@@ -56,8 +56,10 @@ npm-debug.log
 .webpack.json
 /compiled/
 dll/
-/bin/
-/obj/
+bin/
+obj/
+Debug/
+Release/
 
 # Doc #
 /doc/
