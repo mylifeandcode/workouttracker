@@ -1,0 +1,4 @@
+C:\Dev\WorkoutTracker\WorkoutTracker.UI\bin\Debug\netcoreapp1.1\WorkoutTracker.UI.deps.json
+C:\Dev\WorkoutTracker\WorkoutTracker.UI\bin\Debug\netcoreapp1.1\WorkoutTracker.UI.runtimeconfig.json
+C:\Dev\WorkoutTracker\WorkoutTracker.UI\bin\Debug\netcoreapp1.1\WorkoutTracker.UI.runtimeconfig.dev.json
+C:\Dev\WorkoutTracker\WorkoutTracker.UI\obj\Debug\netcoreapp1.1\WorkoutTracker.UI.csprojResolveAssemblyReference.cache

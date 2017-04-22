@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Application", "WorkoutTracker.Application\WorkoutTracker.Application.csproj", "{157081E0-4001-41DC-A6B9-DE4DCA0ACE9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutApplication.Repository", "WorkoutApplication.Repository\WorkoutApplication.Repository.csproj", "{A3D3C858-78E2-443A-9FEA-D44AF18F482F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutApplication.Data", "WorkoutApplication.Data\WorkoutApplication.Data.csproj", "{9E232CCB-9844-4E3F-AF69-931BE242A129}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutApplication.Domain", "WorkoutApplication.Domain\WorkoutApplication.Domain.csproj", "{E830AE12-D04F-4F2A-B2FE-293934D17220}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutApplication.Infrastructure", "WorkoutApplication.Infrastructure\WorkoutApplication.Infrastructure.csproj", "{7B26A9A4-9BD9-459E-8FB3-70AF4125D11E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.UI", "WorkoutTracker.UI\WorkoutTracker.UI.csproj", "{A52405EE-2073-49E4-AA2E-51A93361FA0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkoutTracker.Tests", "WorkoutTracker.Tests\WorkoutTracker.Tests.csproj", "{DF90C6D5-DEE9-4F58-9BC0-E61F38E01557}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{157081E0-4001-41DC-A6B9-DE4DCA0ACE9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{157081E0-4001-41DC-A6B9-DE4DCA0ACE9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{157081E0-4001-41DC-A6B9-DE4DCA0ACE9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{157081E0-4001-41DC-A6B9-DE4DCA0ACE9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3D3C858-78E2-443A-9FEA-D44AF18F482F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3D3C858-78E2-443A-9FEA-D44AF18F482F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3D3C858-78E2-443A-9FEA-D44AF18F482F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3D3C858-78E2-443A-9FEA-D44AF18F482F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E232CCB-9844-4E3F-AF69-931BE242A129}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E232CCB-9844-4E3F-AF69-931BE242A129}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E232CCB-9844-4E3F-AF69-931BE242A129}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E232CCB-9844-4E3F-AF69-931BE242A129}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E830AE12-D04F-4F2A-B2FE-293934D17220}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E830AE12-D04F-4F2A-B2FE-293934D17220}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E830AE12-D04F-4F2A-B2FE-293934D17220}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E830AE12-D04F-4F2A-B2FE-293934D17220}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B26A9A4-9BD9-459E-8FB3-70AF4125D11E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B26A9A4-9BD9-459E-8FB3-70AF4125D11E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B26A9A4-9BD9-459E-8FB3-70AF4125D11E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B26A9A4-9BD9-459E-8FB3-70AF4125D11E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A52405EE-2073-49E4-AA2E-51A93361FA0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A52405EE-2073-49E4-AA2E-51A93361FA0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A52405EE-2073-49E4-AA2E-51A93361FA0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A52405EE-2073-49E4-AA2E-51A93361FA0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF90C6D5-DEE9-4F58-9BC0-E61F38E01557}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF90C6D5-DEE9-4F58-9BC0-E61F38E01557}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF90C6D5-DEE9-4F58-9BC0-E61F38E01557}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF90C6D5-DEE9-4F58-9BC0-E61F38E01557}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

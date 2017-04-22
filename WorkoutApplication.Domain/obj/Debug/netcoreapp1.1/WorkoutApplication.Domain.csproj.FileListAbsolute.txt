@@ -1,0 +1,7 @@
+C:\Dev\WorkoutTracker\WorkoutApplication.Domain\bin\Debug\netcoreapp1.1\WorkoutApplication.Domain.deps.json
+C:\Dev\WorkoutTracker\WorkoutApplication.Domain\bin\Debug\netcoreapp1.1\WorkoutApplication.Domain.dll
+C:\Dev\WorkoutTracker\WorkoutApplication.Domain\bin\Debug\netcoreapp1.1\WorkoutApplication.Domain.pdb
+C:\Dev\WorkoutTracker\WorkoutApplication.Domain\obj\Debug\netcoreapp1.1\WorkoutApplication.Domain.csprojResolveAssemblyReference.cache
+C:\Dev\WorkoutTracker\WorkoutApplication.Domain\obj\Debug\netcoreapp1.1\WorkoutApplication.Domain.AssemblyInfo.cs
+C:\Dev\WorkoutTracker\WorkoutApplication.Domain\obj\Debug\netcoreapp1.1\WorkoutApplication.Domain.dll
+C:\Dev\WorkoutTracker\WorkoutApplication.Domain\obj\Debug\netcoreapp1.1\WorkoutApplication.Domain.pdb
