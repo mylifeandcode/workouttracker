@@ -56,8 +56,6 @@ npm-debug.log
 .webpack.json
 /compiled/
 dll/
-bin/
-obj/
 Debug/
 Release/
 
@@ -74,3 +72,5 @@ Release/
 *.css.shim.ts
 *.ngsummary.json
 *.shim.ngstyle.ts
+bin
+obj

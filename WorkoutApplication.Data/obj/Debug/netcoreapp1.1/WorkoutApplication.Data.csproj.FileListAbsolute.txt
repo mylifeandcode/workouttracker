@@ -1,7 +1,0 @@
-C:\Dev\WorkoutTracker\WorkoutApplication.Data\bin\Debug\netcoreapp1.1\WorkoutApplication.Data.deps.json
-C:\Dev\WorkoutTracker\WorkoutApplication.Data\bin\Debug\netcoreapp1.1\WorkoutApplication.Data.dll
-C:\Dev\WorkoutTracker\WorkoutApplication.Data\bin\Debug\netcoreapp1.1\WorkoutApplication.Data.pdb
-C:\Dev\WorkoutTracker\WorkoutApplication.Data\obj\Debug\netcoreapp1.1\WorkoutApplication.Data.csprojResolveAssemblyReference.cache
-C:\Dev\WorkoutTracker\WorkoutApplication.Data\obj\Debug\netcoreapp1.1\WorkoutApplication.Data.AssemblyInfo.cs
-C:\Dev\WorkoutTracker\WorkoutApplication.Data\obj\Debug\netcoreapp1.1\WorkoutApplication.Data.dll
-C:\Dev\WorkoutTracker\WorkoutApplication.Data\obj\Debug\netcoreapp1.1\WorkoutApplication.Data.pdb
