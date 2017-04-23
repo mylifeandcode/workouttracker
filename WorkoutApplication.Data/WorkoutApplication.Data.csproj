@@ -8,4 +8,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WorkoutApplication.Domain\WorkoutApplication.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

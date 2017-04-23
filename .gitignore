@@ -78,3 +78,5 @@ obj/
 /WorkoutApplication.Domain/bin
 /WorkoutApplication.Domain/obj
 .vs
+/WorkoutTracker.Application/bin
+/WorkoutTracker.Application/obj

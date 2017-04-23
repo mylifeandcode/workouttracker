@@ -1,7 +1,6 @@
 C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\bin\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.deps.json
 C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\bin\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.dll
 C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\bin\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.pdb
-C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\obj\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.csprojResolveAssemblyReference.cache
 C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\obj\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.AssemblyInfo.cs
 C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\obj\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.dll
 C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\obj\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.pdb
