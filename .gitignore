@@ -75,3 +75,6 @@ Release/
 bin/
 obj/
 .vs/
+/WorkoutApplication.Domain/bin
+/WorkoutApplication.Domain/obj
+.vs

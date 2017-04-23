@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WorkoutApplication.Domain
+namespace WorkoutApplication.Domain.Resistances
 {
     public class BandResistance : Resistance
     {
