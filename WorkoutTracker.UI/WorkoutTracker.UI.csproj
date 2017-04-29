@@ -12,10 +12,20 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
+    <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.3.0" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WorkoutApplication.Data\WorkoutApplication.Data.csproj" />
+    <ProjectReference Include="..\WorkoutApplication.Domain\WorkoutApplication.Domain.csproj" />
+    <ProjectReference Include="..\WorkoutApplication.Infrastructure\WorkoutApplication.Infrastructure.csproj" />
+    <ProjectReference Include="..\WorkoutApplication.Repository\WorkoutApplication.Repository.csproj" />
+    <ProjectReference Include="..\WorkoutTracker.Application\WorkoutTracker.Application.csproj" />
   </ItemGroup>
 
 </Project>

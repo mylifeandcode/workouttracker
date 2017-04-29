@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using StructureMap;
+using WorkoutApplication.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace WorkoutTracker
 {
@@ -24,11 +27,17 @@ namespace WorkoutTracker
 
         public IConfigurationRoot Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc()
+                .AddControllersAsServices();
+
+            //TODO: Get connection string from config
+            var connection = @"Server=(localdb)\mssqllocaldb;Database=WorkoutTracker;Trusted_Connection=True;";
+            services.AddDbContext<WorkoutsContext>(options => options.UseSqlServer(connection));
+
+            return ConfigureIoC(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,5 +48,30 @@ namespace WorkoutTracker
 
             app.UseMvc();
         }
+
+        public IServiceProvider ConfigureIoC(IServiceCollection services)
+        {
+            //See this URL for more info:
+            //https://andrewlock.net/getting-started-with-structuremap-in-asp-net-core/
+
+            var container = new Container();
+
+            container.Configure(config =>
+            {
+                // Register stuff in container, using the StructureMap APIs...
+                config.Scan(_ =>
+                {
+                    _.AssemblyContainingType(typeof(Startup));
+                    _.WithDefaultConventions();
+                });
+
+                //Populate the container using the service collection
+                config.Populate(services);
+            });
+
+            return container.GetInstance<IServiceProvider>();
+
+        }
+
     }
 }
