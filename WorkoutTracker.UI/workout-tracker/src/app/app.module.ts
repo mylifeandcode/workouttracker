@@ -13,6 +13,7 @@ import { ExerciseComponent } from './exercise/exercise.component';
 import { ExerciseListComponent } from './exercise-list/exercise-list.component';
 import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
 import { SetEditComponent } from './set-edit/set-edit.component';
+import { ExerciseService } from './exercise.service';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,7 @@ import { SetEditComponent } from './set-edit/set-edit.component';
     HttpModule, 
     AppRoutingModule
   ],
-  providers: [],
+  providers: [ExerciseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
