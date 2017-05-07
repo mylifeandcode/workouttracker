@@ -8,6 +8,7 @@ namespace WorkoutApplication.Domain.Workouts
 {
     public class Workout : NamedEntity
     {
+        public int UserId { get; set; }
         public virtual IEnumerable<Set> Sets { get; set; }
     }
 }

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+﻿import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ExerciseService } from '../exercise.service';
 import { Exercise } from '../exercise';
 import { TargetArea } from '../target-area';
@@ -11,11 +12,29 @@ import { TargetArea } from '../target-area';
 })
 export class ExerciseEditComponent implements OnInit {
 
-  constructor(private _formBuilder: FormBuilder, private _exerciseSvc: ExerciseService) { }
-  public targetAreas: Array<TargetArea>;
+    constructor(private route: ActivatedRoute, private _formBuilder: FormBuilder, private _exerciseSvc: ExerciseService) {
+        this.createForm();
+    }
 
-  ngOnInit() {
-      this._exerciseSvc.getTargetAreas().subscribe((resp) => this.targetAreas = resp);
-  }
+    public targetAreas: Array<TargetArea>;
+
+    exercise: Exercise;
+    exerciseForm: FormGroup;
+
+    ngOnInit() {
+        //this._exerciseSvc.getTargetAreas().subscribe((resp) => this.targetAreas = resp);
+        this.setupViewModel();
+    }
+
+    setupViewModel() {
+    }
+
+    createForm() {
+        this.exerciseForm = this._formBuilder.group({
+            id: [0, Validators.required ], //TODO: Get ID from URL
+            name: [ '', Validators.required ], 
+            description: ['', Validators.required]
+        });
+    }
 
 }
