@@ -1,20 +1,25 @@
 ﻿<div class="container">
   <form [formGroup]="exerciseForm" novalidate>
-    <div class="form-group">
-      <input type="hidden" formControlName="id" />
-      <label class="center-block">
-        Name:
-        <input class="form-control" formControlName="name" />
-      </label>
-      <label class="center-block">
-        Description:
-        <input class="form-control" formControlName="description" />
-      </label>
-      <div *ngFor="let targetArea in targetAreas" class="checkbox">
+    <div class="row">
+      
+      <div class="col-md-offset-2 col-md-4 form-group">
+        <input type="hidden" formControlName="id" />
         <label class="center-block">
-          <input type="checkbox" formControlName="sidekick">{{targetArea.name}}
+          Name:
+          <input class="form-control" formControlName="name" />
+        </label>
+        <label class="center-block">
+          Description:
+          <input class="form-control" formControlName="description" />
         </label>
       </div>
+      
+      <div class="col-md-4 form-group">
+        <strong>Target Areas:</strong>
+          <div *ngFor="let area of targetAreas.controls; let i=index">
+            <input type="checkbox" [formControl]="targetArea"/> {{this.targetAreas[i].name}}
+          </div>      
+        </div>
     </div>
   </form>
 </div>
