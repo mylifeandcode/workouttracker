@@ -1,0 +1,8 @@
+  <div *ngIf="users != null" class="container">
+    <div class="row col-md-offset-4 col-md-4 centeredText">
+      <h3>Who Are You?</h3>
+    </div>
+    <div *ngFor="let user of users" class="row col-md-offset-4 col-md-4 centeredText">
+      {{user.name}}
+    </div>
+  </div>

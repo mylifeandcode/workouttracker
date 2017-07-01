@@ -14,6 +14,9 @@ import { ExerciseListComponent } from './exercise-list/exercise-list.component';
 import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
 import { SetEditComponent } from './set-edit/set-edit.component';
 import { ExerciseService } from './exercise.service';
+import { UserSelectComponent } from './user-select/user-select.component';
+
+import { UserService } from './user.service';
 
 @NgModule({
   declarations: [
@@ -25,7 +28,8 @@ import { ExerciseService } from './exercise.service';
     ExerciseComponent,
     ExerciseListComponent,
     ExerciseEditComponent,
-    SetEditComponent
+    SetEditComponent,
+    UserSelectComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +37,7 @@ import { ExerciseService } from './exercise.service';
     HttpModule, 
     AppRoutingModule
   ],
-  providers: [ExerciseService],
+  providers: [ExerciseService, UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
