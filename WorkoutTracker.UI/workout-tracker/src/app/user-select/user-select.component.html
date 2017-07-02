@@ -2,7 +2,9 @@
     <div class="row col-md-offset-4 col-md-4 centeredText">
       <h3>Who Are You?</h3>
     </div>
-    <div *ngFor="let user of users" class="row col-md-offset-4 col-md-4 centeredText">
-      {{user.name}}
+    <div *ngFor="let user of users" class="row col-md-offset-4 col-md-4 centeredText panel panel-primary">
+      <div class="panel-body">
+        {{user.name}}
+      </div>
     </div>
   </div>

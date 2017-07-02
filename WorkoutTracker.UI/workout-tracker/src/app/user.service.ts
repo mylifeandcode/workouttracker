@@ -18,4 +18,9 @@ export class UserService {
     users[0].name = "Some User";
     return Observable.of(users);
   }
+
+  getUserInfoFromCookie() : User {
+    //TODO: Implement
+    return new User();
+  }
 }

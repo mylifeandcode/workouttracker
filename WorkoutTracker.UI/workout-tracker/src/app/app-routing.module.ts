@@ -5,9 +5,10 @@ import { ExerciseListComponent } from './exercise-list/exercise-list.component';
 import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
 import { ExerciseComponent } from './exercise/exercise.component';
 import { WorkoutComponent } from './workout/workout.component';
+import { WorkoutListComponent } from './workout-list/workout-list.component';
 import { SetComponent } from './set/set.component';
 import { UserSelectComponent } from './user-select/user-select.component';
-
+import { UserListComponent } from './user-list/user-list.component';
 
 const routes: Routes = [
   /*
@@ -26,7 +27,16 @@ const routes: Routes = [
     path: 'exercises', component: ExerciseListComponent
   }, 
   {
-    path: 'exercises/edit', component: ExerciseEditComponent
+    path: 'exercises/edit/:id', component: ExerciseEditComponent
+  }, 
+  {
+    path: 'workouts', component: WorkoutListComponent
+  }, 
+  {
+    path: 'workouts/start', component: WorkoutComponent
+  }, 
+  {
+    path: 'users', component: UserListComponent
   }
 ];
 

@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
 import { WorkoutComponent } from './workout/workout.component';
+import { WorkoutListComponent } from './workout-list/workout-list.component';
 import { SetComponent } from './set/set.component';
 import { ExerciseComponent } from './exercise/exercise.component';
 import { ExerciseListComponent } from './exercise-list/exercise-list.component';
@@ -17,20 +18,22 @@ import { ExerciseService } from './exercise.service';
 import { UserSelectComponent } from './user-select/user-select.component';
 
 import { UserService } from './user.service';
+import { UserListComponent } from './user-list/user-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavComponent,
     HomeComponent,
-    WorkoutComponent,
+    WorkoutComponent, 
+    WorkoutListComponent, 
     SetComponent,
     ExerciseComponent,
     ExerciseListComponent,
     ExerciseEditComponent,
     SetEditComponent,
-    UserSelectComponent
-  ],
+    UserSelectComponent,
+    UserListComponent  ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
