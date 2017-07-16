@@ -8,9 +8,10 @@ using WorkoutApplication.Data;
 namespace WorkoutApplication.Data.Migrations
 {
     [DbContext(typeof(WorkoutsContext))]
-    partial class WorkoutsContextModelSnapshot : ModelSnapshot
+    [Migration("20170716192329_AddUserIdToWorkouts")]
+    partial class AddUserIdToWorkouts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")

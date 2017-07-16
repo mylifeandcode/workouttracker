@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 using StructureMap;
 using WorkoutApplication.Data;
 using Microsoft.EntityFrameworkCore;
+using WorkoutApplication.Repository;
+using WorkoutApplication.Domain.Exercises;
 
 namespace WorkoutTracker
 {
@@ -47,6 +49,11 @@ namespace WorkoutTracker
             loggerFactory.AddDebug();
 
             app.UseMvc();
+
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                serviceScope.ServiceProvider.GetService<WorkoutsContext>().Database.Migrate();
+            }
         }
 
         public IServiceProvider ConfigureIoC(IServiceCollection services)
@@ -64,6 +71,8 @@ namespace WorkoutTracker
                     _.AssemblyContainingType(typeof(Startup));
                     _.WithDefaultConventions();
                 });
+
+                config.For<IRepository<TargetArea>>().Use<Repository<TargetArea>>();
 
                 //Populate the container using the service collection
                 config.Populate(services);

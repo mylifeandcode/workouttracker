@@ -8,6 +8,8 @@ namespace WorkoutApplication.Domain.Exercises
     public class Exercise : NamedEntity
     {
         public string Description { get; set; }
+
+        //TODO: Need to make adjustment in DbContext so that the below property works correctly
         public virtual IEnumerable<TargetArea> TargetAreas { get; set; }
     }
 }
