@@ -22,6 +22,9 @@ namespace WorkoutApplication.Data
         public DbSet<ExecutedExercise> ExecutedExercises { get; set; }
         public DbSet<TargetArea> TargetAreas { get; set; }
 
+        //Compensates for lack of many-to-many support natively in EF Core
+        public DbSet<ExerciseTargetAreaLink> ExerciseTargetAreaLinks { get; set; }
+
         //Resistances
         public DbSet<Resistance> Resistances { get; set; }
         public DbSet<ResistanceBand> ResistanceBands { get; set; }
@@ -43,6 +46,22 @@ namespace WorkoutApplication.Data
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
+
+            //builder.Entity<Exercise>()
+            //  .HasMany(e => e.TargetAreas).WithMany(t => t.Exercises);
+
+            //Currently no native many-to-many support in EF Core. :(
+            //https://docs.microsoft.com/en-us/ef/core/modeling/relationships#many-to-many
+            //Here's the workaround.
+            builder.Entity<ExerciseTargetAreaLink>()
+                .HasOne(l => l.Exercise)
+                .WithMany(e => e.ExerciseTargetAreaLinks)
+                .HasForeignKey(l => l.ExerciseId);
+
+            builder.Entity<ExerciseTargetAreaLink>()
+                .HasOne(l => l.TargetArea)
+                .WithMany(t => t.ExerciseTargetAreaLinks)
+                .HasForeignKey(l => l.TargetAreaId);
         }
     }
 }

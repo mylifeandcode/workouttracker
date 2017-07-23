@@ -8,9 +8,10 @@ using WorkoutApplication.Data;
 namespace WorkoutApplication.Data.Migrations
 {
     [DbContext(typeof(WorkoutsContext))]
-    partial class WorkoutsContextModelSnapshot : ModelSnapshot
+    [Migration("20170723151147_ManyToManyWorkaround")]
+    partial class ManyToManyWorkaround
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")

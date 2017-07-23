@@ -10,7 +10,7 @@ namespace WorkoutApplication.Domain.Workouts
         public virtual Workout Workout { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
-        public string Notes { get; set; }
+        public string Journal { get; set; }
         public int Rating { get; set; }
     }
 }

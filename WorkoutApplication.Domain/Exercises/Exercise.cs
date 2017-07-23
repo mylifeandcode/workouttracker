@@ -9,7 +9,7 @@ namespace WorkoutApplication.Domain.Exercises
     {
         public string Description { get; set; }
 
-        //TODO: Need to make adjustment in DbContext so that the below property works correctly
-        public virtual IEnumerable<TargetArea> TargetAreas { get; set; }
+        //public virtual ICollection<TargetArea> TargetAreas { get; set; }
+        public virtual ICollection<ExerciseTargetAreaLink> ExerciseTargetAreaLinks { get; set; }
     }
 }
