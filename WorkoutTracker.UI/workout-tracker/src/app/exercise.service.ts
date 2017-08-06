@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Exercise } from './exercise';
@@ -20,6 +20,14 @@ export class ExerciseService {
 
   public getTargetAreas(): Observable<Array<TargetArea>> {
     return this._http.get('api/exercises/targetAreas').map((resp: Response) => <Array<TargetArea>>resp.json());
+  }
+
+  public add(exercise: Exercise): Observable<Exercise> {
+      return null; //TODO: Implement
+  }
+
+  public update(exercise: Exercise): Observable<Exercise> {
+      return null; //TODO: Implement
   }
 
 }

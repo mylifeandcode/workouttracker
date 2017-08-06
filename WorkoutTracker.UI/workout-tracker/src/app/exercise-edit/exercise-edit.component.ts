@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
 import { ExerciseService } from '../exercise.service';
 import { Exercise } from '../exercise';
 import { TargetArea } from '../target-area';
@@ -18,17 +18,29 @@ export class ExerciseEditComponent implements OnInit {
     }
 
     public targetAreas: Array<TargetArea> = [];
+    public exercise: Exercise;
+    public exerciseForm: FormGroup;
 
-    exercise: Exercise;
-    exerciseForm: FormGroup;
+    private _exerciseId: number = 0;
+    private _saving: boolean = false;
+    private _loading: boolean = false;
 
-    ngOnInit() {
-        //this._exerciseSvc.getTargetAreas().subscribe((resp) => this.targetAreas = resp);
+    ngOnInit(): void {
+        this.getRouteParams();
         this.setupViewModel();
         this.createForm();
+        if (this._exerciseId != 0)
+            this.loadExercise(); //Is this safe? route.params is an observable.
     }
 
-    setupViewModel() {
+    private getRouteParams(): void {
+        this.route.params.subscribe(params => {
+            this._exerciseId = params['id'];
+            console.log('Exercise ID = ', this._exerciseId);
+        });
+    }
+    
+    private setupViewModel(): void {
         //TODO: Merge available target areas with selected target areas
         console.log("Setting up view model...");
         this.targetAreas.push(new TargetArea(1, "Abs", null, null, null, null, false));
@@ -41,28 +53,21 @@ export class ExerciseEditComponent implements OnInit {
         this.targetAreas.push(new TargetArea(8, "Triceps", null, null, null, null, false));
     }
 
-    createForm() {
+    private createForm(): void {
         console.log("Creating form...");
 
         //Use FormBuilder to create our root FormGroup
         this.exerciseForm = this._formBuilder.group({
             id: [0, Validators.required ], //TODO: Get ID from URL. 0 for new, actual ID for existing exercise.
-            name: [ '', Validators.required ], 
+            name: ['', Validators.required], 
             description: ['', Validators.required], 
-            targetAreas: this.buildTargetAreas() //Get our checkbox FormControls
+            targetAreas: this.buildTargetAreas() //, [Validators.required, Validators.minLength(1)] //Get our checkbox FormControls
         });
 
-        
-
         let checkboxes = new Array<FormControl>(this.targetAreas.length);
-        //this.exercise.targetAreas.forEach(element => {
-          //  checkboxes.push(new FormControl()
-        //});
-
-        //let checkboxArray = new FormArray()
     }
 
-    buildTargetAreas() : FormArray {
+    private buildTargetAreas(): FormArray {
         //Great approach I found at:
         //https://netbasal.com/handling-multiple-checkboxes-in-angular-forms-57eb8e846d21
         const arr = this.targetAreas.map(area => {
@@ -72,7 +77,28 @@ export class ExerciseEditComponent implements OnInit {
         return this._formBuilder.array(arr);
     }
 
-    get allTargetAreas() {
+    private get allTargetAreas(): AbstractControl {
         return this.exerciseForm.get('targetAreas');
     };
+
+    private loadExercise(): void {
+        this._loading = true;
+        this._exerciseSvc.getById(this._exerciseId).subscribe((value: Exercise) => {
+            this.exercise = value;
+            this._loading = false;
+        }); //TODO: Handle errors
+    }
+
+    private saveExercise(): void {
+        if (this._exerciseId == 0)
+            this._exerciseSvc.add(this.exercise).subscribe((value: Exercise) => {
+                //TODO: Implement
+                this._saving = false;
+            });
+        else
+            this._exerciseSvc.update(this.exercise).subscribe((value: Exercise) => {
+                //TODO: Implement
+                this._saving = false;
+            });
+    }
 }
