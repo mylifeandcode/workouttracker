@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using WorkoutApplication.Data.EntitySetup;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Resistances;
 using WorkoutApplication.Domain.Sets;
@@ -9,6 +10,8 @@ namespace WorkoutApplication.Data
 {
     public class WorkoutsContext : DbContext
     {
+        private EntitySetupManager _setupMgr;
+
         //Workouts
         public DbSet<Workout> Workouts { get; set; }
         public DbSet<ExecutedWorkout> ExecutedWorkouts { get; set; }
@@ -29,6 +32,12 @@ namespace WorkoutApplication.Data
         public DbSet<Resistance> Resistances { get; set; }
         public DbSet<ResistanceBand> ResistanceBands { get; set; }
 
+        public WorkoutsContext()
+        {
+            //I could be real fancy here and set this up via IoC, but for the purpose of this class 
+            //it's not really necessary.
+            _setupMgr = new EntitySetupManager();
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -47,21 +56,7 @@ namespace WorkoutApplication.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-            //builder.Entity<Exercise>()
-            //  .HasMany(e => e.TargetAreas).WithMany(t => t.Exercises);
-
-            //Currently no native many-to-many support in EF Core. :(
-            //https://docs.microsoft.com/en-us/ef/core/modeling/relationships#many-to-many
-            //Here's the workaround.
-            builder.Entity<ExerciseTargetAreaLink>()
-                .HasOne(l => l.Exercise)
-                .WithMany(e => e.ExerciseTargetAreaLinks)
-                .HasForeignKey(l => l.ExerciseId);
-
-            builder.Entity<ExerciseTargetAreaLink>()
-                .HasOne(l => l.TargetArea)
-                .WithMany(t => t.ExerciseTargetAreaLinks)
-                .HasForeignKey(l => l.TargetAreaId);
+            _setupMgr.SetupEntities(builder);
         }
     }
 }
