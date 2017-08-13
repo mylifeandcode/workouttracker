@@ -184,8 +184,6 @@ namespace WorkoutApplication.Data.Migrations
 
                     b.Property<DateTime>("ModifiedDateTime");
 
-                    b.Property<int>("TargetExerciseCount");
-
                     b.Property<int?>("WorkoutId");
 
                     b.HasKey("Id");

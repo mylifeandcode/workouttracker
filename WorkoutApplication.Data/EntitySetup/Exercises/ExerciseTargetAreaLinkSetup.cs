@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using WorkoutApplication.Domain.Exercises;
 
-namespace WorkoutApplication.Data.EntitySetup
+namespace WorkoutApplication.Data.EntitySetup.Exercises
 {
     public class ExerciseTargetAreaLinkSetup : IEntitySetup
     {

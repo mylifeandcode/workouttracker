@@ -10,8 +10,6 @@ namespace WorkoutApplication.Data
 {
     public class WorkoutsContext : DbContext
     {
-        private EntitySetupManager _setupMgr;
-
         //Workouts
         public DbSet<Workout> Workouts { get; set; }
         public DbSet<ExecutedWorkout> ExecutedWorkouts { get; set; }
@@ -32,13 +30,6 @@ namespace WorkoutApplication.Data
         public DbSet<Resistance> Resistances { get; set; }
         public DbSet<ResistanceBand> ResistanceBands { get; set; }
 
-        public WorkoutsContext()
-        {
-            //I could be real fancy here and set this up via IoC, but for the purpose of this class 
-            //it's not really necessary.
-            _setupMgr = new EntitySetupManager();
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //TODO: Get connection string from config
@@ -56,7 +47,15 @@ namespace WorkoutApplication.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-            _setupMgr.SetupEntities(builder);
+            SetupEntities(builder);
+        }
+
+        private void SetupEntities(ModelBuilder builder)
+        {
+            //I could be real fancy here and set this up via IoC, but for the purpose of this class 
+            //it's not really necessary.
+            var setupMgr = new EntitySetupManager();
+            setupMgr.SetupEntities(builder);
         }
     }
 }

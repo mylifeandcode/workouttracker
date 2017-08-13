@@ -4,14 +4,14 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using WorkoutApplication.Domain.Exercises;
 
-namespace WorkoutApplication.Data.EntitySetup
+namespace WorkoutApplication.Data.EntitySetup.Exercises
 {
     public class ExecutedExerciseSetup : EntitySetupBase, IEntitySetup
     {
         public void Setup(ModelBuilder builder)
         {
             builder.Entity<ExecutedExercise>().Property(x => x.Notes).HasMaxLength(4096);
-            base.Setup<ExecutedExercise>(builder);
+            base.SetupAuditFields<ExecutedExercise>(builder);
         }
     }
 }

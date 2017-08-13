@@ -55,7 +55,6 @@ namespace WorkoutApplication.Data.Migrations
                     Discriminator = table.Column<string>(nullable: false),
                     ModifiedBy = table.Column<string>(nullable: true),
                     ModifiedDateTime = table.Column<DateTime>(nullable: false),
-                    TargetExerciseCount = table.Column<int>(nullable: false),
                     WorkoutId = table.Column<int>(nullable: true),
                     TargetRepCount = table.Column<int>(nullable: true),
                     TargetTime = table.Column<TimeSpan>(nullable: true)
