@@ -17,10 +17,10 @@
         
       </div>
       
-      <div class="col-md-4 form-group">
+      <div class="col-md-4 form-group" formArrayName="targetAreas">
         <strong>Target Areas:</strong>
           <div *ngFor="let area of allTargetAreas.controls; let i=index">
-            <input type="checkbox" [formControl]="area"/> {{targetAreas[i].name}}
+            <input type="checkbox" [formControlName]="i" /> {{targetAreas[i].name}}
           </div>      
       </div>
     </div>

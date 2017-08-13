@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormControl, FormArray, Validators, AbstractCon
 import { ExerciseService } from '../exercise.service';
 import { Exercise } from '../exercise';
 import { TargetArea } from '../target-area';
+import { CustomValidators } from '../custom-validators';
 
 @Component({
   selector: 'wt-exercise-edit',
@@ -61,7 +62,7 @@ export class ExerciseEditComponent implements OnInit {
             id: [0, Validators.required ], //TODO: Get ID from URL. 0 for new, actual ID for existing exercise.
             name: ['', Validators.required], 
             description: ['', Validators.required], 
-            targetAreas: this.buildTargetAreas() //, [Validators.required, Validators.minLength(1)] //Get our checkbox FormControls
+            targetAreas: this.buildTargetAreas()
         });
 
         let checkboxes = new Array<FormControl>(this.targetAreas.length);
@@ -74,7 +75,13 @@ export class ExerciseEditComponent implements OnInit {
             console.log("area:", area);
             return this._formBuilder.control(area.selected);
         });
-        return this._formBuilder.array(arr);
+
+        //FormArray can only take a single validator, not an array.
+        //Use the below as a workaround as shown at https://github.com/angular/angular/issues/12763
+        return this._formBuilder.array(
+            //arr, Validators.compose([Validators.required, Validators.minLength(1)]));
+            //But in this case, we need a custom validator
+            arr, CustomValidators.multipleCheckboxRequireOne);
     }
 
     private get allTargetAreas(): AbstractControl {
