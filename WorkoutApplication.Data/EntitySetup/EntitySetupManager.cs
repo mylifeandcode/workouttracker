@@ -17,7 +17,7 @@ namespace WorkoutApplication.Data.EntitySetup
         {
             //I could be real fancy here and set this up via IoC, but for the purpose of this class 
             //it's not really necessary.
-            _setups = new List<IEntitySetup>(15); 
+            _setups = new List<IEntitySetup>(16); 
 
             //Exercise Entity Setup
             _setups.Add(new ExerciseSetup());
@@ -41,6 +41,9 @@ namespace WorkoutApplication.Data.EntitySetup
             //Workout Entity Setup
             _setups.Add(new WorkoutSetup());
             _setups.Add(new ExecutedSetSetup());
+
+            //User Entity Setup
+            _setups.Add(new UserSetup());
         }
 
         public void SetupEntities(ModelBuilder builder)

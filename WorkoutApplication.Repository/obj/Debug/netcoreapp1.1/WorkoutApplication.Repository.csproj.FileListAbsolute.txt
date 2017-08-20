@@ -11,3 +11,4 @@ C:\Dev\WorkoutTracker\WorkoutApplication.Repository\obj\Debug\netcoreapp1.1\Work
 C:\Dev\WorkoutTracker\WorkoutApplication.Repository\obj\Debug\netcoreapp1.1\WorkoutApplication.Repository.AssemblyInfo.cs
 C:\Dev\WorkoutTracker\WorkoutApplication.Repository\obj\Debug\netcoreapp1.1\WorkoutApplication.Repository.dll
 C:\Dev\WorkoutTracker\WorkoutApplication.Repository\obj\Debug\netcoreapp1.1\WorkoutApplication.Repository.pdb
+C:\Dev\WorkoutTracker\WorkoutApplication.Repository\obj\Debug\netcoreapp1.1\WorkoutApplication.Repository.csproj.CoreCompileInputs.cache

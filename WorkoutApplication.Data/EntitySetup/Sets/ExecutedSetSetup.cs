@@ -10,8 +10,11 @@ namespace WorkoutApplication.Data.EntitySetup.Sets
     {
         public void Setup(ModelBuilder builder)
         {
-            builder.Entity<ExecutedSet>().HasOne(x => x.Set);
-            builder.Entity<ExecutedSet>().HasMany(x => x.ExecutedExercises);
+            var entity = builder.Entity<ExecutedSet>();
+
+            entity.HasOne(x => x.Set);
+            entity.HasOne(x => x.ExecutedExercise);
+
             base.SetupAuditFields<ExecutedSet>(builder);
         }
     }

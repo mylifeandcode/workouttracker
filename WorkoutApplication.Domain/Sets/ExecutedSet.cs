@@ -9,6 +9,6 @@ namespace WorkoutApplication.Domain.Sets
     public abstract class ExecutedSet : Entity
     {
         public virtual Set Set { get; set; }
-        public virtual IEnumerable<ExecutedExercise> ExecutedExercises { get; set; }
+        public virtual ExecutedExercise ExecutedExercise { get; set; }
     }
 }

@@ -8,6 +8,14 @@ namespace WorkoutApplication.Domain.Sets
 {
     public abstract class Set : Entity
     {
-        public virtual IEnumerable<Exercise> Exercises { get; set; }
+        /// <summary>
+        /// The sequence in which this set of exercises appears in the workout
+        /// </summary>
+        public short Sequence { get; set; }
+
+        /// <summary>
+        /// The exercise to be performed in this set
+        /// </summary>
+        public virtual Exercise Exercise { get; set; }
     }
 }

@@ -5,3 +5,4 @@ C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\obj\Debug\netcoreapp1.1\
 C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\obj\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.AssemblyInfo.cs
 C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\obj\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.dll
 C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\obj\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.pdb
+C:\Dev\WorkoutTracker\WorkoutApplication.Infrastructure\obj\Debug\netcoreapp1.1\WorkoutApplication.Infrastructure.csproj.CoreCompileInputs.cache

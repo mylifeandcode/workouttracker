@@ -10,8 +10,11 @@ namespace WorkoutApplication.Data.EntitySetup.Workouts
     {
         public void Setup(ModelBuilder builder)
         {
-            builder.Entity<ExecutedWorkout>().Property(x => x.Journal).HasMaxLength(4096);
-            builder.Entity<ExecutedWorkout>().HasOne(x => x.Workout);
+            var entity = builder.Entity<ExecutedWorkout>();
+
+            entity.Property(x => x.Journal).HasMaxLength(4096);
+            entity.HasOne(x => x.Workout);
+
             base.SetupAuditFields<ExecutedWorkout>(builder);
         }
     }

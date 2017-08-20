@@ -10,7 +10,11 @@ namespace WorkoutApplication.Data.EntitySetup.Exercises
     {
         public void Setup(ModelBuilder builder)
         {
-            builder.Entity<Exercise>().Property(x => x.Description).IsRequired();
+            var entity = builder.Entity<Exercise>();
+
+            entity.Property(x => x.Description).HasMaxLength(4096).IsRequired();
+            entity.HasIndex(x => x.Name);
+
             base.SetupAuditFields<Exercise>(builder);
         }
     }

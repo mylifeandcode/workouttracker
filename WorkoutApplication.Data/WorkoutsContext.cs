@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using WorkoutApplication.Data.EntitySetup;
+using WorkoutApplication.Domain;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Resistances;
 using WorkoutApplication.Domain.Sets;
@@ -29,6 +30,9 @@ namespace WorkoutApplication.Data
         //Resistances
         public DbSet<Resistance> Resistances { get; set; }
         public DbSet<ResistanceBand> ResistanceBands { get; set; }
+
+        //Users
+        public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

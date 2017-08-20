@@ -7,9 +7,9 @@ namespace WorkoutApplication.Domain.BaseClasses
     public abstract class Entity
     {
         public int Id { get; set; }
-        public string CreatedBy { get; set; }
+        public int CreatedByUserId { get; set; }
         public DateTime CreatedDateTime { get; set; }
-        public string ModifiedBy { get; set; }
+        public int ModifiedByUserId { get; set; }
         public DateTime ModifiedDateTime { get; set; }
     }
 }

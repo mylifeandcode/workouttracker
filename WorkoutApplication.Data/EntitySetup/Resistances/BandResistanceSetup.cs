@@ -10,7 +10,12 @@ namespace WorkoutApplication.Data.EntitySetup.Resistances
     {
         public void Setup(ModelBuilder builder)
         {
-            builder.Entity<BandResistance>().Property(x => x.Amount).IsRequired();
+            var entity = builder.Entity<BandResistance>();
+
+            entity.Property(x => x.Amount).IsRequired();
+            entity.HasIndex(x => x.Amount);
+            entity.HasIndex(x => x.Color);
+
             base.SetupAuditFields<BandResistance>(builder);
         }
     }

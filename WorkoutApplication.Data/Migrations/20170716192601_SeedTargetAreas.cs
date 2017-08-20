@@ -10,14 +10,15 @@ namespace WorkoutApplication.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             var context = new WorkoutsContext();
-            context.TargetAreas.Add(new TargetArea { Name = "Abs", CreatedBy = "Setup", CreatedDateTime = DateTime.Now });
-            context.TargetAreas.Add(new TargetArea { Name = "Back", CreatedBy = "Setup", CreatedDateTime = DateTime.Now });
-            context.TargetAreas.Add(new TargetArea { Name = "Biceps", CreatedBy = "Setup", CreatedDateTime = DateTime.Now });
-            context.TargetAreas.Add(new TargetArea { Name = "Chest", CreatedBy = "Setup", CreatedDateTime = DateTime.Now });
-            context.TargetAreas.Add(new TargetArea { Name = "Core", CreatedBy = "Setup", CreatedDateTime = DateTime.Now });
-            context.TargetAreas.Add(new TargetArea { Name = "Legs", CreatedBy = "Setup", CreatedDateTime = DateTime.Now });
-            context.TargetAreas.Add(new TargetArea { Name = "Shoulders", CreatedBy = "Setup", CreatedDateTime = DateTime.Now });
-            context.TargetAreas.Add(new TargetArea { Name = "Triceps", CreatedBy = "Setup", CreatedDateTime = DateTime.Now });
+            //TODO: Create Setup User for UserId below to maintain referential integrity
+            context.TargetAreas.Add(new TargetArea { Name = "Abs", CreatedByUserId = 0, CreatedDateTime = DateTime.Now });
+            context.TargetAreas.Add(new TargetArea { Name = "Back", CreatedByUserId = 0, CreatedDateTime = DateTime.Now });
+            context.TargetAreas.Add(new TargetArea { Name = "Biceps", CreatedByUserId = 0, CreatedDateTime = DateTime.Now });
+            context.TargetAreas.Add(new TargetArea { Name = "Chest", CreatedByUserId = 0, CreatedDateTime = DateTime.Now });
+            context.TargetAreas.Add(new TargetArea { Name = "Core", CreatedByUserId = 0, CreatedDateTime = DateTime.Now });
+            context.TargetAreas.Add(new TargetArea { Name = "Legs", CreatedByUserId = 0, CreatedDateTime = DateTime.Now });
+            context.TargetAreas.Add(new TargetArea { Name = "Shoulders", CreatedByUserId = 0, CreatedDateTime = DateTime.Now });
+            context.TargetAreas.Add(new TargetArea { Name = "Triceps", CreatedByUserId = 0, CreatedDateTime = DateTime.Now });
 
             context.SaveChanges();
         }

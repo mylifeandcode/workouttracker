@@ -10,3 +10,4 @@ C:\Dev\WorkoutTracker\WorkoutTracker.Tests\obj\Debug\netcoreapp1.1\WorkoutTracke
 C:\Dev\WorkoutTracker\WorkoutTracker.Tests\obj\Debug\netcoreapp1.1\WorkoutTracker.Tests.AssemblyInfo.cs
 C:\Dev\WorkoutTracker\WorkoutTracker.Tests\obj\Debug\netcoreapp1.1\WorkoutTracker.Tests.dll
 C:\Dev\WorkoutTracker\WorkoutTracker.Tests\obj\Debug\netcoreapp1.1\WorkoutTracker.Tests.pdb
+C:\Dev\WorkoutTracker\WorkoutTracker.Tests\obj\Debug\netcoreapp1.1\WorkoutTracker.Tests.csproj.CoreCompileInputs.cache
