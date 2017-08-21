@@ -14,6 +14,7 @@ namespace WorkoutApplication.Data.EntitySetup.Resistances
 
             entity.Property(x => x.Amount).IsRequired();
             entity.HasIndex(x => x.Amount);
+            entity.Property(x => x.Color).HasMaxLength(25).IsRequired();
             entity.HasIndex(x => x.Color);
 
             base.SetupAuditFields<BandResistance>(builder);

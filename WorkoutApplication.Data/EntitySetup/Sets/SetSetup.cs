@@ -10,6 +10,11 @@ namespace WorkoutApplication.Data.EntitySetup.Sets
     {
         public void Setup(ModelBuilder builder)
         {
+            var entity = builder.Entity<Set>();
+
+            entity.Property(x => x.Sequence).IsRequired();
+            entity.HasOne(x => x.Exercise);
+
             base.SetupAuditFields<Set>(builder);
         }
     }
