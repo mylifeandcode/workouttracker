@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Repository;
 
-namespace WorkoutTracker.Application
+namespace WorkoutTracker.Application.Exercises
 {
-    public class TargetAreasService : ITargetAreasService
+    public class TargetAreaService : ITargetAreaService
     {
         protected readonly IRepository<TargetArea> _repo;
 
-        public TargetAreasService(IRepository<TargetArea> repo)
+        public TargetAreaService(IRepository<TargetArea> repo)
         {
             _repo = repo;
         }

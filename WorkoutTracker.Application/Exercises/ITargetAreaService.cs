@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using WorkoutApplication.Domain.Exercises;
 
-namespace WorkoutTracker.Application
+namespace WorkoutTracker.Application.Exercises
 {
-    public interface ITargetAreasService
+    public interface ITargetAreaService
     {
         IEnumerable<TargetArea> GetAll();
         TargetArea Get(int id);
