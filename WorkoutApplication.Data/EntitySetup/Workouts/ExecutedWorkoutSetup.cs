@@ -13,6 +13,12 @@ namespace WorkoutApplication.Data.EntitySetup.Workouts
             var entity = builder.Entity<ExecutedWorkout>();
 
             entity.Property(x => x.Journal).HasMaxLength(4096);
+            entity.Property(x => x.StartDateTime).IsRequired();
+            entity.Property(x => x.EndDateTime).IsRequired();
+
+            entity.HasIndex(x => x.StartDateTime);
+            entity.HasIndex(x => x.Rating);
+
             entity.HasOne(x => x.Workout);
 
             base.SetupAuditFields<ExecutedWorkout>(builder);

@@ -81,3 +81,7 @@ obj/
 .vs
 /WorkoutTracker.Application/bin
 /WorkoutTracker.Application/obj
+/WorkoutTracker.Tests/bin
+/WorkoutTracker.Tests/obj
+**/bin/**
+**/obj/**

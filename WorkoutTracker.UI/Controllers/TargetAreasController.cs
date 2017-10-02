@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application;
+using WorkoutTracker.Application.Exercises;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,9 +14,9 @@ namespace WorkoutTracker.UI.Controllers
     [Route("api/[controller]")]
     public class TargetAreasController : Controller
     {
-        protected ITargetAreasService _svc;
+        protected ITargetAreaService _svc;
 
-        public TargetAreasController(ITargetAreasService svc)
+        public TargetAreasController(ITargetAreaService svc)
         {
             _svc = svc ?? throw new ArgumentNullException("svc");
         }
