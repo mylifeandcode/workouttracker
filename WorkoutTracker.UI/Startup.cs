@@ -12,6 +12,7 @@ using WorkoutApplication.Data;
 using Microsoft.EntityFrameworkCore;
 using WorkoutApplication.Repository;
 using WorkoutApplication.Domain.Exercises;
+using WorkoutTracker.Application.Exercises;
 
 namespace WorkoutTracker
 {
@@ -69,6 +70,7 @@ namespace WorkoutTracker
                 config.Scan(_ =>
                 {
                     _.AssemblyContainingType(typeof(Startup));
+                    _.AssemblyContainingType(typeof(TargetAreaService));
                     _.WithDefaultConventions();
                 });
 

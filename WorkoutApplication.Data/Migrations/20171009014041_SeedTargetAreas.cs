@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Migrations;
 using WorkoutApplication.Domain.Exercises;
 
 namespace WorkoutApplication.Data.Migrations

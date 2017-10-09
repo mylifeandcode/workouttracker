@@ -25,7 +25,7 @@ namespace WorkoutTracker.UI.Controllers
         [HttpGet]
         public IEnumerable<TargetArea> Get()
         {
-            return _svc.GetAll();
+            return _svc.GetAll().ToList();
         }
 
         // GET api/values/5
