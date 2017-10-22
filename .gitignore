@@ -85,3 +85,6 @@ obj/
 /WorkoutTracker.Tests/obj
 **/bin/**
 **/obj/**
+/WorkoutApplication.Infrastructure/obj
+/WorkoutApplication.Repository/obj
+/WorkoutTracker.Tests/obj
