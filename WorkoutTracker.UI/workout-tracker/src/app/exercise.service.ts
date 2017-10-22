@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Exercise } from './exercise';
@@ -23,7 +23,7 @@ export class ExerciseService {
   }
 
   public add(exercise: Exercise): Observable<Exercise> {
-      return null; //TODO: Implement
+      return this._http.post("/api/exercise", exercise).map((response: Response) => (Exercise)response); 
   }
 
   public update(exercise: Exercise): Observable<Exercise> {
