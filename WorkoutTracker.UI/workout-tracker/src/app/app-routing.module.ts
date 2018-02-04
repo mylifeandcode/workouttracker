@@ -9,6 +9,7 @@ import { WorkoutListComponent } from './workout-list/workout-list.component';
 import { SetComponent } from './set/set.component';
 import { UserSelectComponent } from './user-select/user-select.component';
 import { UserListComponent } from './user-list/user-list.component';
+import { UserEditComponent } from './user-edit/user-edit.component';
 
 const routes: Routes = [
   /*
@@ -37,6 +38,9 @@ const routes: Routes = [
   }, 
   {
     path: 'users', component: UserListComponent
+  },
+  {
+    path: 'users/edit/:id', component: UserEditComponent
   }
 ];
 

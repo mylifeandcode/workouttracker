@@ -1,0 +1,26 @@
+<div class="container">
+  <form [formGroup]="userEditForm" novalidate>
+    <div class="row">
+
+      <div class="col-md-offset-4 col-md-4 form-group">
+        <input type="hidden" formControlName="id" />
+
+        <label class="center-block">
+          Name:
+          <input class="form-control" formControlName="name" placeholder="User Name (required)" />
+          <span *ngIf="userEditForm.name?.errors">REQUIRED</span>
+        </label>
+
+        <!--TODO: Add ability to set password, upload profile pic-->
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-md-offset-4 col-md-4">
+        <button type="submit" [disabled]="userEditForm.invalid" class="btn btn-success">Save</button>
+      </div>
+    </div>
+  </form>
+</div>
+

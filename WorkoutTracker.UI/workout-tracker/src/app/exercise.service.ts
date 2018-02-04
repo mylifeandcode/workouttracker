@@ -23,7 +23,8 @@ export class ExerciseService {
   }
 
   public add(exercise: Exercise): Observable<Exercise> {
-      return this._http.post("/api/exercise", exercise).map((response: Response) => (Exercise)response); 
+    return this._http.post("/api/exercise", exercise)
+      .map((response: Response) => response.json()); 
   }
 
   public update(exercise: Exercise): Observable<Exercise> {

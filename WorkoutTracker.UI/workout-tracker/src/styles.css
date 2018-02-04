@@ -8,3 +8,11 @@ body {
 .gimmeSomeSpace {
   padding: 6px;
 }
+
+.centeredText {
+  text-align: center;
+}
+
+.btn.btn-fullWidth {
+  width: 100%;
+}

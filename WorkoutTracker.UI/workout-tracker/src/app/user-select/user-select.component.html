@@ -1,10 +1,29 @@
-  <div *ngIf="users != null" class="container">
-    <div class="row col-md-offset-4 col-md-4 centeredText">
-      <h3>Who Are You?</h3>
-    </div>
-    <div *ngFor="let user of users" class="row col-md-offset-4 col-md-4 centeredText panel panel-primary">
-      <div class="panel-body">
-        {{user.name}}
-      </div>
+<div *ngIf="loading" class="container row col-md-offset-4 col-md-4 centeredText">
+  Loading users...
+</div>
+
+<div *ngIf="!loading" class="container">
+
+  <div class="row col-md-offset-4 col-md-4 centeredText">
+    <h3>Who Are You?</h3>
+  </div>
+
+  <div *ngIf="errorMsg">
+    <h3>{{errorMsg}}</h3>
+  </div>
+
+  <div *ngFor="let user of users" class="row col-md-offset-4 col-md-4 centeredText panel panel-primary">
+    <div class="panel-body">
+      {{user.name}}
     </div>
   </div>
+
+  <div *ngIf="users && users.length == 0" class="row col-md-offset-4 col-md-4 centeredText gimmeSomeSpace">
+    No users have been created yet. Create one with the button below.
+  </div>
+
+  <div class="row col-md-offset-4 col-md-4 centeredText">
+    <button type="button" class="btn btn-primary btn-fullWidth" routerLink='/users/edit/0'>Add User</button>
+  </div>
+
+</div>

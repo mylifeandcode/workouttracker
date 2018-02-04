@@ -13,6 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using WorkoutApplication.Repository;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
+using WorkoutApplication.Domain;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace WorkoutTracker
 {
@@ -32,12 +34,30 @@ namespace WorkoutTracker
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.WithOrigins("http://localhost:4200").AllowAnyMethod());
+            });
+
             // Add framework services.
             services.AddMvc()
                 .AddControllersAsServices();
 
+            //services.AddCors();
+            //TODO: Clean up CORS code to only allow from specific origin
+            var corsBuilder = new CorsPolicyBuilder();
+            corsBuilder.AllowAnyHeader();
+            corsBuilder.AllowAnyMethod();
+            corsBuilder.AllowAnyOrigin();
+            corsBuilder.AllowCredentials();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("SiteCorsPolicy", corsBuilder.Build());
+            });
+
             //TODO: Get connection string from config
-            var connection = @"Server=(localdb)\mssqllocaldb;Database=WorkoutTracker;Trusted_Connection=True;";
+            var connection = @"Server=.\SQLEXPRESS;Database=WorkoutTracker;Trusted_Connection=True;";
             services.AddDbContext<WorkoutsContext>(options => options.UseSqlServer(connection));
 
             return ConfigureIoC(services);
@@ -49,7 +69,9 @@ namespace WorkoutTracker
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseMvc();
+            //app.UseMvc();
+            app.UseMvcWithDefaultRoute();
+            app.UseCors(options => options.WithOrigins("http://localhost:4200").AllowAnyMethod());
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
@@ -75,6 +97,7 @@ namespace WorkoutTracker
                 });
 
                 config.For<IRepository<TargetArea>>().Use<Repository<TargetArea>>();
+                config.For<IRepository<User>>().Use<Repository<User>>();
 
                 //Populate the container using the service collection
                 config.Populate(services);

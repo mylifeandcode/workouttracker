@@ -19,6 +19,7 @@ import { UserSelectComponent } from './user-select/user-select.component';
 
 import { UserService } from './user.service';
 import { UserListComponent } from './user-list/user-list.component';
+import { UserEditComponent } from './user-edit/user-edit.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { UserListComponent } from './user-list/user-list.component';
     ExerciseEditComponent,
     SetEditComponent,
     UserSelectComponent,
-    UserListComponent  ],
+    UserListComponent,
+    UserEditComponent  ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,

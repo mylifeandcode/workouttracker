@@ -40,7 +40,7 @@ namespace WorkoutApplication.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //TODO: Get connection string from config
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=WorkoutTracker;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=WorkoutTracker;Trusted_Connection=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
