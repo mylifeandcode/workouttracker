@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { User } from '../user';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'wt-nav',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavComponent implements OnInit {
 
-  constructor() { }
+  public userName: string;
+
+  constructor(private _userSvc: UserService) { }
 
   ngOnInit() {
+    this._userSvc.getCurrentUserInfo().subscribe(
+      (user: User) => {
+        this.userName = user.name;
+        console.log("User = ", this.userName);
+      });
   }
 
 }

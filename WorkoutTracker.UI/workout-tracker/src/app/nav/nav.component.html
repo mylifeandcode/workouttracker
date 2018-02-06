@@ -15,6 +15,9 @@
     </li>
   </ul>
   <ul class="nav navbar-nav pull-right">
+    <li *ngIf="userName" class="nav-item">
+      <a class="nav-link" routerLink="/home">Welcome {{userName}}!</a> <!--TODO: Add logout capability-->
+    </li>
     <li class="nav-item">
       <a class="nav-link" href="https://github.com/mylifeandcode"><i class="fa fa-github" aria-hidden="true"></i></a>
     </li>

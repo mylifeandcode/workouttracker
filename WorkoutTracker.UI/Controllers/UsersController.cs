@@ -39,7 +39,7 @@ namespace WorkoutTracker.UI.Controllers
         }
 
         [HttpPost]
-        public User Post(User user)
+        public User Post([FromBody]User user)
         {
             return _repo.Add(user, true);
         }

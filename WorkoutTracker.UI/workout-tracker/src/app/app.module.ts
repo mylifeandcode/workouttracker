@@ -21,6 +21,8 @@ import { UserService } from './user.service';
 import { UserListComponent } from './user-list/user-list.component';
 import { UserEditComponent } from './user-edit/user-edit.component';
 
+import { CookieService } from 'ng2-cookies';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,7 +44,7 @@ import { UserEditComponent } from './user-edit/user-edit.component';
     HttpModule, 
     AppRoutingModule
   ],
-  providers: [ExerciseService, UserService],
+  providers: [ExerciseService, UserService, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

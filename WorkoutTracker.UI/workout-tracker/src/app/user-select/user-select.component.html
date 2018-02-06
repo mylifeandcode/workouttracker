@@ -5,25 +5,30 @@
 <div *ngIf="!loading" class="container">
 
   <div class="row col-md-offset-4 col-md-4 centeredText">
-    <h3>Who Are You?</h3>
+    <h3 *ngIf="!gettingUserInfo">Who Are You?</h3>
+    <h3 *ngIf="gettingUserInfo">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
   </div>
 
   <div *ngIf="errorMsg">
     <h3>{{errorMsg}}</h3>
   </div>
 
-  <div *ngFor="let user of users" class="row col-md-offset-4 col-md-4 centeredText panel panel-primary">
-    <div class="panel-body">
-      {{user.name}}
+  <ng-container *ngIf="!gettingUserInfo">
+
+    <div *ngFor="let user of users" (click)="selectUser(user.id, user.name)" class="row col-md-offset-4 col-md-4 centeredText panel panel-primary userSelect">
+      <div class="panel-body">
+        {{user.name}}
+      </div>
     </div>
-  </div>
 
-  <div *ngIf="users && users.length == 0" class="row col-md-offset-4 col-md-4 centeredText gimmeSomeSpace">
-    No users have been created yet. Create one with the button below.
-  </div>
+    <div *ngIf="users && users.length == 0" class="row col-md-offset-4 col-md-4 centeredText gimmeSomeSpace">
+      No users have been created yet. Create one with the button below.
+    </div>
 
-  <div class="row col-md-offset-4 col-md-4 centeredText">
-    <button type="button" class="btn btn-primary btn-fullWidth" routerLink='/users/edit/0'>Add User</button>
-  </div>
+    <div class="row col-md-offset-4 col-md-4 centeredText">
+      <button type="button" class="btn btn-primary btn-fullWidth" routerLink='/users/edit/0'>Add User</button>
+    </div>
+
+  </ng-container>
 
 </div>
