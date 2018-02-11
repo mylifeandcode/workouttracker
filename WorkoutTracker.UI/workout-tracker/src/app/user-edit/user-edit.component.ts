@@ -5,6 +5,7 @@ import { User } from '../user';
 import { FormBuilder, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
+import 'rxjs/add/operator/toPromise';
 
 @Component({
   selector: 'wt-user-edit',
@@ -13,11 +14,12 @@ import { Router } from '@angular/router';
 })
 export class UserEditComponent implements OnInit {
 
-  private _user: User;
   public loadingUserInfo: boolean = true;
   public savingUserInfo: boolean = false;
   public errorMsg: string;
   public userEditForm: FormGroup;
+  private _user: User;
+  private _currentUserId: number;
 
   constructor(
     private _route: ActivatedRoute,
@@ -25,10 +27,11 @@ export class UserEditComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _router: Router) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.loadingUserInfo = true;
     this.getRouteParams();
     this.createForm();
+    this._currentUserId = await this.getCurrentUserId();
   }
 
   private getRouteParams(): void {
@@ -65,11 +68,26 @@ export class UserEditComponent implements OnInit {
 
   }
 
-  private getUserFromFormValues(): User {
+  private async getCurrentUserId(): Promise<number> {
+    let result: User =  await this._userSvc.getCurrentUserInfo().toPromise();
+    return result ? result.id : 0;
+  }
+  
+  private getUserForPersist(): User {
     let user = new User();
 
     user.id = this.userEditForm.get("id").value;
     user.name = this.userEditForm.get("name").value;
+
+    if (this._user) {
+      //TODO: Modify so this code doesn't need to set this value
+      user.createdByUserId = this._user.createdByUserId;
+
+      user.modifiedByUserId = this._currentUserId;
+    }
+    else 
+      user.createdByUserId = this._currentUserId;
+
     console.log("User: ", user);
     return user;
   }
@@ -77,7 +95,7 @@ export class UserEditComponent implements OnInit {
   public saveUser(): void {
 
     this.savingUserInfo = true;
-    let user = this.getUserFromFormValues();
+    let user = this.getUserForPersist();
 
     let result: Observable<User> =
       (user.id === 0 ? this._userSvc.addUser(user) : this._userSvc.updateUser(user));
@@ -93,7 +111,7 @@ export class UserEditComponent implements OnInit {
     if (this.userEditForm.dirty && !window.confirm("Cancel without saving changes?"))
         return;
 
-    //TODO: Redirect to home or previous location
+    this._router.navigate(['']);
   }
 
 }

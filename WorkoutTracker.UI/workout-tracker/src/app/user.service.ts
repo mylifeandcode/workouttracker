@@ -20,7 +20,8 @@ export class UserService {
       .map((resp: Response) => resp.json());
   }
 
-  public getCurrentUserInfo() : Observable<User> {
+  public getCurrentUserInfo(): Observable<User> {
+    console.log("this._currentUser", this._currentUser);
     if (this._currentUser)
       return Observable.of(this._currentUser);
 
@@ -32,6 +33,8 @@ export class UserService {
           return user;
         });
     }
+    else
+      return Observable.of(null);
   }
 
   public getUserInfo(userId: number): Observable<User> {

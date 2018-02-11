@@ -1,7 +1,7 @@
-﻿export abstract class Entity {
+export abstract class Entity {
     id: number;
-    createdBy: string;
+    createdByUserId: number;
     createdDateTime: Date;
-    modifiedBy: string;
+    modifiedByUserId: number;
     modifiedDateTime: Date;
 }

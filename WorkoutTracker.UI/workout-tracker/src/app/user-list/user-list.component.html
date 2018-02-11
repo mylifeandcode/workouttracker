@@ -1,3 +1,23 @@
-<p>
-  user-list works!
-</p>
+<span *ngIf="loadingUsers">Loading users...</span>
+<div class="container">
+  <div class="row col-md-offset-1 col-md-10">
+    <table *ngIf="users" class="table">
+      <thead>
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col" class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{user.name}}</td>
+          <td class="text-right">
+            <button type="button" class="btn btn-primary">Edit</button>
+            <button type="button" class="btn btn-danger">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+

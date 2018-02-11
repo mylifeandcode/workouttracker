@@ -14,10 +14,13 @@ export class NavComponent implements OnInit {
   constructor(private _userSvc: UserService) { }
 
   ngOnInit() {
+    //TODO: Username isn't changing on component when selected user changes. Fix!
     this._userSvc.getCurrentUserInfo().subscribe(
       (user: User) => {
-        this.userName = user.name;
-        console.log("User = ", this.userName);
+        if (user) {
+          this.userName = user.name;
+          console.log("User = ", this.userName);
+        }
       });
   }
 

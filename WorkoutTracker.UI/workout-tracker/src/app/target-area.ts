@@ -5,18 +5,18 @@ export class TargetArea extends NamedEntity {
     constructor (
         id: number, 
         name: string, 
-        createdBy: string, 
+        createdByUserId: number, 
         createdDateTime: Date, 
-        modifiedBy: string, 
+        modifiedByUserId: number, 
         modifiedDateTime: Date, 
         public selected: boolean) {
 
             super();
             this.id = id;
             this.name = name;
-            this.createdBy = createdBy;
+            this.createdByUserId = createdByUserId;
             this.createdDateTime = createdDateTime;
-            this.modifiedBy = modifiedBy;
+            this.modifiedByUserId = modifiedByUserId;
             this.modifiedDateTime = modifiedDateTime;
 
     }
