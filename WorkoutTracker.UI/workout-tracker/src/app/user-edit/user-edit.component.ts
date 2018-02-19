@@ -19,7 +19,7 @@ export class UserEditComponent implements OnInit {
   public errorMsg: string;
   public userEditForm: FormGroup;
   private _user: User;
-  private _currentUserId: number;
+  private _currentUserId: number; //The ID of the user performing the add or edit
 
   constructor(
     private _route: ActivatedRoute,
@@ -29,32 +29,36 @@ export class UserEditComponent implements OnInit {
 
   async ngOnInit() {
     this.loadingUserInfo = true;
-    this.getRouteParams();
     this.createForm();
+    this.getUserInfo();
     this._currentUserId = await this.getCurrentUserId();
-  }
+}
 
-  private getRouteParams(): void {
+  private getUserInfo(): void {
 
     this._route.params.subscribe(params => {
       let userId = params['id'];
-      if (userId)
-        this.getUserInfo(userId);
+      if (userId && userId > 0)
+        this.getUserInfoFromService(userId);
       else {
         this._user = new User();
         this._user.id = 0;
+        this.loadingUserInfo = false;
       }
     });
 
   }
 
-  private getUserInfo(userId: number): void {
+  private getUserInfoFromService(userId: number): void {
 
     this._userSvc.getUserInfo(userId)
       .subscribe(
-        (user: User) => this._user = user,
-        (error: any) => this.errorMsg = error, 
-        () => this.loadingUserInfo = false);
+      (user: User) => {
+        this._user = user;
+        this.userEditForm.patchValue({ id: this._user.id, name: this._user.name });
+      },
+      (error: any) => this.errorMsg = error, 
+      () => this.loadingUserInfo = false);
 
   }
 
@@ -79,12 +83,8 @@ export class UserEditComponent implements OnInit {
     user.id = this.userEditForm.get("id").value;
     user.name = this.userEditForm.get("name").value;
 
-    if (this._user) {
-      //TODO: Modify so this code doesn't need to set this value
-      user.createdByUserId = this._user.createdByUserId;
-
+    if (this._user.id > 0) 
       user.modifiedByUserId = this._currentUserId;
-    }
     else 
       user.createdByUserId = this._currentUserId;
 
@@ -101,7 +101,7 @@ export class UserEditComponent implements OnInit {
       (user.id === 0 ? this._userSvc.addUser(user) : this._userSvc.updateUser(user));
 
     result.subscribe(
-      (user: User) => this._router.navigate(['']),
+      (user: User) => this._router.navigate(['users']),
       (error: any) => this.errorMsg = error,
       () => this.savingUserInfo = false);
 

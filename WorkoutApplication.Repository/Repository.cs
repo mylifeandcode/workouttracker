@@ -39,6 +39,7 @@ namespace WorkoutApplication.Repository
             return entity;
         }
 
+        /*
         public Task<TEntity> AddAsync(TEntity entity, bool saveChanges = false)
         {
             entity.CreatedDateTime = DateTime.Now;
@@ -48,6 +49,18 @@ namespace WorkoutApplication.Repository
                 SaveAsync();
 
             return Task.FromResult<TEntity>(entity);
+        }
+        */
+
+        public TEntity Update(TEntity entity, bool saveChanges = false)
+        {
+            entity.ModifiedDateTime = DateTime.Now;
+            _context.Update<TEntity>(entity);
+
+            if (saveChanges)
+                Save();
+
+            return entity;
         }
 
         public virtual void Save()

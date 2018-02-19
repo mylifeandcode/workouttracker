@@ -11,7 +11,9 @@ namespace WorkoutApplication.Repository
         IQueryable<TEntity> Get();
         TEntity Get(int id);
         TEntity Add(TEntity entity, bool saveChanges = false);
-        Task<TEntity> AddAsync(TEntity entity, bool saveChanges = false);
+        //Task<TEntity> AddAsync(TEntity entity, bool saveChanges = false);
+        TEntity Update(TEntity entity, bool saveChanges = false);
+        void Delete(int id);
         void Save();
         Task SaveAsync();
     }

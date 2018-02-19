@@ -43,5 +43,17 @@ namespace WorkoutTracker.UI.Controllers
         {
             return _repo.Add(user, true);
         }
+
+        [HttpPut]
+        public User Put([FromBody]User user)
+        {
+            return _repo.Update(user, true);
+        }
+
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+            //return _repo.de
+        }
     }
 }

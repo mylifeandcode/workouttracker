@@ -10,6 +10,7 @@ import { SetComponent } from './set/set.component';
 import { UserSelectComponent } from './user-select/user-select.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { UserEditComponent } from './user-edit/user-edit.component';
+import { UserSelectedGuard } from './user-selected.guard';
 
 const routes: Routes = [
   /*
@@ -19,28 +20,51 @@ const routes: Routes = [
   },
   */
   {
-    path: '', component: UserSelectComponent
+    path: '',
+    component: UserSelectComponent
   },
   {
-    path: 'home', component: HomeComponent
+    path: 'login',
+    component: UserSelectComponent
   },
   {
-    path: 'exercises', component: ExerciseListComponent
-  }, 
-  {
-    path: 'exercises/edit/:id', component: ExerciseEditComponent
-  }, 
-  {
-    path: 'workouts', component: WorkoutListComponent
-  }, 
-  {
-    path: 'workouts/start', component: WorkoutComponent
-  }, 
-  {
-    path: 'users', component: UserListComponent
+    path: 'home',
+    component: HomeComponent, 
+    canActivate: [UserSelectedGuard]
   },
   {
-    path: 'users/edit/:id', component: UserEditComponent
+    path: 'exercises',
+    component: ExerciseListComponent, 
+    canActivate: [UserSelectedGuard]
+  }, 
+  {
+    path: 'exercises/edit/:id',
+    component: ExerciseEditComponent, 
+    canActivate: [UserSelectedGuard]
+  }, 
+  {
+    path: 'workouts',
+    component: WorkoutListComponent, 
+    canActivate: [UserSelectedGuard]
+  }, 
+  {
+    path: 'workouts/start',
+    component: WorkoutComponent, 
+    canActivate: [UserSelectedGuard]
+  }, 
+  {
+    path: 'users',
+    component: UserListComponent, 
+    canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'users/edit/:id',
+    component: UserEditComponent, 
+    canActivate: [UserSelectedGuard]
+  },
+  {
+    path: '**',
+    redirectTo: ''
   }
 ];
 

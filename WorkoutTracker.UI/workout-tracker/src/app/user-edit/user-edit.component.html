@@ -1,5 +1,5 @@
 <div class="container">
-  <form [formGroup]="userEditForm" novalidate>
+  <form *ngIf="!loadingUserInfo" [formGroup]="userEditForm" novalidate>
     <div class="row">
 
       <div class="col-md-offset-4 col-md-4 form-group">

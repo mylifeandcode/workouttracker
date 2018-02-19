@@ -22,6 +22,7 @@ import { UserListComponent } from './user-list/user-list.component';
 import { UserEditComponent } from './user-edit/user-edit.component';
 
 import { CookieService } from 'ng2-cookies';
+import { UserSelectedGuard } from 'app/user-selected.guard';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,7 @@ import { CookieService } from 'ng2-cookies';
     HttpModule, 
     AppRoutingModule
   ],
-  providers: [ExerciseService, UserService, CookieService],
+  providers: [ExerciseService, UserService, CookieService, UserSelectedGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
