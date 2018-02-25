@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApplication.Domain;
 using WorkoutApplication.Repository;
+using WorkoutTracker.Application.Users;
 
 namespace WorkoutTracker.UI.Controllers
 {
@@ -15,45 +16,45 @@ namespace WorkoutTracker.UI.Controllers
     [EnableCors("SiteCorsPolicy")]
     public class UsersController : Controller
     {
-        private IRepository<User> _repo;
+        private IUserService _svc;
 
-        public UsersController(IRepository<User> repo)
+        public UsersController(IUserService svc)
         {
-            if (repo == null)
-                throw new ArgumentNullException("repo");
+            if (svc == null)
+                throw new ArgumentNullException("svc");
 
-            _repo = repo;
+            _svc = svc;
         }
 
         // GET api/values
         [HttpGet]
         public IEnumerable<User> Get()
         {
-            return _repo.Get().Where(x => x.Name.ToUpper() != "SYSTEM");
+            return _svc.GetAll();
         }
 
         [HttpGet("{id}")]
         public User Get(int id)
         {
-            return _repo.Get().FirstOrDefault(x => x.Id == id);
+            return _svc.GetById(id);
         }
 
         [HttpPost]
         public User Post([FromBody]User user)
         {
-            return _repo.Add(user, true);
+            return _svc.Add(user);
         }
 
         [HttpPut]
         public User Put([FromBody]User user)
         {
-            return _repo.Update(user, true);
+            return _svc.Update(user);
         }
 
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            //return _repo.de
+            _svc.Delete(id);
         }
     }
 }

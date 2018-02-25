@@ -63,6 +63,12 @@ namespace WorkoutApplication.Repository
             return entity;
         }
 
+        public void Delete(int id)
+        {
+            _context.Remove<TEntity>(Get(id));
+            _context.SaveChanges();
+        }
+
         public virtual void Save()
         {
             try
@@ -90,5 +96,6 @@ namespace WorkoutApplication.Repository
                 throw;
             }
         }
+
     }
 }

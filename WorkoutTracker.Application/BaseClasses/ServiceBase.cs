@@ -26,5 +26,20 @@ namespace WorkoutTracker.Application.BaseClasses
         {
             return _repo.Get(id);
         }
+
+        public virtual T Add(T entity, bool saveChanges = false)
+        {
+            return _repo.Add(entity, saveChanges);
+        }
+
+        public virtual T Update(T entity, bool saveChanges = false)
+        {
+            return _repo.Update(entity, saveChanges);
+        }
+
+        public virtual void Delete(int entityId)
+        {
+            _repo.Delete(entityId);
+        }
     }
 }

@@ -57,6 +57,10 @@ export class UserService {
       .map((resp: Response) => resp.json());
   }
 
+  public deleteUser(userId: number): Observable<Response> {
+    return this._http.delete(`${this._rootUrl}/${userId}`);
+  }
+
   public setCurrentUser(user: User): void {
     this._cookieSvc.set(this.COOKIE_NAME, user.id.toString());
     this._currentUser = user;
