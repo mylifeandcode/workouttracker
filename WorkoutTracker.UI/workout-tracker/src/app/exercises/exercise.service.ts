@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { Exercise } from './exercise';
-import { TargetArea } from './target-area';
+import { Exercise } from '../models/exercise';
+import { TargetArea } from '../models/target-area';
 import 'rxjs/add/operator/map';
 
 @Injectable()

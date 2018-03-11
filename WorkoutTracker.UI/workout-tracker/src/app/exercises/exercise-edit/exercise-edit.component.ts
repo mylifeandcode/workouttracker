@@ -1,10 +1,10 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
 import { ExerciseService } from '../exercise.service';
-import { Exercise } from '../exercise';
-import { TargetArea } from '../target-area';
-import { CustomValidators } from '../custom-validators';
+import { Exercise } from '../../models/exercise';
+import { TargetArea } from '../../models/target-area';
+import { CustomValidators } from '../../validators/custom-validators';
 
 @Component({
   selector: 'wt-exercise-edit',

@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { ExerciseListComponent } from './exercise-list/exercise-list.component';
-import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
-import { ExerciseComponent } from './exercise/exercise.component';
-import { WorkoutComponent } from './workout/workout.component';
-import { WorkoutListComponent } from './workout-list/workout-list.component';
-import { SetComponent } from './set/set.component';
-import { UserSelectComponent } from './user-select/user-select.component';
-import { UserListComponent } from './user-list/user-list.component';
-import { UserEditComponent } from './user-edit/user-edit.component';
-import { UserSelectedGuard } from './user-selected.guard';
+import { ExerciseListComponent } from './exercises/exercise-list/exercise-list.component';
+import { ExerciseEditComponent } from './exercises/exercise-edit/exercise-edit.component';
+import { ExerciseComponent } from './exercises/exercise/exercise.component';
+import { WorkoutComponent } from './workouts/workout/workout.component';
+import { WorkoutListComponent } from './workouts/workout-list/workout-list.component';
+import { SetComponent } from './sets/set/set.component';
+import { UserSelectComponent } from './users/user-select/user-select.component';
+import { UserListComponent } from './users/user-list/user-list.component';
+import { UserEditComponent } from './users/user-edit/user-edit.component';
+import { UserSelectedGuard } from './route-guards/user-selected.guard';
 
 const routes: Routes = [
   /*

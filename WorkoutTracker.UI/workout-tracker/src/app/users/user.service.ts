@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, RequestOptions, RequestOptionsArgs, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { User } from './user';
+import { User } from '../models/user';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/of';
 import { CookieService } from 'ng2-cookies';
