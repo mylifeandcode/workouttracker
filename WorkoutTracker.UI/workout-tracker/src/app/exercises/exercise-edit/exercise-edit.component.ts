@@ -61,7 +61,7 @@ export class ExerciseEditComponent implements OnInit {
         this.exerciseForm = this._formBuilder.group({
             id: [0, Validators.required ], //TODO: Get ID from URL. 0 for new, actual ID for existing exercise.
             name: ['', Validators.required], 
-            description: ['', Validators.required], 
+            description: ['', Validators.compose([Validators.required, Validators.maxLength(10)])], 
             targetAreas: this.buildTargetAreas()
         });
 

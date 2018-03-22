@@ -1,18 +1,20 @@
-﻿<div class="container">
+<div class="container">
   <form [formGroup]="exerciseForm" novalidate>
     <div class="row">
       
       <div class="col-md-offset-2 col-md-4 form-group">
         <input type="hidden" formControlName="id" />
         
-        <label class="center-block">Name:
-          <input class="form-control" formControlName="name" placeholder="Exercise Name (required)" />
-          <span *ngIf="exerciseForm.name?.errors">REQUIRED</span>
+        <label class="center-block">
+            Name:
+            <input class="form-control" formControlName="name" placeholder="Exercise Name (required)" />
+            <span *ngIf="exerciseForm.name?.errors">REQUIRED</span>
         </label>
 
-        <label class="center-block">Description:
-          <input class="form-control" formControlName="description" placeholder="Exercise Description (required)" />
-          <span *ngIf="exerciseForm.description?.errors">REQUIRED</span>
+        <label class="center-block">
+            Description:
+            <textarea class="form-control" rows="6" formControlName="description" placeholder="Exercise Description (required)"></textarea>
+            <span *ngIf="exerciseForm.description?.errors">REQUIRED</span>
         </label>
         
       </div>
