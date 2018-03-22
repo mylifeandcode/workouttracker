@@ -63,6 +63,10 @@ const routes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
+      path: 'users/first',
+      component: UserEditComponent
+  }, 
+  {
     path: '**',
     redirectTo: ''
   }

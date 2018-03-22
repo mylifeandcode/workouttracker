@@ -56,8 +56,7 @@ namespace WorkoutTracker
                 options.AddPolicy("SiteCorsPolicy", corsBuilder.Build());
             });
 
-            //TODO: Get connection string from config
-            var connection = @"Server=.\SQLEXPRESS;Database=WorkoutTracker;Trusted_Connection=True;";
+            var connection = Configuration.GetConnectionString("WorkoutTrackerDatabase");
             services.AddDbContext<WorkoutsContext>(options => options.UseSqlServer(connection));
 
             return ConfigureIoC(services);
@@ -76,6 +75,7 @@ namespace WorkoutTracker
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 serviceScope.ServiceProvider.GetService<WorkoutsContext>().Database.Migrate();
+                serviceScope.ServiceProvider.GetService<WorkoutsContext>().EnsureSeedData();
             }
         }
 

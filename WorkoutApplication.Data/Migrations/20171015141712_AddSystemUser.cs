@@ -162,13 +162,6 @@ namespace WorkoutApplication.Data.Migrations
                 type: "int",
                 nullable: true,
                 oldClrType: typeof(int));
-
-            using (var context = new WorkoutsContext())
-            { 
-                var systemUserId = AddUserForSystemOperations(context);
-                UpdateTargetAreasWithSystemUserId(context, systemUserId);
-                AddForeignKeyToTargetAreas(migrationBuilder);
-            }
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -350,35 +343,6 @@ namespace WorkoutApplication.Data.Migrations
                 oldNullable: true);
 
             //No DOWN operations for adding user for system operations
-        }
-
-        private int AddUserForSystemOperations(WorkoutsContext context)
-        {
-            if (!context.Users.Any(x => x.Name == "SYSTEM"))
-            { 
-                context.Users.Add(
-                    new Domain.User
-                    {
-                        Id = 0,
-                        CreatedByUserId = 0,
-                        CreatedDateTime = DateTime.Now,
-                        Name = "SYSTEM"
-                    });
-
-                context.SaveChanges();
-            }
-
-            return context.Users.First(x => x.Name == "SYSTEM").Id;
-        }
-
-        private void UpdateTargetAreasWithSystemUserId(WorkoutsContext context, int systemUserId)
-        {
-            foreach (var targetArea in context.TargetAreas.Where(x => x.CreatedByUserId == 0))
-            {
-                targetArea.CreatedByUserId = systemUserId;
-            }
-
-            context.SaveChanges();
         }
 
         private void AddForeignKeyToTargetAreas(MigrationBuilder migrationBuilder)

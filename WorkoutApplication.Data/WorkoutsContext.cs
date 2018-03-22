@@ -37,12 +37,6 @@ namespace WorkoutApplication.Data
         public WorkoutsContext() { }
         public WorkoutsContext(DbContextOptions<WorkoutsContext> options) : base(options) { }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //TODO: Get connection string from config
-            optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=WorkoutTracker;Trusted_Connection=True;");
-        }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<RepetitionSet>();
