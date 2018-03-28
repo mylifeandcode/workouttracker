@@ -1,37 +1,38 @@
-<div class="container">
-  <form [formGroup]="exerciseForm" novalidate>
-    <div class="row">
-      
-      <div class="col-md-offset-2 col-md-4 form-group">
-        <input type="hidden" formControlName="id" />
-        
-        <label class="center-block">
-            Name:
-            <input class="form-control" formControlName="name" placeholder="Exercise Name (required)" />
-            <span *ngIf="exerciseForm.name?.errors">REQUIRED</span>
-        </label>
+<div class="container form-group">
+    <form [formGroup]="exerciseForm" novalidate>
+        <div class="row">
 
-        <label class="center-block">
-            Description:
-            <textarea class="form-control" rows="6" formControlName="description" placeholder="Exercise Description (required)"></textarea>
-            <span *ngIf="exerciseForm.description?.errors">REQUIRED</span>
-        </label>
-        
-      </div>
-      
-      <div class="col-md-4 form-group" formArrayName="targetAreas">
-        <strong>Target Areas:</strong>
-          <div *ngFor="let area of allTargetAreas.controls; let i=index">
-            <input type="checkbox" [formControlName]="i" /> {{targetAreas[i].name}}
-          </div>      
-      </div>
-    </div>
-    
-    <div class="row">
-      <div class="col-md-offset-2 col-md-4">
-        <button type="submit" [disabled]="exerciseForm.invalid" class="btn btn-success">Save</button>
-      </div>
-    </div>
-  </form>
+            <div class="col-md-offset-2 col-md-4 form-group">
+                <input type="hidden" formControlName="id" />
+
+                <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['name'].touched && exerciseForm.controls['name'].errors}">
+                    Name:
+                    <input class="form-control" formControlName="name" placeholder="Exercise Name (required)" />
+                    <span *ngIf="exerciseForm.controls['name'].touched && exerciseForm.controls['name']?.errors" class="errorText">Required</span>
+                </label>
+
+                <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['description'].touched && exerciseForm.controls['description'].errors}">
+                    Description:
+                    <textarea class="form-control" rows="6" formControlName="description" placeholder="Exercise Description (required)"></textarea>
+                    <span *ngIf="exerciseForm.controls['description'].touched && exerciseForm.controls['description']?.errors?.required" class="errorText">Required</span>
+                    <span *ngIf="exerciseForm.controls['description'].touched && exerciseForm.controls['description']?.errors?.maxlength" class="errorText">Max length exceeded</span>
+                </label>
+
+            </div>
+
+            <div class="col-md-4 form-group" formArrayName="targetAreas">
+                <strong>Target Areas:</strong>
+                <div *ngFor="let area of allTargetAreas.controls; let i=index" [ngClass]="{'has-error': exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas'].errors}">
+                    <input type="checkbox" [formControlName]="i" /> {{targetAreas[i].name}}
+                </div>
+                <span *ngIf="exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas']?.errors" class="errorText">At least one Target Area is required</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-offset-2 col-md-4">
+                <button type="submit" [disabled]="exerciseForm.invalid" class="btn btn-success">Save</button>
+            </div>
+        </div>
+    </form>
 </div>
-

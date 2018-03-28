@@ -2,17 +2,22 @@
 @import 'cerulean.css';
 
 body {
-  padding-top: 70px;
+    padding-top: 70px;
 }
 
 .gimmeSomeSpace {
-  padding: 6px;
+    padding: 6px;
 }
 
 .centeredText {
-  text-align: center;
+    text-align: center;
 }
 
 .btn.btn-fullWidth {
-  width: 100%;
+    width: 100%;
+}
+
+.errorText {
+    color: red;
+    font-style: italic;
 }
