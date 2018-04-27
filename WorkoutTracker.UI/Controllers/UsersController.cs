@@ -26,7 +26,7 @@ namespace WorkoutTracker.UI.Controllers
             _svc = svc;
         }
 
-        // GET api/values
+        // GET api/Users
         [HttpGet]
         public IEnumerable<User> Get()
         {

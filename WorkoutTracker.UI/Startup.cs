@@ -98,6 +98,7 @@ namespace WorkoutTracker
 
                 config.For<IRepository<TargetArea>>().Use<Repository<TargetArea>>();
                 config.For<IRepository<User>>().Use<Repository<User>>();
+                config.For<IRepository<Exercise>>().Use<Repository<Exercise>>();
 
                 //Populate the container using the service collection
                 config.Populate(services);

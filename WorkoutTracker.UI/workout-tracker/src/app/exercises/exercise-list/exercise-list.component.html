@@ -1,10 +1,18 @@
-<p>
-  exercise-list works!
-</p>
 <div class="container">
   <div class="row">
     <div class="col-md-8">
-      TODO: Exercise List Goes Here
+        <p-table [value]="exercises">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-exercise>
+                <tr>
+                    <td>{{exercise.name}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
     </div>
     <div class="col-md-4">
       <button routerLink="/exercises/edit/0" class="btn btn-primary">Create New Exercise from Scratch</button>

@@ -28,7 +28,7 @@ namespace WorkoutTracker.Application.Users
             return _repo.Update(user, true);
         }
 
-        public IEnumerable<User> GetAll()
+        public override IEnumerable<User> GetAll()
         {
             return _repo.Get().Where(x => x.Name.ToUpper() != "SYSTEM");
         }

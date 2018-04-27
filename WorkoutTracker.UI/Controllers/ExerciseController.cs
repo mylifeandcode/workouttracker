@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
@@ -10,7 +11,9 @@ using WorkoutTracker.Application.Exercises;
 
 namespace WorkoutTracker.UI.Controllers
 {
-    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("api/Exercises")]
+    [EnableCors("SiteCorsPolicy")]
     public class ExerciseController : Controller
     {
         private IExerciseService _svc;
@@ -23,7 +26,7 @@ namespace WorkoutTracker.UI.Controllers
             _svc = svc;
         }
 
-        // GET: api/values
+        // GET: api/Exercises
         [HttpGet]
         public IEnumerable<Exercise> Get()
         {
@@ -31,27 +34,27 @@ namespace WorkoutTracker.UI.Controllers
             return _svc.GetAll(); 
         }
 
-        // GET api/values/5
+        // GET api/Exercises/5
         [HttpGet("{id}")]
         public Exercise Get(int id)
         {
             return _svc.GetById(id);
         }
 
-        // POST api/values
+        // POST api/Exercises
         [HttpPost]
-        public void Post([FromBody]Exercise value)
+        public Exercise Post([FromBody]Exercise value)
         {
-            
+            return _svc.Add(value, true);
         }
 
-        // PUT api/values/5
+        // PUT api/Exercises/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]Exercise value)
         {
         }
 
-        // DELETE api/values/5
+        // DELETE api/Exercises/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

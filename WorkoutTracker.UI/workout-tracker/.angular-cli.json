@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
     "name": "workout-tracker",
@@ -19,11 +19,13 @@
       "tsconfig": "tsconfig.app.json",
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "wt",
-      "styles": [
-        "../node_modules/bootstrap/dist/css/bootstrap.min.css", 
-        "../node_modules/font-awesome/css/font-awesome.css", 
-        "styles.css"
-      ],
+        "styles": [
+            "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+            "../node_modules/font-awesome/css/font-awesome.css",
+            "../node_modules/primeng/resources/themes/omega/theme.css",
+            "../node_modules/primeng/resources/primeng.min.css",
+            "styles.css"
+        ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js", 
         "../node_modules/bootstrap/dist/js/bootstrap.min.js"

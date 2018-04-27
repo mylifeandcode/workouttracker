@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TableModule } from 'primeng/table';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -40,10 +42,12 @@ import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
     UserListComponent,
     UserEditComponent  ],
   imports: [
-    BrowserModule,
-    ReactiveFormsModule,
-    HttpModule, 
-    AppRoutingModule
+        BrowserModule,
+        ReactiveFormsModule,
+        HttpModule, 
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        TableModule
   ],
   providers: [ExerciseService, UserService, CookieService, UserSelectedGuard],
   bootstrap: [AppComponent]

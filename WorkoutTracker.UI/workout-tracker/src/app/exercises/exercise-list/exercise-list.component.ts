@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ExerciseService } from 'app/exercises/exercise.service';
+import { Exercise } from 'app/models/exercise';
 
 @Component({
   selector: 'wt-exercise-list',
@@ -7,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ExerciseListComponent implements OnInit {
 
-  constructor() { }
+    private _exercises: Exercise[];
+    constructor(private _exerciseSvc: ExerciseService) { }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
 
+    }
+
+    private getExercises(): void {
+        this._exerciseSvc.getAll().subscribe(
+            (exercises: Exercise[]) => this._exercises = exercises,
+            (error: any) => window.alert("An error occurred getting exercises: " + error)
+        );
+    }
 }
