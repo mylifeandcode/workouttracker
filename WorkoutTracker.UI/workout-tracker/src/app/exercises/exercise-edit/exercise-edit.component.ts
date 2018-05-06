@@ -5,6 +5,8 @@ import { ExerciseService } from '../exercise.service';
 import { Exercise } from '../../models/exercise';
 import { TargetArea } from '../../models/target-area';
 import { CustomValidators } from '../../validators/custom-validators';
+import { User } from 'app/models/user';
+import { UserService } from 'app/users/user.service';
 
 @Component({
   selector: 'wt-exercise-edit',
@@ -13,9 +15,11 @@ import { CustomValidators } from '../../validators/custom-validators';
 })
 export class ExerciseEditComponent implements OnInit {
 
-    constructor(private route: ActivatedRoute, private _formBuilder: FormBuilder, private _exerciseSvc: ExerciseService) {
-        console.log("Constructing ExerciseEditComponent...");
-        //this.createForm();
+    constructor(
+        private route: ActivatedRoute,
+        private _formBuilder: FormBuilder,
+        private _exerciseSvc: ExerciseService,
+        private _userSvc: UserService) {
     }
 
     public targetAreas: Array<TargetArea> = [];
@@ -25,13 +29,35 @@ export class ExerciseEditComponent implements OnInit {
     private _exerciseId: number = 0;
     private _saving: boolean = false;
     private _loading: boolean = false;
+    private _errorMsg: string = null;
+    private _currentUserId: number; //The ID of the user performing the add or edit
+    private _allTargetAreas: TargetArea[];
 
-    ngOnInit(): void {
+    async ngOnInit() {
         this.getRouteParams();
-        this.setupViewModel();
-        this.createForm();
         if (this._exerciseId != 0)
             this.loadExercise(); //Is this safe? route.params is an observable.
+
+        //TODO: Wrap the below two calls in a Promise.all()
+        this._currentUserId = await this.getCurrentUserId();
+        this._allTargetAreas = await this.getTargetAreas();
+        console.log("TARGET AREAS: ", this._allTargetAreas);
+        this.setupViewModel();
+        this.createForm();
+    }
+
+    private async getCurrentUserId(): Promise<number> {
+        //TODO: Create edit form base component that would contain this function and be extended by other
+        //edit components
+        let result: User = await this._userSvc.getCurrentUserInfo().toPromise();
+        return result ? result.id : 0;
+    }
+
+    private async getTargetAreas(): Promise<TargetArea[]> {
+        //TODO: Refactor! Create an Exercise DTO that has an array of TargetArea IDs. Let the service on the
+        //server sort it out.
+        let result: TargetArea[] = await this._exerciseSvc.getTargetAreas().toPromise();
+        return result ? result : null;
     }
 
     private getRouteParams(): void {
@@ -44,14 +70,10 @@ export class ExerciseEditComponent implements OnInit {
     private setupViewModel(): void {
         //TODO: Merge available target areas with selected target areas
         console.log("Setting up view model...");
-        this.targetAreas.push(new TargetArea(1, "Abs", null, null, null, null, false));
-        this.targetAreas.push(new TargetArea(2, "Back", null, null, null, null, false));
-        this.targetAreas.push(new TargetArea(3, "Biceps", null, null, null, null, false));
-        this.targetAreas.push(new TargetArea(4, "Chest", null, null, null, null, false));
-        this.targetAreas.push(new TargetArea(5, "Core", null, null, null, null, false));
-        this.targetAreas.push(new TargetArea(6, "Legs", null, null, null, null, false));
-        this.targetAreas.push(new TargetArea(7, "Shoulders", null, null, null, null, false));
-        this.targetAreas.push(new TargetArea(8, "Triceps", null, null, null, null, false));
+        this._allTargetAreas.forEach((value: TargetArea, index: number) => {
+            console.log("value: ", value);
+            this.targetAreas.push(new TargetArea(value.id, value.name, null, null, null, null, false));
+        });
     }
 
     private createForm(): void {
@@ -96,16 +118,38 @@ export class ExerciseEditComponent implements OnInit {
         }); //TODO: Handle errors
     }
 
+    private getExerciseForPersist(): Exercise {
+        let exercise = new Exercise();
+
+        exercise.id = this.exerciseForm.get("id").value;
+        exercise.description = this.exerciseForm.get("description").value;
+        exercise.name = this.exerciseForm.get("name").value;
+
+        if (exercise.id > 0)
+            exercise.modifiedByUserId = this._currentUserId;
+        else
+            exercise.createdByUserId = this._currentUserId;
+
+        return exercise;
+    }
+
     private saveExercise(): void {
         if (this._exerciseId == 0)
-            this._exerciseSvc.add(this.exercise).subscribe((value: Exercise) => {
-                //TODO: Implement
-                this._saving = false;
-            });
+            this._exerciseSvc.add(this.exercise).subscribe(
+                (value: Exercise) => {
+                    //this._saving = false;
+                },
+                (error: any) => {
+                    this._errorMsg = error.toString();
+                },
+                () => {
+                    this._saving = false;
+                }
+            );
         else
             this._exerciseSvc.update(this.exercise).subscribe((value: Exercise) => {
-                //TODO: Implement
                 this._saving = false;
             });
     }
+
 }

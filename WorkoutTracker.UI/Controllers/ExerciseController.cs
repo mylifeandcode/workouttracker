@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
+using WorkoutTracker.Application.FilterClasses;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,10 +29,10 @@ namespace WorkoutTracker.UI.Controllers
 
         // GET: api/Exercises
         [HttpGet]
-        public IEnumerable<Exercise> Get()
+        public IEnumerable<Exercise> Get(short startPage, short pageSize, string nameContains = null, string hasTargetAreas = null)
         {
-            //TODO: Add paging params
-            return _svc.GetAll(); 
+            var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
+            return _svc.Get(startPage, pageSize, filter);
         }
 
         // GET api/Exercises/5
@@ -58,6 +59,19 @@ namespace WorkoutTracker.UI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        private ExerciseFilter BuildExerciseFilter(string nameContains, string hasTargetAreas)
+        {
+            var filter = new ExerciseFilter();
+
+            if (!String.IsNullOrWhiteSpace(nameContains))
+                filter.NameContains = nameContains;
+
+            if (!String.IsNullOrWhiteSpace(hasTargetAreas))
+                filter.HasTargetAreas = hasTargetAreas.Split(',').ToList();
+
+            return filter;
         }
     }
 }
