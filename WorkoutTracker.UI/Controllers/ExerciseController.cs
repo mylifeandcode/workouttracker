@@ -53,6 +53,7 @@ namespace WorkoutTracker.UI.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]Exercise value)
         {
+            throw new NotImplementedException();
         }
 
         // DELETE api/Exercises/5

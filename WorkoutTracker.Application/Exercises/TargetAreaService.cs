@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Repository;
 
@@ -22,6 +23,11 @@ namespace WorkoutTracker.Application.Exercises
         public IEnumerable<TargetArea> GetAll()
         {
             return _repo.Get();
+        }
+
+        public IEnumerable<TargetArea> GetByIds(int[] ids)
+        {
+            return _repo.Get().Where(x => ids.Contains(x.Id));
         }
     }
 }
