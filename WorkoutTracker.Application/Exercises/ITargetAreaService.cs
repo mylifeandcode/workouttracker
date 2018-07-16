@@ -9,5 +9,6 @@ namespace WorkoutTracker.Application.Exercises
     {
         IEnumerable<TargetArea> GetAll();
         TargetArea Get(int id);
+        IEnumerable<TargetArea> GetByIds(int[] ids);
     }
 }
