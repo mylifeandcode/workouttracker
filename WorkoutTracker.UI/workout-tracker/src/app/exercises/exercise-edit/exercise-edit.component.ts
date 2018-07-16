@@ -7,6 +7,7 @@ import { TargetArea } from '../../models/target-area';
 import { CustomValidators } from '../../validators/custom-validators';
 import { User } from 'app/models/user';
 import { UserService } from 'app/users/user.service';
+import { ExerciseTargetAreaLink } from '../../models/exercise-target-area-link';
 
 @Component({
   selector: 'wt-exercise-edit',
@@ -130,12 +131,38 @@ export class ExerciseEditComponent implements OnInit {
         else
             exercise.createdByUserId = this._currentUserId;
 
+        exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
+        console.log("EXERCISE: ", exercise);
+        console.log("TARGET AREAS: ", this.exerciseForm.get('targetAreas'));
+        console.log("ALL TARGET AREAS: ", this._allTargetAreas);
+
         return exercise;
     }
 
+    private getExerciseTargetAreaLinksForPersist(): ExerciseTargetAreaLink[] {
+        //I hate this. There's gotta be a better way.
+        //TODO: Refactor!
+        var output: ExerciseTargetAreaLink[] = [];
+        var formControls: FormArray = <FormArray>this.exerciseForm.get('targetAreas');
+
+        for(var x = 0; x < this._allTargetAreas.length; x++) {
+            if(formControls.controls[x].value) {
+                output.push(
+                    new ExerciseTargetAreaLink(
+                        this._exerciseId, 
+                        this._allTargetAreas[x].id, 
+                        this._currentUserId));
+            }
+        }
+
+        return output;
+    }
+
     private saveExercise(): void {
+        var exercise = this.getExerciseForPersist();
+
         if (this._exerciseId == 0)
-            this._exerciseSvc.add(this.exercise).subscribe(
+            this._exerciseSvc.add(exercise).subscribe(
                 (value: Exercise) => {
                     //this._saving = false;
                 },
@@ -147,7 +174,7 @@ export class ExerciseEditComponent implements OnInit {
                 }
             );
         else
-            this._exerciseSvc.update(this.exercise).subscribe((value: Exercise) => {
+            this._exerciseSvc.update(exercise).subscribe((value: Exercise) => {
                 this._saving = false;
             });
     }

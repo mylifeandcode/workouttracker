@@ -1,7 +1,7 @@
 ﻿import { NamedEntity } from './named-entity';
-import { TargetArea } from './target-area';
+import { ExerciseTargetAreaLink } from './exercise-target-area-link';
 
 export class Exercise extends NamedEntity {
     description: string;
-    targetAreas: Array<TargetArea>;
+    exerciseTargetAreaLinks: ExerciseTargetAreaLink[];
 }

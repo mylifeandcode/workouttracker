@@ -1,5 +1,5 @@
 <div class="container form-group">
-    <form [formGroup]="exerciseForm" novalidate>
+    <form *ngIf="exerciseForm" [formGroup]="exerciseForm" novalidate>
         <div class="row">
 
             <div class="col-md-offset-2 col-md-4 form-group">

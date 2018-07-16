@@ -25,7 +25,7 @@ namespace WorkoutTracker.Application.Exercises
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
                 query = query.Where(x => x.Name.Contains(filter.NameContains));
 
-            if (filter.HasTargetAreas.Any())
+            if (filter.HasTargetAreas != null && filter.HasTargetAreas.Any())
             {
                 filter.HasTargetAreas.ForEach((targetArea) =>
                     query = query.Where(x => x.ExerciseTargetAreaLinks.Any(links => links.TargetArea.Name == targetArea)));
