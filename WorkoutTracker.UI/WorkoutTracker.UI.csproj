@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
-    <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
     <StartupObject />
   </PropertyGroup>
 

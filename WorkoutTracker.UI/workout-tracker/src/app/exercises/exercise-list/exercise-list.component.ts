@@ -13,7 +13,7 @@ export class ExerciseListComponent implements OnInit {
     constructor(private _exerciseSvc: ExerciseService) { }
 
     ngOnInit() {
-
+        this.getExercises();
     }
 
     private getExercises(): void {

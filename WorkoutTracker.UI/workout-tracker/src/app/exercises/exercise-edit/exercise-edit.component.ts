@@ -145,45 +145,35 @@ export class ExerciseEditComponent implements OnInit {
             exercise.createdByUserId = this._currentUserId;
 
         exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
+        console.log("EXERCISE: ", exercise);
+        console.log("TARGET AREAS: ", this.exerciseForm.get('targetAreas'));
+        console.log("ALL TARGET AREAS: ", this.allTargetAreas);
 
         return exercise;
     }
 
-    private getSelectedTargetAreas(): TargetArea[] {
-        //return _.filter(this.targetAreas, (targetArea: TargetArea) => targetArea.selected);
-        //return _.filter(this.targetAreas, (targetArea: TargetArea) => targetArea.selected);
-        //return [];
-        //var targetAreasArray: FormArray = this.exerciseForm.controls['targetAreas'];
-        var targetAreasArray: FormArray = this.exerciseForm.get("targetAreas").value;
-        console.log("targetAreasArray:", targetAreasArray);
-        console.log("this.exerciseForm.get('targetAreas'): ", this.exerciseForm.get("targetAreas"));
-        //return _.filter(targetAreasArray.controls, (ctrl) => ctrl.checked);
-        return [];
-    }
-
     private getExerciseTargetAreaLinksForPersist(): ExerciseTargetAreaLink[] {
-        let selectedTargetAreas = this.getSelectedTargetAreas();
-        console.log("selectedTargetAreas: ", selectedTargetAreas);
-        let output: ExerciseTargetAreaLink[] = [];
+        //I hate this. There's gotta be a better way.
+        //TODO: Refactor!
+        var output: ExerciseTargetAreaLink[] = [];
+        var formControls: FormArray = <FormArray>this.exerciseForm.get('targetAreas');
 
-        if (this._exerciseId != 0) {
-        }
-        else {
-            selectedTargetAreas.forEach((value: TargetArea, index: number, array: TargetArea[]) => {
-                let et = new ExerciseTargetAreaLink();
-                et.id = 0;
-                et.exerciseId = 0;
-                et.createdByUserId = this._currentUserId;
-                et.createdDateTime = new Date();
-                et.targetAreaId = value.id;
-            });
+        for(var x = 0; x < this.allTargetAreas.length; x++) {
+            if(formControls.controls[x].value) {
+                output.push(
+                    new ExerciseTargetAreaLink(
+                        this._exerciseId, 
+                        this.allTargetAreas[x].id, 
+                        this._currentUserId));
+            }
         }
 
         return output;
     }
 
     private saveExercise(): void {
-        let exercise: Exercise = this.getExerciseForPersist();
+        var exercise = this.getExerciseForPersist();
+
         if (this._exerciseId == 0)
             this._exerciseSvc.add(exercise).subscribe(
                 (value: Exercise) => {
@@ -213,8 +203,8 @@ export class ExerciseEditComponent implements OnInit {
         //the box
         console.log(event);
         console.log(this.exerciseForm);
-        var selected = this.getSelectedTargetAreas();
-        console.log("SELECTED: ", selected);
+        //var selected = this.getSelectedTargetAreas();
+        //console.log("SELECTED: ", selected);
         //var blah = this.exerciseForm.get(event.target.id);
         //console.log("BLAH: ", blah);
         //if (this.exerciseForm.get(event.target.id).value) {
