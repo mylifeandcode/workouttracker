@@ -68,7 +68,6 @@ namespace WorkoutTracker
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            //app.UseMvc();
             app.UseMvcWithDefaultRoute();
             app.UseCors(options => options.WithOrigins("http://localhost:4200").AllowAnyMethod());
 

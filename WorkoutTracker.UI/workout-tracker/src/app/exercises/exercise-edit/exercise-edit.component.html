@@ -1,5 +1,5 @@
 <div class="container form-group">
-    <form [formGroup]="exerciseForm" novalidate>
+    <form *ngIf="exerciseForm" [formGroup]="exerciseForm" novalidate>
         <div class="row">
 
             <div class="col-md-offset-2 col-md-4 form-group">
@@ -22,11 +22,13 @@
 
             <div class="col-md-4 form-group" formArrayName="targetAreas">
                 <strong>Target Areas:</strong>
-                <div *ngFor="let area of allTargetAreas.controls; let i=index" [ngClass]="{'has-error': exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas'].errors}">
-                    <input type="checkbox" [formControlName]="i" /> {{targetAreas[i].name}}
+                <div *ngFor="let area of allTargetAreas; let i=index" [ngClass]="{'has-error': exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas'].errors}">
+                    <!--<input type="checkbox" [formControl]="area" [value]="area.selected" id="targetArea{{i}}" [formControlName]="i" />-->
+                    <input type="checkbox" [formControlName]="i" [value]="area.name" id="targetArea{{i}}" /> {{allTargetAreas[i].name}}
                 </div>
                 <span *ngIf="exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas']?.errors" class="errorText">At least one Target Area is required</span>
             </div>
+    
         </div>
 
         <div class="row">
@@ -36,6 +38,9 @@
         </div>
         <div *ngIf="_errorMsg" class="col-md-offset-2 col-md-4 errorText">
             {{_errorMsg}}
+        </div>
+        <div>
+            
         </div>
     </form>
 </div>

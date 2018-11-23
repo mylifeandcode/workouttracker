@@ -7,6 +7,8 @@ import { TargetArea } from '../../models/target-area';
 import { CustomValidators } from '../../validators/custom-validators';
 import { User } from 'app/models/user';
 import { UserService } from 'app/users/user.service';
+import { ExerciseTargetAreaLink } from '../../models/exercise-target-area-link';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'wt-exercise-edit',
@@ -22,7 +24,7 @@ export class ExerciseEditComponent implements OnInit {
         private _userSvc: UserService) {
     }
 
-    public targetAreas: Array<TargetArea> = [];
+    //public targetAreas: Array<TargetArea> = [];
     public exercise: Exercise;
     public exerciseForm: FormGroup;
 
@@ -31,7 +33,7 @@ export class ExerciseEditComponent implements OnInit {
     private _loading: boolean = false;
     private _errorMsg: string = null;
     private _currentUserId: number; //The ID of the user performing the add or edit
-    private _allTargetAreas: TargetArea[];
+    public allTargetAreas: TargetArea[];
 
     async ngOnInit() {
         this.getRouteParams();
@@ -40,10 +42,8 @@ export class ExerciseEditComponent implements OnInit {
 
         //TODO: Wrap the below two calls in a Promise.all()
         this._currentUserId = await this.getCurrentUserId();
-        this._allTargetAreas = await this.getTargetAreas();
-        console.log("TARGET AREAS: ", this._allTargetAreas);
-        this.setupViewModel();
-        this.createForm();
+        var targetAreasFormArray = await this.setupTargetAreas();
+        this.createForm(targetAreasFormArray);
     }
 
     private async getCurrentUserId(): Promise<number> {
@@ -53,7 +53,19 @@ export class ExerciseEditComponent implements OnInit {
         return result ? result.id : 0;
     }
 
-    private async getTargetAreas(): Promise<TargetArea[]> {
+    private async setupTargetAreas(): Promise<FormArray> {
+        //Get a list of all of the target areas.
+        //Then, create checkboxes for each one on the form.
+        //If any of the target areas are already selected, set them as selected on the form.
+
+        this.allTargetAreas = await this.getAllTargetAreas();
+        //TODO: Get selected target area IDs
+        var targetAreasFormArray = this.buildTargetAreasFormArray(this.allTargetAreas, []);
+
+        return targetAreasFormArray;
+    }
+
+    private async getAllTargetAreas(): Promise<TargetArea[]> {
         //TODO: Refactor! Create an Exercise DTO that has an array of TargetArea IDs. Let the service on the
         //server sort it out.
         let result: TargetArea[] = await this._exerciseSvc.getTargetAreas().toPromise();
@@ -70,13 +82,15 @@ export class ExerciseEditComponent implements OnInit {
     private setupViewModel(): void {
         //TODO: Merge available target areas with selected target areas
         console.log("Setting up view model...");
-        this._allTargetAreas.forEach((value: TargetArea, index: number) => {
+        /*
+        this.allTargetAreas.forEach((value: TargetArea, index: number) => {
             console.log("value: ", value);
             this.targetAreas.push(new TargetArea(value.id, value.name, null, null, null, null, false));
         });
+        */
     }
 
-    private createForm(): void {
+    private createForm(targetAreasFormArray: FormArray): void {
         console.log("Creating form...");
 
         //Use FormBuilder to create our root FormGroup
@@ -84,18 +98,18 @@ export class ExerciseEditComponent implements OnInit {
             id: [0, Validators.required ], //TODO: Get ID from URL. 0 for new, actual ID for existing exercise.
             name: ['', Validators.required], 
             description: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])], 
-            targetAreas: this.buildTargetAreas()
+            targetAreas: targetAreasFormArray
         });
 
-        let checkboxes = new Array<FormControl>(this.targetAreas.length);
+        console.log("exerciseForm.targetAreas: ", this.exerciseForm.controls["targetAreas"]);
     }
 
-    private buildTargetAreas(): FormArray {
+    private buildTargetAreasFormArray(allTargetAreas: TargetArea[], selectedTargetAreaIds: number[]): FormArray {
         //Great approach I found at:
         //https://netbasal.com/handling-multiple-checkboxes-in-angular-forms-57eb8e846d21
-        const arr = this.targetAreas.map(area => {
+        const arr = allTargetAreas.map(area => {
             console.log("area:", area);
-            return this._formBuilder.control(area.selected);
+            return this._formBuilder.control(_.some(selectedTargetAreaIds, area.id));
         });
 
         //FormArray can only take a single validator, not an array.
@@ -105,11 +119,11 @@ export class ExerciseEditComponent implements OnInit {
             //But in this case, we need a custom validator
             arr, CustomValidators.multipleCheckboxRequireOne);
     }
-
+    /*
     private get allTargetAreas(): AbstractControl {
         return this.exerciseForm.get('targetAreas');
     };
-
+    */
     private loadExercise(): void {
         this._loading = true;
         this._exerciseSvc.getById(this._exerciseId).subscribe((value: Exercise) => {
@@ -130,12 +144,48 @@ export class ExerciseEditComponent implements OnInit {
         else
             exercise.createdByUserId = this._currentUserId;
 
+        exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
+
         return exercise;
     }
 
+    private getSelectedTargetAreas(): TargetArea[] {
+        //return _.filter(this.targetAreas, (targetArea: TargetArea) => targetArea.selected);
+        //return _.filter(this.targetAreas, (targetArea: TargetArea) => targetArea.selected);
+        //return [];
+        //var targetAreasArray: FormArray = this.exerciseForm.controls['targetAreas'];
+        var targetAreasArray: FormArray = this.exerciseForm.get("targetAreas").value;
+        console.log("targetAreasArray:", targetAreasArray);
+        console.log("this.exerciseForm.get('targetAreas'): ", this.exerciseForm.get("targetAreas"));
+        //return _.filter(targetAreasArray.controls, (ctrl) => ctrl.checked);
+        return [];
+    }
+
+    private getExerciseTargetAreaLinksForPersist(): ExerciseTargetAreaLink[] {
+        let selectedTargetAreas = this.getSelectedTargetAreas();
+        console.log("selectedTargetAreas: ", selectedTargetAreas);
+        let output: ExerciseTargetAreaLink[] = [];
+
+        if (this._exerciseId != 0) {
+        }
+        else {
+            selectedTargetAreas.forEach((value: TargetArea, index: number, array: TargetArea[]) => {
+                let et = new ExerciseTargetAreaLink();
+                et.id = 0;
+                et.exerciseId = 0;
+                et.createdByUserId = this._currentUserId;
+                et.createdDateTime = new Date();
+                et.targetAreaId = value.id;
+            });
+        }
+
+        return output;
+    }
+
     private saveExercise(): void {
+        let exercise: Exercise = this.getExerciseForPersist();
         if (this._exerciseId == 0)
-            this._exerciseSvc.add(this.exercise).subscribe(
+            this._exerciseSvc.add(exercise).subscribe(
                 (value: Exercise) => {
                     //this._saving = false;
                 },
@@ -147,9 +197,28 @@ export class ExerciseEditComponent implements OnInit {
                 }
             );
         else
-            this._exerciseSvc.update(this.exercise).subscribe((value: Exercise) => {
+            this._exerciseSvc.update(exercise).subscribe((value: Exercise) => {
                 this._saving = false;
             });
     }
 
+    onCheckboxChange(index: number): void {
+        //From https://stackoverflow.com/questions/40927167/angular-2-reactive-forms-array-of-checkbox-values
+
+        //We want to get back what the name of the checkbox represents, so I'm intercepting the event and
+        //manually changing the value from true to the name of what is being checked.
+
+        //check if the value is true first, if it is then change it to the name of the value
+        //this way when it's set to false it will skip over this and make it false, thus unchecking
+        //the box
+        console.log(event);
+        console.log(this.exerciseForm);
+        var selected = this.getSelectedTargetAreas();
+        console.log("SELECTED: ", selected);
+        //var blah = this.exerciseForm.get(event.target.id);
+        //console.log("BLAH: ", blah);
+        //if (this.exerciseForm.get(event.target.id).value) {
+            //this.exerciseForm.patchValue({ [event.target.id]: event.target.id }); //make sure to have the square brackets
+        //}
+    }
 }
