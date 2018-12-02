@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="workout-tracker\node_modules\**" />
-    <Content Remove="workout-tracker\node_modules\**" />
-    <EmbeddedResource Remove="workout-tracker\node_modules\**" />
-    <None Remove="workout-tracker\node_modules\**" />
+    <Compile Remove="workout-tracker\**" />
+    <Content Remove="workout-tracker\**" />
+    <EmbeddedResource Remove="workout-tracker\**" />
+    <None Remove="workout-tracker\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
