@@ -180,6 +180,7 @@ export class ExerciseEditComponent implements OnInit {
                     //this._saving = false;
                 },
                 (error: any) => {
+                    console.log("ERROR: ", error);
                     this._errorMsg = error.toString();
                 },
                 () => {

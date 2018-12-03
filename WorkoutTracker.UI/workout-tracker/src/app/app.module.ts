@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TableModule } from 'primeng/table';
 
@@ -45,6 +46,7 @@ import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
         BrowserModule,
         ReactiveFormsModule,
         HttpModule, 
+        HttpClientModule, 
         AppRoutingModule,
         BrowserAnimationsModule,
         TableModule
