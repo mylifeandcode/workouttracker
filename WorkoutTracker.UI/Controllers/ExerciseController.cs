@@ -46,7 +46,9 @@ namespace WorkoutTracker.UI.Controllers
         [HttpPost]
         public Exercise Post([FromBody]Exercise value)
         {
-            return _svc.Add(value, true);
+            //return _svc.Add(value, true);
+            var exercise = _svc.Add(value, true);
+            return exercise; //Rut-roh! ExerciseTargetAreaLink includes Exercise, which causes infinite recursion and causes ERR_CONNECTION_CLOSED.
         }
 
         // PUT api/Exercises/5

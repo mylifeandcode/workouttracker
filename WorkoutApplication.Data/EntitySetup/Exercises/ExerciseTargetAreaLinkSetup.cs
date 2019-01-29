@@ -15,10 +15,16 @@ namespace WorkoutApplication.Data.EntitySetup.Exercises
             //Here's the workaround.
             var entity = builder.Entity<ExerciseTargetAreaLink>();
 
+            /*
             entity
                 .HasOne(l => l.Exercise)
                 .WithMany(e => e.ExerciseTargetAreaLinks)
                 .HasForeignKey(l => l.ExerciseId);
+            */
+
+            //Using the below instead of the commented-out code above, 
+            //which caused inifite recursion
+            entity.Property(x => x.ExerciseId).IsRequired();
 
             entity
                 .HasOne(l => l.TargetArea)

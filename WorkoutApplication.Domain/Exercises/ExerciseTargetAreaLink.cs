@@ -14,7 +14,10 @@ namespace WorkoutApplication.Domain.Exercises
     {
         public int ExerciseId { get; set; }
         public int TargetAreaId { get; set; }
-        public Exercise Exercise { get; set; }
+
+        //Removed due to infinite recursion
+        //public Exercise Exercise { get; set; }
+
         public TargetArea TargetArea { get; set; }
     }
 }
