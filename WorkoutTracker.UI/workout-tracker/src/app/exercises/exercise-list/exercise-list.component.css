@@ -1,3 +1,11 @@
+.ui-table table {
+    width: 100%;
+}
+
 tr:nth-child(even) {
     background-color: lightgray;
+}
+
+th, td {
+    padding: 5px;
 }
