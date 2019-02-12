@@ -12,6 +12,7 @@ namespace WorkoutTracker.Application.Exercises
         Exercise Update(Exercise exercise, bool saveChanges = false);
         void Delete(int exerciseId);
         IEnumerable<Exercise> Get(short startPage, short pageSize, ExerciseFilter filter);
+        int GetTotalCount();
         Exercise GetById(int exerciseId);
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
 using WorkoutTracker.Application.FilterClasses;
+using WorkoutTracker.UI.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -29,10 +30,13 @@ namespace WorkoutTracker.UI.Controllers
 
         // GET: api/Exercises
         [HttpGet]
-        public IEnumerable<Exercise> Get(short startPage, short pageSize, string nameContains = null, string hasTargetAreas = null)
+        public PaginatedResults<Exercise> Get(short startPage, short pageSize, string nameContains = null, string hasTargetAreas = null)
         {
             var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
-            return _svc.Get(startPage, pageSize, filter);
+            var result = new PaginatedResults<Exercise>();
+            result.TotalCount = _svc.GetTotalCount();
+            result.Results = _svc.Get(startPage, pageSize, filter);
+            return result;
         }
 
         // GET api/Exercises/5

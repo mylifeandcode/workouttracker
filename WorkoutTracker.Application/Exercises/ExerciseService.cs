@@ -17,7 +17,12 @@ namespace WorkoutTracker.Application.Exercises
         {
             IQueryable<Exercise> query = _repo.Get();
             ApplyQueryFilters(query, filter);
-            return query.Skip((startPage - 1) * pageSize).Take(pageSize);
+            return query.Skip(startPage * pageSize).Take(pageSize);
+        }
+
+        public int GetTotalCount()
+        {
+            return _repo.Get().Count();
         }
 
         private void ApplyQueryFilters(IQueryable<Exercise> query, ExerciseFilter filter)

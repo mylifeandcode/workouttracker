@@ -2,7 +2,7 @@
     <h3>Exercises</h3>
     <div class="row">
         <div class="col-md-8">
-            <p-table [value]="_exercises">
+            <p-table [value]="_exercises" [paginator]="true" [rows]="10" [lazy]="true" (onLazyLoad)="getExercisesLazy($event)" [totalRecords]="_totalRecords" [loading]="_loading">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Name</th>

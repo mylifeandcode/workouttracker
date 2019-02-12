@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Exercise } from '../models/exercise';
 import { TargetArea } from '../models/target-area';
 import { map, catchError } from 'rxjs/operators';
+import { PaginatedResults } from '../models/paginated-results';
 
 const httpOptions = {
     headers: new HttpHeaders({
@@ -19,10 +20,10 @@ export class ExerciseService {
 
     constructor(private _http: HttpClient) { }
 
-    public getAll(): Observable<Array<Exercise>> {
+    public getAll(firstRecOffset: number, pageSize: number): Observable<PaginatedResults<Exercise>> {
         //TODO: Refactor to get pages of filtered data
-        return this._http.get(`${this.API_ROOT}?startPage=1&pageSize=50`)
-            .pipe(map((resp: Array<Exercise>) => resp)); //TODO: Fully implement
+        return this._http.get(`${this.API_ROOT}?startPage=${firstRecOffset}&pageSize=${pageSize}`)
+            .pipe(map((resp: PaginatedResults<Exercise>) => resp)); //TODO: Fully implement
     }
 
     public getById(id: number): Observable<Exercise> {
