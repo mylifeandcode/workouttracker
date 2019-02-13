@@ -30,12 +30,12 @@ namespace WorkoutTracker.UI.Controllers
 
         // GET: api/Exercises
         [HttpGet]
-        public PaginatedResults<Exercise> Get(short startPage, short pageSize, string nameContains = null, string hasTargetAreas = null)
+        public PaginatedResults<Exercise> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null)
         {
             var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
             var result = new PaginatedResults<Exercise>();
             result.TotalCount = _svc.GetTotalCount();
-            result.Results = _svc.Get(startPage, pageSize, filter);
+            result.Results = _svc.Get(firstRecord, pageSize, filter);
             return result;
         }
 

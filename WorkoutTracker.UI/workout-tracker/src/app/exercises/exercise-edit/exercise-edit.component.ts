@@ -37,13 +37,17 @@ export class ExerciseEditComponent implements OnInit {
 
     async ngOnInit() {
         this.getRouteParams();
+
+        let targetAreasFormArray = await this.setupTargetAreas();
+        this.createForm(targetAreasFormArray);
+        
+        console.log("FORM: ", this.exerciseForm);
+
         if (this._exerciseId != 0)
             this.loadExercise(); //Is this safe? route.params is an observable.
 
         //TODO: Wrap the below two calls in a Promise.all()
         this._currentUserId = await this.getCurrentUserId();
-        var targetAreasFormArray = await this.setupTargetAreas();
-        this.createForm(targetAreasFormArray);
     }
 
     private async getCurrentUserId(): Promise<number> {
@@ -128,6 +132,7 @@ export class ExerciseEditComponent implements OnInit {
         this._loading = true;
         this._exerciseSvc.getById(this._exerciseId).subscribe((value: Exercise) => {
             this.exercise = value;
+            this.updateForm();
             this._loading = false;
         }); //TODO: Handle errors
     }
@@ -169,6 +174,14 @@ export class ExerciseEditComponent implements OnInit {
         }
 
         return output;
+    }
+
+    private updateForm(): void {
+        this.exerciseForm.patchValue ({
+            id: this.exercise.id,
+            name: this.exercise.name, 
+            description: this.exercise.description
+        });
     }
 
     private saveExercise(): void {

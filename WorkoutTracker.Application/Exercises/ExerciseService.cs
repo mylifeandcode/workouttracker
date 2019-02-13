@@ -13,11 +13,11 @@ namespace WorkoutTracker.Application.Exercises
     {
         public ExerciseService(IRepository<Exercise> repo) : base(repo) { }
 
-        public IEnumerable<Exercise> Get(short startPage, short pageSize, ExerciseFilter filter)
+        public IEnumerable<Exercise> Get(int firstRecord, short pageSize, ExerciseFilter filter)
         {
             IQueryable<Exercise> query = _repo.Get();
             ApplyQueryFilters(query, filter);
-            return query.Skip(startPage * pageSize).Take(pageSize);
+            return query.Skip(firstRecord).Take(pageSize);
         }
 
         public int GetTotalCount()

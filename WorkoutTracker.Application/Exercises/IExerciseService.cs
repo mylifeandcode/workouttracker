@@ -11,7 +11,7 @@ namespace WorkoutTracker.Application.Exercises
         Exercise Add(Exercise exercise, bool saveChanges = false);
         Exercise Update(Exercise exercise, bool saveChanges = false);
         void Delete(int exerciseId);
-        IEnumerable<Exercise> Get(short startPage, short pageSize, ExerciseFilter filter);
+        IEnumerable<Exercise> Get(int firstRecord, short pageSize, ExerciseFilter filter);
         int GetTotalCount();
         Exercise GetById(int exerciseId);
     }

@@ -22,12 +22,13 @@ export class ExerciseService {
 
     public getAll(firstRecOffset: number, pageSize: number): Observable<PaginatedResults<Exercise>> {
         //TODO: Refactor to get pages of filtered data
-        return this._http.get(`${this.API_ROOT}?startPage=${firstRecOffset}&pageSize=${pageSize}`)
+        return this._http.get(`${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`)
             .pipe(map((resp: PaginatedResults<Exercise>) => resp)); //TODO: Fully implement
     }
 
     public getById(id: number): Observable<Exercise> {
-        return null; //TODO: Implement
+        return this._http.get(`${this.API_ROOT}/${id}`)
+            .pipe(map((resp: Exercise) => resp));
     }
 
     public getTargetAreas(): Observable<Array<TargetArea>> {
