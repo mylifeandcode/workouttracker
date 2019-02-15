@@ -65,7 +65,7 @@ export class ExerciseEditComponent implements OnInit {
         this.allTargetAreas = await this.getAllTargetAreas();
         //TODO: Get selected target area IDs
         var targetAreasFormArray = this.buildTargetAreasFormArray(this.allTargetAreas, []);
-
+        console.log("targetAreasFormArray: ", targetAreasFormArray);
         return targetAreasFormArray;
     }
 
@@ -83,17 +83,6 @@ export class ExerciseEditComponent implements OnInit {
         });
     }
     
-    private setupViewModel(): void {
-        //TODO: Merge available target areas with selected target areas
-        console.log("Setting up view model...");
-        /*
-        this.allTargetAreas.forEach((value: TargetArea, index: number) => {
-            console.log("value: ", value);
-            this.targetAreas.push(new TargetArea(value.id, value.name, null, null, null, null, false));
-        });
-        */
-    }
-
     private createForm(targetAreasFormArray: FormArray): void {
         console.log("Creating form...");
 
@@ -110,11 +99,11 @@ export class ExerciseEditComponent implements OnInit {
 
     private buildTargetAreasFormArray(allTargetAreas: TargetArea[], selectedTargetAreaIds: number[]): FormArray {
         //Great approach I found at:
+        //https://coryrylan.com/blog/creating-a-dynamic-checkbox-list-in-angular
+        //Also:
         //https://netbasal.com/handling-multiple-checkboxes-in-angular-forms-57eb8e846d21
-        const arr = allTargetAreas.map(area => {
-            console.log("area:", area);
-            return this._formBuilder.control(_.some(selectedTargetAreaIds, area.id));
-        });
+
+        const arr = allTargetAreas.map(area => new FormControl(false));
 
         //FormArray can only take a single validator, not an array.
         //Use the below as a workaround as shown at https://github.com/angular/angular/issues/12763
@@ -123,11 +112,7 @@ export class ExerciseEditComponent implements OnInit {
             //But in this case, we need a custom validator
             arr, CustomValidators.multipleCheckboxRequireOne);
     }
-    /*
-    private get allTargetAreas(): AbstractControl {
-        return this.exerciseForm.get('targetAreas');
-    };
-    */
+
     private loadExercise(): void {
         this._loading = true;
         this._exerciseSvc.getById(this._exerciseId).subscribe((value: Exercise) => {
@@ -150,28 +135,27 @@ export class ExerciseEditComponent implements OnInit {
             exercise.createdByUserId = this._currentUserId;
 
         exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
-        console.log("EXERCISE: ", exercise);
-        console.log("TARGET AREAS: ", this.exerciseForm.get('targetAreas'));
-        console.log("ALL TARGET AREAS: ", this.allTargetAreas);
 
         return exercise;
     }
 
     private getExerciseTargetAreaLinksForPersist(): ExerciseTargetAreaLink[] {
-        //I hate this. There's gotta be a better way.
-        //TODO: Refactor!
-        var output: ExerciseTargetAreaLink[] = [];
-        var formControls: FormArray = <FormArray>this.exerciseForm.get('targetAreas');
+        //Great approach I found at:
+        //https://coryrylan.com/blog/creating-a-dynamic-checkbox-list-in-angular
 
-        for(var x = 0; x < this.allTargetAreas.length; x++) {
-            if(formControls.controls[x].value) {
-                output.push(
-                    new ExerciseTargetAreaLink(
-                        this._exerciseId, 
-                        this.allTargetAreas[x].id, 
-                        this._currentUserId));
-            }
-        }
+        var output: ExerciseTargetAreaLink[] = [];
+
+        var selected: number[] = this.exerciseForm.value.targetAreas
+            .map((v, i) => v ? this.allTargetAreas[i].id : null)
+            .filter(v => v !== null);
+
+        selected.forEach(id => {
+            output.push(new ExerciseTargetAreaLink(
+                this._exerciseId, 
+                id, 
+                this._currentUserId
+            ))
+        });
 
         return output;
     }
@@ -206,23 +190,4 @@ export class ExerciseEditComponent implements OnInit {
             });
     }
 
-    onCheckboxChange(index: number): void {
-        //From https://stackoverflow.com/questions/40927167/angular-2-reactive-forms-array-of-checkbox-values
-
-        //We want to get back what the name of the checkbox represents, so I'm intercepting the event and
-        //manually changing the value from true to the name of what is being checked.
-
-        //check if the value is true first, if it is then change it to the name of the value
-        //this way when it's set to false it will skip over this and make it false, thus unchecking
-        //the box
-        console.log(event);
-        console.log(this.exerciseForm);
-        //var selected = this.getSelectedTargetAreas();
-        //console.log("SELECTED: ", selected);
-        //var blah = this.exerciseForm.get(event.target.id);
-        //console.log("BLAH: ", blah);
-        //if (this.exerciseForm.get(event.target.id).value) {
-            //this.exerciseForm.patchValue({ [event.target.id]: event.target.id }); //make sure to have the square brackets
-        //}
-    }
 }
