@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorkoutApplication.Data;
 
 namespace WorkoutApplication.Repository
 {
@@ -16,5 +18,6 @@ namespace WorkoutApplication.Repository
         void Delete(int id);
         void Save();
         Task SaveAsync();
+        WorkoutsContext Context { get; }
     }
 }

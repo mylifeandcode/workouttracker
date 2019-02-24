@@ -12,9 +12,13 @@ namespace WorkoutApplication.Repository
         protected WorkoutsContext _context;
         protected DbSet<TEntity> _dbSet;
 
+        public WorkoutsContext Context => _context;
+
         public Repository(WorkoutsContext context)
         {
             _context = context;
+            _context.Exercises.Include(x => x.ExerciseTargetAreaLinks);
+            _context.ExerciseTargetAreaLinks.Include(x => x.TargetArea);
             _dbSet = _context.Set<TEntity>();
         }
 

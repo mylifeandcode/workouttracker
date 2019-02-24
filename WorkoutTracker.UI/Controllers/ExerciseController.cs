@@ -43,7 +43,10 @@ namespace WorkoutTracker.UI.Controllers
         [HttpGet("{id}")]
         public Exercise Get(int id)
         {
-            return _svc.GetById(id);
+            //return _svc.GetById(id);
+            var exercise = _svc.GetById(id);
+            //exercise.ExerciseTargetAreaLinks.ToList();
+            return exercise;
         }
 
         // POST api/Exercises
@@ -59,7 +62,7 @@ namespace WorkoutTracker.UI.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]Exercise value)
         {
-            throw new NotImplementedException();
+            _svc.Update(value, true);
         }
 
         // DELETE api/Exercises/5

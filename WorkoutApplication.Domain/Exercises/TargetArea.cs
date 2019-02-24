@@ -8,7 +8,6 @@ namespace WorkoutApplication.Domain.Exercises
 {
     public class TargetArea : NamedEntity
     {
-        //public virtual ICollection<Exercise> Exercises { get; set; }
         public virtual ICollection<ExerciseTargetAreaLink> ExerciseTargetAreaLinks { get; set; }
     }
 }

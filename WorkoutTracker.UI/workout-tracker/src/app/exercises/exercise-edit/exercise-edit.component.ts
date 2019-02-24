@@ -117,7 +117,7 @@ export class ExerciseEditComponent implements OnInit {
         this._loading = true;
         this._exerciseSvc.getById(this._exerciseId).subscribe((value: Exercise) => {
             this.exercise = value;
-            this.updateForm();
+            this.updateFormWithExerciseValues();
             this._loading = false;
         }); //TODO: Handle errors
     }
@@ -160,12 +160,19 @@ export class ExerciseEditComponent implements OnInit {
         return output;
     }
 
-    private updateForm(): void {
+    private updateFormWithExerciseValues(): void {
         this.exerciseForm.patchValue ({
             id: this.exercise.id,
             name: this.exercise.name, 
             description: this.exercise.description
         });
+
+        if (this.exercise.exerciseTargetAreaLinks) {
+            this.exercise.exerciseTargetAreaLinks.forEach((link: ExerciseTargetAreaLink) => {
+                let controlIndex = _.findIndex((this.exerciseForm.value.targetAreas, {id: link.targetAreaId}));
+                this.exerciseForm.value.targetAreas.at(controlIndex).patchValue(true);
+            });
+        }
     }
 
     private saveExercise(): void {

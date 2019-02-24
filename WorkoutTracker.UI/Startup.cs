@@ -42,6 +42,10 @@ namespace WorkoutTracker
 
             // Add framework services.
             services.AddMvc()
+                .AddJsonOptions(
+                    options => 
+                        options.SerializerSettings.ReferenceLoopHandling = 
+                            Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .AddControllersAsServices();
 
             //services.AddCors();
@@ -75,6 +79,7 @@ namespace WorkoutTracker
             {
                 serviceScope.ServiceProvider.GetService<WorkoutsContext>().Database.Migrate();
                 serviceScope.ServiceProvider.GetService<WorkoutsContext>().EnsureSeedData();
+                serviceScope.ServiceProvider.GetService<WorkoutsContext>().Exercises.Include(x => x.ExerciseTargetAreaLinks);
             }
         }
 
