@@ -16,7 +16,7 @@ namespace WorkoutTracker.Application.Exercises
 
         public IEnumerable<Exercise> Get(int firstRecord, short pageSize, ExerciseFilter filter)
         {
-            IQueryable<Exercise> query = _repo.Get().Include(x => x.ExerciseTargetAreaLinks);
+            IQueryable<Exercise> query = _repo.Get();
             ApplyQueryFilters(query, filter);
             return query.Skip(firstRecord).Take(pageSize);
         }

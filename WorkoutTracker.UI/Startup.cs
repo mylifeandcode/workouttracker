@@ -61,7 +61,7 @@ namespace WorkoutTracker
             });
 
             var connection = Configuration.GetConnectionString("WorkoutTrackerDatabase");
-            services.AddDbContext<WorkoutsContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<WorkoutsContext>(options => options.UseLazyLoadingProxies().UseSqlServer(connection));
 
             return ConfigureIoC(services);
         }
@@ -79,7 +79,6 @@ namespace WorkoutTracker
             {
                 serviceScope.ServiceProvider.GetService<WorkoutsContext>().Database.Migrate();
                 serviceScope.ServiceProvider.GetService<WorkoutsContext>().EnsureSeedData();
-                serviceScope.ServiceProvider.GetService<WorkoutsContext>().Exercises.Include(x => x.ExerciseTargetAreaLinks);
             }
         }
 

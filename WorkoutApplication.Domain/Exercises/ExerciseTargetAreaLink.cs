@@ -14,7 +14,7 @@ namespace WorkoutApplication.Domain.Exercises
     {
         public int ExerciseId { get; set; }
         public int TargetAreaId { get; set; }
-        public Exercise Exercise { get; set; }
-        public TargetArea TargetArea { get; set; }
+        public virtual Exercise Exercise { get; set; }
+        public virtual TargetArea TargetArea { get; set; }
     }
 }
