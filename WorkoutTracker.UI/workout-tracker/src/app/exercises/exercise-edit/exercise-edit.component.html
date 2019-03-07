@@ -20,15 +20,16 @@
 
             </div>
 
-            <div class="col-md-4 form-group" formArrayName="targetAreas">
+            <div *ngIf="exerciseForm.get('targetAreas')" class="col-md-4 form-group" formGroupName="targetAreas">
                 <strong>Target Areas:</strong>
-                <div *ngFor="let area of allTargetAreas; let i=index" [ngClass]="{'has-error': exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas'].errors}">
-                    <!--<input type="checkbox" [formControl]="area" [value]="area.selected" id="targetArea{{i}}" [formControlName]="i" />-->
-                    <input type="checkbox" [formControlName]="i" [value]="area.name" id="targetArea{{i}}" /> {{allTargetAreas[i].name}}
+
+                <div *ngFor="let area of exerciseForm.get('targetAreas').value | keyvalue" [ngClass]="{'has-error': exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas'].errors}">
+                    <input type="checkbox" [formControlName]="area.key" [value]="area.value" /> {{area.key}}
                 </div>
+
                 <span *ngIf="exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas']?.errors" class="errorText">At least one Target Area is required</span>
             </div>
-    
+
         </div>
 
         <div class="row">

@@ -37,10 +37,9 @@ export class ExerciseEditComponent implements OnInit {
 
     async ngOnInit() {
         this.getRouteParams();
+        this.createForm();
+        await this.setupTargetAreas();
 
-        let targetAreasFormArray = await this.setupTargetAreas();
-        this.createForm(targetAreasFormArray);
-        
         console.log("FORM: ", this.exerciseForm);
 
         if (this._exerciseId != 0)
@@ -57,23 +56,14 @@ export class ExerciseEditComponent implements OnInit {
         return result ? result.id : 0;
     }
 
-    private async setupTargetAreas(): Promise<FormArray> {
-        //Get a list of all of the target areas.
-        //Then, create checkboxes for each one on the form.
-        //If any of the target areas are already selected, set them as selected on the form.
+    private async setupTargetAreas(): Promise<void> {
+        //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
 
-        this.allTargetAreas = await this.getAllTargetAreas();
-        //TODO: Get selected target area IDs
-        var targetAreasFormArray = this.buildTargetAreasFormArray(this.allTargetAreas, []);
-        console.log("targetAreasFormArray: ", targetAreasFormArray);
-        return targetAreasFormArray;
-    }
-
-    private async getAllTargetAreas(): Promise<TargetArea[]> {
-        //TODO: Refactor! Create an Exercise DTO that has an array of TargetArea IDs. Let the service on the
-        //server sort it out.
-        let result: TargetArea[] = await this._exerciseSvc.getTargetAreas().toPromise();
-        return result ? result : null;
+        this.allTargetAreas = await this._exerciseSvc.getTargetAreas().toPromise();
+        const checkboxes = <FormGroup>this.exerciseForm.get('targetAreas');
+        this.allTargetAreas.forEach((targetArea: TargetArea) => {
+            checkboxes.addControl(targetArea.name, new FormControl());
+        });
     }
 
     private getRouteParams(): void {
@@ -83,18 +73,17 @@ export class ExerciseEditComponent implements OnInit {
         });
     }
     
-    private createForm(targetAreasFormArray: FormArray): void {
+    private createForm(): void {
         console.log("Creating form...");
 
-        //Use FormBuilder to create our root FormGroup
         this.exerciseForm = this._formBuilder.group({
             id: [0, Validators.required ], //TODO: Get ID from URL. 0 for new, actual ID for existing exercise.
             name: ['', Validators.required], 
             description: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])], 
-            targetAreas: targetAreasFormArray
+            targetAreas: this._formBuilder.group({})
         });
 
-        console.log("exerciseForm.targetAreas: ", this.exerciseForm.controls["targetAreas"]);
+        console.log("FORM: ", this.exerciseForm);
     }
 
     private buildTargetAreasFormArray(allTargetAreas: TargetArea[], selectedTargetAreaIds: number[]): FormArray {
@@ -167,12 +156,16 @@ export class ExerciseEditComponent implements OnInit {
             description: this.exercise.description
         });
 
+        /*
         if (this.exercise.exerciseTargetAreaLinks) {
             this.exercise.exerciseTargetAreaLinks.forEach((link: ExerciseTargetAreaLink) => {
+                console.log("LINK! :", link);
                 let controlIndex = _.findIndex((this.exerciseForm.value.targetAreas, {id: link.targetAreaId}));
-                this.exerciseForm.value.targetAreas.at(controlIndex).patchValue(true);
+                console.log("CONTROL INDEX: ", controlIndex);
+                //this.exerciseForm.value.targetAreas.at(controlIndex).patchValue(true);
             });
         }
+        */
     }
 
     private saveExercise(): void {
