@@ -36,17 +36,18 @@ export class ExerciseEditComponent implements OnInit {
     public allTargetAreas: TargetArea[];
 
     async ngOnInit() {
+        //TODO: Show loading message/graphic/spinner/whatever
         this.getRouteParams();
         this.createForm();
-        await this.setupTargetAreas();
-
-        console.log("FORM: ", this.exerciseForm);
-
-        if (this._exerciseId != 0)
-            this.loadExercise(); //Is this safe? route.params is an observable.
 
         //TODO: Wrap the below two calls in a Promise.all()
         this._currentUserId = await this.getCurrentUserId();
+        this.allTargetAreas = await this._exerciseSvc.getTargetAreas().toPromise();
+
+        if (this._exerciseId != 0) 
+            this.loadExercise(); //Is this safe? route.params is an observable.
+        else
+            this.setupTargetAreas([]);
     }
 
     private async getCurrentUserId(): Promise<number> {
@@ -56,13 +57,16 @@ export class ExerciseEditComponent implements OnInit {
         return result ? result.id : 0;
     }
 
-    private async setupTargetAreas(): Promise<void> {
+    private setupTargetAreas(exerciseTargetAreaLinks: ExerciseTargetAreaLink[]): void {
         //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
 
-        this.allTargetAreas = await this._exerciseSvc.getTargetAreas().toPromise();
         const checkboxes = <FormGroup>this.exerciseForm.get('targetAreas');
+
+        //I wanted to set the value of each checkbox to the ID of the target area, which was fine 
+        //initially, but on toggling Angular set the value to a boolean.
+
         this.allTargetAreas.forEach((targetArea: TargetArea) => {
-            checkboxes.addControl(targetArea.name, new FormControl());
+            checkboxes.addControl(targetArea.name, new FormControl(_.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id)));
         });
     }
 
@@ -84,22 +88,6 @@ export class ExerciseEditComponent implements OnInit {
         });
 
         console.log("FORM: ", this.exerciseForm);
-    }
-
-    private buildTargetAreasFormArray(allTargetAreas: TargetArea[], selectedTargetAreaIds: number[]): FormArray {
-        //Great approach I found at:
-        //https://coryrylan.com/blog/creating-a-dynamic-checkbox-list-in-angular
-        //Also:
-        //https://netbasal.com/handling-multiple-checkboxes-in-angular-forms-57eb8e846d21
-
-        const arr = allTargetAreas.map(area => new FormControl(false));
-
-        //FormArray can only take a single validator, not an array.
-        //Use the below as a workaround as shown at https://github.com/angular/angular/issues/12763
-        return this._formBuilder.array(
-            //arr, Validators.compose([Validators.required, Validators.minLength(1)]));
-            //But in this case, we need a custom validator
-            arr, CustomValidators.multipleCheckboxRequireOne);
     }
 
     private loadExercise(): void {
@@ -129,22 +117,23 @@ export class ExerciseEditComponent implements OnInit {
     }
 
     private getExerciseTargetAreaLinksForPersist(): ExerciseTargetAreaLink[] {
-        //Great approach I found at:
+        //Original approach using FormArray found at:
         //https://coryrylan.com/blog/creating-a-dynamic-checkbox-list-in-angular
+        //My approach differs due to different control creation from approach learned at:
+        //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
 
         var output: ExerciseTargetAreaLink[] = [];
 
-        var selected: number[] = this.exerciseForm.value.targetAreas
-            .map((v, i) => v ? this.allTargetAreas[i].id : null)
-            .filter(v => v !== null);
-
-        selected.forEach(id => {
-            output.push(new ExerciseTargetAreaLink(
-                this._exerciseId, 
-                id, 
-                this._currentUserId
-            ))
-        });
+        for(var key in this.exerciseForm.value.targetAreas) {
+            if (this.exerciseForm.value.targetAreas[key]) {
+                let selectedTargetArea = _.find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key); 
+                output.push(new ExerciseTargetAreaLink(
+                    this._exerciseId, 
+                    selectedTargetArea.id, 
+                    this._currentUserId
+                ))
+            }
+        }
 
         return output;
     }
@@ -156,16 +145,9 @@ export class ExerciseEditComponent implements OnInit {
             description: this.exercise.description
         });
 
-        /*
         if (this.exercise.exerciseTargetAreaLinks) {
-            this.exercise.exerciseTargetAreaLinks.forEach((link: ExerciseTargetAreaLink) => {
-                console.log("LINK! :", link);
-                let controlIndex = _.findIndex((this.exerciseForm.value.targetAreas, {id: link.targetAreaId}));
-                console.log("CONTROL INDEX: ", controlIndex);
-                //this.exerciseForm.value.targetAreas.at(controlIndex).patchValue(true);
-            });
+            this.setupTargetAreas(this.exercise.exerciseTargetAreaLinks);
         }
-        */
     }
 
     private saveExercise(): void {
