@@ -1,5 +1,5 @@
 ﻿//From https://stackoverflow.com/questions/42038099/validation-on-a-list-of-checkboxes-angular-2
-import { FormArray } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 
 export class CustomValidators {
     static multipleCheckboxRequireOne(fa: FormArray) {
@@ -11,8 +11,28 @@ export class CustomValidators {
                 break;
             }
         }
+
         return valid ? null : {
             multipleCheckboxRequireOne: true
         };
+    }
+
+    static formGroupOfBooleansRequireOneTrue(formGroup: FormGroup) {
+        let valid = false;
+        
+        for (const field in formGroup.controls) {
+            const control = formGroup.get(field);
+            console.log("FIELD: ", field);
+            if(control.value) {
+                valid = true;
+                console.log("YO");
+                break;
+            }
+        }
+
+        return valid ? null : {
+            formGroupOfBooleansRequireOneTrue: true
+        };        
+     
     }
 }

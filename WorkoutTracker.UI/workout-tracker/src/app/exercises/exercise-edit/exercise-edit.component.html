@@ -27,9 +27,7 @@
                     <input type="checkbox" [formControlName]="area.key" [value]="area.value" /> {{area.key}}
                 </div>
 
-                <span *ngIf="exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas']?.errors" class="errorText">At least one Target Area is required</span>
-                
-                CONTROLS {{exerciseForm.value.targetAreas | json}}
+                <span *ngIf="exerciseForm.controls['targetAreas'].dirty && exerciseForm.controls['targetAreas']?.errors" class="errorText">At least one Target Area is required</span>
             </div>
 
         </div>

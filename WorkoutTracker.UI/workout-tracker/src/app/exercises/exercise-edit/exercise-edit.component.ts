@@ -68,6 +68,8 @@ export class ExerciseEditComponent implements OnInit {
         this.allTargetAreas.forEach((targetArea: TargetArea) => {
             checkboxes.addControl(targetArea.name, new FormControl(_.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id)));
         });
+
+        checkboxes.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);
     }
 
     private getRouteParams(): void {
@@ -84,7 +86,7 @@ export class ExerciseEditComponent implements OnInit {
             id: [0, Validators.required ], //TODO: Get ID from URL. 0 for new, actual ID for existing exercise.
             name: ['', Validators.required], 
             description: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])], 
-            targetAreas: this._formBuilder.group({})
+            targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue)
         });
 
         console.log("FORM: ", this.exerciseForm);

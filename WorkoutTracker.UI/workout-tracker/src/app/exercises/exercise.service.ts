@@ -16,7 +16,7 @@ const httpOptions = {
 @Injectable()
 export class ExerciseService {
 
-    private readonly API_ROOT: string = "http://localhost:5600/api/exercises";
+    private readonly API_ROOT: string = "http://localhost:5600/api/exercises"; //TODO: Get from environment config
 
     constructor(private _http: HttpClient) { }
 
