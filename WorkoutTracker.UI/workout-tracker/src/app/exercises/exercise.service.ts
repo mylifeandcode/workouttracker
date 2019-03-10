@@ -43,7 +43,7 @@ export class ExerciseService {
     }
 
     public update(exercise: Exercise): Observable<Exercise> {
-        return null; //TODO: Implement
+        return this._http.put<Exercise>(`${this.API_ROOT}/${exercise.id}`, exercise, httpOptions);
     }
 
 }
