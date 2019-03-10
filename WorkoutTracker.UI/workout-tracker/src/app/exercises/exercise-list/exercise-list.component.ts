@@ -8,17 +8,16 @@ import { PaginatedResults } from 'app/models/paginated-results';
   templateUrl: './exercise-list.component.html',
   styleUrls: ['./exercise-list.component.css']
 })
-export class ExerciseListComponent implements OnInit {
+export class ExerciseListComponent {
+
+    //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
+    //Turbo Table automatically makes a call to get data on initialization
 
     public _totalRecords: number;
-    public _loading: boolean = false;
+    public _loading: boolean = true;
     public _pageSize: number = 10;
     private _exercises: Exercise[];
     constructor(private _exerciseSvc: ExerciseService) { }
-
-    ngOnInit() {
-        //this.getExercises(0);
-    }
 
     public getExercises(first: number): void {
         this._loading = true;

@@ -40,4 +40,22 @@ describe('ExerciseService', () => {
 
   }));
 
+  it('should create new exercise', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
+
+    let exercise = new Exercise();
+
+    service.add(exercise).subscribe(
+      result => expect(result).toEqual(exercise, 'should return newly created exercise'),
+      fail
+    );
+
+    // ExerciseService should have made one request to GET exercises from expected URL
+    const req = httpMock.expectOne("http://localhost:5600/api/exercises"); //TODO: Refactor
+    expect(req.request.method).toEqual('POST');
+
+    // Respond with the mock results
+    req.flush(exercise);    
+
+  }));
+
 });
