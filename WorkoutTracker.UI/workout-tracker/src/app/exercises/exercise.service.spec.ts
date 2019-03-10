@@ -23,16 +23,21 @@ describe('ExerciseService', () => {
   }));
 
   it('should retrieve exercises', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
-    //ARRANGE
-    const exercises = new PaginatedResults<Exercise>();
-    const req = httpMock.expectOne(this.API_ROOT);
-    req.flush(exercises);
 
-    //ACT
-    let result = service.getAll(0, 1);
+    const expectedResults = new PaginatedResults<Exercise>();
 
-    //ASSERT
-    expect(result).toBe(exercises);
+    service.getAll(0, 10).subscribe(
+      exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
+      fail
+    );
+
+    // ExerciseService should have made one request to GET exercises from expected URL
+    const req = httpMock.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10"); //TODO: Refactor
+    expect(req.request.method).toEqual('GET');
+
+    // Respond with the mock results
+    req.flush(expectedResults);    
+
   }));
 
 });
