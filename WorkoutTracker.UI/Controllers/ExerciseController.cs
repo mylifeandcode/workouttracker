@@ -16,6 +16,7 @@ namespace WorkoutTracker.UI.Controllers
     [Produces("application/json")]
     [Route("api/Exercises")]
     [EnableCors("SiteCorsPolicy")]
+    [ApiController]
     public class ExerciseController : Controller
     {
         private IExerciseService _svc;
@@ -30,40 +31,45 @@ namespace WorkoutTracker.UI.Controllers
 
         // GET: api/Exercises
         [HttpGet]
-        public PaginatedResults<Exercise> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null)
+        public ActionResult<PaginatedResults<Exercise>> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null)
         {
             var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
             var result = new PaginatedResults<Exercise>();
             result.TotalCount = _svc.GetTotalCount();
             result.Results = _svc.Get(firstRecord, pageSize, filter);
-            return result;
+            return Ok(result);
         }
 
         // GET api/Exercises/5
         [HttpGet("{id}")]
-        public Exercise Get(int id)
+        public ActionResult<Exercise> Get(int id)
         {
-            return _svc.GetById(id);
+            var exercise = _svc.GetById(id);
+            if (exercise == null)
+                return NotFound(id);
+            else
+                return Ok(exercise);
         }
 
         // POST api/Exercises
         [HttpPost]
-        public Exercise Post([FromBody]Exercise value)
+        public ActionResult<Exercise> Post([FromBody]Exercise value)
         {
-            return _svc.Add(value, true);
+            return Ok(_svc.Add(value, true));
         }
 
         // PUT api/Exercises/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]Exercise value)
+        public ActionResult<Exercise> Put(int id, [FromBody]Exercise value)
         {
-            _svc.Update(value, true);
+            return Ok(_svc.Update(value, true));
         }
 
         // DELETE api/Exercises/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
+            throw new NotImplementedException();
         }
 
         private ExerciseFilter BuildExerciseFilter(string nameContains, string hasTargetAreas)
