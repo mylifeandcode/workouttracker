@@ -46,5 +46,47 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response.Result, typeof(NotFoundObjectResult));
         }
+
+        [TestMethod]
+        public void Should_Create_New_Exercise()
+        {
+            //ARRANGE
+            var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
+            var exercise = new Exercise();
+            exerciseSvc
+                .Setup(x => x.Add(It.IsAny<Exercise>(), true))
+                .Returns((Exercise newExercise, bool save) => exercise);
+
+            var sut = new ExerciseController(exerciseSvc.Object);
+
+            //ACT
+            var response = sut.Post(exercise);
+
+            //ASSERT
+            Assert.IsNotNull(response);
+            Assert.ReferenceEquals(response.Value, exercise);
+            Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void Should_Update_Exxisting_Exercise()
+        {
+            //ARRANGE
+            var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
+            var exercise = new Exercise();
+            exerciseSvc
+                .Setup(x => x.Update(It.IsAny<Exercise>(), true))
+                .Returns((Exercise newExercise, bool save) => exercise);
+
+            var sut = new ExerciseController(exerciseSvc.Object);
+
+            //ACT
+            var response = sut.Put(exercise.Id, exercise);
+
+            //ASSERT
+            Assert.IsNotNull(response);
+            Assert.ReferenceEquals(response.Value, exercise);
+            Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
+        }
     }
 }

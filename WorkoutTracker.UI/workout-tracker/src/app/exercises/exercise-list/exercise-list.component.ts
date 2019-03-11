@@ -14,20 +14,20 @@ export class ExerciseListComponent {
     //Turbo Table automatically makes a call to get data on initialization
 
     public _totalRecords: number;
-    public _loading: boolean = true;
+    public loading: boolean = true;
     public _pageSize: number = 10;
     private _exercises: Exercise[];
     constructor(private _exerciseSvc: ExerciseService) { }
 
     public getExercises(first: number): void {
-        this._loading = true;
+        this.loading = true;
         this._exerciseSvc.getAll(first, this._pageSize).subscribe(
             (exercises: PaginatedResults<Exercise>) => { 
                 this._exercises = exercises.results;
                 this._totalRecords = exercises.totalCount;
             },
             (error: any) => window.alert("An error occurred getting exercises: " + error), 
-            () => this._loading = false
+            () => this.loading = false
         );
     }
 
