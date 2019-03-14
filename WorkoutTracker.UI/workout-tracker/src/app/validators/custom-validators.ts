@@ -22,10 +22,9 @@ export class CustomValidators {
         
         for (const field in formGroup.controls) {
             const control = formGroup.get(field);
-            console.log("FIELD: ", field);
+
             if(control.value) {
                 valid = true;
-                console.log("YO");
                 break;
             }
         }

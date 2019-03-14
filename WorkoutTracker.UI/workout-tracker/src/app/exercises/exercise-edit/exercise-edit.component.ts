@@ -30,13 +30,12 @@ export class ExerciseEditComponent implements OnInit {
 
     private _exerciseId: number = 0;
     private _saving: boolean = false;
-    private _loading: boolean = false;
+    private _loading: boolean = true;
     private _errorMsg: string = null;
     private _currentUserId: number; //The ID of the user performing the add or edit
     public allTargetAreas: TargetArea[];
 
     async ngOnInit() {
-        //TODO: Show loading message/graphic/spinner/whatever
         this.getRouteParams();
         this.createForm();
 
@@ -46,8 +45,10 @@ export class ExerciseEditComponent implements OnInit {
 
         if (this._exerciseId != 0) 
             this.loadExercise(); //Is this safe? route.params is an observable.
-        else
+        else {
             this.setupTargetAreas([]);
+            this._loading = false;
+        }
     }
 
     private async getCurrentUserId(): Promise<number> {
@@ -75,12 +76,10 @@ export class ExerciseEditComponent implements OnInit {
     private getRouteParams(): void {
         this.route.params.subscribe(params => {
             this._exerciseId = params['id'];
-            console.log('Exercise ID = ', this._exerciseId);
         });
     }
     
     private createForm(): void {
-        console.log("Creating form...");
 
         this.exerciseForm = this._formBuilder.group({
             id: [0, Validators.required ], //TODO: Get ID from URL. 0 for new, actual ID for existing exercise.
@@ -89,7 +88,6 @@ export class ExerciseEditComponent implements OnInit {
             targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue)
         });
 
-        console.log("FORM: ", this.exerciseForm);
     }
 
     private loadExercise(): void {
@@ -153,6 +151,7 @@ export class ExerciseEditComponent implements OnInit {
     }
 
     private saveExercise(): void {
+        //Called by Save button
         var exercise = this.getExerciseForPersist();
 
         if (this._exerciseId == 0)
@@ -161,7 +160,6 @@ export class ExerciseEditComponent implements OnInit {
                     //this._saving = false;
                 },
                 (error: any) => {
-                    console.log("ERROR: ", error);
                     this._errorMsg = error.toString();
                 },
                 () => {

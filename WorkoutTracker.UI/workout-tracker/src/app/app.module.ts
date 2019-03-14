@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TableModule } from 'primeng/table';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -49,7 +50,8 @@ import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
         HttpClientModule, 
         AppRoutingModule,
         BrowserAnimationsModule,
-        TableModule
+        TableModule, 
+        ProgressSpinnerModule
   ],
   providers: [ExerciseService, UserService, CookieService, UserSelectedGuard],
   bootstrap: [AppComponent]
