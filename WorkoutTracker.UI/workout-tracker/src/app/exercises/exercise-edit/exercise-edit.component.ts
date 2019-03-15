@@ -34,6 +34,7 @@ export class ExerciseEditComponent implements OnInit {
     private _errorMsg: string = null;
     private _currentUserId: number; //The ID of the user performing the add or edit
     public allTargetAreas: TargetArea[];
+    public infoMsg: string = null;
 
     async ngOnInit() {
         this.getRouteParams();
@@ -152,12 +153,15 @@ export class ExerciseEditComponent implements OnInit {
 
     private saveExercise(): void {
         //Called by Save button
+        this._saving = true;
+        this.infoMsg = "Saving...";
         var exercise = this.getExerciseForPersist();
 
         if (this._exerciseId == 0)
             this._exerciseSvc.add(exercise).subscribe(
                 (value: Exercise) => {
-                    //this._saving = false;
+                    this.exercise = value;
+                    this.infoMsg = "Exercise created at " + new Date();
                 },
                 (error: any) => {
                     this._errorMsg = error.toString();
@@ -169,6 +173,7 @@ export class ExerciseEditComponent implements OnInit {
         else
             this._exerciseSvc.update(exercise).subscribe((value: Exercise) => {
                 this._saving = false;
+                this.infoMsg = "Exercise updated at " + new Date().toLocaleTimeString();
             });
     }
 

@@ -21,8 +21,8 @@ namespace WorkoutApplication.Data.EntitySetup.Exercises
             //.HasForeignKey(l => l.ExerciseId);
 
             entity
-                .HasOne(x => x.TargetArea)
-                .WithMany(x => x.ExerciseTargetAreaLinks);
+                .HasOne(x => x.TargetArea);
+                //.WithMany(x => x.ExerciseTargetAreaLinks);
                 //.HasForeignKey(x => x.TargetAreaId);
         }
     }
