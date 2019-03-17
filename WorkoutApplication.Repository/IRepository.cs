@@ -19,5 +19,6 @@ namespace WorkoutApplication.Repository
         void Save();
         Task SaveAsync();
         WorkoutsContext Context { get; }
+        void SetValues(TEntity target, TEntity source);
     }
 }

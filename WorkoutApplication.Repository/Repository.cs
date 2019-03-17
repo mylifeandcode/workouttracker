@@ -101,5 +101,9 @@ namespace WorkoutApplication.Repository
             }
         }
 
+        public void SetValues(TEntity target, TEntity source)
+        {
+            _context.Entry<TEntity>(target).CurrentValues.SetValues(source);
+        }
     }
 }

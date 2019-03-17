@@ -9,6 +9,7 @@ import { User } from 'app/models/user';
 import { UserService } from 'app/users/user.service';
 import { ExerciseTargetAreaLink } from '../../models/exercise-target-area-link';
 import * as _ from 'lodash';
+import { finalize } from 'rxjs/internal/operators/finalize';
 
 @Component({
   selector: 'wt-exercise-edit',
@@ -28,7 +29,7 @@ export class ExerciseEditComponent implements OnInit {
     public exercise: Exercise;
     public exerciseForm: FormGroup;
 
-    private _exerciseId: number = 0;
+    private _exerciseId: number = 0; //TODO: Refactor. We have an exercise variable. Why have this too?
     private _saving: boolean = false;
     private _loading: boolean = true;
     private _errorMsg: string = null;
@@ -132,7 +133,7 @@ export class ExerciseEditComponent implements OnInit {
                     this._exerciseId, 
                     selectedTargetArea.id, 
                     this._currentUserId
-                ))
+                ));
             }
         }
 
@@ -158,23 +159,32 @@ export class ExerciseEditComponent implements OnInit {
         var exercise = this.getExerciseForPersist();
 
         if (this._exerciseId == 0)
-            this._exerciseSvc.add(exercise).subscribe(
-                (value: Exercise) => {
+            this._exerciseSvc.add(exercise)
+                .pipe(finalize(() => {
+                    this._saving = false;
+                }))
+                .subscribe((value: Exercise) => {
                     this.exercise = value;
-                    this.infoMsg = "Exercise created at " + new Date();
+                    this._exerciseId = this.exercise.id;
+                    this.infoMsg = "Exercise created at " + new Date().toLocaleTimeString();
                 },
                 (error: any) => {
-                    this._errorMsg = error.toString();
-                },
-                () => {
-                    this._saving = false;
+                    this._errorMsg = error.message;
                 }
             );
         else
-            this._exerciseSvc.update(exercise).subscribe((value: Exercise) => {
-                this._saving = false;
-                this.infoMsg = "Exercise updated at " + new Date().toLocaleTimeString();
-            });
+            this._exerciseSvc.update(exercise)
+                .pipe(finalize(() => {
+                    this._saving = false;
+                }))
+                .subscribe((value: Exercise) => {
+                    this._saving = false;
+                    this.infoMsg = "Exercise updated at " + new Date().toLocaleTimeString();
+                }, 
+                (error: any) => {
+                    this._errorMsg = error.message;
+                }
+            );
     }
 
 }

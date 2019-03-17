@@ -17,7 +17,8 @@ namespace WorkoutApplication.Data.EntitySetup.Exercises
             entity
                 .HasMany(x => x.ExerciseTargetAreaLinks)
                 .WithOne(x => x.Exercise)
-                .HasForeignKey(x => x.ExerciseId);
+                .HasForeignKey(x => x.ExerciseId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(x => x.Name);
 

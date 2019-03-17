@@ -31,6 +31,30 @@ namespace WorkoutTracker.Application.Exercises
             return _repo.Get().Count();
         }
 
+        public override Exercise Update(Exercise entity, bool saveChanges = false)
+        {
+            /*
+            Remove any ExerciseTargetAreaLinks which are not present in entity.
+            I thought there'd be an easier way to handle this, but as this is a 
+            disconnected entity, apparently there is not. :/
+            See https://docs.microsoft.com/en-us/ef/core/saving/disconnected-entities for 
+            more info.
+            */
+            var existingExercise = _repo.Get(entity.Id); //Once we do this, this entity is TRACKED
+            _repo.SetValues(existingExercise, entity);
+
+            AddExerciseTargetAreaLinksToExistingExercise(existingExercise, entity);
+            RemoveExerciseTargetAreaLinksToExistingExercise(existingExercise, entity);
+
+            existingExercise.ModifiedDateTime = DateTime.Now;
+
+            if (saveChanges)
+                _repo.Context.SaveChanges(); //Have to save this way because our entity is already TRACKED.
+                                             //TODO: Refactor? I'm not thrilled with this approach.
+
+            return existingExercise;
+        }
+
         private void ApplyQueryFilters(IQueryable<Exercise> query, ExerciseFilter filter)
         {
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
@@ -41,6 +65,32 @@ namespace WorkoutTracker.Application.Exercises
                 filter.HasTargetAreas.ForEach((targetArea) =>
                     query = query.Where(x => x.ExerciseTargetAreaLinks.Any(links => links.TargetArea.Name == targetArea)));
             }
+        }
+
+        private void AddExerciseTargetAreaLinksToExistingExercise(Exercise existingExercise, Exercise modifiedExercise)
+        {
+            foreach (var link in modifiedExercise.ExerciseTargetAreaLinks)
+            {
+                var existingLink =
+                    existingExercise.ExerciseTargetAreaLinks
+                        .FirstOrDefault(x => x.TargetAreaId == link.TargetAreaId);
+
+                if (existingLink == null)
+                    existingExercise.ExerciseTargetAreaLinks.Add(link);
+            }
+        }
+
+        private void RemoveExerciseTargetAreaLinksToExistingExercise(Exercise existingExercise, Exercise modifiedExercise)
+        {
+            var linksToRemove = new List<ExerciseTargetAreaLink>(modifiedExercise.ExerciseTargetAreaLinks.Count);
+            foreach (var existingLink in existingExercise.ExerciseTargetAreaLinks)
+            {
+                if (!modifiedExercise.ExerciseTargetAreaLinks.Any(x => x.TargetAreaId == existingLink.TargetAreaId))
+                    linksToRemove.Add(existingLink);
+            }
+
+            foreach (var link in linksToRemove)
+                existingExercise.ExerciseTargetAreaLinks.Remove(link);
         }
     }
 }
