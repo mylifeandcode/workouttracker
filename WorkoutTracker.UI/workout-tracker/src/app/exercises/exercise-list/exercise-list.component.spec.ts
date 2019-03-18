@@ -1,6 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExerciseListComponent } from './exercise-list.component';
+import { TableModule } from 'primeng/table';
+import { RouterTestingModule } from '@angular/router/testing';
+import { ExerciseService } from '../exercise.service';
+
+class ExerciseServiceMock {
+
+}
 
 describe('ExerciseListComponent', () => {
   let component: ExerciseListComponent;
@@ -8,7 +15,17 @@ describe('ExerciseListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExerciseListComponent ]
+      declarations: [ ExerciseListComponent ], 
+      imports: [ 
+        TableModule, 
+        RouterTestingModule 
+      ], 
+      providers: [ 
+        {
+          provide: ExerciseService, 
+          useClass: ExerciseServiceMock
+        }
+      ]
     })
     .compileComponents();
   }));

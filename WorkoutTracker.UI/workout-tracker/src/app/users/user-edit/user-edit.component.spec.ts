@@ -1,6 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserEditComponent } from './user-edit.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
+import { UserService } from '../user.service';
+
+class UserServiceMock {
+
+}
 
 describe('UserEditComponent', () => {
   let component: UserEditComponent;
@@ -8,7 +15,17 @@ describe('UserEditComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserEditComponent ]
+      declarations: [ UserEditComponent ], 
+      imports: [ 
+        ReactiveFormsModule, 
+        RouterTestingModule 
+      ], 
+      providers: [
+        {
+          provide: UserService, 
+          useClass: UserServiceMock
+        }
+      ]
     })
     .compileComponents();
   }));

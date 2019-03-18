@@ -1,6 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserSelectComponent } from './user-select.component';
+import { UserService } from '../user.service';
+import { RouterTestingModule } from '@angular/router/testing';
+
+class UserServiceMock {
+
+}
 
 describe('UserSelectComponent', () => {
   let component: UserSelectComponent;
@@ -8,7 +14,14 @@ describe('UserSelectComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserSelectComponent ]
+      declarations: [ UserSelectComponent ], 
+      imports: [ RouterTestingModule ], 
+      providers: [
+        {
+          provide: UserService, 
+          useClass: UserServiceMock
+        }
+      ]
     })
     .compileComponents();
   }));

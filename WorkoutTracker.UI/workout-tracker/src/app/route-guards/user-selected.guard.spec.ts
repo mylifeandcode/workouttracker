@@ -1,11 +1,24 @@
 import { TestBed, async, inject } from '@angular/core/testing';
 
 import { UserSelectedGuard } from './user-selected.guard';
+import { UserService } from 'app/users/user.service';
+import { RouterTestingModule } from '@angular/router/testing';
+
+class UserServiceMock {
+
+}
 
 describe('UserSelectedGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [UserSelectedGuard]
+      imports: [ RouterTestingModule ], 
+      providers: [
+        UserSelectedGuard, 
+        {
+          provide: UserService, 
+          useClass: UserServiceMock
+        }
+      ]
     });
   });
 
