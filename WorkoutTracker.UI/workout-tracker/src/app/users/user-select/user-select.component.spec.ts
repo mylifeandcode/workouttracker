@@ -3,9 +3,12 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserSelectComponent } from './user-select.component';
 import { UserService } from '../user.service';
 import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
+import { User } from 'app/models/user';
 
 class UserServiceMock {
-
+  getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
+  getAll = jasmine.createSpy('getAll').and.returnValue(of(new Array<User>()));
 }
 
 describe('UserSelectComponent', () => {

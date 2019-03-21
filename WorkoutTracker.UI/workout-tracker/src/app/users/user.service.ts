@@ -1,9 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, RequestOptions, RequestOptionsArgs, Headers } from '@angular/http';
+import { Response, RequestOptions, RequestOptionsArgs, Headers } from '@angular/http';
 import { Observable, of } from 'rxjs';
 import { User } from '../models/user';
 import { map } from 'rxjs/operators';
 import { CookieService } from 'ng2-cookies';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type':  'application/json'
+  })
+};
 
 @Injectable()
 export class UserService {
@@ -12,7 +19,7 @@ export class UserService {
   private _currentUser: User = null;
   private readonly COOKIE_NAME = "WorkoutTracker";
 
-  constructor(private _http: Http, private _cookieSvc: CookieService) { } //TODO: Refactor to use HttpClient instead of Http
+  constructor(private _http: HttpClient, private _cookieSvc: CookieService) { } //TODO: Refactor to use HttpClient instead of Http
 
   public getAll() : Observable<Array<User>> {
     return this._http.get(this._rootUrl)
@@ -42,21 +49,16 @@ export class UserService {
   }
 
   public addUser(user: User): Observable<User> {
-    console.log("USER = ", user);
-    let headers = new Headers({ 'Content-Type': 'application/json' });
-    let options = new RequestOptions({ headers: headers });
-
-    return this._http.post(this._rootUrl, user)
+    return this._http.post(this._rootUrl, user, httpOptions)
       .pipe(map((resp: Response) => resp.json()));
-
   }
 
   public updateUser(user: User): Observable<User> {
-    return this._http.put(this._rootUrl, user)
+    return this._http.put(this._rootUrl, user, httpOptions)
       .pipe(map((resp: Response) => resp.json()));
   }
 
-  public deleteUser(userId: number): Observable<Response> {
+  public deleteUser(userId: number): Observable<any> {
     return this._http.delete(`${this._rootUrl}/${userId}`);
   }
 

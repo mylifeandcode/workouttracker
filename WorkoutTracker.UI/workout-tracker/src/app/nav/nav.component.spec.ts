@@ -2,9 +2,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavComponent } from './nav.component';
 import { UserService } from 'app/users/user.service';
+import { of } from 'rxjs';
+import { User } from 'app/models/user';
 
 class UserServiceMock {
-
+  getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
 }
 
 describe('NavComponent', () => {
