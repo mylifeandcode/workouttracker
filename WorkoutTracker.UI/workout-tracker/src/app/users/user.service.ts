@@ -23,7 +23,7 @@ export class UserService {
 
   public getAll() : Observable<Array<User>> {
     return this._http.get(this._rootUrl)
-      .pipe(map((resp: Response) => resp.json()));
+      .pipe(map((resp: Array<User>) => resp));
   }
 
   public getCurrentUserInfo(): Observable<User> {
@@ -45,7 +45,7 @@ export class UserService {
 
   public getUserInfo(userId: number): Observable<User> {
     return this._http.get(`${this._rootUrl}/${userId}`)
-      .pipe(map((resp: Response) => resp.json()));
+      .pipe(map((resp: User) => resp));
   }
 
   public addUser(user: User): Observable<User> {
