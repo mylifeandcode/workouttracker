@@ -17,8 +17,9 @@ namespace WorkoutTracker.Application.Exercises
         public IEnumerable<Exercise> Get(int firstRecord, short pageSize, ExerciseFilter filter)
         {
             IQueryable<Exercise> query = _repo.Get();
-            ApplyQueryFilters(query, filter);
-            return query.Skip(firstRecord).Take(pageSize);
+            ApplyQueryFilters(ref query, filter);
+            var output = query.Skip(firstRecord).Take(pageSize);
+            return output;
         }
 
         public override Exercise GetById(int id)
@@ -55,15 +56,18 @@ namespace WorkoutTracker.Application.Exercises
             return existingExercise;
         }
 
-        private void ApplyQueryFilters(IQueryable<Exercise> query, ExerciseFilter filter)
+        private void ApplyQueryFilters(ref IQueryable<Exercise> query, ExerciseFilter filter)
         {
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
                 query = query.Where(x => x.Name.Contains(filter.NameContains));
 
             if (filter.HasTargetAreas != null && filter.HasTargetAreas.Any())
             {
-                filter.HasTargetAreas.ForEach((targetArea) =>
-                    query = query.Where(x => x.ExerciseTargetAreaLinks.Any(links => links.TargetArea.Name == targetArea)));
+                //filter.HasTargetAreas.ForEach((targetArea) =>
+                foreach (var targetArea in filter.HasTargetAreas)
+                {
+                    query = query.Where(x => x.ExerciseTargetAreaLinks.Any(links => links.TargetArea.Name == targetArea));
+                }
             }
         }
 

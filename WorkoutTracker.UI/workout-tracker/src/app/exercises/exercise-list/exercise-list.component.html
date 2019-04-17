@@ -1,12 +1,17 @@
 <div class="container">
     <h3>Exercises</h3>
     <div class="row">
-        <div class="col-md-8">
-            <p-table [value]="_exercises" [paginator]="true" [rows]="_pageSize" [lazy]="true" (onLazyLoad)="getExercisesLazy($event)" [totalRecords]="_totalRecords" [loading]="loading">
-                <ng-template pTemplate="header">
+        <div class="col-md-12">
+            <p-table #dt [value]="_exercises" [paginator]="true" [columns]="cols" [rows]="_pageSize" [lazy]="true" (onLazyLoad)="getExercisesLazy($event)" [totalRecords]="_totalRecords" [loading]="loading">
+                <ng-template pTemplate="header" let-columns>
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
+                    </tr>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" />
+                        </th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-exercise>
@@ -17,11 +22,13 @@
                 </ng-template>
             </p-table>
         </div>
-        <div class="col-md-4">
-            <button routerLink="/exercises/edit/0" [disabled]="loading" class="btn btn-primary">Create New Exercise from Scratch</button>
-        </div>
     </div>
     <div class="row" *ngIf="_totalRecords">
         <div class="col-md-4">{{_totalRecords}} total exercises</div>
+    </div>
+    <div class="row col-md-12">
+        <!--<button routerLink="/exercises/edit/0" [disabled]="loading" class="btn btn-primary"><i class="fas fa-plus"></i></button>-->
+        <!--TODO: Restore version above when I have time to figure out why the fontglyphs aren't working-->
+        <button routerLink="/exercises/edit/0" [disabled]="loading" class="btn btn-primary">Add New</button>
     </div>
 </div>

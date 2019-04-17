@@ -20,9 +20,10 @@ export class ExerciseService {
 
     constructor(private _http: HttpClient) { }
 
-    public getAll(firstRecOffset: number, pageSize: number): Observable<PaginatedResults<Exercise>> {
+    public getAll(firstRecOffset: number, pageSize: number, nameContains: string = null): Observable<PaginatedResults<Exercise>> {
         //TODO: Refactor to get pages of filtered data
-        return this._http.get(`${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`)
+        return this._http
+            .get(`${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&nameContains=${nameContains}`)
             .pipe(map((resp: PaginatedResults<Exercise>) => resp)); //TODO: Fully implement
     }
 
