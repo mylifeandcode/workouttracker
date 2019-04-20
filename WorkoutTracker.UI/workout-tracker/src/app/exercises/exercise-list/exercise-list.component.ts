@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { ExerciseService } from 'app/exercises/exercise.service';
-import { Exercise } from 'app/models/exercise';
 import { PaginatedResults } from 'app/models/paginated-results';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
+import { ExerciseDTO } from 'app/models/exercise-dto';
+import { TargetArea } from 'app/models/target-area';
 
 @Component({
   selector: 'wt-exercise-list',
@@ -19,23 +20,36 @@ export class ExerciseListComponent {
     public _totalRecords: number;
     public loading: boolean = true;
     public _pageSize: number = 10;
-    private _exercises: Exercise[];
+    private _exercises: ExerciseDTO[];
     public cols: any = [
         { field: 'name', header: 'Name' }, 
-        { field: 'description', header: 'Description' }
+        { field: 'targetAreas', header: 'Target Areas' }
     ]; //TODO: Create specific type
+    public targetAreas: string[];
 
-    constructor(private _exerciseSvc: ExerciseService) { }
+    constructor(private _exerciseSvc: ExerciseService) { 
+        _exerciseSvc
+            .getTargetAreas()
+            //.pipe(map(targetAreas => targetAreas.map(targetArea => targetArea.name))
+            .pipe(map(targetAreas => targetAreas.map(targetArea => targetArea.name)))
+            .subscribe((targetAreaNames: string[]) => { 
+                this.targetAreas = targetAreaNames;
+                console.log("TARGET AREAS: ", this.targetAreas);
+            },
+            (error: any) => window.alert("An error occurred getting exercises: " + error)
+        );
 
-    public getExercises(first: number, nameContains: string, descriptionContains: string): void {
+    }
+
+    public getExercises(first: number, nameContains: string, targetAreaContains: string): void {
         this.loading = true;
         this._exerciseSvc
-            .getAll(first, this._pageSize, nameContains)
+            .getAll(first, this._pageSize, nameContains, targetAreaContains)
                 .pipe(finalize(() => { 
                     setTimeout(() => { this.loading = false; }, 500)
                 }))
                 .subscribe(
-                    (exercises: PaginatedResults<Exercise>) => { 
+                    (exercises: PaginatedResults<ExerciseDTO>) => { 
                         this._exercises = exercises.results;
                         this._totalRecords = exercises.totalCount;
                     },
@@ -44,15 +58,15 @@ export class ExerciseListComponent {
     }
 
     public getExercisesLazy(event: any): void {
-        let nameContains: string = null;
-        let descriptionContains: string = null;
+        let nameContains: string;
+        let targetAreaContains: string;
 
         if (event.filters["name"])
             nameContains = event.filters["name"].value;
 
-        if (event.filters["description"])
-            descriptionContains = event.filters["description"].value;
+        if (event.filters["targetAreas"])
+            targetAreaContains = event.filters["targetAreas"].value;
 
-        this.getExercises(event.first, nameContains, descriptionContains);
+        this.getExercises(event.first, nameContains, targetAreaContains);
     }
 }

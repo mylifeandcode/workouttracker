@@ -6,6 +6,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TableModule } from 'primeng/table';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -42,7 +44,8 @@ import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
     SetEditComponent,
     UserSelectComponent,
     UserListComponent,
-    UserEditComponent  ],
+    UserEditComponent
+  ],
   imports: [
         BrowserModule,
         ReactiveFormsModule,
@@ -51,7 +54,9 @@ import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
         AppRoutingModule,
         BrowserAnimationsModule,
         TableModule, 
-        ProgressSpinnerModule
+        ProgressSpinnerModule, 
+        MultiSelectModule, 
+        CommonModule
   ],
   providers: [ExerciseService, UserService, CookieService, UserSelectedGuard],
   bootstrap: [AppComponent]

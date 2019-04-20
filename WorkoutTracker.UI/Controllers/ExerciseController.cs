@@ -31,12 +31,21 @@ namespace WorkoutTracker.UI.Controllers
 
         // GET: api/Exercises
         [HttpGet]
-        public ActionResult<PaginatedResults<Exercise>> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null)
+        public ActionResult<PaginatedResults<ExerciseDTO>> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null)
         {
             var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
-            var result = new PaginatedResults<Exercise>();
+            var result = new PaginatedResults<ExerciseDTO>();
             result.TotalCount = _svc.GetTotalCount();
-            result.Results = _svc.Get(firstRecord, pageSize, filter);
+            var exercises = _svc.Get(firstRecord, pageSize, filter);
+            result.Results = exercises.Select((exercise) => 
+            {
+                var dto = new ExerciseDTO();
+                dto.Id = exercise.Id;
+                dto.Name = exercise.Name;
+                dto.TargetAreas =
+                    string.Join(", ", exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name));
+                return dto;
+            });
             return Ok(result);
         }
 

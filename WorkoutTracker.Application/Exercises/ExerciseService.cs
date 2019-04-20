@@ -66,7 +66,7 @@ namespace WorkoutTracker.Application.Exercises
                 //filter.HasTargetAreas.ForEach((targetArea) =>
                 foreach (var targetArea in filter.HasTargetAreas)
                 {
-                    query = query.Where(x => x.ExerciseTargetAreaLinks.Any(links => links.TargetArea.Name == targetArea));
+                    query = query.Where(x => x.ExerciseTargetAreaLinks.Any(links => links.TargetArea.Name.ToUpper().Contains(targetArea.ToUpper())));
                 }
             }
         }

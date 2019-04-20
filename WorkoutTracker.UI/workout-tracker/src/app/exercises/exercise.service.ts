@@ -6,6 +6,7 @@ import { Exercise } from '../models/exercise';
 import { TargetArea } from '../models/target-area';
 import { map, catchError } from 'rxjs/operators';
 import { PaginatedResults } from '../models/paginated-results';
+import { ExerciseDTO } from 'app/models/exercise-dto';
 
 const httpOptions = {
     headers: new HttpHeaders({
@@ -20,11 +21,19 @@ export class ExerciseService {
 
     constructor(private _http: HttpClient) { }
 
-    public getAll(firstRecOffset: number, pageSize: number, nameContains: string = null): Observable<PaginatedResults<Exercise>> {
-        //TODO: Refactor to get pages of filtered data
+    public getAll(firstRecOffset: number, pageSize: number, nameContains: string = null, targetAreaContains: string = null): Observable<PaginatedResults<ExerciseDTO>> {
+        
+        let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
+
+        if(nameContains)
+            url += `&nameContains=${nameContains}`;
+
+        if(targetAreaContains)
+            url += `&hasTargetAreas=${targetAreaContains}`;
+
         return this._http
-            .get(`${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&nameContains=${nameContains}`)
-            .pipe(map((resp: PaginatedResults<Exercise>) => resp)); //TODO: Fully implement
+            .get(url)
+            .pipe(map((resp: PaginatedResults<ExerciseDTO>) => resp)); //TODO: Fully implement
     }
 
     public getById(id: number): Observable<Exercise> {
