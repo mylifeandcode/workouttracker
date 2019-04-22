@@ -4,6 +4,7 @@ import { PaginatedResults } from 'app/models/paginated-results';
 import { finalize, map } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/models/exercise-dto';
 import { TargetArea } from 'app/models/target-area';
+import { SelectItem } from 'primeng/components/common/selectitem';
 
 @Component({
   selector: 'wt-exercise-list',
@@ -25,20 +26,19 @@ export class ExerciseListComponent {
         { field: 'name', header: 'Name' }, 
         { field: 'targetAreas', header: 'Target Areas' }
     ]; //TODO: Create specific type
-    public targetAreas: string[];
+    public targetAreas: SelectItem[] = [];
 
     constructor(private _exerciseSvc: ExerciseService) { 
         _exerciseSvc
             .getTargetAreas()
-            //.pipe(map(targetAreas => targetAreas.map(targetArea => targetArea.name))
             .pipe(map(targetAreas => targetAreas.map(targetArea => targetArea.name)))
             .subscribe((targetAreaNames: string[]) => { 
-                this.targetAreas = targetAreaNames;
-                console.log("TARGET AREAS: ", this.targetAreas);
+                targetAreaNames.forEach(element => {
+                    this.targetAreas.push({label: element, value: element});
+                });
             },
             (error: any) => window.alert("An error occurred getting exercises: " + error)
         );
-
     }
 
     public getExercises(first: number, nameContains: string, targetAreaContains: string): void {
