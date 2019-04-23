@@ -18,7 +18,7 @@
                             <input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'in')" />
                         </th>
                         <th>
-                            <p-multiSelect [style]="{'min-width': '180px'}" [options]="targetAreas" defaultLabel="All" (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>
+                            <p-multiSelect appendTo="body" [style]="{'min-width': '180px'}" [options]="targetAreas" defaultLabel="All" (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>
                         </th>
                     </tr>
                 </ng-template>
@@ -40,4 +40,3 @@
         <button routerLink="/exercises/edit/0" [disabled]="loading" class="btn btn-primary">Add New</button>
     </div>
 </div>
-<p-multiSelect [style]="{'overflow': 'visible'}" [options]="targetAreas" defaultLabel="All"></p-multiSelect>

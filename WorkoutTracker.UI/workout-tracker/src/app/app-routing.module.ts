@@ -11,6 +11,7 @@ import { UserSelectComponent } from './users/user-select/user-select.component';
 import { UserListComponent } from './users/user-list/user-list.component';
 import { UserEditComponent } from './users/user-edit/user-edit.component';
 import { UserSelectedGuard } from './route-guards/user-selected.guard';
+import { WorkoutEditComponent } from './workouts/workout-edit/workout-edit.component';
 
 const routes: Routes = [
   /*
@@ -47,6 +48,11 @@ const routes: Routes = [
     component: WorkoutListComponent, 
     canActivate: [UserSelectedGuard]
   }, 
+  {
+    path: 'workouts/edit/:id', 
+    component: WorkoutEditComponent, 
+    canActivate: [UserSelectedGuard]
+  },
   {
     path: 'workouts/start',
     component: WorkoutComponent, 

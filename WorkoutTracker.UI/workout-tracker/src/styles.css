@@ -21,3 +21,7 @@ body {
     color: red;
     font-style: italic;
 }
+
+.ui-multiselect-panel {
+    background-color: white;
+}

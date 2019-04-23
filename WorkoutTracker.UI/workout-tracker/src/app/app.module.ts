@@ -29,6 +29,7 @@ import { UserEditComponent } from './users/user-edit/user-edit.component';
 
 import { CookieService } from 'ng2-cookies';
 import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
+import { WorkoutEditComponent } from './workouts/workout-edit/workout-edit.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
     SetEditComponent,
     UserSelectComponent,
     UserListComponent,
-    UserEditComponent
+    UserEditComponent,
+    WorkoutEditComponent
   ],
   imports: [
         BrowserModule,

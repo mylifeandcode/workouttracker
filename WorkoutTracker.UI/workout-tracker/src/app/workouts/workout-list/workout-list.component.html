@@ -1,3 +1,33 @@
-<p>
-  workout-list works!
-</p>
+<div class="container">
+  <h3>Workouts</h3>
+  <div class="row">
+      <div class="col-md-12">
+          <p-table #dt class="table table-striped w-auto"  [value]="_workouts" [paginator]="true" [columns]="cols" [rows]="_pageSize" [lazy]="true" (onLazyLoad)="getWorkoutsLazy($event)" [totalRecords]="_totalRecords" [loading]="loading">
+              <ng-template pTemplate="header" let-columns>
+                  <tr>
+                      <th>Name</th>
+                  </tr>
+                  <tr>
+                      <th>
+                          <input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'in')" />
+                      </th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-workout>
+                  <tr>
+                      <td><a [routerLink]="['/workouts/edit/', workout.id]">{{workout.name}}</a></td>
+                      <td [style]="{'overflow': 'visible'}">{{workout.targetAreas}}</td>
+                  </tr>
+              </ng-template>
+          </p-table>
+      </div>
+  </div>
+  <div class="row" *ngIf="_totalRecords">
+      <div class="col-md-4">{{_totalRecords}} total workouts</div>
+  </div>
+  <div class="row col-md-12">
+      <!--<button routerLink="/workouts/edit/0" [disabled]="loading" class="btn btn-primary"><i class="fas fa-plus"></i></button>-->
+      <!--TODO: Restore version above when I have time to figure out why the fontglyphs aren't working-->
+      <button routerLink="/workouts/edit/0" [disabled]="loading" class="btn btn-primary">Add New</button>
+  </div>
+</div>

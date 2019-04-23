@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Text;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
+using WorkoutTracker.Application.FilterClasses;
 using WorkoutTracker.UI.Controllers;
+using WorkoutTracker.UI.Models;
 
 namespace WorkoutTracker.Tests.Controllers
 {
@@ -87,6 +89,32 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsNotNull(response);
             Assert.ReferenceEquals(response.Value, exercise);
             Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void Should_Get_Exercises_Without_Filtering()
+        {
+            //ARRANGE
+            var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
+            var exercises = new List<Exercise>(0);
+            exerciseSvc
+                .Setup(x => x.Get(It.IsAny<int>(), It.IsAny<short>(), It.IsAny<ExerciseFilter>()))
+                .Returns(exercises);
+
+            exerciseSvc
+                .Setup(x => x.GetTotalCount())
+                .Returns(100);
+
+            var sut = new ExerciseController(exerciseSvc.Object);
+
+            //ACT
+            var response = sut.Get(0, 20);
+
+            //ASSERT
+            Assert.IsNotNull(response);
+            Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
+            //var results = (response.Result as PaginatedResults<ExerciseDTO>);
+            //TODO: Complete this test
         }
     }
 }
