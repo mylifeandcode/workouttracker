@@ -1,3 +1,41 @@
-<p>
-  workout-edit works!
-</p>
+<div class="container form-group">
+  <div *ngIf="_loading" class="row">
+      <div class="col-md-offset-5 col-md-1">
+          <p-progressSpinner></p-progressSpinner>
+      </div>
+  </div>
+
+  <form *ngIf="workoutForm && !_loading" [formGroup]="workoutForm" novalidate>
+      <div class="row">
+
+          <div class="col-md-offset-2 col-md-4 form-group">
+              <input type="hidden" formControlName="id" />
+
+              <label class="center-block" [ngClass]="{'has-error': workoutForm.controls['name'].touched && workoutForm.controls['name'].errors}">
+                  Name:
+                  <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
+                  <span *ngIf="workoutForm.controls['name'].touched && workoutForm.controls['name']?.errors" class="errorText">Required</span>
+              </label>
+
+              <label class="center-block" [ngClass]="{'has-error': workoutForm.controls['description'].touched && workoutForm.controls['description'].errors}">
+                <!--Sets (Repetition vs Timed vs Super)-->
+                Sets
+                <div *ngFor="let set of workout.sets">
+                  {{set.exercise.name}}
+                </div>
+              </label>
+
+          </div>
+
+      </div>
+
+      <div class="row">
+          <div class="col-md-offset-2 col-md-4">
+              <button type="submit" [disabled]="workoutForm.invalid || _saving" (click)="saveWorkout()" class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
+          </div>
+      </div>
+      <div *ngIf="_errorMsg" class="col-md-offset-2 col-md-4 errorText">
+          {{_errorMsg}}
+      </div>
+  </form>
+</div>
