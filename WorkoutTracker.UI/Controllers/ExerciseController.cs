@@ -35,7 +35,9 @@ namespace WorkoutTracker.UI.Controllers
         {
             var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
             var result = new PaginatedResults<ExerciseDTO>();
-            result.TotalCount = _svc.GetTotalCount();
+
+            result.TotalCount = _svc.GetTotalCount(); //TODO: Modify to get total count by filter
+
             var exercises = _svc.Get(firstRecord, pageSize, filter);
             result.Results = exercises.Select((exercise) => 
             {

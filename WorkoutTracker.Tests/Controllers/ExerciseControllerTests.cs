@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
@@ -29,8 +30,8 @@ namespace WorkoutTracker.Tests.Controllers
 
             //ASSERT
             Assert.IsNotNull(response);
-            Assert.ReferenceEquals(response.Value, exercise);
             Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
+            Assert.ReferenceEquals((response.Result as OkObjectResult).Value, exercise);
         }
 
         [TestMethod]
@@ -66,12 +67,12 @@ namespace WorkoutTracker.Tests.Controllers
 
             //ASSERT
             Assert.IsNotNull(response);
-            Assert.ReferenceEquals(response.Value, exercise);
             Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
+            Assert.ReferenceEquals((response.Result as OkObjectResult).Value, exercise);
         }
 
         [TestMethod]
-        public void Should_Update_Exxisting_Exercise()
+        public void Should_Update_Existing_Exercise()
         {
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
@@ -87,8 +88,8 @@ namespace WorkoutTracker.Tests.Controllers
 
             //ASSERT
             Assert.IsNotNull(response);
-            Assert.ReferenceEquals(response.Value, exercise);
             Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
+            Assert.ReferenceEquals((response.Result as OkObjectResult).Value, exercise);
         }
 
         [TestMethod]
@@ -96,7 +97,18 @@ namespace WorkoutTracker.Tests.Controllers
         {
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
-            var exercises = new List<Exercise>(0);
+            var exercises = new List<Exercise>(1);
+            var exercise =
+                new Exercise
+                {
+                    Id = 12345,
+                    Name = "Test Exercise",
+                    ExerciseTargetAreaLinks = new List<ExerciseTargetAreaLink>(1)
+                };
+            exercise.ExerciseTargetAreaLinks.Add(new ExerciseTargetAreaLink { TargetArea = new TargetArea { Name = "Shoulders" } });
+
+            exercises.Add(exercise);
+
             exerciseSvc
                 .Setup(x => x.Get(It.IsAny<int>(), It.IsAny<short>(), It.IsAny<ExerciseFilter>()))
                 .Returns(exercises);
@@ -113,8 +125,12 @@ namespace WorkoutTracker.Tests.Controllers
             //ASSERT
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
-            //var results = (response.Result as PaginatedResults<ExerciseDTO>);
-            //TODO: Complete this test
+
+            var results = ((response.Result as OkObjectResult).Value as PaginatedResults<ExerciseDTO>).Results.ToList();
+            Assert.AreEqual(results.Count, 1);
+            Assert.AreEqual(exercise.Id, results[0].Id);
+            Assert.AreEqual(exercise.Name, results[0].Name);
+            Assert.AreEqual(exercise.ExerciseTargetAreaLinks.ToList()[0].TargetArea.Name, results[0].TargetAreas);
         }
     }
 }
