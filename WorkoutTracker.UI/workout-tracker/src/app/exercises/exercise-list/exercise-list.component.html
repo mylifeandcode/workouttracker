@@ -9,11 +9,6 @@
                         <th>Target Areas</th>
                     </tr>
                     <tr>
-                        <!--
-                        <th *ngFor="let col of columns">
-                            <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)" />
-                        </th>
-                        -->
                         <th>
                             <input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'in')" />
                         </th>

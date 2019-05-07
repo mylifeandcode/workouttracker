@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/users/user.service';
 import { Workout } from 'app/models/workout';
 import { User } from 'app/models/user';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-workout-edit',
@@ -21,13 +22,15 @@ export class WorkoutEditComponent implements OnInit {
   private _loading: boolean = true;
   private _errorMsg: string = null;
   private _currentUserId: number; //The ID of the user performing the add or edit
+  private _modalRef: BsModalRef;
   public infoMsg: string = null;
 
   constructor(
     private route: ActivatedRoute,
     private _formBuilder: FormBuilder,
     private _workoutSvc: WorkoutService,
-    private _userSvc: UserService) {
+    private _userSvc: UserService, 
+    private _modalSvc: BsModalService) {
   }
 
   async ngOnInit() {
@@ -42,6 +45,10 @@ export class WorkoutEditComponent implements OnInit {
         this.workout = new Workout();
         this._loading = false;
       }
+  }
+
+  private openModal(template: TemplateRef<any>): void {
+    this._modalRef = this._modalSvc.show(template);
   }
 
   private getRouteParams(): void {

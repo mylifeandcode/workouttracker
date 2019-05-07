@@ -24,6 +24,7 @@
     "font-awesome": "^4.7.0",
     "lodash": "^4.17.11",
     "ng2-cookies": "^1.0.12",
+    "ngx-bootstrap": "^4.1.1",
     "primeicons": "^1.0.0",
     "primeng": "^6.1.6",
     "rxjs": "~6.3.3",

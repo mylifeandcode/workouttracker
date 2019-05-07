@@ -9,6 +9,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CommonModule } from '@angular/common';
 
+import { ModalModule } from 'ngx-bootstrap/modal';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
@@ -30,6 +32,7 @@ import { UserEditComponent } from './users/user-edit/user-edit.component';
 import { CookieService } from 'ng2-cookies';
 import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
 import { WorkoutEditComponent } from './workouts/workout-edit/workout-edit.component';
+import { ExerciseListMiniComponent } from './exercises/exercise-list-mini/exercise-list-mini.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +49,8 @@ import { WorkoutEditComponent } from './workouts/workout-edit/workout-edit.compo
     UserSelectComponent,
     UserListComponent,
     UserEditComponent,
-    WorkoutEditComponent
+    WorkoutEditComponent,
+    ExerciseListMiniComponent
   ],
   imports: [
         BrowserModule,
@@ -58,7 +62,8 @@ import { WorkoutEditComponent } from './workouts/workout-edit/workout-edit.compo
         TableModule, 
         ProgressSpinnerModule, 
         MultiSelectModule, 
-        CommonModule
+        CommonModule, 
+        ModalModule.forRoot()
   ],
   providers: [ExerciseService, UserService, CookieService, UserSelectedGuard],
   bootstrap: [AppComponent]
