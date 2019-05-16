@@ -6,6 +6,7 @@ import { UserService } from 'app/users/user.service';
 import { Workout } from 'app/models/workout';
 import { User } from 'app/models/user';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { ExerciseDTO } from 'app/models/exercise-dto';
 
 @Component({
   selector: 'app-workout-edit',
@@ -85,6 +86,10 @@ export class WorkoutEditComponent implements OnInit {
 
   private updateFormWithWorkoutValues(): void {
 
+  }
+
+  private addExercise(exercise: ExerciseDTO): void {
+    console.log("Child component says Add Exercise: ", exercise);
   }
 
 }

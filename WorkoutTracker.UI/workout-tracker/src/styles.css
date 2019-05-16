@@ -25,3 +25,7 @@ body {
 .ui-multiselect-panel {
     background-color: white;
 }
+
+.ng-trigger {
+    z-index: 10000 !important;
+}

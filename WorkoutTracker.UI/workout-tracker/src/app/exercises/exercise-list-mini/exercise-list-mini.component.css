@@ -1,0 +1,9 @@
+/* TODO: Come back to this. Style isn't currently being applied, so am adding it elsewhere. */
+.ng-trigger {
+    z-index: 10000 !important;
+}
+
+/* This class DOES work. */
+.exerciseName {
+    cursor: pointer;
+}

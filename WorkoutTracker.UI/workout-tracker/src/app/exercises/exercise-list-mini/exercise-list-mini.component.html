@@ -15,9 +15,8 @@
     </ng-template>
     <ng-template pTemplate="body" let-exercise>
         <tr>
-            <td>{{exercise.name}}</td>
+            <td style="width: 40%"><a class="exerciseName" (click)="selectExercise(exercise)">{{exercise.name}}</a></td>
             <td [style]="{'overflow': 'visible'}">{{exercise.targetAreas}}</td>
         </tr>
     </ng-template>
 </p-table>
-
