@@ -4,9 +4,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/users/user.service';
 import { Workout } from 'app/models/workout';
+import { Set } from 'app/models/set';
 import { User } from 'app/models/user';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ExerciseDTO } from 'app/models/exercise-dto';
+import { WorkoutDTO } from 'app/models/workout-dto';
+import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
 
 @Component({
   selector: 'app-workout-edit',
@@ -15,8 +18,7 @@ import { ExerciseDTO } from 'app/models/exercise-dto';
 })
 export class WorkoutEditComponent implements OnInit {
 
-  private _workoutId: number = 0;
-  public workout: Workout;
+  private _workoutDTO: WorkoutDTO;
   public workoutForm: FormGroup;
 
   private _saving: boolean = false;
@@ -35,17 +37,18 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   async ngOnInit() {
+
+    this._workoutDTO = new WorkoutDTO();
+
     this.getRouteParams();
     this.createForm();
 
     this._currentUserId = await this.getCurrentUserId();
 
-    if (this._workoutId != 0) 
+    if (this._workoutDTO.id != 0) 
         this.loadWorkout(); //Is this safe? route.params is an observable.
-      else {
-        this.workout = new Workout();
-        this._loading = false;
-      }
+    else
+      this._loading = false;
   }
 
   private openModal(template: TemplateRef<any>): void {
@@ -54,7 +57,7 @@ export class WorkoutEditComponent implements OnInit {
 
   private getRouteParams(): void {
     this.route.params.subscribe(params => {
-        this._workoutId = params['id'];
+        this._workoutDTO.id = params['id'];
     });
   }
 
@@ -77,8 +80,8 @@ export class WorkoutEditComponent implements OnInit {
 
   private loadWorkout(): void {
     this._loading = true;
-    this._workoutSvc.getById(this._workoutId).subscribe((value: Workout) => {
-        this.workout = value;
+    this._workoutSvc.getById(this._workoutDTO.id).subscribe((value: Workout) => {
+        this._workoutDTO = this.getWorkoutDTOFromWorkout(value);
         this.updateFormWithWorkoutValues();
         this._loading = false;
     }); //TODO: Handle errors
@@ -89,7 +92,14 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private addExercise(exercise: ExerciseDTO): void {
-    console.log("Child component says Add Exercise: ", exercise);
+    this._modalRef.hide();
+    //TODO: Check this out: https://valor-software.com/ngx-bootstrap/#/modals
+    this._workoutDTO.exercises.push(new ExerciseInWorkout(exercise));
+  }
+
+  private getWorkoutDTOFromWorkout(workout: Workout): WorkoutDTO {
+    //TODO: Implement
+    return null;
   }
 
 }

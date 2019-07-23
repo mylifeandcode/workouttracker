@@ -20,11 +20,11 @@
               <label class="center-block">
                 <!--Sets (Repetition vs Timed vs Super)-->
                 Sets
-                <div *ngFor="let set of workout.sets">
-                  {{set.exercise.name}}
+                <div *ngFor="let exercise of _workoutDTO.exercises">
+                  {{exercise.name}}
                 </div>
                 <p>
-                    <button class="btn btn-primary btn-sm" (click)="openModal(template)">Add Exercise to Workout</button>
+                    <button class="btn btn-primary btn-sm" (click)="openModal(exerciseSelectModal)">Add Exercise to Workout</button>
                 </p>
               </label>
 
@@ -43,7 +43,8 @@
 
   </form>
 </div>
-<ng-template #template>
+
+<ng-template #exerciseSelectModal>
   <div class="modal-header">
     <h4 class="modal-title pull-left">Select an Exercise</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="_modalRef.hide()">
@@ -52,5 +53,17 @@
   </div>
   <div class="modal-body">
     <wt-exercise-list-mini (exerciseSelected)="addExercise($event)"></wt-exercise-list-mini>
+  </div>
+</ng-template>
+
+<ng-template #setDefinitionModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Exercise Set Definition</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="_modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <wt-workout-set-definition></wt-workout-set-definition>
   </div>
 </ng-template>

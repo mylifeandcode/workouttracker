@@ -33,6 +33,7 @@ import { CookieService } from 'ng2-cookies';
 import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
 import { WorkoutEditComponent } from './workouts/workout-edit/workout-edit.component';
 import { ExerciseListMiniComponent } from './exercises/exercise-list-mini/exercise-list-mini.component';
+import { WorkoutSetDefinitionComponent } from './workouts/workout-set-definition/workout-set-definition.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { ExerciseListMiniComponent } from './exercises/exercise-list-mini/exerci
     UserListComponent,
     UserEditComponent,
     WorkoutEditComponent,
-    ExerciseListMiniComponent
+    ExerciseListMiniComponent,
+    WorkoutSetDefinitionComponent
   ],
   imports: [
         BrowserModule,
