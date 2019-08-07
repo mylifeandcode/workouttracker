@@ -14,7 +14,7 @@ namespace WorkoutApplication.Data.EntitySetup.Workouts
 
             entity.Property(x => x.Name).HasMaxLength(50).IsRequired();
             entity.Property(x => x.UserId).IsRequired();
-            entity.HasMany(x => x.Sets);
+            entity.HasMany(x => x.Exercises);
 
             base.SetupAuditFields<Workout>(builder);
         }

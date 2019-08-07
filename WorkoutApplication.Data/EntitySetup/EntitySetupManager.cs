@@ -24,6 +24,7 @@ namespace WorkoutApplication.Data.EntitySetup
             _setups.Add(new ExecutedExerciseSetup());
             _setups.Add(new TargetAreaSetup());
             _setups.Add(new ExerciseTargetAreaLinkSetup());
+            _setups.Add(new ExerciseInWorkoutSetup());
 
             //Resistance Entity Setup
             _setups.Add(new ResistanceSetup());
