@@ -34,7 +34,7 @@ namespace WorkoutApplication.Data
         //Users
         public DbSet<User> Users { get; set; }
 
-        public WorkoutsContext() { }
+        //public WorkoutsContext() { }
         public WorkoutsContext(DbContextOptions<WorkoutsContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutApplication.Data;
 
 namespace WorkoutApplication.Data.Migrations
 {
     [DbContext(typeof(WorkoutsContext))]
-    partial class WorkoutsContextModelSnapshot : ModelSnapshot
+    [Migration("20190807202330_ExerciseInWorkoutInitial")]
+    partial class ExerciseInWorkoutInitial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,17 +67,7 @@ namespace WorkoutApplication.Data.Migrations
 
                     b.Property<DateTime?>("ModifiedDateTime");
 
-                    b.Property<string>("Movement")
-                        .IsRequired()
-                        .HasMaxLength(4096);
-
                     b.Property<string>("Name");
-
-                    b.Property<string>("PointsToRemember")
-                        .HasMaxLength(4096);
-
-                    b.Property<string>("Setup")
-                        .HasMaxLength(4096);
 
                     b.HasKey("Id");
 

@@ -8,7 +8,9 @@ namespace WorkoutApplication.Domain.Exercises
     public class Exercise : NamedEntity
     {
         public string Description { get; set; }
-
+        public string Setup { get; set; }
+        public string Movement { get; set; }
+        public string PointsToRemember { get; set; }
         public virtual ICollection<ExerciseTargetAreaLink> ExerciseTargetAreaLinks { get; set; }
     }
 }
