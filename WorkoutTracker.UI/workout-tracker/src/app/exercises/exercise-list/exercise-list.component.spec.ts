@@ -7,9 +7,12 @@ import { ExerciseService } from '../exercise.service';
 import { Exercise } from 'app/models/exercise';
 import { of } from 'rxjs';
 import { PaginatedResults } from 'app/models/paginated-results';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { TargetArea } from 'app/models/target-area';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<Exercise>()));
+  getTargetAreas = jasmine.createSpy('getTargetAreas').and.returnValue(of(new Array<TargetArea>()));
 }
 
 describe('ExerciseListComponent', () => {
@@ -21,7 +24,8 @@ describe('ExerciseListComponent', () => {
       declarations: [ ExerciseListComponent ], 
       imports: [ 
         TableModule, 
-        RouterTestingModule 
+        RouterTestingModule, 
+        MultiSelectModule 
       ], 
       providers: [ 
         {

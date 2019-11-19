@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WorkoutEditComponent } from './workout-edit.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('WorkoutEditComponent', () => {
   let component: WorkoutEditComponent;
@@ -8,7 +10,11 @@ describe('WorkoutEditComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WorkoutEditComponent ]
+      declarations: [ WorkoutEditComponent ], 
+      imports: [
+        ReactiveFormsModule, 
+        ProgressSpinnerModule
+      ]
     })
     .compileComponents();
   }));

@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { ExerciseService } from './exercise.service';
 import { PaginatedResults } from 'app/models/paginated-results';
 import { Exercise } from 'app/models/exercise';
+import { ExerciseDTO } from 'app/models/exercise-dto';
 
 describe('ExerciseService', () => {
   beforeEach(() => {
@@ -24,7 +25,7 @@ describe('ExerciseService', () => {
 
   it('should retrieve exercises', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
 
-    const expectedResults = new PaginatedResults<Exercise>();
+    const expectedResults = new PaginatedResults<ExerciseDTO>();
 
     service.getAll(0, 10).subscribe(
       exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
