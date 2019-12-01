@@ -15,6 +15,7 @@ using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
 using WorkoutApplication.Domain;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 
 namespace WorkoutTracker
 {
@@ -74,6 +75,18 @@ namespace WorkoutTracker
 
             app.UseMvcWithDefaultRoute();
             app.UseCors(options => options.WithOrigins("http://localhost:4200").AllowAnyMethod());
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+
+                spa.Options.SourcePath = "workout-tracker";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseAngularCliServer(npmScript: "start");
+                }
+            });
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {

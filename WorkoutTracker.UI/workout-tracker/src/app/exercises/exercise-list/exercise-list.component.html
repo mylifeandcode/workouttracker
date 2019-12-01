@@ -14,6 +14,7 @@
                         </th>
                         <th>
                             <p-multiSelect appendTo="body" [style]="{'min-width': '180px'}" [options]="targetAreas" defaultLabel="All" (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>
+                            <!--<p-multiSelect [options]="targetAreas" defaultLabel="All" (onChange)="dt.filter($event.value, 'targetAreas', 'in')" appendTo="body"></p-multiSelect>-->
                         </th>
                     </tr>
                 </ng-template>
