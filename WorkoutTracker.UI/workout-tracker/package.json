@@ -22,7 +22,7 @@
     "@angular/router": "~7.0.0",
     "core-js": "^2.5.4",
     "font-awesome": "^4.7.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "ng2-cookies": "^1.0.12",
     "ngx-bootstrap": "^4.1.1",
     "primeicons": "^1.0.0",
