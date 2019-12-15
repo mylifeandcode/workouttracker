@@ -64,6 +64,12 @@ namespace WorkoutTracker
             var connection = Configuration.GetConnectionString("WorkoutTrackerDatabase");
             services.AddDbContext<WorkoutsContext>(options => options.UseLazyLoadingProxies().UseSqlServer(connection));
 
+            // In production, the Angular files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "workout-tracker/dist";
+            });
+
             return ConfigureIoC(services);
         }
 
@@ -74,6 +80,10 @@ namespace WorkoutTracker
             loggerFactory.AddDebug();
 
             app.UseMvcWithDefaultRoute();
+
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+
             app.UseCors(options => options.WithOrigins("http://localhost:4200").AllowAnyMethod());
             app.UseSpa(spa =>
             {
