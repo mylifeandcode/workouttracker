@@ -5,6 +5,7 @@ import { User } from '../../models/user';
 import { FormBuilder, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'wt-user-edit',
@@ -99,11 +100,11 @@ export class UserEditComponent implements OnInit {
     let result: Observable<User> =
       (user.id === 0 ? this._userSvc.addUser(user) : this._userSvc.updateUser(user));
 
-    result.subscribe(
-      (user: User) => this._router.navigate(['users']),
-      (error: any) => this.errorMsg = error,
-      () => this.savingUserInfo = false);
-
+      result
+          .pipe(finalize(() => { this.savingUserInfo = false; }))
+          .subscribe(
+            (user: User) => this._router.navigate(['users']),
+            (error: any) => this.errorMsg = error);
   }
 
   public cancel(): void {

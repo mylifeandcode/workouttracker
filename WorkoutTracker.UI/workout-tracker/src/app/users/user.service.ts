@@ -50,12 +50,12 @@ export class UserService {
 
   public addUser(user: User): Observable<User> {
     return this._http.post(this._rootUrl, user, httpOptions)
-      .pipe(map((resp: Response) => resp.json()));
+        .pipe(map((resp: User) => resp));
   }
 
   public updateUser(user: User): Observable<User> {
     return this._http.put(this._rootUrl, user, httpOptions)
-      .pipe(map((resp: Response) => resp.json()));
+        .pipe(map((resp: User) => resp));
   }
 
   public deleteUser(userId: number): Observable<any> {

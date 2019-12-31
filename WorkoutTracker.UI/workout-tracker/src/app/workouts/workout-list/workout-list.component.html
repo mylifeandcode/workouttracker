@@ -2,7 +2,7 @@
   <h3>Workouts</h3>
   <div class="row">
       <div class="col-md-12">
-          <p-table #dt class="table table-striped w-auto"  [value]="_workouts" [paginator]="true" [columns]="cols" [rows]="_pageSize" [lazy]="true" (onLazyLoad)="getWorkoutsLazy($event)" [totalRecords]="_totalRecords" [loading]="loading">
+          <p-table #dt *ngIf="_totalRecords > 0" class="table table-striped w-auto"  [value]="_workouts" [paginator]="true" [columns]="cols" [rows]="_pageSize" [lazy]="true" (onLazyLoad)="getWorkoutsLazy($event)" [totalRecords]="_totalRecords" [loading]="loading">
               <ng-template pTemplate="header" let-columns>
                   <tr>
                       <th>Name</th>
@@ -22,8 +22,9 @@
           </p-table>
       </div>
   </div>
-  <div class="row" *ngIf="_totalRecords">
-      <div class="col-md-4">{{_totalRecords}} total workouts</div>
+  <div class="row" *ngIf="_totalRecords != null">
+      <div class="col-md-2">{{_totalRecords}} total workouts</div>
+      <div class="col-md-10" *ngIf="_totalRecords == 0" style="font-style: italic">No workouts have been defined. Please create one using the "Add New" button below.</div>
   </div>
   <div class="row col-md-12">
       <!--<button routerLink="/workouts/edit/0" [disabled]="loading" class="btn btn-primary"><i class="fas fa-plus"></i></button>-->

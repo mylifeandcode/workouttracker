@@ -7,10 +7,10 @@ import { WorkoutDTO } from 'app/models/workout-dto';
   templateUrl: './workout-list.component.html',
   styleUrls: ['./workout-list.component.css']
 })
-export class WorkoutListComponent {
+export class WorkoutListComponent implements OnInit {
 
-    //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
-    //Turbo Table automatically makes a call to get data on initialization
+  //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
+  //Turbo Table automatically makes a call to get data on initialization
 
   private _totalRecords: number;
   private _loading: boolean = true;
@@ -23,9 +23,15 @@ export class WorkoutListComponent {
   constructor(private _workoutSvc: WorkoutService) { 
   }
 
+  ngOnInit(): void {
+      this.getWorkouts(0, null);
+  }
+
   public getWorkouts(first: number, nameContains: string): void {
       this._loading = true;
       //TODO: Implement
+      this._totalRecords = 0;
+      this._loading = false;
   }
 
   public getWorkoutsLazy(event: any): void {

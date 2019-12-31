@@ -69,8 +69,12 @@ const routes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
-      path: 'users/first',
-      component: UserEditComponent
+    path: 'users/first',
+    component: UserEditComponent
+  },
+  {
+    path: 'users/add',
+    component: UserEditComponent
   }, 
   {
     path: '**',

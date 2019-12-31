@@ -30,7 +30,7 @@ export class UserListComponent implements OnInit {
         this._userSvc.deleteUser(userId).subscribe(
             () => {
                 let index = _.findIndex(this.users, (user: User) => user.id == userId);
-                this.users.splice(index);
+                this.users.splice(index, 1);
             },
             (error: any) => this.errorMsg = error,
             () => {

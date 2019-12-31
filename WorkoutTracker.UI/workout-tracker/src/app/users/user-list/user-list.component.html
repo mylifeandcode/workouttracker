@@ -13,11 +13,15 @@
           <td>{{user.name}}</td>
           <td class="text-right">
             <button type="button" routerLink="/users/edit/{{user.id}}" class="btn btn-primary">Edit</button>
+              &nbsp;
             <button type="button" (click)="deleteUser(user.id)" class="btn btn-danger">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
+  <div class="row col-md-offset-10 col-md-1">
+      <button type="button" class="btn btn-primary" routerLink="/users/add">Add</button>
   </div>
 </div>
 
