@@ -29,7 +29,7 @@ export class WorkoutEditComponent implements OnInit {
   public infoMsg: string = null;
 
   constructor(
-    private route: ActivatedRoute,
+    private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
     private _workoutSvc: WorkoutService,
     private _userSvc: UserService, 
@@ -56,7 +56,7 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private getRouteParams(): void {
-    this.route.params.subscribe(params => {
+    this._route.params.subscribe(params => {
         this._workoutDTO.id = params['id'];
     });
   }

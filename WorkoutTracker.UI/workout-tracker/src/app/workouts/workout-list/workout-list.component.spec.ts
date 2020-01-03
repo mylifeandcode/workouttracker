@@ -1,7 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+
+import { TableModule } from 'primeng/table';
 
 import { WorkoutListComponent } from './workout-list.component';
-import { TableModule } from 'primeng/table';
+import { WorkoutService } from '../workout.service';
+
+
+class WorkoutServiceMock {
+
+}
 
 describe('WorkoutListComponent', () => {
   let component: WorkoutListComponent;
@@ -11,7 +19,14 @@ describe('WorkoutListComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ WorkoutListComponent ], 
       imports: [
-        TableModule
+        TableModule, 
+        RouterTestingModule
+      ], 
+      providers: [
+        {
+          provide: WorkoutService, 
+          useClass: WorkoutServiceMock
+        }
       ]
     })
     .compileComponents();

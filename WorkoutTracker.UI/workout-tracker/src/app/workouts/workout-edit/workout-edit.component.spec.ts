@@ -1,9 +1,18 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { WorkoutEditComponent } from './workout-edit.component';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+
+import { of } from 'rxjs';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+
+import { WorkoutEditComponent } from './workout-edit.component';
+import { WorkoutService } from '../workout.service';
+import { UserService } from 'app/users/user.service';
+import { User } from 'app/models/user';
+import { Workout } from 'app/models/workout';
 
 @Component({
   selector: 'wt-exercise-list-mini', 
@@ -17,10 +26,23 @@ class FakeExerciseListMiniComponent{}
 })
 class FakeWorkoutSetDefComponent{}
 
+class WorkoutServiceMock {
+  getById = jasmine.createSpy('getById').and.returnValue(of(new Workout()));
+}
+
+class UserServiceMock {
+  getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
+}
+
+class BsModalServiceMock {
+
+}
 
 describe('WorkoutEditComponent', () => {
   let component: WorkoutEditComponent;
   let fixture: ComponentFixture<WorkoutEditComponent>;
+
+  //Thanks to Mike Gallagher for the link: https://www.joshuacolvin.net/mocking-activated-route-data-in-angular/
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -31,7 +53,30 @@ describe('WorkoutEditComponent', () => {
       ], 
       imports: [
         ReactiveFormsModule, 
-        ProgressSpinnerModule
+        ProgressSpinnerModule, 
+        RouterTestingModule
+      ], 
+      providers: [
+        {
+          provide: ActivatedRoute, 
+          useValue: {
+            params: of({
+              id: 5
+            })
+          }
+        }, 
+        {
+          provide: WorkoutService, 
+          useClass: WorkoutServiceMock
+        }, 
+        {
+          provide: UserService, 
+          useClass: UserServiceMock
+        }, 
+        {
+          provide: BsModalService, 
+          useClass: BsModalServiceMock
+        }
       ]
     })
     .compileComponents();

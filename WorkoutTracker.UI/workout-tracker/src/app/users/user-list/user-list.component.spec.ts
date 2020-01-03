@@ -8,6 +8,7 @@ import { User } from 'app/models/user';
 
 class UserServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new Array<User>()));
+  getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
 }
 
 describe('UserListComponent', () => {
