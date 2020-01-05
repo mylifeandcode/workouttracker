@@ -4,6 +4,7 @@ import { ExerciseService } from './exercise.service';
 import { PaginatedResults } from 'app/models/paginated-results';
 import { Exercise } from 'app/models/exercise';
 import { ExerciseDTO } from 'app/models/exercise-dto';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 describe('ExerciseService', () => {
   beforeEach(() => {
@@ -41,18 +42,37 @@ describe('ExerciseService', () => {
 
   }));
 
+  it('should retrieve exercise by ID', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
+
+    const expectedExercise = new Exercise();
+
+    service.getById(5).subscribe(
+      exercise => expect(exercise).toEqual(expectedExercise, 'should return expected results'), 
+      fail
+    );
+
+    // ExerciseService should have made one request to GET exercise from expected URL
+    const req = httpMock.expectOne("http://localhost:5600/api/exercises/5"); //TODO: Refactor
+    expect(req.request.method).toEqual('GET');
+
+    // Respond with the mock results
+    req.flush(expectedExercise);    
+
+  }));
+
   it('should create new exercise', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
 
     let exercise = new Exercise();
 
     service.add(exercise).subscribe(
-      result => expect(result).toEqual(exercise, 'should return newly created exercise'),
+      (result: Exercise) =>  expect(result).toEqual(exercise, 'should return newly created exercise'),
       fail
     );
 
     // ExerciseService should have made one request to GET exercises from expected URL
     const req = httpMock.expectOne("http://localhost:5600/api/exercises"); //TODO: Refactor
     expect(req.request.method).toEqual('POST');
+    expect(req.request.body).toEqual(exercise);
 
     // Respond with the mock results
     req.flush(exercise);    
