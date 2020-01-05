@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Response, RequestOptions } from '@angular/http';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Exercise } from '../models/exercise';
 import { TargetArea } from '../models/target-area';

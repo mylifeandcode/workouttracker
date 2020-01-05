@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Response, RequestOptions, RequestOptionsArgs, Headers } from '@angular/http';
 import { Observable, of } from 'rxjs';
 import { User } from '../models/user';
 import { map } from 'rxjs/operators';
 import { CookieService } from 'ng2-cookies';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 
 const httpOptions = {
   headers: new HttpHeaders({
