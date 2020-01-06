@@ -26,7 +26,7 @@ export class UserService {
   }
 
   public getCurrentUserInfo(): Observable<User> {
-    console.log("this._currentUser", this._currentUser);
+
     if (this._currentUser)
       return of(this._currentUser);
 
