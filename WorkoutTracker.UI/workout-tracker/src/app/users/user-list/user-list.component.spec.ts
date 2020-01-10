@@ -7,7 +7,13 @@ import { of } from 'rxjs';
 import { User } from 'app/models/user';
 
 class UserServiceMock {
-  getAll = jasmine.createSpy('getAll').and.returnValue(of(new Array<User>()));
+  private fakeUsers: User[] = 
+  [
+    new User({name: 'Fred'}), 
+    new User({name: 'Joe'})
+  ];
+
+  getAll = jasmine.createSpy('getAll').and.returnValue(of(this.fakeUsers));
   getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
 }
 
@@ -37,5 +43,12 @@ describe('UserListComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should load users on init', () => {
+    fixture.detectChanges();
+    const userSvc: UserService = TestBed.get(UserService);
+    expect(userSvc.getAll).toHaveBeenCalledTimes(1);
+    expect(component.users.length).toBeGreaterThan(0);
   });
 });
