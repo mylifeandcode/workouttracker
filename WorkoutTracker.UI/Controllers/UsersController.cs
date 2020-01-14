@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApplication.Domain;
-using WorkoutApplication.Repository;
 using WorkoutTracker.Application.Users;
 
 namespace WorkoutTracker.UI.Controllers
@@ -28,33 +24,69 @@ namespace WorkoutTracker.UI.Controllers
 
         // GET api/Users
         [HttpGet]
-        public IEnumerable<User> Get()
+        public ActionResult<IEnumerable<User>> Get()
         {
-            return _svc.GetAll();
+            try
+            {
+                return Ok(_svc.GetAll());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpGet("{id}")]
-        public User Get(int id)
+        public ActionResult<User> Get(int id)
         {
-            return _svc.GetById(id);
+            try
+            {
+                return Ok(_svc.GetById(id));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPost]
-        public User Post([FromBody]User user)
+        public ActionResult<User> Post([FromBody]User user)
         {
-            return _svc.Add(user);
+            try
+            {
+                return Ok(_svc.Add(user));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPut]
-        public User Put([FromBody]User user)
+        public ActionResult<User> Put([FromBody]User user)
         {
-            return _svc.Update(user);
+            try
+            {
+                return Ok(_svc.Update(user));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
-            _svc.Delete(id);
+            try
+            {
+                _svc.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

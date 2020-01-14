@@ -33,47 +33,75 @@ namespace WorkoutTracker.UI.Controllers
         [HttpGet]
         public ActionResult<PaginatedResults<ExerciseDTO>> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null)
         {
-            var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
-            var result = new PaginatedResults<ExerciseDTO>();
-
-            result.TotalCount = _svc.GetTotalCount(); //TODO: Modify to get total count by filter
-
-            var exercises = _svc.Get(firstRecord, pageSize, filter);
-            result.Results = exercises.Select((exercise) => 
+            try
             {
-                var dto = new ExerciseDTO();
-                dto.Id = exercise.Id;
-                dto.Name = exercise.Name;
-                dto.TargetAreas =
-                    string.Join(", ", exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name));
-                return dto;
-            });
-            return Ok(result);
+                var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
+                var result = new PaginatedResults<ExerciseDTO>();
+
+                result.TotalCount = _svc.GetTotalCount(); //TODO: Modify to get total count by filter
+
+                var exercises = _svc.Get(firstRecord, pageSize, filter);
+                result.Results = exercises.Select((exercise) =>
+                {
+                    var dto = new ExerciseDTO();
+                    dto.Id = exercise.Id;
+                    dto.Name = exercise.Name;
+                    dto.TargetAreas =
+                        string.Join(", ", exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name));
+                    return dto;
+                });
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // GET api/Exercises/5
         [HttpGet("{id}")]
         public ActionResult<Exercise> Get(int id)
         {
-            var exercise = _svc.GetById(id);
-            if (exercise == null)
-                return NotFound(id);
-            else
-                return Ok(exercise);
+            try
+            {
+                var exercise = _svc.GetById(id);
+                if (exercise == null)
+                    return NotFound(id);
+                else
+                    return Ok(exercise);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // POST api/Exercises
         [HttpPost]
         public ActionResult<Exercise> Post([FromBody]Exercise value)
         {
-            return Ok(_svc.Add(value, true));
+            try
+            {
+                return Ok(_svc.Add(value, true));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // PUT api/Exercises/5
         [HttpPut("{id}")]
         public ActionResult<Exercise> Put(int id, [FromBody]Exercise value)
         {
-            return Ok(_svc.Update(value, true));
+            try
+            {
+                return Ok(_svc.Update(value, true));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // DELETE api/Exercises/5

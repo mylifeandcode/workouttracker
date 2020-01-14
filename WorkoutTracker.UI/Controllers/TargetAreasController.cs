@@ -25,34 +25,51 @@ namespace WorkoutTracker.UI.Controllers
 
         // GET: api/values
         [HttpGet]
-        public IEnumerable<TargetArea> Get()
+        public ActionResult<IEnumerable<TargetArea>> Get()
         {
-            return _svc.GetAll().ToList();
+            try
+            {
+                return Ok(_svc.GetAll().ToList());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public TargetArea Get(int id)
+        public ActionResult<TargetArea> Get(int id)
         {
-            return _svc.Get(id);
+            try
+            {
+                return Ok(_svc.Get(id));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]TargetArea value)
+        public ActionResult<TargetArea> Post([FromBody]TargetArea value)
         {
+            throw new NotImplementedException();
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]TargetArea value)
+        public ActionResult<TargetArea> Put(int id, [FromBody]TargetArea value)
         {
+            throw new NotImplementedException();
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            throw new NotImplementedException();
         }
     }
 }

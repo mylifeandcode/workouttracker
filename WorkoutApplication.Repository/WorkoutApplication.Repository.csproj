@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WorkoutApplication.Data\WorkoutApplication.Data.csproj" />
     <ProjectReference Include="..\WorkoutApplication.Domain\WorkoutApplication.Domain.csproj" />
     <ProjectReference Include="..\WorkoutApplication.Infrastructure\WorkoutApplication.Infrastructure.csproj" />
