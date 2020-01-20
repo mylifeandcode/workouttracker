@@ -8,7 +8,7 @@
     <form *ngIf="exerciseForm && !_loading" [formGroup]="exerciseForm" novalidate>
         <div class="row">
 
-            <div class="col-md-offset-2 col-md-4 form-group">
+            <div class="col-md-8 form-group">
                 <input type="hidden" formControlName="id" />
 
                 <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['name'].touched && exerciseForm.controls['name'].errors}">
@@ -37,13 +37,23 @@
             </div>
 
         </div>
-
         <div class="row">
-            <div class="col-md-offset-2 col-md-4">
+            <div class="col-md-3">
+                Setup
+            </div>
+            <div class="col-md-3">
+                Movement
+            </div>
+            <div class="col-md-4">
+                Points to Remember
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
                 <button type="submit" [disabled]="exerciseForm.invalid || _saving" (click)="saveExercise()" class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
             </div>
         </div>
-        <div *ngIf="_errorMsg" class="col-md-offset-2 col-md-4 errorText">
+        <div *ngIf="_errorMsg" class="col-md-4 errorText">
             {{_errorMsg}}
         </div>
         <div>

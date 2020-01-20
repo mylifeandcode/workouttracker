@@ -56,7 +56,6 @@ import { WorkoutSetDefinitionComponent } from './workouts/workout-set-definition
   imports: [
         BrowserModule,
         ReactiveFormsModule,
-        HttpModule, 
         HttpClientModule, 
         AppRoutingModule,
         BrowserAnimationsModule,

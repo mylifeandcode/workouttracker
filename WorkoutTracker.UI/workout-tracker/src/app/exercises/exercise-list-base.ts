@@ -8,7 +8,7 @@ export abstract class ExerciseListBase {
 
     //TODO: Clean up this class (specifically the differing access modifiers below)
 
-    public _totalRecords: number;
+    public totalRecords: number;
     public loading: boolean = true;
     public _pageSize: number = 10;
     protected _exercises: ExerciseDTO[];
@@ -37,7 +37,8 @@ export abstract class ExerciseListBase {
                 .subscribe(
                     (exercises: PaginatedResults<ExerciseDTO>) => { 
                         this._exercises = exercises.results;
-                        this._totalRecords = exercises.totalCount;
+                        this.totalRecords = exercises.totalCount;
+                        console.log("TOTAL: ", exercises.totalCount);
                     },
                     (error: any) => window.alert("An error occurred getting exercises: " + error)
                 );
