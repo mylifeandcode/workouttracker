@@ -87,7 +87,10 @@ export class ExerciseEditComponent implements OnInit {
             id: [0, Validators.required ], //TODO: Get ID from URL. 0 for new, actual ID for existing exercise.
             name: ['', Validators.required], 
             description: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])], 
-            targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue)
+            targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
+            setup: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
+            movement: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
+            pointsToRemember: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])]
         });
 
     }
@@ -105,8 +108,11 @@ export class ExerciseEditComponent implements OnInit {
         let exercise = new Exercise();
 
         exercise.id = this.exerciseForm.get("id").value;
-        exercise.description = this.exerciseForm.get("description").value;
         exercise.name = this.exerciseForm.get("name").value;
+        exercise.description = this.exerciseForm.get("description").value;
+        exercise.setup = this.exerciseForm.get("setup").value;
+        exercise.movement = this.exerciseForm.get("movement").value;
+        exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember").value;
 
         if (exercise.id > 0)
             exercise.modifiedByUserId = this._currentUserId;
@@ -144,7 +150,10 @@ export class ExerciseEditComponent implements OnInit {
         this.exerciseForm.patchValue ({
             id: this.exercise.id,
             name: this.exercise.name, 
-            description: this.exercise.description
+            description: this.exercise.description,
+            setup: this.exercise.setup,
+            movement: this.exercise.movement,
+            pointsToRemember: this.exercise.pointsToRemember
         });
 
         if (this.exercise.exerciseTargetAreaLinks) {
