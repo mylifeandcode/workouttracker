@@ -8,7 +8,7 @@
   <form *ngIf="workoutForm && !_loading" [formGroup]="workoutForm" novalidate>
       <div class="row">
 
-          <div class="col-md-offset-2 col-md-4 form-group">
+          <div class="col-md-8 form-group">
               <input type="hidden" formControlName="id" />
 
               <label class="center-block" [ngClass]="{'has-error': workoutForm.controls['name'].touched && workoutForm.controls['name'].errors}">
@@ -18,22 +18,21 @@
               </label>
 
               <label class="center-block">
-                <!--Sets (Repetition vs Timed vs Super)-->
-                Sets
-                <div *ngFor="let exercise of _workoutDTO.exercises">
-                  {{exercise.name}}
-                </div>
-                <p>
-                    <button class="btn btn-primary btn-sm" (click)="openModal(exerciseSelectModal)">Add Exercise to Workout</button>
-                </p>
+                  <!--Sets (Repetition vs Timed vs Super)-->
+                  Exercises
               </label>
-
+              <div *ngFor="let exercise of _workoutDTO.exercises">
+                {{exercise.exercise.name}} # of sets: <input type="text" />
+              </div>
+              <p>
+                <button class="btn btn-primary btn-sm" (click)="openModal(exerciseSelectModal)">Add Exercise to Workout</button>
+              </p>
           </div>
 
       </div>
 
       <div class="row">
-          <div class="col-md-offset-2 col-md-4">
+          <div class="col-md-8">
               <button type="submit" [disabled]="workoutForm.invalid || _saving" (click)="saveWorkout()" class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
           </div>
       </div>

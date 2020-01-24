@@ -92,9 +92,11 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private addExercise(exercise: ExerciseDTO): void {
+    console.log("Added exercise: ", exercise);
     this._modalRef.hide();
     //TODO: Check this out: https://valor-software.com/ngx-bootstrap/#/modals
     this._workoutDTO.exercises.push(new ExerciseInWorkout(exercise));
+    console.log("_workoutDTO.exercises", this._workoutDTO.exercises);
   }
 
   private getWorkoutDTOFromWorkout(workout: Workout): WorkoutDTO {
