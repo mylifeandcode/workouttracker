@@ -1,0 +1,11 @@
+.numberOfSets {
+    width: 50px;
+}
+
+.exerciseList:nth-child(even) {
+    background: #CCC
+}
+
+.exerciseList:nth-child(odd) {
+    background: #FFF
+}

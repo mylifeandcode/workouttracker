@@ -1,46 +1,68 @@
 <div class="container form-group">
-  <div *ngIf="_loading" class="row">
-      <div class="col-md-offset-5 col-md-1">
-          <p-progressSpinner></p-progressSpinner>
-      </div>
-  </div>
+    <div *ngIf="_loading" class="row">
+        <div class="col-md-offset-5 col-md-1">
+            <p-progressSpinner></p-progressSpinner>
+        </div>
+    </div>
 
-  <form *ngIf="workoutForm && !_loading" [formGroup]="workoutForm" novalidate>
-      <div class="row">
+    <form *ngIf="workoutForm && !_loading" [formGroup]="workoutForm" novalidate>
+        <div class="row">
+            <div class="col-md-12 form-group">
+                <input type="hidden" formControlName="id" />
 
-          <div class="col-md-8 form-group">
-              <input type="hidden" formControlName="id" />
+                <label class="center-block" [ngClass]="{'has-error': workoutForm.controls['name'].touched && workoutForm.controls['name'].errors}">
+                    Name:
+                    <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
+                    <span *ngIf="workoutForm.controls['name'].touched && workoutForm.controls['name']?.errors" class="errorText">Required</span>
+                </label>
+            </div>
+        </div>
 
-              <label class="center-block" [ngClass]="{'has-error': workoutForm.controls['name'].touched && workoutForm.controls['name'].errors}">
-                  Name:
-                  <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
-                  <span *ngIf="workoutForm.controls['name'].touched && workoutForm.controls['name']?.errors" class="errorText">Required</span>
-              </label>
+        <label class="center-block">
+            <!--Sets (Repetition vs Timed vs Super)-->
+            Exercises
+        </label>
 
-              <label class="center-block">
-                  <!--Sets (Repetition vs Timed vs Super)-->
-                  Exercises
-              </label>
-              <div *ngFor="let exercise of _workoutDTO.exercises">
-                {{exercise.exercise.name}} # of sets: <input type="text" />
-              </div>
-              <p>
-                <button class="btn btn-primary btn-sm" (click)="openModal(exerciseSelectModal)">Add Exercise to Workout</button>
-              </p>
-          </div>
+        <div class="table table-striped">
+            <div class="row">
+                <div class="col-md-4">Exercise Name</div>
+                <div class="col-md-4">Number of Sets</div>
+                <div class="col-md-4">Set Type</div>
+            </div>
+            <div formArrayName="exercises">
+                <div *ngFor="let exercise of exercisesArray.controls; let i = index" class="row">
+                    <div class="col-md-4">
+                        <input type="text" formControlName="exerciseName" [readonly]="true" />
+                    </div>
+                    <div class="col-md-4">
+                        # of sets: <input type="number" class="numberOfSets" required />
+                    </div>
+                    <div class="col-md-4">
+                        <select formControlName="setType">
+                            <option value="0">Repetition</option>
+                            <option value="1">Timed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      </div>
+        <p>
+            <button class="btn btn-primary btn-sm" (click)="openModal(exerciseSelectModal)">Add Exercise to Workout</button>
+        </p>
 
-      <div class="row">
-          <div class="col-md-8">
-              <button type="submit" [disabled]="workoutForm.invalid || _saving" (click)="saveWorkout()" class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
-          </div>
-      </div>
-      <div *ngIf="_errorMsg" class="col-md-offset-2 col-md-4 errorText">
-          {{_errorMsg}}
-      </div>
+        <div class="row">
+            <div class="col-md-8">
+                <button type="submit" [disabled]="workoutForm.invalid || _saving" (click)="saveWorkout()" class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
+            </div>
+        </div>
+        <div *ngIf="_errorMsg" class="col-md-offset-2 col-md-4 errorText">
+            {{_errorMsg}}
+        </div>
 
-  </form>
+    </form>
+
+    Form: {{_workoutDTO | json}}
 </div>
 
 <ng-template #exerciseSelectModal>
