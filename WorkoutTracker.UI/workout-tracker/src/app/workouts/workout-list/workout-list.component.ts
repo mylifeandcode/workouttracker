@@ -12,9 +12,9 @@ export class WorkoutListComponent implements OnInit {
   //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
   //Turbo Table automatically makes a call to get data on initialization
 
-  private _totalRecords: number;
-  private _loading: boolean = true;
-  private _pageSize: number = 10;
+  public totalRecords: number;
+  public loading: boolean = true;
+  public pageSize: number = 10;
   private _workouts: WorkoutDTO[];
   private cols: any = [
       { field: 'name', header: 'Name' }
@@ -28,10 +28,10 @@ export class WorkoutListComponent implements OnInit {
   }
 
   public getWorkouts(first: number, nameContains: string): void {
-      this._loading = true;
+      this.loading = true;
       //TODO: Implement
-      this._totalRecords = 0;
-      this._loading = false;
+      this.totalRecords = 0;
+      this.loading = false;
   }
 
   public getWorkoutsLazy(event: any): void {

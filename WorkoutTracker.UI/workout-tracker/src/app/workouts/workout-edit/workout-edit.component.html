@@ -1,11 +1,11 @@
 <div class="container form-group">
-    <div *ngIf="_loading" class="row">
+    <div *ngIf="loading" class="row">
         <div class="col-md-offset-5 col-md-1">
             <p-progressSpinner></p-progressSpinner>
         </div>
     </div>
 
-    <form *ngIf="workoutForm && !_loading" [formGroup]="workoutForm" novalidate>
+    <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
         <div class="row">
             <div class="col-md-12 form-group">
                 <input type="hidden" formControlName="id" />
@@ -62,7 +62,6 @@
 
     </form>
 
-    Form: {{_workoutDTO | json}}
 </div>
 
 <ng-template #exerciseSelectModal>

@@ -4,7 +4,6 @@ import { PaginatedResults } from 'app/models/paginated-results';
 import { finalize, map } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/models/exercise-dto';
 import { TargetArea } from 'app/models/target-area';
-import { SelectItem } from 'primeng/components/common/selectitem';
 import { ExerciseListBase } from '../exercise-list-base';
 
 @Component({

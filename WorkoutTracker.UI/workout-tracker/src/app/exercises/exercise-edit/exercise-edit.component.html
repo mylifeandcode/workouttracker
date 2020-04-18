@@ -1,11 +1,11 @@
 <div class="container form-group">
-    <div *ngIf="_loading" class="row">
+    <div *ngIf="loading" class="row">
         <div class="col-md-offset-5 col-md-1">
             <p-progressSpinner></p-progressSpinner>
         </div>
     </div>
 
-    <form *ngIf="exerciseForm && !_loading" [formGroup]="exerciseForm" novalidate>
+    <form *ngIf="exerciseForm && !loading" [formGroup]="exerciseForm" novalidate>
         <div class="row">
 
             <div class="col-md-8 form-group">

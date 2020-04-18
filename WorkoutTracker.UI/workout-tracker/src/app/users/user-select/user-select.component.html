@@ -1,8 +1,8 @@
-<div *ngIf="loading" class="container row col-md-offset-4 col-md-4 centeredText">
+<div *ngIf="loadingUsers" class="container row col-md-offset-4 col-md-4 centeredText">
   Loading users...
 </div>
 
-<div *ngIf="!loading" class="container">
+<div *ngIf="!loadingUsers" class="container">
 
   <div class="row col-md-offset-4 col-md-4 centeredText">
     <h3 *ngIf="!gettingUserInfo">Who Are You?</h3>

@@ -24,7 +24,7 @@ export class WorkoutEditComponent implements OnInit {
   public workoutForm: FormGroup;
 
   private _saving: boolean = false;
-  private _loading: boolean = true;
+  public loading: boolean = true;
   private _errorMsg: string = null;
   private _currentUserId: number; //The ID of the user performing the add or edit
   private _modalRef: BsModalRef;
@@ -52,7 +52,7 @@ export class WorkoutEditComponent implements OnInit {
     if (this._workoutId != 0) 
         this.loadWorkout(); //Is this safe? route.params is an observable.
     else
-      this._loading = false;
+      this.loading = false;
   }
 
   private openModal(template: TemplateRef<any>): void {
@@ -84,10 +84,10 @@ export class WorkoutEditComponent implements OnInit {
 
 
   private loadWorkout(): void {
-    this._loading = true;
+    this.loading = true;
     this._workoutSvc.getById(this._workoutId).subscribe((workout: Workout) => {
         this.updateFormWithWorkoutValues(workout);
-        this._loading = false;
+        this.loading = false;
     }); //TODO: Handle errors
   }
 
@@ -99,7 +99,6 @@ export class WorkoutEditComponent implements OnInit {
 
     this._modalRef.hide();     //TODO: Check this out: https://valor-software.com/ngx-bootstrap/#/modals
     let exerciseInWorkout = new ExerciseInWorkout(exercise.id, exercise.name, 1); //TODO: Support selected SetType
-    //this._workoutDTO.exercises.push();
     this.exercisesArray.push(this.createExercise(exerciseInWorkout));
 
   }

@@ -31,7 +31,7 @@ export class ExerciseEditComponent implements OnInit {
 
     private _exerciseId: number = 0; //TODO: Refactor. We have an exercise variable. Why have this too?
     private _saving: boolean = false;
-    private _loading: boolean = true;
+    public loading: boolean = true;
     private _errorMsg: string = null;
     private _currentUserId: number; //The ID of the user performing the add or edit
     public allTargetAreas: TargetArea[];
@@ -49,7 +49,7 @@ export class ExerciseEditComponent implements OnInit {
             this.loadExercise(); //Is this safe? route.params is an observable.
         else {
             this.setupTargetAreas([]);
-            this._loading = false;
+            this.loading = false;
         }
     }
 
@@ -96,11 +96,11 @@ export class ExerciseEditComponent implements OnInit {
     }
 
     private loadExercise(): void {
-        this._loading = true;
+        this.loading = true;
         this._exerciseSvc.getById(this._exerciseId).subscribe((value: Exercise) => {
             this.exercise = value;
             this.updateFormWithExerciseValues();
-            this._loading = false;
+            this.loading = false;
         }); //TODO: Handle errors
     }
 

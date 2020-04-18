@@ -2,7 +2,7 @@ import { ExerciseService } from 'app/exercises/exercise.service';
 import { PaginatedResults } from 'app/models/paginated-results';
 import { finalize, map } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/models/exercise-dto';
-import { SelectItem } from 'primeng/components/common/selectitem';
+import { SelectItem } from 'primeng/api/selectitem';
 
 export abstract class ExerciseListBase {
 
@@ -10,12 +10,13 @@ export abstract class ExerciseListBase {
 
     public totalRecords: number;
     public loading: boolean = true;
-    public _pageSize: number = 10;
-    protected _exercises: ExerciseDTO[];
+    public pageSize: number = 10;
+    public exercises: ExerciseDTO[];
     public targetAreas: SelectItem[] = [];
 
     constructor(protected _exerciseSvc: ExerciseService) { 
-        _exerciseSvc
+        //TODO: Move to ngOnInit()
+        this._exerciseSvc
             .getTargetAreas()
             .pipe(map(targetAreas => targetAreas.map(targetArea => targetArea.name)))
             .subscribe((targetAreaNames: string[]) => { 
@@ -30,13 +31,13 @@ export abstract class ExerciseListBase {
     public getExercises(first: number, nameContains: string, targetAreaContains: string): void {
         this.loading = true;
         this._exerciseSvc
-            .getAll(first, this._pageSize, nameContains, targetAreaContains)
+            .getAll(first, this.pageSize, nameContains, targetAreaContains)
                 .pipe(finalize(() => { 
                     setTimeout(() => { this.loading = false; }, 500)
                 }))
                 .subscribe(
                     (exercises: PaginatedResults<ExerciseDTO>) => { 
-                        this._exercises = exercises.results;
+                        this.exercises = exercises.results;
                         this.totalRecords = exercises.totalCount;
                         console.log("TOTAL: ", exercises.totalCount);
                     },
