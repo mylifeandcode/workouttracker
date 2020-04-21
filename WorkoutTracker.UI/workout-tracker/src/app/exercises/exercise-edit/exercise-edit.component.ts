@@ -19,7 +19,7 @@ import { finalize } from 'rxjs/internal/operators/finalize';
 export class ExerciseEditComponent implements OnInit {
 
     constructor(
-        private route: ActivatedRoute,
+        private _route: ActivatedRoute,
         private _formBuilder: FormBuilder,
         private _exerciseSvc: ExerciseService,
         private _userSvc: UserService) {
@@ -33,24 +33,20 @@ export class ExerciseEditComponent implements OnInit {
     private _saving: boolean = false;
     public loading: boolean = true;
     private _errorMsg: string = null;
-    private _currentUserId: number; //The ID of the user performing the add or edit
+    public currentUserId: number; //The ID of the user performing the add or edit
     public allTargetAreas: TargetArea[];
     public infoMsg: string = null;
 
     async ngOnInit() {
-        this.getRouteParams();
+
         this.createForm();
 
         //TODO: Wrap the below two calls in a Promise.all()
-        this._currentUserId = await this.getCurrentUserId();
+        this.currentUserId = await this.getCurrentUserId();
         this.allTargetAreas = await this._exerciseSvc.getTargetAreas().toPromise();
+        
+        this.subscribeToRouteParamsToSetupFormOnExamIdChange();
 
-        if (this._exerciseId != 0) 
-            this.loadExercise(); //Is this safe? route.params is an observable.
-        else {
-            this.setupTargetAreas([]);
-            this.loading = false;
-        }
     }
 
     private async getCurrentUserId(): Promise<number> {
@@ -75,16 +71,23 @@ export class ExerciseEditComponent implements OnInit {
         checkboxes.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);
     }
 
-    private getRouteParams(): void {
-        this.route.params.subscribe(params => {
+    private subscribeToRouteParamsToSetupFormOnExamIdChange(): void {
+        this._route.params.subscribe(params => {
+            console.log("params['id']: ", params['id']);
             this._exerciseId = params['id'];
+            if (this._exerciseId != 0) 
+                this.loadExercise(); 
+            else {
+                this.setupTargetAreas([]);
+                this.loading = false;
+            }
         });
     }
-    
+
     private createForm(): void {
 
         this.exerciseForm = this._formBuilder.group({
-            id: [0, Validators.required ], //TODO: Get ID from URL. 0 for new, actual ID for existing exercise.
+            id: [0, Validators.required ], 
             name: ['', Validators.required], 
             description: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])], 
             targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
@@ -97,7 +100,9 @@ export class ExerciseEditComponent implements OnInit {
 
     private loadExercise(): void {
         this.loading = true;
+        console.log("Loading exercise...");
         this._exerciseSvc.getById(this._exerciseId).subscribe((value: Exercise) => {
+            console.log("Loaded exercise: ", this.exercise);
             this.exercise = value;
             this.updateFormWithExerciseValues();
             this.loading = false;
@@ -115,9 +120,9 @@ export class ExerciseEditComponent implements OnInit {
         exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember").value;
 
         if (exercise.id > 0)
-            exercise.modifiedByUserId = this._currentUserId;
+            exercise.modifiedByUserId = this.currentUserId;
         else
-            exercise.createdByUserId = this._currentUserId;
+            exercise.createdByUserId = this.currentUserId;
 
         exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
 
@@ -138,7 +143,7 @@ export class ExerciseEditComponent implements OnInit {
                 output.push(new ExerciseTargetAreaLink(
                     this._exerciseId, 
                     selectedTargetArea.id, 
-                    this._currentUserId
+                    this.currentUserId
                 ));
             }
         }

@@ -9,3 +9,11 @@
 .exerciseList:nth-child(odd) {
     background: #FFF
 }
+
+.exerciseName {
+    width: 100%;
+}
+
+.exerciseRow {
+    padding-bottom: 8px;
+}

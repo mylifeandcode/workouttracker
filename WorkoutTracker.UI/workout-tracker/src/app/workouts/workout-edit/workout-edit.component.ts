@@ -110,12 +110,16 @@ export class WorkoutEditComponent implements OnInit {
 
   private saveWorkout(): void {
 
+    if (!this.workoutForm.invalid) {
+
+    }
+
   }
 
   private createExercise(exercise: ExerciseInWorkout): FormGroup {
     return this._formBuilder.group({
-      exerciseName: ['', Validators.compose([Validators.required])],
-      numberOfSets: [0, Validators.compose([Validators.required])], 
+      exerciseName: [exercise.exerciseName, Validators.compose([Validators.required])],
+      numberOfSets: [0, Validators.compose([Validators.required])], //TODO: Add a "Greater Than 0 Validator"
       setType: ['', Validators.compose([Validators.required])]
     });
   }

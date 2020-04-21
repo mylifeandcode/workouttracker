@@ -13,6 +13,7 @@ import { UserService } from 'app/users/user.service';
 import { User } from 'app/models/user';
 import { TargetArea } from 'app/models/target-area';
 import { Exercise } from 'app/models/exercise';
+import { ActivatedRoute } from '@angular/router';
 
 
 class ExerciseServiceMock {
@@ -47,6 +48,14 @@ describe('ExerciseEditComponent', () => {
          {
            provide: UserService, 
            useClass: UserServiceMock
+         }, 
+         {
+           provide: ActivatedRoute,
+           useValue: {
+             params: of({
+               id: 2,
+             })
+            }
          }
        ]
     })
@@ -62,4 +71,12 @@ describe('ExerciseEditComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should get exercise when id is not 0', async(() => {
+    const exerciseService: ExerciseService = TestBed.get(ExerciseService);
+    fixture.whenStable().then(() => {
+      expect(exerciseService.getById).toHaveBeenCalled();
+      expect(component.currentUserId).not.toBeNull();
+    });
+  }));
 });
