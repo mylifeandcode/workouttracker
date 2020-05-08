@@ -7,7 +7,7 @@ import { map, catchError } from 'rxjs/operators';
 import { PaginatedResults } from '../models/paginated-results';
 import { ExerciseDTO } from 'app/models/exercise-dto';
 
-const httpOptions = {
+const HTTP_OPTIONS = {
     headers: new HttpHeaders({
       'Content-Type':  'application/json'
     })
@@ -48,11 +48,11 @@ export class ExerciseService {
     }
 
     public add(exercise: Exercise): Observable<Exercise> {
-        return this._http.post<Exercise>(this.API_ROOT, exercise, httpOptions);
+        return this._http.post<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS);
     }
 
     public update(exercise: Exercise): Observable<Exercise> {
-        return this._http.put<Exercise>(`${this.API_ROOT}/${exercise.id}`, exercise, httpOptions);
+        return this._http.put<Exercise>(`${this.API_ROOT}/${exercise.id}`, exercise, HTTP_OPTIONS);
     }
 
 }

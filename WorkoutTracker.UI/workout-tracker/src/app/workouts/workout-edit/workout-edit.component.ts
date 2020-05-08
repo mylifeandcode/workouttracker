@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/users/user.service';
 import { Workout } from 'app/models/workout';
@@ -10,6 +10,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ExerciseDTO } from 'app/models/exercise-dto';
 import { WorkoutDTO } from 'app/models/workout-dto';
 import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-workout-edit',
@@ -96,11 +97,24 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private addExercise(exercise: ExerciseDTO): void {
-
     this._modalRef.hide();     //TODO: Check this out: https://valor-software.com/ngx-bootstrap/#/modals
-    let exerciseInWorkout = new ExerciseInWorkout(exercise.id, exercise.name, 1); //TODO: Support selected SetType
-    this.exercisesArray.push(this.createExercise(exerciseInWorkout));
+    this.exercisesArray.push(this.getExerciseFormGroup(exercise.id, exercise.name));
+  }
 
+  private removeExercise(index: number): void {
+    this.exercisesArray.removeAt(index);
+  }
+
+  private moveExerciseUp(index: number): void {
+    let exerciseControl: AbstractControl = this.exercisesArray.at(index);
+    this.exercisesArray.removeAt(index);
+    this.exercisesArray.insert((index - 1), exerciseControl);
+  }
+
+  private moveExerciseDown(index: number): void {
+    let exerciseControl: AbstractControl = this.exercisesArray.at(index);
+    this.exercisesArray.removeAt(index);
+    this.exercisesArray.insert((index + 1), exerciseControl);
   }
 
   private getWorkoutDTOFromWorkout(workout: Workout): WorkoutDTO {
@@ -109,18 +123,73 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private saveWorkout(): void {
-
+    //Called by Save button
+    
     if (!this.workoutForm.invalid) {
+      const workout = this.getWorkoutForPersist();
+
+      this._saving = true;
+      this.infoMsg = "Saving...";
+
+      if (workout.id == 0)
+        this.addWorkout(workout);
+      else
+        this.updateWorkout(workout);
 
     }
+  }
+
+  private addWorkout(workout: Workout): void {
+
+    this._workoutSvc.add(workout)
+      .pipe(finalize(() => {
+          this._saving = false;
+      }))
+      .subscribe((addedWorkout: Workout) => {
+          //this.workout = value;
+          this._workoutId = addedWorkout.id;
+          this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
+      },
+      (error: any) => {
+          this._errorMsg = error.message;
+      }
+    );
+  
+  }
+
+  private updateWorkout(workout: Workout): void {
+  
+    this._workoutSvc.update(workout)
+      .pipe(finalize(() => {
+          this._saving = false;
+      }))
+      .subscribe((updatedWorkout: Workout) => {
+          this._saving = false;
+          this.infoMsg = "Workout updated at " + new Date().toLocaleTimeString();
+      }, 
+      (error: any) => {
+          this._errorMsg = error.message;
+      }
+    );
 
   }
 
   private createExercise(exercise: ExerciseInWorkout): FormGroup {
     return this._formBuilder.group({
+      id: 0, 
       exerciseName: [exercise.exerciseName, Validators.compose([Validators.required])],
-      numberOfSets: [0, Validators.compose([Validators.required])], //TODO: Add a "Greater Than 0 Validator"
-      setType: ['', Validators.compose([Validators.required])]
+      numberOfSets: [0, Validators.compose([Validators.required, Validators.min(1)])], 
+      setType: [null, Validators.compose([Validators.required])]
+    });
+  }
+
+  private getExerciseFormGroup(exerciseId: number, exerciseName: string, setType: number = 0): FormGroup {
+    return this._formBuilder.group({
+      id: 0, 
+      exerciseId: exerciseId, 
+      exerciseName: [exerciseName, Validators.compose([Validators.required])],
+      numberOfSets: [0, Validators.compose([Validators.required, Validators.min(1)])], 
+      setType: [setType, Validators.compose([Validators.required])]
     });
   }
 
@@ -151,7 +220,9 @@ export class WorkoutEditComponent implements OnInit {
         output.push(
           new ExerciseInWorkout(
             exerciseGroup.get("id").value,
-            exerciseGroup.get("exerciseName").value,
+            exerciseGroup.get("exerciseId").value, 
+            exerciseGroup.get("exerciseName").value, 
+            exerciseGroup.get("numberOfSets").value, 
             exerciseGroup.get("setType").value));
       }
     }

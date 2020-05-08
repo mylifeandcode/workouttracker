@@ -7,17 +7,11 @@ export class ExerciseInWorkout {
   public numberOfSets: number;
   public setType: number;
 
-  /*
-  constructor(exercise: ExerciseDTO) {
-    this.exerciseId = exercise.id;
-    this.exerciseName = exercise.name;
-    this.setType = 1;
-  }
-  */
-
-  constructor(exerciseId: number, exerciseName: string, setType: number) {
+  constructor(id: number, exerciseId: number, exerciseName: string, numberOfSets: number, setType: number) {
+    this.id = id;
     this.exerciseId = exerciseId;
     this.exerciseName = exerciseName;
+    this.numberOfSets = numberOfSets;
     this.setType = setType;
   }
 }

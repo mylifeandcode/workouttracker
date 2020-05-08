@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Workout } from 'app/models/workout';
 import { map, catchError } from 'rxjs/operators';
 
-const httpOptions = {
+const HTTP_OPTIONS = {
   headers: new HttpHeaders({
     'Content-Type':  'application/json'
   })
@@ -22,5 +22,15 @@ export class WorkoutService {
   public getById(id: number): Observable<Workout> {
     return this._http.get(`${this.API_ROOT}/${id}`)
       .pipe(map((resp: Workout) => resp));
+  }
+
+  public add(workout: Workout): Observable<Workout> {
+    return this._http.post(this.API_ROOT, workout, HTTP_OPTIONS)
+      .pipe(map((response: Workout) => response));
+  }
+
+  public update(workout: Workout): Observable<Workout> {
+    return this._http.put(this.API_ROOT, workout, HTTP_OPTIONS)
+      .pipe(map((response: Workout) => response));
   }
 }

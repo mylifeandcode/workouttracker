@@ -17,3 +17,7 @@
 .exerciseRow {
     padding-bottom: 8px;
 }
+
+button.exerciseButton {
+    margin-right: 4px;
+}
