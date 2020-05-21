@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { WorkoutService } from '../workout.service';
 import { WorkoutDTO } from 'app/models/workout-dto';
+import { PaginatedResults } from 'app/models/paginated-results';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'wt-workout-list',
@@ -29,9 +31,17 @@ export class WorkoutListComponent implements OnInit {
 
   public getWorkouts(first: number, nameContains: string): void {
       this.loading = true;
-      //TODO: Implement
       this.totalRecords = 0;
-      this.loading = false;
+
+      this._workoutSvc.getAll(first, 20)
+        .pipe(finalize(() => { this.loading = false; }))
+        .subscribe(
+            (results: PaginatedResults<WorkoutDTO>) => {
+                this._workouts = results.results;
+                this.totalRecords = results.totalCount;
+            }, 
+            (error: any) => window.alert("An error occurred getting exercises: " + error)
+        );
   }
 
   public getWorkoutsLazy(event: any): void {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using WorkoutApplication.Repository;
 
@@ -40,6 +41,11 @@ namespace WorkoutTracker.Application.BaseClasses
         public virtual void Delete(int entityId)
         {
             _repo.Delete(entityId);
+        }
+
+        public int GetTotalCount()
+        {
+            return _repo.Get().Count();
         }
     }
 }

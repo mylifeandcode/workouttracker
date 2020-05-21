@@ -16,6 +16,7 @@ using WorkoutTracker.Application.Exercises;
 using WorkoutApplication.Domain;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using WorkoutApplication.Domain.Workouts;
 
 namespace WorkoutTracker
 {
@@ -125,6 +126,7 @@ namespace WorkoutTracker
                 config.For<IRepository<TargetArea>>().Use<Repository<TargetArea>>();
                 config.For<IRepository<User>>().Use<Repository<User>>();
                 config.For<IRepository<Exercise>>().Use<Repository<Exercise>>();
+                config.For<IRepository<Workout>>().Use<Repository<Workout>>();
 
                 //Populate the container using the service collection
                 config.Populate(services);

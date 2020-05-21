@@ -196,6 +196,7 @@ export class WorkoutEditComponent implements OnInit {
   private getWorkoutForPersist(): Workout {
     let workout = new Workout();
     workout.id = this._workoutId;
+    workout.userId = this._currentUserId;
 
     if (workout.id == 0) {
       workout.createdByUserId = this._currentUserId;

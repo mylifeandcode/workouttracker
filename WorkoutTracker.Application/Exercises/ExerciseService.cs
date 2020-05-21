@@ -17,19 +17,12 @@ namespace WorkoutTracker.Application.Exercises
         public IEnumerable<Exercise> Get(int firstRecord, short pageSize, ExerciseFilter filter)
         {
             IQueryable<Exercise> query = _repo.Get();
-            ApplyQueryFilters(ref query, filter);
+
+            if (filter != null)
+                ApplyQueryFilters(ref query, filter);
+
             var output = query.Skip(firstRecord).Take(pageSize);
             return output;
-        }
-
-        public override Exercise GetById(int id)
-        {
-            return base.GetById(id);
-        }
-
-        public int GetTotalCount()
-        {
-            return _repo.Get().Count();
         }
 
         public override Exercise Update(Exercise entity, bool saveChanges = false)
@@ -58,6 +51,9 @@ namespace WorkoutTracker.Application.Exercises
 
         private void ApplyQueryFilters(ref IQueryable<Exercise> query, ExerciseFilter filter)
         {
+            if (filter == null)
+                return;
+
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
                 query = query.Where(x => x.Name.Contains(filter.NameContains));
 

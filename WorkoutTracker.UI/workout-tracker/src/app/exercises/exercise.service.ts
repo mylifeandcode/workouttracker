@@ -32,7 +32,7 @@ export class ExerciseService {
 
         return this._http
             .get(url)
-            .pipe(map((resp: PaginatedResults<ExerciseDTO>) => resp)); //TODO: Fully implement
+            .pipe(map((resp: PaginatedResults<ExerciseDTO>) => resp));
     }
 
     public getById(id: number): Observable<Exercise> {
