@@ -65,4 +65,9 @@ export class UserService {
     this._cookieSvc.set(this.COOKIE_NAME, user.id.toString());
     this._currentUser = user;
   }
+
+  public logOff(): void {
+    this._cookieSvc.delete(this.COOKIE_NAME);
+    this._currentUser = null;
+  }
 }

@@ -29,3 +29,18 @@ body {
 .ng-trigger {
     z-index: 10000 !important;
 }
+
+.wallpaper {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 50px;
+    background-image: url('./assets/images/fitness-background.jpg'); 
+    background-size: cover;
+    background-position-y: -90px;
+}
+
+.wallpaper-friendly {
+    position: fixed;
+    top: 100px;
+}
