@@ -1,9 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
-@import 'cerulean.css';
 
+/*
 body {
     padding-top: 70px;
 }
+*/
 
 .gimmeSomeSpace {
     padding: 6px;
@@ -15,6 +16,10 @@ body {
 
 .btn.btn-fullWidth {
     width: 100%;
+}
+
+.welcome-text {
+    color: white;
 }
 
 .errorText {

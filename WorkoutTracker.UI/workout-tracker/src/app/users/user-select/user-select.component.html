@@ -1,12 +1,12 @@
-<div *ngIf="loadingUsers" class="container row col-md-offset-4 col-md-4 centeredText">
+<div *ngIf="loadingUsers" class="container-fluid row offset-md-4 col-md-4 centeredText">
   Loading users...
 </div>
 
-<div *ngIf="!loadingUsers" class="container">
+<div *ngIf="!loadingUsers" class="container-fluid">
 
-  <div class="row col-md-offset-4 col-md-4 centeredText">
-    <h3 *ngIf="!gettingUserInfo">Who Are You?</h3>
-    <h3 *ngIf="gettingUserInfo">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
+  <div class="row offset-md-4 col-md-4">
+    <h3 *ngIf="!gettingUserInfo" class="text-center mx-auto">Who are you?</h3>
+    <h3 *ngIf="gettingUserInfo" class="text-center mx-auto">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
   </div>
 
   <div *ngIf="errorMsg">
@@ -15,17 +15,19 @@
 
   <ng-container *ngIf="!gettingUserInfo">
 
-    <div *ngFor="let user of users" (click)="selectUser(user.id, user.name)" class="row col-md-offset-4 col-md-4 centeredText panel panel-primary userSelect">
-      <div class="panel-body">
-        {{user.name}}
+    <div class="row offset-md-4 col-md-4 card centeredText userSelect">
+      <div class="list-group list-group-flush">
+        <div *ngFor="let user of users" (click)="selectUser(user.id, user.name)" class="list-group-item">
+          {{user.name}}
+        </div>
       </div>
     </div>
 
-    <div *ngIf="users && users.length == 0" class="row col-md-offset-4 col-md-4 centeredText gimmeSomeSpace">
+    <div *ngIf="users && users.length == 0" class="row offset-md-4 col-md-4 centeredText gimmeSomeSpace">
       No users have been created yet. Create one with the button below.
     </div>
 
-    <div class="row col-md-offset-4 col-md-4 centeredText">
+    <div class="row offset-md-4 col-md-4 centeredText">
       <button type="button" class="btn btn-info btn-fullWidth" routerLink='/users/first'>Add User</button>
     </div>
 
