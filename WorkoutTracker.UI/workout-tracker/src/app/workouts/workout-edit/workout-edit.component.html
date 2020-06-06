@@ -1,20 +1,21 @@
-<div class="container form-group">
+<div class="container-fluid form-group">
     <div *ngIf="loading" class="row">
-        <div class="col-md-offset-5 col-md-1">
+        <div class="offset-md-5 col-md-1">
             <p-progressSpinner></p-progressSpinner>
         </div>
     </div>
 
     <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
+        <h3>Workout {{ workout ? 'Edit' : 'Creation' }}</h3>
         <div class="row">
             <div class="col-md-12 form-group">
                 <input type="hidden" formControlName="id" />
 
                 <label class="center-block" [ngClass]="{'has-error': workoutForm.controls['name'].touched && workoutForm.controls['name'].errors}">
                     Name:
-                    <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
-                    <span *ngIf="workoutForm.controls['name'].touched && workoutForm.controls['name']?.errors" class="errorText">Required</span>
                 </label>
+                <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
+                <span *ngIf="workoutForm.controls['name'].touched && workoutForm.controls['name']?.errors" class="errorText">Required</span>
             </div>
         </div>
 
@@ -36,9 +37,10 @@
             https://jasonwatmore.com/post/2019/06/25/angular-8-dynamic-reactive-forms-example
             -->
 
-            <div *ngFor="let exercise of exercisesArray.controls; let i = index" class="row exerciseRow">
-                <div [formGroup]="exercise">
+            <div *ngFor="let exercise of exercisesArray.controls; let i = index" class="row exerciseRow" [formGroup]="exercise">
+                <!--<div [formGroup]="exercise">-->
                     <div class="col-md-6">
+                        <input type="hidden" formControlName="exerciseId" />
                         <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
                     </div>
                     <div class="col-md-2">
@@ -63,7 +65,7 @@
                             <i class="fa fa-minus-circle"></i>
                         </button>
                     </div>
-                </div>
+                <!--</div>-->
             </div>
 
         </div>
@@ -78,7 +80,7 @@
                 <span *ngIf="workoutForm.touched && workoutForm.invalid" class="errorText">Please enter required information</span>
             </div>
         </div>
-        <div *ngIf="_errorMsg" class="col-md-offset-2 col-md-4 errorText">
+        <div *ngIf="_errorMsg" class="offset-md-2 col-md-4 errorText">
             {{_errorMsg}}
         </div>
 

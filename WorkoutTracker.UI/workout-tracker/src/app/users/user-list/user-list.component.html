@@ -1,26 +1,25 @@
 <span *ngIf="busy">{{busyMsg}}</span>
-<div class="container">
-  <div class="row col-md-offset-1 col-md-10">
-    <table *ngIf="users" class="table">
-      <thead>
-        <tr>
-          <th scope="col">Username</th>
-          <th scope="col" class="text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-          <td>{{user.name}}</td>
-          <td class="text-right">
-            <button type="button" routerLink="/users/edit/{{user.id}}" class="btn btn-primary">Edit</button>
-              &nbsp;
-            <button type="button" (click)="deleteUser(user.id)" class="btn btn-danger">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="row col-md-offset-10 col-md-1">
+<div *ngIf="!busy" class="container-fluid">
+  <h3>Users</h3>
+  <table *ngIf="users" class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Username</th>
+        <th scope="col" class="text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{user.name}}</td>
+        <td class="text-right">
+          <button type="button" routerLink="/users/edit/{{user.id}}" class="btn btn-primary">Edit</button>
+            &nbsp;
+          <button type="button" (click)="deleteUser(user.id)" class="btn btn-danger">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="row offset-md-11 col-md-1">
       <button type="button" class="btn btn-primary" routerLink="/users/add">Add</button>
   </div>
 </div>

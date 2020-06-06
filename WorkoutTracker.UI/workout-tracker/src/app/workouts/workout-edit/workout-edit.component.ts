@@ -177,6 +177,7 @@ export class WorkoutEditComponent implements OnInit {
   private createExercise(exercise: ExerciseInWorkout): FormGroup {
     return this._formBuilder.group({
       id: 0, 
+      exerciseId: exercise.exerciseId, 
       exerciseName: [exercise.exerciseName, Validators.compose([Validators.required])],
       numberOfSets: [0, Validators.compose([Validators.required, Validators.min(1)])], 
       setType: [null, Validators.compose([Validators.required])]

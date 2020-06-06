@@ -1,11 +1,11 @@
-<div class="container form-group">
+<div class="container-fluid form-group">
     <div *ngIf="loading" class="row">
-        <div class="col-md-offset-5 col-md-1">
+        <div class="offset-md-5 col-md-1">
             <p-progressSpinner></p-progressSpinner>
         </div>
     </div>
-
     <form *ngIf="exerciseForm && !loading" [formGroup]="exerciseForm" novalidate>
+        <h3>Exercise {{ exercise ? 'Edit' : 'Creation' }}</h3>
         <div class="row">
 
             <div class="col-md-8 form-group">
@@ -13,17 +13,18 @@
 
                 <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['name'].touched && exerciseForm.controls['name'].errors}">
                     Name
-                    <input class="form-control" formControlName="name" placeholder="Exercise Name (required)" />
-                    <span *ngIf="exerciseForm.controls['name'].touched && exerciseForm.controls['name']?.errors" class="errorText">Required</span>
                 </label>
+                <input class="form-control" formControlName="name" placeholder="Exercise Name (required)" />
+                <span *ngIf="exerciseForm.controls['name'].touched && exerciseForm.controls['name']?.errors" class="errorText">Required</span>
+                
+                <br/>
 
                 <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['description'].touched && exerciseForm.controls['description'].errors}">
                     Description
-                    <textarea class="form-control" rows="6" formControlName="description" placeholder="Exercise Description (required)"></textarea>
-                    <span *ngIf="exerciseForm.controls['description'].touched && exerciseForm.controls['description']?.errors?.required" class="errorText">Required</span>
-                    <span *ngIf="exerciseForm.controls['description'].touched && exerciseForm.controls['description']?.errors?.maxlength" class="errorText">Max length exceeded</span>
-                </label>
-
+                </label>                    
+                <textarea class="form-control" rows="6" formControlName="description" placeholder="Exercise Description (required)"></textarea>
+                <span *ngIf="exerciseForm.controls['description'].touched && exerciseForm.controls['description']?.errors?.required" class="errorText">Required</span>
+                <span *ngIf="exerciseForm.controls['description'].touched && exerciseForm.controls['description']?.errors?.maxlength" class="errorText">Max length exceeded</span>
             </div>
 
             <div *ngIf="exerciseForm.get('targetAreas')" class="col-md-4 form-group" formGroupName="targetAreas">
@@ -44,26 +45,26 @@
             <div class="col-md-3 form-group">
                 <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['setup'].touched && exerciseForm.controls['setup'].errors}">
                     Setup
-                    <textarea class="form-control" rows="12" formControlName="setup" placeholder="How to prepare for this exercise (required)"></textarea>
-                    <span *ngIf="exerciseForm.controls['setup'].touched && exerciseForm.controls['setup']?.errors?.required" class="errorText">Required</span>
-                    <span *ngIf="exerciseForm.controls['setup'].touched && exerciseForm.controls['setup']?.errors?.maxlength" class="errorText">Max length exceeded</span>
                 </label>
+                <textarea class="form-control" rows="12" formControlName="setup" placeholder="How to prepare for this exercise (required)"></textarea>
+                <span *ngIf="exerciseForm.controls['setup'].touched && exerciseForm.controls['setup']?.errors?.required" class="errorText">Required</span>
+                <span *ngIf="exerciseForm.controls['setup'].touched && exerciseForm.controls['setup']?.errors?.maxlength" class="errorText">Max length exceeded</span>
             </div>
             <div class="col-md-3 form-group">
                 <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['movement'].touched && exerciseForm.controls['movement'].errors}">
                     Movement
-                    <textarea class="form-control" rows="12" formControlName="movement" placeholder="How to perform the exercise (required)"></textarea>
-                    <span *ngIf="exerciseForm.controls['movement'].touched && exerciseForm.controls['movement']?.errors?.required" class="errorText">Required</span>
-                    <span *ngIf="exerciseForm.controls['movement'].touched && exerciseForm.controls['movement']?.errors?.maxlength" class="errorText">Max length exceeded</span>
                 </label>
+                <textarea class="form-control" rows="12" formControlName="movement" placeholder="How to perform the exercise (required)"></textarea>
+                <span *ngIf="exerciseForm.controls['movement'].touched && exerciseForm.controls['movement']?.errors?.required" class="errorText">Required</span>
+                <span *ngIf="exerciseForm.controls['movement'].touched && exerciseForm.controls['movement']?.errors?.maxlength" class="errorText">Max length exceeded</span>
             </div>
             <div class="col-md-4 form-group">
                 <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember'].errors}">
                     Points to Remember
-                    <textarea class="form-control" rows="12" formControlName="pointsToRemember" placeholder="Points to remember (required)"></textarea>
-                    <span *ngIf="exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember']?.errors?.required" class="errorText">Required</span>
-                    <span *ngIf="exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember']?.errors?.maxlength" class="errorText">Max length exceeded</span>
                 </label>
+                <textarea class="form-control" rows="12" formControlName="pointsToRemember" placeholder="Points to remember (required)"></textarea>
+                <span *ngIf="exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember']?.errors?.required" class="errorText">Required</span>
+                <span *ngIf="exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember']?.errors?.maxlength" class="errorText">Max length exceeded</span>
             </div>
         </div>
         <div class="row">

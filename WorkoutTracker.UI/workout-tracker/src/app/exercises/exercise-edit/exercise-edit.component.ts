@@ -45,7 +45,7 @@ export class ExerciseEditComponent implements OnInit {
         this.currentUserId = await this.getCurrentUserId();
         this.allTargetAreas = await this._exerciseSvc.getTargetAreas().toPromise();
         
-        this.subscribeToRouteParamsToSetupFormOnExamIdChange();
+        this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
 
     }
 
@@ -71,7 +71,7 @@ export class ExerciseEditComponent implements OnInit {
         checkboxes.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);
     }
 
-    private subscribeToRouteParamsToSetupFormOnExamIdChange(): void {
+    private subscribeToRouteParamsToSetupFormOnExerciseIdChange(): void {
         this._route.params.subscribe(params => {
             console.log("params['id']: ", params['id']);
             this._exerciseId = params['id'];
