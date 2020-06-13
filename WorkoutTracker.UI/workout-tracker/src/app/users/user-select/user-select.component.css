@@ -1,3 +1,19 @@
 .userSelect {
   cursor: pointer;
+  width: 100%;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.userSelectPanel {
+  color: white;
+  background-color: forestgreen;
+}
+
+.greeting-text {
+  color: white;
+}
+
+.headroom {
+  margin-top: 20px;
 }

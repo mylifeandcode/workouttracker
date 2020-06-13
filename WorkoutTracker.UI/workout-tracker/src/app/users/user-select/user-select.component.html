@@ -2,11 +2,11 @@
   Loading users...
 </div>
 
-<div *ngIf="!loadingUsers" class="container-fluid">
-
+<div *ngIf="!loadingUsers" class="container-fluid wallpaper">
+  <br />
   <div class="row offset-md-4 col-md-4">
-    <h3 *ngIf="!gettingUserInfo" class="text-center mx-auto">Who are you?</h3>
-    <h3 *ngIf="gettingUserInfo" class="text-center mx-auto">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
+    <h3 *ngIf="!gettingUserInfo" class="text-center mx-auto greeting-text">Who are you?</h3>
+    <h3 *ngIf="gettingUserInfo" class="text-center mx-auto greeting-text">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
   </div>
 
   <div *ngIf="errorMsg">
@@ -16,8 +16,8 @@
   <ng-container *ngIf="!gettingUserInfo">
 
     <div class="row offset-md-4 col-md-4 card centeredText userSelect">
-      <div class="list-group list-group-flush">
-        <div *ngFor="let user of users" (click)="selectUser(user.id, user.name)" class="list-group-item">
+      <div class="list-group">
+        <div *ngFor="let user of users" (click)="selectUser(user.id, user.name)" class="list-group-item list-group-item-action list-group-item-success userSelectPanel">
           {{user.name}}
         </div>
       </div>
@@ -28,7 +28,8 @@
     </div>
 
     <div class="row offset-md-4 col-md-4 centeredText">
-      <button type="button" class="btn btn-info btn-fullWidth" routerLink='/users/first'>Add User</button>
+
+        <button type="button" class="btn btn-info btn-fullWidth headroom" routerLink='/users/first'>Add User</button>
     </div>
 
   </ng-container>

@@ -17,8 +17,8 @@ export class WorkoutListComponent implements OnInit {
   public totalRecords: number;
   public loading: boolean = true;
   public pageSize: number = 10;
-  private _workouts: WorkoutDTO[];
-  private cols: any = [
+  public workouts: WorkoutDTO[];
+  public cols: any = [
       { field: 'name', header: 'Name' }
   ]; //TODO: Create specific type
 
@@ -30,14 +30,14 @@ export class WorkoutListComponent implements OnInit {
   }
 
   public getWorkouts(first: number, nameContains: string): void {
-      this.loading = true;
+      //this.loading = true;
       this.totalRecords = 0;
 
       this._workoutSvc.getAll(first, 20)
         .pipe(finalize(() => { this.loading = false; }))
         .subscribe(
             (results: PaginatedResults<WorkoutDTO>) => {
-                this._workouts = results.results;
+                this.workouts = results.results;
                 this.totalRecords = results.totalCount;
             }, 
             (error: any) => window.alert("An error occurred getting exercises: " + error)

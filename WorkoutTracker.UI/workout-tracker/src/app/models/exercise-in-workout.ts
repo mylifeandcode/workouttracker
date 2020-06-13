@@ -13,5 +13,6 @@ export class ExerciseInWorkout {
     this.exerciseName = exerciseName;
     this.numberOfSets = numberOfSets;
     this.setType = setType;
+    console.log("ExerciseInWorkout: ", this);
   }
 }

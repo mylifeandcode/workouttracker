@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <h3>Exercises</h3>
+    <h3 class="headroom">Exercises</h3>
     <div class="row">
         <div class="col-md-12">
             <p-table #dt class="table table-striped w-auto"  [value]="exercises" [paginator]="true" [rows]="pageSize" [lazy]="true" (onLazyLoad)="getExercisesLazy($event)" [totalRecords]="totalRecords" [loading]="loading">

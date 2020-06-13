@@ -49,3 +49,7 @@ body {
     position: fixed;
     top: 100px;
 }
+
+.headroom {
+    padding-top: 14px;
+}
