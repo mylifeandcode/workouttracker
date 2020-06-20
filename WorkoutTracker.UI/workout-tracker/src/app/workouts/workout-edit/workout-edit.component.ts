@@ -11,6 +11,7 @@ import { ExerciseDTO } from 'app/models/exercise-dto';
 import { WorkoutDTO } from 'app/models/workout-dto';
 import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
+import { WorkoutTrackerPage } from '../../../../e2e/app.po';
 
 @Component({
   selector: 'app-workout-edit',
@@ -21,16 +22,20 @@ export class WorkoutEditComponent implements OnInit {
 
   //A helfpul link for dynamic form arrays: https://codinglatte.com/posts/angular/angular-dynamic-form-fields-using-formarray/
 
-  private _workoutId: number;
+  //Public fields
+  public workoutId: number;
   public workoutForm: FormGroup;
-
-  private _saving: boolean = false;
   public loading: boolean = true;
+  public infoMsg: string = null;
+
+  //Private fields
+  private _saving: boolean = false;
   private _errorMsg: string = null;
   private _currentUserId: number; //The ID of the user performing the add or edit
   private _modalRef: BsModalRef;
-  public infoMsg: string = null;
+  private _workout: Workout;
 
+  //Properties
   get exercisesArray(): FormArray {
     return this.workoutForm.get('exercises') as FormArray;
   }
@@ -50,11 +55,27 @@ export class WorkoutEditComponent implements OnInit {
 
     this._currentUserId = await this.getCurrentUserId();
 
+    /*
     if (this._workoutId != 0) 
         this.loadWorkout(); //Is this safe? route.params is an observable.
     else
       this.loading = false;
+    */
+
+    this.subscribeToRouteParamsToSetupFormOnWorkoutIdChange();
   }
+
+  private subscribeToRouteParamsToSetupFormOnWorkoutIdChange(): void {
+    this._route.params.subscribe(params => {
+        console.log("params['id']: ", params['id']);
+        this.workoutId = params['id'];
+        if (this.workoutId != 0) 
+            this.loadWorkout(); 
+        else {
+            this.loading = false;
+        }
+    });
+}  
 
   private openModal(template: TemplateRef<any>): void {
     this._modalRef = this._modalSvc.show(template);
@@ -62,7 +83,7 @@ export class WorkoutEditComponent implements OnInit {
 
   private getRouteParams(): void {
     this._route.params.subscribe(params => {
-        this._workoutId = params['id'];
+        this.workoutId = params['id'];
     });
   }
 
@@ -86,14 +107,24 @@ export class WorkoutEditComponent implements OnInit {
 
   private loadWorkout(): void {
     this.loading = true;
-    this._workoutSvc.getById(this._workoutId).subscribe((workout: Workout) => {
+    this._workoutSvc.getById(this.workoutId).subscribe((workout: Workout) => {
         this.updateFormWithWorkoutValues(workout);
         this.loading = false;
+        this._workout = workout;
     }); //TODO: Handle errors
   }
 
   private updateFormWithWorkoutValues(workout: Workout): void {
+    this.workoutForm.patchValue({
+      id: workout.id, 
+      name: workout.name
+    });
 
+    workout.exercises.forEach(exerciseInWorkout => {
+      this.exercisesArray.push(
+        this.getExerciseFormGroup(
+          exerciseInWorkout.id, exerciseInWorkout.exercise.name, exerciseInWorkout.setType, exerciseInWorkout.numberOfSets));
+    });
   }
 
   private addExercise(exercise: ExerciseDTO): void {
@@ -147,11 +178,12 @@ export class WorkoutEditComponent implements OnInit {
       }))
       .subscribe((addedWorkout: Workout) => {
           //this.workout = value;
-          this._workoutId = addedWorkout.id;
+          this.workoutId = addedWorkout.id;
           this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
       },
       (error: any) => {
           this._errorMsg = error.message;
+          this.infoMsg = null;
       }
     );
   
@@ -168,40 +200,37 @@ export class WorkoutEditComponent implements OnInit {
           this.infoMsg = "Workout updated at " + new Date().toLocaleTimeString();
       }, 
       (error: any) => {
+          console.log("ERROR: ", error);
           this._errorMsg = error.message;
+          this.infoMsg = null;
       }
     );
 
   }
 
-  private createExercise(exercise: ExerciseInWorkout): FormGroup {
-    return this._formBuilder.group({
-      id: 0, 
-      exerciseId: exercise.exerciseId, 
-      exerciseName: [exercise.exerciseName, Validators.compose([Validators.required])],
-      numberOfSets: [0, Validators.compose([Validators.required, Validators.min(1)])], 
-      setType: [null, Validators.compose([Validators.required])]
-    });
-  }
-
-  private getExerciseFormGroup(exerciseId: number, exerciseName: string, setType: number = 0): FormGroup {
+  private getExerciseFormGroup(exerciseId: number, exerciseName: string, setType: number = 0, numberOfSets: number = 0): FormGroup {
+    console.log("getExerciseFormGroup: exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
     return this._formBuilder.group({
       id: 0, 
       exerciseId: exerciseId, 
       exerciseName: [exerciseName, Validators.compose([Validators.required])],
-      numberOfSets: [0, Validators.compose([Validators.required, Validators.min(1)])], 
+      numberOfSets: [numberOfSets, Validators.compose([Validators.required, Validators.min(1)])], 
       setType: [setType, Validators.compose([Validators.required])]
     });
   }
 
   private getWorkoutForPersist(): Workout {
     let workout = new Workout();
-    workout.id = this._workoutId;
+    workout.id = this.workoutId;
     workout.userId = this._currentUserId;
 
     if (workout.id == 0) {
       workout.createdByUserId = this._currentUserId;
       workout.createdDateTime = new Date();
+    }
+    else {
+      workout.createdByUserId = this._workout.createdByUserId;
+      workout.createdDateTime = this._workout.createdDateTime;
     }
 
     workout.modifiedByUserId = this._currentUserId;
