@@ -190,7 +190,7 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private updateWorkout(workout: Workout): void {
-  
+    console.log("WORKOUT: ", workout);
     this._workoutSvc.update(workout)
       .pipe(finalize(() => {
           this._saving = false;

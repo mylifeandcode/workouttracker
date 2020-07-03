@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using StructureMap;
 using WorkoutApplication.Data;
 using Microsoft.EntityFrameworkCore;
@@ -15,14 +16,16 @@ using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
 using WorkoutApplication.Domain;
 using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.AspNetCore.SpaServices.Extensions;
 using WorkoutApplication.Domain.Workouts;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.Extensions.Hosting;
 
 namespace WorkoutTracker
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -36,67 +39,93 @@ namespace WorkoutTracker
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddConfiguration(Configuration.GetSection("Logging"));
+                loggingBuilder.AddConsole();
+                loggingBuilder.AddDebug();
+            });
+            
             services.AddCors(options =>
             {
+                /*
                 options.AddPolicy("AllowSpecificOrigin",
                     builder => builder.WithOrigins("http://localhost:4200").AllowAnyMethod());
+                */
+                options.AddPolicy("SiteCorsPolicy",
+                    builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().Build());
             });
 
             // Add framework services.
             services.AddMvc()
-                .AddJsonOptions(
+                .AddNewtonsoftJson(
                     options => 
                         options.SerializerSettings.ReferenceLoopHandling = 
                             Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .AddControllersAsServices();
 
-            //services.AddCors();
-            //TODO: Clean up CORS code to only allow from specific origin
-            var corsBuilder = new CorsPolicyBuilder();
-            corsBuilder.AllowAnyHeader();
-            corsBuilder.AllowAnyMethod();
-            corsBuilder.AllowAnyOrigin();
-            corsBuilder.AllowCredentials();
-            services.AddCors(options =>
+            //In their attempts to optimize performance, Microsoft replaced JSON.NET in .NET Core 3.
+            //But they didn't provide a way to handle reference loops. Therefore, the below code 
+            //remains commented out in favor of the "old way", with the added JSON.NET reference, above.
+            /*
+            services.AddMvc().AddJsonOptions(o =>
             {
-                options.AddPolicy("SiteCorsPolicy", corsBuilder.Build());
-            });
+                o.JsonSerializerOptions.PropertyNamingPolicy = null;
+                o.JsonSerializerOptions.DictionaryKeyPolicy = null;
+            })
+            .AddControllersAsServices();
+            */
+
 
             var connection = Configuration.GetConnectionString("WorkoutTrackerDatabase");
             services.AddDbContext<WorkoutsContext>(options => options.UseLazyLoadingProxies().UseSqlServer(connection));
 
+            /*
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "workout-tracker/dist";
             });
+            */
 
             return ConfigureIoC(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)//, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            app.UseMvcWithDefaultRoute();
+            //app.UseMvcWithDefaultRoute();
 
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            app.UseRouting();
+            //app.UseSpaStaticFiles();
 
-            app.UseCors(options => options.WithOrigins("http://localhost:4200").AllowAnyMethod());
+            //app.UseCors(options => options.WithOrigins("http://localhost:4200").AllowAnyMethod());
+            app.UseCors();
+
+            if (env.IsDevelopment())
+                app.UseDeveloperExceptionPage();
+
+            /*
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
                 // see https://go.microsoft.com/fwlink/?linkid=864501
 
-                spa.Options.SourcePath = "workout-tracker";
+                //spa.Options.SourcePath = "workout-tracker";
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    //spa.UseAngularCliServer(npmScript: "start")
+                    app.UseDeveloperExceptionPage();
+
                 }
+            });
+            */
+
+            app.UseEndpoints(endpoints => 
+            {
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -135,6 +164,5 @@ namespace WorkoutTracker
             return container.GetInstance<IServiceProvider>();
 
         }
-
     }
 }
