@@ -7,6 +7,7 @@ import { User } from 'app/models/user';
 
 class UserServiceMock {
   getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
+  isUserLoggedIn = jasmine.createSpy('isUserLoggedIn').and.returnValue(true);
 }
 
 describe('NavComponent', () => {

@@ -66,6 +66,10 @@ export class UserService {
     this._currentUser = user;
   }
 
+  public isUserLoggedIn(): boolean {
+    return (this._currentUser != null);
+  }
+
   public logOff(): void {
     this._cookieSvc.delete(this.COOKIE_NAME);
     this._currentUser = null;

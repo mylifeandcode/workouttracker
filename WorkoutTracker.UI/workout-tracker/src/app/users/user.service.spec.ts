@@ -144,4 +144,27 @@ describe('UserService', () => {
     
   }));
 
+  it('should indicate user is logged in when a user is logged in', () => {
+
+    //ARRANGE
+    const service = TestBed.get(UserService);
+    const user = new User();
+    user.id = 1;
+    service.setCurrentUser(user);
+
+    //ACT/ASSERT
+    expect(service.isUserLoggedIn).toBeTruthy();
+
+  });
+
+  it('should NOT indicate user is logged in when a user is not logged in', () => {
+
+    //ARRANGE
+    const service = TestBed.get(UserService);
+
+    //ACT/ASSERT
+    expect(service.isUserLoggedIn).toBeTruthy();
+
+  });
+
 });

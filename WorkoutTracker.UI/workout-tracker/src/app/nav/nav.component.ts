@@ -11,6 +11,10 @@ export class NavComponent implements OnInit {
 
   public userName: string;
 
+  get userIsLoggedIn(): boolean {
+    return this._userSvc.isUserLoggedIn();
+  }
+
   constructor(private _userSvc: UserService) { }
 
   ngOnInit() {

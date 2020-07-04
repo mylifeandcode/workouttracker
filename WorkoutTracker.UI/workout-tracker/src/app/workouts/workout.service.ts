@@ -44,7 +44,7 @@ export class WorkoutService {
   }
 
   public update(workout: Workout): Observable<Workout> {
-    return this._http.put(this.API_ROOT, workout, HTTP_OPTIONS)
+    return this._http.put(`${this.API_ROOT}/${workout.id}`, workout, HTTP_OPTIONS)
       .pipe(map((response: Workout) => response));
   }
 }
