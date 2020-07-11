@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.Application", "WorkoutTracker.Application\WorkoutTracker.Application.csproj", "{157081E0-4001-41DC-A6B9-DE4DCA0ACE9E}"
 EndProject
@@ -16,6 +16,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.UI", "WorkoutTracker.UI\WorkoutTracker.UI.csproj", "{A52405EE-2073-49E4-AA2E-51A93361FA0B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.Tests", "WorkoutTracker.Tests\WorkoutTracker.Tests.csproj", "{DF90C6D5-DEE9-4F58-9BC0-E61F38E01557}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{0DC2AB55-A448-442E-A210-3822D82F550C}"
+	ProjectSection(SolutionItems) = preProject
+		TODO.txt = TODO.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

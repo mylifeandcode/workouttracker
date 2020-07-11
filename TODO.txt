@@ -1,0 +1,9 @@
+- Refactor to use AutoFac
+- Add Serilog
+- Revisit child entity persistence
+- Exercise select modal beautification
+- Historical data entry
+- Analytics
+- Timer for timed exercises
+- Workout journaling
+- Fix filter on Workout Select

@@ -123,26 +123,30 @@ export class WorkoutEditComponent implements OnInit {
     workout.exercises.forEach(exerciseInWorkout => {
       this.exercisesArray.push(
         this.getExerciseFormGroup(
-          exerciseInWorkout.id, exerciseInWorkout.exercise.name, exerciseInWorkout.setType, exerciseInWorkout.numberOfSets));
+          exerciseInWorkout.id, exerciseInWorkout.exerciseId, exerciseInWorkout.exercise.name, exerciseInWorkout.setType, exerciseInWorkout.numberOfSets));
     });
   }
 
   private addExercise(exercise: ExerciseDTO): void {
+    //Called by button click in template
     this._modalRef.hide();     //TODO: Check this out: https://valor-software.com/ngx-bootstrap/#/modals
-    this.exercisesArray.push(this.getExerciseFormGroup(exercise.id, exercise.name));
+    this.exercisesArray.push(this.getExerciseFormGroup(0, exercise.id, exercise.name));
   }
 
   private removeExercise(index: number): void {
+    //Called by button click in template
     this.exercisesArray.removeAt(index);
   }
 
   private moveExerciseUp(index: number): void {
+    //Called by button click in template
     let exerciseControl: AbstractControl = this.exercisesArray.at(index);
     this.exercisesArray.removeAt(index);
     this.exercisesArray.insert((index - 1), exerciseControl);
   }
 
   private moveExerciseDown(index: number): void {
+    //Called by button click in template
     let exerciseControl: AbstractControl = this.exercisesArray.at(index);
     this.exercisesArray.removeAt(index);
     this.exercisesArray.insert((index + 1), exerciseControl);
@@ -208,10 +212,10 @@ export class WorkoutEditComponent implements OnInit {
 
   }
 
-  private getExerciseFormGroup(exerciseId: number, exerciseName: string, setType: number = 0, numberOfSets: number = 0): FormGroup {
-    console.log("getExerciseFormGroup: exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
+  private getExerciseFormGroup(exerciseInWorkoutId: number, exerciseId: number, exerciseName: string, setType: number = 0, numberOfSets: number = 0): FormGroup {
+    console.log("getExerciseFormGroup: exerciseInWorkoutId = " + exerciseInWorkoutId + ", exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
     return this._formBuilder.group({
-      id: 0, 
+      id: exerciseInWorkoutId, 
       exerciseId: exerciseId, 
       exerciseName: [exerciseName, Validators.compose([Validators.required])],
       numberOfSets: [numberOfSets, Validators.compose([Validators.required, Validators.min(1)])], 

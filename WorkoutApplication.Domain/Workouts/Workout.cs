@@ -10,6 +10,6 @@ namespace WorkoutApplication.Domain.Workouts
     public class Workout : NamedEntity
     {
         public int UserId { get; set; }
-        public virtual IEnumerable<ExerciseInWorkout> Exercises { get; set; }
+        public virtual ICollection<ExerciseInWorkout> Exercises { get; set; }
     }
 }

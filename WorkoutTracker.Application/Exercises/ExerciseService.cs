@@ -25,7 +25,7 @@ namespace WorkoutTracker.Application.Exercises
             return output;
         }
 
-        public override Exercise Update(Exercise entity, bool saveChanges = false)
+        public override Exercise Update(Exercise modifiedExercise, bool saveChanges = false)
         {
             /*
             Remove any ExerciseTargetAreaLinks which are not present in entity.
@@ -34,11 +34,11 @@ namespace WorkoutTracker.Application.Exercises
             See https://docs.microsoft.com/en-us/ef/core/saving/disconnected-entities for 
             more info.
             */
-            var existingExercise = _repo.Get(entity.Id); //Once we do this, this entity is TRACKED
-            _repo.SetValues(existingExercise, entity);
+            var existingExercise = _repo.Get(modifiedExercise.Id); //Once we do this, this entity is TRACKED
+            _repo.SetValues(existingExercise, modifiedExercise);
 
-            AddExerciseTargetAreaLinksToExistingExercise(existingExercise, entity);
-            RemoveExerciseTargetAreaLinksToExistingExercise(existingExercise, entity);
+            AddExerciseTargetAreaLinksToExistingExercise(existingExercise, modifiedExercise);
+            RemoveExerciseTargetAreaLinksToExistingExercise(existingExercise, modifiedExercise);
 
             existingExercise.ModifiedDateTime = DateTime.Now;
 
