@@ -90,5 +90,57 @@ namespace WorkoutTracker.Tests.Services
             result.ExerciseTargetAreaLinks.ShouldContain(link => link.TargetArea.Name == "Chest");
             result.ExerciseTargetAreaLinks.ShouldContain(link => link.TargetArea.Name == "Arms");
         }
+
+        [TestMethod]
+        public void Should_Add_Exercise()
+        {
+            //ARRANGE
+            var exercise = new Exercise();
+            var repoMock = new Mock<IRepository<Exercise>>(MockBehavior.Strict);
+            
+            repoMock
+                .Setup(mock => mock.Add(It.IsAny<Exercise>(), true))
+                .Returns(exercise);
+
+            var sut = new ExerciseService(repoMock.Object);
+
+            //ACT
+            var result = sut.Add(exercise, true);
+
+            //ASSERT
+            result.ShouldBeSameAs(exercise);
+            repoMock.Verify(mock => mock.Add(exercise, true), Times.Once);
+        }
+
+        //TODO: Finish!
+        /*
+        [TestMethod]
+        public void Should_Update_Exercise()
+        {
+            //ARRANGE
+            var exerciseToUpdate = new Exercise { Id = 1 };
+            var existingExercise = new Exercise { Id = 1 };
+            
+            var repoMock = new Mock<IRepository<Exercise>>(MockBehavior.Strict);
+
+            repoMock
+                .Setup(mock => mock.Context.SaveChanges(true))
+                .Returns(1);
+            
+            repoMock
+                .Setup(mock => mock.Get(1))
+                .Returns(existingExercise);
+
+            var sut = new ExerciseService(repoMock.Object);
+
+            //ACT
+            var result = sut.Update(exerciseToUpdate, true);
+
+            //ASSERT
+            result.ShouldBeSameAs(exerciseToUpdate);
+            repoMock.Verify(mock => mock.Get(1), Times.Once);
+            repoMock.Verify(mock => mock.Update(exerciseToUpdate, true), Times.Once);
+        }
+        */
     }
 }
