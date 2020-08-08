@@ -16,9 +16,13 @@ namespace WorkoutApplication.Repository
         //Task<TEntity> AddAsync(TEntity entity, bool saveChanges = false);
         TEntity Update(TEntity entity, bool saveChanges = false);
         void Delete(int id);
-        void Save();
-        Task SaveAsync();
-        WorkoutsContext Context { get; }
+
+        //TODO: Re-evaluate. I don't think this method is needed.
+        //void Save();
+
+        //TODO: Re-evaluate. I don't think this method is needed.
+        //Task SaveAsync();
+
         void SetValues(TEntity target, TEntity source);
     }
 }

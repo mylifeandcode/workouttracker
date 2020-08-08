@@ -46,11 +46,15 @@ namespace WorkoutTracker.Application.Workouts
             AddExercisesToExistingWorkout(existingWorkout, modifiedWorkout);
             RemoveExercisesFromExistingWorkout(existingWorkout, modifiedWorkout);
 
+            /*
             existingWorkout.ModifiedDateTime = DateTime.Now;
 
             if (saveChanges)
                 _repo.Context.SaveChanges(); //Have to save this way because our entity is already TRACKED.
                                              //TODO: Refactor? I'm not thrilled with this approach.
+            */
+
+            _repo.Update(existingWorkout, saveChanges);
 
             return existingWorkout;
         }

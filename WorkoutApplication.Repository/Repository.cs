@@ -12,8 +12,6 @@ namespace WorkoutApplication.Repository
         protected WorkoutsContext _context;
         protected DbSet<TEntity> _dbSet;
 
-        public WorkoutsContext Context => _context;
-
         public Repository(WorkoutsContext context)
         {
             _context = context;
@@ -38,7 +36,7 @@ namespace WorkoutApplication.Repository
             _context.Add<TEntity>(entity);
 
             if (saveChanges)
-                Save();
+                _context.SaveChanges(); //Save();
 
             return entity;
         }
@@ -62,7 +60,7 @@ namespace WorkoutApplication.Repository
             _context.Update<TEntity>(entity);
 
             if (saveChanges)
-                Save();
+                _context.SaveChanges(); //Save();
 
             return entity;
         }
@@ -73,6 +71,8 @@ namespace WorkoutApplication.Repository
             _context.SaveChanges();
         }
 
+        //TODO: Re-evaluate. I don't think this method is needed.
+        /*
         public virtual void Save()
         {
             try
@@ -87,6 +87,7 @@ namespace WorkoutApplication.Repository
             }
         }
 
+        //TODO: Re-evaluate. I don't think this method is needed.
         public virtual Task SaveAsync()
         {
             try
@@ -100,6 +101,7 @@ namespace WorkoutApplication.Repository
                 throw;
             }
         }
+        */
 
         public void SetValues(TEntity target, TEntity source)
         {

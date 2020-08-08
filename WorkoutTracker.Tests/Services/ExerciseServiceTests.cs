@@ -113,34 +113,79 @@ namespace WorkoutTracker.Tests.Services
         }
 
         //TODO: Finish!
-        /*
         [TestMethod]
         public void Should_Update_Exercise()
         {
             //ARRANGE
-            var exerciseToUpdate = new Exercise { Id = 1 };
-            var existingExercise = new Exercise { Id = 1 };
+            //TODO: Create builder for these Exercises
+            var modifiedExercise = 
+                new Exercise 
+                { 
+                    Id = 1, 
+                    ExerciseTargetAreaLinks = 
+                        new List<ExerciseTargetAreaLink>(2) 
+                        { 
+                            new ExerciseTargetAreaLink 
+                            {
+                                Id = 1, ExerciseId = 1, TargetAreaId = 3
+                            },
+                            new ExerciseTargetAreaLink
+                            {
+                                Id = 2, ExerciseId = 1, TargetAreaId = 7
+                            }
+                        } 
+                };
+
+            var existingExercise = 
+                new Exercise 
+                { 
+                    Id = 1,
+                    ExerciseTargetAreaLinks =
+                        new List<ExerciseTargetAreaLink>(2)
+                        {
+                            new ExerciseTargetAreaLink
+                            {
+                                Id = 1, ExerciseId = 1, TargetAreaId = 4
+                            },
+                            new ExerciseTargetAreaLink
+                            {
+                                Id = 2, ExerciseId = 1, TargetAreaId = 7
+                            }
+                        }
+                };
             
             var repoMock = new Mock<IRepository<Exercise>>(MockBehavior.Strict);
 
             repoMock
-                .Setup(mock => mock.Context.SaveChanges(true))
-                .Returns(1);
+                .Setup(mock => mock.Update(existingExercise, true))
+                .Returns(existingExercise);
             
             repoMock
                 .Setup(mock => mock.Get(1))
                 .Returns(existingExercise);
 
+            repoMock
+                .Setup(mock => mock.SetValues(existingExercise, modifiedExercise));
+
             var sut = new ExerciseService(repoMock.Object);
 
             //ACT
-            var result = sut.Update(exerciseToUpdate, true);
+            var result = sut.Update(modifiedExercise, true);
 
             //ASSERT
-            result.ShouldBeSameAs(exerciseToUpdate);
+            result.ShouldBeSameAs(existingExercise);
             repoMock.Verify(mock => mock.Get(1), Times.Once);
-            repoMock.Verify(mock => mock.Update(exerciseToUpdate, true), Times.Once);
+            repoMock.Verify(mock => mock.Update(existingExercise, true), Times.Once);
+            existingExercise.ExerciseTargetAreaLinks.ShouldNotBeNull();
+            existingExercise.ExerciseTargetAreaLinks.Count.ShouldBe(modifiedExercise.ExerciseTargetAreaLinks.Count);
+            foreach (var link in existingExercise.ExerciseTargetAreaLinks)
+            {
+                modifiedExercise
+                    .ExerciseTargetAreaLinks.Any(modifiedLink => 
+                        modifiedLink.Id == link.Id 
+                        && modifiedLink.ExerciseId == link.ExerciseId 
+                        && modifiedLink.TargetAreaId == link.TargetAreaId);
+            }
         }
-        */
     }
 }

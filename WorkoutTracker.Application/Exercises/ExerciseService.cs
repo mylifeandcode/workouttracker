@@ -40,13 +40,7 @@ namespace WorkoutTracker.Application.Exercises
             AddExerciseTargetAreaLinksToExistingExercise(existingExercise, modifiedExercise);
             RemoveExerciseTargetAreaLinksToExistingExercise(existingExercise, modifiedExercise);
 
-            existingExercise.ModifiedDateTime = DateTime.Now;
-
-            if (saveChanges)
-                _repo.Context.SaveChanges(); //Have to save this way because our entity is already TRACKED.
-                                             //TODO: Refactor? I'm not thrilled with this approach.
-
-            return existingExercise;
+            return _repo.Update(existingExercise, saveChanges);
         }
 
         private void ApplyQueryFilters(ref IQueryable<Exercise> query, ExerciseFilter filter)
