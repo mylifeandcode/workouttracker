@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using WorkoutApplication.Domain.Exercises;
@@ -112,7 +109,6 @@ namespace WorkoutTracker.Tests.Services
             repoMock.Verify(mock => mock.Add(exercise, true), Times.Once);
         }
 
-        //TODO: Finish!
         [TestMethod]
         public void Should_Update_Exercise()
         {
@@ -184,7 +180,8 @@ namespace WorkoutTracker.Tests.Services
                     .ExerciseTargetAreaLinks.Any(modifiedLink => 
                         modifiedLink.Id == link.Id 
                         && modifiedLink.ExerciseId == link.ExerciseId 
-                        && modifiedLink.TargetAreaId == link.TargetAreaId);
+                        && modifiedLink.TargetAreaId == link.TargetAreaId)
+                    .ShouldBeTrue();
             }
         }
     }

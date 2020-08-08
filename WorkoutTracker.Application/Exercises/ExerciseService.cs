@@ -43,6 +43,7 @@ namespace WorkoutTracker.Application.Exercises
             return _repo.Update(existingExercise, saveChanges);
         }
 
+        #region Private Methods
         private void ApplyQueryFilters(ref IQueryable<Exercise> query, ExerciseFilter filter)
         {
             if (filter == null)
@@ -86,5 +87,6 @@ namespace WorkoutTracker.Application.Exercises
             foreach (var link in linksToRemove)
                 existingExercise.ExerciseTargetAreaLinks.Remove(link);
         }
+        #endregion Private Methods
     }
 }

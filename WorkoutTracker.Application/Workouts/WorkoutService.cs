@@ -46,14 +46,6 @@ namespace WorkoutTracker.Application.Workouts
             AddExercisesToExistingWorkout(existingWorkout, modifiedWorkout);
             RemoveExercisesFromExistingWorkout(existingWorkout, modifiedWorkout);
 
-            /*
-            existingWorkout.ModifiedDateTime = DateTime.Now;
-
-            if (saveChanges)
-                _repo.Context.SaveChanges(); //Have to save this way because our entity is already TRACKED.
-                                             //TODO: Refactor? I'm not thrilled with this approach.
-            */
-
             _repo.Update(existingWorkout, saveChanges);
 
             return existingWorkout;
@@ -65,7 +57,7 @@ namespace WorkoutTracker.Application.Workouts
                 return;
 
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
-                query = query.Where(x => x.Name.Contains(filter.NameContains, StringComparison.CurrentCulture));
+                query = query.Where(x => x.Name.Contains(filter.NameContains, StringComparison.CurrentCultureIgnoreCase));
         }
 
         private void AddExercisesToExistingWorkout(Workout existingWorkout, Workout modifiedWorkout)
