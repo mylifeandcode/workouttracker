@@ -27,6 +27,9 @@ namespace WorkoutTracker.Application.Workouts
 
         public override Workout Update(Workout modifiedWorkout, bool saveChanges = false)
         {
+            if (modifiedWorkout == null)
+                throw new ArgumentNullException(nameof(modifiedWorkout));
+
             /*
             I thought there'd be an easier way to handle this, but as this is a 
             disconnected entity, apparently there is not. :/

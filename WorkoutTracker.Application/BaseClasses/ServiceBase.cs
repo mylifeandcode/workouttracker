@@ -13,7 +13,7 @@ namespace WorkoutTracker.Application.BaseClasses
         public ServiceBase(IRepository<T> repo)
         {
             if (repo == null)
-                throw new ArgumentNullException("repo");
+                throw new ArgumentNullException(nameof(repo));
 
             _repo = repo;
         }

@@ -27,6 +27,9 @@ namespace WorkoutTracker.Application.Exercises
 
         public override Exercise Update(Exercise modifiedExercise, bool saveChanges = false)
         {
+            if (modifiedExercise == null)
+                throw new ArgumentNullException(nameof(modifiedExercise));
+
             /*
             Remove any ExerciseTargetAreaLinks which are not present in entity.
             I thought there'd be an easier way to handle this, but as this is a 
@@ -50,7 +53,7 @@ namespace WorkoutTracker.Application.Exercises
                 return;
 
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
-                query = query.Where(x => x.Name.Contains(filter.NameContains));
+                query = query.Where(x => x.Name.Contains(filter.NameContains, StringComparison.CurrentCultureIgnoreCase));
 
             if (filter.HasTargetAreas != null && filter.HasTargetAreas.Any())
             {

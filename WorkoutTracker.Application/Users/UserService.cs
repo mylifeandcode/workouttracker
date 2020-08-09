@@ -17,7 +17,7 @@ namespace WorkoutTracker.Application.Users
             return _repo.Add(user, true);
         }
 
-        public void Delete(int userId)
+        public override void Delete(int userId)
         {
             //TODO: Delete entities associated with user (workouts, etc)
             _repo.Delete(userId);
@@ -32,11 +32,5 @@ namespace WorkoutTracker.Application.Users
         {
             return _repo.Get().Where(x => x.Name.ToUpper() != "SYSTEM");
         }
-
-        public User GetById(int userId)
-        {
-            return _repo.Get(userId);
-        }
-
     }
 }
