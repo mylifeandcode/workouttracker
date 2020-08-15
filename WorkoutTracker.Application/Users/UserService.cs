@@ -30,7 +30,7 @@ namespace WorkoutTracker.Application.Users
 
         public override IEnumerable<User> GetAll()
         {
-            return _repo.Get().Where(x => x.Name.ToUpper() != "SYSTEM");
+            return _repo.Get().Where(x => x.Name.ToUpper(System.Globalization.CultureInfo.CurrentCulture) != "SYSTEM");
         }
     }
 }
