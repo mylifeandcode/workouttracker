@@ -85,8 +85,10 @@ namespace WorkoutTracker.Tests.Services
 
             //ASSERT
             results.Count.ShouldBe(users.Count - 1);
-            results.Any(user => 
-                    user.Name.ToUpper(System.Globalization.CultureInfo.CurrentCulture) == "SYSTEM")
+            results.Any(user =>
+                    //user.Name.ToUpper(System.Globalization.CultureInfo.CurrentCulture) == "SYSTEM")
+                    //EF doesn't like the culture stuff! :/                    
+                    user.Name.ToUpper() == "SYSTEM")
                 .ShouldBeFalse();
         }
     }

@@ -21,9 +21,9 @@ export class WorkoutService {
 
   constructor(private _http: HttpClient) { }
 
-  public getAll(firstRecOffset: number, pageSize: number, nameContains: string = null): Observable<PaginatedResults<WorkoutDTO>> {
+  public getAll(firstRecOffset: number, pageSize: number, userId: number, nameContains: string = null): Observable<PaginatedResults<WorkoutDTO>> {
         
-    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
+    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&userId=${userId}`;
 
     if(nameContains)
         url += `&nameContains=${nameContains}`;
@@ -36,6 +36,11 @@ export class WorkoutService {
   public getById(id: number): Observable<Workout> {
     return this._http.get(`${this.API_ROOT}/${id}`)
       .pipe(map((resp: Workout) => resp));
+  }
+
+  public getByUserId(id: number): Observable<WorkoutDTO[]> {
+    return this._http.get(`${this.API_ROOT}/user/${id}`)
+      .pipe(map((resp: WorkoutDTO[]) => resp));
   }
 
   public add(workout: Workout): Observable<Workout> {

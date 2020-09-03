@@ -3,6 +3,8 @@ import { WorkoutService } from '../workout.service';
 import { WorkoutDTO } from 'app/models/workout-dto';
 import { PaginatedResults } from 'app/models/paginated-results';
 import { finalize } from 'rxjs/operators';
+import { UserService } from 'app/users/user.service';
+import { User } from 'app/models/user';
 
 @Component({
   selector: 'wt-workout-list',
@@ -22,18 +24,23 @@ export class WorkoutListComponent implements OnInit {
       { field: 'name', header: 'Name' }
   ]; //TODO: Create specific type
 
-  constructor(private _workoutSvc: WorkoutService) { 
+  private _userId: number;
+
+  constructor(private _workoutSvc: WorkoutService, private _userService: UserService) { 
   }
 
   ngOnInit(): void {
-      this.getWorkouts(0, null);
+      this._userService.getCurrentUserInfo().subscribe((user: User) => {
+        this._userId = user.id;
+        this.getWorkouts(0, null);
+      });
   }
 
   public getWorkouts(first: number, nameContains: string): void {
       //this.loading = true;
       this.totalRecords = 0;
 
-      this._workoutSvc.getAll(first, 20)
+      this._workoutSvc.getAll(first, 20, this._userId)
         .pipe(finalize(() => { this.loading = false; }))
         .subscribe(
             (results: PaginatedResults<WorkoutDTO>) => {

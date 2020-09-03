@@ -27,11 +27,11 @@ namespace WorkoutTracker.UI.Controllers
 
         // GET: api/Workouts
         [HttpGet]
-        public ActionResult<PaginatedResults<WorkoutDTO>> Get(int firstRecord, short pageSize, string nameContains = null)
+        public ActionResult<PaginatedResults<WorkoutDTO>> Get(int firstRecord, short pageSize, int userId, string nameContains = null)
         {
             try
             {
-                var filter = BuildWorkoutFilter(nameContains);
+                var filter = BuildWorkoutFilter(userId, nameContains);
                 var result = new PaginatedResults<WorkoutDTO>();
 
                 result.TotalCount = _workoutService.GetTotalCount(); //TODO: Modify to get total count by filter
@@ -110,9 +110,11 @@ namespace WorkoutTracker.UI.Controllers
             throw new NotImplementedException();
         }
 
-        private WorkoutFilter BuildWorkoutFilter(string nameContains)
+        private WorkoutFilter BuildWorkoutFilter(int userId, string nameContains)
         {
             var filter = new WorkoutFilter();
+
+            filter.UserId = userId;
 
             if (!String.IsNullOrWhiteSpace(nameContains))
                 filter.NameContains = nameContains;

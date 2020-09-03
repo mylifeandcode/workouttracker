@@ -1,3 +1,17 @@
-<p>
-  workout works!
-</p>
+<div class="container-fluid form-group">
+  <div *ngIf="loading" class="row">
+      <div class="offset-md-5 col-md-1">
+          <p-progressSpinner></p-progressSpinner>
+      </div>
+  </div>
+
+  <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
+    <h3 class="headroom">Workout</h3>
+    <div class="row">
+      <div class="col-md-12 form-group">
+        <label>Select a Workout</label>
+        <select formControlName="workoutDefinitions"></select>
+      </div>
+    </div>
+  </form>
+</div>

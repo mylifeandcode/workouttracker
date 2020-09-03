@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { WorkoutService } from '../workout.service';
+import { UserService } from 'app/users/user.service';
 
 @Component({
   selector: 'wt-workout',
@@ -7,9 +10,32 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WorkoutComponent implements OnInit {
 
-  constructor() { }
+  public loading: boolean = true;
+  public workoutForm: FormGroup;
 
-  ngOnInit() {
+  constructor(
+    private _formBuilder: FormBuilder,
+    private _workoutSvc: WorkoutService,
+    private _userSvc: UserService, 
+  ) { }
+
+  public ngOnInit(): void {
+    this.createForm();
+    this.loading = false;
+  }
+
+  private createForm(): void {
+
+    this.workoutForm = this._formBuilder.group({
+        id: [0, Validators.required ], 
+        name: ['', Validators.required],
+        workoutDefinitions: this._formBuilder.array([])
+    });
+
+  }
+  
+  private getWorkoutDefinitons(): void {
+    
   }
 
 }
