@@ -10,7 +10,10 @@ namespace WorkoutApplication.Data.EntitySetup.Resistances
     {
         public void Setup(ModelBuilder builder)
         {
-            builder.Entity<Resistance>().Property(x => x.Amount).IsRequired();
+            var entity = builder.Entity<Resistance>();
+
+            entity.Property(x => x.Amount).IsRequired();//.HasColumnType("int");
+
             base.SetupAuditFields<Resistance>(builder);
         }
     }
