@@ -11,5 +11,6 @@ namespace WorkoutApplication.Domain.Exercises
         public virtual int ExerciseId { get; set; }
         public short NumberOfSets { get; set; }
         public SetType SetType { get; set; }
+        public short Sequence { get; set; }
     }
 }

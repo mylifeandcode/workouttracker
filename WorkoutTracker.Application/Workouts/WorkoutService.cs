@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,7 +61,7 @@ namespace WorkoutTracker.Application.Workouts
                 return;
 
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
-                query = query.Where(x => x.Name.Contains(filter.NameContains, StringComparison.CurrentCultureIgnoreCase));
+                query = query.Where(workout => EF.Functions.Like(workout.Name, "%" + filter.NameContains + "%"));
         }
 
         private void AddExercisesToExistingWorkout(Workout existingWorkout, Workout modifiedWorkout)

@@ -53,14 +53,16 @@ namespace WorkoutTracker.Application.Exercises
                 return;
 
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
-                query = query.Where(x => x.Name.Contains(filter.NameContains, StringComparison.CurrentCultureIgnoreCase));
+                query = query.Where(exercise => EF.Functions.Like(exercise.Name, "%" + filter.NameContains + "%"));
 
             if (filter.HasTargetAreas != null && filter.HasTargetAreas.Any())
             {
                 //filter.HasTargetAreas.ForEach((targetArea) =>
                 foreach (var targetArea in filter.HasTargetAreas)
                 {
-                    query = query.Where(x => x.ExerciseTargetAreaLinks.Any(links => links.TargetArea.Name.ToUpper().Contains(targetArea.ToUpper())));
+                    query = query.Where(exercise =>
+                        exercise.ExerciseTargetAreaLinks.Any(links => 
+                            EF.Functions.Like(links.TargetArea.Name.ToUpper(), targetArea.ToUpper())));
                 }
             }
         }
