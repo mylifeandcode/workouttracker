@@ -4,14 +4,12 @@ import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl } from '
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/users/user.service';
 import { Workout } from 'app/models/workout';
-import { Set } from 'app/models/set';
 import { User } from 'app/models/user';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ExerciseDTO } from 'app/models/exercise-dto';
 import { WorkoutDTO } from 'app/models/workout-dto';
 import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
-import { WorkoutTrackerPage } from '../../../../e2e/app.po';
 
 @Component({
   selector: 'app-workout-edit',

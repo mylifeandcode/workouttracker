@@ -11,7 +11,9 @@ const httpOptions = {
   })
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class UserService {
 
   private _rootUrl: string = "http://localhost:5600/api/Users";
