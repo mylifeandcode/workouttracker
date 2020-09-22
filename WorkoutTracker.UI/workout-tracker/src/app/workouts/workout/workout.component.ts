@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/users/user.service';
 import { User } from 'app/models/user';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from 'app/models/workout-dto';
 import { PaginatedResults } from 'app/models/paginated-results';
+import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
 
 @Component({
   selector: 'wt-workout',
@@ -14,10 +15,19 @@ import { PaginatedResults } from 'app/models/paginated-results';
 })
 export class WorkoutComponent implements OnInit {
 
+  //Public fields
   public loading: boolean = true;
   public errorInfo: string;
   public workoutForm: FormGroup;
-  public workouts: WorkoutDTO[];
+  public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
+  public workout: WorkoutDTO;
+
+  //Properties
+  get exercisesArray(): FormArray {
+    //This property provides an easier way for the template to access this information, 
+    //and is used by the component code as a short-hand reference to the form array.
+    return this.workoutForm.get('exercises') as FormArray;
+  }
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -35,14 +45,14 @@ export class WorkoutComponent implements OnInit {
         }, 
         (error: any) => {
           this.loading = false;
+          this.setErrorInfo(error, "An error occurred getting user info. See console for more info.");
         }
       );
 
   }
 
-  public workoutSelected(event: any) { //TODO: Get concrete type
-    console.log("event: ", event);
-    window.alert(event.target.value);
+  public workoutSelected(event: any) { //TODO: Get concrete type instead of using any
+    this.getWorkoutDefinitionById(event.target.value);
   }
 
   private createForm(): void {
@@ -50,7 +60,8 @@ export class WorkoutComponent implements OnInit {
     this.workoutForm = this._formBuilder.group({
         id: [0, Validators.required ], 
         name: ['', Validators.required],
-        workoutDefinitions: [''] //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
+        workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
+        exercises: this._formBuilder.array([])
     });
 
   }
@@ -68,12 +79,61 @@ export class WorkoutComponent implements OnInit {
           }
         }, 
         (error: any) => {
-          if (error.message)
-            this.errorInfo = error.message;
-          else
-            this.errorInfo = "An error occurred getting workout definitions. See console for details.";
+          this.setErrorInfo(error, "An error occurred getting workout definitions. See console for details.");
         }
       );
+  }
+
+  private getWorkoutDefinitionById(id: number): void {
+    this.loading = true;
+    this._workoutService.getDTObyId(id)
+      .pipe(finalize(() => { this.loading = false; }))
+      .subscribe(
+        (workout: WorkoutDTO) => { 
+          //TODO: Separate endpoint to return workout w/recommended resistance values
+          this.workout = workout;
+          this.setupExercisesFormGroup(workout.exercises);
+        }, 
+        (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
+      );
+  }
+
+  private setupExercisesFormGroup(exercises: ExerciseInWorkout[]): void {
+    this.exercisesArray.clear();
+    exercises.forEach(exercise => {
+      this.exercisesArray.push(
+        this._formBuilder.group({
+          id: exercise.id, 
+          exerciseId: exercise.exerciseId, 
+          exerciseName: [exercise.exerciseName, Validators.compose([Validators.required])],
+          numberOfSets: [exercise.numberOfSets, Validators.compose([Validators.required, Validators.min(1)])], 
+          exerciseSets: this.getExerciseSetsFormArray(exercise.numberOfSets), 
+          setType: [exercise.setType, Validators.compose([Validators.required])]
+        }) 
+      )
+    });
+  }
+
+  private getExerciseSetsFormArray(numberOfSets: number): FormArray {
+
+    let formArray = this._formBuilder.array([]);
+
+    for(let i = 0; i < numberOfSets; i++) {
+      formArray.push(this._formBuilder.group({
+        targetReps: [0, Validators.required], //TODO: Populate with data from API once refactored to provide it!
+        actualReps: [0, Validators.required]
+      }));
+    }
+
+    return formArray;
+    
+  }
+
+  private setErrorInfo(error: any, defaultMessage: string): void {
+    if (error.message)
+      this.errorInfo = error.message;
+    else
+      this.errorInfo = defaultMessage;
   }
 
 }

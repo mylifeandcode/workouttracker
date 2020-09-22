@@ -1,0 +1,14 @@
+<div [formGroup]="formGroup" class="row">
+    <div class="col-md-6">
+        <input type="hidden" formControlName="exerciseId" />
+        <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            {{formGroup.controls.setType.value == 0 ? "Repitition" : "Timed"}} Set(s):
+            <div *ngFor="let exerciseSet of setsArray.controls; let i = index" class="col-md-12">
+                Set {{i + 1}}
+            </div>
+        </div>
+    </div>
+</div>

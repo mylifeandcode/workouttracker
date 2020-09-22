@@ -63,11 +63,33 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
-                var exercise = _workoutService.GetById(id);
-                if (exercise == null)
+                var workout = _workoutService.GetById(id);
+                if (workout == null)
                     return NotFound(id);
                 else
-                    return Ok(exercise);
+                    return Ok(workout);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("DTO/{id}")]
+        public ActionResult<WorkoutDTO> GetDTO(int id)
+        {
+            try
+            {
+                var workout = _workoutService.GetById(id);
+                if (workout == null)
+                    return NotFound(id);
+
+                var dto = new WorkoutDTO();
+                dto.Id = workout.Id;
+                dto.Name = workout.Name;
+                dto.Exercises = workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise));
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {

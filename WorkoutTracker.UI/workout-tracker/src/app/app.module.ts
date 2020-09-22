@@ -33,6 +33,7 @@ import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
 import { WorkoutEditComponent } from './workouts/workout-edit/workout-edit.component';
 import { ExerciseListMiniComponent } from './exercises/exercise-list-mini/exercise-list-mini.component';
 import { WorkoutSetDefinitionComponent } from './workouts/workout-set-definition/workout-set-definition.component';
+import { WorkoutExerciseComponent } from './workouts/workout-exercise/workout-exercise.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { WorkoutSetDefinitionComponent } from './workouts/workout-set-definition
     UserEditComponent,
     WorkoutEditComponent,
     ExerciseListMiniComponent,
-    WorkoutSetDefinitionComponent
+    WorkoutSetDefinitionComponent,
+    WorkoutExerciseComponent
   ],
   imports: [
         BrowserModule,
