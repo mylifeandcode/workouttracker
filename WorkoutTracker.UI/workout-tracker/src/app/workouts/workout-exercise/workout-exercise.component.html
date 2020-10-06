@@ -6,8 +6,12 @@
     <div class="col-md-6">
         <div class="row">
             {{formGroup.controls.setType.value == 0 ? "Repitition" : "Timed"}} Set(s):
-            <div *ngFor="let exerciseSet of setsArray.controls; let i = index" class="col-md-12">
-                Set {{i + 1}}
+            <!--exerciseSets is the name of the FormArray on the FormGroup representing an Exercise which is passed in via an @Input()-->
+            <div formArrayName="exerciseSets">
+                <div *ngFor="let exerciseSet of setsArray.controls; let i = index" class="col-md-12" [formGroupName]="i">
+                    Set {{i + 1}}
+                    <input type="text" formControlName="targetReps" required />
+                </div>
             </div>
         </div>
     </div>

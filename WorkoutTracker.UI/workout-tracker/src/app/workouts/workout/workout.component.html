@@ -20,7 +20,10 @@
     </div>
 
     <ng-container *ngIf="workout != null">
-      <wt-workout-exercise *ngFor="let exercise of exercisesArray.controls; let i = index" [formGroup]="exercise"></wt-workout-exercise>
+      <wt-workout-exercise 
+        *ngFor="let exercise of exercisesArray.controls; let i = index" 
+        [formGroup]="exercise">
+      </wt-workout-exercise>
     </ng-container>
 
   </form>

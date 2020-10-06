@@ -1,8 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray } from '@angular/forms';
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
 
+/**
+ * A component representing an Exercise as part of a Workout instance, 
+ * i.e. "The Chest and Arms Workout on 10/7/2020 includes 5 sets of Diamond Push-Ups with a 
+ * target rep count of 30 for each set, and an actual rep count of how many I actually did."
+ */
 @Component({
   selector: 'wt-workout-exercise',
   templateUrl: './workout-exercise.component.html',
@@ -13,19 +17,28 @@ export class WorkoutExerciseComponent implements OnInit {
   @Input()
   exercise: ExerciseInWorkout;
 
+  /**
+   * The FormGroup containing FormControls for the Exercise Name, Type, etc, as well as 
+   * a FormArray for the Sets
+   */
   @Input()
-  formGroup: FormGroup;
+  formGroup: FormGroup; //TODO: Use a strong-typed structure
+
+  @Input()
+  exerciseSetsFormArray: FormArray;
 
   //Properties
   get setsArray(): FormArray {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
+    console.log("SETS ARRAY: ", this.formGroup.get('exerciseSets') as FormArray);
     return this.formGroup.get('exerciseSets') as FormArray;
   }
 
   constructor() { }
 
   ngOnInit(): void {
+    console.log("FORM GROUP: ", this.formGroup);
   }
 
 }

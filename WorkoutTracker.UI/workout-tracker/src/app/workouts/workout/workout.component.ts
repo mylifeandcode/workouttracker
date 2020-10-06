@@ -15,19 +15,26 @@ import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
 })
 export class WorkoutComponent implements OnInit {
 
-  //Public fields
+  //PUBLIC FIELDS
   public loading: boolean = true;
   public errorInfo: string;
   public workoutForm: FormGroup;
   public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
   public workout: WorkoutDTO;
+  //END PUBLIC FIELDS
 
-  //Properties
+  //PROPERTIES
+
+  /**
+   * A property representing all of the Exercises which are part of the Workout
+   */
   get exercisesArray(): FormArray {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
     return this.workoutForm.get('exercises') as FormArray;
   }
+
+  //END PROPERTIES
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -107,7 +114,7 @@ export class WorkoutComponent implements OnInit {
           exerciseId: exercise.exerciseId, 
           exerciseName: [exercise.exerciseName, Validators.compose([Validators.required])],
           numberOfSets: [exercise.numberOfSets, Validators.compose([Validators.required, Validators.min(1)])], 
-          exerciseSets: this.getExerciseSetsFormArray(exercise.numberOfSets), 
+          exerciseSets: this.getExerciseSetsFormArray(exercise.numberOfSets), //This is a FormArray of FormGroups. Each group represents a set, with a Target Rep control and an Actual Rep control.
           setType: [exercise.setType, Validators.compose([Validators.required])]
         }) 
       )
@@ -118,6 +125,7 @@ export class WorkoutComponent implements OnInit {
 
     let formArray = this._formBuilder.array([]);
 
+    //Each member of the array is a FormGroup
     for(let i = 0; i < numberOfSets; i++) {
       formArray.push(this._formBuilder.group({
         targetReps: [0, Validators.required], //TODO: Populate with data from API once refactored to provide it!
