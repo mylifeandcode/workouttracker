@@ -1,18 +1,71 @@
 <div [formGroup]="formGroup" class="row">
-    <div class="col-md-6">
+    <div class="col-md-3">
         <input type="hidden" formControlName="exerciseId" />
-        <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
+        <input type="text" formControlName="exerciseName" [readonly]="true" class="form-control-plaintext exerciseName" required />
     </div>
-    <div class="col-md-6">
-        <div class="row">
-            {{formGroup.controls.setType.value == 0 ? "Repitition" : "Timed"}} Set(s):
-            <!--exerciseSets is the name of the FormArray on the FormGroup representing an Exercise which is passed in via an @Input()-->
-            <div formArrayName="exerciseSets">
-                <div *ngFor="let exerciseSet of setsArray.controls; let i = index" class="col-md-12" [formGroupName]="i">
-                    Set {{i + 1}}
-                    <input type="text" formControlName="targetReps" required />
+    <div class="col-md-9" class="setType">
+        {{formGroup.controls.setType.value == 0 ? "Repitition" : "Timed"}} Set(s):
+    </div>
+</div>
+<div [formGroup]="formGroup" class="row">
+    <div class="col-md-12">
+        <!--exerciseSets is the name of the FormArray on the FormGroup representing an Exercise which is passed in via an @Input()-->
+        <div formArrayName="exerciseSets">
+            <div class="row">
+                <div class="col-1">
+                    Set
+                </div>
+                <div class="col-1">
+                    Resistance
+                </div>
+                <div class="col-2">
+                    Target Reps
+                </div>
+                <div class="col-2">
+                    Actual Reps
+                </div>
+                <div class="col-3">
+                    Form
+                </div>
+                <div class="col-3">
+                    Range of Motion
+                </div>
+            </div>
+            <div *ngFor="let exerciseSet of setsArray.controls; let i = index" class="col-md-12" [formGroupName]="i">
+                <div class="row form-group">
+                    <div class="col-1">
+                        {{i + 1}}
+                    </div>
+                    <div class="col-1">
+                        <input type="text" class="form-control" required />
+                    </div>
+                    <div class="col-2">
+                        <input type="text" class="form-control" formControlName="targetReps" required />
+                    </div>
+                    <div class="col-2">
+                        <input type="text" class="form-control" formControlName="actualReps" required /> 
+                    </div>
+                    <div class="col-3">
+                        <select class="form-control"> <!--TODO: Set up differenty, this is just for POC-->
+                            <option>Bad</option>
+                            <option>Poor</option>
+                            <option>OK</option>
+                            <option>Good</option>
+                            <option>Excellent</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <select class="form-control"> <!--TODO: Set up differenty, this is just for POC-->
+                            <option>Bad</option>
+                            <option>Poor</option>
+                            <option>OK</option>
+                            <option>Good</option>
+                            <option>Excellent</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
