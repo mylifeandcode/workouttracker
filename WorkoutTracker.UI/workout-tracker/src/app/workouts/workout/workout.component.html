@@ -12,6 +12,7 @@
       <div class="col-md-12 form-group">
         <label>Select a Workout</label>&nbsp;
         <select formControlName="workoutDefinitions" id="workoutDefinitions" (change)="workoutSelected($event)">
+          <option value="" selected disabled>Choose a Workout</option>
           <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
             {{workouts[i].name}}
           </option>          
@@ -26,5 +27,6 @@
       </wt-workout-exercise>
     </ng-container>
 
+    <button type="submit" class="btn btn-primary" *ngIf="workout != null" [disabled]="!workoutForm.valid">Complete Workout</button>
   </form>
 </div>

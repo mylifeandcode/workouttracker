@@ -42,7 +42,7 @@ export class WorkoutComponent implements OnInit {
     private _userService: UserService) { 
   }
 
-  public async ngOnInit(): Promise<void> {
+  public ngOnInit(): void {
     this.createForm();
     
     this._userService.getCurrentUserInfo()
@@ -59,14 +59,13 @@ export class WorkoutComponent implements OnInit {
   }
 
   public workoutSelected(event: any) { //TODO: Get concrete type instead of using any
-    this.getWorkoutDefinitionById(event.target.value);
+    this.setupWorkout(event.target.value);
   }
 
   private createForm(): void {
 
     this.workoutForm = this._formBuilder.group({
         id: [0, Validators.required ], 
-        name: ['', Validators.required],
         workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
         exercises: this._formBuilder.array([])
     });
@@ -91,7 +90,7 @@ export class WorkoutComponent implements OnInit {
       );
   }
 
-  private getWorkoutDefinitionById(id: number): void {
+  private setupWorkout(id: number): void {
     this.loading = true;
     this._workoutService.getDTObyId(id)
       .pipe(finalize(() => { this.loading = false; }))
@@ -99,6 +98,9 @@ export class WorkoutComponent implements OnInit {
         (workout: WorkoutDTO) => { 
           //TODO: Separate endpoint to return workout w/recommended resistance values
           this.workout = workout;
+          this.workoutForm.patchValue({
+            id: id
+          });
           this.setupExercisesFormGroup(workout.exercises);
         }, 
         (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
@@ -128,8 +130,11 @@ export class WorkoutComponent implements OnInit {
     //Each member of the array is a FormGroup
     for(let i = 0; i < numberOfSets; i++) {
       formArray.push(this._formBuilder.group({
+        resistance: [0, Validators.required], 
         targetReps: [0, Validators.required], //TODO: Populate with data from API once refactored to provide it!
-        actualReps: [0, Validators.required]
+        actualReps: [0, Validators.required], 
+        formRating: [null, Validators.required], 
+        rangeOfMotionRating: [null, Validators.required]
       }));
     }
 
