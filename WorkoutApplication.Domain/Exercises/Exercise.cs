@@ -13,5 +13,7 @@ namespace WorkoutApplication.Domain.Exercises
         public string PointsToRemember { get; set; }
 
         public virtual ICollection<ExerciseTargetAreaLink> ExerciseTargetAreaLinks { get; set; }
+
+        public ResistanceType TypeOfResistance { get; set; }
     }
 }

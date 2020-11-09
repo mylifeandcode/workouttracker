@@ -39,8 +39,25 @@ namespace WorkoutApplication.Domain.Exercises
         public string Notes { get; set; }
 
         /// <summary>
-        /// The Resistances used/intended during the Exercise.
+        /// The amount of resistance used when this exercise was executed.
         /// </summary>
-        public virtual IEnumerable<Resistance> Resistances { get; set; }
+        public decimal ResistanceAmount { get; set; }
+        
+        /// <summary>
+        /// A string representing the different resistances which add up to the 
+        /// total resistance amount. Does not apply to all resistance types 
+        /// (for example, body weight or machine weight).
+        /// </summary>
+        /// <example>
+        /// For an exercise using resistance bands by Bodylastics, a ResistanceMakeup 
+        /// value of O,O,P,Blk indicates two orange bands, one purple band, and a 
+        /// black band.
+        /// </example>
+        public decimal ResistanceMakeup { get; set; }
+
+        /// <summary>
+        /// The individual resistances which were used for this exercise.
+        /// </summary>
+        public virtual ICollection<Resistance> Resistances { get; set; }
     }
 }

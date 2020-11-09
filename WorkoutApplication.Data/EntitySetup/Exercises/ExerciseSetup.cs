@@ -23,6 +23,10 @@ namespace WorkoutApplication.Data.EntitySetup.Exercises
                 .HasForeignKey(x => x.ExerciseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            entity
+                .Property(x => x.TypeOfResistance)
+                .HasConversion<int>();
+
             entity.HasIndex(x => x.Name);
 
             base.SetupAuditFields<Exercise>(builder);
