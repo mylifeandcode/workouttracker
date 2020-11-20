@@ -38,13 +38,17 @@
             </div>
 
         </div>
-        <div class="row col-md-12">
-            <label>Resistance Type</label>
-            <select formControlName="resistanceTypes">
-                <option *ngFor="let resistanceType of resistanceTypes" value={{resistanceType}}>>
-                    {{resistanceType}}
-                </option>
-            </select>{{resistanceTypes | json}}
+        <div class="row">
+            <div class="col-md-3 form-group">
+                <label class="center-block" for="resistanceTypes">
+                    Resistance Type
+                </label>
+                <select formControlName="resistanceTypes" id="resistanceTypes" class="form-control">
+                    <option *ngFor="let resistanceType of resistanceTypes | keyvalue" value={{resistanceType.key}} selected="resistanceType.key == exercise.typeOfResistance">
+                        {{resistanceType.value | insertSpaceBeforeCapital}}
+                    </option>
+                </select>
+            </div>
         </div>
         <div class="row col-md-12">
             <h3>Instructions</h3>

@@ -4,7 +4,7 @@
         <input type="text" formControlName="exerciseName" [readonly]="true" class="form-control-plaintext exerciseName" required />
     </div>
     <div class="col-md-9" class="setType">
-        {{formGroup.controls.setType.value == 0 ? "Repitition" : "Timed"}} Set(s):
+        {{formGroup?.controls?.setType?.value == 0 ? "Repitition" : "Timed"}} Set(s):
     </div>
 </div>
 <div [formGroup]="formGroup" class="row">
@@ -31,7 +31,7 @@
                     Range of Motion
                 </div>
             </div>
-            <div *ngFor="let exerciseSet of setsArray.controls; let i = index" class="col-md-12" [formGroupName]="i">
+            <div *ngFor="let exerciseSet of setsArray?.controls; let i = index" class="col-md-12" [formGroupName]="i">
                 <div class="row form-group">
                     <div class="col-1">
                         {{i + 1}}

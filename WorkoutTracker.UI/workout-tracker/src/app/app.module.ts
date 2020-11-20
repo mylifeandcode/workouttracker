@@ -34,6 +34,7 @@ import { WorkoutEditComponent } from './workouts/workout-edit/workout-edit.compo
 import { ExerciseListMiniComponent } from './exercises/exercise-list-mini/exercise-list-mini.component';
 import { WorkoutSetDefinitionComponent } from './workouts/workout-set-definition/workout-set-definition.component';
 import { WorkoutExerciseComponent } from './workouts/workout-exercise/workout-exercise.component';
+import { InsertSpaceBeforeCapitalPipe } from './pipes/insert-space-before-capital.pipe';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { WorkoutExerciseComponent } from './workouts/workout-exercise/workout-ex
     WorkoutEditComponent,
     ExerciseListMiniComponent,
     WorkoutSetDefinitionComponent,
-    WorkoutExerciseComponent
+    WorkoutExerciseComponent,
+    InsertSpaceBeforeCapitalPipe
   ],
   imports: [
         BrowserModule,

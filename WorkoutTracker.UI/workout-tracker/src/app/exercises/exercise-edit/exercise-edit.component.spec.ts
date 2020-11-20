@@ -14,11 +14,23 @@ import { User } from 'app/models/user';
 import { TargetArea } from 'app/models/target-area';
 import { Exercise } from 'app/models/exercise';
 import { ActivatedRoute } from '@angular/router';
+import { DecimalPipe } from '@angular/common';
 
 
 class ExerciseServiceMock {
+  resistanceTypes: Map<number, string>;
+
+  constructor() {
+    this.resistanceTypes = new Map<number, string>();
+    this.resistanceTypes.set(0, 'Free Weight');
+    this.resistanceTypes.set(1, 'Resistance Band');
+  }
+
   getTargetAreas = jasmine.createSpy('getTargetAreas').and.returnValue(of(new Array<TargetArea>()));
   getById = jasmine.createSpy('getById').and.returnValue(of(new Exercise()));
+  getResistanceTypes = 
+    jasmine.createSpy('getResistanceTypes')
+      .and.returnValue(of(this.resistanceTypes));
 }
 
 class UserServiceMock {

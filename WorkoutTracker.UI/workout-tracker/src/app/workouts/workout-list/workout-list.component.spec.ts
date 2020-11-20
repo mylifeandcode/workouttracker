@@ -8,10 +8,18 @@ import { WorkoutService } from '../workout.service';
 import { Observable, of } from 'rxjs';
 import { PaginatedResults } from 'app/models/paginated-results';
 import { WorkoutDTO } from 'app/models/workout-dto';
+import { User } from 'app/models/user';
+import { UserService } from 'app/users/user.service';
 
 
 class WorkoutServiceMock {
-  getAll = jasmine.createSpy('getAll').and.returnValue(of(new Observable<PaginatedResults<WorkoutDTO>>()));
+  getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<WorkoutDTO>()));
+}
+
+class UserServiceMock {
+  getCurrentUserInfo = 
+    jasmine.createSpy('getCurrentUserInfo')
+      .and.returnValue(of(new User()));
 }
 
 describe('WorkoutListComponent', () => {
@@ -29,6 +37,10 @@ describe('WorkoutListComponent', () => {
         {
           provide: WorkoutService, 
           useClass: WorkoutServiceMock
+        }, 
+        {
+          provide: UserService, 
+          useClass: UserServiceMock
         }
       ]
     })

@@ -1,10 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WorkoutExerciseComponent } from './workout-exercise.component';
+import { FormBuilder, Validators } from '@angular/forms';
 
 describe('WorkoutExerciseComponent', () => {
   let component: WorkoutExerciseComponent;
   let fixture: ComponentFixture<WorkoutExerciseComponent>;
+  let formBuilder: FormBuilder;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -16,6 +18,12 @@ describe('WorkoutExerciseComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutExerciseComponent);
     component = fixture.componentInstance;
+    formBuilder = new FormBuilder();
+    component.formGroup = formBuilder.group({
+      id: [0, Validators.required ], 
+      workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
+      exercises: formBuilder.array([])
+    });
     fixture.detectChanges();
   });
 
