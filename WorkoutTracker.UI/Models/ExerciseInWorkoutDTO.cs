@@ -13,6 +13,7 @@ namespace WorkoutTracker.UI.Models
         public string ExerciseName { get; set; }
         public short NumberOfSets { get; set; }
         public SetType SetType { get; set; }
+        public ResistanceType ResistanceType { get; set; }
 
         public ExerciseInWorkoutDTO(ExerciseInWorkout exercise)
         {
@@ -21,6 +22,7 @@ namespace WorkoutTracker.UI.Models
             ExerciseName = exercise.Exercise.Name;
             NumberOfSets = exercise.NumberOfSets;
             SetType = exercise.SetType;
+            ResistanceType = exercise.Exercise.TypeOfResistance;
         }
     }
 }

@@ -35,16 +35,17 @@ export class ExerciseEditComponent implements OnInit {
     private _errorMsg: string = null;
     public currentUserId: number; //The ID of the user performing the add or edit
     public allTargetAreas: TargetArea[];
+    public resistanceTypes: Map<number, string>;
     public infoMsg: string = null;
 
     async ngOnInit() {
 
         this.createForm();
 
-        //TODO: Wrap the below two calls in a Promise.all()
+        //TODO: Revisit. Do we really need to await this stuff?
         this.currentUserId = await this.getCurrentUserId();
         this.allTargetAreas = await this._exerciseSvc.getTargetAreas().toPromise();
-        
+        this.resistanceTypes = await this._exerciseSvc.getResistanceTypes().toPromise();
         this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
 
     }
@@ -90,6 +91,7 @@ export class ExerciseEditComponent implements OnInit {
             id: [0, Validators.required ], 
             name: ['', Validators.required], 
             description: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])], 
+            resistanceTypes: [0, Validators.required], 
             targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
             setup: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
             movement: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],

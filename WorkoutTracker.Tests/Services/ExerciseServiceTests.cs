@@ -7,6 +7,8 @@ using WorkoutApplication.Repository;
 using WorkoutTracker.Application.Exercises;
 using WorkoutTracker.Application.FilterClasses;
 using Shouldly;
+using Microsoft.ApplicationInsights.Common;
+using System;
 
 namespace WorkoutTracker.Tests.Services
 {
@@ -182,6 +184,26 @@ namespace WorkoutTracker.Tests.Services
                         && modifiedLink.ExerciseId == link.ExerciseId 
                         && modifiedLink.TargetAreaId == link.TargetAreaId)
                     .ShouldBeTrue();
+            }
+        }
+
+        [TestMethod]
+        public void Should_Get_Resistance_Types()
+        {
+            //ARRANGE
+            var repoMock = new Mock<IRepository<Exercise>>(MockBehavior.Strict);
+            var sut = new ExerciseService(repoMock.Object);
+
+            //ACT
+            var results = sut.GetResistanceTypes();
+
+            //ASSERT
+            var resistanceTypeNames = Enum.GetNames(typeof(ResistanceType));
+            results.ShouldNotBeNull();
+            results.Count.ShouldBe(resistanceTypeNames.Length);
+            foreach (var result in results)
+            {
+                result.Value.ShouldBe(Enum.GetName(typeof(ResistanceType), result.Key));
             }
         }
     }

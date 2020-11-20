@@ -46,6 +46,15 @@ namespace WorkoutTracker.Application.Exercises
             return _repo.Update(existingExercise, saveChanges);
         }
 
+        public Dictionary<int, string> GetResistanceTypes()
+        {
+            return 
+                Enum
+                    .GetValues(typeof(ResistanceType))
+                    .Cast<int>()
+                    .ToDictionary(enumValue => enumValue, enumValue => Enum.GetName(typeof(ResistanceType), enumValue));
+        }
+
         #region Private Methods
         private void ApplyQueryFilters(ref IQueryable<Exercise> query, ExerciseFilter filter)
         {

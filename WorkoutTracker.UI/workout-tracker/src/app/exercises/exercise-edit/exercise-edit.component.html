@@ -39,6 +39,14 @@
 
         </div>
         <div class="row col-md-12">
+            <label>Resistance Type</label>
+            <select formControlName="resistanceTypes">
+                <option *ngFor="let resistanceType of resistanceTypes" value={{resistanceType}}>>
+                    {{resistanceType}}
+                </option>
+            </select>{{resistanceTypes | json}}
+        </div>
+        <div class="row col-md-12">
             <h3>Instructions</h3>
         </div>
         <div class="row">

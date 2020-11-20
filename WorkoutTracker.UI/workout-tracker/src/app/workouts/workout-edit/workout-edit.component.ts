@@ -120,7 +120,7 @@ export class WorkoutEditComponent implements OnInit {
 
     workout.exercises.forEach(exerciseInWorkout => {
       this.exercisesArray.push(
-        this.getExerciseFormGroup(
+        this.createExerciseFormGroup(
           exerciseInWorkout.id, exerciseInWorkout.exerciseId, exerciseInWorkout.exercise.name, exerciseInWorkout.setType, exerciseInWorkout.numberOfSets));
     });
   }
@@ -128,7 +128,7 @@ export class WorkoutEditComponent implements OnInit {
   private addExercise(exercise: ExerciseDTO): void {
     //Called by button click in template
     this._modalRef.hide();     //TODO: Check this out: https://valor-software.com/ngx-bootstrap/#/modals
-    this.exercisesArray.push(this.getExerciseFormGroup(0, exercise.id, exercise.name));
+    this.exercisesArray.push(this.createExerciseFormGroup(0, exercise.id, exercise.name));
   }
 
   private removeExercise(index: number): void {
@@ -210,14 +210,22 @@ export class WorkoutEditComponent implements OnInit {
 
   }
 
-  private getExerciseFormGroup(exerciseInWorkoutId: number, exerciseId: number, exerciseName: string, setType: number = 0, numberOfSets: number = 0): FormGroup {
+  private createExerciseFormGroup(
+    exerciseInWorkoutId: number, 
+    exerciseId: number, 
+    exerciseName: string, 
+    setType: number = 0, 
+    resistanceType: number = 0, 
+    numberOfSets: number = 0): FormGroup {
+      
     console.log("getExerciseFormGroup: exerciseInWorkoutId = " + exerciseInWorkoutId + ", exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
     return this._formBuilder.group({
       id: exerciseInWorkoutId, 
       exerciseId: exerciseId, 
       exerciseName: [exerciseName, Validators.compose([Validators.required])],
       numberOfSets: [numberOfSets, Validators.compose([Validators.required, Validators.min(1)])], 
-      setType: [setType, Validators.compose([Validators.required])]
+      setType: [setType, Validators.compose([Validators.required])], 
+      resistanceType: [resistanceType, Validators.compose([Validators.required])]
     });
   }
 
@@ -256,7 +264,8 @@ export class WorkoutEditComponent implements OnInit {
             exerciseGroup.get("exerciseId").value, 
             exerciseGroup.get("exerciseName").value, 
             exerciseGroup.get("numberOfSets").value, 
-            exerciseGroup.get("setType").value));
+            exerciseGroup.get("setType").value, 
+            exerciseGroup.get("resistanceType").value));
       }
     }
 

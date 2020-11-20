@@ -17,6 +17,8 @@ const HTTP_OPTIONS = {
 export class ExerciseService {
 
     private readonly API_ROOT: string = "http://localhost:5600/api/exercises"; //TODO: Get from environment config
+    private _targetAreas: Observable<Array<TargetArea>>;
+    private _resistanceTypes: Observable<Map<number, string>>;
 
     constructor(private _http: HttpClient) { }
 
@@ -53,6 +55,13 @@ export class ExerciseService {
 
     public update(exercise: Exercise): Observable<Exercise> {
         return this._http.put<Exercise>(`${this.API_ROOT}/${exercise.id}`, exercise, HTTP_OPTIONS);
+    }
+
+    public getResistanceTypes(): Observable<Map<number, string>> {
+        if (!this._resistanceTypes)
+            this._resistanceTypes = this._http.get<Map<number, string>>(`${this.API_ROOT}/ResistanceTypes`);
+
+        return this._resistanceTypes;
     }
 
 }

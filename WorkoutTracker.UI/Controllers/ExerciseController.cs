@@ -19,14 +19,14 @@ namespace WorkoutTracker.UI.Controllers
     [ApiController]
     public class ExerciseController : Controller
     {
-        private IExerciseService _svc;
+        private IExerciseService _exerciseService;
 
         public ExerciseController(IExerciseService svc)
         {
             if (svc == null)
                 throw new ArgumentNullException("svc");
 
-            _svc = svc;
+            _exerciseService = svc;
         }
 
         // GET: api/Exercises
@@ -38,12 +38,12 @@ namespace WorkoutTracker.UI.Controllers
                 var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
                 var result = new PaginatedResults<ExerciseDTO>();
 
-                result.TotalCount = _svc.GetTotalCount(); //TODO: Modify to get total count by filter
+                result.TotalCount = _exerciseService.GetTotalCount(); //TODO: Modify to get total count by filter
 
                 //Blows up after upgrading to EF Core 3.1 from 2.2!
                 //More info at https://stackoverflow.com/questions/59677609/problem-with-ef-core-after-migrating-from-2-2-to-3-1
                 //Had to add .ToList() to the call below.
-                var exercises = _svc.Get(firstRecord, pageSize, filter).ToList();
+                var exercises = _exerciseService.Get(firstRecord, pageSize, filter).ToList();
 
                 result.Results = exercises.Select((exercise) =>
                 {
@@ -68,7 +68,7 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
-                var exercise = _svc.GetById(id);
+                var exercise = _exerciseService.GetById(id);
                 if (exercise == null)
                     return NotFound(id);
                 else
@@ -86,7 +86,7 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
-                return Ok(_svc.Add(value, true));
+                return Ok(_exerciseService.Add(value, true));
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
-                return Ok(_svc.Update(value, true));
+                return Ok(_exerciseService.Update(value, true));
             }
             catch (Exception ex)
             {
@@ -113,6 +113,13 @@ namespace WorkoutTracker.UI.Controllers
         public ActionResult Delete(int id)
         {
             throw new NotImplementedException();
+        }
+
+        // GET api/Exercises/ResistanceTypes
+        [HttpGet("ResistanceTypes")]
+        public ActionResult<Dictionary<int, string>> GetResistanceTypes()
+        {
+            return _exerciseService.GetResistanceTypes();
         }
 
         private ExerciseFilter BuildExerciseFilter(string nameContains, string hasTargetAreas)

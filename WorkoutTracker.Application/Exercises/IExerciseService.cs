@@ -14,5 +14,6 @@ namespace WorkoutTracker.Application.Exercises
         IEnumerable<Exercise> Get(int firstRecord, short pageSize, ExerciseFilter filter);
         int GetTotalCount();
         Exercise GetById(int exerciseId);
+        Dictionary<int, string> GetResistanceTypes();
     }
 }
