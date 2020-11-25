@@ -43,8 +43,8 @@
                 <label class="center-block" for="resistanceTypes">
                     Resistance Type
                 </label>
-                <select formControlName="resistanceTypes" id="resistanceTypes" class="form-control">
-                    <option *ngFor="let resistanceType of resistanceTypes | keyvalue" value={{resistanceType.key}} selected="resistanceType.key == exercise.typeOfResistance">
+                <select *ngIf="resistanceTypes" formControlName="resistanceTypes" id="resistanceTypes" class="form-control">
+                    <option *ngFor="let resistanceType of resistanceTypes | keyvalue" [value]="resistanceType.key">
                         {{resistanceType.value | insertSpaceBeforeCapital}}
                     </option>
                 </select>

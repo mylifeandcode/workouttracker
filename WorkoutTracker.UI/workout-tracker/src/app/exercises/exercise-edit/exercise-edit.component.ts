@@ -47,7 +47,6 @@ export class ExerciseEditComponent implements OnInit {
         this.allTargetAreas = await this._exerciseSvc.getTargetAreas().toPromise();
         this.resistanceTypes = await this._exerciseSvc.getResistanceTypes().toPromise();
         this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
-
     }
 
     private async getCurrentUserId(): Promise<number> {
@@ -76,7 +75,7 @@ export class ExerciseEditComponent implements OnInit {
         this._route.params.subscribe(params => {
             console.log("params['id']: ", params['id']);
             this._exerciseId = params['id'];
-            if (this._exerciseId != 0) 
+            if (this._exerciseId != 0)
                 this.loadExercise(); 
             else {
                 this.setupTargetAreas([]);
@@ -120,6 +119,7 @@ export class ExerciseEditComponent implements OnInit {
         exercise.setup = this.exerciseForm.get("setup").value;
         exercise.movement = this.exerciseForm.get("movement").value;
         exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember").value;
+        exercise.typeOfResistance = this.exerciseForm.get("resistanceTypes").value;
 
         if (exercise.id > 0)
             exercise.modifiedByUserId = this.currentUserId;
@@ -166,6 +166,8 @@ export class ExerciseEditComponent implements OnInit {
         if (this.exercise.exerciseTargetAreaLinks) {
             this.setupTargetAreas(this.exercise.exerciseTargetAreaLinks);
         }
+
+        this.exerciseForm.controls["resistanceTypes"].setValue(this.exercise.typeOfResistance);
     }
 
     private saveExercise(): void {
