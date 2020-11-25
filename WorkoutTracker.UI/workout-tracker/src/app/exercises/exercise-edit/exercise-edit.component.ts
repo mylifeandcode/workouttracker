@@ -91,6 +91,7 @@ export class ExerciseEditComponent implements OnInit {
             name: ['', Validators.required], 
             description: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])], 
             resistanceTypes: [0, Validators.required], 
+            oneSided: [false], 
             targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
             setup: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
             movement: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
@@ -120,6 +121,7 @@ export class ExerciseEditComponent implements OnInit {
         exercise.movement = this.exerciseForm.get("movement").value;
         exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember").value;
         exercise.typeOfResistance = this.exerciseForm.get("resistanceTypes").value;
+        exercise.oneSided = this.exerciseForm.get("oneSided").value;
 
         if (exercise.id > 0)
             exercise.modifiedByUserId = this.currentUserId;
@@ -168,6 +170,7 @@ export class ExerciseEditComponent implements OnInit {
         }
 
         this.exerciseForm.controls["resistanceTypes"].setValue(this.exercise.typeOfResistance);
+        this.exerciseForm.controls["oneSided"].setValue(this.exercise.oneSided);
     }
 
     private saveExercise(): void {

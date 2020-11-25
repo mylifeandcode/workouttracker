@@ -53,7 +53,7 @@ namespace WorkoutApplication.Domain.Exercises
         /// value of O,O,P,Blk indicates two orange bands, one purple band, and a 
         /// black band.
         /// </example>
-        public decimal ResistanceMakeup { get; set; }
+        public string ResistanceMakeup { get; set; }
 
         /// <summary>
         /// The individual resistances which were used for this exercise.

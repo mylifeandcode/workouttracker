@@ -8,4 +8,5 @@ export class Exercise extends NamedEntity {
     movement: string;
     pointsToRemember: string;
     typeOfResistance: number;
+    oneSided: boolean;
 }

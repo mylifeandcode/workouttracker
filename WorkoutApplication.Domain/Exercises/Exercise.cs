@@ -15,5 +15,6 @@ namespace WorkoutApplication.Domain.Exercises
         public virtual ICollection<ExerciseTargetAreaLink> ExerciseTargetAreaLinks { get; set; }
 
         public ResistanceType TypeOfResistance { get; set; }
+        public bool OneSided { get; set; }
     }
 }
