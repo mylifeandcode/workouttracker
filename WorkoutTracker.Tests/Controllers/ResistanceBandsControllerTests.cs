@@ -34,31 +34,99 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             Assert.AreEqual(resistanceBands, (result.Result as OkObjectResult).Value);
+            service.Verify(mock => mock.GetAll(), Times.Once);
         }
 
+        [TestMethod]
         public void Should_Get_By_Id()
         {
-            throw new NotImplementedException();
+            //ARRANGE
+            var resistanceBand = new ResistanceBand();
+            var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
+            service.Setup(mock => mock.GetById(It.IsAny<int>())).Returns(resistanceBand);
+            var sut = new ResistanceBandsController(service.Object);
+
+            //ACT
+            var result = sut.Get(1);
+
+            //ASSERT
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            Assert.AreEqual(resistanceBand, (result.Result as OkObjectResult).Value);
+            service.Verify(mock => mock.GetById(1), Times.Once);
         }
 
+        [TestMethod]
         public void Should_Return_NotFound_From_GetById_When_Entity_Not_Found()
         {
-            throw new NotImplementedException();
+            //ARRANGE
+            ResistanceBand resistanceBand = null;
+            var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
+            service.Setup(mock => mock.GetById(It.IsAny<int>())).Returns(resistanceBand);
+            var sut = new ResistanceBandsController(service.Object);
+
+            //ACT
+            var result = sut.Get(2);
+
+            //ASSERT
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+            service.Verify(mock => mock.GetById(2), Times.Once);
         }
 
+        [TestMethod]
         public void Should_Add()
         {
-            throw new NotImplementedException();
+            //ARRANGE
+            var resistanceBand = new ResistanceBand();
+            var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
+            service.Setup(mock => mock.Add(resistanceBand)).Returns(resistanceBand);
+            var sut = new ResistanceBandsController(service.Object);
+
+            //ACT
+            var result = sut.Post(resistanceBand);
+
+            //ASSERT
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            Assert.AreEqual(resistanceBand, (result.Result as OkObjectResult).Value);
+            service.Verify(mock => mock.Add(resistanceBand), Times.Once);
         }
 
+        [TestMethod]
         public void Should_Update()
         {
-            throw new NotImplementedException();
+            //ARRANGE
+            var resistanceBand = new ResistanceBand();
+            var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
+            service.Setup(mock => mock.Update(resistanceBand)).Returns(resistanceBand);
+            var sut = new ResistanceBandsController(service.Object);
+
+            //ACT
+            var result = sut.Put(5, resistanceBand);
+
+            //ASSERT
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            Assert.AreEqual(resistanceBand, (result.Result as OkObjectResult).Value);
+            service.Verify(mock => mock.Update(resistanceBand), Times.Once);
         }
 
+        [TestMethod]
         public void Should_Delete()
         {
-            throw new NotImplementedException();
+            //ARRANGE
+            var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
+            service.Setup(mock => mock.Delete(It.IsAny<int>()));
+            var sut = new ResistanceBandsController(service.Object);
+
+            //ACT
+            var result = sut.Delete(1);
+
+            //ASSERT
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(NoContentResult));
+            service.Verify(mock => mock.Delete(1), Times.Once);
         }
     }
 }
