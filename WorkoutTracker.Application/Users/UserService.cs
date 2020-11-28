@@ -14,18 +14,18 @@ namespace WorkoutTracker.Application.Users
 
         public User Add(User user)
         {
-            return _repo.Add(user, true);
+            return Add(user, true);
         }
 
         public override void Delete(int userId)
         {
             //TODO: Delete entities associated with user (workouts, etc)
-            _repo.Delete(userId);
+            base.Delete(userId);
         }
 
         public User Update(User user)
         {
-            return _repo.Update(user, true);
+            return Update(user, true);
         }
 
         public override IEnumerable<User> GetAll()

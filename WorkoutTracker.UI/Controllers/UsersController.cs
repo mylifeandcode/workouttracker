@@ -10,83 +10,41 @@ namespace WorkoutTracker.UI.Controllers
     [Produces("application/json")]
     [Route("api/Users")]
     [EnableCors("SiteCorsPolicy")]
-    public class UsersController : Controller
+    [ApiController]
+    public class UsersController : SimpleAPIControllerBase<User>
     {
-        private IUserService _svc;
-
-        public UsersController(IUserService svc)
+        public UsersController(IUserService service) : base(service)
         {
-            if (svc == null)
-                throw new ArgumentNullException("svc");
-
-            _svc = svc;
         }
 
-        // GET api/Users
         [HttpGet]
-        public ActionResult<IEnumerable<User>> Get()
+        public override ActionResult<IEnumerable<User>> Get()
         {
-            try
-            {
-                return Ok(_svc.GetAll());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return base.Get();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<User> Get(int id)
+        public override ActionResult<User> Get(int id)
         {
-            try
-            {
-                return Ok(_svc.GetById(id));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return base.Get(id);
         }
 
         [HttpPost]
-        public ActionResult<User> Post([FromBody]User user)
+        public override ActionResult<User> Post([FromBody] User value)
         {
-            try
-            {
-                return Ok(_svc.Add(user));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return base.Post(value);
         }
 
-        [HttpPut]
-        public ActionResult<User> Put([FromBody]User user)
+        [HttpPut("{id}")]
+        public override ActionResult<User> Put(int id, [FromBody] User value)
         {
-            try
-            {
-                return Ok(_svc.Update(user));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return base.Put(id, value);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public override IActionResult Delete(int id)
         {
-            try
-            {
-                _svc.Delete(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return base.Delete(id);
         }
     }
 }

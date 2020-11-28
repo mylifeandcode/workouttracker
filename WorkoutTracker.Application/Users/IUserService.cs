@@ -5,12 +5,7 @@ using WorkoutApplication.Domain;
 
 namespace WorkoutTracker.Application.Users
 {
-    public interface IUserService
+    public interface IUserService : ISimpleService<User>
     {
-        User Add(User user);
-        User Update(User user);
-        void Delete(int userId);
-        IEnumerable<User> GetAll();
-        User GetById(int userId);
     }
 }

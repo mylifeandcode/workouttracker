@@ -1,17 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Resistances;
-using WorkoutTracker.Application.Exercises;
-using WorkoutTracker.Application.FilterClasses;
 using WorkoutTracker.Application.Resistances;
 using WorkoutTracker.UI.Controllers;
-using WorkoutTracker.UI.Models;
 
 namespace WorkoutTracker.Tests.Controllers
 {

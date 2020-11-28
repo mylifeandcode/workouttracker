@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WorkoutTracker.Application.BaseClasses;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Application;
 
 namespace WorkoutTracker.UI.Controllers
 {
-    public class SimpleAPIControllerBase<T> : ControllerBase
+    public abstract class SimpleAPIControllerBase<T> : ControllerBase
     {
         protected ISimpleService<T> _service;
 
@@ -17,37 +14,60 @@ namespace WorkoutTracker.UI.Controllers
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<T>> Get()
+        public virtual ActionResult<IEnumerable<T>> Get()
         {
-            return Ok(_service.GetAll());
+            try
+            {
+                return Ok(_service.GetAll());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-        [HttpGet("{id}", Name = "Get")]
-        public ActionResult<T> Get(int id)
+        public virtual ActionResult<T> Get(int id)
         {
-            var entity = _service.GetById(id);
+            try
+            {
+                var entity = _service.GetById(id);
 
-            if (entity == null)
-                return NotFound();
-            else
-                return Ok(entity);
+                if (entity == null)
+                    return NotFound();
+                else
+                    return Ok(entity);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-        [HttpPost]
-        public ActionResult<T> Post([FromBody] T value)
+        public virtual ActionResult<T> Post([FromBody] T value)
         {
-            return Ok(_service.Add(value));
+            try
+            {
+                return Ok(_service.Add(value));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-        [HttpPut("{id}")]
-        public ActionResult<T> Put(int id, [FromBody] T value)
+        public virtual ActionResult<T> Put(int id, [FromBody] T value)
         {
-            return Ok(_service.Update(value));
+            try
+            {
+                return Ok(_service.Update(value));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public virtual IActionResult Delete(int id)
         {
             try
             {
