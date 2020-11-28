@@ -14,7 +14,6 @@ namespace WorkoutApplication.Data.EntitySetup.Resistances
 
             entity.Property(x => x.Color).HasMaxLength(25).IsRequired();
             entity.HasIndex(x => x.Color);
-            //entity.Property(x => x.ResistanceAmount).HasColumnType("int");
 
             base.SetupAuditFields<ResistanceBand>(builder);
         }

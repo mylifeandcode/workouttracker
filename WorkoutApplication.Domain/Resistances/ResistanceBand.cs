@@ -11,6 +11,7 @@ namespace WorkoutApplication.Domain.Resistances
     public class ResistanceBand : Entity
     {
         public string Color { get; set; }
-        public decimal ResistanceAmount { get; set; }
+        public decimal MaxResistanceAmount { get; set; }
+        public short NumberAvailable { get; set; }
     }
 }

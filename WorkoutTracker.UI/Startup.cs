@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.SpaServices.Extensions;
 using WorkoutApplication.Domain.Workouts;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Hosting;
+using WorkoutApplication.Domain.Resistances;
 
 namespace WorkoutTracker
 {
@@ -157,6 +158,7 @@ namespace WorkoutTracker
                 config.For<IRepository<Exercise>>().Use<Repository<Exercise>>();
                 config.For<IRepository<Workout>>().Use<Repository<Workout>>();
                 config.For<IRepository<ExecutedWorkout>>().Use<Repository<ExecutedWorkout>>();
+                config.For<IRepository<ResistanceBand>>().Use<Repository<ResistanceBand>>();
 
                 //Populate the container using the service collection
                 config.Populate(services);
