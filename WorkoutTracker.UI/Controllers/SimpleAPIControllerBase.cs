@@ -14,6 +14,7 @@ namespace WorkoutTracker.UI.Controllers
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
+        [HttpGet]
         public virtual ActionResult<IEnumerable<T>> Get()
         {
             try
@@ -26,6 +27,7 @@ namespace WorkoutTracker.UI.Controllers
             }
         }
 
+        [HttpGet("{id}")]
         public virtual ActionResult<T> Get(int id)
         {
             try
@@ -43,6 +45,7 @@ namespace WorkoutTracker.UI.Controllers
             }
         }
 
+        [HttpPost]
         public virtual ActionResult<T> Post([FromBody] T value)
         {
             try
@@ -55,6 +58,7 @@ namespace WorkoutTracker.UI.Controllers
             }
         }
 
+        [HttpPut("{id}")]
         public virtual ActionResult<T> Put(int id, [FromBody] T value)
         {
             try
@@ -67,6 +71,7 @@ namespace WorkoutTracker.UI.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
         public virtual IActionResult Delete(int id)
         {
             try
