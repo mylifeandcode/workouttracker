@@ -6,10 +6,10 @@ import { TableModule } from 'primeng/table';
 import { WorkoutListComponent } from './workout-list.component';
 import { WorkoutService } from '../workout.service';
 import { Observable, of } from 'rxjs';
-import { PaginatedResults } from 'app/models/paginated-results';
+import { PaginatedResults } from '../../core/models/paginated-results';
 import { WorkoutDTO } from 'app/models/workout-dto';
-import { User } from 'app/models/user';
-import { UserService } from 'app/users/user.service';
+import { User } from 'app/core/models/user';
+import { UserService } from 'app/core/user.service';
 
 
 class WorkoutServiceMock {

@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ExerciseService } from './exercise.service';
-import { PaginatedResults } from 'app/models/paginated-results';
+import { PaginatedResults } from '../core/models/paginated-results';
 import { Exercise } from 'app/models/exercise';
 import { ExerciseDTO } from 'app/models/exercise-dto';
 

@@ -10,8 +10,8 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 import { WorkoutEditComponent } from './workout-edit.component';
 import { WorkoutService } from '../workout.service';
-import { UserService } from 'app/users/user.service';
-import { User } from 'app/models/user';
+import { UserService } from 'app/core/user.service';
+import { User } from 'app/core/models/user';
 import { Workout } from 'app/models/workout';
 
 @Component({

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { WorkoutService } from '../workout.service';
 import { WorkoutDTO } from 'app/models/workout-dto';
-import { PaginatedResults } from 'app/models/paginated-results';
+import { PaginatedResults } from '../../core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
-import { UserService } from 'app/users/user.service';
-import { User } from 'app/models/user';
+import { UserService } from 'app/core/user.service';
+import { User } from 'app/core/models/user';
 
 @Component({
   selector: 'wt-workout-list',

@@ -4,7 +4,7 @@ import { ExerciseListMiniComponent } from './exercise-list-mini.component';
 import { TableModule } from 'primeng/table';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ExerciseService } from '../exercise.service';
-import { PaginatedResults } from 'app/models/paginated-results';
+import { PaginatedResults } from '../../core/models/paginated-results';
 import { of } from 'rxjs';
 import { ExerciseDTO } from 'app/models/exercise-dto';
 import { TargetArea } from 'app/models/target-area';

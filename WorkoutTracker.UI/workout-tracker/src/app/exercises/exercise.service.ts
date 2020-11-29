@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Exercise } from '../models/exercise';
 import { TargetArea } from '../models/target-area';
 import { map, catchError } from 'rxjs/operators';
-import { PaginatedResults } from '../models/paginated-results';
+import { PaginatedResults } from '../core/models/paginated-results';
 import { ExerciseDTO } from 'app/models/exercise-dto';
 
 const HTTP_OPTIONS = {

@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HomeComponent } from './home.component';
-import { UserService } from 'app/users/user.service';
+import { UserService } from 'app/core/user.service';
 import { RouterTestingModule } from '@angular/router/testing';
 
 class UserServiceMock {

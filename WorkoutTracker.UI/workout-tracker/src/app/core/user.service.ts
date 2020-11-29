@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { User } from '../models/user';
+import { User } from './models/user';
 import { map } from 'rxjs/operators';
 import { CookieService } from 'ng2-cookies';
 import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
@@ -55,7 +55,7 @@ export class UserService {
   }
 
   public updateUser(user: User): Observable<User> {
-    return this._http.put(this._rootUrl, user, httpOptions)
+    return this._http.put(`${this._rootUrl}/${user.id}`, user, httpOptions)
         .pipe(map((resp: User) => resp));
   }
 

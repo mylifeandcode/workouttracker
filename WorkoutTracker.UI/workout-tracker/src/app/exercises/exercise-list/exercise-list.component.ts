@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ExerciseService } from 'app/exercises/exercise.service';
-import { PaginatedResults } from 'app/models/paginated-results';
+import { PaginatedResults } from '../../core/models/paginated-results';
 import { finalize, map } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/models/exercise-dto';
 import { TargetArea } from 'app/models/target-area';

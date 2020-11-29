@@ -1,5 +1,5 @@
-import { User } from 'app/models/user';
-import { UserService } from 'app/users/user.service';
+import { User } from 'app/core/models/user';
+import { UserService } from 'app/core/user.service';
 
 export abstract class UserAware {
 

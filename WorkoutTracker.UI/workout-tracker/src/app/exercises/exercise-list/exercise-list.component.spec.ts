@@ -6,7 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ExerciseService } from '../exercise.service';
 import { Exercise } from 'app/models/exercise';
 import { of } from 'rxjs';
-import { PaginatedResults } from 'app/models/paginated-results';
+import { PaginatedResults } from '../../core/models/paginated-results';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TargetArea } from 'app/models/target-area';
 

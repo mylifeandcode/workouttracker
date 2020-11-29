@@ -3,7 +3,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { UserService } from './user.service';
 import { CookieService } from 'ng2-cookies';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { User } from 'app/models/user';
+import { User } from 'app/core/models/user';
 
 const TEST_USER_ID: string = "1";
 
@@ -117,7 +117,7 @@ describe('UserService', () => {
         fail
       );
 
-    const request = httpMock.expectOne('http://localhost:5600/api/Users');
+    const request = httpMock.expectOne(`http://localhost:5600/api/Users/${user.id}`);
     expect(request.request.method).toEqual('PUT');
     expect(request.request.body).toEqual(user);
 

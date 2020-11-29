@@ -9,8 +9,8 @@ import { TableModule } from 'primeng/table';
 
 import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../exercise.service';
-import { UserService } from 'app/users/user.service';
-import { User } from 'app/models/user';
+import { UserService } from 'app/core/user.service';
+import { User } from 'app/core/models/user';
 import { TargetArea } from 'app/models/target-area';
 import { Exercise } from 'app/models/exercise';
 import { ActivatedRoute } from '@angular/router';
@@ -18,7 +18,7 @@ import { DecimalPipe } from '@angular/common';
 
 
 class ExerciseServiceMock {
-  resistanceTypes: Map<number, string>;
+  resistanceTypes: Map<number, string> = null;
 
   constructor() {
     this.resistanceTypes = new Map<number, string>();

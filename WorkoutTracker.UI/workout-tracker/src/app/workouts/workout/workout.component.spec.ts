@@ -3,10 +3,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutComponent } from './workout.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
-import { UserService } from 'app/users/user.service';
+import { UserService } from 'app/core/user.service';
 import { of } from 'rxjs';
-import { User } from 'app/models/user';
-import { PaginatedResults } from 'app/models/paginated-results';
+import { User } from 'app/core/models/user';
+import { PaginatedResults } from '../../core/models/paginated-results';
 import { WorkoutDTO } from 'app/models/workout-dto';
 
 class WorkoutServiceMock {

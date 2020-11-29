@@ -1,4 +1,4 @@
-import { Entity } from "./entity";
+import { Entity } from "../core/models/entity";
 
 export class ExerciseTargetAreaLink extends Entity {
     exerciseId : number;

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
-import { UserService } from 'app/users/user.service';
-import { User } from 'app/models/user';
+import { UserService } from 'app/core/user.service';
+import { User } from 'app/core/models/user';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from 'app/models/workout-dto';
-import { PaginatedResults } from 'app/models/paginated-results';
+import { PaginatedResults } from '../../core/models/paginated-results';
 import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
 
 @Component({

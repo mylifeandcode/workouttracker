@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../models/user';
-import { UserService } from '../users/user.service';
+import { User } from '../core/models/user';
+import { UserService } from '../core/user.service';
 
 @Component({
   selector: 'wt-nav',

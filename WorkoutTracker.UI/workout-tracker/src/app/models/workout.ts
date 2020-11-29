@@ -1,5 +1,4 @@
-import { NamedEntity } from "./named-entity";
-import { Set } from "./set";
+import { NamedEntity } from "../core/models/named-entity";
 import { ExerciseInWorkout } from './exercise-in-workout';
 
 export class Workout extends NamedEntity {

@@ -16,25 +16,21 @@ import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
 import { WorkoutComponent } from './workouts/workout/workout.component';
 import { WorkoutListComponent } from './workouts/workout-list/workout-list.component';
-import { SetComponent } from './sets/set/set.component';
-import { ExerciseComponent } from './exercises/exercise/exercise.component';
 import { ExerciseListComponent } from './exercises/exercise-list/exercise-list.component';
 import { ExerciseEditComponent } from './exercises/exercise-edit/exercise-edit.component';
-import { SetEditComponent } from './sets/set-edit/set-edit.component';
 import { ExerciseService } from './exercises/exercise.service';
 import { UserSelectComponent } from './users/user-select/user-select.component';
 
-import { UserService } from './users/user.service';
-import { UserListComponent } from './users/user-list/user-list.component';
+import { UserService } from './core/user.service';
 import { UserEditComponent } from './users/user-edit/user-edit.component';
 
 import { CookieService } from 'ng2-cookies';
-import { UserSelectedGuard } from 'app/route-guards/user-selected.guard';
 import { WorkoutEditComponent } from './workouts/workout-edit/workout-edit.component';
 import { ExerciseListMiniComponent } from './exercises/exercise-list-mini/exercise-list-mini.component';
 import { WorkoutSetDefinitionComponent } from './workouts/workout-set-definition/workout-set-definition.component';
 import { WorkoutExerciseComponent } from './workouts/workout-exercise/workout-exercise.component';
 import { InsertSpaceBeforeCapitalPipe } from './pipes/insert-space-before-capital.pipe';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
   declarations: [
@@ -43,13 +39,9 @@ import { InsertSpaceBeforeCapitalPipe } from './pipes/insert-space-before-capita
     HomeComponent,
     WorkoutComponent, 
     WorkoutListComponent, 
-    SetComponent,
-    ExerciseComponent,
     ExerciseListComponent,
     ExerciseEditComponent,
-    SetEditComponent,
     UserSelectComponent,
-    UserListComponent,
     UserEditComponent,
     WorkoutEditComponent,
     ExerciseListMiniComponent,
@@ -67,9 +59,10 @@ import { InsertSpaceBeforeCapitalPipe } from './pipes/insert-space-before-capita
         ProgressSpinnerModule, 
         MultiSelectModule, 
         CommonModule, 
-        ModalModule.forRoot()
+        ModalModule.forRoot(), 
+        CoreModule
   ],
-  providers: [ExerciseService, UserService, CookieService, UserSelectedGuard],
+  providers: [ExerciseService, UserService, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

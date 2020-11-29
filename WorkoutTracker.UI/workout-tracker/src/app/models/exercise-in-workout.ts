@@ -1,4 +1,3 @@
-import { ExerciseDTO } from "./exercise-dto";
 import { Exercise } from './exercise';
 
 export class ExerciseInWorkout {
