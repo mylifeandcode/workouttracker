@@ -20,10 +20,7 @@ import { ExerciseListComponent } from './exercises/exercise-list/exercise-list.c
 import { ExerciseEditComponent } from './exercises/exercise-edit/exercise-edit.component';
 import { ExerciseService } from './exercises/exercise.service';
 import { UserSelectComponent } from './users/user-select/user-select.component';
-
 import { UserService } from './core/user.service';
-import { UserEditComponent } from './users/user-edit/user-edit.component';
-
 import { CookieService } from 'ng2-cookies';
 import { WorkoutEditComponent } from './workouts/workout-edit/workout-edit.component';
 import { ExerciseListMiniComponent } from './exercises/exercise-list-mini/exercise-list-mini.component';
@@ -42,7 +39,6 @@ import { CoreModule } from './core/core.module';
     ExerciseListComponent,
     ExerciseEditComponent,
     UserSelectComponent,
-    UserEditComponent,
     WorkoutEditComponent,
     ExerciseListMiniComponent,
     WorkoutSetDefinitionComponent,
@@ -50,17 +46,17 @@ import { CoreModule } from './core/core.module';
     InsertSpaceBeforeCapitalPipe
   ],
   imports: [
-        BrowserModule,
-        ReactiveFormsModule,
-        HttpClientModule, 
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        TableModule, 
-        ProgressSpinnerModule, 
-        MultiSelectModule, 
-        CommonModule, 
-        ModalModule.forRoot(), 
-        CoreModule
+    BrowserModule,
+    ReactiveFormsModule,
+    HttpClientModule, 
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    TableModule, 
+    ProgressSpinnerModule, 
+    MultiSelectModule, 
+    CommonModule, 
+    ModalModule.forRoot(), 
+    CoreModule
   ],
   providers: [ExerciseService, UserService, CookieService],
   bootstrap: [AppComponent]

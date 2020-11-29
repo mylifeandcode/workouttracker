@@ -103,7 +103,7 @@ export class UserEditComponent implements OnInit {
       result
           .pipe(finalize(() => { this.savingUserInfo = false; }))
           .subscribe(
-            (user: User) => this._router.navigate(['users']),
+            (user: User) => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
             (error: any) => this.errorMsg = error);
   }
 

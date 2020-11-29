@@ -12,7 +12,7 @@
       <tr *ngFor="let user of users">
         <td>{{user.name}}</td>
         <td class="text-right">
-          <button type="button" routerLink="/users/edit/{{user.id}}" class="btn btn-primary">Edit</button>
+          <button type="button" routerLink="edit/{{user.id}}" class="btn btn-primary">Edit</button>
             &nbsp;
           <button type="button" (click)="deleteUser(user.id)" class="btn btn-danger">Delete</button>
         </td>
