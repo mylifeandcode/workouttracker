@@ -7,7 +7,7 @@ import { UserService } from 'app/core/user.service';
 import { of } from 'rxjs';
 import { User } from 'app/core/models/user';
 import { PaginatedResults } from '../../core/models/paginated-results';
-import { WorkoutDTO } from 'app/models/workout-dto';
+import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 
 class WorkoutServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<WorkoutDTO>()));

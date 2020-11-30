@@ -3,12 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/core/user.service';
-import { Workout } from 'app/models/workout';
+import { Workout } from 'app/workouts/models/workout';
 import { User } from 'app/core/models/user';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
-import { ExerciseDTO } from 'app/models/exercise-dto';
-import { WorkoutDTO } from 'app/models/workout-dto';
-import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
+import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
+import { WorkoutDTO } from 'app/workouts/models/workout-dto';
+import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
 
 @Component({

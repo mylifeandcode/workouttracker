@@ -12,7 +12,7 @@ import { WorkoutEditComponent } from './workout-edit.component';
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/core/user.service';
 import { User } from 'app/core/models/user';
-import { Workout } from 'app/models/workout';
+import { Workout } from 'app/workouts/models/workout';
 
 @Component({
   selector: 'wt-exercise-list-mini', 

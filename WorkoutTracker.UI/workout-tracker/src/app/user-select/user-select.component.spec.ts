@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserSelectComponent } from './user-select.component';
-import { UserService } from '../../core/user.service';
+import { UserService } from '../core/user.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { User } from 'app/core/models/user';

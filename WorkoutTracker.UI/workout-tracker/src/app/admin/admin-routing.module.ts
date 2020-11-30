@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { UserSelectedGuard } from 'app/core/guards/user-selected.guard';
+import { UserSelectedGuard } from 'app/core/guards/user-selected.guard'; //TODO: What's the correct way of importing a guard from another module?
 import { AdminHomeComponent } from './admin-home/admin-home.component';
 import { ResistanceBandsComponent } from './resistance-bands/resistance-bands.component';
 import { UserEditComponent } from './user-edit/user-edit.component';

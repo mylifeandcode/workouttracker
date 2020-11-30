@@ -1,4 +1,4 @@
-import { NamedEntity } from '../core/models/named-entity';
+import { NamedEntity } from '../../core/models/named-entity';
 
 export class TargetArea extends NamedEntity {
     

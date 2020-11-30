@@ -6,8 +6,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { ExerciseService } from '../exercise.service';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { of } from 'rxjs';
-import { ExerciseDTO } from 'app/models/exercise-dto';
-import { TargetArea } from 'app/models/target-area';
+import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
+import { TargetArea } from 'app/workouts/models/target-area';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<ExerciseDTO>()));

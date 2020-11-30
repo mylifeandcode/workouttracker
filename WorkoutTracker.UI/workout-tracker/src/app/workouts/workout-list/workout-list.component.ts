@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WorkoutService } from '../workout.service';
-import { WorkoutDTO } from 'app/models/workout-dto';
+import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { UserService } from 'app/core/user.service';

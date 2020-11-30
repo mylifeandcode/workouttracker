@@ -2,8 +2,8 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ExerciseService } from './exercise.service';
 import { PaginatedResults } from '../core/models/paginated-results';
-import { Exercise } from 'app/models/exercise';
-import { ExerciseDTO } from 'app/models/exercise-dto';
+import { Exercise } from 'app/workouts/models/exercise';
+import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 
 describe('ExerciseService', () => {
   beforeEach(() => {

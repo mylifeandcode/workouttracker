@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ExerciseListBase } from '../exercise-list-base';
 import { ExerciseService } from '../exercise.service';
-import { ExerciseDTO } from 'app/models/exercise-dto';
+import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 
 @Component({
   selector: 'wt-exercise-list-mini',

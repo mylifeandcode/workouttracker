@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
+import { ExerciseInWorkout } from '../models/exercise-in-workout';
 
 /**
  * A component representing an Exercise as part of a Workout instance, 

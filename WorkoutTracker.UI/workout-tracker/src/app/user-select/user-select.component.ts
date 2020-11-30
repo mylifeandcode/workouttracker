@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../../core/user.service';
-import { User } from '../../core/models/user';
-import { Observable } from 'rxJs';
+import { UserService } from '../core/user.service';
+import { User } from '../core/models/user';
 
 @Component({
   selector: 'wt-user-select',

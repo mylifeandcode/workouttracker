@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Workout } from 'app/models/workout';
+import { Workout } from 'app/workouts/models/workout';
 import { map, catchError } from 'rxjs/operators';
 import { PaginatedResults } from '../core/models/paginated-results';
-import { WorkoutDTO } from 'app/models/workout-dto';
+import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({

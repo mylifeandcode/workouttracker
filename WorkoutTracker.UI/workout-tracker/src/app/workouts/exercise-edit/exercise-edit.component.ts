@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
 import { ExerciseService } from '../exercise.service';
-import { Exercise } from '../../models/exercise';
-import { TargetArea } from '../../models/target-area';
+import { Exercise } from '../../workouts/models/exercise';
+import { TargetArea } from '../../workouts/models/target-area';
 import { CustomValidators } from '../../validators/custom-validators';
 import { User } from 'app/core/models/user';
 import { UserService } from 'app/core/user.service';
-import { ExerciseTargetAreaLink } from '../../models/exercise-target-area-link';
+import { ExerciseTargetAreaLink } from '../../workouts/models/exercise-target-area-link';
 import * as _ from 'lodash';
 import { finalize } from 'rxjs/internal/operators/finalize';
 

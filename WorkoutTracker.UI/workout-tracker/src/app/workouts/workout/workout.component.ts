@@ -4,9 +4,9 @@ import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/core/user.service';
 import { User } from 'app/core/models/user';
 import { finalize } from 'rxjs/operators';
-import { WorkoutDTO } from 'app/models/workout-dto';
+import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { PaginatedResults } from '../../core/models/paginated-results';
-import { ExerciseInWorkout } from 'app/models/exercise-in-workout';
+import { ExerciseInWorkout } from '../models/exercise-in-workout';
 
 @Component({
   selector: 'wt-workout',

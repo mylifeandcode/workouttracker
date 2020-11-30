@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 import { WorkoutService } from './workout.service';
-import { Workout } from 'app/models/workout';
+import { Workout } from 'app/workouts/models/workout';
 
 const TEST_WORKOUT_ID = "5";
 const API_ROOT_URL = "http://localhost:5600/api/workouts";

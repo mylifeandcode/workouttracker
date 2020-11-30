@@ -14,13 +14,12 @@
                         </th>
                         <th>
                             <p-multiSelect appendTo="body" [style]="{'min-width': '180px'}" [options]="targetAreas" defaultLabel="All" (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>
-                            <!--<p-multiSelect [options]="targetAreas" defaultLabel="All" (onChange)="dt.filter($event.value, 'targetAreas', 'in')" appendTo="body"></p-multiSelect>-->
                         </th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-exercise>
                     <tr>
-                        <td><a [routerLink]="['/exercises/edit/', exercise.id]">{{exercise.name}}</a></td>
+                        <td><a [routerLink]="['edit/', exercise.id]">{{exercise.name}}</a></td>
                         <td [style]="{'overflow': 'visible'}">{{exercise.targetAreas}}</td>
                     </tr>
                 </ng-template>
