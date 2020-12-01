@@ -1,4 +1,4 @@
-import { NamedEntity } from '../../core/models/named-entity';
+import { NamedEntity } from '../../shared/models/named-entity';
 import { ExerciseTargetAreaLink } from './exercise-target-area-link';
 
 export class Exercise extends NamedEntity {

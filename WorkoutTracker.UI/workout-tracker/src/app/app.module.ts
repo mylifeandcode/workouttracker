@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -12,9 +12,17 @@ import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
 import { UserSelectComponent } from './user-select/user-select.component';
-import { ExerciseService } from './workouts/exercise.service';
-import { UserService } from './core/user.service';
 import { CookieService } from 'ng2-cookies';
+import { ConfigService } from './core/config.service';
+import { environment } from 'environments/environment';
+import { SharedModule } from './shared/shared.module';
+
+
+export function initializeApp(configSvc: ConfigService) {
+  return () => {
+    configSvc.init(environment);
+  };
+}
 
 
 @NgModule({
@@ -32,9 +40,18 @@ import { CookieService } from 'ng2-cookies';
     BrowserAnimationsModule,
     CommonModule, 
     ModalModule.forRoot(), 
-    CoreModule
+    CoreModule, 
+    SharedModule
   ],
-  providers: [ExerciseService, UserService, CookieService],
+  providers: [
+    CookieService, 
+    {
+      provide: APP_INITIALIZER, 
+      useFactory: initializeApp, 
+      deps: [ConfigService], 
+      multi: true
+    }    
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

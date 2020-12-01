@@ -13,7 +13,9 @@ const HTTP_OPTIONS = {
     })
   };
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class ExerciseService {
 
     private readonly API_ROOT: string = "http://localhost:5600/api/exercises"; //TODO: Get from environment config

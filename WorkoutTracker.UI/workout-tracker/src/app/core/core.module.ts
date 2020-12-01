@@ -4,13 +4,15 @@ import { UserSelectedGuard } from './guards/user-selected.guard';
 import { EnsureModuleLoadedOnceGuard } from './guards/ensure-module-loaded-once.guard';
 import { Optional } from '@angular/core';
 import { SkipSelf } from '@angular/core';
+import { SharedModule } from 'app/shared/shared.module';
 
 
 
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule
+    CommonModule, 
+    SharedModule
   ], 
   exports: [], 
   providers: [
