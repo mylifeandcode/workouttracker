@@ -1,4 +1,4 @@
-import { TestBed, async, inject } from '@angular/core/testing';
+import { TestBed, inject, waitForAsync } from '@angular/core/testing';
 
 import { UserSelectedGuard } from './user-selected.guard';
 import { UserService } from 'app/core/user.service';

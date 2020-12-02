@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -41,7 +41,7 @@ describe('ExerciseEditComponent', () => {
   let component: ExerciseEditComponent;
   let fixture: ComponentFixture<ExerciseEditComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ 
         ExerciseEditComponent
@@ -84,7 +84,7 @@ describe('ExerciseEditComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get exercise when id is not 0', async(() => {
+  it('should get exercise when id is not 0', waitForAsync(() => {
     const exerciseService: ExerciseService = TestBed.get(ExerciseService);
     fixture.whenStable().then(() => {
       expect(exerciseService.getById).toHaveBeenCalled();

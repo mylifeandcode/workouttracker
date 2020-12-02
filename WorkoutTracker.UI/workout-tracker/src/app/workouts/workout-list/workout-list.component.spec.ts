@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { TableModule } from 'primeng/table';
@@ -26,7 +26,7 @@ describe('WorkoutListComponent', () => {
   let component: WorkoutListComponent;
   let fixture: ComponentFixture<WorkoutListComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WorkoutListComponent ], 
       imports: [

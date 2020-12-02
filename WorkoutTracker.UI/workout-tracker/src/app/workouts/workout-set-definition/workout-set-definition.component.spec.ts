@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { WorkoutSetDefinitionComponent } from './workout-set-definition.component';
 
@@ -6,7 +6,7 @@ describe('WorkoutSetDefinitionComponent', () => {
   let component: WorkoutSetDefinitionComponent;
   let fixture: ComponentFixture<WorkoutSetDefinitionComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WorkoutSetDefinitionComponent ]
     })

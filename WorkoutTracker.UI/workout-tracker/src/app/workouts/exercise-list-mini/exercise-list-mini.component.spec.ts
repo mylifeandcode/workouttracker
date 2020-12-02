@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ExerciseListMiniComponent } from './exercise-list-mini.component';
 import { TableModule } from 'primeng/table';
@@ -18,7 +18,7 @@ describe('ExerciseListMiniComponent', () => {
   let component: ExerciseListMiniComponent;
   let fixture: ComponentFixture<ExerciseListMiniComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ExerciseListMiniComponent ], 
       providers: [
