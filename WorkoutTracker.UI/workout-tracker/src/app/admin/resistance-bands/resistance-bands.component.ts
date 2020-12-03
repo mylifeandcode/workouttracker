@@ -15,6 +15,10 @@ export class ResistanceBandsComponent implements OnInit {
   public busy: boolean = false;
   public busyMsg: string;
 
+  private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {};
+
+  //Table edit code based on PrimeNg's example at https://www.primefaces.org/primeng/showcase/#/table/edit
+
   ngOnInit(): void {
     this.getResistanceBandData();
   }
@@ -25,4 +29,18 @@ export class ResistanceBandsComponent implements OnInit {
       .subscribe((results: ResistanceBand[]) => this.resistanceBands = results);
   }
 
+  onRowEditInit(band: ResistanceBand) {
+    this._clonedResistanceBands[band.id] = {...band};
+  }
+
+  onRowEditSave(band: ResistanceBand) {
+    delete this._clonedResistanceBands[band.id];
+    //this.messageService.add({severity:'success', summary: 'Success', detail:'Product is updated'});
+    //TODO: Make service call to update
+  }
+
+  onRowEditCancel(band: ResistanceBand, index: number) {
+      this.resistanceBands[index] = this._clonedResistanceBands[band.id];
+      delete this.resistanceBands[band.id];
+  }  
 }

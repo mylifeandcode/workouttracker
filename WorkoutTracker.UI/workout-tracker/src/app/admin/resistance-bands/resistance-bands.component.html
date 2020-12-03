@@ -1,6 +1,58 @@
 <span *ngIf="busy">{{busyMsg}}</span>
 <div *ngIf="!busy" class="container-fluid">
   <h3 class="headroom">Resistance Band Inventory</h3>
+
+    <p-table [value]="resistanceBands" dataKey="id" editMode="row">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Color</th>
+                <th>Max Resistance</th>
+                <th># Available</th>
+                <th style="width:8rem"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-resistanceBand let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="resistanceBand">
+                <td pEditableColumn>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="resistanceBand.color" required>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            <span [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td pEditableColumn>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="resistanceBand.maxResistanceAmount" required>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{resistanceBand.maxResistanceAmount}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td pEditableColumn>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="resistanceBand.numberAvailable">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{resistanceBand.numberAvailable}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td style="text-align:center">
+                    <button *ngIf="!editing" type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(product)" class="p-button-rounded p-button-text"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(product)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(product, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+  <!--
   <table *ngIf="resistanceBands" class="table table-striped">
     <thead>
       <tr>
@@ -14,11 +66,6 @@
       <td [ngStyle]="{'color': band.color}">{{band.color}}</td>
         <td>{{band.maxResistanceAmount}}</td>
         <td class="text-right">
-          <!--
-          <button type="button" routerLink="edit/{{user.id}}" class="btn btn-primary">Edit</button>
-            &nbsp;
-          <button type="button" (click)="deleteUser(user.id)" class="btn btn-danger">Delete</button>
-          -->
         </td>
       </tr>
     </tbody>
@@ -26,5 +73,6 @@
   <div class="row offset-md-11 col-md-1">
       <button type="button" class="btn btn-primary" routerLink="add">Add</button>
   </div>
+    -->
 </div>
 
