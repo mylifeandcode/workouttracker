@@ -10,6 +10,7 @@ const TEST_USER_ID: string = "1";
 class CookieServiceMock {
   get = jasmine.createSpy('get').and.returnValue(TEST_USER_ID);
   set = jasmine.createSpy('set');
+  delete = jasmine.createSpy('delete');
 }
 
 describe('UserService', () => {
@@ -147,7 +148,7 @@ describe('UserService', () => {
   it('should indicate user is logged in when a user is logged in', () => {
 
     //ARRANGE
-    const service = TestBed.get(UserService);
+    const service = TestBed.inject(UserService);
     const user = new User();
     user.id = 1;
     service.setCurrentUser(user);
@@ -160,11 +161,28 @@ describe('UserService', () => {
   it('should NOT indicate user is logged in when a user is not logged in', () => {
 
     //ARRANGE
-    const service = TestBed.get(UserService);
+    const service = TestBed.inject(UserService);
 
-    //ACT/ASSERT
-    expect(service.isUserLoggedIn).toBeTruthy();
+    //ACT
+    service.logOff();
+    
+    //ASSERT
+    expect(service.isUserLoggedIn()).toBeFalsy();
 
+  });
+
+  it('should get the current user ID', () => {
+    
+    //ARRANGE
+    const service = TestBed.inject(UserService);
+    const user = new User({id: parseInt(TEST_USER_ID)}); //CookieService mock returns TEST_USER_ID for get() calls
+    service.setCurrentUser(user);
+
+    //ACT
+    const userId: number = service.currentUserId;
+
+    //ASSERT
+    expect(userId).toEqual(user.id);
   });
 
 });

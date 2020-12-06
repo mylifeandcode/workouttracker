@@ -22,6 +22,18 @@ export class UserService {
 
   constructor(private _http: HttpClient, private _cookieSvc: CookieService) { } //TODO: Refactor to use HttpClient instead of Http
 
+  public get currentUserId(): number {
+    if (!this.isUserLoggedIn())
+      throw new Error("No user is currently logged in.");
+
+    let userId: string = this._cookieSvc.get(this.COOKIE_NAME);
+
+    if(isNaN(Number(userId)))
+      throw new Error("ID for current user is not a number."); //This should never happen
+
+    return Number(userId);
+  }
+
   public getAll() : Observable<Array<User>> {
     return this._http.get(this._rootUrl)
       .pipe(map((resp: Array<User>) => resp));

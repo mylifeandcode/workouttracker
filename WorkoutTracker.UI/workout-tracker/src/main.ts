@@ -9,3 +9,5 @@ if (environment.production) {
 }
 
 platformBrowserDynamic().bootstrapModule(AppModule);
+
+//PrimeNg setup instructions: https://www.primefaces.org/primeng/showcase/#/setup

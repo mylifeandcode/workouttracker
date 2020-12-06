@@ -1,19 +1,23 @@
 <span *ngIf="busy">{{busyMsg}}</span>
+
+<p-toast position="center"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
 <div *ngIf="!busy" class="container-fluid">
   <h3 class="headroom">Resistance Band Inventory</h3>
 
-    <p-table [value]="resistanceBands" dataKey="id" editMode="row">
+    <p-table #dt [value]="resistanceBands" dataKey="id" editMode="row">
         <ng-template pTemplate="header">
             <tr>
-                <th>Color</th>
-                <th>Max Resistance</th>
-                <th># Available</th>
+                <th pSortableColumn="color">Color <p-sortIcon field="color"></p-sortIcon></th>
+                <th pSortableColumn="maxResistanceAmount">Max Resistance <p-sortIcon field="maxResistanceAmount"></p-sortIcon></th>
+                <th pSortableColumn="numberAvailable"># Available <p-sortIcon field="numberAvailable"></p-sortIcon></th>
                 <th style="width:8rem"></th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-resistanceBand let-editing="editing" let-ri="rowIndex">
             <tr [pEditableRow]="resistanceBand">
-                <td pEditableColumn>
+                <td>
                     <p-cellEditor>
                         <ng-template pTemplate="input">
                             <input pInputText type="text" [(ngModel)]="resistanceBand.color" required>
@@ -23,7 +27,7 @@
                         </ng-template>
                     </p-cellEditor>
                 </td>
-                <td pEditableColumn>
+                <td>
                     <p-cellEditor>
                         <ng-template pTemplate="input">
                             <input pInputText type="text" [(ngModel)]="resistanceBand.maxResistanceAmount" required>
@@ -33,7 +37,7 @@
                         </ng-template>
                     </p-cellEditor>
                 </td>
-                <td pEditableColumn>
+                <td>
                     <p-cellEditor>
                         <ng-template pTemplate="input">
                             <input pInputText type="text" [(ngModel)]="resistanceBand.numberAvailable">
@@ -44,35 +48,46 @@
                     </p-cellEditor>
                 </td>
                 <td style="text-align:center">
-                    <button *ngIf="!editing" type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(product)" class="p-button-rounded p-button-text"></button>
-                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(product)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(product, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+                    <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(resistanceBand)" class="p-button-rounded p-button-text"></button>
+                    <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-trash" (click)="deleteBand(resistanceBand)" class="p-button-rounded p-button-text p-button-danger"></button>                    
+                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(resistanceBand)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(resistanceBand, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
                 </td>
             </tr>
         </ng-template>
     </p-table>
+    
+    <p></p>
+    <button pButton pRipple label="Add New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openAddModal()"></button>
 
-  <!--
-  <table *ngIf="resistanceBands" class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">Color</th>
-        <th scope="col">Max Resistance</th>
-        <th scope="col" class="text-right">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let band of resistanceBands">
-      <td [ngStyle]="{'color': band.color}">{{band.color}}</td>
-        <td>{{band.maxResistanceAmount}}</td>
-        <td class="text-right">
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="row offset-md-11 col-md-1">
-      <button type="button" class="btn btn-primary" routerLink="add">Add</button>
-  </div>
-    -->
 </div>
 
+<!--
+TODO: Consider making this dialog its own component, and have it publish an event on OK, rather 
+than being bound to an object in this component. The current approach follows the example from the 
+PrimeNg docs and results in tight coupling.
+-->
+<p-dialog [(visible)]="showAddDialog" [style]="{width: '450px'}" header="Resistance Band Details" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="p-field">
+            <label for="color">Color</label>
+            <input type="text" class="p-inputtext" pInputText id="color" [(ngModel)]="newResistanceBand.color" required autofocus />
+            <small class="p-invalid" *ngIf="modalSubmitted && !newResistanceBand.color">Color is required.</small>
+        </div>
+        <div class="p-field">
+            <label for="maxResistanceAmount">Maximum Resistance Amount</label>
+            <input type="number" class="p-inputtext" pInputText id="maxResistanceAmount" [(ngModel)]="newResistanceBand.maxResistanceAmount" required />
+            <small class="p-invalid" *ngIf="modalSubmitted && !newResistanceBand.maxResistanceAmount">Max Resistance Amount is required.</small>
+        </div>
+        <div class="p-field">
+            <label for="numberAvailable"># Available</label>
+            <input type="number" class="p-inputtext" pInputText id="numberAvailable" [(ngModel)]="newResistanceBand.numberAvailable" required />
+            <small class="p-invalid" *ngIf="modalSubmitted && !newResistanceBand.numberAvailable"># Available is required.</small>
+        </div>
+    </ng-template>
+    
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveNewBand()"></button>
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideModal()"></button>
+    </ng-template>
+</p-dialog>

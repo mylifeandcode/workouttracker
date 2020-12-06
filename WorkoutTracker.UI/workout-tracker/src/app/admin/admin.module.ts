@@ -1,29 +1,54 @@
+//Angular Modules
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+//Third-Party Modules
+import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { MessageModule } from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+
+//Third-Party Services
+import { ConfirmationService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
+
+//Local Modules
 import { AdminRoutingModule } from './admin-routing.module';
-import { ResistanceBandsComponent } from './resistance-bands/resistance-bands.component';
+
+//Local Components and Services
 import { AdminHomeComponent } from './admin-home/admin-home.component';
-import { UserListComponent } from './user-list/user-list.component';
+import { ResistanceBandsComponent } from './resistance-bands/resistance-bands.component';
 import { UserEditComponent } from './user-edit/user-edit.component';
+import { UserListComponent } from './user-list/user-list.component';
 
 
 @NgModule({
   declarations: [
-    ResistanceBandsComponent, 
     AdminHomeComponent, 
+    ResistanceBandsComponent,     
     UserEditComponent, 
     UserListComponent
   ],
   imports: [
-    CommonModule, 
+    AdminRoutingModule,     
     ButtonModule, 
+    ConfirmDialogModule,     
+    CommonModule, 
+    DialogModule, 
+    FormsModule, 
+    MessageModule, 
+    MessagesModule, 
+    ReactiveFormsModule, 
     TableModule, 
-    AdminRoutingModule, 
-    ReactiveFormsModule
+    ToastModule
+  ], 
+  providers: [
+    ConfirmationService, 
+    MessageService
   ]
 })
 export class AdminModule {}
