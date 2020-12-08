@@ -5,7 +5,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { UserService } from 'app/core/user.service';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from './resistance-band.service';
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Component({
   selector: 'app-resistance-bands',
@@ -20,13 +19,13 @@ export class ResistanceBandsComponent implements OnInit {
     private _messageService: MessageService, 
     private _confirmationService: ConfirmationService) { }
 
-  public resistanceBands: ResistanceBand[] = [];
+  public resistanceBands: ResistanceBand[] = null;
   public busy: boolean = false;
   public busyMsg: string;
 
   //Add modal related
   public showAddDialog: boolean;
-  public newResistanceBand: ResistanceBand; //TODO: Revisit. Not really a fan of this approach.
+  public newResistanceBand: ResistanceBand = null; //TODO: Revisit. Not really a fan of this approach.
   public modalSubmitted: boolean;  
 
   //This is used to store the original row when we go into edit mode
