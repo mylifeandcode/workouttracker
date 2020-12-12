@@ -215,7 +215,6 @@ export class WorkoutEditComponent implements OnInit {
     exerciseId: number, 
     exerciseName: string, 
     setType: number = 0, 
-    resistanceType: number = 0, 
     numberOfSets: number = 0): FormGroup {
       
     console.log("getExerciseFormGroup: exerciseInWorkoutId = " + exerciseInWorkoutId + ", exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
@@ -224,8 +223,7 @@ export class WorkoutEditComponent implements OnInit {
       exerciseId: exerciseId, 
       exerciseName: [exerciseName, Validators.compose([Validators.required])],
       numberOfSets: [numberOfSets, Validators.compose([Validators.required, Validators.min(1)])], 
-      setType: [setType, Validators.compose([Validators.required])], 
-      resistanceType: [resistanceType, Validators.compose([Validators.required])]
+      setType: [setType, Validators.compose([Validators.required])]
     });
   }
 
@@ -264,8 +262,9 @@ export class WorkoutEditComponent implements OnInit {
             exerciseGroup.get("exerciseId").value, 
             exerciseGroup.get("exerciseName").value, 
             exerciseGroup.get("numberOfSets").value, 
-            exerciseGroup.get("setType").value, 
-            exerciseGroup.get("resistanceType").value));
+            exerciseGroup.get("setType").value,
+            null) //ResistanceType is used for display only. It's a property on the Exercise class.
+        );
       }
     }
 

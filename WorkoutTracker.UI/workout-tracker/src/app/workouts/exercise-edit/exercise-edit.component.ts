@@ -120,7 +120,7 @@ export class ExerciseEditComponent implements OnInit {
         exercise.setup = this.exerciseForm.get("setup").value;
         exercise.movement = this.exerciseForm.get("movement").value;
         exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember").value;
-        exercise.typeOfResistance = this.exerciseForm.get("resistanceTypes").value;
+        exercise.resistanceType = this.exerciseForm.get("resistanceTypes").value;
         exercise.oneSided = this.exerciseForm.get("oneSided").value;
 
         if (exercise.id > 0)
@@ -169,7 +169,7 @@ export class ExerciseEditComponent implements OnInit {
             this.setupTargetAreas(this.exercise.exerciseTargetAreaLinks);
         }
 
-        this.exerciseForm.controls["resistanceTypes"].setValue(this.exercise.typeOfResistance);
+        this.exerciseForm.controls["resistanceTypes"].setValue(this.exercise.resistanceType);
         this.exerciseForm.controls["oneSided"].setValue(this.exercise.oneSided);
     }
 

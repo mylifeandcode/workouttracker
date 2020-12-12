@@ -121,7 +121,7 @@ namespace WorkoutApplication.Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasMaxLength(4096);
 
-                    b.Property<int>("TypeOfResistance")
+                    b.Property<int>("ResistanceType")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

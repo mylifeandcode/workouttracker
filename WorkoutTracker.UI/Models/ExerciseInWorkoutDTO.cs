@@ -22,7 +22,7 @@ namespace WorkoutTracker.UI.Models
             ExerciseName = exercise.Exercise.Name;
             NumberOfSets = exercise.NumberOfSets;
             SetType = exercise.SetType;
-            ResistanceType = exercise.Exercise.TypeOfResistance;
+            ResistanceType = exercise.Exercise.ResistanceType;
         }
     }
 }

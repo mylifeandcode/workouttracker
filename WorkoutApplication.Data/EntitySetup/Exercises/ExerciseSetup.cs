@@ -24,7 +24,7 @@ namespace WorkoutApplication.Data.EntitySetup.Exercises
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity
-                .Property(x => x.TypeOfResistance)
+                .Property(x => x.ResistanceType)
                 .HasConversion<int>();
 
             entity.HasIndex(x => x.Name);

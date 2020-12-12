@@ -18,6 +18,9 @@ namespace WorkoutApplication.Data.EntitySetup.Exercises
             //entity.Property(x => x.ActualRepCount).IsRequired();
             entity.Property(x => x.Notes).HasMaxLength(4096);
             entity.HasMany(x => x.Resistances);
+            entity
+                .Property(x => x.ResistanceAmount)
+                .HasColumnType("decimal(18,2)");
 
             base.SetupAuditFields<ExecutedExercise>(builder);
         }

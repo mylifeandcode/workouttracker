@@ -26,10 +26,9 @@
 
         <div class="table table-striped">
             <div class="row">
-                <div class="col-md-4">Exercise Name</div>
+                <div class="col-md-6">Exercise Name</div>
                 <div class="col-md-2">Number of Sets</div>
                 <div class="col-md-2">Set Type</div>
-                <div class="col-md-2">Resistance Type</div>
                 <div class="col-md-2">Move/Delete</div>
             </div>
 
@@ -40,7 +39,7 @@
 
             <div *ngFor="let exercise of exercisesArray.controls; let i = index" class="row exerciseRow" [formGroup]="exercise">
                 <!--<div [formGroup]="exercise">-->
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <input type="hidden" formControlName="exerciseId" />
                         <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
                     </div>
@@ -54,13 +53,6 @@
                             <option value="1">Timed</option>
                         </select>
                         <span *ngIf="exercise.controls['setType'].invalid" class="errorText"><br />Required</span>
-                    </div>
-                    <div class="col-md-2">
-                        <select formControlName="resistanceType">
-                            <option value="0">Blah!</option>
-                            <option value="1">Blah again!</option>
-                        </select>
-                        <span *ngIf="exercise.controls['resistanceType'].invalid" class="errorText"><br />Required</span>
                     </div>
                     <div class="col-md-2">
                         <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp(i)" [disabled]="i == 0">

@@ -6,8 +6,8 @@ export class ExerciseInWorkout {
   public exerciseName: string;
   public numberOfSets: number;
   public setType: number;
-  public exercise: Exercise;
   public resistanceType: number;
+  public exercise: Exercise;
 
   constructor(
     id: number, 
@@ -19,11 +19,9 @@ export class ExerciseInWorkout {
       
     this.id = id;
     this.exerciseId = exerciseId;
-    //this.exerciseName = exerciseName;
     this.numberOfSets = numberOfSets;
     this.setType = setType;
     this.resistanceType = resistanceType;
     this.exercise = null;
-    console.log("ExerciseInWorkout: ", this);
   }
 }

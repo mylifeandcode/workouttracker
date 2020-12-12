@@ -10,8 +10,8 @@ using WorkoutApplication.Data;
 namespace WorkoutApplication.Data.Migrations
 {
     [DbContext(typeof(WorkoutsContext))]
-    [Migration("20201125163713_OneSidedExercises")]
-    partial class OneSidedExercises
+    [Migration("20201212204050_ExerciseTypeOfResistanceColumnRename")]
+    partial class ExerciseTypeOfResistanceColumnRename
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,8 +56,8 @@ namespace WorkoutApplication.Data.Migrations
                     b.Property<decimal>("ResistanceAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("ResistanceMakeup")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("ResistanceMakeup")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Sequence")
                         .HasColumnType("int");
@@ -117,12 +117,12 @@ namespace WorkoutApplication.Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasMaxLength(4096);
 
+                    b.Property<int>("ResistanceType")
+                        .HasColumnType("int");
+
                     b.Property<string>("Setup")
                         .HasColumnType("nvarchar(max)")
                         .HasMaxLength(4096);
-
-                    b.Property<int>("ResistanceType")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -301,14 +301,17 @@ namespace WorkoutApplication.Data.Migrations
                     b.Property<DateTime>("CreatedDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("MaxResistanceAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int?>("ModifiedByUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("ResistanceAmount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<short>("NumberAvailable")
+                        .HasColumnType("smallint");
 
                     b.HasKey("Id");
 

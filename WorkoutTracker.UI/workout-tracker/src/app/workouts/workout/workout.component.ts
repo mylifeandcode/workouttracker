@@ -151,7 +151,8 @@ export class WorkoutComponent implements OnInit {
           exerciseName: [exercise.exerciseName, Validators.compose([Validators.required])],
           numberOfSets: [exercise.numberOfSets, Validators.compose([Validators.required, Validators.min(1)])], 
           exerciseSets: this.getExerciseSetsFormArray(exercise.numberOfSets), //This is a FormArray of FormGroups. Each group represents a set, with a Target Rep control and an Actual Rep control.
-          setType: [exercise.setType, Validators.compose([Validators.required])]
+          setType: [exercise.setType, Validators.compose([Validators.required])], 
+          resistanceType: [exercise.resistanceType, Validators.compose([Validators.required])]
         }) 
       )
     });

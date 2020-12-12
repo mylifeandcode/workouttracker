@@ -2,22 +2,22 @@
 
 namespace WorkoutApplication.Data.Migrations
 {
-    public partial class ResistanceTypes : Migration
+    public partial class ExerciseTypeOfResistanceColumnRename : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "ResistanceType",
+            migrationBuilder.RenameColumn(
+                name: "TypeOfResistance",
                 table: "Exercises",
-                nullable: false,
-                defaultValue: 2);
+                newName: "ResistanceType");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
+            migrationBuilder.RenameColumn(
                 name: "ResistanceType",
-                table: "Exercises");
+                table: "Exercises",
+                newName: "TypeOfResistance");
         }
     }
 }
