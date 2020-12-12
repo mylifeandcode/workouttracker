@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -33,6 +34,7 @@ import { PickListModule } from 'primeng/picklist';
   ],
   imports: [
     CommonModule, 
+    DialogModule, 
     ReactiveFormsModule, 
     TableModule, 
     PickListModule, 

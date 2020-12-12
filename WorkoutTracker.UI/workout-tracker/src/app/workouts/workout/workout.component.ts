@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/core/user.service';
@@ -7,6 +7,9 @@ import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
+import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
+import { ResistanceBand } from 'app/shared/models/resistance-band';
+import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 
 @Component({
   selector: 'wt-workout',
@@ -16,14 +19,23 @@ import { ExerciseInWorkout } from '../models/exercise-in-workout';
 export class WorkoutComponent implements OnInit {
 
   //PUBLIC FIELDS
-  public loading: boolean = true;
+  //public loading: boolean = true;
   public errorInfo: string;
   public workoutForm: FormGroup;
   public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
   public workout: WorkoutDTO;
+  public showResistanceBandsSelectModal: boolean = false;
+  public allResistanceBands: ResistanceBand[] = [];
+  @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
   //END PUBLIC FIELDS
 
-  //PROPERTIES
+  //PUBLIC PROPERTIES
+  public get loading(): boolean {
+     return this._apiCallsInProgress > 0; 
+  }
+  //END PUBLIC PROPERTIES
+
+  private _apiCallsInProgress: number = 0;
 
   /**
    * A property representing all of the Exercises which are part of the Workout
@@ -39,43 +51,65 @@ export class WorkoutComponent implements OnInit {
   constructor(
     private _formBuilder: FormBuilder,
     private _workoutService: WorkoutService,
-    private _userService: UserService) { 
+    private _userService: UserService, 
+    private _resistanceBandService: ResistanceBandService) { 
   }
 
   public ngOnInit(): void {
     this.createForm();
-    
-    this._userService.getCurrentUserInfo()
-      .subscribe(
-        (user: User) => {
-          this.getWorkoutDefinitons(user.id);
-        }, 
-        (error: any) => {
-          this.loading = false;
-          this.setErrorInfo(error, "An error occurred getting user info. See console for more info.");
-        }
-      );
-
+    this.getCurrentUserInfo();
+    this.getResistanceBands();
   }
 
   public workoutSelected(event: any) { //TODO: Get concrete type instead of using any
     this.setupWorkout(event.target.value);
   }
 
-  private createForm(): void {
+  public resistanceBandsModalEnabled(currentResistance: string) {
+    this.showResistanceBandsSelectModal = true;
+    this.bandSelect.setBandAllocation(null);
+  }
 
+  private createForm(): void {
     this.workoutForm = this._formBuilder.group({
         id: [0, Validators.required ], 
         workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
         exercises: this._formBuilder.array([])
     });
+  }
 
+  private getCurrentUserInfo(): void {
+    this._apiCallsInProgress++;
+    this._userService.getCurrentUserInfo()
+      .pipe(finalize(() => { this._apiCallsInProgress--; }))
+      .subscribe(
+        (user: User) => {
+          this.getWorkoutDefinitons(user.id);
+        }, 
+        (error: any) => {
+          this.setErrorInfo(error, "An error occurred getting user info. See console for more info.");
+        }
+      );
+  }
+
+  private getResistanceBands(): void {
+    this._apiCallsInProgress++;
+    this._resistanceBandService.getAll()
+      .pipe(finalize(() => { this._apiCallsInProgress--; }))
+      .subscribe(
+        (bands: ResistanceBand[]) => {
+          this.allResistanceBands = bands;
+        }, 
+        (error: any) => {
+          this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
+        }
+      );
   }
   
   private getWorkoutDefinitons(userId: number): void {
     this._workoutService.getAll(0, 500, userId) //TODO: Clean this up. Don't harcode page size of 500. Maybe a better endpoint is needed for this.
       .pipe(finalize(() => {
-        this.loading = false;
+        this._apiCallsInProgress--;
       }))
       .subscribe(
         (workouts: PaginatedResults<WorkoutDTO>) => {
@@ -91,9 +125,9 @@ export class WorkoutComponent implements OnInit {
   }
 
   private setupWorkout(id: number): void {
-    this.loading = true;
+    this._apiCallsInProgress++;
     this._workoutService.getDTObyId(id)
-      .pipe(finalize(() => { this.loading = false; }))
+      .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe(
         (workout: WorkoutDTO) => { 
           //TODO: Separate endpoint to return workout w/recommended resistance values

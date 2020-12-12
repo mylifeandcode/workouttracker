@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 
 @Component({
-  selector: 'app-resistance-band-select',
+  selector: 'wt-resistance-band-select',
   templateUrl: './resistance-band-select.component.html',
   styleUrls: ['./resistance-band-select.component.css']
 })
@@ -11,8 +11,8 @@ export class ResistanceBandSelectComponent implements OnInit {
   @Input()
   public resistanceBandInventory: ResistanceBand[];
 
-  public selectedBands: ResistanceBand[];
-  public availableBands: ResistanceBand[];
+  public selectedBands: ResistanceBand[] = [];
+  public availableBands: ResistanceBand[] = [];
 
   constructor() { }
 
@@ -25,7 +25,7 @@ export class ResistanceBandSelectComponent implements OnInit {
    * @param selectedBands A string of resistance band colors currently selected
    */
   public setBandAllocation(selectedBands: string): void {
-    let selectedBandColors: string[] = selectedBands.split(',');
+    let selectedBandColors: string[] = (selectedBands ? selectedBands.split(',') : []);
     selectedBandColors.forEach((value: string) => value.trim());
     
     this.availableBands = this.resistanceBandInventory;

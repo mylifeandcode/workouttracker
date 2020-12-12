@@ -1,21 +1,32 @@
-import { BrowserModule } from '@angular/platform-browser';
+//Angular imports
 import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { ModalModule } from 'ngx-bootstrap/modal';
+import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+
+//Third-Party imports
+import { CookieService } from 'ng2-cookies';
+import { ModalModule } from 'ngx-bootstrap/modal'; //TODO: Deprecate in favor of PrimeNg dialog
+
+//My imports
+//Modules
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from './core/core.module';
-
-import { AppComponent } from './app.component';
-import { NavComponent } from './nav/nav.component';
-import { HomeComponent } from './home/home.component';
-import { UserSelectComponent } from './user-select/user-select.component';
-import { CookieService } from 'ng2-cookies';
-import { ConfigService } from './core/config.service';
-import { environment } from 'environments/environment';
 import { SharedModule } from './shared/shared.module';
+
+//Services
+import { ConfigService } from './core/config.service';
+
+//Components
+import { AppComponent } from './app.component';
+import { HomeComponent } from './home/home.component';
+import { NavComponent } from './nav/nav.component';
+import { UserSelectComponent } from './user-select/user-select.component';
+
+//Other
+import { environment } from 'environments/environment';
 
 
 export function initializeApp(configSvc: ConfigService) {
@@ -33,24 +44,24 @@ export function initializeApp(configSvc: ConfigService) {
     UserSelectComponent
   ],
   imports: [
-    BrowserModule,
-    ReactiveFormsModule,
-    HttpClientModule, 
     AppRoutingModule,
     BrowserAnimationsModule,
+    BrowserModule, 
     CommonModule, 
-    ModalModule.forRoot(), 
     CoreModule, 
+    HttpClientModule, 
+    ModalModule.forRoot(), 
+    ReactiveFormsModule,
     SharedModule
   ],
   providers: [
-    CookieService, 
     {
       provide: APP_INITIALIZER, 
       useFactory: initializeApp, 
       deps: [ConfigService], 
       multi: true
-    }    
+    },
+    CookieService
   ],
   bootstrap: [AppComponent]
 })

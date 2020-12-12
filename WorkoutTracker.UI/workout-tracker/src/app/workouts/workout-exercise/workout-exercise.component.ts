@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
 
@@ -27,18 +27,22 @@ export class WorkoutExerciseComponent implements OnInit {
   @Input()
   exerciseSetsFormArray: FormArray;
 
+  @Output()
+  resistanceBandsSelect = new EventEmitter<string>();
+
   //Properties
   get setsArray(): FormArray {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
-    console.log("SETS ARRAY: ", this.formGroup.get('exerciseSets') as FormArray);
     return this.formGroup.get('exerciseSets') as FormArray;
   }
 
   constructor() { }
 
   ngOnInit(): void {
-    console.log("FORM GROUP: ", this.formGroup);
   }
 
+  public selectResistanceBands(): void {
+    this.resistanceBandsSelect.emit("blah");
+  }
 }

@@ -1,1 +1,7 @@
-<p>resistance-band-select works!</p>
+<p-pickList [source]="availableBands" [target]="selectedBands" sourceHeader="Available" targetHeader="Selected" [dragdrop]="true">
+  <ng-template let-resistanceBand pTemplate="item">
+      <div>
+        <span [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
+      </div>
+  </ng-template>
+</p-pickList>

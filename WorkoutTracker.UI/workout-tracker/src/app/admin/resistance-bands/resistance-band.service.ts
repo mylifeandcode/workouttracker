@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { ApiBaseService } from 'app/core/api-base.service';
 import { ConfigService } from 'app/core/config.service';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
