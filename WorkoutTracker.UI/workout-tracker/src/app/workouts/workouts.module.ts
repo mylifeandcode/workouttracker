@@ -14,6 +14,8 @@ import { ExerciseListComponent } from './exercise-list/exercise-list.component';
 import { ExerciseListMiniComponent } from './exercise-list-mini/exercise-list-mini.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InsertSpaceBeforeCapitalPipe } from './pipes/insert-space-before-capital.pipe';
+import { ResistanceBandSelectComponent } from './resistance-band-select/resistance-band-select.component';
+import { PickListModule } from 'primeng/picklist';
 
 
 @NgModule({
@@ -26,12 +28,14 @@ import { InsertSpaceBeforeCapitalPipe } from './pipes/insert-space-before-capita
     ExerciseEditComponent, 
     ExerciseListComponent, 
     ExerciseListMiniComponent,
-    InsertSpaceBeforeCapitalPipe
+    InsertSpaceBeforeCapitalPipe,
+    ResistanceBandSelectComponent
   ],
   imports: [
     CommonModule, 
     ReactiveFormsModule, 
     TableModule, 
+    PickListModule, 
     ProgressSpinnerModule, 
     MultiSelectModule,     
     WorkoutsRoutingModule
