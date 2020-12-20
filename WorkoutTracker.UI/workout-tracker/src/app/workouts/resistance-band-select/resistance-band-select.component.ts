@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
+import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
+import * as _ from "lodash";
 
 @Component({
   selector: 'wt-resistance-band-select',
@@ -9,10 +11,18 @@ import { ResistanceBand } from 'app/shared/models/resistance-band';
 export class ResistanceBandSelectComponent implements OnInit {
 
   @Input()
-  public resistanceBandInventory: ResistanceBand[];
+  public resistanceBandInventory: ResistanceBandIndividual[];
 
-  public selectedBands: ResistanceBand[] = [];
-  public availableBands: ResistanceBand[] = [];
+  public selectedBands: ResistanceBandIndividual[] = [];
+  public availableBands: ResistanceBandIndividual[] = [];
+
+  public get maxAvailableResistance(): number {
+    return _.sumBy(this.availableBands, 'maxResistanceAmount');
+  }
+
+  public get maxSelectedResistance(): number {
+    return _.sumBy(this.selectedBands, 'maxResistanceAmount');
+  }
 
   constructor() { }
 
@@ -32,7 +42,7 @@ export class ResistanceBandSelectComponent implements OnInit {
     
     selectedBandColors.forEach((bandColor: string) => {
       //Find first match in array of available bands
-      let foundBand: ResistanceBand = this.availableBands.find(band => band.color == bandColor);
+      let foundBand: ResistanceBandIndividual = this.availableBands.find(band => band.color == bandColor);
       if (foundBand) {
         this.selectedBands.push(foundBand);
         

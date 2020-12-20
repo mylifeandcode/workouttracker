@@ -10,6 +10,7 @@ import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
+import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 
 @Component({
   selector: 'wt-workout',
@@ -25,7 +26,7 @@ export class WorkoutComponent implements OnInit {
   public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
   public workout: WorkoutDTO;
   public showResistanceBandsSelectModal: boolean = false;
-  public allResistanceBands: ResistanceBand[] = [];
+  public allResistanceBands: ResistanceBandIndividual[] = [];
   @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
   //END PUBLIC FIELDS
 
@@ -94,10 +95,10 @@ export class WorkoutComponent implements OnInit {
 
   private getResistanceBands(): void {
     this._apiCallsInProgress++;
-    this._resistanceBandService.getAll()
+    this._resistanceBandService.getAllIndividualBands()
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe(
-        (bands: ResistanceBand[]) => {
+        (bands: ResistanceBandIndividual[]) => {
           this.allResistanceBands = bands;
         }, 
         (error: any) => {

@@ -1,7 +1,20 @@
-<p-pickList [source]="availableBands" [target]="selectedBands" sourceHeader="Available" targetHeader="Selected" [dragdrop]="true">
+<p-pickList 
+  [source]="availableBands" [target]="selectedBands" 
+  sourceHeader="Available" targetHeader="Selected" 
+  [showSourceControls]="false" [showTargetControls]="false"
+  [sourceStyle]="{'min-width':'200px'}" [targetStyle]="{'min-width':'200px'}"
+  [dragdrop]="true">
   <ng-template let-resistanceBand pTemplate="item">
       <div>
         <span [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
       </div>
   </ng-template>
 </p-pickList>
+<div class="row">
+  <div class="col-6">
+    Max Available Resistance: {{maxAvailableResistance}}
+  </div>
+  <div class="col-6">
+    Max Selected Resistance: {{maxSelectedResistance}}
+  </div>
+</div>

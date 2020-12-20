@@ -8,6 +8,8 @@ import { of } from 'rxjs';
 import { User } from 'app/core/models/user';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
+import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
+import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 
 class WorkoutServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<WorkoutDTO>()));
@@ -17,6 +19,12 @@ class UserServiceMock {
   getCurrentUserInfo = 
     jasmine.createSpy('getCurrentUserInfo')
       .and.returnValue(of(new User()));
+}
+
+class ResistanceBandServiceMock {
+  getAllIndividualBands = 
+    jasmine.createSpy('getAllIndividualBands')
+      .and.returnValue(of(new Array<ResistanceBandIndividual>()));
 }
 
 describe('WorkoutComponent', () => {
@@ -35,6 +43,10 @@ describe('WorkoutComponent', () => {
         {
           provide: UserService, 
           useClass: UserServiceMock
+        }, 
+        {
+          provide: ResistanceBandService, 
+          useClass: ResistanceBandServiceMock
         }
       ]
     })
