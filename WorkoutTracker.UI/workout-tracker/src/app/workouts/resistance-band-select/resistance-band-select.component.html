@@ -2,7 +2,7 @@
   [source]="availableBands" [target]="selectedBands" 
   sourceHeader="Available" targetHeader="Selected" 
   [showSourceControls]="false" [showTargetControls]="false"
-  [sourceStyle]="{'min-width':'200px'}" [targetStyle]="{'min-width':'200px'}"
+  [sourceStyle]="{'min-width':'200px', 'max-height':'200px'}" [targetStyle]="{'min-width':'200px', 'max-height':'200px'}"
   [dragdrop]="true">
   <ng-template let-resistanceBand pTemplate="item">
       <div>
@@ -18,3 +18,6 @@
     Max Selected Resistance: {{maxSelectedResistance}}
   </div>
 </div>
+<button class="btn btn-warning pull-right mild-margins" (click)="cancel()">Cancel</button>
+<span style="width:100px"></span>
+<button class="btn btn-success pull-right" (click)="ok()">OK</button>

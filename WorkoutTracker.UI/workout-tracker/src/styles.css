@@ -53,3 +53,8 @@ body {
 .headroom {
     padding-top: 14px;
 }
+
+.mild-margins {
+    margin-left: 6px;
+    margin-right: 6px;
+}

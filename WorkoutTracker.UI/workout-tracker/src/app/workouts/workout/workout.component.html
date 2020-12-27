@@ -24,14 +24,24 @@
       <wt-workout-exercise 
         *ngFor="let exercise of exercisesArray.controls; let i = index" 
         [formGroup]="exercise" 
-        (resistanceBandsSelect)="resistanceBandsModalEnabled(exercise)">
+        (resistanceBandsSelect)="resistanceBandsModalEnabled($event)">
       </wt-workout-exercise>
-    </ng-container>
 
-    <button type="submit" class="btn btn-primary" *ngIf="workout != null" [disabled]="!workoutForm.valid">Complete Workout</button>
+      <div class="row form-group">
+        <label for="journal">Notes</label>
+        <textarea id="journal" class="col-md-12" formControlName="journal"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid">Complete Workout</button>
+    </ng-container>
+    
   </form>
 
   <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal">
-    <wt-resistance-band-select [resistanceBandInventory]="allResistanceBands"></wt-resistance-band-select>
+    <wt-resistance-band-select 
+      [resistanceBandInventory]="allResistanceBands"
+      (okClicked)="resistanceBandsModalAccepted($event)"
+      (cancelClicked)="resistanceBandsModalCancelled()">
+    </wt-resistance-band-select>
   </p-dialog>
 </div>

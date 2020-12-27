@@ -13,6 +13,7 @@ import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkout } from '../models/executed-workout';
 import { ExecutedExercise } from '../models/executed-exercise';
 import * as _ from 'lodash';
+import { ResistanceBandSelection } from '../models/resistance-band-selection';
 
 @Component({
   selector: 'wt-workout',
@@ -30,6 +31,7 @@ export class WorkoutComponent implements OnInit {
   public showResistanceBandsSelectModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
   @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
+  public formGroupForResistanceSelection: FormGroup;
   //END PUBLIC FIELDS
 
   //PUBLIC PROPERTIES
@@ -71,7 +73,20 @@ export class WorkoutComponent implements OnInit {
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup) {
     this.showResistanceBandsSelectModal = true;
-    this.bandSelect.setBandAllocation(null);
+    this.formGroupForResistanceSelection = exerciseFormGroup;
+    this.bandSelect.setBandAllocation(exerciseFormGroup.controls.resistanceMakeup.value);
+  }
+
+  public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {
+    this.formGroupForResistanceSelection.patchValue({ 
+      resistanceMakeup: selectedBands.makeup, 
+      resistance: selectedBands.maxResistanceAmount 
+    });
+    this.showResistanceBandsSelectModal = false;
+  }
+
+  public resistanceBandsModalCancelled(): void {
+    this.showResistanceBandsSelectModal = false;
   }
 
   private createForm(): void {
@@ -130,13 +145,10 @@ export class WorkoutComponent implements OnInit {
 
   private setupWorkout(id: number): void {
     this._apiCallsInProgress++;
-    //this._workoutService.getDTObyId(id)
     this._executedWorkoutService.getNew(id)
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe(
-        //(workout: WorkoutDTO) => { 
           (executedWorkout: ExecutedWorkout) => {
-          //TODO: Separate endpoint to return workout w/recommended resistance values
           this.workout = executedWorkout;
           this.workoutForm.patchValue({
             id: id
@@ -181,7 +193,8 @@ export class WorkoutComponent implements OnInit {
         targetReps: [exercises[i].targetRepCount, Validators.required], //TODO: Populate with data from API once refactored to provide it!
         actualReps: [0, Validators.required], 
         formRating: [null, Validators.required], 
-        rangeOfMotionRating: [null, Validators.required]
+        rangeOfMotionRating: [null, Validators.required], 
+        resistanceMakeup: [exercises[i].resistanceMakeup]
       }));
     }
 

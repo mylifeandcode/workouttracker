@@ -25,7 +25,7 @@ export class WorkoutExerciseComponent implements OnInit {
   exerciseSetsFormArray: FormArray;
 
   @Output()
-  resistanceBandsSelect = new EventEmitter<string>();
+  resistanceBandsSelect = new EventEmitter<FormGroup>();
 
   //Properties
   get setsArray(): FormArray {
@@ -39,7 +39,8 @@ export class WorkoutExerciseComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public selectResistanceBands(): void {
-    this.resistanceBandsSelect.emit("blah");
+  public selectResistanceBands(formGroup: FormGroup): void {
+    console.log("Form Group for Selection: ", formGroup);
+    this.resistanceBandsSelect.emit(formGroup);
   }
 }

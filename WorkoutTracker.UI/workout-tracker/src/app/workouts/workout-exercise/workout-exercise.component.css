@@ -5,3 +5,15 @@
 .setType {
     font-style: italic;
 }
+
+.resistance-amount {
+    width: 40%;
+}
+
+.reps {
+    width: 50%
+}
+
+input {
+    margin: 4px;
+}
