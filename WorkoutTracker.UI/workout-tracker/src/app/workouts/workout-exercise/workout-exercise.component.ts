@@ -14,9 +14,6 @@ import { ExerciseInWorkout } from '../models/exercise-in-workout';
 })
 export class WorkoutExerciseComponent implements OnInit {
 
-  @Input()
-  exercise: ExerciseInWorkout;
-
   /**
    * The FormGroup containing FormControls for the Exercise Name, Type, etc, as well as 
    * a FormArray for the Sets

@@ -36,7 +36,7 @@ namespace WorkoutTracker.Application.Workouts
 
         public ExecutedWorkout Get(int id)
         {
-            throw new NotImplementedException();
+            return _repo.Get(id);
         }
 
         public ExecutedWorkout Save(ExecutedWorkout executedWorkout)
@@ -47,19 +47,24 @@ namespace WorkoutTracker.Application.Workouts
         private ExecutedWorkout CreateNewExecutedWorkout(Workout workout)
         {
             var executedWorkout = new ExecutedWorkout();
+            executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
 
             foreach (var exercise in workout.Exercises)
             {
-                //TODO: Add new constructor to ExecutedExercise which takes an ExerciseInWorkout param 
-                //and initialize that way instead.
-                var exerciseToExecute = new ExecutedExercise();
-                exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
-                exerciseToExecute.CreatedDateTime = DateTime.Now;
-                exerciseToExecute.Exercise = exercise.Exercise;
-                exerciseToExecute.Sequence = exercise.Sequence;
+                for(int x = 0; x < exercise.NumberOfSets; x++)
+                { 
+                    //TODO: Add new constructor to ExecutedExercise which takes an ExerciseInWorkout param 
+                    //and initialize that way instead.
+                    var exerciseToExecute = new ExecutedExercise();
+                    exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
+                    exerciseToExecute.CreatedDateTime = DateTime.Now;
+                    exerciseToExecute.Exercise = exercise.Exercise;
+                    exerciseToExecute.Sequence = exercise.Sequence;
+                    exerciseToExecute.SetType = exercise.SetType;
 
-                //TODO: Add logic to populate target reps and resistances from last time when applicable
-                executedWorkout.Exercises.Add(exerciseToExecute);
+                    //TODO: Add logic to populate target reps and resistances from last time when applicable
+                    executedWorkout.Exercises.Add(exerciseToExecute);
+                }
             }
 
             return executedWorkout;

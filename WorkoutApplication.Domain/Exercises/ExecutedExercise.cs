@@ -56,6 +56,11 @@ namespace WorkoutApplication.Domain.Exercises
         public string ResistanceMakeup { get; set; }
 
         /// <summary>
+        /// The type of set the exercise was executed in.
+        /// </summary>
+        public SetType SetType { get; set; }
+
+        /// <summary>
         /// The individual resistances which were used for this exercise.
         /// </summary>
         public virtual ICollection<Resistance> Resistances { get; set; }

@@ -6,11 +6,13 @@ import { User } from 'app/core/models/user';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { PaginatedResults } from '../../core/models/paginated-results';
-import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
-import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
+import { ExecutedWorkoutService } from '../executed-workout.service';
+import { ExecutedWorkout } from '../models/executed-workout';
+import { ExecutedExercise } from '../models/executed-exercise';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'wt-workout',
@@ -24,7 +26,7 @@ export class WorkoutComponent implements OnInit {
   public errorInfo: string;
   public workoutForm: FormGroup;
   public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
-  public workout: WorkoutDTO;
+  public workout: ExecutedWorkout;
   public showResistanceBandsSelectModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
   @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
@@ -51,7 +53,8 @@ export class WorkoutComponent implements OnInit {
 
   constructor(
     private _formBuilder: FormBuilder,
-    private _workoutService: WorkoutService,
+    private _workoutService: WorkoutService, 
+    private _executedWorkoutService: ExecutedWorkoutService, 
     private _userService: UserService, 
     private _resistanceBandService: ResistanceBandService) { 
   }
@@ -66,7 +69,7 @@ export class WorkoutComponent implements OnInit {
     this.setupWorkout(event.target.value);
   }
 
-  public resistanceBandsModalEnabled(currentResistance: string) {
+  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup) {
     this.showResistanceBandsSelectModal = true;
     this.bandSelect.setBandAllocation(null);
   }
@@ -127,47 +130,55 @@ export class WorkoutComponent implements OnInit {
 
   private setupWorkout(id: number): void {
     this._apiCallsInProgress++;
-    this._workoutService.getDTObyId(id)
+    //this._workoutService.getDTObyId(id)
+    this._executedWorkoutService.getNew(id)
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe(
-        (workout: WorkoutDTO) => { 
+        //(workout: WorkoutDTO) => { 
+          (executedWorkout: ExecutedWorkout) => {
           //TODO: Separate endpoint to return workout w/recommended resistance values
-          this.workout = workout;
+          this.workout = executedWorkout;
           this.workoutForm.patchValue({
             id: id
           });
-          this.setupExercisesFormGroup(workout.exercises);
+          this.setupExercisesFormGroup(executedWorkout.exercises);
         }, 
         (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
       );
   }
 
-  private setupExercisesFormGroup(exercises: ExerciseInWorkout[]): void {
+  private setupExercisesFormGroup(exercises: ExecutedExercise[]): void {
     this.exercisesArray.clear();
-    exercises.forEach(exercise => {
+
+    //Group ExecutedExercise by Exercise and Set Type
+    let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); });
+    console.log('groupedExercises: ', groupedExercises);
+
+    _.forEach(groupedExercises, (exerciseArray: ExecutedExercise[]) => {
+
       this.exercisesArray.push(
         this._formBuilder.group({
-          id: exercise.id, 
-          exerciseId: exercise.exerciseId, 
-          exerciseName: [exercise.exerciseName, Validators.compose([Validators.required])],
-          numberOfSets: [exercise.numberOfSets, Validators.compose([Validators.required, Validators.min(1)])], 
-          exerciseSets: this.getExerciseSetsFormArray(exercise.numberOfSets), //This is a FormArray of FormGroups. Each group represents a set, with a Target Rep control and an Actual Rep control.
-          setType: [exercise.setType, Validators.compose([Validators.required])], 
-          resistanceType: [exercise.resistanceType, Validators.compose([Validators.required])]
-        }) 
-      )
+          id: exerciseArray[0].exercise.id, 
+          exerciseId: exerciseArray[0].exercise.id, 
+          exerciseName: [exerciseArray[0].exercise.name, Validators.compose([Validators.required])],
+          exerciseSets: this.getExerciseSetsFormArray(exerciseArray), 
+          setType: [exerciseArray[0].setType, Validators.compose([Validators.required])], 
+          resistanceType: [exerciseArray[0].exercise.resistanceType, Validators.compose([Validators.required])], 
+        })
+      );
+
     });
   }
 
-  private getExerciseSetsFormArray(numberOfSets: number): FormArray {
+  private getExerciseSetsFormArray(exercises: ExecutedExercise[]): FormArray {
 
     let formArray = this._formBuilder.array([]);
 
     //Each member of the array is a FormGroup
-    for(let i = 0; i < numberOfSets; i++) {
+    for(let i = 0; i < exercises.length; i++) {
       formArray.push(this._formBuilder.group({
-        resistance: [0, Validators.required], 
-        targetReps: [0, Validators.required], //TODO: Populate with data from API once refactored to provide it!
+        resistance: [exercises[i].resistanceAmount, Validators.required], 
+        targetReps: [exercises[i].targetRepCount, Validators.required], //TODO: Populate with data from API once refactored to provide it!
         actualReps: [0, Validators.required], 
         formRating: [null, Validators.required], 
         rangeOfMotionRating: [null, Validators.required]
@@ -175,7 +186,6 @@ export class WorkoutComponent implements OnInit {
     }
 
     return formArray;
-    
   }
 
   private setErrorInfo(error: any, defaultMessage: string): void {
