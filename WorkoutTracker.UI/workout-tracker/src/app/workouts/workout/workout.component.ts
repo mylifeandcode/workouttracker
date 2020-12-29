@@ -51,6 +51,14 @@ export class WorkoutComponent implements OnInit {
     return this.workoutForm.get('exercises') as FormArray;
   }
 
+  /**
+   * Specifies whether or not the workout has been started
+   */
+  get workoutStarted(): boolean {
+    return this.workout?.startDateTime != null 
+      && new Date(this.workout?.startDateTime).getFullYear() > 1;
+  }
+
   //END PROPERTIES
 
   constructor(
@@ -60,6 +68,9 @@ export class WorkoutComponent implements OnInit {
     private _userService: UserService, 
     private _resistanceBandService: ResistanceBandService) { 
   }
+  
+
+  //PUBLIC METHODS ////////////////////////////////////////////////////////////
 
   public ngOnInit(): void {
     this.createForm();
@@ -93,9 +104,19 @@ export class WorkoutComponent implements OnInit {
     this.workoutForm = this._formBuilder.group({
         id: [0, Validators.required ], 
         workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
-        exercises: this._formBuilder.array([])
+        exercises: this._formBuilder.array([]), 
+        journal: [{value:'', disabled: true}]
     });
   }
+
+  public startWorkout(): void {
+    this.workout.startDateTime = new Date();
+    this.workoutForm.controls.journal.enable();
+    this.workoutForm.controls.exercises.enable();
+  }
+
+  
+  //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
   private getCurrentUserInfo(): void {
     this._apiCallsInProgress++;
@@ -180,6 +201,8 @@ export class WorkoutComponent implements OnInit {
       );
 
     });
+
+    this.exercisesArray.disable();
   }
 
   private getExerciseSetsFormArray(exercises: ExecutedExercise[]): FormArray {

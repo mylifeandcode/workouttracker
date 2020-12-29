@@ -55,10 +55,10 @@ export class ResistanceBandSelectComponent implements OnInit {
       let foundBand: ResistanceBandIndividual = this.availableBands.find(band => band.color == bandColor);
       if (foundBand) {
         this.selectedBands.push(foundBand);
-        
+        let indexInAvailableArray = this.availableBands.findIndex(band => band.color == bandColor);
+        if (indexInAvailableArray > -1)
+          this.availableBands.splice(indexInAvailableArray, 1);
       }
-
-      //Pop band from available array and push it to the selected array
     });
 
   }

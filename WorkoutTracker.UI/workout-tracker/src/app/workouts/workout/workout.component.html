@@ -21,6 +21,8 @@
     </div>
 
     <ng-container *ngIf="workout != null">
+      <button class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutStarted">Start Workout</button>
+      <span *ngIf="workoutStarted" class="mild-margins">Workout started at {{workout.startDateTime | date: 'shortTime'}}</span>
       <wt-workout-exercise 
         *ngFor="let exercise of exercisesArray.controls; let i = index" 
         [formGroup]="exercise" 
@@ -28,8 +30,10 @@
       </wt-workout-exercise>
 
       <div class="row form-group">
-        <label for="journal">Notes</label>
-        <textarea id="journal" class="col-md-12" formControlName="journal"></textarea>
+        <div class="col-md-12">
+          <label for="journal">Notes</label>
+          <textarea id="journal" class="form-control" formControlName="journal"></textarea>
+        </div>
       </div>
 
       <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid">Complete Workout</button>

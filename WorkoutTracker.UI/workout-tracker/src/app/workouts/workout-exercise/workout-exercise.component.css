@@ -4,6 +4,9 @@
 
 .setType {
     font-style: italic;
+    padding: .375rem 0;
+    border: 1px;
+    margin: 4px;
 }
 
 .resistance-amount {

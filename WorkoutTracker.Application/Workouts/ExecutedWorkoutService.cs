@@ -5,16 +5,22 @@ using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Workouts;
 using WorkoutApplication.Repository;
 using WorkoutTracker.Application.BaseClasses;
+using WorkoutTracker.Application.Exercises;
 
 namespace WorkoutTracker.Application.Workouts
 {
     public class ExecutedWorkoutService : ServiceBase<ExecutedWorkout>, IExecutedWorkoutService
     {
         private IRepository<Workout> _workoutRepo;
+        private IExerciseAmountRecommendationService _exerciseRecommendationService;
 
-        public ExecutedWorkoutService(IRepository<ExecutedWorkout> executedWorkoutRepo, IRepository<Workout> workoutRepo) : base(executedWorkoutRepo) 
+        public ExecutedWorkoutService(
+            IRepository<ExecutedWorkout> executedWorkoutRepo, 
+            IRepository<Workout> workoutRepo,
+            IExerciseAmountRecommendationService exerciseAmountRecommendationService) : base(executedWorkoutRepo) 
         {
             _workoutRepo = workoutRepo ?? throw new ArgumentNullException(nameof(workoutRepo));
+            _exerciseRecommendationService = exerciseAmountRecommendationService ?? throw new ArgumentNullException(nameof(exerciseAmountRecommendationService));
         }
 
         public ExecutedWorkout Create(int workoutId)
@@ -62,7 +68,11 @@ namespace WorkoutTracker.Application.Workouts
                     exerciseToExecute.Sequence = exercise.Sequence;
                     exerciseToExecute.SetType = exercise.SetType;
 
-                    //TODO: Add logic to populate target reps and resistances from last time when applicable
+                    var recommendation = _exerciseRecommendationService.GetRecommendation(exercise.ExerciseId);
+                    exerciseToExecute.TargetRepCount = recommendation.Reps;
+                    exerciseToExecute.ResistanceAmount = recommendation.ResistanceAmount;
+                    exerciseToExecute.ResistanceMakeup = recommendation.ResistanceMakeup;
+
                     executedWorkout.Exercises.Add(exerciseToExecute);
                 }
             }
