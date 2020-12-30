@@ -14,9 +14,18 @@
 }
 
 .reps {
-    width: 50%
+    width: 54px;
+}
+
+.exercise-info-cell {
+    padding-top: 8px;
+}
+
+.exercise-dropdown-cell {
+    padding-top: 4px;
 }
 
 input {
     margin: 4px;
 }
+
