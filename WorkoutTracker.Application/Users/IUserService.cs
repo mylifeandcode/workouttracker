@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using WorkoutApplication.Domain;
+﻿using WorkoutApplication.Domain.Users;
 
 namespace WorkoutTracker.Application.Users
 {

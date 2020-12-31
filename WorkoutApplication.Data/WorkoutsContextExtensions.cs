@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using WorkoutApplication.Domain.Exercises;
+using WorkoutApplication.Domain.Users;
 
 namespace WorkoutApplication.Data
 {
@@ -26,7 +25,7 @@ namespace WorkoutApplication.Data
             if (systemUser == null)
             {
                 context.Users.Add(
-                    new Domain.User
+                    new User
                     {
                         Id = 0,
                         CreatedByUserId = 0,

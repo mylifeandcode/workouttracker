@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using WorkoutApplication.Data.EntitySetup;
-using WorkoutApplication.Domain;
+using WorkoutApplication.Domain.Users;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Resistances;
 using WorkoutApplication.Domain.Sets;

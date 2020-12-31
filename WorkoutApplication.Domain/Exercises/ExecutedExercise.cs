@@ -61,6 +61,12 @@ namespace WorkoutApplication.Domain.Exercises
         public SetType SetType { get; set; }
 
         /// <summary>
+        /// The amount of time in seconds the exercise was performed for if 
+        /// a time set.
+        /// </summary>
+        public ushort? Duration { get; set; }
+
+        /// <summary>
         /// The individual resistances which were used for this exercise.
         /// </summary>
         public virtual ICollection<Resistance> Resistances { get; set; }

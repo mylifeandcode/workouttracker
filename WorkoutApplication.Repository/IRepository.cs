@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using WorkoutApplication.Data;
+using WorkoutApplication.Domain.BaseClasses;
 
 namespace WorkoutApplication.Repository
 {
@@ -24,5 +26,7 @@ namespace WorkoutApplication.Repository
         //Task SaveAsync();
 
         void SetValues(TEntity target, TEntity source);
+
+        Task<int> UpdateAsync<T>(T entity, params Expression<Func<T, object>>[] navigations) where T : Entity;
     }
 }

@@ -1,0 +1,41 @@
+/* https://reactgo.com/add-fonts-to-angular/ */
+
+@font-face {
+  font-family: "ShadowsIntoLight";
+  src: local("ShadowsIntoLight"), url(./assets/fonts/ShadowsIntoLight/ShadowsIntoLight-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "ComingSoon";
+  src: local("ComingSoon"), url(./assets/fonts/ComingSoon/ComingSoon-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "GochiHand";
+  src: local("GochiHand"), url(./assets/fonts/GochiHand/GochiHand-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Pangolin";
+  src: local("Pangolin"), url(./assets/fonts/Pangolin/Pangolin-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "PermanentMarker";
+  src: local("PermanentMarker"), url(./assets/fonts/PermanentMarker/PermanentMarker-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "RockSalt";
+  src: local("RockSalt"), url(./assets/fonts/RockSalt/RockSalt-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Schoolbell";
+  src: local("Schoolbell"), url(./assets/fonts/Schoolbell/Schoolbell-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "SedgwickAve";
+  src: local("SedgwickAve"), url(./assets/fonts/SedgwickAve/SedgwickAve-Regular.ttf) format("truetype");
+}

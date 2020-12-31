@@ -34,7 +34,7 @@
             <div *ngFor="let exerciseSet of setsArray?.controls; let i = index" class="col-md-12" [formGroupName]="i">
                 <div class="row" [ngStyle]="{'backgroundColor': (i % 2 === 0)?'#d3d3d3':'#ffffff'}">
                     <div class="col-1 exercise-info-cell">
-                        {{i + 1}}
+                        {{i + 1}} <button class="btn btn-sm btn-success" *ngIf="formGroup?.controls?.setType?.value==1" (click)="showTimer(setsArray?.controls[i])">Start</button>
                     </div>
                     <div class="col-3 exercise-info-cell">
                         <input *ngIf="formGroup?.controls?.resistanceType?.value==1" type="text" class="form-control resistance-amount" formControlName="resistance" required />

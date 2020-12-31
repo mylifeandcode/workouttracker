@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutApplication.Domain;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using WorkoutApplication.Domain.Users;
 using WorkoutTracker.Application.Users;
 
 namespace WorkoutTracker.UI.Controllers
@@ -15,6 +16,78 @@ namespace WorkoutTracker.UI.Controllers
     {
         public UsersController(IUserService service) : base(service)
         {
+        }
+
+        //TODO: Revisit. The below was causing a 500 response.
+        /*
+        [HttpGet("{id}")]
+        public new ActionResult<UserDTO> Get(int id)
+        {
+            //This method replaces the default implementation because we don't 
+            //want to return the domain object which includes the user's 
+            //hashed password.
+            //TODO: Implement a different authentication approach.
+            //Is an STS overkill for this little home workout tracker?
+            try
+            {
+                var entity = _service.GetById(id);
+
+                if (entity == null)
+                    return NotFound();
+                else
+                    return Ok(new UserDTO(entity));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        */
+
+        [HttpGet("{id}")]
+        public override ActionResult<User> Get(int id)
+        {
+            //This method replaces the default implementation because we don't 
+            //want to return the domain object which includes the user's 
+            //hashed password.
+            //TODO: Implement a different authentication approach.
+            //Is an STS overkill for this little home workout tracker?
+            try
+            {
+                var entity = _service.GetById(id);
+
+                if (entity == null)
+                    return NotFound();
+                else
+                {
+                    entity.HashedPassword = null;
+                    return Ok(entity);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public override ActionResult<IEnumerable<User>> Get()
+        {
+            try
+            {
+                //This method replaces the default implementation because we don't 
+                //want to return the domain object which includes the user's 
+                //hashed password.
+                //TODO: Implement a different authentication approach.
+                //Is an STS overkill for this little home workout tracker?
+                var allUsers = _service.GetAll().ToList();
+                allUsers.ForEach(user => user.HashedPassword = null);
+                return Ok(allUsers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

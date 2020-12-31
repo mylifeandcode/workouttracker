@@ -1,0 +1,11 @@
+<div class="centeredText timer-text">
+  Get ready...<countdown #preCountdown [config]="preCountdownConfig" (event)="handlePreCountdownEvent($event)"></countdown>
+</div>
+<div class="centeredText timer-text">
+  <countdown #mainCountdown [config]="countdownConfig" (event)="handleCountdownEvent($event)"></countdown>
+</div>
+<p></p>
+<div class="centeredText">
+  <button class="btn btn-success" (click)="startCountdown()">Begin</button>
+</div>
+

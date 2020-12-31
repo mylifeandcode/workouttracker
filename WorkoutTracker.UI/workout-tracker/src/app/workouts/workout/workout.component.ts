@@ -23,16 +23,18 @@ import { ResistanceBandSelection } from '../models/resistance-band-selection';
 export class WorkoutComponent implements OnInit {
 
   //PUBLIC FIELDS
-  //public loading: boolean = true;
   public errorInfo: string;
   public workoutForm: FormGroup;
   public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
   public workout: ExecutedWorkout;
   public showResistanceBandsSelectModal: boolean = false;
+  public showCountdownModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
-  @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
   public formGroupForResistanceSelection: FormGroup;
   //END PUBLIC FIELDS
+
+  //VIEWCHILD
+  @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
 
   //PUBLIC PROPERTIES
   public get loading(): boolean {
@@ -82,7 +84,7 @@ export class WorkoutComponent implements OnInit {
     this.setupWorkout(event.target.value);
   }
 
-  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup) {
+  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
     this.bandSelect.setBandAllocation(exerciseFormGroup.controls.resistanceMakeup.value);
@@ -100,13 +102,8 @@ export class WorkoutComponent implements OnInit {
     this.showResistanceBandsSelectModal = false;
   }
 
-  private createForm(): void {
-    this.workoutForm = this._formBuilder.group({
-        id: [0, Validators.required ], 
-        workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
-        exercises: this._formBuilder.array([]), 
-        journal: [{value:'', disabled: true}]
-    });
+  public showTimer(exerciseFormGroup: FormGroup): void {
+    this.showCountdownModal = true;
   }
 
   public startWorkout(): void {
@@ -117,6 +114,15 @@ export class WorkoutComponent implements OnInit {
 
   
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
+
+  private createForm(): void {
+    this.workoutForm = this._formBuilder.group({
+        id: [0, Validators.required ], 
+        workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
+        exercises: this._formBuilder.array([]), 
+        journal: [{value:'', disabled: true}]
+    });
+  }
 
   private getCurrentUserInfo(): void {
     this._apiCallsInProgress++;

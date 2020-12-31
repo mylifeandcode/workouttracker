@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using WorkoutApplication.Domain;
+using WorkoutApplication.Domain.Users;
 using WorkoutApplication.Repository;
 using WorkoutTracker.Application.BaseClasses;
 

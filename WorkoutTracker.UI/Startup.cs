@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using WorkoutApplication.Repository;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
-using WorkoutApplication.Domain;
+using WorkoutApplication.Domain.Users;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.SpaServices.Extensions;
 using WorkoutApplication.Domain.Workouts;

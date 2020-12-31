@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using WorkoutApplication.Domain.BaseClasses;
 
-namespace WorkoutApplication.Domain
+namespace WorkoutApplication.Domain.Users
 {
     public class User : NamedEntity
     {

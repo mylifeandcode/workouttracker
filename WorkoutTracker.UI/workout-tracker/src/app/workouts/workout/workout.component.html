@@ -26,7 +26,8 @@
       <wt-workout-exercise 
         *ngFor="let exercise of exercisesArray.controls; let i = index" 
         [formGroup]="exercise" 
-        (resistanceBandsSelect)="resistanceBandsModalEnabled($event)">
+        (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
+        (showTimerRequest)="showTimer($event)">
       </wt-workout-exercise>
 
       <div class="row form-group">
@@ -47,5 +48,12 @@
       (okClicked)="resistanceBandsModalAccepted($event)"
       (cancelClicked)="resistanceBandsModalCancelled()">
     </wt-resistance-band-select>
+  </p-dialog>
+
+  <p-dialog header="Timed Set Countdown" [(visible)]="showCountdownModal">
+    <wt-countdown-timer
+      [secondsToCountdown]="240"
+      [secondsLeadInTime]="10">
+    </wt-countdown-timer>
   </p-dialog>
 </div>

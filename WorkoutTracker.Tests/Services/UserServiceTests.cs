@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using WorkoutApplication.Domain;
+using WorkoutApplication.Domain.Users;
 using WorkoutApplication.Repository;
 using Shouldly;
 using WorkoutTracker.Application.Users;

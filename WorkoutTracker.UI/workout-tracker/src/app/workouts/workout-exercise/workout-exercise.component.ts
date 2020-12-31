@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { ExerciseInWorkout } from '../models/exercise-in-workout';
 
 /**
  * A component representing an Exercise as part of a Workout instance, 
@@ -27,6 +26,9 @@ export class WorkoutExerciseComponent implements OnInit {
   @Output()
   resistanceBandsSelect = new EventEmitter<FormGroup>();
 
+  @Output()
+  showTimerRequest = new EventEmitter<FormGroup>();
+
   //Properties
   get setsArray(): FormArray {
     //This property provides an easier way for the template to access this information, 
@@ -42,5 +44,9 @@ export class WorkoutExerciseComponent implements OnInit {
   public selectResistanceBands(formGroup: FormGroup): void {
     console.log("Form Group for Selection: ", formGroup);
     this.resistanceBandsSelect.emit(formGroup);
+  }
+
+  public showTimer(formGroup: FormGroup): void {
+    this.showTimerRequest.emit(formGroup);
   }
 }
