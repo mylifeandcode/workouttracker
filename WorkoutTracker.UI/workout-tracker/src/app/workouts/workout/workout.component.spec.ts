@@ -10,6 +10,8 @@ import { PaginatedResults } from '../../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
+import { ExecutedWorkout } from '../models/executed-workout';
+import { ExecutedWorkoutService } from '../executed-workout.service';
 
 class WorkoutServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<WorkoutDTO>()));
@@ -25,6 +27,11 @@ class ResistanceBandServiceMock {
   getAllIndividualBands = 
     jasmine.createSpy('getAllIndividualBands')
       .and.returnValue(of(new Array<ResistanceBandIndividual>()));
+}
+
+class ExecutedWorkoutServiceMock {
+  getNew = jasmine.createSpy('getNew').and.returnValue(of(new ExecutedWorkout()));
+  add = jasmine.createSpy('add').and.returnValue(of(new ExecutedWorkout()));
 }
 
 describe('WorkoutComponent', () => {
@@ -47,6 +54,10 @@ describe('WorkoutComponent', () => {
         {
           provide: ResistanceBandService, 
           useClass: ResistanceBandServiceMock
+        }, 
+        {
+          provide: ExecutedWorkoutService, 
+          useClass: ExecutedWorkoutServiceMock
         }
       ]
     })

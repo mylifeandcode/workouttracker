@@ -46,6 +46,7 @@ export class ExerciseService {
 
     public getTargetAreas(): Observable<Array<TargetArea>> {
         //TODO: Move this into its own service?
+        //TODO: Refactor to use config service for API URL
         return this._http.get("http://localhost:5600/api/TargetAreas")
             //.pipe(map((resp: Response) => <Array<TargetArea>>resp));
             .pipe(map((resp: Array<TargetArea>) => resp));

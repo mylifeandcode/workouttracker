@@ -14,16 +14,17 @@ import { User } from 'app/core/models/user';
 import { TargetArea } from 'app/workouts/models/target-area';
 import { Exercise } from 'app/workouts/models/exercise';
 import { ActivatedRoute } from '@angular/router';
-import { DecimalPipe } from '@angular/common';
 
+const USER_ID: number = 5;
 
 class ExerciseServiceMock {
-  resistanceTypes: Map<number, string> = null;
+  resistanceTypes: Map<number, string> = new Map<number, string>();
 
   constructor() {
-    this.resistanceTypes = new Map<number, string>();
+    //this.resistanceTypes = new Map<number, string>();
     this.resistanceTypes.set(0, 'Free Weight');
     this.resistanceTypes.set(1, 'Resistance Band');
+    console.log("RESISTANCE TYPES: ", this.resistanceTypes);
   }
 
   getTargetAreas = jasmine.createSpy('getTargetAreas').and.returnValue(of(new Array<TargetArea>()));
@@ -34,7 +35,9 @@ class ExerciseServiceMock {
 }
 
 class UserServiceMock {
-  getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
+  getCurrentUserInfo = 
+    jasmine.createSpy('getCurrentUserInfo')
+      .and.returnValue(of(new User({ id: USER_ID })));
 }
 
 describe('ExerciseEditComponent', () => {
@@ -85,10 +88,51 @@ describe('ExerciseEditComponent', () => {
   });
 
   it('should get exercise when id is not 0', waitForAsync(() => {
-    const exerciseService: ExerciseService = TestBed.get(ExerciseService);
+    const exerciseService: ExerciseService = TestBed.inject(ExerciseService);
     fixture.whenStable().then(() => {
       expect(exerciseService.getById).toHaveBeenCalled();
       expect(component.currentUserId).not.toBeNull();
     });
   }));
+
+  it('should create form', waitForAsync(() => {
+    fixture.whenStable().then(() => {
+      expect(component.exerciseForm).toBeTruthy();
+      expect(component.exerciseForm.controls.id).toBeTruthy();
+      expect(component.exerciseForm.controls.name).toBeTruthy();
+      expect(component.exerciseForm.controls.description).toBeTruthy();
+      expect(component.exerciseForm.controls.resistanceTypes).toBeTruthy();
+      expect(component.exerciseForm.controls.oneSided).toBeTruthy();
+      expect(component.exerciseForm.controls.targetAreas).toBeTruthy();
+      expect(component.exerciseForm.controls.setup).toBeTruthy();
+      expect(component.exerciseForm.controls.movement).toBeTruthy();
+      expect(component.exerciseForm.controls.pointsToRemember).toBeTruthy();
+    });
+  }));
+
+  it('should get the current user ID', waitForAsync(() => {
+    let userService = TestBed.inject(UserService);
+    fixture.whenStable().then(() => {
+      expect(component.currentUserId).toEqual(USER_ID);
+      expect(userService.getCurrentUserInfo).toHaveBeenCalledTimes(1);
+    });
+  }));
+
+  it('should get all target areas', waitForAsync(() => {
+    let exerciseService = TestBed.inject(ExerciseService);
+    fixture.whenStable().then(() => {
+      expect(component.allTargetAreas).toBeTruthy();
+      expect(exerciseService.getTargetAreas).toHaveBeenCalledTimes(1);
+    });
+  }));
+
+  it('should get resistance types', waitForAsync(() => {
+    let exerciseService = TestBed.inject(ExerciseService);
+    fixture.whenStable().then(() => {
+      expect(component.resistanceTypes).toBeTruthy();
+      expect(exerciseService.getResistanceTypes).toHaveBeenCalledTimes(1);
+    });
+  }));
+
+
 });

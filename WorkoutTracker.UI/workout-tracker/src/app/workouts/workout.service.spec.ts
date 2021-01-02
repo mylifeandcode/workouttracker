@@ -16,13 +16,13 @@ describe('WorkoutService', () => {
     }));
 
   it('should be created', () => {
-    const service: WorkoutService = TestBed.get(WorkoutService);
+    const service: WorkoutService = TestBed.inject(WorkoutService);
     expect(service).toBeTruthy();
   });
 
   it('should get workout by ID', (done: DoneFn) => {
-    const service: WorkoutService = TestBed.get(WorkoutService);
-    const httpMock: HttpTestingController = TestBed.get(HttpTestingController);
+    const service: WorkoutService = TestBed.inject(WorkoutService);
+    const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
     
     const expectedResults = new Workout();
     const workoutId: number = parseInt(TEST_WORKOUT_ID);
@@ -47,8 +47,8 @@ describe('WorkoutService', () => {
   it('should add new workout', (done: DoneFn) => {
     
     //ARRANGE
-    const service: WorkoutService = TestBed.get(WorkoutService);
-    const httpMock: HttpTestingController = TestBed.get(HttpTestingController);
+    const service: WorkoutService = TestBed.inject(WorkoutService);
+    const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
     const workout = new Workout();
 
     //ACT
