@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/core/user.service';
 import { User } from 'app/core/models/user';
@@ -32,6 +32,9 @@ export class WorkoutComponent implements OnInit {
   public allResistanceBands: ResistanceBandIndividual[] = [];
   public formGroupForResistanceSelection: FormGroup;
   public formGroupForCountdownModal: FormGroup;
+  public saving: boolean = false;
+  public infoMsg: string;
+  public workoutCompleted: boolean = false;
   //END PUBLIC FIELDS
 
   //VIEWCHILD
@@ -116,6 +119,10 @@ export class WorkoutComponent implements OnInit {
     this.workoutForm.controls.exercises.enable();
   }
 
+  public completeWorkout(): void {
+    this.setWorkoutValuesFromFormGroup();
+    this.postWorkoutToServer();
+  }
   
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
@@ -195,7 +202,6 @@ export class WorkoutComponent implements OnInit {
 
     //Group ExecutedExercise by Exercise and Set Type
     let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); });
-    console.log('groupedExercises: ', groupedExercises);
 
     _.forEach(groupedExercises, (exerciseArray: ExecutedExercise[]) => {
 
@@ -222,13 +228,14 @@ export class WorkoutComponent implements OnInit {
     //Each member of the array is a FormGroup
     for(let i = 0; i < exercises.length; i++) {
       formArray.push(this._formBuilder.group({
+        sequence: [exercises[i].sequence], 
         resistance: [exercises[i].resistanceAmount, Validators.required], 
         targetReps: [exercises[i].targetRepCount, Validators.required], //TODO: Populate with data from API once refactored to provide it!
         actualReps: [0, Validators.required], 
         formRating: [null, Validators.required], 
         rangeOfMotionRating: [null, Validators.required], 
         resistanceMakeup: [exercises[i].resistanceMakeup], 
-        duration: [120]
+        duration: [120] //TODO: Get/set value from API
       }));
     }
 
@@ -240,6 +247,52 @@ export class WorkoutComponent implements OnInit {
       this.errorInfo = error.message;
     else
       this.errorInfo = defaultMessage;
+  }
+
+  private setWorkoutValuesFromFormGroup(): void {
+    this.workout.journal = this.workoutForm.controls.journal.value;
+
+    this.exercisesArray.controls.forEach((value: AbstractControl) => {
+      let formGroup = <FormGroup>value;
+      let sets = <FormArray>formGroup.controls.exerciseSets.value;
+      let exerciseId = formGroup.controls.exerciseId.value;
+      let exercises = this.workout.exercises.filter((exercise: ExecutedExercise) => {
+        return exercise.exercise.id == exerciseId; 
+      });
+
+      exercises = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
+
+      if(exercises.length != sets.length) {
+        window.alert("Exercises/FormArray length mismatch."); //TODO: Handle this a better way
+        return;
+      }
+
+      for(let x = 0; x < exercises.length; x++) {
+        exercises[x].actualRepCount = sets[x].actualReps;
+        exercises[x].duration = sets[x].duration;
+        //exercises[x].notes //TODO: Implement
+        exercises[x].resistanceAmount = sets[x].resistance;
+        exercises[x].resistanceMakeup = sets[x].resistanceMakeup;
+        exercises[x].targetRepCount = sets[x].targetReps;
+      }
+
+    });
+    
+    this.workout.endDateTime = new Date();
+  }
+
+  private postWorkoutToServer(): void {
+    this.saving = true;
+    this._executedWorkoutService
+      .add(this.workout)
+      .pipe(finalize(() => { this.saving = false; }))
+      .subscribe((workout: ExecutedWorkout) => {
+          this.workout = workout;
+          this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
+          this.workoutCompleted = true;
+        }, 
+        (error: any) => { this.setErrorInfo(error, "An error occurred saving workout information. See console for details."); 
+      });
   }
 
 }

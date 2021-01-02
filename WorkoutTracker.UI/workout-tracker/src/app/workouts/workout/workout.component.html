@@ -30,14 +30,19 @@
         (showTimerRequest)="showTimer($event)">
       </wt-workout-exercise>
 
+      <div class="row">
+        <div class="col-12">&nbsp;</div>
+      </div>
+
       <div class="row form-group">
         <div class="col-md-12">
-          <label for="journal">Notes</label>
+          <label for="journal">Notes/Journal</label>
           <textarea id="journal" class="form-control" formControlName="journal"></textarea>
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid">Complete Workout</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || workoutCompleted" (click)="completeWorkout()">Complete Workout</button>
+      <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
     </ng-container>
     
   </form>

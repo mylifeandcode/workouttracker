@@ -6,7 +6,7 @@ using WorkoutApplication.Repository;
 
 namespace WorkoutTracker.Application.BaseClasses
 {
-    public abstract class ServiceBase<T>
+    public abstract class ServiceBase<T> : IServiceBase<T>
     {
         protected IRepository<T> _repo;
 

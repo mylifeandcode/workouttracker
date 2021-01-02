@@ -21,6 +21,9 @@ namespace WorkoutApplication.Domain.Exercises
         /// The Exercise performed/to be performed.
         /// </summary>
         public virtual Exercise Exercise { get; set; }
+
+        //The ID of the Exercise performed/to be performed.
+        public virtual int ExerciseId { get; set;}
         
         /// <summary>
         /// The target number of repetitions.

@@ -40,16 +40,39 @@ namespace WorkoutTracker.Application.Workouts
             }
         }
 
-        public ExecutedWorkout Get(int id)
+        public override ExecutedWorkout Add(ExecutedWorkout entity, bool saveChanges = false)
         {
-            return _repo.Get(id);
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
+            /*
+            When attempting to save an ExecutedWorkout, the following exception would
+            occur:
+
+            "The instance of entity type 'TargetArea' cannot be tracked because 
+            another instance with the same key value for {'Id'} is already being 
+            tracked. When attaching existing entities, ensure that only one entity 
+            instance with a given key value is attached. Consider using 
+            'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the 
+            conflicting key values."
+            
+            This is because ExecutedExercise has a reference to an Exercise, which 
+            in turn has a collection of ExerciseTargetAreaLinks, which in turn relate 
+            to TargetAreas. One solution to the problem would be to set the state 
+            of the Exercise objects to EntityState.Unchanged, but this requires a 
+            reference to the DbContext. I'm going with the simpler (albeit less 
+            elegant) approach here, which is to set the Exercises to null. The 
+            reference will still be preserved via the ExerciseId property.
+            */
+            foreach (var executedExercise in entity.Exercises)
+            {
+                executedExercise.Exercise = null;
+            }
+
+            return base.Add(entity, saveChanges);
         }
 
-        public ExecutedWorkout Save(ExecutedWorkout executedWorkout)
-        {
-            throw new NotImplementedException();
-        }
-
+        #region Private Methods
         private ExecutedWorkout CreateNewExecutedWorkout(Workout workout)
         {
             var executedWorkout = new ExecutedWorkout();
@@ -65,6 +88,7 @@ namespace WorkoutTracker.Application.Workouts
                     exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
                     exerciseToExecute.CreatedDateTime = DateTime.Now;
                     exerciseToExecute.Exercise = exercise.Exercise;
+                    exerciseToExecute.ExerciseId = exercise.Exercise.Id;
                     exerciseToExecute.Sequence = exercise.Sequence;
                     exerciseToExecute.SetType = exercise.SetType;
 
@@ -79,5 +103,6 @@ namespace WorkoutTracker.Application.Workouts
 
             return executedWorkout;
         }
+        #endregion Private Methods
     }
 }

@@ -29,7 +29,7 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
-                var executedWorkout = _executedWorkoutService.Get(id);
+                var executedWorkout = _executedWorkoutService.GetById(id);
                 if (executedWorkout == null)
                     return NotFound();
                 else
@@ -48,6 +48,20 @@ namespace WorkoutTracker.UI.Controllers
             try
             {
                 return _executedWorkoutService.Create(workoutId);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // POST api/ExecutedWorkout
+        [HttpPost]
+        public ActionResult<ExecutedWorkout> Post([FromBody] ExecutedWorkout value)
+        {
+            try
+            {
+                return _executedWorkoutService.Add(value, true);
             }
             catch (Exception ex)
             {

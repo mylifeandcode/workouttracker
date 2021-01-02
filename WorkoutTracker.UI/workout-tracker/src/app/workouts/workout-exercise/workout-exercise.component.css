@@ -10,7 +10,7 @@
 }
 
 .resistance-amount {
-    width: 40%;
+    width: 25%;
 }
 
 .reps {
@@ -21,8 +21,21 @@
     font-size: smaller;
 }
 
-.exercise-info-cell {
+.exercise-info-div {
     padding-top: 8px;
+}
+
+.exercise-input-div {
+    padding-top: 4px;
+}
+
+.exercise-info-div > input {
+    margin-top: -4px;
+}
+
+.exercise-info-span {
+    display: inline-block;
+    margin-top: 8px;
 }
 
 .exercise-dropdown-cell {

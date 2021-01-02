@@ -79,7 +79,8 @@ namespace WorkoutTracker
 
 
             var connection = Configuration.GetConnectionString("WorkoutTrackerDatabase");
-            services.AddDbContext<WorkoutsContext>(options => options.UseLazyLoadingProxies().UseSqlServer(connection));
+            services.AddDbContext<WorkoutsContext>(options => 
+                options.UseLazyLoadingProxies().UseSqlServer(connection));
 
             /*
             // In production, the Angular files will be served from this directory

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using WorkoutApplication.Domain.Workouts;
+﻿using WorkoutApplication.Domain.Workouts;
+using WorkoutTracker.Application.BaseClasses;
 
 namespace WorkoutTracker.Application.Workouts
 {
-    public interface IExecutedWorkoutService
+    public interface IExecutedWorkoutService : IServiceBase<ExecutedWorkout>
     {
         ExecutedWorkout Create(int workoutId);
-        ExecutedWorkout Get(int id);
-        ExecutedWorkout Save(ExecutedWorkout executedWorkout);
     }
 }
