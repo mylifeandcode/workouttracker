@@ -218,7 +218,7 @@ export class WorkoutComponent implements OnInit {
 
     });
 
-    this.exercisesArray.disable();
+    //this.exercisesArray.disable();
   }
 
   private getExerciseSetsFormArray(exercises: ExecutedExercise[]): FormArray {
@@ -227,7 +227,7 @@ export class WorkoutComponent implements OnInit {
 
     //Each member of the array is a FormGroup
     for(let i = 0; i < exercises.length; i++) {
-      formArray.push(this._formBuilder.group({
+      let formGroup = this._formBuilder.group({
         sequence: [exercises[i].sequence], 
         resistance: [exercises[i].resistanceAmount, Validators.required], 
         targetReps: [exercises[i].targetRepCount, Validators.required], //TODO: Populate with data from API once refactored to provide it!
@@ -236,7 +236,13 @@ export class WorkoutComponent implements OnInit {
         rangeOfMotionRating: [null, Validators.required], 
         resistanceMakeup: [exercises[i].resistanceMakeup], 
         duration: [120] //TODO: Get/set value from API
-      }));
+      });
+
+      formGroup.controls.actualReps.disable();
+      formGroup.controls.formRating.disable();
+      formGroup.controls.rangeOfMotionRating.disable();
+
+      formArray.push(formGroup);
     }
 
     return formArray;
