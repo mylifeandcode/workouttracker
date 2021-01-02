@@ -45,7 +45,7 @@
                         {{i + 1}} <button class="btn btn-sm btn-success" *ngIf="formGroup?.controls?.setType?.value==1" (click)="showTimer(setsArray?.controls[i])">Start</button>
                     </div>
                     <div class="col-4 exercise-info-div">
-                        <input *ngIf="formGroup?.controls?.resistanceType?.value==1" type="text" class="form-control resistance-amount" formControlName="resistance" required />
+                        <input *ngIf="formGroup?.controls?.resistanceType?.value < 1" type="text" class="form-control resistance-amount" formControlName="resistance" required />
                         <span *ngIf="formGroup?.controls?.resistanceType?.value==3">Body Weight</span>
                         <span *ngIf="formGroup?.controls?.resistanceType?.value==2">
                             <button class="btn btn-sm btn-primary mild-margins" (click)="selectResistanceBands(setsArray?.controls[i])">Set</button>                            
