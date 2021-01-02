@@ -17,6 +17,10 @@
     width: 54px;
 }
 
+.reps-div {
+    font-size: smaller;
+}
+
 .exercise-info-cell {
     padding-top: 8px;
 }

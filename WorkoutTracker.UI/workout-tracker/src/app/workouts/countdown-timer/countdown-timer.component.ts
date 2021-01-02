@@ -13,8 +13,8 @@ export class CountdownTimerComponent implements OnInit {
 
   public countdownConfig: CountdownConfig;
   public preCountdownConfig: CountdownConfig;
-  public showPreCountdown: boolean = true;
-  public showCountdown: boolean = false;
+  public showPreCountdown: boolean = false;
+  public countdownHasBegun: boolean = false;
 
   @Input()
   public get secondsToCountdown(): number {
@@ -23,6 +23,7 @@ export class CountdownTimerComponent implements OnInit {
   public set secondsToCountdown(value: number) {
     this._secondsToCountdown = value;
     this.setCountdownConfig();
+    this.reset();
   }
 
   @Input()
@@ -44,21 +45,23 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   public startCountdown(): void {
+    this.showPreCountdown = true;
     this._preCountdown.begin();
-    //this._countdown.begin();
   }
 
   public handlePreCountdownEvent(countdownEvent: CountdownEvent): void {
     if(countdownEvent.action == 'done') {
       this.showPreCountdown = false;
       //TODO: Make a sound -- more info here: https://www.geeksforgeeks.org/how-to-make-a-beep-sound-in-javascript/
-      this.showCountdown = true;
+      this.countdownHasBegun = true;
       this._countdown.begin();
     }
   }
 
   public handleCountdownEvent(countdownEvent: CountdownEvent): void {
-    console.log("COUNTDOWN: ", countdownEvent.action);
+    if(countdownEvent.action == 'done') {
+      //TODO: Make a sound -- more info here: https://www.geeksforgeeks.org/how-to-make-a-beep-sound-in-javascript/
+    }
   }
 
   private setPreCountdownConfig(): void {
@@ -77,6 +80,11 @@ export class CountdownTimerComponent implements OnInit {
       format: 'mm:ss' 
     };
 
+  }
+
+  private reset(): void {
+    this.showPreCountdown = false;
+    this.countdownHasBegun = false;
   }
 
 }

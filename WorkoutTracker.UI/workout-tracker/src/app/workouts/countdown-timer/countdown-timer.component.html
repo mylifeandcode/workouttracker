@@ -1,11 +1,21 @@
-<div class="centeredText timer-text">
-  Get ready...<countdown #preCountdown [config]="preCountdownConfig" (event)="handlePreCountdownEvent($event)"></countdown>
+<!--
+There seems to be a bug when using 2 countdown components and ngIf to determine whether 
+or not to render them. If you render one which had not originally been rendered, and then 
+try to call a method on it via ViewChild, it throws a null reference exception, claiming 
+that the newly-rendered countdown is null.
+-->
+<div [ngStyle]="{'text-align': 'center', 'display': (showPreCountdown)?'inline-block':'none'}" class="centeredText timer-text">
+    Get ready: 
+    <countdown #preCountdown [config]="preCountdownConfig" (event)="handlePreCountdownEvent($event)"></countdown>
+</div>
+<div *ngIf="countdownHasBegun" class="centeredText timer-text">
+  GO!
 </div>
 <div class="centeredText timer-text">
   <countdown #mainCountdown [config]="countdownConfig" (event)="handleCountdownEvent($event)"></countdown>
 </div>
 <p></p>
 <div class="centeredText">
-  <button class="btn btn-success" (click)="startCountdown()">Begin</button>
+  <button *ngIf="!showPreCountdown" class="btn btn-success" (click)="startCountdown()">Begin</button>
 </div>
 

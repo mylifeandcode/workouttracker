@@ -15,13 +15,16 @@
                 <div class="col-1">
                     Set
                 </div>
-                <div class="col-3">
+                <div class="col-4">
                     Resistance
                 </div>
-                <div class="col-2">
+                <div class="col-1">
+                    Duration
+                </div>
+                <div class="col-1 reps-div">
                     Target Reps
                 </div>
-                <div class="col-2">
+                <div class="col-1 reps-div">
                     Actual Reps
                 </div>
                 <div class="col-2">
@@ -36,7 +39,7 @@
                     <div class="col-1 exercise-info-cell">
                         {{i + 1}} <button class="btn btn-sm btn-success" *ngIf="formGroup?.controls?.setType?.value==1" (click)="showTimer(setsArray?.controls[i])">Start</button>
                     </div>
-                    <div class="col-3 exercise-info-cell">
+                    <div class="col-4 exercise-info-cell">
                         <input *ngIf="formGroup?.controls?.resistanceType?.value==1" type="text" class="form-control resistance-amount" formControlName="resistance" required />
                         <span *ngIf="formGroup?.controls?.resistanceType?.value==3">Body Weight</span>
                         <span *ngIf="formGroup?.controls?.resistanceType?.value==2">
@@ -45,10 +48,14 @@
                             <span *ngIf="!exerciseSet.controls.resistanceMakeup.value">Not set</span>
                         </span>
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
+                        <input *ngIf="formGroup?.controls?.resistanceType?.value==2" type="text" class="form-control" formControlName="duration" required />
+                        <span *ngIf="formGroup?.controls?.resistanceType?.value!=2">N/A</span>
+                    </div>
+                    <div class="col-1">
                         <input type="text" class="form-control reps" formControlName="targetReps" required />
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
                         <input type="text" class="form-control reps" formControlName="actualReps" required /> 
                     </div>
                     <div class="col-2 exercise-dropdown-cell">

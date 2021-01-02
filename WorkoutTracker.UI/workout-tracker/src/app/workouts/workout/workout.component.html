@@ -52,7 +52,7 @@
 
   <p-dialog header="Timed Set Countdown" [(visible)]="showCountdownModal">
     <wt-countdown-timer
-      [secondsToCountdown]="240"
+      [secondsToCountdown]="formGroupForCountdownModal?.controls?.duration?.value"
       [secondsLeadInTime]="10">
     </wt-countdown-timer>
   </p-dialog>

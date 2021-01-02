@@ -31,6 +31,7 @@ export class WorkoutComponent implements OnInit {
   public showCountdownModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
   public formGroupForResistanceSelection: FormGroup;
+  public formGroupForCountdownModal: FormGroup;
   //END PUBLIC FIELDS
 
   //VIEWCHILD
@@ -42,7 +43,9 @@ export class WorkoutComponent implements OnInit {
   }
   //END PUBLIC PROPERTIES
 
+  //PRIVATE FIELDS
   private _apiCallsInProgress: number = 0;
+  //END PRIVATE FIELDS
 
   /**
    * A property representing all of the Exercises which are part of the Workout
@@ -103,6 +106,7 @@ export class WorkoutComponent implements OnInit {
   }
 
   public showTimer(exerciseFormGroup: FormGroup): void {
+    this.formGroupForCountdownModal = exerciseFormGroup;
     this.showCountdownModal = true;
   }
 
@@ -223,7 +227,8 @@ export class WorkoutComponent implements OnInit {
         actualReps: [0, Validators.required], 
         formRating: [null, Validators.required], 
         rangeOfMotionRating: [null, Validators.required], 
-        resistanceMakeup: [exercises[i].resistanceMakeup]
+        resistanceMakeup: [exercises[i].resistanceMakeup], 
+        duration: [120]
       }));
     }
 
