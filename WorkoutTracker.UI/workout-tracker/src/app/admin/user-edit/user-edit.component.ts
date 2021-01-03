@@ -27,12 +27,41 @@ export class UserEditComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _router: Router) { }
 
-  async ngOnInit() {
+  
+  //PUBLIC METHODS
+
+  public async ngOnInit() {
     this.loadingUserInfo = true;
     this.createForm();
     this.getUserInfo();
     this._currentUserId = await this.getCurrentUserId();
-}
+  }
+
+  public saveUser(): void {
+
+    this.savingUserInfo = true;
+    let user = this.getUserForPersist();
+
+    let result: Observable<User> =
+      (user.id === 0 ? this._userSvc.addUser(user) : this._userSvc.updateUser(user));
+
+      result
+          .pipe(finalize(() => { this.savingUserInfo = false; }))
+          .subscribe(
+            (user: User) => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
+            (error: any) => this.errorMsg = error);
+  }
+
+  public cancel(): void {
+    if (this.userEditForm.dirty && !window.confirm("Cancel without saving changes?"))
+        return;
+
+    this._router.navigate(['']);
+  }
+
+  //END PUBLIC METHODS
+
+  //PRIVATE METHODS
 
   private getUserInfo(): void {
 
@@ -88,30 +117,9 @@ export class UserEditComponent implements OnInit {
     else 
       user.createdByUserId = this._currentUserId;
 
-    console.log("User: ", user);
     return user;
   }
 
-  public saveUser(): void {
-
-    this.savingUserInfo = true;
-    let user = this.getUserForPersist();
-
-    let result: Observable<User> =
-      (user.id === 0 ? this._userSvc.addUser(user) : this._userSvc.updateUser(user));
-
-      result
-          .pipe(finalize(() => { this.savingUserInfo = false; }))
-          .subscribe(
-            (user: User) => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
-            (error: any) => this.errorMsg = error);
-  }
-
-  public cancel(): void {
-    if (this.userEditForm.dirty && !window.confirm("Cancel without saving changes?"))
-        return;
-
-    this._router.navigate(['']);
-  }
+  //END PRIVATE METHODS
 
 }
