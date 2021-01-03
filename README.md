@@ -6,6 +6,8 @@ Currently intended for use in a private, in-home network, though I may expand it
 
 ![Workout](PreviewImages/workout.PNG)<br /><br />
 
+![Workout with Bands](PreviewImages/workout-with-bands.png)<br /><br />
+
 ![Exercise Edit](PreviewImages/exercise-edit.png)<br /><br />
 
 ![Resistance Band Management](PreviewImages/resistance-band-inventory.png)<br /><br />
