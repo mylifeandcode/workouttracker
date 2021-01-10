@@ -4,6 +4,7 @@ import { UserSelectedGuard } from 'app/core/guards/user-selected.guard'; //TODO:
 import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
 import { ExerciseListComponent } from './exercise-list/exercise-list.component';
 import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
+import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
 import { WorkoutListComponent } from './workout-list/workout-list.component';
 import { WorkoutComponent } from './workout/workout.component';
 
@@ -29,6 +30,11 @@ const routes: Routes = [
     component: ExerciseEditComponent, 
     canActivate: [UserSelectedGuard]
   }, 
+  {
+    path: 'history', 
+    component: WorkoutHistoryComponent, 
+    canActivate: [UserSelectedGuard]
+  },
   {
     path: '**',
     component: WorkoutListComponent, 

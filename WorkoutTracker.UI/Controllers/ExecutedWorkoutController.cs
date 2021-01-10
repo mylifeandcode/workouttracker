@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApplication.Domain.Workouts;
+using WorkoutTracker.Application.FilterClasses;
 using WorkoutTracker.Application.Workouts;
+using WorkoutTracker.UI.Models;
 
 namespace WorkoutTracker.UI.Controllers
 {
@@ -55,6 +57,43 @@ namespace WorkoutTracker.UI.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult<PaginatedResults<ExecutedWorkoutDTO>> Get(int userId, int firstRecord, short pageSize, DateTime? startDateTime = null, DateTime? endDateTime = null)
+        {
+            try
+            {
+                var filter = 
+                    BuildExecutedWorkoutFilter(
+                        userId, startDateTime, endDateTime);
+                
+                var result = new PaginatedResults<ExecutedWorkoutDTO>();
+
+                result.TotalCount = _executedWorkoutService.GetTotalCount(); //TODO: Modify to get total count by filter
+
+                var executedWorkouts = 
+                    _executedWorkoutService
+                        .GetFilteredSubset(firstRecord, pageSize, filter)
+                        .ToList();
+
+                result.Results = executedWorkouts.Select((executedWorkout) =>
+                {
+                    var dto = new ExecutedWorkoutDTO();
+                    dto.Id = executedWorkout.Id;
+                    dto.Name = executedWorkout.Workout.Name;
+                    dto.StartDateTime = executedWorkout.StartDateTime;
+                    dto.EndDateTime = executedWorkout.EndDateTime;
+                    return dto;
+                });
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
         // POST api/ExecutedWorkout
         [HttpPost]
         public ActionResult<ExecutedWorkout> Post([FromBody] ExecutedWorkout value)
@@ -67,6 +106,24 @@ namespace WorkoutTracker.UI.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        private ExecutedWorkoutFilter BuildExecutedWorkoutFilter(
+            int userId, 
+            DateTime? startDateTime, 
+            DateTime? endDateTime)
+        {
+            var filter = new ExecutedWorkoutFilter();
+
+            filter.UserId = userId;
+
+            if(filter.StartDateTime.HasValue)
+                filter.StartDateTime = startDateTime;
+            
+            if(filter.EndDateTime.HasValue)
+                filter.EndDateTime = endDateTime;
+
+            return filter;
         }
     }
 }

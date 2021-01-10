@@ -19,6 +19,7 @@ import { InsertSpaceBeforeCapitalPipe } from './pipes/insert-space-before-capita
 import { ResistanceBandSelectComponent } from './resistance-band-select/resistance-band-select.component';
 import { PickListModule } from 'primeng/picklist';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
+import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
     ExerciseListMiniComponent,
     InsertSpaceBeforeCapitalPipe,
     ResistanceBandSelectComponent,
-    CountdownTimerComponent
+    CountdownTimerComponent,
+    WorkoutHistoryComponent
   ],
   imports: [
     CommonModule, 

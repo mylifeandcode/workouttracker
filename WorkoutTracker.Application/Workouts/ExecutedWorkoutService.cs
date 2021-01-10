@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Workouts;
 using WorkoutApplication.Repository;
 using WorkoutTracker.Application.BaseClasses;
 using WorkoutTracker.Application.Exercises;
+using WorkoutTracker.Application.FilterClasses;
 
 namespace WorkoutTracker.Application.Workouts
 {
@@ -72,6 +74,17 @@ namespace WorkoutTracker.Application.Workouts
             return base.Add(entity, saveChanges);
         }
 
+        public IEnumerable<ExecutedWorkout> GetFilteredSubset(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter)
+        {
+            IQueryable<ExecutedWorkout> query = _repo.Get();
+
+            if (filter != null)
+                ApplyQueryFilters(ref query, filter);
+
+            var output = query.Skip(firstRecordIndex).Take(subsetSize);
+            return output;
+        }
+
         #region Private Methods
         private ExecutedWorkout CreateNewExecutedWorkout(Workout workout)
         {
@@ -103,6 +116,21 @@ namespace WorkoutTracker.Application.Workouts
 
             return executedWorkout;
         }
+
+        private void ApplyQueryFilters(ref IQueryable<ExecutedWorkout> query, ExecutedWorkoutFilter filter)
+        {
+            if (filter == null)
+                return;
+
+            query = query.Where(x => x.CreatedByUserId == filter.UserId);
+            
+            if (filter.StartDateTime.HasValue)
+                query = query.Where(x => x.StartDateTime >= filter.StartDateTime);
+
+            if (filter.EndDateTime.HasValue)
+                query = query.Where(x => x.EndDateTime <= filter.EndDateTime);
+        }
+
         #endregion Private Methods
     }
 }

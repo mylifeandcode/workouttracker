@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { User } from './models/user';
 import { map } from 'rxjs/operators';
 import { CookieService } from 'ng2-cookies';
@@ -19,7 +19,7 @@ export class UserService {
   private _rootUrl: string = "http://localhost:5600/api/Users";
   private _currentUser: User = null;
   private readonly COOKIE_NAME = "WorkoutTracker";
-  private _userSubject$ = new Subject<User>();
+  private _userSubject$ = new BehaviorSubject<User>(null);
   private _userObservable$: Observable<User> = this._userSubject$.asObservable();
 
   constructor(private _http: HttpClient, private _cookieSvc: CookieService) { } //TODO: Refactor to use HttpClient instead of Http
