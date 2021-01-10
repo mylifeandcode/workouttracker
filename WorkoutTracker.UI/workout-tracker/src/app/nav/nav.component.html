@@ -8,25 +8,45 @@
       <li class="nav-item">
         <a class="nav-link" routerLink="/home">Home <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/workouts">Workouts</a>
+
+      <li class="nav-item dropdown">
+        <a id="workoutsDropdown" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          Workouts
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="workoutsDropdown">
+          <li><a class="dropdown-item" routerLink="/workouts/start">Start a Workout</a></li>
+          <li><a class="dropdown-item" routerLink="/workouts">View, Edit, or Add Workouts</a></li>
+        </ul>
+      </li>      
+
+      <li class="nav-item dropdown">
+        <a id="exercisesDropdown" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          Exercises
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="exercisesDropdown">
+          <li><a class="dropdown-item" routerLink="/workouts/exercises">View, Edit, or Add Exercises</a></li>
+          <li><a class="dropdown-item" routerLink="/workouts/exercises/edit/0">Create an Exercise</a></li>
+        </ul>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/workouts/exercises">Exercises</a>
-      </li>
+
       <li class="nav-item">
         <a class="nav-link" routerLink="/admin">Admin</a>
       </li>
     </ul>
   </div>
-  <!--
+
+  
   <ul class="nav navbar-nav pull-right">
     <li *ngIf="userName" class="nav-item">
       <a class="nav-link" routerLink="/home">Welcome {{userName}}!</a> 
     </li>
+    <li *ngIf="userIsLoggedIn" class="nav-item">
+      <a class="nav-link" (click)="logOff()">Log off</a> 
+    </li>    
     <li class="nav-item">
       <a class="nav-link" href="https://github.com/mylifeandcode"><i class="fa fa-github" aria-hidden="true"></i></a>
     </li>
   </ul>
-  -->  
+
+  
 </nav>

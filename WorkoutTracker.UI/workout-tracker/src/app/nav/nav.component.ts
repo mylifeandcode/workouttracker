@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { User } from '../core/models/user';
 import { UserService } from '../core/user.service';
 
@@ -12,20 +13,21 @@ export class NavComponent implements OnInit {
   public userName: string;
 
   get userIsLoggedIn(): boolean {
-    return this._userSvc.isUserLoggedIn();
+   return this.userName != null;
   }
 
-  constructor(private _userSvc: UserService) { }
+  constructor(private _userService: UserService, private _router: Router) { }
 
   ngOnInit() {
-    //TODO: Username isn't changing on component when selected user changes. Fix!
-    this._userSvc.getCurrentUserInfo().subscribe(
+    this._userService.currentUserInfo.subscribe(
       (user: User) => {
-        if (user) {
-          this.userName = user.name;
-          console.log("User = ", this.userName);
-        }
+        this.userName = (user ? user.name : null);
       });
   }
+
+  public logOff(): void {
+    this._userService.logOff();
+    this._router.navigate(['login']);
+  }  
 
 }

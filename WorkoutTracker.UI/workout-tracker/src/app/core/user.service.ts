@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { User } from './models/user';
 import { map } from 'rxjs/operators';
 import { CookieService } from 'ng2-cookies';
@@ -19,6 +19,8 @@ export class UserService {
   private _rootUrl: string = "http://localhost:5600/api/Users";
   private _currentUser: User = null;
   private readonly COOKIE_NAME = "WorkoutTracker";
+  private _userSubject$ = new Subject<User>();
+  private _userObservable$: Observable<User> = this._userSubject$.asObservable();
 
   constructor(private _http: HttpClient, private _cookieSvc: CookieService) { } //TODO: Refactor to use HttpClient instead of Http
 
@@ -32,6 +34,10 @@ export class UserService {
       throw new Error("ID for current user is not a number."); //This should never happen
 
     return Number(userId);
+  }
+
+  public get currentUserInfo(): Observable<User> {
+    return this._userObservable$;
   }
 
   public getAll() : Observable<Array<User>> {
@@ -49,6 +55,7 @@ export class UserService {
       return this.getUserInfo(parseInt(userId))
         .pipe(map((user: User) => {
           this.setCurrentUser(user);
+          this._userSubject$.next(user);
           return user;
         }));
     }
@@ -78,6 +85,7 @@ export class UserService {
   public setCurrentUser(user: User): void {
     this._cookieSvc.set(this.COOKIE_NAME, user.id.toString());
     this._currentUser = user;
+    this._userSubject$.next(user);
   }
 
   public isUserLoggedIn(): boolean {
@@ -87,5 +95,6 @@ export class UserService {
   public logOff(): void {
     this._cookieSvc.delete(this.COOKIE_NAME);
     this._currentUser = null;
+    this._userSubject$.next(null);
   }
 }
