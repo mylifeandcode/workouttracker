@@ -117,6 +117,7 @@ export class WorkoutComponent implements OnInit {
     this.workout.startDateTime = new Date();
     this.workoutForm.controls.journal.enable();
     this.workoutForm.controls.exercises.enable();
+    this.workout.createdByUserId = this._userService.currentUserId;
   }
 
   public completeWorkout(): void {

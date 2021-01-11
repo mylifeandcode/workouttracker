@@ -18,6 +18,7 @@ import { SharedModule } from './shared/shared.module';
 
 //Services
 import { ConfigService } from './core/config.service';
+import { UserService } from './core/user.service';
 
 //Components
 import { AppComponent } from './app.component';
@@ -29,9 +30,10 @@ import { UserSelectComponent } from './user-select/user-select.component';
 import { environment } from 'environments/environment';
 
 
-export function initializeApp(configSvc: ConfigService) {
+export function initializeApp(configService: ConfigService, userService: UserService) {
   return () => {
-    configSvc.init(environment);
+    configService.init(environment);
+    userService.restoreUserSessionIfApplicable();
   };
 }
 
@@ -58,7 +60,7 @@ export function initializeApp(configSvc: ConfigService) {
     {
       provide: APP_INITIALIZER, 
       useFactory: initializeApp, 
-      deps: [ConfigService], 
+      deps: [ConfigService, UserService], 
       multi: true
     },
     CookieService

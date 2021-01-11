@@ -32,10 +32,11 @@ export class UserSelectComponent implements OnInit {
     this.gettingUserInfo = true;
     this.username = userName;
 
-    this._userSvc.getUserInfo(userId)
+    //this._userSvc.getUserInfo(userId)
+    this._userSvc.logIn(userId)
       .subscribe(
         (user: User) => {
-          this._userSvc.setCurrentUser(user);
+          //this._userSvc.setCurrentUser(user);
           this._router.navigate(['home']);
         },
         (error: any) => this.errorMsg = error,

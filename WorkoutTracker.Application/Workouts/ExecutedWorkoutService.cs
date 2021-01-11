@@ -89,6 +89,7 @@ namespace WorkoutTracker.Application.Workouts
         private ExecutedWorkout CreateNewExecutedWorkout(Workout workout)
         {
             var executedWorkout = new ExecutedWorkout();
+            executedWorkout.WorkoutId = workout.Id;
             executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
 
             foreach (var exercise in workout.Exercises)

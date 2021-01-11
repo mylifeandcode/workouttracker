@@ -16,6 +16,11 @@ namespace WorkoutApplication.Domain.Workouts
         /// The Workout which was executed.
         /// </summary>
         public virtual Workout Workout { get; set; }
+
+        /// <summary>
+        /// The ID of the Workout which was executed.
+        /// </summary>
+        public virtual int WorkoutId { get; set; }
         
         /// <summary>
         /// The date/time the user began the Workout.
