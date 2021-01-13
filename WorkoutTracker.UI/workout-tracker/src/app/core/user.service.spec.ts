@@ -49,25 +49,37 @@ describe('UserService', () => {
 
   }));
 
-  it('should get current user info',  inject([HttpTestingController, UserService, CookieService], (httpMock: HttpTestingController, service: UserService, cookieSvcMock: CookieServiceMock) => {
-    const expectedResults = new User();
-    expectedResults.id = parseInt(TEST_USER_ID);
+  it('should get current user info', () => {
+    
+    const userService = TestBed.inject(UserService);
+    const httpMock = TestBed.inject(HttpTestingController);
+    
 
-    service.getCurrentUserInfo().subscribe(
+    const expectedResults = new User();
+    const userId: number = parseInt(TEST_USER_ID);
+    expectedResults.id = userId;
+
+    //We need to log in first so we'll have a current user
+    userService.logIn(userId).subscribe(
       (user: User) => expect(user).toEqual(expectedResults), 
       fail
     );
 
     const req = httpMock.expectOne(`http://localhost:5600/api/Users/${TEST_USER_ID}`);
+
+    //ACT/ASSERT
+    expect(userService.isUserLoggedIn).toBeTruthy();
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
     req.flush(expectedResults);
-    
-    expect(cookieSvcMock.get).toHaveBeenCalledWith("WorkoutTracker");
-    expect(cookieSvcMock.set).toHaveBeenCalledWith("WorkoutTracker", TEST_USER_ID);
 
-  }));
+    userService.getCurrentUserInfo().subscribe(
+      (user: User) => expect(user).toEqual(expectedResults), 
+      fail
+    );
+    
+  });
   
   it('should get user info by user ID',  inject([HttpTestingController, UserService, CookieService], (httpMock: HttpTestingController, service: UserService, cookieSvcMock: CookieServiceMock) => {
     const expectedResults = new User();
@@ -149,12 +161,25 @@ describe('UserService', () => {
 
     //ARRANGE
     const service = TestBed.inject(UserService);
-    const user = new User();
-    user.id = 1;
-    service.setCurrentUser(user);
+    const httpMock = TestBed.inject(HttpTestingController);
+
+    const expectedResults = new User();
+    const userId: number = parseInt(TEST_USER_ID);
+    expectedResults.id = userId;
+
+    service.logIn(userId).subscribe(
+      (user: User) => expect(user).toEqual(expectedResults), 
+      fail
+    );
+
+    const req = httpMock.expectOne(`http://localhost:5600/api/Users/${TEST_USER_ID}`);
 
     //ACT/ASSERT
     expect(service.isUserLoggedIn).toBeTruthy();
+    expect(req.request.method).toEqual('GET');
+
+    // Respond with the mock results
+    req.flush(expectedResults);
 
   });
 
@@ -175,14 +200,25 @@ describe('UserService', () => {
     
     //ARRANGE
     const service = TestBed.inject(UserService);
-    const user = new User({id: parseInt(TEST_USER_ID)}); //CookieService mock returns TEST_USER_ID for get() calls
-    service.setCurrentUser(user);
+    const httpMock = TestBed.inject(HttpTestingController);
+    const userId = parseInt(TEST_USER_ID);
+    const expectedResults = new User({id: userId}); //CookieService mock returns TEST_USER_ID for get() calls
+    
+    service.logIn(userId).subscribe(
+      (user: User) => expect(user).toEqual(expectedResults), 
+      fail
+    );
 
-    //ACT
-    const userId: number = service.currentUserId;
+    const req = httpMock.expectOne(`http://localhost:5600/api/Users/${TEST_USER_ID}`);
 
-    //ASSERT
-    expect(userId).toEqual(user.id);
+    //ACT/ASSERT
+    expect(service.isUserLoggedIn).toBeTruthy();
+    expect(req.request.method).toEqual('GET');
+
+    // Respond with the mock results
+    req.flush(expectedResults);
+
+    expect(userId).toEqual(expectedResults.id);
   });
 
 });

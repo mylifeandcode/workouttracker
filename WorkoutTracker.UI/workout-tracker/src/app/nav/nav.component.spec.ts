@@ -1,19 +1,22 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
+import { RouterTestingModule } from '@angular/router/testing';
 import { NavComponent } from './nav.component';
 import { UserService } from 'app/core/user.service';
 import { of } from 'rxjs';
 import { User } from 'app/core/models/user';
+import { Component } from '@angular/core';
 
 const username = 'someuser';
 
 class UserServiceMock {
-  getCurrentUserInfo = 
-    jasmine.createSpy('getCurrentUserInfo')
-      .and.returnValue(of(new User({name: username})));
 
-  isUserLoggedIn = jasmine.createSpy('isUserLoggedIn').and.returnValue(true);
+  currentUserInfo = 
+    of(new User({name: username}));
+
 }
+
+@Component({})
+class FakeComponent{};
 
 describe('NavComponent', () => {
   let component: NavComponent;
@@ -21,6 +24,10 @@ describe('NavComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [        
+        RouterTestingModule.withRoutes(
+          [{path: 'admin/users', component: FakeComponent}])
+      ],
       declarations: [ NavComponent ], 
       providers: [
         {
@@ -48,13 +55,10 @@ describe('NavComponent', () => {
     const userService = TestBed.inject(UserService);
 
     //ACT
-    let userIsLoggedIn = component.userIsLoggedIn;
+    //Nothing else to do here
 
     //ASSERT
-    //expect(userService.isUserLoggedIn).toHaveBeenCalledTimes(1);
-    //TODO: Revisit this test, as it was showing the service method below to have 
-    //been called 5 TIMES!
-    expect(userService.isUserLoggedIn).toHaveBeenCalled();
+    expect(component.userIsLoggedIn).toBeTruthy();
 
   });
 
@@ -67,7 +71,6 @@ describe('NavComponent', () => {
     //Nothing extra needed here
 
     //ASSERT
-    expect(userService.getCurrentUserInfo).toHaveBeenCalledTimes(1);
     expect(component.userName = username);
 
   });
