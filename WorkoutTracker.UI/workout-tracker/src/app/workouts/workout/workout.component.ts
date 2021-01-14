@@ -132,7 +132,7 @@ export class WorkoutComponent implements OnInit {
         id: [0, Validators.required ], 
         workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
         exercises: this._formBuilder.array([]), 
-        journal: [{value:'', disabled: true}]
+        journal: ['']
     });
   }
 
@@ -208,7 +208,7 @@ export class WorkoutComponent implements OnInit {
 
       this.exercisesArray.push(
         this._formBuilder.group({
-          id: exerciseArray[0].exercise.id, 
+          id: exerciseArray[0].id, //WARN: Pretty sure this will still just be 0 at this point
           exerciseId: exerciseArray[0].exercise.id, 
           exerciseName: [exerciseArray[0].exercise.name, Validators.compose([Validators.required])],
           exerciseSets: this.getExerciseSetsFormArray(exerciseArray), 
