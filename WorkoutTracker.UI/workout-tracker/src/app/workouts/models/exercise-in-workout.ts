@@ -6,7 +6,7 @@ export class ExerciseInWorkout {
   public exerciseName: string;
   public numberOfSets: number;
   public setType: number;
-  public resistanceType: number;
+  public sequence: number;
   public exercise: Exercise;
 
   constructor(
@@ -15,13 +15,13 @@ export class ExerciseInWorkout {
     exerciseName: string, 
     numberOfSets: number, 
     setType: number, 
-    resistanceType: number) {
+    sequence: number) {
       
     this.id = id;
     this.exerciseId = exerciseId;
     this.numberOfSets = numberOfSets;
     this.setType = setType;
-    this.resistanceType = resistanceType;
+    this.sequence = sequence;
     this.exercise = null;
   }
 }

@@ -67,7 +67,10 @@ namespace WorkoutTracker.UI.Controllers
                 if (workout == null)
                     return NotFound(id);
                 else
+                {
+                    workout.Exercises = workout.Exercises?.OrderBy(x => x.Sequence).ToList();
                     return Ok(workout);
+                }
             }
             catch (Exception ex)
             {

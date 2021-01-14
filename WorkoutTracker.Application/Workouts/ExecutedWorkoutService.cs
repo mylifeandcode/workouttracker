@@ -92,7 +92,7 @@ namespace WorkoutTracker.Application.Workouts
             executedWorkout.WorkoutId = workout.Id;
             executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
 
-            foreach (var exercise in workout.Exercises)
+            foreach (var exercise in workout.Exercises?.OrderBy(x => x.Sequence))
             {
                 for(int x = 0; x < exercise.NumberOfSets; x++)
                 { 

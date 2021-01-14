@@ -141,6 +141,7 @@ export class WorkoutEditComponent implements OnInit {
     let exerciseControl: AbstractControl = this.exercisesArray.at(index);
     this.exercisesArray.removeAt(index);
     this.exercisesArray.insert((index - 1), exerciseControl);
+    //this.exercisesArray[index - 1].controls.sequnce
   }
 
   private moveExerciseDown(index: number): void {
@@ -252,6 +253,7 @@ export class WorkoutEditComponent implements OnInit {
 
   private getExercisesFromForm(): Array<ExerciseInWorkout> {
     let output = new Array<ExerciseInWorkout>();
+    let index = 0;
 
     for (let control of this.exercisesArray.controls) {
       if (control instanceof FormGroup) {
@@ -263,8 +265,9 @@ export class WorkoutEditComponent implements OnInit {
             exerciseGroup.get("exerciseName").value, 
             exerciseGroup.get("numberOfSets").value, 
             exerciseGroup.get("setType").value,
-            null) //ResistanceType is used for display only. It's a property on the Exercise class.
+            index) 
         );
+        index++;
       }
     }
 
