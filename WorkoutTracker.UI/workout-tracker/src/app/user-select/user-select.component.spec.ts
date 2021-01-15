@@ -5,20 +5,29 @@ import { UserService } from '../core/user.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { User } from 'app/core/models/user';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
 
 class UserServiceMock {
-  getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new Array<User>()));
+  logIn = jasmine.createSpy('logIn').and.returnValue(of(new User()));
 }
 
 describe('UserSelectComponent', () => {
   let component: UserSelectComponent;
   let fixture: ComponentFixture<UserSelectComponent>;
 
+  @Component({})
+  class FakeComponent{};
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ UserSelectComponent ], 
-      imports: [ RouterTestingModule ], 
+      imports: [         
+        RouterTestingModule.withRoutes(
+          [{path: 'home', component: FakeComponent}]) 
+      ], 
       providers: [
         {
           provide: UserService, 
@@ -37,5 +46,37 @@ describe('UserSelectComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should get all users', () => {
+
+    //ARRANGE
+    let userService = TestBed.inject(UserService);
+
+    //ACT
+    //Nothing else to do here
+
+    //ASSERT
+    expect(userService.getAll).toHaveBeenCalledTimes(1);
+
+  });
+
+  it('should select user', () => {
+
+    //ARRANGE
+    let userService = TestBed.inject(UserService);
+    let router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.callThrough();
+    const userId = 1;
+    const userName = "davidleeroth";
+
+    //ACT
+    component.selectUser(userId, userName);
+
+    //ASSERT
+    expect(userService.logIn).toHaveBeenCalledOnceWith(userId);
+    expect(component.username).toBe(userName);
+    expect(router.navigate).toHaveBeenCalledOnceWith(['home']);
+
   });
 });

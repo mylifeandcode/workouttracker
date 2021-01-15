@@ -14,6 +14,7 @@ import { User } from 'app/core/models/user';
 import { TargetArea } from 'app/workouts/models/target-area';
 import { Exercise } from 'app/workouts/models/exercise';
 import { ActivatedRoute } from '@angular/router';
+import { By } from '@angular/platform-browser';
 
 const USER_ID: number = 5;
 
@@ -134,5 +135,28 @@ describe('ExerciseEditComponent', () => {
     });
   }));
 
+  //TODO: Complete
+  xit('should save exercise', waitForAsync(() => {
+
+    let exerciseService = TestBed.inject(ExerciseService);
+    fixture.whenStable().then(() => {
+
+      component.exerciseForm.setValue({
+        id: 10, 
+        name: 'Standing Press w/Resistance Bands', 
+        description: 'something', 
+        resistanceTypes: '[1]', 
+        oneSided: [false], 
+        targetAreas: ['Chest', 'Triceps'],
+        setup: 'Ready',
+        movement: 'Set',
+        pointsToRemember: 'Go'
+      });
+
+      const button = fixture.debugElement.query(By.css("button[type = 'submit']"));
+
+    });
+
+  }));
 
 });
