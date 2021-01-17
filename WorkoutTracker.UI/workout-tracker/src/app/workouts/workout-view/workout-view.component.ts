@@ -42,7 +42,6 @@ export class WorkoutViewComponent implements OnInit {
           _.groupBy(executedWorkout.exercises, (exercise: ExecutedExercise) => { 
             return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
           });
-        console.log("groupedExercises: ", this.groupedExercises);
       });
   }
 

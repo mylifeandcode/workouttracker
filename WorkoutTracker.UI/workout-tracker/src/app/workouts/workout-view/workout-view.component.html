@@ -22,5 +22,14 @@
       *ngFor="let exerciseGroup of groupedExercises | keyvalue" 
       [executedExercises]="exerciseGroup.value">
     </wt-executed-exercises>
+
+    <div class="row headroom">
+      <div class="col-12">
+        Notes/Journal<br />
+        {{executedWorkout.journal}}
+      </div>
+    </div>
+
   </ng-container>
+
 </div>

@@ -70,6 +70,16 @@ namespace WorkoutApplication.Domain.Exercises
         public ushort? Duration { get; set; }
 
         /// <summary>
+        /// How well the form was for this exercise (the higher the number, the better).
+        /// </summary>
+        public ushort FormRating { get; set; }
+        
+        /// <summary>
+        /// How well the range of motion was for this exercise (the higher the number, the better).
+        /// </summary>
+        public ushort RangeOfMotionRating { get; set; }
+
+        /// <summary>
         /// The individual resistances which were used for this exercise.
         /// </summary>
         public virtual ICollection<Resistance> Resistances { get; set; }

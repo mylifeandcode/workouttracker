@@ -11,4 +11,6 @@ export class ExecutedExercise extends Entity {
   public resistanceMakeup: string;
   public setType: number;
   public duration: number;
+  public formRating: number;
+  public rangeOfMotionRating: number;
 }

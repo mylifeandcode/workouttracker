@@ -1,3 +1,71 @@
-<div class="row" *ngFor="let exercise of executedExercises">
-  {{exercise.id}}
-</div>
+<ng-container *ngIf="executedExercises && executedExercises.length > 0">
+
+  <div class="row headroom">
+    <div class="col-md-3">
+        {{executedExercises[0].exercise.name}}
+    </div>
+    <div class="col-md-9" class="setType">
+        {{executedExercises[0].setType == 0 ? "Repetition" : "Timed"}} Set(s):
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-1">
+        Set
+    </div>
+    <div class="col-4">
+        Resistance
+    </div>
+    <div class="col-1">
+        Duration
+    </div>
+    <div class="col-1 reps-div">
+        Target Reps
+    </div>
+    <div class="col-1 reps-div">
+        Actual Reps
+    </div>
+    <div class="col-2">
+        Form
+    </div>
+    <div class="col-2">
+        Range of Motion
+    </div>
+  </div>
+
+  <div class="row" *ngFor="let exercise of executedExercises; let i = index" [ngStyle]="{'backgroundColor': (i % 2 === 0)?'#d3d3d3':'#ffffff'}">
+  
+    <div class="col-1 exercise-info-div">
+      {{i + 1}}
+    </div>
+  
+    <div class="col-4 exercise-info-div">
+        <!--TODO: Create a pipe for this-->
+      <span *ngIf="exercise.exercise.resistanceType < 2">{{exercise.resistanceAmount}}</span>
+      <span *ngIf="exercise.exercise.resistanceType == 3">Body Weight</span>
+      <span *ngIf="exercise.exercise.resistanceType == 2">{{exercise.resistanceMakeup}}</span>
+    </div>
+
+    <div class="col-1">
+        <span *ngIf="exercise.setType == 0">N/A</span>
+        <span *ngIf="exercise.setType == 1">{{exercise.duration}}</span>
+    </div>
+
+    <div class="col-1">
+        {{exercise.targetRepCount}}
+    </div>
+    <div class="col-1">
+        {{exercise.actualRepCount}}
+    </div>
+
+    <div class="col-2">
+        {{exercise.formRating | rating}}
+    </div>
+
+    <div class="col-2">
+        {{exercise.rangeOfMotionRating | rating}}
+    </div>
+    
+  </div>
+
+</ng-container>

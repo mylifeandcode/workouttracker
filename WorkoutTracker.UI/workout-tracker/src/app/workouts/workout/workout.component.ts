@@ -14,7 +14,7 @@ import { ExecutedWorkout } from '../models/executed-workout';
 import { ExecutedExercise } from '../models/executed-exercise';
 import * as _ from 'lodash';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
-import { ActivatedRoute, Params } from '@angular/router';
+
 
 @Component({
   selector: 'wt-workout',
@@ -282,6 +282,9 @@ export class WorkoutComponent implements OnInit {
         exercises[x].resistanceAmount = sets[x].resistance;
         exercises[x].resistanceMakeup = sets[x].resistanceMakeup;
         exercises[x].targetRepCount = sets[x].targetReps;
+        exercises[x].sequence = x;
+        exercises[x].formRating = sets[x].formRating;
+        exercises[x].rangeOfMotionRating = sets[x].rangeOfMotionRating;
       }
 
     });

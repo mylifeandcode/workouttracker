@@ -23,6 +23,7 @@ import { WorkoutHistoryComponent } from './workout-history/workout-history.compo
 import { WorkoutSelectComponent } from './workout-select/workout-select.component';
 import { WorkoutViewComponent } from './workout-view/workout-view.component';
 import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';
+import { RatingPipe } from './pipes/rating.pipe';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { ExecutedExercisesComponent } from './executed-exercises/executed-exerci
     WorkoutHistoryComponent,
     WorkoutSelectComponent,
     WorkoutViewComponent,
-    ExecutedExercisesComponent
+    ExecutedExercisesComponent,
+    RatingPipe
   ],
   imports: [
     CommonModule, 

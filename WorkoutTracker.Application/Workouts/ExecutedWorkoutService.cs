@@ -103,7 +103,7 @@ namespace WorkoutTracker.Application.Workouts
                     exerciseToExecute.CreatedDateTime = DateTime.Now;
                     exerciseToExecute.Exercise = exercise.Exercise;
                     exerciseToExecute.ExerciseId = exercise.Exercise.Id;
-                    exerciseToExecute.Sequence = exercise.Sequence;
+                    exerciseToExecute.Sequence = x;
                     exerciseToExecute.SetType = exercise.SetType;
 
                     var recommendation = _exerciseRecommendationService.GetRecommendation(exercise.ExerciseId);
