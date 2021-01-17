@@ -14,6 +14,7 @@ import { ExecutedWorkout } from '../models/executed-workout';
 import { ExecutedExercise } from '../models/executed-exercise';
 import * as _ from 'lodash';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'wt-workout',
@@ -130,7 +131,7 @@ export class WorkoutComponent implements OnInit {
   private createForm(): void {
     this.workoutForm = this._formBuilder.group({
         id: [0, Validators.required ], 
-        workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
+        //workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
         exercises: this._formBuilder.array([]), 
         journal: ['']
     });

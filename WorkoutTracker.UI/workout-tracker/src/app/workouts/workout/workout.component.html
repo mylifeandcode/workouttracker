@@ -8,17 +8,10 @@
   <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
     <h3 class="headroom">Workout</h3>
     
-    <div class="row">
-      <div class="col-md-12 form-group">
-        <label>Select a Workout</label>&nbsp;
-        <select formControlName="workoutDefinitions" id="workoutDefinitions" (change)="workoutSelected($event)">
-          <option value="" selected disabled>Choose a Workout</option>
-          <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
-            {{workouts[i].name}}
-          </option>          
-        </select>
-      </div>
-    </div>
+    <wt-workout-select
+      [workouts]="workouts"
+      (workoutSelected)="setupWorkout($event)">
+    </wt-workout-select>
 
     <ng-container *ngIf="workout != null">
       <button class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutStarted">Start Workout</button>

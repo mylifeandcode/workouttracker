@@ -1,0 +1,26 @@
+<div class="container-fluid form-group">
+  <div *ngIf="loading" class="row">
+      <div class="offset-md-5 col-md-1">
+          <p-progressSpinner></p-progressSpinner>
+      </div>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <div class="row">
+      <div class="col-4">
+        <h3 class="headroom">Workout: {{executedWorkout.workout.name}}</h3>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-4">
+        Started {{executedWorkout.startDateTime | date: 'short'}}, Completed {{executedWorkout.endDateTime | date: 'short'}}
+      </div>
+    </div>
+
+    <wt-executed-exercises
+      *ngFor="let exerciseGroup of groupedExercises | keyvalue" 
+      [executedExercises]="exerciseGroup.value">
+    </wt-executed-exercises>
+  </ng-container>
+</div>

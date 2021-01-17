@@ -30,7 +30,6 @@ export class ResistanceBandService extends ApiBaseService<ResistanceBand> {
           let individualBands: ResistanceBandIndividual[] = [];
           bands.map((band: ResistanceBand) => {
             for(let x = 0; x < band.numberAvailable; x++) {
-              console.log(band.color + x);
               individualBands.push(new ResistanceBandIndividual(band.color, band.maxResistanceAmount));
             }
           })

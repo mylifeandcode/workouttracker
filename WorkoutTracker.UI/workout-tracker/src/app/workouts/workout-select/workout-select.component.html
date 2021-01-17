@@ -1,0 +1,11 @@
+<div class="row">
+  <div class="col-md-12 form-group">
+    <label>Select a Workout</label>&nbsp;
+    <select id="workoutDefinitions" (change)="workoutSelectChange($event)">
+      <option value="" selected disabled>Choose a Workout</option>
+      <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
+        {{workouts[i].name}}
+      </option>          
+    </select>
+  </div>
+</div>

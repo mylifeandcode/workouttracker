@@ -20,6 +20,9 @@ import { ResistanceBandSelectComponent } from './resistance-band-select/resistan
 import { PickListModule } from 'primeng/picklist';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
+import { WorkoutSelectComponent } from './workout-select/workout-select.component';
+import { WorkoutViewComponent } from './workout-view/workout-view.component';
+import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';
 
 
 @NgModule({
@@ -35,7 +38,10 @@ import { WorkoutHistoryComponent } from './workout-history/workout-history.compo
     InsertSpaceBeforeCapitalPipe,
     ResistanceBandSelectComponent,
     CountdownTimerComponent,
-    WorkoutHistoryComponent
+    WorkoutHistoryComponent,
+    WorkoutSelectComponent,
+    WorkoutViewComponent,
+    ExecutedExercisesComponent
   ],
   imports: [
     CommonModule, 
