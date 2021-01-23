@@ -3,15 +3,18 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { UserSelectComponent } from './user-select/user-select.component';
 import { UserSelectedGuard } from './core/guards/user-selected.guard';
+import { UserNotSelectedGuard } from './core/guards/user-not-selected.guard';
 
 const routes: Routes = [
   {
     path: '',
-    component: UserSelectComponent
+    component: UserSelectComponent, 
+    canActivate: [UserNotSelectedGuard]
   },
   {
     path: 'login',
-    component: UserSelectComponent
+    component: UserSelectComponent, 
+    canActivate: [UserNotSelectedGuard]
   },
   {
     path: 'home',
