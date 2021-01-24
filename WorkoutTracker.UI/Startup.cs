@@ -60,9 +60,19 @@ namespace WorkoutTracker
             // Add framework services.
             services.AddMvc()
                 .AddNewtonsoftJson(
-                    options => 
-                        options.SerializerSettings.ReferenceLoopHandling = 
-                            Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+                    options =>
+                    {
+                        options
+                            .SerializerSettings
+                            .ReferenceLoopHandling =
+                                Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+
+                        options
+                            .SerializerSettings
+                            .DateTimeZoneHandling = 
+                                Newtonsoft.Json.DateTimeZoneHandling.Utc;
+                    })
+                        
                 .AddControllersAsServices();
 
             //In their attempts to optimize performance, Microsoft replaced JSON.NET in .NET Core 3.

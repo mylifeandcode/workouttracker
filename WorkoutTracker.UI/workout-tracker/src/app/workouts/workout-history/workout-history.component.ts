@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { PaginatedResults } from 'app/core/models/paginated-results';
-import { User } from 'app/core/models/user';
 import { UserService } from 'app/core/user.service';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
@@ -25,13 +24,15 @@ export class WorkoutHistoryComponent implements OnInit {
   public cols: any = [
       { field: 'name', header: 'Name' }
   ]; //TODO: Create specific type
+ 
 
   constructor(
     private _executedWorkoutService: ExecutedWorkoutService, 
-    private _userService: UserService) {}
+    private _userService: UserService) {
+
+  }
 
   public ngOnInit(): void {
-    console.log('history init!');
   }
 
   public getExecutedWorkouts(first: number, nameContains: string): void {
