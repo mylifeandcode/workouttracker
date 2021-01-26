@@ -44,6 +44,8 @@ namespace WorkoutTracker.Application.Workouts
             if (filter == null)
                 return;
 
+            query = query.Where(workout => workout.CreatedByUserId == filter.UserId);
+
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
                 query = query.Where(workout => EF.Functions.Like(workout.Name, "%" + filter.NameContains + "%"));
         }

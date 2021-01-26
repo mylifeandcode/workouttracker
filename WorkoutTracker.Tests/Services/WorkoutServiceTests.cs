@@ -17,27 +17,39 @@ namespace WorkoutTracker.Tests.Services
         [TestMethod]
         public void Should_Get_Workouts_By_Filter()
         {
+            //TODO: Split into separate tests by filter criteria
+
             //ARRANGE
-            var filter = new WorkoutFilter { NameContains = "CHEST" };
-            var workouts = new List<Workout>(3);
+            var filter = new WorkoutFilter { NameContains = "CHEST", UserId = 4 };
+            var workouts = new List<Workout>(4);
 
             //TODO: Create a builder for this
             workouts.Add(
                 new Workout
                 {
-                    Name = "Legs and Glutes"
+                    Name = "Legs and Glutes", 
+                    CreatedByUserId = 4
                 });
 
             workouts.Add(
                 new Workout
                 {
-                    Name = "Chest and Arms"
+                    Name = "Chest and Arms",
+                    CreatedByUserId = 4
                 });
 
             workouts.Add(
                 new Workout
                 {
-                    Name = "The Mind!"
+                    Name = "The Mind!",
+                    CreatedByUserId = 4
+                });
+
+            workouts.Add(
+                new Workout
+                {
+                    Name = "Chest Workout 2000",
+                    CreatedByUserId = 3
                 });
 
             var repoMock = new Mock<IRepository<Workout>>(MockBehavior.Strict);
