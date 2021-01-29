@@ -10,7 +10,7 @@
         <ng-template pTemplate="header">
             <tr>
                 <th pSortableColumn="color">Color <p-sortIcon field="color"></p-sortIcon></th>
-                <th pSortableColumn="maxResistanceAmount">Max Resistance <p-sortIcon field="maxResistanceAmount"></p-sortIcon></th>
+                <th pSortableColumn="maxResistanceAmount">Max End-to-End Resistance <p-sortIcon field="maxResistanceAmount"></p-sortIcon></th>
                 <th pSortableColumn="numberAvailable"># Available <p-sortIcon field="numberAvailable"></p-sortIcon></th>
                 <th style="width:8rem"></th>
             </tr>
@@ -75,8 +75,9 @@ PrimeNg docs and results in tight coupling.
             <small class="p-invalid" *ngIf="modalSubmitted && !newResistanceBand.color">Color is required.</small>
         </div>
         <div class="p-field">
-            <label for="maxResistanceAmount">Maximum Resistance Amount</label>
+            <label for="maxResistanceAmount">Maximum End-to-End Resistance Amount *</label>
             <input type="number" class="p-inputtext" pInputText id="maxResistanceAmount" [(ngModel)]="newResistanceBand.maxResistanceAmount" required />
+            <small>*Resistance will be 2x when band is doubled over</small>
             <small class="p-invalid" *ngIf="modalSubmitted && !newResistanceBand.maxResistanceAmount">Max Resistance Amount is required.</small>
         </div>
         <div class="p-field">
@@ -87,7 +88,8 @@ PrimeNg docs and results in tight coupling.
     </ng-template>
     
     <ng-template pTemplate="footer">
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveNewBand()"></button>
+        <!--TODO: Refactor when time allows. Couldn't embed form in this dialog and still have the footer. Need to find a way.-->
+        <button pButton pRipple label="Save" [disabled]="!newResistanceBand.color || !newResistanceBand.maxResistanceAmount || !newResistanceBand.numberAvailable" icon="pi pi-check" class="p-button-text" (click)="saveNewBand()"></button>
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideModal()"></button>
     </ng-template>
 </p-dialog>

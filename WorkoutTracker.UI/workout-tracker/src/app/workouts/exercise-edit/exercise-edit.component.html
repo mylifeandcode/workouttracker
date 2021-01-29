@@ -48,6 +48,9 @@
                         {{resistanceType.value | insertSpaceBeforeCapital}}
                     </option>
                 </select>
+                <span *ngIf="exerciseForm.controls['resistanceTypes'].value=='2'"> <!--TODO: Replace with constant or data-driven value-->
+                    End to End?
+                </span>
             </div>
         </div>
         <div class="row">
