@@ -24,12 +24,14 @@ export class ResistanceBandSelectComponent implements OnInit {
   public availableBands: ResistanceBandIndividual[] = [];
 
   public get maxAvailableResistance(): number {
-    return _.sumBy(this.availableBands, 'maxResistanceAmount');
+    return _.sumBy(this.availableBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
   }
 
   public get maxSelectedResistance(): number {
-    return _.sumBy(this.selectedBands, 'maxResistanceAmount');
+    return _.sumBy(this.selectedBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
   }
+
+  private _doubleMaxResistanceAmounts: boolean;
 
   constructor() { }
 
@@ -40,8 +42,9 @@ export class ResistanceBandSelectComponent implements OnInit {
    * Sets the arrays of selected and available bands based on a comma-separated string of 
    * resistance band colors
    * @param selectedBands A string of resistance band colors currently selected
+   * @param doubleMaxResistanceAmounts Specifies whether or not band resistances should be doubled. This should be true when the exercise does not use the band end-to-end without an anchor.
    */
-  public setBandAllocation(selectedBands: string): void {
+  public setBandAllocation(selectedBands: string, doubleMaxResistanceAmounts: boolean): void {
     
     /*
     At one point, I'd gone down the path of making this private and having it called by 
@@ -58,6 +61,7 @@ export class ResistanceBandSelectComponent implements OnInit {
     but the code is simpler this way.
     */
 
+    this._doubleMaxResistanceAmounts = doubleMaxResistanceAmounts;
     this.selectedBands = [];
     this.availableBands = [...this.resistanceBandInventory];
 
@@ -87,6 +91,9 @@ export class ResistanceBandSelectComponent implements OnInit {
         .join(',');
     
     selection.maxResistanceAmount = this.maxSelectedResistance;
+
+    if(this._doubleMaxResistanceAmounts)
+    selection.maxResistanceAmount = selection.maxResistanceAmount * 2;
     
     this.okClicked.emit(selection);
   }

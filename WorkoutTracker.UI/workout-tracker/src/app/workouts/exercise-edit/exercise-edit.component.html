@@ -48,9 +48,12 @@
                         {{resistanceType.value | insertSpaceBeforeCapital}}
                     </option>
                 </select>
-                <span *ngIf="exerciseForm.controls['resistanceTypes'].value=='2'"> <!--TODO: Replace with constant or data-driven value-->
-                    End to End?
-                </span>
+            </div>
+            <div class="col-md-3 form-group" *ngIf="exerciseForm.controls['resistanceTypes'].value=='2'"> <!--TODO: Replace with constant or data-driven value-->
+                <div class="custom-control custom-checkbox end-to-end-selection">
+                    <input type="checkbox" class="custom-control-input" formControlName="endToEnd" id="endToEnd">
+                    <label class="custom-control-label" for="endToEnd">End to End</label> <small style="margin-left: 12px;" pTooltip="''End to End'' specifies that the exercise is performed with one end of the band clipped to a ring, and the other hand clipped to a handle, as opposed to looped through an anchor." tooltipPosition="right">(What's this?)</small>
+                </div>
             </div>
         </div>
         <div class="row">

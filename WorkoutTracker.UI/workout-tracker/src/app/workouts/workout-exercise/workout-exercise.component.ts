@@ -42,7 +42,6 @@ export class WorkoutExerciseComponent implements OnInit {
   }
 
   public selectResistanceBands(formGroup: FormGroup): void {
-    console.log("Form Group for Selection: ", formGroup);
     this.resistanceBandsSelect.emit(formGroup);
   }
 

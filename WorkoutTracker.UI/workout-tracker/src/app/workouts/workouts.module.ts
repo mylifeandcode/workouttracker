@@ -18,6 +18,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { InsertSpaceBeforeCapitalPipe } from './pipes/insert-space-before-capital.pipe';
 import { ResistanceBandSelectComponent } from './resistance-band-select/resistance-band-select.component';
 import { PickListModule } from 'primeng/picklist';
+import { TooltipModule } from 'primeng/tooltip';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
 import { WorkoutSelectComponent } from './workout-select/workout-select.component';
@@ -51,6 +52,7 @@ import { RatingPipe } from './pipes/rating.pipe';
     DialogModule, 
     ReactiveFormsModule, 
     TableModule, 
+    TooltipModule, 
     PickListModule, 
     ProgressSpinnerModule, 
     MultiSelectModule,     

@@ -1,3 +1,11 @@
 label {
     padding-top: 18px;
 }
+
+tr.band-row {
+    line-height: 10px; 
+}
+
+td {
+    padding: 8px !important;
+}

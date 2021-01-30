@@ -9,4 +9,5 @@ export class Exercise extends NamedEntity {
     pointsToRemember: string;
     resistanceType: number;
     oneSided: boolean;
+    bandsEndToEnd: boolean;
 }

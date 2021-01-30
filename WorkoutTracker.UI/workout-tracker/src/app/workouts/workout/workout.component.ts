@@ -94,7 +94,9 @@ export class WorkoutComponent implements OnInit {
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
-    this.bandSelect.setBandAllocation(exerciseFormGroup.controls.resistanceMakeup.value);
+    this.bandSelect.setBandAllocation(
+      exerciseFormGroup.controls.resistanceMakeup.value, 
+      !exerciseFormGroup.controls.bandsEndToEnd.value);
   }
 
   public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {
@@ -214,7 +216,7 @@ export class WorkoutComponent implements OnInit {
           exerciseName: [exerciseArray[0].exercise.name, Validators.compose([Validators.required])],
           exerciseSets: this.getExerciseSetsFormArray(exerciseArray), 
           setType: [exerciseArray[0].setType, Validators.compose([Validators.required])], 
-          resistanceType: [exerciseArray[0].exercise.resistanceType, Validators.compose([Validators.required])], 
+          resistanceType: [exerciseArray[0].exercise.resistanceType, Validators.compose([Validators.required])]
         })
       );
 
@@ -237,6 +239,7 @@ export class WorkoutComponent implements OnInit {
         formRating: [null, Validators.required], 
         rangeOfMotionRating: [null, Validators.required], 
         resistanceMakeup: [exercises[i].resistanceMakeup], 
+        bandsEndToEnd: exercises[i].exercise.bandsEndToEnd, //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
         duration: [120] //TODO: Get/set value from API
       });
 

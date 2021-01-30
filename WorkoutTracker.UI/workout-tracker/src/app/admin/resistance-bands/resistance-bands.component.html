@@ -16,7 +16,7 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-resistanceBand let-editing="editing" let-ri="rowIndex">
-            <tr [pEditableRow]="resistanceBand">
+            <tr [pEditableRow]="resistanceBand" class="band-row">
                 <td>
                     <p-cellEditor>
                         <ng-template pTemplate="input">
