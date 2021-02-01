@@ -87,8 +87,8 @@ export class WorkoutComponent implements OnInit {
     this.getResistanceBands();
   }
 
-  public workoutSelected(event: any) { //TODO: Get concrete type instead of using any
-    this.setupWorkout(event.target.value);
+  public workoutSelected(worktoutId: number) { 
+    this.setupWorkout(worktoutId);
   }
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
