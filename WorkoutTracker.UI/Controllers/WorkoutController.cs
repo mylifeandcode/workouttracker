@@ -32,23 +32,23 @@ namespace WorkoutTracker.UI.Controllers
             try
             {
                 var filter = BuildWorkoutFilter(userId, nameContains);
-                var result = new PaginatedResults<WorkoutDTO>();
 
-                result.TotalCount = _workoutService.GetTotalCount(); //TODO: Modify to get total count by filter
+                int totalCount = _workoutService.GetTotalCount(); //TODO: Modify to get total count by filter
 
                 //Blows up after upgrading to EF Core 3.1 from 2.2!
                 //More info at https://stackoverflow.com/questions/59677609/problem-with-ef-core-after-migrating-from-2-2-to-3-1
                 //Had to add .ToList() to the call below.
                 var workouts = _workoutService.Get(firstRecord, pageSize, filter).ToList();
 
-                result.Results = workouts.Select((workout) =>
+                var results = workouts.Select((workout) =>
                 {
-                    var dto = new WorkoutDTO();
-                    dto.Id = workout.Id;
-                    dto.Name = workout.Name;
-                    dto.Exercises = workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise));
-                    return dto;
+                    return new WorkoutDTO(
+                        workout.Id, 
+                        workout.Name, 
+                        workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise)));
                 });
+
+                var result = new PaginatedResults<WorkoutDTO>(results, totalCount);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -87,10 +87,10 @@ namespace WorkoutTracker.UI.Controllers
                 if (workout == null)
                     return NotFound(id);
 
-                var dto = new WorkoutDTO();
-                dto.Id = workout.Id;
-                dto.Name = workout.Name;
-                dto.Exercises = workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise));
+                var dto = new WorkoutDTO(
+                    workout.Id, 
+                    workout.Name, 
+                    workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise)));
 
                 return Ok(dto);
             }

@@ -66,24 +66,19 @@ namespace WorkoutTracker.UI.Controllers
                     BuildExecutedWorkoutFilter(
                         userId, startDateTime, endDateTime);
                 
-                var result = new PaginatedResults<ExecutedWorkoutDTO>();
-
-                result.TotalCount = _executedWorkoutService.GetTotalCount(); //TODO: Modify to get total count by filter
+                int totalCount = _executedWorkoutService.GetTotalCount(); //TODO: Modify to get total count by filter
 
                 var executedWorkouts = 
                     _executedWorkoutService
                         .GetFilteredSubset(firstRecord, pageSize, filter)
                         .ToList();
 
-                result.Results = executedWorkouts.Select((executedWorkout) =>
+                var results = executedWorkouts.Select((executedWorkout) =>
                 {
-                    var dto = new ExecutedWorkoutDTO();
-                    dto.Id = executedWorkout.Id;
-                    dto.Name = executedWorkout.Workout.Name;
-                    dto.StartDateTime = executedWorkout.StartDateTime;
-                    dto.EndDateTime = executedWorkout.EndDateTime;
-                    return dto;
+                    return new ExecutedWorkoutDTO(executedWorkout.Id, executedWorkout.Workout.Name, executedWorkout.StartDateTime, executedWorkout.EndDateTime);
                 });
+
+                var result = new PaginatedResults<ExecutedWorkoutDTO>(results, totalCount);
 
                 return Ok(result);
             }

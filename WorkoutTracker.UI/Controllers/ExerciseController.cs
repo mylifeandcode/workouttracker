@@ -36,24 +36,24 @@ namespace WorkoutTracker.UI.Controllers
             try
             {
                 var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
-                var result = new PaginatedResults<ExerciseDTO>();
 
-                result.TotalCount = _exerciseService.GetTotalCount(); //TODO: Modify to get total count by filter
+                int totalCount = _exerciseService.GetTotalCount(); //TODO: Modify to get total count by filter
 
                 //Blows up after upgrading to EF Core 3.1 from 2.2!
                 //More info at https://stackoverflow.com/questions/59677609/problem-with-ef-core-after-migrating-from-2-2-to-3-1
                 //Had to add .ToList() to the call below.
                 var exercises = _exerciseService.Get(firstRecord, pageSize, filter).ToList();
 
-                result.Results = exercises.Select((exercise) =>
+                var results = exercises.Select((exercise) =>
                 {
-                    var dto = new ExerciseDTO();
-                    dto.Id = exercise.Id;
-                    dto.Name = exercise.Name;
-                    dto.TargetAreas =
-                        string.Join(", ", exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name));
-                    return dto;
+                    return new ExerciseDTO(
+                        exercise.Id, 
+                        exercise.Name, 
+                        string.Join(", ", exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name)));
                 });
+
+                var result = new PaginatedResults<ExerciseDTO>(results, totalCount);
+
                 return Ok(result);
             }
             catch (Exception ex)

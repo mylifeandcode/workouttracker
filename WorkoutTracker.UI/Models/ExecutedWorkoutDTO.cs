@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 
 namespace WorkoutTracker.UI.Models
 {
-    public class ExecutedWorkoutDTO : NamedEntityDTO
+    public record ExecutedWorkoutDTO : NamedEntityDTO
     {
-        public DateTime StartDateTime { get; set; }
-        public DateTime EndDateTime { get; set; }
+        public DateTime StartDateTime { get; }
+        public DateTime EndDateTime { get; }
+
+        public ExecutedWorkoutDTO(int id, string name, DateTime startDateTime, DateTime endDateTime): base(id, name)
+            => (StartDateTime, EndDateTime) = (startDateTime, endDateTime);
     }
 }

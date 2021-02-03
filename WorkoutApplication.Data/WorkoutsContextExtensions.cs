@@ -29,7 +29,7 @@ namespace WorkoutApplication.Data
                     {
                         Id = 0,
                         CreatedByUserId = 0,
-                        CreatedDateTime = DateTime.Now,
+                        CreatedDateTime = DateTime.Now.ToUniversalTime(),
                         Name = "SYSTEM"
                     });
 
@@ -51,14 +51,14 @@ namespace WorkoutApplication.Data
             //seed set.
             if (!context.TargetAreas.Any())
             {
-                context.TargetAreas.Add(new TargetArea { Name = "Abs", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now });
-                context.TargetAreas.Add(new TargetArea { Name = "Back", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now });
-                context.TargetAreas.Add(new TargetArea { Name = "Biceps", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now });
-                context.TargetAreas.Add(new TargetArea { Name = "Chest", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now });
-                context.TargetAreas.Add(new TargetArea { Name = "Core", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now });
-                context.TargetAreas.Add(new TargetArea { Name = "Legs", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now });
-                context.TargetAreas.Add(new TargetArea { Name = "Shoulders", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now });
-                context.TargetAreas.Add(new TargetArea { Name = "Triceps", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now });
+                context.TargetAreas.Add(new TargetArea { Name = "Abs", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now.ToUniversalTime() });
+                context.TargetAreas.Add(new TargetArea { Name = "Back", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now.ToUniversalTime() });
+                context.TargetAreas.Add(new TargetArea { Name = "Biceps", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now.ToUniversalTime() });
+                context.TargetAreas.Add(new TargetArea { Name = "Chest", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now.ToUniversalTime() });
+                context.TargetAreas.Add(new TargetArea { Name = "Core", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now.ToUniversalTime() });
+                context.TargetAreas.Add(new TargetArea { Name = "Legs", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now.ToUniversalTime() });
+                context.TargetAreas.Add(new TargetArea { Name = "Shoulders", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now.ToUniversalTime() });
+                context.TargetAreas.Add(new TargetArea { Name = "Triceps", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now.ToUniversalTime() });
 
                 context.SaveChanges();
             }

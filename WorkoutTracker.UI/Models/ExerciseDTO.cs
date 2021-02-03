@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 
 namespace WorkoutTracker.UI.Models
 {
-    public class ExerciseDTO : NamedEntityDTO
+    public record ExerciseDTO : NamedEntityDTO
     {
-        public string TargetAreas { get; set; }
+        public string TargetAreas { get; }
+
+        public ExerciseDTO(int id, string name, string targetAreas) : base(id, name)
+            => (TargetAreas) = targetAreas;
     }
 }

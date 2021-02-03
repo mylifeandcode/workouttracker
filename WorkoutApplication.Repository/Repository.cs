@@ -35,7 +35,7 @@ namespace WorkoutApplication.Repository
 
         public TEntity Add(TEntity entity, bool saveChanges = false)
         {
-            entity.CreatedDateTime = DateTime.Now;
+            entity.CreatedDateTime = DateTime.Now.ToUniversalTime();
             _context.Add<TEntity>(entity);
 
             if (saveChanges)
@@ -59,7 +59,7 @@ namespace WorkoutApplication.Repository
 
         public TEntity Update(TEntity entity, bool saveChanges = false)
         {
-            entity.ModifiedDateTime = DateTime.Now;
+            entity.ModifiedDateTime = DateTime.Now.ToUniversalTime();
             _context.Update<TEntity>(entity);
 
             if (saveChanges)

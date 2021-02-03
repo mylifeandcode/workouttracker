@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 
 namespace WorkoutTracker.UI.Models
 {
-    public class PaginatedResults<T>
+    public record PaginatedResults<T>
     {
-        public IEnumerable<T> Results { get; set; }
-        public int TotalCount { get; set; }
+        public IEnumerable<T> Results { get; }
+        public int TotalCount { get; }
+
+        public PaginatedResults(IEnumerable<T> results, int totalCount) 
+            => (Results, TotalCount) = (results, totalCount);
     }
 }

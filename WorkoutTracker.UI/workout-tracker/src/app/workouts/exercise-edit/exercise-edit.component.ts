@@ -45,9 +45,7 @@ export class ExerciseEditComponent implements OnInit {
         //TODO: Revisit. Do we really need to await this stuff?
         this.currentUserId = await this.getCurrentUserId();
         this.allTargetAreas = await this._exerciseSvc.getTargetAreas().toPromise();
-        console.log('1');
         this.resistanceTypes = await this._exerciseSvc.getResistanceTypes().toPromise();
-        console.log('2: ', this.resistanceTypes);
         this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
     }
 
@@ -81,6 +79,9 @@ export class ExerciseEditComponent implements OnInit {
                 this.loadExercise(); 
             else {
                 this.setupTargetAreas([]);
+                this.exerciseForm.reset();
+                this.exerciseForm.controls["id"].setValue(0);
+                this.exercise = null;
                 this.loading = false;
             }
         });

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Workouts;
 using WorkoutApplication.Repository;
@@ -100,7 +99,7 @@ namespace WorkoutTracker.Application.Workouts
                     //and initialize that way instead.
                     var exerciseToExecute = new ExecutedExercise();
                     exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
-                    exerciseToExecute.CreatedDateTime = DateTime.Now;
+                    exerciseToExecute.CreatedDateTime = DateTime.Now.ToUniversalTime();
                     exerciseToExecute.Exercise = exercise.Exercise;
                     exerciseToExecute.ExerciseId = exercise.Exercise.Id;
                     exerciseToExecute.Sequence = x;

@@ -6,14 +6,14 @@ using WorkoutApplication.Domain.Exercises;
 
 namespace WorkoutTracker.UI.Models
 {
-    public class ExerciseInWorkoutDTO
+    public record ExerciseInWorkoutDTO
     {
-        public int Id { get; set; }
-        public int ExerciseId { get; set; }
-        public string ExerciseName { get; set; }
-        public short NumberOfSets { get; set; }
-        public SetType SetType { get; set; }
-        public ResistanceType ResistanceType { get; set; }
+        public int Id { get; }
+        public int ExerciseId { get; }
+        public string ExerciseName { get; }
+        public short NumberOfSets { get; }
+        public SetType SetType { get; }
+        public ResistanceType ResistanceType { get; }
 
         public ExerciseInWorkoutDTO(ExerciseInWorkout exercise)
         {
