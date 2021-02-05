@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { WorkoutComponent } from './workout.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/core/user.service';
 import { of } from 'rxjs';
@@ -17,6 +17,7 @@ import { ExecutedExercise } from '../models/executed-exercise';
 import { Exercise } from '../models/exercise';
 
 const MOCK_USER_ID: number = 15;
+const NUMBER_OF_EXERCISES_IN_WORKOUT = 3;
 
 function getFakeUserWorkouts(): PaginatedResults<WorkoutDTO> {
   let workouts = new PaginatedResults<WorkoutDTO>();
@@ -39,16 +40,26 @@ function getResistanceBands(): ResistanceBandIndividual[] {
 function getFakeExecutedWorkout(): ExecutedWorkout {
   let executedWorkout = new ExecutedWorkout();
   executedWorkout.exercises = [];
-  for(let x = 0; x < 3; x++) {
+  for(let x = 0; x < NUMBER_OF_EXERCISES_IN_WORKOUT; x++) {
     let exercise = new ExecutedExercise();
     exercise.exercise = new Exercise(); //So...yeah. Mistakes were made with the naming. :/
-    exercise.exercise.id = x;
+    exercise.exercise.id = x + 1;
     exercise.exercise.name = "Exercise " + x.toString();
     exercise.exercise.resistanceType = x;
     exercise.setType = ((x + 1) % 2);
     executedWorkout.exercises.push(exercise);
   }
-  
+
+  //Duplicate the last exercise so we can verify the grouping works
+  let lastExercise = executedWorkout.exercises[executedWorkout.exercises.length - 1];
+  let oneMoreExercise = new ExecutedExercise();
+  oneMoreExercise.exercise = new Exercise();
+  oneMoreExercise.exercise.id = lastExercise.exercise.id;
+  oneMoreExercise.exercise.name = lastExercise.exercise.name;
+  oneMoreExercise.exercise.resistanceType = lastExercise.exercise.resistanceType;
+  oneMoreExercise.setType = lastExercise.setType;
+  executedWorkout.exercises.push(oneMoreExercise);
+
   return executedWorkout;
 }
 
@@ -152,6 +163,50 @@ describe('WorkoutComponent', () => {
     //ASSERT
     expect(executedWorkoutService.getNew).toHaveBeenCalledTimes(1);
     expect(component.workout).toEqual(expectedExecutedWorkout);
+    
     //TODO: Finish. Verify form group controls.
+    expect(component.exercisesArray.controls.length).toBe(NUMBER_OF_EXERCISES_IN_WORKOUT);
+
+    /*
+    for(let x = 0; x < component.exercisesArray.length; x++) {
+      expect(component.exercisesArray.controls[x].get('id')).toBeDefined();
+      expect(component.exercisesArray.controls[x].get('id')).toBeGreaterThan(0)
+    }
+    */
+    component.exercisesArray.controls.forEach((value: AbstractControl) => {
+      let formGroup = <FormGroup>value;
+      expect(formGroup).toBeDefined();
+      console.log("exerciseSets: ", formGroup.controls.exerciseSets);
+      let sets = <FormArray>formGroup.controls.exerciseSets.value;
+      expect(sets).toBeDefined();
+      expect(sets.length).toBeGreaterThan(0);
+      expect(formGroup.controls.exerciseId.value).toBeGreaterThan(0);
+      let exercises = component.workout.exercises.filter((exercise: ExecutedExercise) => {
+        return exercise.exercise.id == formGroup.controls.exerciseId.value; 
+      });
+
+      expect(exercises.length).toEqual(sets.length);
+
+      for(let x = 0; x < sets.length; x++) {
+        console.log("sets[x]: ", sets[x]);
+        //console.log("exercises[x]: ", exercises[x]);
+        expect(sets[x].controls.duration).toBeDefined();
+        expect(sets[x].controls.targetReps).toBeDefined();
+        expect(sets[x].controls.actualReps).toBeDefined();
+        /*
+        expect(sets[x].actualReps).toBeDefined();
+
+        //exercises[x].notes //TODO: Implement
+        exercises[x].resistanceAmount = sets[x].resistance;
+        exercises[x].resistanceMakeup = sets[x].resistanceMakeup;
+        exercises[x].targetRepCount = sets[x].targetReps;
+        exercises[x].sequence = x;
+        exercises[x].formRating = sets[x].formRating;
+        exercises[x].rangeOfMotionRating = sets[x].rangeOfMotionRating;
+        */
+      }
+
+    });
+
   });
 });

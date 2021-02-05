@@ -205,7 +205,9 @@ export class WorkoutComponent implements OnInit {
     this.exercisesArray.clear();
 
     //Group ExecutedExercise by Exercise and Set Type
-    let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); });
+    let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { 
+        return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
+      });
 
     _.forEach(groupedExercises, (exerciseArray: ExecutedExercise[]) => {
 
@@ -242,7 +244,7 @@ export class WorkoutComponent implements OnInit {
         bandsEndToEnd: exercises[i].exercise.bandsEndToEnd, //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
         duration: [120] //TODO: Get/set value from API
       });
-
+      console.log("formGroup: ", formGroup);
       formGroup.controls.actualReps.disable();
       formGroup.controls.formRating.disable();
       formGroup.controls.rangeOfMotionRating.disable();
