@@ -12,9 +12,11 @@ import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-indi
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 import { ExecutedWorkout } from '../models/executed-workout';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { Workout } from '../models/workout';
 import { ExecutedExercise } from '../models/executed-exercise';
 import { Exercise } from '../models/exercise';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ResistanceBandSelection } from '../models/resistance-band-selection';
+import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_EXERCISES_IN_WORKOUT = 3;
@@ -43,9 +45,13 @@ function getFakeExecutedWorkout(): ExecutedWorkout {
   for(let x = 0; x < NUMBER_OF_EXERCISES_IN_WORKOUT; x++) {
     let exercise = new ExecutedExercise();
     exercise.exercise = new Exercise(); //So...yeah. Mistakes were made with the naming. :/
+    exercise.exercise.bandsEndToEnd = (x % 2 > 0);
     exercise.exercise.id = x + 1;
     exercise.exercise.name = "Exercise " + x.toString();
     exercise.exercise.resistanceType = x;
+    exercise.resistanceAmount = x * 10;
+    exercise.resistanceMakeup = exercise.resistanceAmount.toString();
+    exercise.targetRepCount = x * 5;
     exercise.setType = ((x + 1) % 2);
     executedWorkout.exercises.push(exercise);
   }
@@ -54,9 +60,13 @@ function getFakeExecutedWorkout(): ExecutedWorkout {
   let lastExercise = executedWorkout.exercises[executedWorkout.exercises.length - 1];
   let oneMoreExercise = new ExecutedExercise();
   oneMoreExercise.exercise = new Exercise();
+  oneMoreExercise.exercise.bandsEndToEnd = lastExercise.exercise.bandsEndToEnd;
   oneMoreExercise.exercise.id = lastExercise.exercise.id;
   oneMoreExercise.exercise.name = lastExercise.exercise.name;
   oneMoreExercise.exercise.resistanceType = lastExercise.exercise.resistanceType;
+  oneMoreExercise.resistanceAmount = lastExercise.resistanceAmount;
+  oneMoreExercise.resistanceMakeup = lastExercise.resistanceMakeup;
+  oneMoreExercise.targetRepCount = lastExercise.targetRepCount;
   oneMoreExercise.setType = lastExercise.setType;
   executedWorkout.exercises.push(oneMoreExercise);
 
@@ -85,6 +95,51 @@ class ExecutedWorkoutServiceMock {
   add = jasmine.createSpy('add').and.returnValue(of(new ExecutedWorkout()));
 }
 
+/*
+The casting solution presented at this URL did not work: https://medium.com/angular-in-depth/angular-unit-testing-viewchild-4525e0c7b756
+Unfortunately, for now, I've had to mock each property and method. :/
+*/
+@Component({
+  selector: 'wt-resistance-band-select', 
+  template: ''
+})
+class ResistanceBandSelectComponentMock extends ResistanceBandSelectComponent {
+
+  @Input()
+  public resistanceBandInventory: ResistanceBandIndividual[];
+
+  @Output()
+  public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
+
+  @Output()
+  public cancelClicked: EventEmitter<void> = new EventEmitter<void>();
+  
+  /*
+  public selectedBands: ResistanceBandIndividual[] = [];
+  public availableBands: ResistanceBandIndividual[] = [];  
+  */
+
+  setBandAllocation = jasmine.createSpy('setBandAllocation');
+
+  /*
+  ok = jasmine.createSpy('ok');
+  cancel = jasmine.createSpy('cancel');
+
+  public get maxAvailableResistance(): number {
+    return 0;
+  }
+
+  public get maxSelectedResistance(): number {
+    return 0;
+  }
+
+  //private _doubleMaxResistanceAmounts: boolean;
+  
+  ngOnInit(): void {
+  }
+  */  
+}
+
 describe('WorkoutComponent', () => {
   let component: WorkoutComponent;
   let fixture: ComponentFixture<WorkoutComponent>;
@@ -92,7 +147,7 @@ describe('WorkoutComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule ], 
-      declarations: [ WorkoutComponent ], 
+      declarations: [ WorkoutComponent, ResistanceBandSelectComponentMock ], 
       providers: [
         {
           provide: WorkoutService, 
@@ -118,7 +173,15 @@ describe('WorkoutComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutComponent);
     component = fixture.componentInstance;
+    
+    //The below line works, but bandSelect becomes undefined after detectChanges(), most likely 
+    //due to the HTML element not being rendered due to the visible attribute being false
+    //component.bandSelect = TestBed.createComponent(ResistanceBandSelectComponentMock).componentInstance;
+    
     fixture.detectChanges();
+
+    //IMPORTANT: Need to set this AFTER detectChanges, because otherwise it is undefined (probably due to the visible attribute being false)
+    component.bandSelect = TestBed.createComponent(ResistanceBandSelectComponentMock).componentInstance;
   });
 
   it('should create', () => {
@@ -163,50 +226,81 @@ describe('WorkoutComponent', () => {
     //ASSERT
     expect(executedWorkoutService.getNew).toHaveBeenCalledTimes(1);
     expect(component.workout).toEqual(expectedExecutedWorkout);
+    expect(component.workoutForm.controls.id.value).toBe(12);
     
-    //TODO: Finish. Verify form group controls.
     expect(component.exercisesArray.controls.length).toBe(NUMBER_OF_EXERCISES_IN_WORKOUT);
 
-    /*
-    for(let x = 0; x < component.exercisesArray.length; x++) {
-      expect(component.exercisesArray.controls[x].get('id')).toBeDefined();
-      expect(component.exercisesArray.controls[x].get('id')).toBeGreaterThan(0)
-    }
-    */
     component.exercisesArray.controls.forEach((value: AbstractControl) => {
       let formGroup = <FormGroup>value;
       expect(formGroup).toBeDefined();
-      console.log("exerciseSets: ", formGroup.controls.exerciseSets);
-      let sets = <FormArray>formGroup.controls.exerciseSets.value;
-      expect(sets).toBeDefined();
-      expect(sets.length).toBeGreaterThan(0);
+      expect(formGroup.controls.id).toBeDefined();
+      //expect(formGroup.controls.id.value).toBe(0); //TODO: Revisit -- similar comment in component
+      expect(formGroup.controls.exerciseId).toBeDefined();
       expect(formGroup.controls.exerciseId.value).toBeGreaterThan(0);
-      let exercises = component.workout.exercises.filter((exercise: ExecutedExercise) => {
-        return exercise.exercise.id == formGroup.controls.exerciseId.value; 
+      expect(formGroup.controls.exerciseName).toBeDefined();
+      expect(formGroup.controls.setType).toBeDefined();
+      expect(formGroup.controls.resistanceType).toBeDefined();
+      
+      //let exerciseSets = <FormArray>formGroup.controls.exerciseSets.value;
+      //IMPORTANT DISTINCTION:
+      //The above approach only gets any values which were set.
+      //The *below* approach gets the controls we've defined.
+      let exerciseSets = (<FormArray>formGroup.controls.exerciseSets).controls;
+      
+      expect(exerciseSets).toBeDefined();
+      expect(exerciseSets.length).toBeGreaterThan(0);
+
+      let executedExercises = component.workout.exercises.filter((executedExercise: ExecutedExercise) => {
+        return executedExercise.exercise.id == formGroup.controls.exerciseId.value; 
       });
 
-      expect(exercises.length).toEqual(sets.length);
+      expect(executedExercises.length).toEqual(exerciseSets.length);
 
-      for(let x = 0; x < sets.length; x++) {
-        console.log("sets[x]: ", sets[x]);
-        //console.log("exercises[x]: ", exercises[x]);
-        expect(sets[x].controls.duration).toBeDefined();
-        expect(sets[x].controls.targetReps).toBeDefined();
-        expect(sets[x].controls.actualReps).toBeDefined();
-        /*
-        expect(sets[x].actualReps).toBeDefined();
+      //Make sure each set was initialized correctly
+      for(let x = 0; x < exerciseSets.length; x++) {
+        const exerciseSetFormGroup = <FormGroup>exerciseSets[x];
 
-        //exercises[x].notes //TODO: Implement
-        exercises[x].resistanceAmount = sets[x].resistance;
-        exercises[x].resistanceMakeup = sets[x].resistanceMakeup;
-        exercises[x].targetRepCount = sets[x].targetReps;
-        exercises[x].sequence = x;
-        exercises[x].formRating = sets[x].formRating;
-        exercises[x].rangeOfMotionRating = sets[x].rangeOfMotionRating;
-        */
+        expect(exerciseSetFormGroup.controls.actualReps).toBeDefined();
+        expect(exerciseSetFormGroup.controls.bandsEndToEnd).toBeDefined();
+
+        expect(exerciseSetFormGroup.controls.duration).toBeDefined();
+        expect(exerciseSetFormGroup.controls.duration.value).toBe(120); //TODO: Refactor required (comment in component)
+        expect(exerciseSetFormGroup.controls.resistance).toBeDefined();
+        expect(exerciseSetFormGroup.controls.resistanceMakeup).toBeDefined();
+        expect(exerciseSetFormGroup.controls.sequence).toBeDefined();
+        expect(exerciseSetFormGroup.controls.targetReps).toBeDefined();
+
+        //We can reference [0] for these, as the exercise should be the same if more than one in the group
+        expect(exerciseSetFormGroup.controls.bandsEndToEnd.value).toBe(executedExercises[0].exercise.bandsEndToEnd);
+        expect(exerciseSetFormGroup.controls.resistance.value).toBe(executedExercises[0].resistanceAmount);
+        expect(exerciseSetFormGroup.controls.resistanceMakeup.value).toBe(executedExercises[0].resistanceMakeup);
+        expect(exerciseSetFormGroup.controls.targetReps.value).toBe(executedExercises[0].targetRepCount);
       }
 
     });
 
   });
+
+  it('should enable the resistance bands selection modal', () => {
+    //ARRANGE
+    component.workoutSelected(12);
+
+    //Reactive Forms can get CONFUSING!
+    const firstExercise = component.exercisesArray.controls[0];
+    const formGroup = <FormGroup>firstExercise;
+    const exerciseSets = (<FormArray>formGroup.controls.exerciseSets).controls;
+    const exerciseFormGroup = <FormGroup>exerciseSets[0];
+ 
+    //ACT
+    component.resistanceBandsModalEnabled(exerciseFormGroup);
+
+    //ASSERT
+    expect(component.showResistanceBandsSelectModal).toBeTrue();
+    expect(component.formGroupForResistanceSelection).toBe(exerciseFormGroup);
+    expect(component.bandSelect.setBandAllocation)
+      .toHaveBeenCalledWith(
+        exerciseFormGroup.controls.resistanceMakeup.value, 
+        !exerciseFormGroup.controls.bandsEndToEnd.value);
+  });
+
 });

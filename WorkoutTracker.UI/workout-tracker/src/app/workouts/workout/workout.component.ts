@@ -241,10 +241,10 @@ export class WorkoutComponent implements OnInit {
         formRating: [null, Validators.required], 
         rangeOfMotionRating: [null, Validators.required], 
         resistanceMakeup: [exercises[i].resistanceMakeup], 
-        bandsEndToEnd: exercises[i].exercise.bandsEndToEnd, //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
+        bandsEndToEnd: [exercises[i].exercise.bandsEndToEnd], //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
         duration: [120] //TODO: Get/set value from API
       });
-      console.log("formGroup: ", formGroup);
+
       formGroup.controls.actualReps.disable();
       formGroup.controls.formRating.disable();
       formGroup.controls.rangeOfMotionRating.disable();

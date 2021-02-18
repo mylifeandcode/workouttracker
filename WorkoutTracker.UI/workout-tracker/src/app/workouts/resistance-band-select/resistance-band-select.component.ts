@@ -35,8 +35,7 @@ export class ResistanceBandSelectComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   /**
    * Sets the arrays of selected and available bands based on a comma-separated string of 
