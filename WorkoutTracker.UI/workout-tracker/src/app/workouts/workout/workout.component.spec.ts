@@ -18,6 +18,8 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { RSA_X931_PADDING } from 'constants';
+import { exec } from 'child_process';
+import { isConstructSignatureDeclaration } from 'typescript';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -55,6 +57,8 @@ function getFakeExecutedWorkout(): ExecutedWorkout {
     exercise.resistanceMakeup = exercise.resistanceAmount.toString();
     exercise.targetRepCount = x * 5;
     exercise.setType = ((x + 1) % 2);
+    exercise.sequence = x;
+    console.log("exercise.sequence = " + exercise.sequence);
     executedWorkout.exercises.push(exercise);
   }
 
@@ -74,6 +78,7 @@ function getFakeExecutedWorkout(): ExecutedWorkout {
   oneMoreExercise.resistanceMakeup = lastExercise.resistanceMakeup;
   oneMoreExercise.targetRepCount = lastExercise.targetRepCount;
   oneMoreExercise.setType = lastExercise.setType;
+  oneMoreExercise.sequence = lastExercise.sequence + 1;
   executedWorkout.exercises.push(oneMoreExercise);
   return executedWorkout;
 }
@@ -84,6 +89,10 @@ function getFirstExerciseFormGroup(component: WorkoutComponent): FormGroup {
   const formGroup = <FormGroup>firstExercise;
   const exerciseSets = (<FormArray>formGroup.controls.exerciseSets).controls;
   return <FormGroup>exerciseSets[0];
+}
+
+function getRandomInt(max): number {
+  return Math.floor(Math.random() * Math.floor(max));
 }
 //END HELPER FUNCTIONS ////////////////////////////////////////////////////////
 
@@ -390,55 +399,68 @@ describe('WorkoutComponent', () => {
   //TODO: Complete
   xit('should complete a workout', () => {
     //ARRANGE
+    const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
     component.workoutSelected(12);
     component.startWorkout();
 
     component.workoutForm.patchValue({journal: '38 degrees, sunny. ST: TOS - \"The Omega Glory\" and YouTube'});
 
+    let expectedExecutedWorkout = new ExecutedWorkout();
+    expectedExecutedWorkout.createdByUserId = MOCK_USER_ID;
+    expectedExecutedWorkout.startDateTime = component.workout.startDateTime;
+    expectedExecutedWorkout.journal = component.workoutForm.controls.journal.value;
+    expectedExecutedWorkout.exercises = [];
+
+    //Loop through exercises FormArray and patch values into the controls to simulate the info
+    //the user has entered
     component.exercisesArray.controls.forEach((value: AbstractControl) => {
+      //Remember, each control in the exercises array is a FormGroup
       let formGroup = <FormGroup>value;
-      let sets: FormArray = <FormArray>formGroup.controls.exerciseSets.value;
-      console.log("sets: ", sets);
 
-      for(var x = 0; x < sets.length; x++) {
-        let setFormGroup: FormGroup = <FormGroup>sets[x];
-        setFormGroup.patchValue({ actualReps: x });
-      }
+      //Each exercise has a FormArray of exercise sets
+      let sets = <FormArray>formGroup.controls.exerciseSets;
+      //sets.controls.forEach(set => {
+      for(let x = 0; x < sets.controls.length; x++) {
 
-      /*
-      let sets = <FormArray>formGroup.controls.exerciseSets.value;
-      let exerciseId = formGroup.controls.exerciseId.value;
-      let exercises = this.workout.exercises.filter((exercise: ExecutedExercise) => {
-        return exercise.exercise.id == exerciseId; 
-      });
+        let setGroup = <FormGroup>sets.controls[x];
+        setGroup.patchValue({
+          actualReps: getRandomInt(10), 
+          duration: getRandomInt(240), 
+          formRating: getRandomInt(5), 
+          rangeOfMotionRating: getRandomInt(5),
+          resistance: getRandomInt(200), 
+          resistanceMakeup: getRandomInt(1000).toString(), 
+          sequence: x
+        });
 
-      exercises = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
-
-      if(exercises.length != sets.length) {
-        window.alert("Exercises/FormArray length mismatch."); //TODO: Handle this a better way
-        return;
-      }
-
-      for(let x = 0; x < exercises.length; x++) {
-        exercises[x].actualRepCount = sets[x].actualReps;
-        exercises[x].duration = sets[x].duration;
-        //exercises[x].notes //TODO: Implement
-        exercises[x].resistanceAmount = sets[x].resistance;
-        exercises[x].resistanceMakeup = sets[x].resistanceMakeup;
-        exercises[x].targetRepCount = sets[x].targetReps;
-        exercises[x].sequence = x;
-        exercises[x].formRating = sets[x].formRating;
-        exercises[x].rangeOfMotionRating = sets[x].rangeOfMotionRating;
-      }
-      */
+        let executedExercise = new ExecutedExercise();
+        executedExercise.actualRepCount = setGroup.controls.actualReps.value;
+        executedExercise.targetRepCount = setGroup.controls.targetReps.value;
+        executedExercise.exercise = new Exercise();
+        executedExercise.exercise.id = formGroup.controls.exerciseId.value;
+        executedExercise.exercise.bandsEndToEnd = setGroup.controls.bandsEndToEnd.value;
+        executedExercise.exercise.name = formGroup.controls.exerciseName.value;
+        executedExercise.exercise.resistanceType = formGroup.controls.resistanceType.value;
+        executedExercise.duration = setGroup.controls.duration.value;
+        executedExercise.formRating = setGroup.controls.formRating.value;
+        executedExercise.rangeOfMotionRating = setGroup.controls.rangeOfMotionRating.value;
+        executedExercise.resistanceAmount = setGroup.controls.resistance.value;
+        executedExercise.resistanceMakeup = setGroup.controls.resistanceMakeup.value;
+        executedExercise.setType = formGroup.controls.setType.value;
+        executedExercise.sequence = setGroup.controls.sequence.value;
+        expectedExecutedWorkout.exercises.push(executedExercise);
+  
+      };
 
     });
     
-    //this.workout.endDateTime = new Date();
-
     //ACT
     component.completeWorkout();
+    expectedExecutedWorkout.endDateTime = component.workout.endDateTime;
+    console.log("component.workout.endDateTime: ", component.workout.endDateTime);
+    console.log("expectedExecutedWorkout.endDateTime: ", expectedExecutedWorkout.endDateTime);
 
     //ASSERT
+    expect(executedWorkoutService.add).toHaveBeenCalledWith(expectedExecutedWorkout);
   });
 });
