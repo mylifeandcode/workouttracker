@@ -125,6 +125,7 @@ export class WorkoutComponent implements OnInit {
 
   public completeWorkout(): void {
     this.setWorkoutValuesFromFormGroup();
+    this.workout.endDateTime = new Date();
     this.postWorkoutToServer();
   }
   
@@ -294,7 +295,6 @@ export class WorkoutComponent implements OnInit {
 
     });
     
-    this.workout.endDateTime = new Date();
   }
 
   private postWorkoutToServer(): void {

@@ -118,7 +118,7 @@ class ResistanceBandServiceMock {
 
 class ExecutedWorkoutServiceMock {
   getNew = jasmine.createSpy('getNew').and.returnValue(of(getFakeExecutedWorkout()));
-  add = jasmine.createSpy('add').and.returnValue(of(new ExecutedWorkout()));
+  add = jasmine.createSpy('add').and.callFake((workout: ExecutedWorkout) => of(workout));
 }
 //END SERVICE MOCK CLASSES ////////////////////////////////////////////////////
 
@@ -396,8 +396,7 @@ describe('WorkoutComponent', () => {
     expect(component.workout.createdByUserId).toEqual(MOCK_USER_ID);
   });
 
-  //TODO: Complete
-  xit('should complete a workout', () => {
+  it('should complete a workout', () => {
     //ARRANGE
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
     component.workoutSelected(12);
@@ -457,10 +456,10 @@ describe('WorkoutComponent', () => {
     //ACT
     component.completeWorkout();
     expectedExecutedWorkout.endDateTime = component.workout.endDateTime;
-    console.log("component.workout.endDateTime: ", component.workout.endDateTime);
-    console.log("expectedExecutedWorkout.endDateTime: ", expectedExecutedWorkout.endDateTime);
 
     //ASSERT
     expect(executedWorkoutService.add).toHaveBeenCalledWith(expectedExecutedWorkout);
+    expect(component.workoutCompleted).toBeTrue();
+    expect(component.infoMsg).toContain('Completed workout saved');
   });
 });
