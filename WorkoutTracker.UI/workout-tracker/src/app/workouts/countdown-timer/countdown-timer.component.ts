@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
+import { Howl } from 'howler';
 
 @Component({
   selector: 'wt-countdown-timer',
@@ -52,15 +53,17 @@ export class CountdownTimerComponent implements OnInit {
   public handlePreCountdownEvent(countdownEvent: CountdownEvent): void {
     if(countdownEvent.action == 'done') {
       this.showPreCountdown = false;
-      //TODO: Make a sound -- more info here: https://www.geeksforgeeks.org/how-to-make-a-beep-sound-in-javascript/
+      this.playSound();
       this.countdownHasBegun = true;
       this._countdown.begin();
     }
   }
 
   public handleCountdownEvent(countdownEvent: CountdownEvent): void {
-    if(countdownEvent.action == 'done') {
-      //TODO: Make a sound -- more info here: https://www.geeksforgeeks.org/how-to-make-a-beep-sound-in-javascript/
+    if (this.countdownHasBegun) { //If statement added because the 'done' event was firing on init, before countdown even began
+      if(countdownEvent.action == 'done') {
+        this.playSound();
+      }
     }
   }
 
@@ -85,6 +88,14 @@ export class CountdownTimerComponent implements OnInit {
   private reset(): void {
     this.showPreCountdown = false;
     this.countdownHasBegun = false;
+  }
+
+  private playSound(): void {
+    var sound = new Howl({
+      src: ['../../assets/sounds/210639764.mp3']
+    });
+     
+    sound.play();
   }
 
 }
