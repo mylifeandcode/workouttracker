@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
 import { Howl } from 'howler';
+import { SoundService } from 'app/core/sound.service';
 
 @Component({
   selector: 'wt-countdown-timer',
@@ -39,7 +40,7 @@ export class CountdownTimerComponent implements OnInit {
   private _secondsToCountdown: number;
   private _secondsLeadInTime: number;
 
-  constructor() { 
+  constructor(private _soundService: SoundService) { 
   }
 
   ngOnInit(): void {
@@ -91,11 +92,7 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   private playSound(): void {
-    var sound = new Howl({
-      src: ['../../assets/sounds/210639764.mp3']
-    });
-     
-    sound.play();
+    this._soundService.playSound('../../assets/sounds/210639764.mp3');
   }
 
 }
