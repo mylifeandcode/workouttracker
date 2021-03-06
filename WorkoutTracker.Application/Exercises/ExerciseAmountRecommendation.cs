@@ -10,5 +10,6 @@ namespace WorkoutTracker.Application.Exercises
         public decimal ResistanceAmount { get; set; }
         public string ResistanceMakeup { get; set; }
         public int Reps { get; set; }
+        public string Reason { get; set; }
     }
 }

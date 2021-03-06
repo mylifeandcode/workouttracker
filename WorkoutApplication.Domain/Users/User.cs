@@ -9,5 +9,6 @@ namespace WorkoutApplication.Domain.Users
     {
         public string HashedPassword { get; set; }
         public string ProfilePic { get; set; }
+        public UserSettings Settings { get; set; } //Single object containing all of the user-specific settings
     }
 }

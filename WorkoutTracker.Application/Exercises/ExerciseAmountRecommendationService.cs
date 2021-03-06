@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Resistances;
+using WorkoutApplication.Domain.Users;
 using WorkoutApplication.Domain.Workouts;
 using WorkoutApplication.Repository;
 
@@ -11,17 +12,30 @@ namespace WorkoutTracker.Application.Exercises
 {
     public class ExerciseAmountRecommendationService : IExerciseAmountRecommendationService
     {
-        private IRepository<ExecutedWorkout> _executedWorkoutRepo;
-        private IRepository<Exercise> _exerciseRepo;
-        private IRepository<ResistanceBand> _resistanceBandRepo;
+        /*
+        Normally, these would be references to other services, but in this case:
+
+            - This service is used by ExecutedWorkoutService, and also needs executed workout 
+            info. To get it via a service reference would introduce a circular dependency.
+            - Some of the information needed here didn't seem entirely service-worthy.
+
+        My feelings on this are somewhat mixed.
+        */
+        private IRepository<ExecutedWorkout> _executedWorkoutRepo; //Only used to get workout in which this exercise was performed
+        private IRepository<Exercise> _exerciseRepo; //Only used to get the exercise for the default recommendation
+        private IRepository<ResistanceBand> _resistanceBandRepo; //Used to get lowest band, and to calculate next band resistance amount based on inventory
 
         private ResistanceBand _lowestResistanceBand;
         private static TimeSpan RECENTLY_PERFORMED_EXERCISE_THRESHOLD = new TimeSpan(14, 0, 0, 0);
 
+        private const decimal LOWEST_FREEWEIGHT_RESISTANCE = 5;
+        private const decimal LOWEST_MACHINE_RESISTANCE = 10;
+
+
         public ExerciseAmountRecommendationService(
             IRepository<ExecutedWorkout> executedWorkoutRepo, 
             IRepository<Exercise> exerciseRepo,
-            IRepository<ResistanceBand> resistanceBandRepo
+            IRepository<ResistanceBand> resistanceBandRepo)
         {
             //Was tempted to pass the repo in to the call to GetRecommendation() instead, 
             //but though having the instance here would be less expensive than passing 
@@ -32,17 +46,20 @@ namespace WorkoutTracker.Application.Exercises
             _resistanceBandRepo = resistanceBandRepo ?? throw new ArgumentNullException(nameof(resistanceBandRepo));
         }
 
-        public ExerciseAmountRecommendation GetRecommendation(int exerciseId)
+        public ExerciseAmountRecommendation GetRecommendation(int exerciseId, UserSettings userSettings = null)
         {
             var lastWorkoutWithThisExercise = GetLastWorkoutWithExercise(exerciseId);
             var lastSetsOfThisExercise = GetLastSetsOfExercise(exerciseId, lastWorkoutWithThisExercise);
+
+            if (userSettings == null)
+                userSettings = UserSettings.GetDefault(); //TODO: Remove stopgap.
 
             if (UserHasPerformedExeriseBefore(lastWorkoutWithThisExercise))
             {
                 if (UserHasPerformedExerciseRecently(lastSetsOfThisExercise))
                 {
                     //Increase weights or reps accordingly
-                    return GetProgressBasedRecommendation(lastSetsOfThisExercise);
+                    return GetProgressBasedRecommendation(lastSetsOfThisExercise, userSettings);
                 }
                 else
                 {
@@ -104,6 +121,7 @@ namespace WorkoutTracker.Application.Exercises
             var recommendation = new ExerciseAmountRecommendation();
             recommendation.ExerciseId = exerciseId;
             recommendation.Reps = 10; //TODO: Taylor to user's goals (bulk, weight loss, etc)
+            recommendation.Reason = "Exercise has never been performed. Starting recommendation at lowest resistance.";
 
             switch (exercise.ResistanceType)
             {
@@ -152,7 +170,9 @@ namespace WorkoutTracker.Application.Exercises
             return _lowestResistanceBand.MaxResistanceAmount;
         }
 
-        private ExerciseAmountRecommendation GetProgressBasedRecommendation(List<ExecutedExercise> executedExercises)
+        private ExerciseAmountRecommendation GetProgressBasedRecommendation(
+            List<ExecutedExercise> executedExercises, 
+            UserSettings userSettings)
         {
             //TODO: Allow for profile-based thresholds
             var firstExerciseSet = GetFirstExericseBySequence(executedExercises);
@@ -211,9 +231,26 @@ namespace WorkoutTracker.Application.Exercises
             return rating >= 4;
         }
 
-        private ExerciseAmountRecommendation GetIncreaseRecommendation(ExecutedExercise executedExercise)
+        private ExerciseAmountRecommendation GetIncreaseRecommendation(
+            ExecutedExercise executedExercise, 
+            UserSettings userSettings)
         {
             var recommendation = new ExerciseAmountRecommendation();
+
+            //Increase reps or resistance?
+            if (executedExercise.SetType == SetType.Timed)
+            {
+                var repSettings = GetRepSettings(userSettings.RepSettings, SetType.Timed, executedExercise.Duration);
+                if (executedExercise.ActualRepCount >= repSettings.MaxReps)
+                {
+                    recommendation.Reps = repSettings.MinReps;
+
+                }
+            }
+            else
+            { 
+            }
+
             return recommendation;
         }
 
@@ -221,6 +258,20 @@ namespace WorkoutTracker.Application.Exercises
         {
             var recommendation = new ExerciseAmountRecommendation();
             return recommendation;
+        }
+
+        private UserMinMaxReps GetRepSettings(List<UserMinMaxReps> repSettings, SetType setType, ushort? duration)
+        {
+            var settings = 
+                repSettings
+                    .FirstOrDefault(reps => reps.SetType == setType && reps.Duration == duration);
+
+            //If not found, return an attempt at some defaults. Wild guess really.
+            return settings ?? new UserMinMaxReps { Duration = duration, MinReps = 15, MaxReps = 30 };
+        }
+
+        private decimal GetNextResistanceAmount(ResistanceType resistanceType)
+        { 
         }
     }
 }
