@@ -79,7 +79,7 @@ namespace WorkoutTracker.Application.Exercises
             return _executedWorkoutRepo
                     .Get()
                     .OrderByDescending(workout => workout.EndDateTime)
-                    .FirstOrDefault(Workout => Workout.Exercises.Any(exercise => exercise.ExerciseId == exerciseId);
+                    .FirstOrDefault(Workout => Workout.Exercises.Any(exercise => exercise.ExerciseId == exerciseId));
         }
 
         private static List<ExecutedExercise> GetLastSetsOfExercise(int exerciseId, ExecutedWorkout workout)
@@ -181,7 +181,7 @@ namespace WorkoutTracker.Application.Exercises
                 if (HadAdequateRating(firstExerciseSet.FormRating)
                     && HadAdequateRating(firstExerciseSet.RangeOfMotionRating))
                 {
-                    return GetIncreaseRecommendation(firstExerciseSet);
+                    return GetIncreaseRecommendation(firstExerciseSet, userSettings);
                 }
                 else
                 {
@@ -268,10 +268,6 @@ namespace WorkoutTracker.Application.Exercises
 
             //If not found, return an attempt at some defaults. Wild guess really.
             return settings ?? new UserMinMaxReps { Duration = duration, MinReps = 15, MaxReps = 30 };
-        }
-
-        private decimal GetNextResistanceAmount(ResistanceType resistanceType)
-        { 
         }
     }
 }

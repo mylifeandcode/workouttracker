@@ -15,7 +15,7 @@ namespace WorkoutTracker.Tests.Controllers
         public void Should_Get_All()
         {
             //ARRANGE
-            var users = new List<User>(2) { new User(), new User() };
+            var users = new List<User>(2) { new User { Id = 1 }, new User { Id = 2 } };
             var service = new Mock<IUserService>(MockBehavior.Strict);
             service.Setup(mock => mock.GetAll()).Returns(users);
             var sut = new UsersController(service.Object);
@@ -27,6 +27,7 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             Assert.AreEqual(users, (result.Result as OkObjectResult).Value);
+
             service.Verify(mock => mock.GetAll(), Times.Once);
         }
 

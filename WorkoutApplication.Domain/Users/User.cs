@@ -7,8 +7,9 @@ namespace WorkoutApplication.Domain.Users
 {
     public class User : NamedEntity
     {
+        [Newtonsoft.Json.JsonIgnoreAttribute]
         public string HashedPassword { get; set; }
         public string ProfilePic { get; set; }
-        public UserSettings Settings { get; set; } //Single object containing all of the user-specific settings
+        //public UserSettings Settings { get; set; } //Single object containing all of the user-specific settings
     }
 }

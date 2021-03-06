@@ -107,14 +107,31 @@ namespace WorkoutTracker.Application.Resistances
                 else 
                 {
                     //Get to stacking...
+                    availableBands =
+                        GetIndividualBands()
+                            .Where(band => band.MaxResistanceAmount < preferredMax)
+                            .OrderByDescending(band => band.MaxResistanceAmount)
+                            .ToList();
+
+                    if (availableBands.Any())
+                    {
+                        selectedBands.Add(availableBands[0]);
+                        availableBands.RemoveAt(0);
+
+                        while (availableBands.Any() && !amountOk)
+                        {
+                            if (availableBands[0].MaxResistanceAmount + selectedBands.Sum(band => band.MaxResistanceAmount) <= preferredMax)
+                            {
+                                selectedBands.Add(availableBands[0]);
+                                amountOk = selectedBands.Sum(band => band.MaxResistanceAmount) == preferredMax;
+                            }
+                            availableBands.RemoveAt(0);
+                        }
+                    }
                 }
             }
 
             return selectedBands;
-        }
-
-        public List<ResistanceBand> CalculatePreviousAvailableResistanceAmount(decimal currentAmount)
-        { 
         }
 
         private bool AssembleListOfBandsBasedOnResistanceCriteria(

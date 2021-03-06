@@ -69,25 +69,5 @@ namespace WorkoutTracker.UI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-        [HttpGet]
-        public override ActionResult<IEnumerable<User>> Get()
-        {
-            try
-            {
-                //This method replaces the default implementation because we don't 
-                //want to return the domain object which includes the user's 
-                //hashed password.
-                //TODO: Implement a different authentication approach.
-                //Is an STS overkill for this little home workout tracker?
-                var allUsers = _service.GetAll().ToList();
-                allUsers.ForEach(user => user.HashedPassword = null);
-                return Ok(allUsers);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
     }
 }

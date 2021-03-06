@@ -12,6 +12,15 @@ namespace WorkoutTracker.Tests.Services
     [TestClass]
     public class ResistanceBandServiceTests
     {
+        private Mock<IRepository<ResistanceBand>> _repo;
+        private List<ResistanceBand> _bands;
+
+        [TestInitialize]
+        public void Init()
+        {
+            SetupRepoMock();
+        }
+
         [TestMethod]
         public void Should_Add()
         {
@@ -107,6 +116,58 @@ namespace WorkoutTracker.Tests.Services
             //ASSERT
             result.ShouldBe(resistanceBand);
             repoMock.Verify(mock => mock.Get(It.IsAny<int>()), Times.Once);
+        }
+
+        [TestMethod]
+        public void Should_Get_Individual_Bands()
+        {
+            //ARRANGE
+            int expectedCount = _bands.Sum(band => band.NumberAvailable);
+            var sut = new ResistanceBandService(_repo.Object);
+
+            //ACT
+            var result = sut.GetIndividualBands();
+
+            //ASSERT
+            Assert.AreEqual(expectedCount, result.Count);
+            foreach (var band in _bands)
+            {
+                Assert.AreEqual(band.NumberAvailable, result.Count(resultBand => resultBand.Color == band.Color));
+            }
+        }
+
+        [TestMethod]
+        public void Should_Calculate_Next_Resistance_Amount_When_Scenario_Is_Simple()
+        {
+            //TODO: Refine/base expectations dynamically not statically
+
+            //ARRANGE
+            var sut = new ResistanceBandService(_repo.Object);
+
+            //ACT
+            var result = sut.CalculateNextAvailableReistanceAmount(30, 3, 5);
+
+            //ASSERT
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(35, result.Sum(band => band.MaxResistanceAmount));
+        }
+
+        private void SetupRepoMock()
+        {
+            _repo = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);
+            _bands = new List<ResistanceBand>(8);
+            _bands.Add(new ResistanceBand { Color = "Black40", MaxResistanceAmount = 40, NumberAvailable = 2 });
+            _bands.Add(new ResistanceBand { Color = "Orange", MaxResistanceAmount = 30, NumberAvailable = 4 });
+            _bands.Add(new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23, NumberAvailable = 1 });
+            _bands.Add(new ResistanceBand { Color = "Black", MaxResistanceAmount = 19, NumberAvailable = 1 });
+            _bands.Add(new ResistanceBand { Color = "Blue", MaxResistanceAmount = 13, NumberAvailable = 1 });
+            _bands.Add(new ResistanceBand { Color = "Red", MaxResistanceAmount = 8, NumberAvailable = 1 });
+            _bands.Add(new ResistanceBand { Color = "Green", MaxResistanceAmount = 5, NumberAvailable = 1 });
+            _bands.Add(new ResistanceBand { Color = "Yellow", MaxResistanceAmount = 3, NumberAvailable = 1 });
+
+            _repo
+                .Setup(mock => mock.Get())
+                .Returns(_bands.AsQueryable());
         }
 
     }
