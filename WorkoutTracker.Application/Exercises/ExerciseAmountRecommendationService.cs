@@ -7,23 +7,13 @@ using WorkoutApplication.Domain.Resistances;
 using WorkoutApplication.Domain.Users;
 using WorkoutApplication.Domain.Workouts;
 using WorkoutApplication.Repository;
+using WorkoutTracker.Application.Resistances;
 
 namespace WorkoutTracker.Application.Exercises
 {
     public class ExerciseAmountRecommendationService : IExerciseAmountRecommendationService
     {
-        /*
-        Normally, these would be references to other services, but in this case:
-
-            - This service is used by ExecutedWorkoutService, and also needs executed workout 
-            info. To get it via a service reference would introduce a circular dependency.
-            - Some of the information needed here didn't seem entirely service-worthy.
-
-        My feelings on this are somewhat mixed.
-        */
-        private IRepository<ExecutedWorkout> _executedWorkoutRepo; //Only used to get workout in which this exercise was performed
-        private IRepository<Exercise> _exerciseRepo; //Only used to get the exercise for the default recommendation
-        private IRepository<ResistanceBand> _resistanceBandRepo; //Used to get lowest band, and to calculate next band resistance amount based on inventory
+        private IResistanceBandService _resistanceBandService;
 
         private ResistanceBand _lowestResistanceBand;
         private static TimeSpan RECENTLY_PERFORMED_EXERCISE_THRESHOLD = new TimeSpan(14, 0, 0, 0);
@@ -33,23 +23,20 @@ namespace WorkoutTracker.Application.Exercises
 
 
         public ExerciseAmountRecommendationService(
-            IRepository<ExecutedWorkout> executedWorkoutRepo, 
-            IRepository<Exercise> exerciseRepo,
-            IRepository<ResistanceBand> resistanceBandRepo)
+            IResistanceBandService resistanceBandService)
         {
-            //Was tempted to pass the repo in to the call to GetRecommendation() instead, 
-            //but though having the instance here would be less expensive than passing 
-            //the repo in with every call
-            _executedWorkoutRepo = executedWorkoutRepo ?? throw new ArgumentNullException(nameof(executedWorkoutRepo));
-
-            _exerciseRepo = exerciseRepo ?? throw new ArgumentNullException(nameof(exerciseRepo));
-            _resistanceBandRepo = resistanceBandRepo ?? throw new ArgumentNullException(nameof(resistanceBandRepo));
+            _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
         }
 
-        public ExerciseAmountRecommendation GetRecommendation(int exerciseId, UserSettings userSettings = null)
+        public ExerciseAmountRecommendation GetRecommendation(
+            Exercise exercise, 
+            ExecutedWorkout lastWorkoutWithThisExercise, 
+            UserSettings userSettings = null)
         {
-            var lastWorkoutWithThisExercise = GetLastWorkoutWithExercise(exerciseId);
-            var lastSetsOfThisExercise = GetLastSetsOfExercise(exerciseId, lastWorkoutWithThisExercise);
+            if (exercise == null)
+                throw new ArgumentNullException(nameof(exercise));
+
+            var lastSetsOfThisExercise = GetLastSetsOfExercise(exercise.Id, lastWorkoutWithThisExercise);
 
             if (userSettings == null)
                 userSettings = UserSettings.GetDefault(); //TODO: Remove stopgap.
@@ -70,16 +57,8 @@ namespace WorkoutTracker.Application.Exercises
             }
             else
             {
-                return GetDefaultRecommendation(exerciseId);
+                return GetDefaultRecommendation(exercise);
             }
-        }
-
-        private ExecutedWorkout GetLastWorkoutWithExercise(int exerciseId)
-        {
-            return _executedWorkoutRepo
-                    .Get()
-                    .OrderByDescending(workout => workout.EndDateTime)
-                    .FirstOrDefault(Workout => Workout.Exercises.Any(exercise => exercise.ExerciseId == exerciseId));
         }
 
         private static List<ExecutedExercise> GetLastSetsOfExercise(int exerciseId, ExecutedWorkout workout)
@@ -112,14 +91,11 @@ namespace WorkoutTracker.Application.Exercises
                         .Date) <= RECENTLY_PERFORMED_EXERCISE_THRESHOLD;
         }
 
-        private ExerciseAmountRecommendation GetDefaultRecommendation(int exerciseId)
+        private ExerciseAmountRecommendation GetDefaultRecommendation(
+            Exercise exercise)
         {
-            var exercise = _exerciseRepo.Get(exerciseId);
-            if (exercise == null)
-                throw new ApplicationException($"Exercise {exerciseId} not found.");
-
             var recommendation = new ExerciseAmountRecommendation();
-            recommendation.ExerciseId = exerciseId;
+            recommendation.ExerciseId = exercise.Id;
             recommendation.Reps = 10; //TODO: Taylor to user's goals (bulk, weight loss, etc)
             recommendation.Reason = "Exercise has never been performed. Starting recommendation at lowest resistance.";
 
@@ -154,11 +130,11 @@ namespace WorkoutTracker.Application.Exercises
         private decimal GetLowestResistanceBandAmount()
         {
             if (_lowestResistanceBand == null)
-                _lowestResistanceBand = 
-                    _resistanceBandRepo
-                        .Get()
-                        .OrderBy(band => band.MaxResistanceAmount)
-                        .FirstOrDefault();
+                _lowestResistanceBand =
+                    _resistanceBandService
+                        .GetIndividualBands()
+                            .OrderBy(band => band.MaxResistanceAmount)
+                            .FirstOrDefault();
 
             if (_lowestResistanceBand == null) 
             {

@@ -7,5 +7,14 @@ namespace WorkoutTracker.Application.Resistances
 {
     public interface IResistanceBandService : ISimpleService<ResistanceBand>
     {
+        List<ResistanceBand> GetIndividualBands();
+        List<ResistanceBand> CalculateNextAvailableResistanceAmount(
+            decimal currentAmount,
+            decimal minimalIncrease,
+            decimal preferredMaxIncrease);
+        List<ResistanceBand> CalculatePreviousAvailableResistanceAmount(
+            decimal currentAmount,
+            decimal minimalDecrease,
+            decimal preferredMaxDecrease);
     }
 }

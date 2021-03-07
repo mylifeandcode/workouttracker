@@ -105,7 +105,12 @@ namespace WorkoutTracker.Application.Workouts
                     exerciseToExecute.Sequence = x;
                     exerciseToExecute.SetType = exercise.SetType;
 
-                    var recommendation = _exerciseRecommendationService.GetRecommendation(exercise.ExerciseId);
+                    var lastWorkoutWithThisExercise = new ExecutedWorkout(); //TODO: Get last workout with this exercise!
+                    
+                    var recommendation = 
+                        _exerciseRecommendationService.GetRecommendation(
+                            exercise.Exercise, lastWorkoutWithThisExercise); //TODO: Provide user settings!
+                    
                     exerciseToExecute.TargetRepCount = recommendation.Reps;
                     exerciseToExecute.ResistanceAmount = recommendation.ResistanceAmount;
                     exerciseToExecute.ResistanceMakeup = recommendation.ResistanceMakeup;

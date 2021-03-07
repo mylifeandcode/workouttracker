@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Users;
+using WorkoutApplication.Domain.Workouts;
 
 namespace WorkoutTracker.Application.Exercises
 {
     public interface IExerciseAmountRecommendationService
     {
-        ExerciseAmountRecommendation GetRecommendation(int exerciseId, UserSettings userSettings = null);
+        ExerciseAmountRecommendation GetRecommendation(
+            Exercise exercise, 
+            ExecutedWorkout lastWorkoutWithThisExercise, 
+            UserSettings userSettings = null);
     }
 }
