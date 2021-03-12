@@ -11,10 +11,12 @@ namespace WorkoutTracker.Application.Resistances
         List<ResistanceBand> CalculateNextAvailableResistanceAmount(
             decimal currentAmount,
             decimal minimalIncrease,
-            decimal preferredMaxIncrease);
+            decimal preferredMaxIncrease, 
+            bool doubleBandResistanceAmounts);
         List<ResistanceBand> CalculatePreviousAvailableResistanceAmount(
             decimal currentAmount,
             decimal minimalDecrease,
-            decimal preferredMaxDecrease);
+            decimal preferredMaxDecrease, 
+            bool doubleBandResistanceAmounts);
     }
 }

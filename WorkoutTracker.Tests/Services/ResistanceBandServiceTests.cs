@@ -145,7 +145,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(30, 3, 5);
+            var result = sut.CalculateNextAvailableResistanceAmount(30, 3, 5, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -164,7 +164,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(30, 20, 25);
+            var result = sut.CalculateNextAvailableResistanceAmount(30, 20, 25, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -183,7 +183,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(40, 20, 30);
+            var result = sut.CalculateNextAvailableResistanceAmount(40, 20, 30, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -202,7 +202,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(40, 20, 25);
+            var result = sut.CalculateNextAvailableResistanceAmount(40, 20, 25, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -210,6 +210,26 @@ namespace WorkoutTracker.Tests.Services
             Assert.IsTrue(
                 result.Count(band => band.Color == "Black40") == 1
                 && result.Count(band => band.Color == "Purple") == 1);
+        }
+
+        [TestMethod]
+        public void Should_Calculate_Next_Resistance_Amount_When_Band_Resistances_Are_Doubled()
+        {
+            //TODO: Refine/base expectations dynamically not statically
+
+            //ARRANGE
+            var sut = new ResistanceBandService(_repo.Object);
+
+            //ACT
+            var result = sut.CalculateNextAvailableResistanceAmount(120, 10, 15, true);
+
+            //ASSERT
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(132, result.Sum(band => band.MaxResistanceAmount) * 2);
+            Assert.IsTrue(
+                result.Count(band => band.Color == "Black40") == 1
+                && result.Count(band => band.Color == "Purple") == 1
+                && result.Count(band => band.Color == "Yellow") == 1);
         }
 
         [TestMethod]
@@ -221,7 +241,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(30, 5, 10);
+            var result = sut.CalculatePreviousAvailableResistanceAmount(30, 5, 10, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -240,7 +260,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(35, 5, 10);
+            var result = sut.CalculatePreviousAvailableResistanceAmount(35, 5, 10, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -257,7 +277,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(80, 20, 25);
+            var result = sut.CalculatePreviousAvailableResistanceAmount(80, 20, 25, false);
 
             //ASSERT
             Assert.AreEqual(4, result.Count);
@@ -267,6 +287,26 @@ namespace WorkoutTracker.Tests.Services
                 && result.Count(band => band.Color == "Yellow") == 1
                 && result.Count(band => band.Color == "Green") == 1
                 && result.Count(band => band.Color == "Red") == 1);
+        }
+
+        [TestMethod]
+        public void Should_Calculate_Previous_Resistance_Amount_When_Band_Resistances_Are_Doubled()
+        {
+            //TODO: Refine/base expectations dynamically not statically
+
+            //ARRANGE
+            var sut = new ResistanceBandService(_repo.Object);
+
+            //ACT
+            var result = sut.CalculatePreviousAvailableResistanceAmount(120, 20, 25, true);
+
+            //ASSERT
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(96, result.Sum(band => band.MaxResistanceAmount) * 2);
+            Assert.IsTrue(
+                result.Count(band => band.Color == "Black40") == 1
+                && result.Count(band => band.Color == "Green") == 1
+                && result.Count(band => band.Color == "Yellow") == 1);
         }
 
         private void SetupRepoMock()
