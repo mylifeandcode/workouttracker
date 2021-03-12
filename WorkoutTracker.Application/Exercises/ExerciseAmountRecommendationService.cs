@@ -220,7 +220,8 @@ namespace WorkoutTracker.Application.Exercises
                 if (executedExercise.ActualRepCount >= repSettings.MaxReps)
                 {
                     recommendation.Reps = repSettings.MinReps;
-
+                    
+                    //How much should we increase the resistance by?
                 }
             }
             else
@@ -244,6 +245,32 @@ namespace WorkoutTracker.Application.Exercises
 
             //If not found, return an attempt at some defaults. Wild guess really.
             return settings ?? new UserMinMaxReps { Duration = duration, MinReps = 15, MaxReps = 30 };
+        }
+
+        private decimal GetIncreasedResistanceAmount(
+            decimal targetRepsLastTime, 
+            decimal actualRepsLastTime, 
+            ResistanceType resistanceType)
+        {
+            
+        }
+
+        private bool UserGreatlyExceededTargetRepCount(decimal targetRepCount, decimal actualRepCount)
+        {
+            return (actualRepCount - targetRepCount) >= 15;
+        }
+
+        private bool UserExceededTargetRepCount(decimal targetRepCount, decimal actualRepCount)
+        {
+            decimal difference = actualRepCount - targetRepCount;
+            return difference <= 14 && difference >= 1;
+        }
+
+        private bool UserMetTargetRepCount(decimal targetRepCount, decimal actualRepCount)
+        {
+            //TODO: Re-evaluate. Probably not necessary -- would be the default
+            //condition.
+            return targetRepCount == actualRepCount;
         }
     }
 }
