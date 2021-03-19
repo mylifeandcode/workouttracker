@@ -219,9 +219,20 @@ namespace WorkoutTracker.Application.Exercises
                 var repSettings = GetRepSettings(userSettings.RepSettings, SetType.Timed, executedExercise.Duration);
                 if (executedExercise.ActualRepCount >= repSettings.MaxReps)
                 {
+                    string resistanceMakeup;
                     recommendation.Reps = repSettings.MinReps;
+                    recommendation.ResistanceAmount =
+                        GetIncreasedResistanceAmount(
+                            executedExercise.TargetRepCount,
+                            executedExercise.ActualRepCount,
+                            executedExercise.ResistanceAmount,
+                            executedExercise.Exercise,
+                            out resistanceMakeup);
+                    recommendation.ResistanceMakeup = resistanceMakeup;
+                }
+                else
+                {
                     
-                    //How much should we increase the resistance by?
                 }
             }
             else
@@ -250,9 +261,47 @@ namespace WorkoutTracker.Application.Exercises
         private decimal GetIncreasedResistanceAmount(
             decimal targetRepsLastTime, 
             decimal actualRepsLastTime, 
-            ResistanceType resistanceType)
+            decimal previousResistanceAmount, 
+            Exercise exercise, 
+            out string resistanceMakeup)
         {
-            
+            //TODO: This has a code smell. Can I find a better way of handling this?
+            //Only needed for resistance bands.
+            resistanceMakeup = null;
+
+            if (exercise.ResistanceType == ResistanceType.BodyWeight || exercise.ResistanceType == ResistanceType.Other)
+                return previousResistanceAmount;
+
+            short multiplier = 1;
+
+            if (UserGreatlyExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
+            {
+                multiplier = 3;
+            }
+            else if (UserExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
+            {
+                multiplier = 2;
+            }
+            else 
+            {
+                multiplier = 1;
+            }
+
+            switch (exercise.ResistanceType)
+            {
+                case ResistanceType.FreeWeight:
+                    return GetIncreasedFreeWeightResistanceAmount(previousResistanceAmount, multiplier);
+                case ResistanceType.MachineWeight:
+                    return GetIncreasedMachineResistanceAmount(previousResistanceAmount, multiplier);
+                case ResistanceType.ResistanceBand:
+                    return GetIncreasedResistanceBandResistanceAmount(
+                        previousResistanceAmount, 
+                        multiplier, 
+                        !exercise.BandsEndToEnd.Value, //Resistance Band exercises always have a value for this 
+                        out resistanceMakeup);
+                default:
+                    throw new ApplicationException($"Unhandled ResistanceType in switch statement in ExerciseAmountRecommendationService: {exercise.ResistanceType}.");
+            }
         }
 
         private bool UserGreatlyExceededTargetRepCount(decimal targetRepCount, decimal actualRepCount)
@@ -271,6 +320,53 @@ namespace WorkoutTracker.Application.Exercises
             //TODO: Re-evaluate. Probably not necessary -- would be the default
             //condition.
             return targetRepCount == actualRepCount;
+        }
+
+        private decimal GetIncreasedFreeWeightResistanceAmount(decimal previousResistanceAmount, short multiplier)
+        {
+            return previousResistanceAmount + (LOWEST_FREEWEIGHT_RESISTANCE * multiplier);
+        }
+
+        private decimal GetIncreasedMachineResistanceAmount(decimal previousResistanceAmount, short multiplier)
+        {
+            return previousResistanceAmount + (LOWEST_MACHINE_RESISTANCE * multiplier);
+        }
+
+        private decimal GetIncreasedResistanceBandResistanceAmount(
+            decimal previousResistanceAmount, 
+            short multiplier, 
+            bool doubleBandResistanceAmounts, 
+            out string resistanceMakeup)
+        {
+            decimal minIncrease = GetLowestResistanceBandAmount() * multiplier;
+            decimal maxIncrease = minIncrease + 10;
+            var recommendedBands = 
+                _resistanceBandService.CalculateNextAvailableResistanceAmount(
+                    previousResistanceAmount, minIncrease, maxIncrease, doubleBandResistanceAmounts);
+            if (recommendedBands.Any())
+                resistanceMakeup = string.Join(',', recommendedBands.Select(band => band.Color));
+            else
+                resistanceMakeup = null;
+
+            return recommendedBands.Sum(band => band.MaxResistanceAmount);
+        }
+
+        private short GetIncreasedTargetRepCount(
+            decimal targetRepsLastTime, 
+            decimal actualRepsLastTime, 
+            decimal maxRepCount)
+        {
+            //This is intended for timed sets. Target rep count for repetition sets
+            //would remain the same, and we'd increase or decrease the resistance amount.
+            if (UserGreatlyExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
+            {
+            }
+            else if (UserExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
+            {
+            }
+            else 
+            { 
+            }
         }
     }
 }
