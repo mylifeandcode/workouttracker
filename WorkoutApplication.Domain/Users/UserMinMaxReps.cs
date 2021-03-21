@@ -13,7 +13,7 @@ namespace WorkoutApplication.Domain.Users
         public UserGoal Goal { get; set; }
         public SetType SetType { get; set; }
         public ushort? Duration { get; set; }
-        public ushort MinReps { get; set; }
-        public ushort MaxReps { get; set; }
+        public byte MinReps { get; set; }
+        public byte MaxReps { get; set; }
     }
 }
