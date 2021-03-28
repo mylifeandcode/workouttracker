@@ -21,11 +21,22 @@ namespace WorkoutTracker.Application.Exercises
         private ResistanceBand _lowestResistanceBand;
         private static TimeSpan RECENTLY_PERFORMED_EXERCISE_THRESHOLD = new TimeSpan(14, 0, 0, 0);
 
+        #region Constants
         private const decimal LOWEST_FREEWEIGHT_RESISTANCE = 5;
         private const decimal LOWEST_MACHINE_RESISTANCE = 10;
 
         private const byte LOWEST_ACCEPTABLE_RATING = 4;
 
+        private const string REASON_FORM_NEEDS_IMPROVEMENT = "Form needs improvement.";
+        private const string REASON_RANGE_OF_MOTION_NEEDS_IMPROVEMENT = "Range of Motion needs improvement.";
+        private const string REASON_ACTUAL_REPS_SIGNIFICANTLY_LOWER_THAN_TARGET = "Actual reps last time were significantly lower than target.";
+        private const string REASON_ACTUAL_REPS_LOWER_THAN_TARGET = "Actual reps last time lower than target.";
+        private const string REASON_GOALS_NOT_MET_BUT_CLOSE = "Goals not met, but close enough to remain the same.";
+
+        private const byte RATING_BAD = 1;
+        private const byte RATING_POOR = 2;
+        private const byte RATING_OK = 3;
+        #endregion Constants
 
         public ExerciseAmountRecommendationService(
             IResistanceBandService resistanceBandService)
@@ -66,7 +77,7 @@ namespace WorkoutTracker.Application.Exercises
                 {
                     //Recommend same as last time, or lower weights or rep if they 
                     //did poorly
-                    return GetRecommendationForExerciseNotPerformedRecently(lastSetsOfThisExercise);
+                    return GetRecommendationForExerciseNotPerformedRecently(lastSetsOfThisExercise, userSettings);
                 }
             }
             else
@@ -85,7 +96,7 @@ namespace WorkoutTracker.Application.Exercises
         {
             var recommendation = new ExerciseAmountRecommendation();
             recommendation.ExerciseId = exercise.Id;
-            recommendation.Reps = 10; //TODO: Taylor to user's goals (bulk, weight loss, etc)
+            recommendation.Reps = 10; //TODO: Tailor to user's goals (bulk, weight loss, etc)
             recommendation.Reason = "Exercise has never been performed. Starting recommendation at lowest resistance.";
 
             switch (exercise.ResistanceType)
@@ -150,16 +161,18 @@ namespace WorkoutTracker.Application.Exercises
                 }
                 else
                 {
-                    return GetAdjustmentRecommendation(firstExerciseSet);
+                    return GetAdjustmentRecommendation(firstExerciseSet, userSettings);
                 }
             }
             else
             {
-                return GetAdjustmentRecommendation(firstExerciseSet);
+                return GetAdjustmentRecommendation(firstExerciseSet, userSettings);
             }
         }
 
-        private ExerciseAmountRecommendation GetRecommendationForExerciseNotPerformedRecently(List<ExecutedExercise> executedExercises)
+        private ExerciseAmountRecommendation GetRecommendationForExerciseNotPerformedRecently(
+            List<ExecutedExercise> executedExercises, 
+            UserSettings userSettings)
         {
             var firstExerciseOfSet = GetFirstExericseBySequence(executedExercises);
 
@@ -181,7 +194,7 @@ namespace WorkoutTracker.Application.Exercises
             }
             else
             {
-                return GetAdjustmentRecommendation(firstExerciseOfSet);
+                return GetAdjustmentRecommendation(firstExerciseOfSet, userSettings);
             }
         }
 
@@ -260,22 +273,64 @@ namespace WorkoutTracker.Application.Exercises
             return recommendation;
         }
 
-        private ExerciseAmountRecommendation GetAdjustmentRecommendation(ExecutedExercise executedExercise)
+        private ExerciseAmountRecommendation GetAdjustmentRecommendation(
+            ExecutedExercise executedExercise, 
+            UserSettings userSettings)
         {
             //Adjust target reps, resistance, or both.
             throw new NotImplementedException(); //TODO: Implement
-            var recommendation = new ExerciseAmountRecommendation(executedExercise);
+            ExerciseAmountRecommendation recommendation;
+
+            bool inadequateForm = !HadAdequateRating(executedExercise.FormRating);
+            bool inadequateRangeOfMotion = !HadAdequateRating(executedExercise.RangeOfMotionRating);
 
             //If form or range of motion was lacking, reduce resistance.
-            if (!HadAdequateRating(executedExercise.FormRating) || !HadAdequateRating(executedExercise.RangeOfMotionRating))
-            { 
+            if (inadequateForm || inadequateRangeOfMotion)
+            {
+                recommendation.Reason = GetBadRatingReason(inadequateForm, inadequateRangeOfMotion);
+                byte multiplier = GetResistanceDecreaseMultiplier(executedExercise.FormRating, executedExercise.RangeOfMotionRating);
+                recommendation.ResistanceAmount = GetDecreasedResistanceAmount();
+            }
+            //If number of reps was significantly less than the target, reduce resistance.
+            else if (ActualRepsSignificantlyLessThanTarget(executedExercise.SetType, executedExercise.TargetRepCount, executedExercise.ActualRepCount))
+            {
+                recommendation = 
+                    GetDecreaseRecommendation(executedExercise, userSettings, false, false, true, false);
+            }
+            else if (ActualRepsLessThanTarget(executedExercise.SetType, executedExercise.TargetRepCount, executedExercise.ActualRepCount))
+            {
+                recommendation = 
+                    GetDecreaseRecommendation(executedExercise, userSettings, false, false, false, true);
+            }
+            //Otherwise, they didn't meet their goals last time, but they should remain the same.
+            else
+            {
+                recommendation = new ExerciseAmountRecommendation(executedExercise);
+                recommendation.Reason = "";
             }
 
-            //If number of reps was significantly less than the target, reduce resistance.
-
-            //Otherwise, they didn't meet their goals last time, but they should remain the same.
-
             return recommendation;
+        }
+
+        private ExerciseAmountRecommendation GetDecreaseRecommendation(
+            ExecutedExercise executedExercise, 
+            UserSettings userSettings, 
+            bool inadequateForm, 
+            bool inadequateRangeOfMotion, 
+            bool actualRepsSignificantlyLessThanTarget, 
+            bool actualRepsLessThanTarget)
+        {
+            throw new NotImplementedException();
+        }
+
+        private ExerciseAmountRecommendation GetTimedSetDecreaseRecommendation()
+        {
+            throw new NotImplementedException();
+        }
+
+        private ExerciseAmountRecommendation GetRepititionSetDecreaseRecommendation()
+        {
+            throw new NotImplementedException();
         }
 
         private decimal GetIncreasedResistanceAmount(
@@ -342,6 +397,11 @@ namespace WorkoutTracker.Application.Exercises
 
             return recommendedBands.Sum(band => band.MaxResistanceAmount);
         }
+
+        private decimal GetDecreasedResistanceAmount()
+        {
+            throw new NotImplementedException();
+        }
         #endregion Private Non-Static Methods
 
         #region Private Static Methods
@@ -391,7 +451,7 @@ namespace WorkoutTracker.Application.Exercises
             return settings ?? new UserMinMaxReps { Duration = duration, MinReps = 15, MaxReps = 30 };
         }
 
-        private static bool HadAdequateRating(ushort rating)
+        private static bool HadAdequateRating(byte rating)
         {
             //TODO: Implement profile-based thresholds
             return rating >= LOWEST_ACCEPTABLE_RATING;
@@ -415,12 +475,37 @@ namespace WorkoutTracker.Application.Exercises
             return targetRepCount == actualRepCount;
         }
 
+        private string GetBadRatingReason(bool inadequateForm, bool inadequateRangeOfMotion)
+        {
+            if (inadequateForm && inadequateRangeOfMotion)
+                return REASON_FORM_NEEDS_IMPROVEMENT + " " + REASON_RANGE_OF_MOTION_NEEDS_IMPROVEMENT;
+            else if (inadequateForm)
+                return REASON_FORM_NEEDS_IMPROVEMENT;
+            else
+                return REASON_RANGE_OF_MOTION_NEEDS_IMPROVEMENT;
+        }
+
+        private static byte GetResistanceDecreaseMultiplier(byte formRating, byte rangeOfMotionRating)
+        {
+            if (UserHadFormOrRangeOfMotionRating(RATING_BAD, formRating, rangeOfMotionRating))
+                return 3;
+            else if (UserHadFormOrRangeOfMotionRating(RATING_POOR, formRating, rangeOfMotionRating))
+                return 2;
+            else
+                return 1;
+        }
+
+        private static bool UserHadFormOrRangeOfMotionRating(byte ratingLevel, byte formRating, byte rangeOfMotionRating)
+        {
+            return formRating == ratingLevel || rangeOfMotionRating == ratingLevel;
+        }
+
         private static decimal GetIncreasedFreeWeightResistanceAmount(decimal previousResistanceAmount, byte multiplier)
         {
             return previousResistanceAmount + (LOWEST_FREEWEIGHT_RESISTANCE * multiplier);
         }
 
-        private static decimal GetIncreasedMachineResistanceAmount(decimal previousResistanceAmount, short multiplier)
+        private static decimal GetIncreasedMachineResistanceAmount(decimal previousResistanceAmount, byte multiplier)
         {
             return previousResistanceAmount + (LOWEST_MACHINE_RESISTANCE * multiplier);
         }
@@ -449,6 +534,27 @@ namespace WorkoutTracker.Application.Exercises
             }
 
             return Math.Min(increasedRepCount, maxRepCount); //TODO: Refactor higher up the chain so that if we're only bumping up by a small amount, increase resistance instead and use smaller rep count
+        }
+
+        private static bool ActualRepsSignificantlyLessThanTarget(
+            SetType setType, 
+            byte targetReps, 
+            byte actualReps)
+        {
+            //TODO: Allow this to be configurable
+            //TODO: Modify for different set types
+            return (targetReps - actualReps) >= 10;
+        }
+
+        private static bool ActualRepsLessThanTarget(
+            SetType setType, 
+            byte targetReps, 
+            byte actualReps)
+        {
+            //TODO: Allow this to be configurable
+            //TODO: Modify for different set types
+            byte difference = ((byte)(targetReps - actualReps));
+            return difference < 10 && difference >= 6;
         }
 
         #endregion Private Static Methods
