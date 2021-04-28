@@ -28,12 +28,12 @@ namespace WorkoutApplication.Domain.Exercises
         /// <summary>
         /// The target number of repetitions.
         /// </summary>
-        public virtual int TargetRepCount { get; set; }
+        public virtual ushort TargetRepCount { get; set; }
         
         /// <summary>
         /// The actual number of repetitions.
         /// </summary>
-        public virtual int ActualRepCount { get; set; }
+        public virtual ushort ActualRepCount { get; set; }
         
         /// <summary>
         /// Any notes pertaining to the Exercise performed 
