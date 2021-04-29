@@ -9,7 +9,7 @@ namespace WorkoutTracker.Application.Exercises
         public int ExerciseId { get; set; }
         public decimal ResistanceAmount { get; set; }
         public string ResistanceMakeup { get; set; }
-        public ushort Reps { get; set; }
+        public int Reps { get; set; }
         public string Reason { get; set; }
     }
 }
