@@ -93,7 +93,7 @@ namespace WorkoutTracker.Application.Workouts
 
             foreach (var exercise in workout.Exercises?.OrderBy(x => x.Sequence))
             {
-                for(int x = 0; x < exercise.NumberOfSets; x++)
+                for(byte x = 0; x < exercise.NumberOfSets; x++)
                 { 
                     //TODO: Add new constructor to ExecutedExercise which takes an ExerciseInWorkout param 
                     //and initialize that way instead.

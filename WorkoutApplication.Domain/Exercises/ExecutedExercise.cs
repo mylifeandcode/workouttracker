@@ -15,7 +15,7 @@ namespace WorkoutApplication.Domain.Exercises
         /// <summary>
         /// The order in which this Exercise appears in the Workout.
         /// </summary>
-        public virtual int Sequence { get; set; }
+        public virtual byte Sequence { get; set; }
 
         /// <summary>
         /// The Exercise performed/to be performed.
@@ -28,12 +28,12 @@ namespace WorkoutApplication.Domain.Exercises
         /// <summary>
         /// The target number of repetitions.
         /// </summary>
-        public virtual int TargetRepCount { get; set; }
+        public virtual byte TargetRepCount { get; set; }
         
         /// <summary>
         /// The actual number of repetitions.
         /// </summary>
-        public virtual int ActualRepCount { get; set; }
+        public virtual byte ActualRepCount { get; set; }
         
         /// <summary>
         /// Any notes pertaining to the Exercise performed 
@@ -72,12 +72,12 @@ namespace WorkoutApplication.Domain.Exercises
         /// <summary>
         /// How well the form was for this exercise (the higher the number, the better).
         /// </summary>
-        public ushort FormRating { get; set; }
+        public byte FormRating { get; set; }
         
         /// <summary>
         /// How well the range of motion was for this exercise (the higher the number, the better).
         /// </summary>
-        public ushort RangeOfMotionRating { get; set; }
+        public byte RangeOfMotionRating { get; set; }
 
         /// <summary>
         /// The individual resistances which were used for this exercise.
