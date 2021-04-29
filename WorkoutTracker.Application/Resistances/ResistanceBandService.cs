@@ -10,6 +10,8 @@ namespace WorkoutTracker.Application.Resistances
 {
     public class ResistanceBandService : ServiceBase<ResistanceBand>, IResistanceBandService
     {
+        protected ResistanceBand _lowestResistanceBand;
+
         public ResistanceBandService(IRepository<ResistanceBand> repository) : base(repository) { }
 
         public ResistanceBand Add(ResistanceBand resistanceBand)
@@ -238,6 +240,24 @@ namespace WorkoutTracker.Application.Resistances
         private static bool AmountIsInRange(decimal actual, decimal min, decimal max)
         {
             return actual >= min && actual <= max;
+        }
+
+        public ResistanceBand GetLowestResistanceBand()
+        {
+            if (_lowestResistanceBand == null)
+                _lowestResistanceBand =
+                    GetIndividualBands()
+                        .OrderBy(band => band.MaxResistanceAmount)
+                        .FirstOrDefault();
+
+            if (_lowestResistanceBand == null)
+            {
+                _lowestResistanceBand = new ResistanceBand();
+                _lowestResistanceBand.MaxResistanceAmount = 3; //Safeguard against no resistance bands having been defined yet
+                _lowestResistanceBand.Color = "Undefined";
+            }
+
+            return _lowestResistanceBand;
         }
     }
 }

@@ -18,5 +18,6 @@ namespace WorkoutTracker.Application.Resistances
             decimal minimalDecrease,
             decimal preferredMaxDecrease, 
             bool doubleBandResistanceAmounts);
+        ResistanceBand GetLowestResistanceBand();
     }
 }

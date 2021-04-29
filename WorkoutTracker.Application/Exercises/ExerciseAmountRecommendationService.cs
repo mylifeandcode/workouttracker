@@ -129,21 +129,7 @@ namespace WorkoutTracker.Application.Exercises
 
         private decimal GetLowestResistanceBandAmount()
         {
-            if (_lowestResistanceBand == null)
-                _lowestResistanceBand =
-                    _resistanceBandService
-                        .GetIndividualBands()
-                            .OrderBy(band => band.MaxResistanceAmount)
-                            .FirstOrDefault();
-
-            if (_lowestResistanceBand == null)
-            {
-                _lowestResistanceBand = new ResistanceBand();
-                _lowestResistanceBand.MaxResistanceAmount = 3; //Safeguard against no resistance bands having been defined yet
-                _lowestResistanceBand.Color = "Undefined";
-            }
-
-            return _lowestResistanceBand.MaxResistanceAmount;
+            return _resistanceBandService.GetLowestResistanceBand().MaxResistanceAmount;
         }
 
         private ExerciseAmountRecommendation GetPerformanceBasedRecommendation(
@@ -151,7 +137,7 @@ namespace WorkoutTracker.Application.Exercises
             UserSettings userSettings)
         {
             //TODO: Allow for profile-based thresholds
-            var firstExerciseSet = GetFirstExericseBySequence(executedExercises);
+            var firstExerciseSet = GetFirstExerciseBySequence(executedExercises);
             if (firstExerciseSet.ActualRepCount >= firstExerciseSet.TargetRepCount)
             {
                 if (HadAdequateRating(firstExerciseSet.FormRating)
@@ -174,7 +160,7 @@ namespace WorkoutTracker.Application.Exercises
             List<ExecutedExercise> executedExercises, 
             UserSettings userSettings)
         {
-            var firstExerciseOfSet = GetFirstExericseBySequence(executedExercises);
+            var firstExerciseOfSet = GetFirstExerciseBySequence(executedExercises);
 
             //How did they do last time?
             if (HadAdequateRating(firstExerciseOfSet.FormRating)
@@ -278,29 +264,26 @@ namespace WorkoutTracker.Application.Exercises
             UserSettings userSettings)
         {
             //Adjust target reps, resistance, or both.
-            throw new NotImplementedException(); //TODO: Implement
-            ExerciseAmountRecommendation recommendation;
+
+            var recommendation = new ExerciseAmountRecommendation();
+            string resistanceMakeup = null;
 
             bool inadequateForm = !HadAdequateRating(executedExercise.FormRating);
             bool inadequateRangeOfMotion = !HadAdequateRating(executedExercise.RangeOfMotionRating);
+            bool actualRepsSignificantlyLessThanTarget = ActualRepsSignificantlyLessThanTarget(executedExercise.SetType, executedExercise.TargetRepCount, executedExercise.ActualRepCount);
+            bool actualRepsLessThanTarget = ActualRepsLessThanTarget(executedExercise.SetType, executedExercise.TargetRepCount, executedExercise.ActualRepCount);
 
             //If form or range of motion was lacking, reduce resistance.
-            if (inadequateForm || inadequateRangeOfMotion)
+            if (inadequateForm || inadequateRangeOfMotion || actualRepsSignificantlyLessThanTarget || actualRepsLessThanTarget)
             {
-                recommendation.Reason = GetBadRatingReason(inadequateForm, inadequateRangeOfMotion);
-                byte multiplier = GetResistanceDecreaseMultiplier(executedExercise.FormRating, executedExercise.RangeOfMotionRating);
-                recommendation.ResistanceAmount = GetDecreasedResistanceAmount();
-            }
-            //If number of reps was significantly less than the target, reduce resistance.
-            else if (ActualRepsSignificantlyLessThanTarget(executedExercise.SetType, executedExercise.TargetRepCount, executedExercise.ActualRepCount))
-            {
-                recommendation = 
-                    GetDecreaseRecommendation(executedExercise, userSettings, false, false, true, false);
-            }
-            else if (ActualRepsLessThanTarget(executedExercise.SetType, executedExercise.TargetRepCount, executedExercise.ActualRepCount))
-            {
-                recommendation = 
-                    GetDecreaseRecommendation(executedExercise, userSettings, false, false, false, true);
+                recommendation =
+                    GetDecreaseRecommendation(
+                        executedExercise, 
+                        userSettings, 
+                        inadequateForm, 
+                        inadequateRangeOfMotion, 
+                        actualRepsSignificantlyLessThanTarget, 
+                        actualRepsLessThanTarget);
             }
             //Otherwise, they didn't meet their goals last time, but they should remain the same.
             else
@@ -340,27 +323,12 @@ namespace WorkoutTracker.Application.Exercises
             Exercise exercise,
             out string resistanceMakeup)
         {
-            //TODO: This has a code smell. Can I find a better way of handling this?
-            //Only needed for resistance bands.
-            resistanceMakeup = null;
+            resistanceMakeup = null; //Only needed for resistance bands.
 
             if (exercise.ResistanceType == ResistanceType.BodyWeight || exercise.ResistanceType == ResistanceType.Other)
                 return previousResistanceAmount;
 
-            byte multiplier;
-
-            if (UserGreatlyExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
-            {
-                multiplier = 3;
-            }
-            else if (UserExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
-            {
-                multiplier = 2;
-            }
-            else
-            {
-                multiplier = 1;
-            }
+            byte multiplier = GetRepCountMultiplier(targetRepsLastTime, actualRepsLastTime);
 
             switch (exercise.ResistanceType)
             {
@@ -398,10 +366,18 @@ namespace WorkoutTracker.Application.Exercises
             return recommendedBands.Sum(band => band.MaxResistanceAmount);
         }
 
-        private decimal GetDecreasedResistanceAmount()
+        /*
+        private decimal GetDecreasedResistanceAmount(
+            byte targetRepsLastTime,
+            byte actualRepsLastTime,
+            decimal previousResistanceAmount,
+            Exercise exercise,
+            out string resistanceMakeup)
         {
+            byte multiplier = GetResistanceDecreaseMultiplier()
             throw new NotImplementedException();
         }
+        */
         #endregion Private Non-Static Methods
 
         #region Private Static Methods
@@ -436,7 +412,7 @@ namespace WorkoutTracker.Application.Exercises
                         .Date) <= RECENTLY_PERFORMED_EXERCISE_THRESHOLD;
         }
 
-        private static ExecutedExercise GetFirstExericseBySequence(List<ExecutedExercise> executedExercises)
+        private static ExecutedExercise GetFirstExerciseBySequence(List<ExecutedExercise> executedExercises)
         {
             return executedExercises.OrderBy(exercise => exercise.Sequence).First();
         }
@@ -475,7 +451,7 @@ namespace WorkoutTracker.Application.Exercises
             return targetRepCount == actualRepCount;
         }
 
-        private string GetBadRatingReason(bool inadequateForm, bool inadequateRangeOfMotion)
+        private static string GetBadRatingReason(bool inadequateForm, bool inadequateRangeOfMotion)
         {
             if (inadequateForm && inadequateRangeOfMotion)
                 return REASON_FORM_NEEDS_IMPROVEMENT + " " + REASON_RANGE_OF_MOTION_NEEDS_IMPROVEMENT;
@@ -555,6 +531,22 @@ namespace WorkoutTracker.Application.Exercises
             //TODO: Modify for different set types
             byte difference = ((byte)(targetReps - actualReps));
             return difference < 10 && difference >= 6;
+        }
+
+        private static byte GetRepCountMultiplier(byte targetRepsLastTime, byte actualRepsLastTime)
+        {
+            if (UserGreatlyExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
+            {
+                return 3;
+            }
+            else if (UserExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
+            {
+                return 2;
+            }
+            else
+            {
+                return 1;
+            }
         }
 
         #endregion Private Static Methods
