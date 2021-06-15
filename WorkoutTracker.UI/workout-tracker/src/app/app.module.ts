@@ -28,6 +28,7 @@ import { UserSelectComponent } from './user-select/user-select.component';
 
 //Other
 import { environment } from 'environments/environment';
+import { UserSettingsComponent } from './user-settings/user-settings.component';
 
 
 export function initializeApp(configService: ConfigService, userService: UserService) {
@@ -43,7 +44,8 @@ export function initializeApp(configService: ConfigService, userService: UserSer
     AppComponent,
     NavComponent,
     HomeComponent,
-    UserSelectComponent
+    UserSelectComponent,
+    UserSettingsComponent
   ],
   imports: [
     AppRoutingModule,
