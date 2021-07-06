@@ -27,7 +27,6 @@ export class UserEditComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _router: Router) { }
 
-  
   //PUBLIC METHODS
 
   public async ngOnInit() {
@@ -40,15 +39,15 @@ export class UserEditComponent implements OnInit {
   public saveUser(): void {
 
     this.savingUserInfo = true;
-    let user = this.getUserForPersist();
+    const user = this.getUserForPersist();
 
-    let result: Observable<User> =
+    const result: Observable<User> =
       (user.id === 0 ? this._userSvc.addUser(user) : this._userSvc.updateUser(user));
 
       result
           .pipe(finalize(() => { this.savingUserInfo = false; }))
           .subscribe(
-            (user: User) => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
+            (savedUser: User) => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
             (error: any) => this.errorMsg = error);
   }
 
@@ -66,7 +65,7 @@ export class UserEditComponent implements OnInit {
   private getUserInfo(): void {
 
     this._route.params.subscribe(params => {
-      let userId = params['id'];
+      const userId = params['id'];
       if (userId && userId > 0)
         this.getUserInfoFromService(userId);
       else {
@@ -86,7 +85,7 @@ export class UserEditComponent implements OnInit {
         this._user = user;
         this.userEditForm.patchValue({ id: this._user.id, name: this._user.name });
       },
-      (error: any) => this.errorMsg = error, 
+      (error: any) => this.errorMsg = error,
       () => this.loadingUserInfo = false);
 
   }
@@ -95,26 +94,26 @@ export class UserEditComponent implements OnInit {
 
     //Use FormBuilder to create our root FormGroup
     this.userEditForm = this._formBuilder.group({
-      id: [0, Validators.required], 
+      id: [0, Validators.required],
       name: ['', Validators.required]
     });
 
   }
 
   private async getCurrentUserId(): Promise<number> {
-    let result: User =  await this._userSvc.getCurrentUserInfo().toPromise();
+    const result: User =  await this._userSvc.getCurrentUserInfo().toPromise();
     return result ? result.id : 0;
   }
-  
+
   private getUserForPersist(): User {
-    let user = new User();
+    const user = new User();
 
     user.id = this.userEditForm.get("id").value;
     user.name = this.userEditForm.get("name").value;
 
-    if (this._user.id > 0) 
+    if (this._user.id > 0)
       user.modifiedByUserId = this._currentUserId;
-    else 
+    else
       user.createdByUserId = this._currentUserId;
 
     return user;

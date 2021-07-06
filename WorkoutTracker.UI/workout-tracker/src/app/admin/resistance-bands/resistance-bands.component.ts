@@ -7,7 +7,7 @@ import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from './resistance-band.service';
 
 @Component({
-  selector: 'app-resistance-bands',
+  selector: 'wt-resistance-bands',
   templateUrl: './resistance-bands.component.html',
   styleUrls: ['./resistance-bands.component.css']
 })
