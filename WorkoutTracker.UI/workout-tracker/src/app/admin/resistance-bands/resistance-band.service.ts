@@ -15,19 +15,19 @@ import { map } from 'rxjs/operators';
 })
 export class ResistanceBandService extends ApiBaseService<ResistanceBand> {
 
-  constructor(private _configService: ConfigService, _http: HttpClient) { 
+  constructor(private _configService: ConfigService, _http: HttpClient) {
     super(_configService.get('apiRoot') + "resistancebands", _http);
   }
 
   /**
-   * Gets an array of all individual resistance bands, rather than an array of the domain 
+   * Gets an array of all individual resistance bands, rather than an array of the domain
    * objects which include the numberAvailable property.
    */
   public getAllIndividualBands(): Observable<ResistanceBandIndividual[]> {
     return this.getAll()
       .pipe(
         map((bands: ResistanceBand[]) => {
-          let individualBands: ResistanceBandIndividual[] = [];
+          const individualBands: ResistanceBandIndividual[] = [];
           bands.map((band: ResistanceBand) => {
             for(let x = 0; x < band.numberAvailable; x++) {
               individualBands.push(new ResistanceBandIndividual(band.color, band.maxResistanceAmount));

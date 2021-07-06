@@ -13,35 +13,35 @@ import { WorkoutViewComponent } from './workout-view.component';
 const EXECUTED_WORKOUT_ID = 5;
 
 class ExecutedWorkoutServiceMock {
-  getById = 
+  getById =
     jasmine.createSpy('getById')
       .and.returnValue(of(this.getFakeExecutedWorkout()));
 
   getFakeExecutedWorkout(): ExecutedWorkout {
 
-    let executedWorkout = new ExecutedWorkout();
-    let executedExercise1 = new ExecutedExercise();
-    let executedExercise2 = new ExecutedExercise();
-    let executedExercise3 = new ExecutedExercise();
-    let exercise1 = new Exercise();
-    let exercise2 = new Exercise();
+    const executedWorkout = new ExecutedWorkout();
+    const executedExercise1 = new ExecutedExercise();
+    const executedExercise2 = new ExecutedExercise();
+    const executedExercise3 = new ExecutedExercise();
+    const exercise1 = new Exercise();
+    const exercise2 = new Exercise();
 
     exercise1.id = 1;
     exercise2.id = 2;
 
     executedExercise1.exercise = exercise1;
     executedExercise1.setType = 0;
-    
+
     executedExercise2.exercise = exercise1;
     executedExercise2.setType = 0;
-    
+
     executedExercise3.exercise = exercise2;
     executedExercise3.setType = 1;
 
     executedWorkout.exercises = [];
     executedWorkout.exercises.push(...[executedExercise1, executedExercise2, executedExercise3]);
 
-    let workout = new Workout();
+    const workout = new Workout();
     workout.name = "Some Workout";
 
     executedWorkout.workout = workout;
@@ -57,18 +57,18 @@ describe('WorkoutViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutViewComponent ], 
+      declarations: [ WorkoutViewComponent ],
       providers: [
         {
-          provide: ActivatedRoute, 
+          provide: ActivatedRoute,
           useValue: {
             params: of({
               id: EXECUTED_WORKOUT_ID
             })
           }
-        }, 
+        },
         {
-          provide: ExecutedWorkoutService, 
+          provide: ExecutedWorkoutService,
           useClass: ExecutedWorkoutServiceMock
         }
       ]

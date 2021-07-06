@@ -27,19 +27,19 @@ describe('UserEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserEditComponent ], 
-      imports: [ 
-        ReactiveFormsModule, 
+      declarations: [ UserEditComponent ],
+      imports: [
+        ReactiveFormsModule,
         RouterTestingModule.withRoutes(
-          [{path: 'admin/users', component: FakeComponent}]) 
-      ], 
+          [{path: 'admin/users', component: FakeComponent}])
+      ],
       providers: [
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: UserServiceMock
-        }, 
+        },
         {
-          provide: ActivatedRoute, 
+          provide: ActivatedRoute,
           useValue: {
             params: of({
               id: 5
@@ -87,7 +87,7 @@ describe('UserEditComponent', () => {
     fixture.whenStable().then(() => {
       //ARRANGE
       const userService = TestBed.inject(UserService);
-      let expectedUser = new User({id: 0, name: 'Dr. Klahn', createdByUserId: CURRENT_USER_ID});
+      const expectedUser = new User({id: 0, name: 'Dr. Klahn', createdByUserId: CURRENT_USER_ID});
       component.userEditForm.controls.id.setValue(expectedUser.id);
       component.userEditForm.controls.name.setValue(expectedUser.name);
 
@@ -103,7 +103,7 @@ describe('UserEditComponent', () => {
     fixture.whenStable().then(() => {
       //ARRANGE
       const userService = TestBed.inject(UserService);
-      let expectedUser = new User({id: 100, name: 'Big Jim Slade', createdByUserId: CURRENT_USER_ID});
+      const expectedUser = new User({id: 100, name: 'Big Jim Slade', createdByUserId: CURRENT_USER_ID});
       component.userEditForm.controls.id.setValue(expectedUser.id);
       component.userEditForm.controls.name.setValue(expectedUser.name);
 

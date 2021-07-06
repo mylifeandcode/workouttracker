@@ -6,19 +6,19 @@ const HTTP_OPTIONS = {
   headers: new HttpHeaders({
     'Content-Type':  'application/json'
   })
-};  
+};
 
 export abstract class ApiBaseService<T extends Entity> {
-    
+
     constructor(protected _apiRoot: string, protected _http: HttpClient) {}
 
     public getAll(): Observable<T[]> {
       return this._http.get<T[]>(this._apiRoot);
     }
-    
+
     public getById(id: number): Observable<T> {
       return this._http.get<T>(`${this._apiRoot}/${id}`);
-    }    
+    }
 
     public add(value: T): Observable<T> {
       return this._http.post<T>(this._apiRoot, value, HTTP_OPTIONS);

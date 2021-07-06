@@ -8,7 +8,7 @@ describe('ExecutedWorkoutService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ExecutedWorkoutService], 
+      providers: [ExecutedWorkoutService],
       imports :[
         HttpClientTestingModule
       ]

@@ -20,7 +20,7 @@ describe('WorkoutExerciseComponent', () => {
     component = fixture.componentInstance;
     formBuilder = new FormBuilder();
     component.formGroup = formBuilder.group({
-      id: [0, Validators.required ], 
+      id: [0, Validators.required ],
       workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
       exercises: formBuilder.array([])
     });

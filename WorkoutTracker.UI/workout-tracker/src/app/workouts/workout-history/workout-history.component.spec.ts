@@ -8,7 +8,7 @@ describe('WorkoutHistoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutHistoryComponent ], 
+      declarations: [ WorkoutHistoryComponent ],
       imports: [
         HttpClientTestingModule
       ]

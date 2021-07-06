@@ -18,7 +18,7 @@ export class WorkoutViewComponent implements OnInit {
   public groupedExercises: Map<string, ExecutedExercise[]>;
 
   constructor(
-    private _activatedRoute: ActivatedRoute, 
+    private _activatedRoute: ActivatedRoute,
     private _executedWorkoutService: ExecutedWorkoutService) { }
 
   ngOnInit(): void {
@@ -38,10 +38,8 @@ export class WorkoutViewComponent implements OnInit {
       .pipe(finalize(() => { this.loading = false; }))
       .subscribe((executedWorkout: ExecutedWorkout) => {
         this.executedWorkout = executedWorkout;
-        this.groupedExercises = 
-          _.groupBy(executedWorkout.exercises, (exercise: ExecutedExercise) => { 
-            return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
-          });
+        this.groupedExercises =
+          _.groupBy(executedWorkout.exercises, (exercise: ExecutedExercise) => exercise.exercise.id.toString() + '-' + exercise.setType.toString());
       });
   }
 

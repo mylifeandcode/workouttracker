@@ -12,38 +12,38 @@ import { WorkoutComponent } from './workout/workout.component';
 
 const routes: Routes = [
   {
-    path: 'edit/:id', 
-    component: WorkoutEditComponent, 
+    path: 'edit/:id',
+    component: WorkoutEditComponent,
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'start',
-    component: WorkoutComponent, 
+    component: WorkoutComponent,
     canActivate: [UserSelectedGuard]
   },
   {
-    path: 'view/:id', 
-    component: WorkoutViewComponent, 
+    path: 'view/:id',
+    component: WorkoutViewComponent,
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'exercises',
-    component: ExerciseListComponent, 
+    component: ExerciseListComponent,
     canActivate: [UserSelectedGuard]
-  }, 
+  },
   {
     path: 'exercises/edit/:id',
-    component: ExerciseEditComponent, 
+    component: ExerciseEditComponent,
     canActivate: [UserSelectedGuard]
-  }, 
+  },
   {
-    path: 'history', 
-    component: WorkoutHistoryComponent, 
+    path: 'history',
+    component: WorkoutHistoryComponent,
     canActivate: [UserSelectedGuard]
   },
   {
     path: '**',
-    component: WorkoutListComponent, 
+    component: WorkoutListComponent,
     canActivate: [UserSelectedGuard]
   }
 ];

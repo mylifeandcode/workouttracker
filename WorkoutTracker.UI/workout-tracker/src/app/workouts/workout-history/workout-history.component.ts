@@ -24,10 +24,10 @@ export class WorkoutHistoryComponent implements OnInit {
   public cols: any = [
       { field: 'name', header: 'Name' }
   ]; //TODO: Create specific type
- 
+
 
   constructor(
-    private _executedWorkoutService: ExecutedWorkoutService, 
+    private _executedWorkoutService: ExecutedWorkoutService,
     private _userService: UserService) {
 
   }
@@ -48,7 +48,7 @@ export class WorkoutHistoryComponent implements OnInit {
                 this.executedWorkouts = results.results;
                 console.log('executedWorkouts: ', this.executedWorkouts);
                 this.totalRecords = results.totalCount;
-            }, 
+            },
             (error: any) => window.alert("An error occurred getting executed workouts: " + error)
         );
 
@@ -57,6 +57,6 @@ export class WorkoutHistoryComponent implements OnInit {
 
   public getExecutedWorkoutsLazy(event: any): void {
     this.getExecutedWorkouts(event.first, null);
-  }  
+  }
 
 }

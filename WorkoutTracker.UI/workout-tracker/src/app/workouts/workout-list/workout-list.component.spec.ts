@@ -17,7 +17,7 @@ class WorkoutServiceMock {
 }
 
 class UserServiceMock {
-  getCurrentUserInfo = 
+  getCurrentUserInfo =
     jasmine.createSpy('getCurrentUserInfo')
       .and.returnValue(of(new User()));
 }
@@ -28,18 +28,18 @@ describe('WorkoutListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ WorkoutListComponent ], 
+      declarations: [ WorkoutListComponent ],
       imports: [
-        TableModule, 
+        TableModule,
         RouterTestingModule
-      ], 
+      ],
       providers: [
         {
-          provide: WorkoutService, 
+          provide: WorkoutService,
           useClass: WorkoutServiceMock
-        }, 
+        },
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: UserServiceMock
         }
       ]

@@ -1,4 +1,4 @@
 export enum SetType {
-  Repetition, 
+  Repetition,
   Timed
 }

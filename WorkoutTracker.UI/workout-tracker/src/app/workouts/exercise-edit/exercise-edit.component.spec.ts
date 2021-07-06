@@ -30,13 +30,13 @@ class ExerciseServiceMock {
 
   getTargetAreas = jasmine.createSpy('getTargetAreas').and.returnValue(of(new Array<TargetArea>()));
   getById = jasmine.createSpy('getById').and.returnValue(of(new Exercise()));
-  getResistanceTypes = 
+  getResistanceTypes =
     jasmine.createSpy('getResistanceTypes')
       .and.returnValue(of(this.resistanceTypes));
 }
 
 class UserServiceMock {
-  getCurrentUserInfo = 
+  getCurrentUserInfo =
     jasmine.createSpy('getCurrentUserInfo')
       .and.returnValue(of(new User({ id: USER_ID })));
 }
@@ -47,24 +47,24 @@ describe('ExerciseEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
+      declarations: [
         ExerciseEditComponent
-      ], 
-      imports: [ 
-        ProgressSpinnerModule, 
-        ReactiveFormsModule, 
-        RouterTestingModule, 
+      ],
+      imports: [
+        ProgressSpinnerModule,
+        ReactiveFormsModule,
+        RouterTestingModule,
         TableModule
-       ], 
+       ],
        providers: [
          {
-           provide: ExerciseService, 
+           provide: ExerciseService,
            useClass: ExerciseServiceMock
-         }, 
+         },
          {
-           provide: UserService, 
+           provide: UserService,
            useClass: UserServiceMock
-         }, 
+         },
          {
            provide: ActivatedRoute,
            useValue: {
@@ -112,7 +112,7 @@ describe('ExerciseEditComponent', () => {
   }));
 
   it('should get the current user ID', waitForAsync(() => {
-    let userService = TestBed.inject(UserService);
+    const userService = TestBed.inject(UserService);
     fixture.whenStable().then(() => {
       expect(component.currentUserId).toEqual(USER_ID);
       expect(userService.getCurrentUserInfo).toHaveBeenCalledTimes(1);
@@ -120,7 +120,7 @@ describe('ExerciseEditComponent', () => {
   }));
 
   it('should get all target areas', waitForAsync(() => {
-    let exerciseService = TestBed.inject(ExerciseService);
+    const exerciseService = TestBed.inject(ExerciseService);
     fixture.whenStable().then(() => {
       expect(component.allTargetAreas).toBeTruthy();
       expect(exerciseService.getTargetAreas).toHaveBeenCalledTimes(1);
@@ -128,7 +128,7 @@ describe('ExerciseEditComponent', () => {
   }));
 
   it('should get resistance types', waitForAsync(() => {
-    let exerciseService = TestBed.inject(ExerciseService);
+    const exerciseService = TestBed.inject(ExerciseService);
     fixture.whenStable().then(() => {
       expect(component.resistanceTypes).toBeTruthy();
       expect(exerciseService.getResistanceTypes).toHaveBeenCalledTimes(1);
@@ -138,15 +138,15 @@ describe('ExerciseEditComponent', () => {
   //TODO: Complete
   xit('should save exercise', waitForAsync(() => {
 
-    let exerciseService = TestBed.inject(ExerciseService);
+    const exerciseService = TestBed.inject(ExerciseService);
     fixture.whenStable().then(() => {
 
       component.exerciseForm.setValue({
-        id: 10, 
-        name: 'Standing Press w/Resistance Bands', 
-        description: 'something', 
-        resistanceTypes: '[1]', 
-        oneSided: [false], 
+        id: 10,
+        name: 'Standing Press w/Resistance Bands',
+        description: 'something',
+        resistanceTypes: '[1]',
+        oneSided: [false],
         targetAreas: ['Chest', 'Triceps'],
         setup: 'Ready',
         movement: 'Set',

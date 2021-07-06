@@ -29,13 +29,13 @@ import { RatingPipe } from './pipes/rating.pipe';
 
 @NgModule({
   declarations: [
-    WorkoutComponent, 
-    WorkoutListComponent, 
-    WorkoutEditComponent, 
-    WorkoutSetDefinitionComponent, 
-    WorkoutExerciseComponent, 
-    ExerciseEditComponent, 
-    ExerciseListComponent, 
+    WorkoutComponent,
+    WorkoutListComponent,
+    WorkoutEditComponent,
+    WorkoutSetDefinitionComponent,
+    WorkoutExerciseComponent,
+    ExerciseEditComponent,
+    ExerciseListComponent,
     ExerciseListMiniComponent,
     InsertSpaceBeforeCapitalPipe,
     ResistanceBandSelectComponent,
@@ -47,15 +47,15 @@ import { RatingPipe } from './pipes/rating.pipe';
     RatingPipe
   ],
   imports: [
-    CommonModule, 
-    CountdownModule, 
-    DialogModule, 
-    ReactiveFormsModule, 
-    TableModule, 
-    TooltipModule, 
-    PickListModule, 
-    ProgressSpinnerModule, 
-    MultiSelectModule,     
+    CommonModule,
+    CountdownModule,
+    DialogModule,
+    ReactiveFormsModule,
+    TableModule,
+    TooltipModule,
+    PickListModule,
+    ProgressSpinnerModule,
+    MultiSelectModule,
     WorkoutsRoutingModule
   ]
 })

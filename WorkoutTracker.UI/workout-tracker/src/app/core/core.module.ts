@@ -11,15 +11,15 @@ import { SharedModule } from 'app/shared/shared.module';
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule, 
+    CommonModule,
     SharedModule
-  ], 
-  exports: [], 
+  ],
+  exports: [],
   providers: [
     UserSelectedGuard
   ] //UserService is provided in root
 })
-export class CoreModule extends EnsureModuleLoadedOnceGuard { 
+export class CoreModule extends EnsureModuleLoadedOnceGuard {
 
   constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
     super(parentModule);

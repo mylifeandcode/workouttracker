@@ -50,19 +50,19 @@ export function initializeApp(configService: ConfigService, userService: UserSer
   imports: [
     AppRoutingModule,
     BrowserAnimationsModule,
-    BrowserModule, 
-    CommonModule, 
-    CoreModule, 
-    HttpClientModule, 
-    ModalModule.forRoot(), 
+    BrowserModule,
+    CommonModule,
+    CoreModule,
+    HttpClientModule,
+    ModalModule.forRoot(),
     ReactiveFormsModule,
     SharedModule
   ],
   providers: [
     {
-      provide: APP_INITIALIZER, 
-      useFactory: initializeApp, 
-      deps: [ConfigService, UserService], 
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [ConfigService, UserService],
       multi: true
     },
     CookieService

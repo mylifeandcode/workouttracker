@@ -14,10 +14,10 @@ describe('ResistanceBandServiceService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ HttpClientTestingModule ], 
+      imports: [ HttpClientTestingModule ],
       providers: [
         {
-          provide: ConfigService, 
+          provide: ConfigService,
           useClass: ConfigServiceMock
         }
       ]
@@ -32,14 +32,14 @@ describe('ResistanceBandServiceService', () => {
   it('should get all individual bands', () => {
 
     //ARRANGE
-    let httpMock = TestBed.inject(HttpTestingController);
-    let resistanceBands = new Array<ResistanceBand>();
-    let blackBand = new ResistanceBand();
+    const httpMock = TestBed.inject(HttpTestingController);
+    const resistanceBands = new Array<ResistanceBand>();
+    const blackBand = new ResistanceBand();
     blackBand.color = "Black";
     blackBand.numberAvailable = 1;
     blackBand.maxResistanceAmount = 19;
 
-    let orangeBand = new ResistanceBand();
+    const orangeBand = new ResistanceBand();
     orangeBand.color = "Orange";
     orangeBand.numberAvailable = 4;
     orangeBand.maxResistanceAmount = 30;
@@ -57,7 +57,7 @@ describe('ResistanceBandServiceService', () => {
     const req = httpMock.expectOne("http://someUrl/api/resistancebands");
     expect(req.request.method).toEqual('GET');
     //Respond with the mock results
-    req.flush(resistanceBands);    
+    req.flush(resistanceBands);
 
   });
 });

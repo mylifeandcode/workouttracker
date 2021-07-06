@@ -23,14 +23,14 @@ describe('UserSelectComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserSelectComponent ], 
-      imports: [         
+      declarations: [ UserSelectComponent ],
+      imports: [
         RouterTestingModule.withRoutes(
-          [{path: 'home', component: FakeComponent}]) 
-      ], 
+          [{path: 'home', component: FakeComponent}])
+      ],
       providers: [
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: UserServiceMock
         }
       ]
@@ -51,7 +51,7 @@ describe('UserSelectComponent', () => {
   it('should get all users', () => {
 
     //ARRANGE
-    let userService = TestBed.inject(UserService);
+    const userService = TestBed.inject(UserService);
 
     //ACT
     //Nothing else to do here
@@ -64,8 +64,8 @@ describe('UserSelectComponent', () => {
   it('should select user', () => {
 
     //ARRANGE
-    let userService = TestBed.inject(UserService);
-    let router = TestBed.inject(Router);
+    const userService = TestBed.inject(UserService);
+    const router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.callThrough();
     const userId = 1;
     const userName = "davidleeroth";
