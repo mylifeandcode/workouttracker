@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
+    "test-for-ci": "ng test --karma-config=src/karma.conf.ci.js", 
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "ngcc"

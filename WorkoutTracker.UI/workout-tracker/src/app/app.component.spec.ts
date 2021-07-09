@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
   selector: 'wt-nav',
   template: ''
 })
-class NavComponentMock {
+class MockNavComponent {
 
 }
 
@@ -21,7 +21,7 @@ describe('AppComponent', () => {
       ],
       declarations: [
         AppComponent,
-        NavComponentMock
+        MockNavComponent
       ],
     }).compileComponents();
   }));
