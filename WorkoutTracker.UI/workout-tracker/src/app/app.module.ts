@@ -28,6 +28,7 @@ import { UserSelectComponent } from './user-select/user-select.component';
 
 //Other
 import { environment } from 'environments/environment';
+import { UserSettingsComponent } from './user-settings/user-settings.component';
 
 
 export function initializeApp(configService: ConfigService, userService: UserService) {
@@ -43,24 +44,25 @@ export function initializeApp(configService: ConfigService, userService: UserSer
     AppComponent,
     NavComponent,
     HomeComponent,
-    UserSelectComponent
+    UserSelectComponent,
+    UserSettingsComponent
   ],
   imports: [
     AppRoutingModule,
     BrowserAnimationsModule,
-    BrowserModule, 
-    CommonModule, 
-    CoreModule, 
-    HttpClientModule, 
-    ModalModule.forRoot(), 
+    BrowserModule,
+    CommonModule,
+    CoreModule,
+    HttpClientModule,
+    ModalModule.forRoot(),
     ReactiveFormsModule,
     SharedModule
   ],
   providers: [
     {
-      provide: APP_INITIALIZER, 
-      useFactory: initializeApp, 
-      deps: [ConfigService, UserService], 
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [ConfigService, UserService],
       multi: true
     },
     CookieService

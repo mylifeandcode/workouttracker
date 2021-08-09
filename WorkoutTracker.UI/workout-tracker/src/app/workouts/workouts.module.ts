@@ -31,13 +31,13 @@ import { WorkoutInfoComponent } from './workout-info/workout-info.component';
 
 @NgModule({
   declarations: [
-    WorkoutComponent, 
-    WorkoutListComponent, 
-    WorkoutEditComponent, 
-    WorkoutSetDefinitionComponent, 
-    WorkoutExerciseComponent, 
-    ExerciseEditComponent, 
-    ExerciseListComponent, 
+    WorkoutComponent,
+    WorkoutListComponent,
+    WorkoutEditComponent,
+    WorkoutSetDefinitionComponent,
+    WorkoutExerciseComponent,
+    ExerciseEditComponent,
+    ExerciseListComponent,
     ExerciseListMiniComponent,
     InsertSpaceBeforeCapitalPipe,
     ResistanceBandSelectComponent,
@@ -51,15 +51,15 @@ import { WorkoutInfoComponent } from './workout-info/workout-info.component';
     WorkoutInfoComponent
   ],
   imports: [
-    CommonModule, 
-    CountdownModule, 
-    DialogModule, 
-    ReactiveFormsModule, 
-    TableModule, 
-    TooltipModule, 
-    PickListModule, 
-    ProgressSpinnerModule, 
-    MultiSelectModule,     
+    CommonModule,
+    CountdownModule,
+    DialogModule,
+    ReactiveFormsModule,
+    TableModule,
+    TooltipModule,
+    PickListModule,
+    ProgressSpinnerModule,
+    MultiSelectModule,
     WorkoutsRoutingModule
   ]
 })

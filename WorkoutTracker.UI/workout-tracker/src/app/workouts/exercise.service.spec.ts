@@ -8,7 +8,7 @@ import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 describe('ExerciseService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ExerciseService], 
+      providers: [ExerciseService],
       imports :[
         HttpClientTestingModule
       ]
@@ -37,7 +37,7 @@ describe('ExerciseService', () => {
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
-    req.flush(expectedResults);    
+    req.flush(expectedResults);
 
   }));
 
@@ -46,7 +46,7 @@ describe('ExerciseService', () => {
     const expectedExercise = new Exercise();
 
     service.getById(5).subscribe(
-      exercise => expect(exercise).toEqual(expectedExercise, 'should return expected results'), 
+      exercise => expect(exercise).toEqual(expectedExercise, 'should return expected results'),
       fail
     );
 
@@ -55,13 +55,13 @@ describe('ExerciseService', () => {
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
-    req.flush(expectedExercise);    
+    req.flush(expectedExercise);
 
   }));
 
   it('should create new exercise', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
 
-    let exercise = new Exercise();
+    const exercise = new Exercise();
 
     service.add(exercise).subscribe(
       (result: Exercise) => expect(result).toEqual(exercise, 'should return newly created exercise'),
@@ -74,17 +74,17 @@ describe('ExerciseService', () => {
     expect(req.request.body).toEqual(exercise);
 
     // Respond with the mock results
-    req.flush(exercise);    
+    req.flush(exercise);
 
   }));
 
   it('should update existing exercise', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
 
-    let exercise = new Exercise();
+    const exercise = new Exercise();
     exercise.id = 6;
 
     service.update(exercise).subscribe(
-      (result: Exercise) => expect(result).toEqual(exercise, 'should return udpated exercise'), 
+      (result: Exercise) => expect(result).toEqual(exercise, 'should return udpated exercise'),
       fail
     );
 
@@ -94,7 +94,7 @@ describe('ExerciseService', () => {
     expect(req.request.body).toEqual(exercise);
 
     // Respond with the mock results
-    req.flush(exercise);    
+    req.flush(exercise);
 
   }));
 

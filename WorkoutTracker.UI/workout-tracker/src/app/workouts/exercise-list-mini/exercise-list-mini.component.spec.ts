@@ -20,15 +20,15 @@ describe('ExerciseListMiniComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExerciseListMiniComponent ], 
+      declarations: [ ExerciseListMiniComponent ],
       providers: [
         {
-          provide: ExerciseService, 
+          provide: ExerciseService,
           useClass: ExerciseServiceMock
         }
       ],
       imports: [
-        TableModule, 
+        TableModule,
         MultiSelectModule
       ]
     })

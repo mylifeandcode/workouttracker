@@ -20,6 +20,7 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
 
   /**
    * Gets a new ExecutedWorkout to be used for the specified Workout
+   *
    * @param workoutId The ID of the Workout to get a new ExecutedWorkout for
    */
   public getNew(workoutId: number): Observable<ExecutedWorkout> {
@@ -28,6 +29,7 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
 
   /**
    * Gets a subset of ExecutedWorkoutDTOs
+   *
    * @param userId The ID of the user to get ExecutedWorkoutDTOs for.
    * @param startingIndex The index of the record to start with.
    * @param pageSize The number of records to return. Could be less if on the final page.

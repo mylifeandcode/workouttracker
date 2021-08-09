@@ -11,11 +11,11 @@ class UserServiceMock {
 describe('UserSelectedGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule ], 
+      imports: [ RouterTestingModule ],
       providers: [
-        UserSelectedGuard, 
+        UserSelectedGuard,
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: UserServiceMock
         }
       ]

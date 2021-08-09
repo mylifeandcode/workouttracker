@@ -9,7 +9,7 @@ import { UserService } from '../user.service';
 import { UserNotSelectedGuard } from './user-not-selected.guard';
 
 class UserServiceMock {
-  getCurrentUserInfo = 
+  getCurrentUserInfo =
     jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
 }
 
@@ -25,11 +25,11 @@ describe('UserNotSelectedGuard', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes(
-          [{path: 'home', component: FakeComponent}]) 
+          [{path: 'home', component: FakeComponent}])
       ],
       providers: [
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: UserServiceMock
         }
       ]
@@ -42,7 +42,7 @@ describe('UserNotSelectedGuard', () => {
   });
 
   it('should return false from canActivate() and redirect to home when user is not null', () => {
-    
+
     //ARRANGE
     const userService = TestBed.inject(UserService);
     const router = TestBed.inject(Router);

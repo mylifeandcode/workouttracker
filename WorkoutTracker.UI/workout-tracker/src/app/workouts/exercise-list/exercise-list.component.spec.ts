@@ -21,15 +21,15 @@ describe('ExerciseListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExerciseListComponent ], 
-      imports: [ 
-        TableModule, 
-        RouterTestingModule, 
-        MultiSelectModule 
-      ], 
-      providers: [ 
+      declarations: [ ExerciseListComponent ],
+      imports: [
+        TableModule,
+        RouterTestingModule,
+        MultiSelectModule
+      ],
+      providers: [
         {
-          provide: ExerciseService, 
+          provide: ExerciseService,
           useClass: ExerciseServiceMock
         }
       ]

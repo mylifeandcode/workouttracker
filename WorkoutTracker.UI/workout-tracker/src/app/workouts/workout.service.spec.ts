@@ -8,7 +8,7 @@ const TEST_WORKOUT_ID = "5";
 const API_ROOT_URL = "http://localhost:5600/api/workouts";
 
 describe('WorkoutService', () => {
-  beforeEach(() => 
+  beforeEach(() =>
     TestBed.configureTestingModule({
       imports :[
         HttpClientTestingModule
@@ -23,7 +23,7 @@ describe('WorkoutService', () => {
   it('should get workout by ID', (done: DoneFn) => {
     const service: WorkoutService = TestBed.inject(WorkoutService);
     const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
-    
+
     const expectedResults = new Workout();
     const workoutId: number = parseInt(TEST_WORKOUT_ID);
     expectedResults.id = workoutId;
@@ -32,7 +32,7 @@ describe('WorkoutService', () => {
       (workout: Workout) => {
         expect(workout).toEqual(expectedResults);
         done();
-      }, 
+      },
       fail
     );
 
@@ -45,7 +45,7 @@ describe('WorkoutService', () => {
   });
 
   it('should add new workout', (done: DoneFn) => {
-    
+
     //ARRANGE
     const service: WorkoutService = TestBed.inject(WorkoutService);
     const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
@@ -57,7 +57,7 @@ describe('WorkoutService', () => {
         (workout: Workout) => {
           expect(workout).toEqual(workout); //ASSERT
           done();
-        }, 
+        },
         fail
     );
 
@@ -73,7 +73,7 @@ describe('WorkoutService', () => {
   });
 
   it('should update existing workout', (done: DoneFn) => {
-    
+
     //ARRANGE
     const service: WorkoutService = TestBed.get(WorkoutService);
     const httpMock: HttpTestingController = TestBed.get(HttpTestingController);
@@ -86,7 +86,7 @@ describe('WorkoutService', () => {
         (workout: Workout) => {
           expect(workout).toEqual(workout); //ASSERT
           done();
-        }, 
+        },
         fail
     );
 
@@ -99,7 +99,7 @@ describe('WorkoutService', () => {
     // Respond with the mock results
     req.flush(workout);
 
-  });  
+  });
 
 });
 

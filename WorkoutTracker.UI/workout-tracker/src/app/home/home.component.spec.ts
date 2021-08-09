@@ -22,11 +22,11 @@ describe('HomeComponent', () => {
         RouterTestingModule.withRoutes(
           [{path: 'login', component: FakeComponent}]
         )
-      ], 
-      declarations: [ HomeComponent ], 
+      ],
+      declarations: [ HomeComponent ],
       providers: [
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: UserServiceMock
         }
       ]
@@ -45,20 +45,20 @@ describe('HomeComponent', () => {
   });
 
   it('should allow user to log off', () => {
-    
+
     //ARRANGE
     const userService = TestBed.inject(UserService);
     const router = TestBed.inject(Router);
 
     spyOn(router, 'navigate').and.callThrough();
-    
+
     //ACT
     component.logOff();
 
     //ASSERT
     expect(userService.logOff).toHaveBeenCalledTimes(1);
     expect(router.navigate).toHaveBeenCalledWith(['login']);
-    
+
   });
 
 });

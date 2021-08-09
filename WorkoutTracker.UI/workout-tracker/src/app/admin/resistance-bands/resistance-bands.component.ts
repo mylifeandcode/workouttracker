@@ -7,17 +7,11 @@ import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from './resistance-band.service';
 
 @Component({
-  selector: 'app-resistance-bands',
+  selector: 'wt-resistance-bands',
   templateUrl: './resistance-bands.component.html',
   styleUrls: ['./resistance-bands.component.css']
 })
 export class ResistanceBandsComponent implements OnInit {
-
-  constructor(
-    private _resistanceBandService: ResistanceBandService, 
-    private _userService: UserService, 
-    private _messageService: MessageService, 
-    private _confirmationService: ConfirmationService) { }
 
   public resistanceBands: ResistanceBand[] = null;
   public busy: boolean = false;
@@ -26,10 +20,17 @@ export class ResistanceBandsComponent implements OnInit {
   //Add modal related
   public showAddDialog: boolean;
   public newResistanceBand: ResistanceBand = null; //TODO: Revisit. Not really a fan of this approach.
-  public modalSubmitted: boolean;  
+  public modalSubmitted: boolean;
 
   //This is used to store the original row when we go into edit mode
   private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {};
+
+  constructor(
+    private _resistanceBandService: ResistanceBandService,
+    private _userService: UserService,
+    private _messageService: MessageService,
+    private _confirmationService: ConfirmationService) { }
+
 
   //Table edit code based on PrimeNg's example at https://www.primefaces.org/primeng/showcase/#/table/edit
 
@@ -44,14 +45,14 @@ export class ResistanceBandsComponent implements OnInit {
 
   public onRowEditSave(band: ResistanceBand): void {
     //Delete our cloned row, we don't need it any more.
-    delete this._clonedResistanceBands[band.id]; 
+    delete this._clonedResistanceBands[band.id];
 
     //this.messageService.add({severity:'success', summary: 'Success', detail:'Product is updated'});
     this.updateResistanceBand(band);
   }
 
   public onRowEditCancel(band: ResistanceBand, index: number): void {
-    //Replace the row we were editing with the clone, so in case we made any changes we'll get the original 
+    //Replace the row we were editing with the clone, so in case we made any changes we'll get the original
     //version back.
     this.resistanceBands[index] = this._clonedResistanceBands[band.id];
 
@@ -81,9 +82,9 @@ export class ResistanceBandsComponent implements OnInit {
             this.getResistanceBandData();
           });
         }
-    });    
+    });
   }
-  
+
   public hideModal(): void {
     this.showAddDialog = false;
     this.modalSubmitted = false;
@@ -94,7 +95,7 @@ export class ResistanceBandsComponent implements OnInit {
       .getAll()
       .subscribe((results: ResistanceBand[]) => this.resistanceBands = results);
   }
-  
+
   private addResistanceBand(): void {
     this.newResistanceBand.createdByUserId = this._userService.currentUserId;
     this.newResistanceBand.createdDateTime = new Date();
@@ -104,7 +105,7 @@ export class ResistanceBandsComponent implements OnInit {
         (band: ResistanceBand) => {
           this._messageService.add({severity:'success', summary: 'Successful', detail: 'Resistance Band added', life: 3000});
           this.getResistanceBandData();
-        }, 
+        },
         (error: any) => {
           this._messageService.add({severity:'error', summary: 'Error', detail: 'Failed to add Resistance Band', sticky: true});
         }
@@ -119,10 +120,10 @@ export class ResistanceBandsComponent implements OnInit {
       .subscribe(
         (updatedBand: ResistanceBand) => {
           this._messageService.add({severity:'success', summary: 'Successful', detail: 'Resistance Band updated', life: 3000});
-        }, 
+        },
         (error: any) => {
           this._messageService.add({severity:'error', summary: 'Error', detail: 'Failed to update Resistance Band', sticky: true});
-        }        
+        }
       );
   }
 }

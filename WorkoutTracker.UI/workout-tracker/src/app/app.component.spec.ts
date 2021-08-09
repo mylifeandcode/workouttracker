@@ -5,10 +5,10 @@ import { AppComponent } from './app.component';
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'wt-nav', 
+  selector: 'wt-nav',
   template: ''
 })
-class NavComponentMock {
+class MockNavComponent {
 
 }
 
@@ -20,8 +20,8 @@ describe('AppComponent', () => {
         RouterTestingModule
       ],
       declarations: [
-        AppComponent, 
-        NavComponentMock
+        AppComponent,
+        MockNavComponent
       ],
     }).compileComponents();
   }));

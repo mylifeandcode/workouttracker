@@ -6,6 +6,6 @@ export class WorkoutTrackerPage {
   }
 
   getParagraphText() {
-    return element(by.css('app-root h1')).getText();
+    return element(by.css('wt-root h1')).getText();
   }
 }

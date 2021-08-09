@@ -19,7 +19,7 @@ export class CustomValidators {
 
     static formGroupOfBooleansRequireOneTrue(formGroup: FormGroup) {
         let valid = false;
-        
+
         for (const field in formGroup.controls) {
             const control = formGroup.get(field);
 
@@ -31,7 +31,7 @@ export class CustomValidators {
 
         return valid ? null : {
             formGroupOfBooleansRequireOneTrue: true
-        };        
-     
+        };
+
     }
 }

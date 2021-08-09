@@ -1,14 +1,14 @@
 import { NamedEntity } from '../../shared/models/named-entity';
 
 export class TargetArea extends NamedEntity {
-    
-    constructor (
-        id: number, 
-        name: string, 
-        createdByUserId: number, 
-        createdDateTime: Date, 
-        modifiedByUserId: number, 
-        modifiedDateTime: Date, 
+
+    constructor(
+        id: number,
+        name: string,
+        createdByUserId: number,
+        createdDateTime: Date,
+        modifiedByUserId: number,
+        modifiedDateTime: Date,
         public selected: boolean) {
 
             super();

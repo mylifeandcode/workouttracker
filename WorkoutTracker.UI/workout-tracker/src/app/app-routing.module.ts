@@ -8,25 +8,25 @@ import { UserNotSelectedGuard } from './core/guards/user-not-selected.guard';
 const routes: Routes = [
   {
     path: '',
-    component: UserSelectComponent, 
+    component: UserSelectComponent,
     canActivate: [UserNotSelectedGuard]
   },
   {
     path: 'login',
-    component: UserSelectComponent, 
+    component: UserSelectComponent,
     canActivate: [UserNotSelectedGuard]
   },
   {
     path: 'home',
-    component: HomeComponent, 
+    component: HomeComponent,
     canActivate: [UserSelectedGuard]
   },
   {
-    path: 'admin', 
+    path: 'admin',
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
   },
   {
-    path: 'workouts', 
+    path: 'workouts',
     loadChildren: () => import('./workouts/workouts.module').then(m => m.WorkoutsModule)
   },
   {

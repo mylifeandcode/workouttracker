@@ -10,13 +10,13 @@ export class ExerciseInWorkout {
   public exercise: Exercise;
 
   constructor(
-    id: number, 
-    exerciseId: number, 
-    exerciseName: string, 
-    numberOfSets: number, 
-    setType: number, 
+    id: number,
+    exerciseId: number,
+    exerciseName: string,
+    numberOfSets: number,
+    setType: number,
     sequence: number) {
-      
+
     this.id = id;
     this.exerciseId = exerciseId;
     this.numberOfSets = numberOfSets;

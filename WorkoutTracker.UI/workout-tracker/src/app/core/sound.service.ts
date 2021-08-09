@@ -9,10 +9,10 @@ export class SoundService {
   constructor() { }
 
   public playSound(soundFile: string): void {
-    var sound = new Howl({
+    const sound = new Howl({
       src: [soundFile]
     });
-     
-    sound.play();    
+
+    sound.play();
   }
 }

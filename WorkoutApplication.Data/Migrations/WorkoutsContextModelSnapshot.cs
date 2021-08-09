@@ -458,6 +458,86 @@ namespace WorkoutApplication.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("WorkoutApplication.Domain.Users.UserMinMaxReps", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Goal")
+                        .HasColumnType("int");
+
+                    b.Property<byte>("MaxReps")
+                        .HasColumnType("tinyint");
+
+                    b.Property<byte>("MinReps")
+                        .HasColumnType("tinyint");
+
+                    b.Property<int?>("ModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SetType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserSettingsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserSettingsId");
+
+                    b.ToTable("UserMinMaxReps");
+                });
+
+            modelBuilder.Entity("WorkoutApplication.Domain.Users.UserSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Goal")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("RecommendationsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserSettings");
+                });
+
             modelBuilder.Entity("WorkoutApplication.Domain.Workouts.ExecutedWorkout", b =>
                 {
                     b.Property<int>("Id")
@@ -669,6 +749,24 @@ namespace WorkoutApplication.Data.Migrations
                     b.Navigation("Exercise");
                 });
 
+            modelBuilder.Entity("WorkoutApplication.Domain.Users.UserMinMaxReps", b =>
+                {
+                    b.HasOne("WorkoutApplication.Domain.Users.UserSettings", null)
+                        .WithMany("RepSettings")
+                        .HasForeignKey("UserSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WorkoutApplication.Domain.Users.UserSettings", b =>
+                {
+                    b.HasOne("WorkoutApplication.Domain.Users.User", null)
+                        .WithOne("Settings")
+                        .HasForeignKey("WorkoutApplication.Domain.Users.UserSettings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("WorkoutApplication.Domain.Workouts.ExecutedWorkout", b =>
                 {
                     b.HasOne("WorkoutApplication.Domain.Workouts.Workout", "Workout")
@@ -688,6 +786,16 @@ namespace WorkoutApplication.Data.Migrations
             modelBuilder.Entity("WorkoutApplication.Domain.Exercises.Exercise", b =>
                 {
                     b.Navigation("ExerciseTargetAreaLinks");
+                });
+
+            modelBuilder.Entity("WorkoutApplication.Domain.Users.User", b =>
+                {
+                    b.Navigation("Settings");
+                });
+
+            modelBuilder.Entity("WorkoutApplication.Domain.Users.UserSettings", b =>
+                {
+                    b.Navigation("RepSettings");
                 });
 
             modelBuilder.Entity("WorkoutApplication.Domain.Workouts.ExecutedWorkout", b =>

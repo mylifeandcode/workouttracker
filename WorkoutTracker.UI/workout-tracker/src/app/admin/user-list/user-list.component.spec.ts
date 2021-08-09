@@ -7,9 +7,9 @@ import { of } from 'rxjs';
 import { User } from 'app/core/models/user';
 
 class UserServiceMock {
-  private fakeUsers: User[] = 
+  private fakeUsers: User[] =
   [
-    new User({name: 'Fred'}), 
+    new User({name: 'Fred'}),
     new User({name: 'Joe'})
   ];
 
@@ -24,11 +24,11 @@ describe('UserListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserListComponent ], 
-      imports: [ RouterTestingModule ], 
+      declarations: [ UserListComponent ],
+      imports: [ RouterTestingModule ],
       providers: [
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: UserServiceMock
         }
       ]
@@ -61,7 +61,7 @@ describe('UserListComponent', () => {
     //ACT
     fixture.detectChanges();
     component.deleteUser(1);
-    
+
     //ASSERT
     expect(userSvc.deleteUser).not.toHaveBeenCalled();
   });

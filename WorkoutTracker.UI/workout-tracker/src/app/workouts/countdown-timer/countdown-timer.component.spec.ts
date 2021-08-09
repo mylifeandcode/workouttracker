@@ -8,7 +8,7 @@ class SoundServiceMock {
   playSound = jasmine.createSpy('playSound');
 }
 
-//TODO: Need to resolve tests which are failing because ViewChild objects aren't visible 
+//TODO: Need to resolve tests which are failing because ViewChild objects aren't visible
 //and therefore the backing objects are null
 xdescribe('CountdownTimerComponent', () => {
   let component: CountdownTimerComponent;
@@ -16,10 +16,10 @@ xdescribe('CountdownTimerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CountdownTimerComponent ], 
+      declarations: [ CountdownTimerComponent ],
       providers: [
         {
-          provide: SoundService, 
+          provide: SoundService,
           useClass: SoundServiceMock
         }
       ]
@@ -46,7 +46,7 @@ xdescribe('CountdownTimerComponent', () => {
   it('should start countdown on final pre-countdown event', () => {
     //ARRANGE
     const soundService = TestBed.inject(SoundService);
-    let preCountdownEvent = <CountdownEvent>{ action: 'done', status: null, left: null, text: null };
+    const preCountdownEvent = <CountdownEvent>{ action: 'done', status: null, left: null, text: null };
 
     //ACT
     component.handlePreCountdownEvent(preCountdownEvent);

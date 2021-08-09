@@ -15,13 +15,13 @@ import { User } from 'app/core/models/user';
 import { Workout } from 'app/workouts/models/workout';
 
 @Component({
-  selector: 'wt-exercise-list-mini', 
+  selector: 'wt-exercise-list-mini',
   template: ''
 })
 class FakeExerciseListMiniComponent{}
 
 @Component({
-  selector: 'wt-workout-set-definition', 
+  selector: 'wt-workout-set-definition',
   template: ''
 })
 class FakeWorkoutSetDefComponent{}
@@ -46,35 +46,35 @@ describe('WorkoutEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
-        WorkoutEditComponent, 
-        FakeExerciseListMiniComponent, 
+      declarations: [
+        WorkoutEditComponent,
+        FakeExerciseListMiniComponent,
         FakeWorkoutSetDefComponent
-      ], 
+      ],
       imports: [
-        ReactiveFormsModule, 
-        ProgressSpinnerModule, 
+        ReactiveFormsModule,
+        ProgressSpinnerModule,
         RouterTestingModule
-      ], 
+      ],
       providers: [
         {
-          provide: ActivatedRoute, 
+          provide: ActivatedRoute,
           useValue: {
             params: of({
               id: 5
             })
           }
-        }, 
+        },
         {
-          provide: WorkoutService, 
+          provide: WorkoutService,
           useClass: WorkoutServiceMock
-        }, 
+        },
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: UserServiceMock
-        }, 
+        },
         {
-          provide: BsModalService, 
+          provide: BsModalService,
           useClass: BsModalServiceMock
         }
       ]

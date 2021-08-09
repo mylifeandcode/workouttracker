@@ -7,6 +7,7 @@ using WorkoutApplication.Repository;
 using WorkoutTracker.Application.BaseClasses;
 using WorkoutTracker.Application.Exercises;
 using WorkoutTracker.Application.FilterClasses;
+using WorkoutTracker.Application.Users;
 
 namespace WorkoutTracker.Application.Workouts
 {
@@ -14,14 +15,17 @@ namespace WorkoutTracker.Application.Workouts
     {
         private IRepository<Workout> _workoutRepo;
         private IExerciseAmountRecommendationService _exerciseRecommendationService;
+        private IUserService _userService;
 
         public ExecutedWorkoutService(
             IRepository<ExecutedWorkout> executedWorkoutRepo, 
             IRepository<Workout> workoutRepo,
-            IExerciseAmountRecommendationService exerciseAmountRecommendationService) : base(executedWorkoutRepo) 
+            IExerciseAmountRecommendationService exerciseAmountRecommendationService, 
+            IUserService userService) : base(executedWorkoutRepo) 
         {
             _workoutRepo = workoutRepo ?? throw new ArgumentNullException(nameof(workoutRepo));
             _exerciseRecommendationService = exerciseAmountRecommendationService ?? throw new ArgumentNullException(nameof(exerciseAmountRecommendationService));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         public ExecutedWorkout Create(int workoutId)
@@ -121,11 +125,23 @@ namespace WorkoutTracker.Application.Workouts
                     exerciseToExecute.SetType = exercise.SetType;
 
                     var lastWorkoutWithThisExercise = new ExecutedWorkout(); //TODO: Get last workout with this exercise!
-                    
-                    var recommendation = 
-                        _exerciseRecommendationService.GetRecommendation(
+
+                    ExerciseAmountRecommendation recommendation;
+
+                    //TODO: This is temp code. Refactor for a better way of getting the current user.
+                    var user = _userService.GetById(workout.CreatedByUserId);
+
+                    if (user == null)
+                        throw new ApplicationException($"Couldn't find user {workout.CreatedByUserId}");
+
+                    var recommendationsEnabled = (user?.Settings?.RecommendationsEnabled ?? false);
+
+                    if (recommendationsEnabled)
+                        recommendation = _exerciseRecommendationService.GetRecommendation(
                             exercise.Exercise, lastWorkoutWithThisExercise); //TODO: Provide user settings!
-                    
+                    else
+                        recommendation = new ExerciseAmountRecommendation();
+
                     exerciseToExecute.TargetRepCount = recommendation.Reps;
                     exerciseToExecute.ResistanceAmount = recommendation.ResistanceAmount;
                     exerciseToExecute.ResistanceMakeup = recommendation.ResistanceMakeup;

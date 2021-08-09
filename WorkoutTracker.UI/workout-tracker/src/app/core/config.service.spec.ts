@@ -15,10 +15,10 @@ describe('ConfigService', () => {
 
   it('should convert passed-in configuration object into map', inject([ConfigService], (service: ConfigService) => {
     //ARRANGE
-    let anyOldObject = {
-      blah: "whatever", 
-      blah2: "whateverStill", 
-      hello: "world", 
+    const anyOldObject = {
+      blah: "whatever",
+      blah2: "whateverStill",
+      hello: "world",
       complexObject: {
         my: "complex",
         objectThing: "rocks"
@@ -37,8 +37,8 @@ describe('ConfigService', () => {
 
   it('should return null when requested config setting not found', inject([ConfigService], (service: ConfigService) => {
     //ARRANGE
-    let anyOldObject = {
-      blah: "whatever", 
+    const anyOldObject = {
+      blah: "whatever",
       blah2: "whateverStill"
     };
 
@@ -47,6 +47,6 @@ describe('ConfigService', () => {
 
     //ASSERT
     expect(service.get("blah3")).toBeNull();
-  }));  
+  }));
 
 });

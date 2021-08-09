@@ -26,7 +26,7 @@ class MessageServiceMock {
 }
 
 class ConfirmationServiceMock {
-  confirm = 
+  confirm =
     jasmine.createSpy('confirm')
       .and.callFake((confirmation: Confirmation) => { confirmation.accept(); });
       //.and.returnValue(this);
@@ -39,22 +39,22 @@ describe('ResistanceBandsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ResistanceBandsComponent ], 
+      declarations: [ ResistanceBandsComponent ],
       providers: [
         {
-          provide: ResistanceBandService, 
+          provide: ResistanceBandService,
           useClass: ResistanceBandServiceMock
-        }, 
+        },
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: UserServiceMock
-        }, 
+        },
         {
-          provide: MessageService, 
+          provide: MessageService,
           useClass: MessageServiceMock
-        }, 
+        },
         {
-          provide: ConfirmationService, 
+          provide: ConfirmationService,
           useClass: ConfirmationServiceMock
         }
       ]
@@ -90,7 +90,12 @@ describe('ResistanceBandsComponent', () => {
 
     //ASSERT
     expect(resistanceBandService.add).toHaveBeenCalledWith(component.newResistanceBand);
-    expect(messageService.add).toHaveBeenCalledWith({severity:'success', summary: 'Successful', detail: 'Resistance Band added', life: 3000});
+    expect(messageService.add)
+      .toHaveBeenCalledWith({
+        severity:'success',
+        summary: 'Successful',
+        detail: 'Resistance Band added', life: 3000
+      });
     expect(resistanceBandService.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refrsh after the save
 
   });
@@ -107,7 +112,12 @@ describe('ResistanceBandsComponent', () => {
 
     //ASSERT
     expect(resistanceBandService.update).toHaveBeenCalledWith(band);
-    expect(messageService.add).toHaveBeenCalledWith({severity:'success', summary: 'Successful', detail: 'Resistance Band updated', life: 3000});
+    expect(messageService.add)
+      .toHaveBeenCalledWith({
+        severity:'success',
+        summary: 'Successful',
+        detail: 'Resistance Band updated', life: 3000
+      });
 
   });
 
@@ -125,7 +135,12 @@ describe('ResistanceBandsComponent', () => {
 
     //ASSERT
     expect(resistanceBandService.delete).toHaveBeenCalledWith(band.id);
-    expect(messageService.add).toHaveBeenCalledWith({severity:'success', summary: 'Successful', detail: 'Resistance Band deleted', life: 3000});
+    expect(messageService.add)
+      .toHaveBeenCalledWith({
+        severity:'success',
+        summary: 'Successful',
+        detail: 'Resistance Band deleted', life: 3000
+      });
     expect(resistanceBandService.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refresh after deletion
 
   });
@@ -151,7 +166,7 @@ describe('ResistanceBandsComponent', () => {
   });
 
   it('should open modal', () => {
-    
+
     //ACT
     component.openAddModal();
 

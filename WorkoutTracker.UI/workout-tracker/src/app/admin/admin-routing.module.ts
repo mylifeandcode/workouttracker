@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { UserSelectedGuard } from 'app/core/guards/user-selected.guard'; //TODO: What's the correct way of importing a guard from another module?
+
+//TODO: What's the correct way of importing a guard from another module?
+import { UserSelectedGuard } from 'app/core/guards/user-selected.guard';
+
 import { AdminHomeComponent } from './admin-home/admin-home.component';
 import { ResistanceBandsComponent } from './resistance-bands/resistance-bands.component';
 import { UserEditComponent } from './user-edit/user-edit.component';
@@ -11,14 +14,14 @@ const routes: Routes = [
   {
     path: 'resistancebands',
     component: ResistanceBandsComponent
-  }, 
+  },
   {
-    path: 'users', 
+    path: 'users',
     component: UserListComponent
-  }, 
+  },
   {
     path: 'users/edit/:id',
-    component: UserEditComponent, 
+    component: UserEditComponent,
     canActivate: [UserSelectedGuard]
   },
   {
@@ -28,11 +31,11 @@ const routes: Routes = [
   {
     path: 'users/add',
     component: UserEditComponent
-  }, 
+  },
   {
-    path: '**', 
+    path: '**',
     component: AdminHomeComponent
-  }  
+  }
 ];
 
 @NgModule({

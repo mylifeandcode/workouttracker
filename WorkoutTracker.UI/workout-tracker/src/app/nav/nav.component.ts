@@ -28,6 +28,6 @@ export class NavComponent implements OnInit {
   public logOff(): void {
     this._userService.logOff();
     this._router.navigate(['login']);
-  }  
+  }
 
 }

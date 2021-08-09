@@ -14,12 +14,12 @@ export abstract class ExerciseListBase {
     public exercises: ExerciseDTO[];
     public targetAreas: SelectItem[] = [];
 
-    constructor(protected _exerciseSvc: ExerciseService) { 
+    constructor(protected _exerciseSvc: ExerciseService) {
         //TODO: Move to ngOnInit()
         this._exerciseSvc
             .getTargetAreas()
             .pipe(map(targetAreas => targetAreas.map(targetArea => targetArea.name)))
-            .subscribe((targetAreaNames: string[]) => { 
+            .subscribe((targetAreaNames: string[]) => {
                 targetAreaNames.forEach(element => {
                     this.targetAreas.push({label: element, value: element});
                 });
@@ -32,11 +32,11 @@ export abstract class ExerciseListBase {
         this.loading = true;
         this._exerciseSvc
             .getAll(first, this.pageSize, nameContains, targetAreaContains)
-                .pipe(finalize(() => { 
+                .pipe(finalize(() => {
                     setTimeout(() => { this.loading = false; }, 500)
                 }))
                 .subscribe(
-                    (exercises: PaginatedResults<ExerciseDTO>) => { 
+                    (exercises: PaginatedResults<ExerciseDTO>) => {
                         this.exercises = exercises.results;
                         this.totalRecords = exercises.totalCount;
                         console.log("TOTAL: ", exercises.totalCount);

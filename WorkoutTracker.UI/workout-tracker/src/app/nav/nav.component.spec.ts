@@ -10,7 +10,7 @@ const username = 'someuser';
 
 class UserServiceMock {
 
-  currentUserInfo = 
+  currentUserInfo =
     of(new User({name: username}));
 
 }
@@ -24,14 +24,14 @@ describe('NavComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [        
+      imports: [
         RouterTestingModule.withRoutes(
           [{path: 'admin/users', component: FakeComponent}])
       ],
-      declarations: [ NavComponent ], 
+      declarations: [ NavComponent ],
       providers: [
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: UserServiceMock
         }
       ]
@@ -50,7 +50,7 @@ describe('NavComponent', () => {
   });
 
   it('should determine if user is logged in', () => {
-    
+
     //ARRANGE
     const userService = TestBed.inject(UserService);
 
@@ -74,5 +74,5 @@ describe('NavComponent', () => {
     expect(component.userName = username);
 
   });
-  
+
 });

@@ -28,26 +28,26 @@ import { UserListComponent } from './user-list/user-list.component';
 
 @NgModule({
   declarations: [
-    AdminHomeComponent, 
-    ResistanceBandsComponent,     
-    UserEditComponent, 
+    AdminHomeComponent,
+    ResistanceBandsComponent,
+    UserEditComponent,
     UserListComponent
   ],
   imports: [
-    AdminRoutingModule,     
-    ButtonModule, 
-    ConfirmDialogModule,     
-    CommonModule, 
-    DialogModule, 
-    FormsModule, 
-    MessageModule, 
-    MessagesModule, 
-    ReactiveFormsModule, 
-    TableModule, 
+    AdminRoutingModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    CommonModule,
+    DialogModule,
+    FormsModule,
+    MessageModule,
+    MessagesModule,
+    ReactiveFormsModule,
+    TableModule,
     ToastModule
-  ], 
+  ],
   providers: [
-    ConfirmationService, 
+    ConfirmationService,
     MessageService
   ]
 })

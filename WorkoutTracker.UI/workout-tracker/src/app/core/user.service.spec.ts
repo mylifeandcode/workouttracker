@@ -17,15 +17,15 @@ describe('UserService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        UserService, 
+        UserService,
         {
-          provide: CookieService, 
+          provide: CookieService,
           useClass: CookieServiceMock
         }
-      ], 
+      ],
       imports :[
         HttpClientTestingModule
-      ]      
+      ]
     });
   });
 
@@ -37,7 +37,7 @@ describe('UserService', () => {
     const expectedResults = new Array<User>();
 
     service.getAll().subscribe(
-      (users: Array<User>) => expect(users).toEqual(expectedResults), 
+      (users: Array<User>) => expect(users).toEqual(expectedResults),
       fail
     );
 
@@ -45,15 +45,15 @@ describe('UserService', () => {
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
-    req.flush(expectedResults);    
+    req.flush(expectedResults);
 
   }));
 
   it('should get current user info', () => {
-    
+
     const userService = TestBed.inject(UserService);
     const httpMock = TestBed.inject(HttpTestingController);
-    
+
 
     const expectedResults = new User();
     const userId: number = parseInt(TEST_USER_ID);
@@ -61,7 +61,7 @@ describe('UserService', () => {
 
     //We need to log in first so we'll have a current user
     userService.logIn(userId).subscribe(
-      (user: User) => expect(user).toEqual(expectedResults), 
+      (user: User) => expect(user).toEqual(expectedResults),
       fail
     );
 
@@ -75,19 +75,19 @@ describe('UserService', () => {
     req.flush(expectedResults);
 
     userService.getCurrentUserInfo().subscribe(
-      (user: User) => expect(user).toEqual(expectedResults), 
+      (user: User) => expect(user).toEqual(expectedResults),
       fail
     );
-    
+
   });
-  
+
   it('should get user info by user ID',  inject([HttpTestingController, UserService, CookieService], (httpMock: HttpTestingController, service: UserService, cookieSvcMock: CookieServiceMock) => {
     const expectedResults = new User();
     const userId: number = parseInt(TEST_USER_ID);
     expectedResults.id = userId;
 
     service.getUserInfo(userId).subscribe(
-      (user: User) => expect(user).toEqual(expectedResults), 
+      (user: User) => expect(user).toEqual(expectedResults),
       fail
     );
 
@@ -96,18 +96,18 @@ describe('UserService', () => {
 
     // Respond with the mock results
     req.flush(expectedResults);
-    
+
     expect(cookieSvcMock.get).not.toHaveBeenCalled();
     expect(cookieSvcMock.set).not.toHaveBeenCalled();
 
-  }));  
+  }));
 
   it('should add user', inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
     const user = new User();
 
     service.addUser(user)
       .subscribe(
-        (result: User) => expect(result).toEqual(user), 
+        (result: User) => expect(result).toEqual(user),
         fail
       );
 
@@ -117,7 +117,7 @@ describe('UserService', () => {
 
     // Respond with the mock results
     request.flush(user);
-    
+
   }));
 
   it('should update user', inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
@@ -126,7 +126,7 @@ describe('UserService', () => {
 
     service.updateUser(user)
       .subscribe(
-        (result: User) => expect(result).toEqual(user), 
+        (result: User) => expect(result).toEqual(user),
         fail
       );
 
@@ -136,7 +136,7 @@ describe('UserService', () => {
 
     // Respond with the mock results
     request.flush(user);
-    
+
   }));
 
   it('should delete user', inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
@@ -144,7 +144,7 @@ describe('UserService', () => {
 
     service.deleteUser(7)
       .subscribe(
-        (result: any) => expect(result).toBeNull(), 
+        (result: any) => expect(result).toBeNull(),
         fail
       );
 
@@ -154,7 +154,7 @@ describe('UserService', () => {
     // Respond with the mock results
     //TODO: Revisit/complete
     request.flush(null)
-    
+
   }));
 
   it('should indicate user is logged in when a user is logged in', () => {
@@ -168,7 +168,7 @@ describe('UserService', () => {
     expectedResults.id = userId;
 
     service.logIn(userId).subscribe(
-      (user: User) => expect(user).toEqual(expectedResults), 
+      (user: User) => expect(user).toEqual(expectedResults),
       fail
     );
 
@@ -190,22 +190,22 @@ describe('UserService', () => {
 
     //ACT
     service.logOff();
-    
+
     //ASSERT
     expect(service.isUserLoggedIn()).toBeFalsy();
 
   });
 
   it('should get the current user ID', () => {
-    
+
     //ARRANGE
     const service = TestBed.inject(UserService);
     const httpMock = TestBed.inject(HttpTestingController);
     const userId = parseInt(TEST_USER_ID);
     const expectedResults = new User({id: userId}); //CookieService mock returns TEST_USER_ID for get() calls
-    
+
     service.logIn(userId).subscribe(
-      (user: User) => expect(user).toEqual(expectedResults), 
+      (user: User) => expect(user).toEqual(expectedResults),
       fail
     );
 

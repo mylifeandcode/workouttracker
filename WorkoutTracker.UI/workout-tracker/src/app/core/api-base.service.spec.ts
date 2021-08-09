@@ -11,7 +11,7 @@ class Widget extends Entity {
 
 }
 
-//Because ApiBaseService<T> is (and should be) abstract, we'll create a class local 
+//Because ApiBaseService<T> is (and should be) abstract, we'll create a class local
 //to this spec to extend it so we can test it.
 @Injectable({
   providedIn: 'root',
@@ -27,10 +27,10 @@ describe('ApiBaseService', () => {
     TestBed.configureTestingModule({
       providers: [
         WidgetService
-      ], 
+      ],
       imports :[
         HttpClientTestingModule
-      ]      
+      ]
     });
   });
 
@@ -48,8 +48,8 @@ describe('ApiBaseService', () => {
   it('should get all', () => {
 
     //ARRANGE
-    let httpMock = TestBed.inject(HttpTestingController);
-    let widgets = new Array<Widget>();
+    const httpMock = TestBed.inject(HttpTestingController);
+    const widgets = new Array<Widget>();
 
     //ACT
     const result = service.getAll();
@@ -61,15 +61,15 @@ describe('ApiBaseService', () => {
     const req = httpMock.expectOne(API_ROOT);
     expect(req.request.method).toEqual('GET');
     //Respond with the mock results
-    req.flush(widgets);    
+    req.flush(widgets);
 
   });
 
   it('should get by ID', () => {
 
     //ARRANGE
-    let httpMock = TestBed.inject(HttpTestingController);
-    let widget = new Widget();
+    const httpMock = TestBed.inject(HttpTestingController);
+    const widget = new Widget();
     const WIDGET_ID: number = 1;
 
     //ACT
@@ -82,15 +82,15 @@ describe('ApiBaseService', () => {
     const req = httpMock.expectOne(`${API_ROOT}/${WIDGET_ID}`);
     expect(req.request.method).toEqual('GET');
     //Respond with the mock results
-    req.flush(widget);    
-    
+    req.flush(widget);
+
   });
 
   it('should add', () => {
 
     //ARRANGE
-    let httpMock = TestBed.inject(HttpTestingController);
-    let widget = new Widget();
+    const httpMock = TestBed.inject(HttpTestingController);
+    const widget = new Widget();
 
     //ACT
     const result = service.add(widget);
@@ -102,15 +102,15 @@ describe('ApiBaseService', () => {
     const req = httpMock.expectOne(API_ROOT);
     expect(req.request.method).toEqual('POST');
     //Respond with the mock results
-    req.flush(widget);    
-    
+    req.flush(widget);
+
   });
-  
+
   it('should update', () => {
 
     //ARRANGE
-    let httpMock = TestBed.inject(HttpTestingController);
-    let widget = new Widget();
+    const httpMock = TestBed.inject(HttpTestingController);
+    const widget = new Widget();
     const WIDGET_ID: number = 1;
     widget.id = WIDGET_ID;
 
@@ -124,14 +124,14 @@ describe('ApiBaseService', () => {
     const req = httpMock.expectOne(`${API_ROOT}/${WIDGET_ID}`);
     expect(req.request.method).toEqual('PUT');
     //Respond with the mock results
-    req.flush(widget);    
-    
+    req.flush(widget);
+
   });
-  
+
   it('should delete', () => {
-    
+
     //ARRANGE
-    let httpMock = TestBed.inject(HttpTestingController);
+    const httpMock = TestBed.inject(HttpTestingController);
     const WIDGET_ID: number = 1;
 
     //ACT
@@ -144,8 +144,8 @@ describe('ApiBaseService', () => {
     const req = httpMock.expectOne(`${API_ROOT}/${WIDGET_ID}`);
     expect(req.request.method).toEqual('DELETE');
     //Respond with the mock results
-    req.flush(new Object());    
+    req.flush(new Object());
 
-  });  
+  });
 
 });

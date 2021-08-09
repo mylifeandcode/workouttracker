@@ -8,7 +8,7 @@ export abstract class UserAware {
     constructor(protected _userService: UserService) {}
 
     protected async getCurrentUserId(): Promise<void> {
-        let result: User = await this._userService.getCurrentUserInfo().toPromise();
+        const result: User = await this._userService.getCurrentUserInfo().toPromise();
         this._userId = result ? result.id : 0;
     }
 
