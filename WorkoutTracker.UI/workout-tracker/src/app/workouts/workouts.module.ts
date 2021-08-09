@@ -29,6 +29,7 @@ import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.compo
 import { WorkoutInfoComponent } from './workout-info/workout-info.component';
 import { ResistanceTypePipe } from './pipes/resistance-type.pipe';
 import { TargetAreasPipe } from './pipes/target-areas.pipe';
+import { WorkoutPlanComponent } from './workout-plan/workout-plan.component';
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import { TargetAreasPipe } from './pipes/target-areas.pipe';
     RecentWorkoutsComponent,
     WorkoutInfoComponent,
     ResistanceTypePipe,
-    TargetAreasPipe
+    TargetAreasPipe,
+    WorkoutPlanComponent
   ],
   imports: [
     CommonModule,

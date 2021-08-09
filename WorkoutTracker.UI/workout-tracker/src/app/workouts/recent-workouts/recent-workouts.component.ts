@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserService } from 'app/core/user.service';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
@@ -19,7 +20,8 @@ export class RecentWorkoutsComponent implements OnInit {
   constructor(
     private _userService: UserService, 
     private _executedWorkoutService: ExecutedWorkoutService, 
-    private _workoutService: WorkoutService) 
+    private _workoutService: WorkoutService, 
+    private _router: Router) 
     { }
 
   public ngOnInit(): void {
@@ -36,5 +38,9 @@ export class RecentWorkoutsComponent implements OnInit {
         this.showExercises = true;
         this.selectedWorkout = result;
       });
+  }
+
+  public doWorkout(workoutId: number): void {
+    this._router.navigate([`workouts/plan/${workoutId}`]);
   }
 }

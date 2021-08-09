@@ -1,0 +1,9 @@
+<p-progressSpinner *ngIf="executedWorkout == null"></p-progressSpinner>
+<ng-container *ngIf="executedWorkout">
+  Here's the plan...
+  <wt-workout-exercise 
+    *ngFor="let exercise of exercisesArray.controls; let i = index" 
+    [formGroup]="exercise">
+  </wt-workout-exercise>
+</ng-container>
+

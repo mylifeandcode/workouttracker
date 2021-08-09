@@ -6,6 +6,7 @@ import { ExerciseListComponent } from './exercise-list/exercise-list.component';
 import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
 import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
 import { WorkoutListComponent } from './workout-list/workout-list.component';
+import { WorkoutPlanComponent } from './workout-plan/workout-plan.component';
 import { WorkoutViewComponent } from './workout-view/workout-view.component';
 import { WorkoutComponent } from './workout/workout.component';
 
@@ -39,6 +40,11 @@ const routes: Routes = [
   {
     path: 'history',
     component: WorkoutHistoryComponent,
+    canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'plan/:id',
+    component: WorkoutPlanComponent, 
     canActivate: [UserSelectedGuard]
   },
   {
