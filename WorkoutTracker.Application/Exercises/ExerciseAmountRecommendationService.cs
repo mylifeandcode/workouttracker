@@ -408,7 +408,7 @@ namespace WorkoutTracker.Application.Exercises
 
         private static List<ExecutedExercise> GetLastSetsOfExercise(int exerciseId, ExecutedWorkout workout)
         {
-            if (workout == null)
+            if (workout == null || workout.Exercises == null)
                 return new List<ExecutedExercise>(0);
             else
                 return workout

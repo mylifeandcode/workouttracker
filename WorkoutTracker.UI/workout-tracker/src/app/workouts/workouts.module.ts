@@ -25,6 +25,8 @@ import { WorkoutSelectComponent } from './workout-select/workout-select.componen
 import { WorkoutViewComponent } from './workout-view/workout-view.component';
 import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';
 import { RatingPipe } from './pipes/rating.pipe';
+import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.component';
+import { WorkoutInfoComponent } from './workout-info/workout-info.component';
 
 
 @NgModule({
@@ -44,7 +46,9 @@ import { RatingPipe } from './pipes/rating.pipe';
     WorkoutSelectComponent,
     WorkoutViewComponent,
     ExecutedExercisesComponent,
-    RatingPipe
+    RatingPipe,
+    RecentWorkoutsComponent,
+    WorkoutInfoComponent
   ],
   imports: [
     CommonModule, 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Workouts;
 using WorkoutTracker.Application.FilterClasses;
 using WorkoutTracker.Application.Workouts;
@@ -58,7 +59,7 @@ namespace WorkoutTracker.UI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<PaginatedResults<ExecutedWorkoutDTO>> Get(int userId, int firstRecord, short pageSize, DateTime? startDateTime = null, DateTime? endDateTime = null)
+        public ActionResult<PaginatedResults<ExecutedWorkoutDTO>> Get(int userId, int firstRecord, short pageSize, DateTime? startDateTime = null, DateTime? endDateTime = null, bool newestFirst = true)
         {
             try
             {
@@ -70,12 +71,17 @@ namespace WorkoutTracker.UI.Controllers
 
                 var executedWorkouts = 
                     _executedWorkoutService
-                        .GetFilteredSubset(firstRecord, pageSize, filter)
+                        .GetFilteredSubset(firstRecord, pageSize, filter, newestFirst)
                         .ToList();
 
                 var results = executedWorkouts.Select((executedWorkout) =>
                 {
-                    return new ExecutedWorkoutDTO(executedWorkout.Id, executedWorkout.Workout.Name, executedWorkout.StartDateTime, executedWorkout.EndDateTime);
+                    return new ExecutedWorkoutDTO(
+                        executedWorkout.Id, 
+                        executedWorkout.Workout.Name, 
+                        executedWorkout.WorkoutId, 
+                        executedWorkout.StartDateTime, 
+                        executedWorkout.EndDateTime);
                 });
 
                 var result = new PaginatedResults<ExecutedWorkoutDTO>(results, totalCount);
@@ -87,7 +93,6 @@ namespace WorkoutTracker.UI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
 
         // POST api/ExecutedWorkout
         [HttpPost]
@@ -102,7 +107,7 @@ namespace WorkoutTracker.UI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+            
         private ExecutedWorkoutFilter BuildExecutedWorkoutFilter(
             int userId, 
             DateTime? startDateTime, 

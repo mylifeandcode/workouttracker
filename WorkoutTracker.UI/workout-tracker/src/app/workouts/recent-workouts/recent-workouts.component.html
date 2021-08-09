@@ -1,0 +1,16 @@
+<h5>Recent Workouts</h5>
+<div class="row" *ngFor="let workout of recentWorkouts">
+  <div class="col-4">
+    {{workout.name}}
+  </div>
+  <div class="col-4">
+    <a type="button" class="view-exercises" (click)="viewExercises(workout.workoutId)">View Exercises</a>
+  </div>
+  <div class="col-4">
+    {{workout.startDateTime | date:'short'}}
+  </div>
+</div>
+
+<p-dialog header="Workout Info" [(visible)]="showExercises">
+  <wt-workout-info [workout]="selectedWorkout"></wt-workout-info>
+</p-dialog>

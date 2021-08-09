@@ -1,0 +1,23 @@
+<p-progressSpinner *ngIf="workout == null"></p-progressSpinner>
+<ng-container *ngIf="workout">
+  <h5>{{workout?.name}}</h5>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Exercise</th>
+        <th scope="col">Sets</th>
+        <th scope="col">Resistance Type</th>
+        <th scope="col">Target Areas</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let exercise in workout.exercises">
+        <td>{{exercise.name}}</td>
+        <td>{{exercise.numberOfSets}}</td>
+        <td>{{exercise.Exercise.resistanceType}}</td>
+        <td>Oops!</td>
+      </tr>
+    </tbody>
+  </table>
+
+</ng-container>

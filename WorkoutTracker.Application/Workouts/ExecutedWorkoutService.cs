@@ -73,14 +73,29 @@ namespace WorkoutTracker.Application.Workouts
             return base.Add(entity, saveChanges);
         }
 
-        public IEnumerable<ExecutedWorkout> GetFilteredSubset(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter)
+        public IEnumerable<ExecutedWorkout> GetFilteredSubset(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst)
         {
             IQueryable<ExecutedWorkout> query = _repo.Get();
 
             if (filter != null)
                 ApplyQueryFilters(ref query, filter);
 
+            if (newestFirst)
+                query = query.OrderByDescending(x => x.CreatedDateTime);
+            else
+                query = query.OrderBy(x => x.CreatedDateTime);
+
             var output = query.Skip(firstRecordIndex).Take(subsetSize);
+            return output;
+        }
+
+        public IEnumerable<ExecutedWorkout> GetRecent(int numberOfMostRecent)
+        {
+            IQueryable<ExecutedWorkout> query = _repo.Get();
+            var output = query
+                .OrderByDescending(workout => workout.Id)
+                //.Distinct(workout.Workout.Id) //TODO: Get last n number of distinct by Workout
+                .Take(numberOfMostRecent);
             return output;
         }
 

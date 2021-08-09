@@ -1,10 +1,9 @@
-import { SetDTO } from "./set-dto";
-import { ExerciseInWorkout } from "./exercise-in-workout";
+import { ExerciseInWorkoutDTO } from "./exercise-in-workout-dto";
 
 export class WorkoutDTO {
     public id: number;
     public workoutName: string;
-    public exercises: ExerciseInWorkout[];
+    public exercises: ExerciseInWorkoutDTO[];
 
     constructor() {
         this.exercises = [];

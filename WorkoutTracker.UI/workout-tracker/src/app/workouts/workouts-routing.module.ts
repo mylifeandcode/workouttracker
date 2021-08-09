@@ -17,7 +17,7 @@ const routes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
-    path: 'start',
+    path: 'select',
     component: WorkoutComponent, 
     canActivate: [UserSelectedGuard]
   },

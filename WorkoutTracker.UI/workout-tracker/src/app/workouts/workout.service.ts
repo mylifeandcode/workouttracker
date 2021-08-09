@@ -38,9 +38,11 @@ export class WorkoutService {
       .pipe(map((resp: Workout) => resp));
   }
 
+  /*
   public getDTObyId(id: number): Observable<WorkoutDTO> {
     return this._http.get<WorkoutDTO>(`${this.API_ROOT}/DTO/${id}`);
   }
+  */
 
   public getByUserId(id: number): Observable<WorkoutDTO[]> {
     return this._http.get(`${this.API_ROOT}/user/${id}`)

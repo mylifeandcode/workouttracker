@@ -4,8 +4,10 @@ import { ApiBaseService } from 'app/core/api-base.service';
 import { ConfigService } from 'app/core/config.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ExecutedWorkout } from './models/executed-workout';
 import { ExecutedWorkoutDTO } from './models/executed-workout-dto';
+import { WorkoutDTO } from './models/workout-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +34,14 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
    */
   public getFilteredSubset(userId: number, startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutDTO>> {
     return this._http.get<PaginatedResults<ExecutedWorkoutDTO>>(`${this._apiRoot}?userId=${userId}&firstRecord=${startingIndex}&pageSize=${pageSize}`);
+  }
+
+  /**
+   * Gets recently executed workouts
+   * @returns an array of recently executed workouts
+   */
+  public getRecent(userId: number): Observable<ExecutedWorkoutDTO[]> {
+    return this.getFilteredSubset(userId, 0, 5)
+      .pipe(map((results: PaginatedResults<ExecutedWorkoutDTO>) => results.results));
   }
 }

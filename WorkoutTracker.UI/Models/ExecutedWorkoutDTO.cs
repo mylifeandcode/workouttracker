@@ -9,8 +9,9 @@ namespace WorkoutTracker.UI.Models
     {
         public DateTime StartDateTime { get; }
         public DateTime EndDateTime { get; }
+        public int WorkoutId { get; }
 
-        public ExecutedWorkoutDTO(int id, string name, DateTime startDateTime, DateTime endDateTime): base(id, name)
-            => (StartDateTime, EndDateTime) = (startDateTime, endDateTime);
+        public ExecutedWorkoutDTO(int id, string name, int workoutId, DateTime startDateTime, DateTime endDateTime): base(id, name)
+            => (WorkoutId, StartDateTime, EndDateTime) = (workoutId, startDateTime, endDateTime);
     }
 }

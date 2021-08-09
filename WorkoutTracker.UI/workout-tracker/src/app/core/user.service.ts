@@ -16,8 +16,9 @@ const httpOptions = {
 })
 export class UserService {
 
-  private _rootUrl: string = "http://localhost:5600/api/Users"; //TODO: Get from config service
   private readonly LOCAL_STORAGE_KEY = "WorkoutTrackerUser";
+
+  private _rootUrl: string = "http://localhost:5600/api/Users"; //TODO: Get from config service
   private _userSubject$ = new BehaviorSubject<User>(null);
   private _userObservable$: Observable<User> = this._userSubject$.asObservable();
 
