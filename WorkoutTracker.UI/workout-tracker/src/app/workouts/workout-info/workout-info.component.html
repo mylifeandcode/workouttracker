@@ -11,11 +11,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let exercise in workout.exercises">
-        <td>{{exercise.name}}</td>
+      <tr *ngFor="let exercise of workout.exercises">
+        <td>{{exercise.exercise.name}}</td>
         <td>{{exercise.numberOfSets}}</td>
-        <td>{{exercise.Exercise.resistanceType}}</td>
-        <td>Oops!</td>
+        <td>{{exercise.exercise.resistanceType | resistanceType}}</td>
+        <td>{{exercise.exercise.exerciseTargetAreaLinks | targetAreas}}</td>
       </tr>
     </tbody>
   </table>
