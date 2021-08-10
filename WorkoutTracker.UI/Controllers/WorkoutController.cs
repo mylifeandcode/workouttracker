@@ -19,10 +19,14 @@ namespace WorkoutTracker.UI.Controllers
     public class WorkoutController : ControllerBase
     {
         private IWorkoutService _workoutService;
+        private IWorkoutPlanService _workoutPlanService;
 
-        public WorkoutController(IWorkoutService workoutService)
+        public WorkoutController(
+            IWorkoutService workoutService, 
+            IWorkoutPlanService workoutPlanService)
         {
             _workoutService = workoutService ?? throw new ArgumentNullException("workoutService");
+            _workoutPlanService = workoutPlanService ?? throw new ArgumentNullException("workoutPlanService");
         }
 
         // GET: api/Workouts
@@ -93,6 +97,20 @@ namespace WorkoutTracker.UI.Controllers
                     workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise)));
 
                 return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{id}/plan")]
+        public ActionResult<WorkoutDTO> GetPlan(int id)
+        {
+            try
+            {
+                var plan = _workoutPlanService.Create(id);
+                return Ok(plan);
             }
             catch (Exception ex)
             {

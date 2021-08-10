@@ -30,6 +30,7 @@ namespace WorkoutTracker.Application.Workouts
 
         public ExecutedWorkout Create(int workoutId)
         {
+            //TODO: Deprecate
             try
             {
                 var workout = _workoutRepo.Get(workoutId);
@@ -43,6 +44,11 @@ namespace WorkoutTracker.Application.Workouts
                 //TODO: Log
                 throw;
             }
+        }
+
+        public ExecutedWorkout Create(WorkoutPlan plan)
+        {
+            throw new NotImplementedException();
         }
 
         public override ExecutedWorkout Add(ExecutedWorkout entity, bool saveChanges = false)
@@ -101,6 +107,13 @@ namespace WorkoutTracker.Application.Workouts
                 //.Distinct(workout.Workout.Id) //TODO: Get last n number of distinct by Workout
                 .Take(numberOfMostRecent);
             return output;
+        }
+
+        public ExecutedWorkout GetLatest(int workoutId)
+        {
+            return _repo.Get()
+                .OrderByDescending(x => x.Id)
+                .FirstOrDefault(x => x.WorkoutId == workoutId);
         }
 
         #region Private Methods
