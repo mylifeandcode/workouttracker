@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
-import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedExercise } from '../models/executed-exercise';
-import { ExecutedWorkout } from '../models/executed-workout';
+import { WorkoutPlan } from '../models/workout-plan';
+import { WorkoutService } from '../workout.service';
+import { ExercisePlan } from '../models/exercise-plan';
+
 import * as _ from 'lodash';
+
 
 @Component({
   selector: 'wt-workout-plan',
@@ -13,8 +15,8 @@ import * as _ from 'lodash';
 })
 export class WorkoutPlanComponent implements OnInit {
 
-  public executedWorkout: ExecutedWorkout;
-  public workoutForm: FormGroup;
+  public workoutPlan: WorkoutPlan;
+  public workoutPlanForm: FormGroup;
 
   //TODO: Component needs to show target reps and allow for setting target resistance
 
@@ -25,14 +27,13 @@ export class WorkoutPlanComponent implements OnInit {
    get exercisesArray(): FormArray {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
-    return this.workoutForm.get('exercises') as FormArray;
+    return this.workoutPlanForm.get('exercises') as FormArray;
   }
 
   constructor(
-    private _executedWorkoutService: ExecutedWorkoutService, 
+    private _workoutService: WorkoutService, 
     private _activatedRoute: ActivatedRoute, 
     private _formBuilder: FormBuilder) { 
-
   }
 
   public ngOnInit(): void {
@@ -47,47 +48,53 @@ export class WorkoutPlanComponent implements OnInit {
 
   private subscribeToRoute(): void {
     this._activatedRoute.params.subscribe((params: Params) => {
-      this.executedWorkout = null;
+      this.workoutPlan = null;
       const workoutId = params["id"];
-      this._executedWorkoutService.getNew(workoutId)
-        .subscribe((result: ExecutedWorkout) => {
-          this.executedWorkout = result;
-          this.workoutForm.patchValue({
-            id: workoutId
+      this._workoutService.getPlan(workoutId)
+        .subscribe((result: WorkoutPlan) => {
+          this.workoutPlan = result;
+          this.workoutPlanForm.patchValue({
+            workoutId: workoutId, 
+            workoutName: result.workoutName, 
+            hasBeenExecutedBefore: result.hasBeenExecutedBefore
           });
           this.setupExercisesFormGroup(result.exercises);
-
         });
     });
   }
 
-  //TODO: These are here temporarily -- copied from WorkoutComponent. Consolidate!
   private createForm(): void {
-    this.workoutForm = this._formBuilder.group({
-        id: [0, Validators.required ], 
-        exercises: this._formBuilder.array([]), 
-        journal: ['']
+    this.workoutPlanForm = this._formBuilder.group({
+        workoutId: [0, Validators.required ], 
+        workoutName: '', 
+        hasBeenExecutedBefore: false, 
+        exercises: this._formBuilder.array([])
     });
   }
   
-  private setupExercisesFormGroup(exercises: ExecutedExercise[]): void {
+  private setupExercisesFormGroup(exercises: ExercisePlan[]): void {
     this.exercisesArray.clear();
-
-    //Group ExecutedExercise by Exercise and Set Type
-    let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { 
-        return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
-      });
-
-    _.forEach(groupedExercises, (exerciseArray: ExecutedExercise[]) => {
+    _.forEach(exercises, (exercise: ExercisePlan) => {
 
       this.exercisesArray.push(
         this._formBuilder.group({
-          id: exerciseArray[0].id, //WARN: Pretty sure this will still just be 0 at this point
-          exerciseId: exerciseArray[0].exercise.id, 
-          exerciseName: [exerciseArray[0].exercise.name, Validators.compose([Validators.required])],
-          exerciseSets: this.getExerciseSetsFormArray(exerciseArray), 
-          setType: [exerciseArray[0].setType, Validators.compose([Validators.required])], 
-          resistanceType: [exerciseArray[0].exercise.resistanceType, Validators.compose([Validators.required])]
+          exerciseInWorkoutId: exercise.exerciseInWorkoutId, 
+          exerciseId: exercise.exerciseId,
+          exerciseName: exercise.exerciseName,
+          numberOfSets: exercise.numberOfSets, 
+          setType: exercise.setType, 
+          sequence: exercise.sequence, 
+          targetRepCountLastTime: exercise.targetRepCountLastTime, 
+          maxActualRepCountLastTime: exercise.maxActualRepCountLastTime,
+          recommendedTargetRepCount: exercise.recommendedTargetRepCount, 
+          targetRepCount: exercise.targetRepCount,
+          resistanceAmountLastTime: exercise.resistanceAmountLastTime, 
+          resistanceMakeupLastTime: exercise.resistanceMakeupLastTime, 
+          recommendedResistanceAmount: exercise.recommendedResistanceAmount,
+          recommendedResistanceMakeup: exercise.recommendedResistanceMakeup, 
+          resistanceAmount: exercise.resistanceAmount, 
+          resistanceMakeup: exercise.resistanceMakeup, 
+          recommendationReason: exercise.recommendationReason
         })
       );
 
@@ -95,6 +102,7 @@ export class WorkoutPlanComponent implements OnInit {
 
   }
 
+  /*
   private getExerciseSetsFormArray(exercises: ExecutedExercise[]): FormArray {
 
     let formArray = this._formBuilder.array([]);
@@ -122,5 +130,6 @@ export class WorkoutPlanComponent implements OnInit {
 
     return formArray;
   }  
-    
+  */
+
 }

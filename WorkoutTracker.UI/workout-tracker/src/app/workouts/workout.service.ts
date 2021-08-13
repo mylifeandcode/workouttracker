@@ -5,6 +5,7 @@ import { Workout } from 'app/workouts/models/workout';
 import { map, catchError } from 'rxjs/operators';
 import { PaginatedResults } from '../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
+import { WorkoutPlan } from './models/workout-plan';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -57,5 +58,9 @@ export class WorkoutService {
   public update(workout: Workout): Observable<Workout> {
     return this._http.put(`${this.API_ROOT}/${workout.id}`, workout, HTTP_OPTIONS)
       .pipe(map((response: Workout) => response));
+  }
+
+  public getPlan(workoutId: number): Observable<WorkoutPlan> {
+    return this._http.get<WorkoutPlan>(`${this.API_ROOT}/${workoutId}/plan`);
   }
 }

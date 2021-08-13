@@ -46,7 +46,14 @@ namespace WorkoutApplication.Domain.Exercises
 
         public void SetLastTimeValues(IEnumerable<ExecutedExercise> executedExercises)
         {
-            throw new NotImplementedException();
+            TargetRepCountLastTime = executedExercises.Max(x => x.TargetRepCount);
+            MaxActualRepCountLastTime = executedExercises.Max(x => x.ActualRepCount);
+
+            var executedWithMaxResitance = 
+                executedExercises.OrderByDescending(x => x.ResistanceAmount).First();
+
+            ResistanceAmountLastTime = executedWithMaxResitance.ResistanceAmount;
+            ResistanceMakeupLastTime = executedWithMaxResitance.ResistanceMakeup;
         }
     }
 }

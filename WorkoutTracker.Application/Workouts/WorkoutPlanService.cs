@@ -58,11 +58,15 @@ namespace WorkoutTracker.Application.Workouts
             for (short x = 0; x < exercisesInWorkout.Count; x++)
             {
                 var exerciseInWorkout = exercisesInWorkout[x];
-                var exercisePlan = new ExercisePlan(exerciseInWorkout);
+                //var exercisePlan = new ExercisePlan(exerciseInWorkout);
+                var exercisePlan = output.Exercises.First(x => x.Sequence == exerciseInWorkout.Sequence);
                 var executedExercises =
                     lastExecutedWorkout
                         .Exercises
                         .Where(x => x.ExerciseId == exerciseInWorkout.ExerciseId);
+
+                exercisePlan.SetLastTimeValues(executedExercises);
+
                 if (recommendationsEnabled)
                 {
                     var recommendation = _recommendationService.GetRecommendation(exerciseInWorkout.Exercise, lastExecutedWorkout, null);
@@ -71,7 +75,8 @@ namespace WorkoutTracker.Application.Workouts
                     exercisePlan.RecommendedResistanceMakeup = recommendation.ResistanceMakeup;
                     exercisePlan.RecommendedTargetRepCount = recommendation.Reps;
                 }
-                output.Exercises.Add(exercisePlan);
+
+                //output.Exercises.Add(exercisePlan);
             }
 
             return output;

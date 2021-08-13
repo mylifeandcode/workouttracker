@@ -105,7 +105,7 @@ namespace WorkoutTracker.UI.Controllers
         }
 
         [HttpGet("{id}/plan")]
-        public ActionResult<WorkoutDTO> GetPlan(int id)
+        public ActionResult<WorkoutPlan> GetPlan(int id)
         {
             try
             {
