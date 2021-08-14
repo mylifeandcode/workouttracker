@@ -1,0 +1,72 @@
+<div class="row" [formGroup]="formGroup">
+  <div class="col-12">
+
+    <div class="row">
+      <div class="col-12"><h5 class="exercise-header-row">{{formGroup.controls['exerciseName'].value}}</h5></div>
+    </div>
+
+    <!--LAST TIME-->
+    <div class="row">
+      <div class="col-12">
+        <strong>Last Time</strong>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2 form-group">
+        Target Rep Count: <span class="pre-pop-value">{{formGroup.controls['targetRepCountLastTime'].value}}</span>
+      </div>
+      <div class="col-2 form-group">
+        Max Actual Rep Count: <span class="pre-pop-value">{{formGroup.controls['maxActualRepCountLastTime'].value}}</span>
+      </div>
+      <div class="col-4 form-group">
+        Resistance: <span class="pre-pop-value">{{formGroup.controls['resistanceAmountLastTime'].value}}</span>
+        <span *ngIf="formGroup.controls['resistanceMakeupLastTime'].value">
+          ({{formGroup.controls['resistanceMakeupLastTime'].value}})
+        </span>
+      </div>
+    </div>
+
+    <!--RECOMMENDATIONS-->
+    <div *ngIf="formGroup.controls['recommendationReason'].value" class="row">
+      <div class="col-12">
+        <strong>Recommendations</strong>
+      </div>
+    </div>
+    <div *ngIf="formGroup.controls['recommendationReason'].value" class="row">
+      <div class="col-4 form-group">
+        Recommended Resistance Amount <span class="pre-pop-value">{{formGroup.controls['recommendedResistanceAmount'].value}}</span>
+        <span *ngIf="formGroup.controls['recommendedResistanceMakeup'].value">
+          ({{formGroup.controls['recommendedResistanceMakeup'].value}})
+        </span>
+      </div>
+      <div class="col-4 form-group">
+        Recommended Target Rep Count <span class="pre-pop-value">{{formGroup.controls['recommendedTargetRepCount'].value}}</span>
+      </div>
+      <div class="col-4 form-group">
+        Recommendation Reason <span class="pre-pop-value">{{formGroup.controls['recommendationReason'].value}}</span>
+      </div>
+    </div>
+
+    <!--THIS TIME-->
+    <div class="row">
+      <div class="col-12">
+        <strong>This Time</strong>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2 form-group">
+        <label>
+          Target Rep Count
+          <input type="text" class="amount" formControlName="targetRepCount" required />
+        </label>
+      </div>
+      <div class="col-2 form-group">
+        <label>
+          Resistance Amount
+          <input type="text" class="amount" formControlName="resistanceAmount" required />
+        </label>
+      </div>
+    </div>
+
+  </div>
+</div>

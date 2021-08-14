@@ -1,0 +1,14 @@
+.amount {
+  width: 40px;
+  margin-left: 4px;
+}
+
+.pre-pop-value {
+  color: blue;
+  font-weight: bold;
+}
+
+.exercise-header-row {
+  background-color:crimson;
+  color:white;
+}

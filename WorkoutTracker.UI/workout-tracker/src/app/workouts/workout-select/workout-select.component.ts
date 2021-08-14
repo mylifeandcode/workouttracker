@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { WorkoutDTO } from '../models/workout-dto';
 
 @Component({
@@ -14,13 +15,14 @@ export class WorkoutSelectComponent implements OnInit {
   @Output()
   workoutSelected: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor() { }
+  constructor(private _router: Router) { }
 
   ngOnInit(): void {
   }
 
   public workoutSelectChange(event: any): void { //TODO: Get concrete type instead of using any
-    this.workoutSelected.emit(event.target.value);
+    //this.workoutSelected.emit(event.target.value);
+    this._router.navigate([`workouts/plan/${event.target.value}`]);
   }
 
 }
