@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using WorkoutApplication.Application.Workouts;
 using WorkoutApplication.Domain.Workouts;
 using WorkoutTracker.Application.BaseClasses;
 using WorkoutTracker.Application.FilterClasses;

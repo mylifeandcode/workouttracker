@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorkoutApplication.Application.Exercises;
 using WorkoutApplication.Domain.Exercises;
+using WorkoutApplication.Domain.Workouts;
 
-namespace WorkoutApplication.Domain.Workouts
+namespace WorkoutApplication.Application.Workouts
 {
     /// <summary>
     /// A class for use in planning a workout's targets (reps and resistance) before executing.

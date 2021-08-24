@@ -13,6 +13,8 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WorkoutTracker.Tests.TestHelpers.Builders;
 using WorkoutTracker.Application.Exercises;
+using WorkoutTracker.Application.Users;
+using WorkoutApplication.Domain.Users;
 
 namespace WorkoutTracker.Tests.Services
 {
@@ -33,6 +35,9 @@ namespace WorkoutTracker.Tests.Services
         private Mock<IExecutedWorkoutService> _executedWorkoutServiceMock = 
             new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
 
+        private Mock<IUserService> _userServiceMock =
+            new Mock<IUserService>(MockBehavior.Strict);
+
         private Mock<IExerciseAmountRecommendationService> _recommendationServiceMock = 
             new Mock<IExerciseAmountRecommendationService>(MockBehavior.Strict);
 
@@ -41,6 +46,7 @@ namespace WorkoutTracker.Tests.Services
         [TestInitialize]
         public void Setup()
         {
+            //TODO: Split up into smaller functions
             var exercise1 =
                 _exerciseBuilder
                     .With(x => x.Id = 5)
@@ -90,6 +96,7 @@ namespace WorkoutTracker.Tests.Services
                         _executedExerciseBuilder
                             .With(x => x.Exercise = exercise1)
                             .With(x => x.ExerciseId = exercise1.Id)
+                            .With(x => x.ActualRepCount = 10)
                             .Build(),
                         _executedExerciseBuilder
                             .With(x => x.Exercise = exercise2)
@@ -102,9 +109,18 @@ namespace WorkoutTracker.Tests.Services
                     })
                     .Build();
 
+            var user = new User();
+            user.Settings = new UserSettings();
+            user.Settings.RecommendationsEnabled = false;
+
+            _userServiceMock
+                .Setup(x => x.GetById(It.IsAny<int>()))
+                .Returns(user);
+
             _sut = new WorkoutPlanService(
                 _workoutServiceMock.Object, 
                 _executedWorkoutServiceMock.Object, 
+                _userServiceMock.Object,
                 _recommendationServiceMock.Object);
         }
 

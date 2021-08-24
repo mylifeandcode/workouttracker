@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorkoutApplication.Domain.Exercises;
+using WorkoutTracker.Application.Exercises;
 
-namespace WorkoutApplication.Domain.Exercises
+namespace WorkoutApplication.Application.Exercises
 {
     /// <summary>
     /// A class used to plan targets (reps and resistance) for an exercise prior to a workout.
@@ -54,6 +56,17 @@ namespace WorkoutApplication.Domain.Exercises
 
             ResistanceAmountLastTime = executedWithMaxResitance.ResistanceAmount;
             ResistanceMakeupLastTime = executedWithMaxResitance.ResistanceMakeup;
+        }
+
+        public void ApplyRecommendation(ExerciseAmountRecommendation recommendation)
+        {
+            if (recommendation != null)
+            {
+                RecommendationReason = recommendation.Reason;
+                RecommendedResistanceAmount = recommendation.ResistanceAmount;
+                RecommendedResistanceMakeup = recommendation.ResistanceMakeup;
+                RecommendedTargetRepCount = recommendation.Reps;
+            }
         }
     }
 }

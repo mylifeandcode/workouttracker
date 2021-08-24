@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorkoutApplication.Application.Workouts;
 using WorkoutApplication.Domain.Exercises;
+using WorkoutApplication.Domain.Users;
 using WorkoutApplication.Domain.Workouts;
 using WorkoutTracker.Application.Exercises;
+using WorkoutTracker.Application.Users;
 
 namespace WorkoutTracker.Application.Workouts
 {
@@ -13,16 +16,20 @@ namespace WorkoutTracker.Application.Workouts
     {
         private IWorkoutService _workoutService;
         private IExecutedWorkoutService _executedWorkoutService;
+        private IUserService _userService;
         private IExerciseAmountRecommendationService _recommendationService;
+        
 
         public WorkoutPlanService(
             IWorkoutService workoutService,
             IExecutedWorkoutService executedWorkoutService,
+            IUserService userService,
             IExerciseAmountRecommendationService recommendationService)
         {
             _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _recommendationService = recommendationService ?? throw new ArgumentNullException(nameof(recommendationService));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         public WorkoutPlan Create(int workoutId)
@@ -46,14 +53,28 @@ namespace WorkoutTracker.Application.Workouts
         private WorkoutPlan CreatePlanForNewWorkout(int workoutId)
         {
             Workout workout = _workoutService.GetById(workoutId);
-            return new WorkoutPlan(workout, false);
+            var userSettings = GetUserSettings(workout.UserId);
+
+            var plan = new WorkoutPlan(workout, false);
+
+            if (userSettings != null && userSettings.RecommendationsEnabled)
+            {
+                foreach (var exercisePlan in plan.Exercises)
+                {
+                    var exercise = workout.Exercises.First(x => x.ExerciseId == exercisePlan.ExerciseId);
+                    var recommendation = _recommendationService.GetRecommendation(exercise.Exercise, null, userSettings);
+                    exercisePlan.ApplyRecommendation(recommendation);
+                }
+            }
+
+            return plan;
         }
 
         private WorkoutPlan CreatePlanForExecutedWorkout(ExecutedWorkout lastExecutedWorkout)
         {
             var output = new WorkoutPlan(lastExecutedWorkout.Workout, true);
-            var recommendationsEnabled = RecommendationsAreEnabled();
             var exercisesInWorkout = lastExecutedWorkout.Workout.Exercises.ToList();
+            var userSettings = GetUserSettings(lastExecutedWorkout.Workout.UserId);
 
             for (short x = 0; x < exercisesInWorkout.Count; x++)
             {
@@ -66,23 +87,26 @@ namespace WorkoutTracker.Application.Workouts
 
                 exercisePlan.SetLastTimeValues(executedExercises);
 
-                if (recommendationsEnabled)
+                if (userSettings != null && userSettings.RecommendationsEnabled)
                 {
-                    var recommendation = _recommendationService.GetRecommendation(exerciseInWorkout.Exercise, lastExecutedWorkout, null);
-                    exercisePlan.RecommendationReason = recommendation.Reason;
-                    exercisePlan.RecommendedResistanceAmount = recommendation.ResistanceAmount;
-                    exercisePlan.RecommendedResistanceMakeup = recommendation.ResistanceMakeup;
-                    exercisePlan.RecommendedTargetRepCount = recommendation.Reps;
+                    var recommendation = 
+                        _recommendationService.GetRecommendation(
+                            exerciseInWorkout.Exercise, lastExecutedWorkout, userSettings);
+
+                    exercisePlan.ApplyRecommendation(recommendation);
                 }
             }
 
             return output;
         }
 
-        private bool RecommendationsAreEnabled()
+        private UserSettings GetUserSettings(int userId)
         {
-            //TODO: Implement
-            return false;
+            var user = _userService.GetById(userId);
+            if (user == null)
+                throw new ApplicationException($"User {userId} not found.");
+            else
+                return user.Settings;
         }
     }
 }
