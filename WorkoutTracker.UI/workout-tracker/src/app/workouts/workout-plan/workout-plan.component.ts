@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Params } from '@angular/router';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../models/workout-plan';
 import { WorkoutService } from '../workout.service';
 import { ExercisePlan } from '../models/exercise-plan';
@@ -33,6 +33,7 @@ export class WorkoutPlanComponent implements OnInit {
   constructor(
     private _workoutService: WorkoutService, 
     private _activatedRoute: ActivatedRoute, 
+    private _router: Router, 
     private _formBuilder: FormBuilder) { 
   }
 
@@ -42,8 +43,13 @@ export class WorkoutPlanComponent implements OnInit {
   }
 
   public startWorkout(): void {
-    //TODO: Post the new ExecutedWorkout model to the API to create it, then redirect
-    //to WorkoutComponent
+    this.updateWorkoutPlanFromForm();
+    this._workoutService.submitPlan(this.workoutPlan)
+      .subscribe((executedWorkoutId: number) => {
+        //this._router.navigate([`workouts/plan/${event.target.value}`]);
+        this._router.navigate([`workouts/start/${executedWorkoutId}`]);
+        //this._router.navigate(['workouts/start', id]);
+      });
   }
 
   private subscribeToRoute(): void {
@@ -83,6 +89,7 @@ export class WorkoutPlanComponent implements OnInit {
           exerciseName: exercise.exerciseName,
           numberOfSets: exercise.numberOfSets, 
           setType: exercise.setType, 
+          resistanceType: exercise.resistanceType, 
           sequence: exercise.sequence, 
           targetRepCountLastTime: exercise.targetRepCountLastTime, 
           maxActualRepCountLastTime: exercise.maxActualRepCountLastTime,
@@ -102,34 +109,15 @@ export class WorkoutPlanComponent implements OnInit {
 
   }
 
-  /*
-  private getExerciseSetsFormArray(exercises: ExecutedExercise[]): FormArray {
-
-    let formArray = this._formBuilder.array([]);
-
-    //Each member of the array is a FormGroup
-    for(let i = 0; i < exercises.length; i++) {
-      let formGroup = this._formBuilder.group({
-        sequence: [exercises[i].sequence], 
-        resistance: [exercises[i].resistanceAmount, Validators.required], 
-        targetReps: [exercises[i].targetRepCount, Validators.required], //TODO: Populate with data from API once refactored to provide it!
-        actualReps: [0, Validators.required], 
-        formRating: [null, Validators.required], 
-        rangeOfMotionRating: [null, Validators.required], 
-        resistanceMakeup: [exercises[i].resistanceMakeup], 
-        bandsEndToEnd: [exercises[i].exercise.bandsEndToEnd], //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
-        duration: [120] //TODO: Get/set value from API
-      });
-
-      formGroup.controls.actualReps.disable();
-      formGroup.controls.formRating.disable();
-      formGroup.controls.rangeOfMotionRating.disable();
-
-      formArray.push(formGroup);
-    }
-
-    return formArray;
-  }  
-  */
-
+  private updateWorkoutPlanFromForm(): void {
+    this.exercisesArray.controls.forEach((control: AbstractControl, index: number, array: AbstractControl[]) => {
+      
+      const exerciseFormGroup = control as FormGroup;
+      const exercisePlan = this.workoutPlan.exercises[index];
+      console.log(control);
+      exercisePlan.targetRepCount = exerciseFormGroup.controls.targetRepCount.value;
+      exercisePlan.resistanceAmount = exerciseFormGroup.controls.resistanceAmount.value;
+      exercisePlan.resistanceMakeup = exerciseFormGroup.controls.resistanceMakeup.value;
+    });
+  }
 }

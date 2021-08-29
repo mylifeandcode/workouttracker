@@ -8,13 +8,7 @@
   <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
     <h3 class="headroom">Workout</h3>
     
-    <wt-workout-select
-      [workouts]="workouts"
-      (workoutSelected)="setupWorkout($event)">
-    </wt-workout-select>
-
     <ng-container *ngIf="workout != null">
-      <button class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutStarted">Start Workout</button>
       <span *ngIf="workoutStarted" class="mild-margins">Workout started at {{workout.startDateTime | date: 'shortTime'}}</span>
       <wt-workout-exercise 
         *ngFor="let exercise of exercisesArray.controls; let i = index" 

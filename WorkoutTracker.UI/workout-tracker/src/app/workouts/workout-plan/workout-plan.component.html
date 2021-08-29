@@ -19,30 +19,15 @@
         [formGroup]="exercise">
       </wt-exercise-plan>
       
-      <!--
-      <table class="table table-striped">
-        <th>Exercise</th>
-        <th># of Sets</th>
-        <th>Set Type</th>
-        <th>Target Rep Count Last Time</th>
-        <th>Max Actual Rep Count Last Time</th>
-        <th>Recommended Target Rep Count</th>
-        <th>Target Rep Count</th>
-        <th>Resistance Amount Last Time</th>
-        <th>Resistance Makeup Last Time</th>
-        <th>Recommended Resistance Amount</th>
-        <th>Recommended Resistance Makeup</th>
-        <th>Resistance Amount</th>
-        <th>Resistance Makeup</th>
-        <th>Recommendation Reason</th>
-      </table>
-      -->
       <div class="row">
         <div class="col-12">
-          <button type="submit" class="btn btn-primary">Start Workout</button>
+          <button type="submit" class="btn btn-primary" (click)="startWorkout()">Start Workout</button>
         </div>
       </div>
+      
     </form>
+
+    <wt-resistance-band-select></wt-resistance-band-select>
   </div>
 </ng-container>
 

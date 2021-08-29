@@ -63,4 +63,8 @@ export class WorkoutService {
   public getPlan(workoutId: number): Observable<WorkoutPlan> {
     return this._http.get<WorkoutPlan>(`${this.API_ROOT}/${workoutId}/plan`);
   }
+
+  public submitPlan(plan: WorkoutPlan): Observable<number> {
+    return this._http.post<number>(`${this.API_ROOT}/${plan.workoutId}/plan`, plan);
+  }
 }

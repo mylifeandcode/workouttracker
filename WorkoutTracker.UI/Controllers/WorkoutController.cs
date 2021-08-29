@@ -21,13 +21,16 @@ namespace WorkoutTracker.UI.Controllers
     {
         private IWorkoutService _workoutService;
         private IWorkoutPlanService _workoutPlanService;
+        private IExecutedWorkoutService _executedWorkoutService;
 
         public WorkoutController(
             IWorkoutService workoutService, 
-            IWorkoutPlanService workoutPlanService)
+            IWorkoutPlanService workoutPlanService, 
+            IExecutedWorkoutService executedWorkoutService)
         {
-            _workoutService = workoutService ?? throw new ArgumentNullException("workoutService");
-            _workoutPlanService = workoutPlanService ?? throw new ArgumentNullException("workoutPlanService");
+            _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));
+            _workoutPlanService = workoutPlanService ?? throw new ArgumentNullException(nameof(workoutPlanService));
+            _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
         }
 
         // GET: api/Workouts
@@ -112,6 +115,21 @@ namespace WorkoutTracker.UI.Controllers
             {
                 var plan = _workoutPlanService.Create(id);
                 return Ok(plan);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/plan")]
+        public ActionResult<int> SubmitPlan([FromBody] WorkoutPlan plan)
+        {
+            try
+            {
+                var executedWorkout = _executedWorkoutService.Create(plan);
+                return Ok(executedWorkout.Id);
+
             }
             catch (Exception ex)
             {

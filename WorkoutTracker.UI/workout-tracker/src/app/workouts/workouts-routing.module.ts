@@ -7,6 +7,7 @@ import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
 import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
 import { WorkoutListComponent } from './workout-list/workout-list.component';
 import { WorkoutPlanComponent } from './workout-plan/workout-plan.component';
+import { WorkoutSelectComponent } from './workout-select/workout-select.component';
 import { WorkoutViewComponent } from './workout-view/workout-view.component';
 import { WorkoutComponent } from './workout/workout.component';
 
@@ -18,7 +19,12 @@ const routes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
-    path: 'select',
+    path: 'select', 
+    component: WorkoutSelectComponent, 
+    canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'start/:executedWorkoutId',
     component: WorkoutComponent, 
     canActivate: [UserSelectedGuard]
   },

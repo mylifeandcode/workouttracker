@@ -1,3 +1,4 @@
+import { ResistanceType } from "../enums/resistance-type";
 import { SetType } from "../enums/set-type";
 
 export class ExercisePlan {
@@ -6,6 +7,7 @@ export class ExercisePlan {
   public exerciseName: string;
   public numberOfSets: number;
   public setType: SetType;
+  public resistanceType: ResistanceType;
   public sequence: number;
 
   public targetRepCountLastTime: number;

@@ -49,7 +49,7 @@ namespace WorkoutTracker.Application.Workouts
 
         public ExecutedWorkout Create(WorkoutPlan plan)
         {
-            throw new NotImplementedException();
+            return CreateFromPlan(plan);
         }
 
         public override ExecutedWorkout Add(ExecutedWorkout entity, bool saveChanges = false)
@@ -163,6 +163,42 @@ namespace WorkoutTracker.Application.Workouts
                     executedWorkout.Exercises.Add(exerciseToExecute);
                 }
             }
+
+            return executedWorkout;
+        }
+
+        private ExecutedWorkout CreateFromPlan(WorkoutPlan plan)
+        {
+            var executedWorkout = new ExecutedWorkout();
+            executedWorkout.WorkoutId = plan.WorkoutId;
+            executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
+            var workout = _workoutRepo.Get(plan.WorkoutId);
+
+            foreach (var exercise in workout.Exercises?.OrderBy(x => x.Sequence))
+            {
+                var exercisePlan = plan.Exercises.First(x => x.ExerciseId == exercise.ExerciseId);
+                for (byte x = 0; x < exercise.NumberOfSets; x++)
+                {
+                    //TODO: Add new constructor to ExecutedExercise which takes an ExercisePlan param 
+                    //and initialize that way instead.
+                    var exerciseToExecute = new ExecutedExercise();
+                    exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
+                    exerciseToExecute.CreatedDateTime = DateTime.Now.ToUniversalTime();
+                    exerciseToExecute.Exercise = exercise.Exercise;
+                    exerciseToExecute.ExerciseId = exercise.Exercise.Id;
+                    exerciseToExecute.Sequence = x;
+                    exerciseToExecute.SetType = exercise.SetType;
+
+                    exerciseToExecute.TargetRepCount = exercisePlan.TargetRepCount;
+                    exerciseToExecute.ResistanceAmount = exercisePlan.ResistanceAmount;
+                    exerciseToExecute.ResistanceMakeup = exercisePlan.ResistanceMakeup;
+
+                    executedWorkout.Exercises.Add(exerciseToExecute);
+                }
+            }
+
+            executedWorkout.StartDateTime = DateTime.Now;
+            _repo.Add(executedWorkout, true);
 
             return executedWorkout;
         }

@@ -20,6 +20,7 @@ namespace WorkoutApplication.Application.Exercises
         public string ExerciseName { get; set; }
         public byte NumberOfSets { get; set; }
         public SetType SetType { get; set; }
+        public ResistanceType ResistanceType { get; set; }
         public byte Sequence { get; set; }
 
         public byte TargetRepCountLastTime { get; set; }
@@ -36,13 +37,19 @@ namespace WorkoutApplication.Application.Exercises
 
         public string RecommendationReason { get; set; }
 
+        public ExercisePlan() { }
+
         public ExercisePlan(ExerciseInWorkout exercise)
         {
+            if (exercise == null)
+                throw new ArgumentNullException(nameof(exercise));
+
             ExerciseInWorkoutId = exercise.Id;
             ExerciseId = exercise.Exercise.Id;
             ExerciseName = exercise.Exercise.Name;
             NumberOfSets = exercise.NumberOfSets;
             SetType = exercise.SetType;
+            ResistanceType = exercise.Exercise.ResistanceType;
             Sequence = exercise.Sequence;
         }
 

@@ -60,10 +60,16 @@
           <input type="text" class="amount" formControlName="targetRepCount" required />
         </label>
       </div>
-      <div class="col-2 form-group">
+      <div class="col-4 form-group">
         <label>
           Resistance Amount
-          <input type="text" class="amount" formControlName="resistanceAmount" required />
+          <!--TODO: Get these *ngIfs to work with the enum type instead-->
+          <input *ngIf="formGroup.controls['resistanceType'].value!=2" type="text" class="amount" formControlName="resistanceAmount" required />
+          <span *ngIf="formGroup.controls['resistanceType'].value==2">
+            {{formGroup.controls['resistanceAmount'].value}}
+            ({{formGroup.controls['resistanceMakeup'].value}})
+            <button class="lead-space btn btn-primary btn-sm">Choose Resistance</button>
+          </span>
         </label>
       </div>
     </div>

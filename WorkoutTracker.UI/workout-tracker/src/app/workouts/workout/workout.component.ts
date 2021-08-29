@@ -14,6 +14,7 @@ import { ExecutedWorkout } from '../models/executed-workout';
 import { ExecutedExercise } from '../models/executed-exercise';
 import * as _ from 'lodash';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -48,6 +49,7 @@ export class WorkoutComponent implements OnInit {
   //END PUBLIC PROPERTIES
 
   //PRIVATE FIELDS
+  private _executedWorkoutId: number = 0;
   private _apiCallsInProgress: number = 0;
   //END PRIVATE FIELDS
 
@@ -71,6 +73,7 @@ export class WorkoutComponent implements OnInit {
   //END PROPERTIES
 
   constructor(
+    private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
     private _workoutService: WorkoutService, 
     private _executedWorkoutService: ExecutedWorkoutService, 
@@ -85,10 +88,7 @@ export class WorkoutComponent implements OnInit {
     this.createForm();
     this.getCurrentUserInfo();
     this.getResistanceBands();
-  }
-
-  public workoutSelected(worktoutId: number) { 
-    this.setupWorkout(worktoutId);
+    this.subscribeToRouteParams();
   }
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
@@ -130,6 +130,13 @@ export class WorkoutComponent implements OnInit {
   }
   
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
+
+  private subscribeToRouteParams(): void {
+    this._route.params.subscribe((params) => {
+      this._executedWorkoutId = params['executedWorkoutId'];
+      this.setupWorkout(this._executedWorkoutId);
+    });
+  }
 
   private createForm(): void {
     this.workoutForm = this._formBuilder.group({
@@ -188,7 +195,8 @@ export class WorkoutComponent implements OnInit {
 
   private setupWorkout(id: number): void {
     this._apiCallsInProgress++;
-    this._executedWorkoutService.getNew(id)
+    //this._executedWorkoutService.getNew(id)
+    this._executedWorkoutService.getById(id)
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe(
           (executedWorkout: ExecutedWorkout) => {

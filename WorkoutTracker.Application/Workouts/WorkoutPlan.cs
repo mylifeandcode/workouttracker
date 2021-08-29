@@ -21,8 +21,13 @@ namespace WorkoutApplication.Application.Workouts
         public bool HasBeenExecutedBefore { get; set; }
         public List<ExercisePlan> Exercises { get; set; }
 
+        public WorkoutPlan() { }
+
         public WorkoutPlan(Workout workout, bool hasBeenExecutedBefore)
         {
+            if (workout == null)
+                throw new ArgumentNullException(nameof(workout));
+
             WorkoutId = workout.Id;
             WorkoutName = workout.Name;
             HasBeenExecutedBefore = hasBeenExecutedBefore;
