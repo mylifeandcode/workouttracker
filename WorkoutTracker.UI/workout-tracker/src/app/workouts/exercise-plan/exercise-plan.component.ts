@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -6,15 +6,20 @@ import { FormGroup } from '@angular/forms';
   templateUrl: './exercise-plan.component.html',
   styleUrls: ['./exercise-plan.component.css']
 })
-export class ExercisePlanComponent implements OnInit {
+export class ExercisePlanComponent {
 
   @Input()
   formGroup: FormGroup; //TODO: Use a strong-typed structure
 
-  constructor() { }
+  @Output()
+  resistanceBandsModalRequested: EventEmitter<FormGroup>;
 
-  ngOnInit(): void {
-    console.log('hi');
+  constructor() { 
+    this.resistanceBandsModalRequested = new EventEmitter<FormGroup>();
+  }
+
+  public selectResistanceBands(formGroup: FormGroup): void {
+    this.resistanceBandsModalRequested.emit(formGroup);
   }
 
 }

@@ -34,6 +34,7 @@ namespace WorkoutApplication.Application.Exercises
         public string RecommendedResistanceMakeup { get; set; }
         public decimal ResistanceAmount { get; set; }
         public string ResistanceMakeup { get; set; }
+        public bool? BandsEndToEnd { get; set; }
 
         public string RecommendationReason { get; set; }
 
@@ -50,6 +51,7 @@ namespace WorkoutApplication.Application.Exercises
             NumberOfSets = exercise.NumberOfSets;
             SetType = exercise.SetType;
             ResistanceType = exercise.Exercise.ResistanceType;
+            BandsEndToEnd = exercise.Exercise.BandsEndToEnd;
             Sequence = exercise.Sequence;
         }
 

@@ -1,5 +1,7 @@
-<div *ngIf="workoutPlan == null" class="text-center">
-  <p-progressSpinner></p-progressSpinner>
+<div *ngIf="loading" class="row">
+  <div class="offset-md-5 col-md-1">
+      <p-progressSpinner></p-progressSpinner>
+  </div>
 </div>
 
 <ng-container *ngIf="workoutPlan">
@@ -16,7 +18,8 @@
 
       <wt-exercise-plan 
         *ngFor="let exercise of exercisesArray.controls; let i=index"
-        [formGroup]="exercise">
+        [formGroup]="exercise"
+        (resistanceBandsModalRequested)="resistanceBandsModalEnabled($event)">
       </wt-exercise-plan>
       
       <div class="row">
@@ -27,7 +30,13 @@
       
     </form>
 
-    <wt-resistance-band-select></wt-resistance-band-select>
+    <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal">
+      <wt-resistance-band-select
+        [resistanceBandInventory]="allResistanceBands"
+        (okClicked)="resistanceBandsModalAccepted($event)"
+        (cancelClicked)="resistanceBandsModalCancelled()">
+      </wt-resistance-band-select>
+    </p-dialog>
   </div>
 </ng-container>
 

@@ -21,6 +21,7 @@ export class ExercisePlan {
   public recommendedResistanceMakeup: string;
   public resistanceAmount: number;
   public resistanceMakeup: string;
+  public bandsEndToEnd?: boolean;
 
   public recommendationReason: string;
 }

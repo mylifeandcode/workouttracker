@@ -68,7 +68,7 @@
           <span *ngIf="formGroup.controls['resistanceType'].value==2">
             {{formGroup.controls['resistanceAmount'].value}}
             ({{formGroup.controls['resistanceMakeup'].value}})
-            <button class="lead-space btn btn-primary btn-sm">Choose Resistance</button>
+            <button class="lead-space btn btn-primary btn-sm" (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
           </span>
         </label>
       </div>

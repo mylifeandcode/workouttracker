@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../models/workout-plan';
@@ -6,6 +6,11 @@ import { WorkoutService } from '../workout.service';
 import { ExercisePlan } from '../models/exercise-plan';
 
 import * as _ from 'lodash';
+import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
+import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
+import { ResistanceBandSelection } from '../models/resistance-band-selection';
+import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
+import { finalize } from 'rxjs/operators';
 
 
 @Component({
@@ -15,12 +20,26 @@ import * as _ from 'lodash';
 })
 export class WorkoutPlanComponent implements OnInit {
 
+  //PUBLIC FIELDS
   public workoutPlan: WorkoutPlan;
   public workoutPlanForm: FormGroup;
+  public showResistanceBandsSelectModal: boolean;
+  public allResistanceBands: ResistanceBandIndividual[] = [];
+  public formGroupForResistanceSelection: FormGroup;
+  public errorInfo: string;
+  //END PUBLIC FIELDS
+
+  //VIEWCHILD
+  @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
+
+  //PRIVATE FIELDS
+  private _apiCallsInProgress: number = 0;
+  //END PRIVATE FIELDS
 
   //TODO: Component needs to show target reps and allow for setting target resistance
+  //TODO: Consolidate code duplicated between this component and WorkoutComponent
 
-
+  //PUBLIC PROPERTIES
   /**
    * A property representing all of the Exercises which are part of the Workout
    */
@@ -30,14 +49,25 @@ export class WorkoutPlanComponent implements OnInit {
     return this.workoutPlanForm.get('exercises') as FormArray;
   }
 
+  /**
+   * A property indicating whether or not the component is still loading information
+   */
+  public get loading(): boolean {
+    return this._apiCallsInProgress > 0; 
+  }
+  //END PUBLIC PROPERTIES
+
   constructor(
     private _workoutService: WorkoutService, 
+    private _resistanceBandService: ResistanceBandService,
     private _activatedRoute: ActivatedRoute, 
     private _router: Router, 
     private _formBuilder: FormBuilder) { 
   }
 
+  //PUBLIC METHODS
   public ngOnInit(): void {
+    this.getResistanceBandInventory();
     this.createForm();
     this.subscribeToRoute();
   }
@@ -46,17 +76,39 @@ export class WorkoutPlanComponent implements OnInit {
     this.updateWorkoutPlanFromForm();
     this._workoutService.submitPlan(this.workoutPlan)
       .subscribe((executedWorkoutId: number) => {
-        //this._router.navigate([`workouts/plan/${event.target.value}`]);
         this._router.navigate([`workouts/start/${executedWorkoutId}`]);
-        //this._router.navigate(['workouts/start', id]);
       });
   }
 
+  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
+    this.showResistanceBandsSelectModal = true;
+    this.formGroupForResistanceSelection = exerciseFormGroup;
+    this.bandSelect.setBandAllocation(
+      exerciseFormGroup.controls.resistanceMakeup.value, 
+      !exerciseFormGroup.controls.bandsEndToEnd.value);
+  }
+
+  public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {
+    this.formGroupForResistanceSelection.patchValue({ 
+      resistanceMakeup: selectedBands.makeup, 
+      resistanceAmount: selectedBands.maxResistanceAmount 
+    });
+    this.showResistanceBandsSelectModal = false;
+  }
+
+  public resistanceBandsModalCancelled(): void {
+    this.showResistanceBandsSelectModal = false;
+  }  
+  //END PUBLIC METHODS
+
+  //PRIVATE METHODS
   private subscribeToRoute(): void {
     this._activatedRoute.params.subscribe((params: Params) => {
       this.workoutPlan = null;
       const workoutId = params["id"];
+      this._apiCallsInProgress++;
       this._workoutService.getPlan(workoutId)
+        .pipe(finalize(() => { this._apiCallsInProgress--; }))
         .subscribe((result: WorkoutPlan) => {
           this.workoutPlan = result;
           this.workoutPlanForm.patchValue({
@@ -101,6 +153,7 @@ export class WorkoutPlanComponent implements OnInit {
           recommendedResistanceMakeup: exercise.recommendedResistanceMakeup, 
           resistanceAmount: exercise.resistanceAmount, 
           resistanceMakeup: exercise.resistanceMakeup, 
+          bandsEndToEnd: exercise.bandsEndToEnd, 
           recommendationReason: exercise.recommendationReason
         })
       );
@@ -120,4 +173,27 @@ export class WorkoutPlanComponent implements OnInit {
       exercisePlan.resistanceMakeup = exerciseFormGroup.controls.resistanceMakeup.value;
     });
   }
+
+  private getResistanceBandInventory(): void {
+    this._apiCallsInProgress++;
+    this._resistanceBandService.getAllIndividualBands()
+      .pipe(finalize(() => { this._apiCallsInProgress--; }))
+      .subscribe(
+        (bands: ResistanceBandIndividual[]) => {
+          this.allResistanceBands = bands;
+        }, 
+        (error: any) => {
+          this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
+        }
+      );
+  }
+
+  private setErrorInfo(error: any, defaultMessage: string): void {
+    if (error.message)
+      this.errorInfo = error.message;
+    else
+      this.errorInfo = defaultMessage;
+  }  
+  //END PRIVATE METHODS
+
 }

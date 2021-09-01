@@ -107,7 +107,20 @@ namespace WorkoutTracker.UI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-            
+
+        [HttpPut]
+        public ActionResult<ExecutedWorkout> Put([FromBody] ExecutedWorkout value)
+        {
+            try
+            {
+                return _executedWorkoutService.Update(value, true);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         private ExecutedWorkoutFilter BuildExecutedWorkoutFilter(
             int userId, 
             DateTime? startDateTime, 

@@ -43,15 +43,12 @@ export class WorkoutComponent implements OnInit {
   @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
 
   //PUBLIC PROPERTIES
+  /**
+   * A property indicating whether or not the component is loading information it requires
+   */
   public get loading(): boolean {
      return this._apiCallsInProgress > 0; 
   }
-  //END PUBLIC PROPERTIES
-
-  //PRIVATE FIELDS
-  private _executedWorkoutId: number = 0;
-  private _apiCallsInProgress: number = 0;
-  //END PRIVATE FIELDS
 
   /**
    * A property representing all of the Exercises which are part of the Workout
@@ -69,8 +66,12 @@ export class WorkoutComponent implements OnInit {
     return this.workout?.startDateTime != null 
       && new Date(this.workout?.startDateTime).getFullYear() > 1;
   }
+  //END PUBLIC PROPERTIES
 
-  //END PROPERTIES
+  //PRIVATE FIELDS
+  private _executedWorkoutId: number = 0;
+  private _apiCallsInProgress: number = 0;
+  //END PRIVATE FIELDS
 
   constructor(
     private _route: ActivatedRoute,
@@ -89,6 +90,7 @@ export class WorkoutComponent implements OnInit {
     this.getCurrentUserInfo();
     this.getResistanceBands();
     this.subscribeToRouteParams();
+    this.startWorkout();
   }
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
@@ -117,16 +119,17 @@ export class WorkoutComponent implements OnInit {
   }
 
   public startWorkout(): void {
-    this.workout.startDateTime = new Date();
+    //TODO: Refactor to remove this, nol onger needed
+    //this.workout.startDateTime = new Date();
     this.workoutForm.controls.journal.enable();
     this.workoutForm.controls.exercises.enable();
-    this.workout.createdByUserId = this._userService.currentUserId;
+    //this.workout.createdByUserId = this._userService.currentUserId;
   }
 
   public completeWorkout(): void {
     this.setWorkoutValuesFromFormGroup();
     this.workout.endDateTime = new Date();
-    this.postWorkoutToServer();
+    this.persistWorkoutToServer();
   }
   
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
@@ -254,9 +257,9 @@ export class WorkoutComponent implements OnInit {
         duration: [120] //TODO: Get/set value from API
       });
 
-      formGroup.controls.actualReps.disable();
-      formGroup.controls.formRating.disable();
-      formGroup.controls.rangeOfMotionRating.disable();
+      //formGroup.controls.actualReps.disable();
+      //formGroup.controls.formRating.disable();
+      //formGroup.controls.rangeOfMotionRating.disable();
 
       formArray.push(formGroup);
     }
@@ -297,18 +300,18 @@ export class WorkoutComponent implements OnInit {
         exercises[x].resistanceMakeup = sets[x].resistanceMakeup;
         exercises[x].targetRepCount = sets[x].targetReps;
         exercises[x].sequence = x;
-        exercises[x].formRating = sets[x].formRating;
-        exercises[x].rangeOfMotionRating = sets[x].rangeOfMotionRating;
+        exercises[x].formRating = Number(sets[x].formRating);
+        exercises[x].rangeOfMotionRating = Number(sets[x].rangeOfMotionRating);
       }
 
     });
     
   }
 
-  private postWorkoutToServer(): void {
+  private persistWorkoutToServer(): void {
     this.saving = true;
     this._executedWorkoutService
-      .add(this.workout)
+      .update(this.workout)
       .pipe(finalize(() => { this.saving = false; }))
       .subscribe((workout: ExecutedWorkout) => {
           this.workout = workout;
