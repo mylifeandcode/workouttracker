@@ -18,6 +18,7 @@ namespace WorkoutApplication.Application.Workouts
     {
         public int WorkoutId { get; set; }
         public string WorkoutName { get; set; }
+        public int UserId { get; set; }
         public bool HasBeenExecutedBefore { get; set; }
         public List<ExercisePlan> Exercises { get; set; }
 
@@ -31,6 +32,7 @@ namespace WorkoutApplication.Application.Workouts
             WorkoutId = workout.Id;
             WorkoutName = workout.Name;
             HasBeenExecutedBefore = hasBeenExecutedBefore;
+            UserId = workout.CreatedByUserId;
             SetupExercises(workout.Exercises);
         }
 

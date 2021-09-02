@@ -108,7 +108,7 @@ namespace WorkoutTracker.UI.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public ActionResult<ExecutedWorkout> Put([FromBody] ExecutedWorkout value)
         {
             try

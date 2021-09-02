@@ -18,7 +18,7 @@ export class NavComponent implements OnInit {
 
   constructor(private _userService: UserService, private _router: Router) { }
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this._userService.currentUserInfo.subscribe(
       (user: User) => {
         this.userName = (user ? user.name : null);

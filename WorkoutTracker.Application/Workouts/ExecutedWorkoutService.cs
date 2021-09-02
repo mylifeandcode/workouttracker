@@ -76,12 +76,26 @@ namespace WorkoutTracker.Application.Workouts
             elegant) approach here, which is to set the Exercises to null. The 
             reference will still be preserved via the ExerciseId property.
             */
+            //TODO: Use the approach in the Update() method instead!
             foreach (var executedExercise in entity.Exercises)
             {
                 executedExercise.Exercise = null;
             }
 
             return base.Add(entity, saveChanges);
+        }
+
+        public override ExecutedWorkout Update(ExecutedWorkout entity, bool saveChanges = false)
+        {
+            //TODO: Refactor to make async
+            //TODO: Refactor method signature to remove saveChanges param
+
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
+            _repo.UpdateAsync<ExecutedWorkout>(entity, (executedWorkout) => executedWorkout.Exercises).Wait();
+
+            return entity;
         }
 
         public IEnumerable<ExecutedWorkout> GetFilteredSubset(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst)
@@ -171,6 +185,7 @@ namespace WorkoutTracker.Application.Workouts
         {
             var executedWorkout = new ExecutedWorkout();
             executedWorkout.WorkoutId = plan.WorkoutId;
+            executedWorkout.CreatedByUserId = plan.UserId;
             executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
             var workout = _workoutRepo.Get(plan.WorkoutId);
 

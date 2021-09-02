@@ -11,6 +11,7 @@ import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-indi
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 import { finalize } from 'rxjs/operators';
+import { UserService } from 'app/core/user.service';
 
 
 @Component({
@@ -59,7 +60,7 @@ export class WorkoutPlanComponent implements OnInit {
 
   constructor(
     private _workoutService: WorkoutService, 
-    private _resistanceBandService: ResistanceBandService,
+    private _resistanceBandService: ResistanceBandService, 
     private _activatedRoute: ActivatedRoute, 
     private _router: Router, 
     private _formBuilder: FormBuilder) { 
