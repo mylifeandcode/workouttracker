@@ -6,12 +6,12 @@
     </div>
 
     <!--LAST TIME-->
-    <div class="row">
+    <div *ngIf="workoutHasBeenExecutedBefore" class="row">
       <div class="col-12">
         <strong>Last Time</strong>
       </div>
     </div>
-    <div class="row">
+    <div *ngIf="workoutHasBeenExecutedBefore" class="row">
       <div class="col-2 form-group">
         Target Rep Count: <span class="pre-pop-value">{{formGroup.controls['targetRepCountLastTime'].value}}</span>
       </div>
@@ -48,7 +48,7 @@
     </div>
 
     <!--THIS TIME-->
-    <div class="row">
+    <div *ngIf="workoutHasBeenExecutedBefore" class="row">
       <div class="col-12">
         <strong>This Time</strong>
       </div>
@@ -60,7 +60,7 @@
           <input type="text" class="amount" formControlName="targetRepCount" required />
         </label>
       </div>
-      <div class="col-4 form-group">
+      <div class="col-10 form-group">
         <label>
           Resistance Amount
           <!--TODO: Get these *ngIfs to work with the enum type instead-->

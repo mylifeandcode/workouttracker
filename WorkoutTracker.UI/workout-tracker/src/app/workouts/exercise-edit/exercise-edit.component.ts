@@ -94,14 +94,18 @@ export class ExerciseEditComponent implements OnInit {
             name: ['', Validators.required], 
             description: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])], 
             resistanceTypes: [0, Validators.required], 
-            oneSided: [false], 
-            endToEnd: [false], 
+            oneSided: [false], //TODO: Solve -- this value remains null, not false, until checked
+            endToEnd: [false], //TODO: Same as above
             targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
             setup: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
             movement: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
             pointsToRemember: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])]
         });
 
+        //TODO: Solve. The below lines don't change anything. Values remain false.
+        this.exerciseForm.controls["oneSided"].setValue(false);
+        this.exerciseForm.controls["endToEnd"].setValue(false);
+        
     }
 
     private loadExercise(): void {
@@ -125,10 +129,10 @@ export class ExerciseEditComponent implements OnInit {
         exercise.movement = this.exerciseForm.get("movement").value;
         exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember").value;
         exercise.resistanceType = this.exerciseForm.get("resistanceTypes").value;
-        exercise.oneSided = this.exerciseForm.get("oneSided").value;
+        exercise.oneSided = Boolean(this.exerciseForm.get("oneSided").value); //Call to Boolean() is a workaround to initializer and setValue() not setting value to false as stated
         
         if (exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
-            exercise.bandsEndToEnd = this.exerciseForm.get("endToEnd").value;
+            exercise.bandsEndToEnd = Boolean(this.exerciseForm.get("endToEnd").value); //Call to Boolean() is a workaround (see above)
 
         if (exercise.id > 0)
             exercise.modifiedByUserId = this.currentUserId;

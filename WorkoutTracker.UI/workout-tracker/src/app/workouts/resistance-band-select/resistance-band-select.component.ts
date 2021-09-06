@@ -91,9 +91,12 @@ export class ResistanceBandSelectComponent implements OnInit {
     
     selection.maxResistanceAmount = this.maxSelectedResistance;
 
+    //Pretty sure the amounts have already been doubled if need be by this point
+    /*
     if(this._doubleMaxResistanceAmounts)
     selection.maxResistanceAmount = selection.maxResistanceAmount * 2;
-    
+    */
+
     this.okClicked.emit(selection);
   }
 

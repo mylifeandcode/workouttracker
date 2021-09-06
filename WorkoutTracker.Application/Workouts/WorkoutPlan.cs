@@ -21,6 +21,7 @@ namespace WorkoutApplication.Application.Workouts
         public int UserId { get; set; }
         public bool HasBeenExecutedBefore { get; set; }
         public List<ExercisePlan> Exercises { get; set; }
+        public DateTime? SubmittedDateTime { get; set; }
 
         public WorkoutPlan() { }
 

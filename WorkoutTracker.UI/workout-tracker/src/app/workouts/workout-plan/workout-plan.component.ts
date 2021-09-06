@@ -75,6 +75,7 @@ export class WorkoutPlanComponent implements OnInit {
 
   public startWorkout(): void {
     this.updateWorkoutPlanFromForm();
+    this.workoutPlan.submittedDateTime = new Date();
     this._workoutService.submitPlan(this.workoutPlan)
       .subscribe((executedWorkoutId: number) => {
         this._router.navigate([`workouts/start/${executedWorkoutId}`]);
@@ -147,12 +148,12 @@ export class WorkoutPlanComponent implements OnInit {
           targetRepCountLastTime: exercise.targetRepCountLastTime, 
           maxActualRepCountLastTime: exercise.maxActualRepCountLastTime,
           recommendedTargetRepCount: exercise.recommendedTargetRepCount, 
-          targetRepCount: exercise.targetRepCount,
+          targetRepCount: [exercise.targetRepCount, Validators.min(1)],
           resistanceAmountLastTime: exercise.resistanceAmountLastTime, 
           resistanceMakeupLastTime: exercise.resistanceMakeupLastTime, 
           recommendedResistanceAmount: exercise.recommendedResistanceAmount,
           recommendedResistanceMakeup: exercise.recommendedResistanceMakeup, 
-          resistanceAmount: exercise.resistanceAmount, 
+          resistanceAmount: [exercise.resistanceAmount, Validators.min(0.1)], 
           resistanceMakeup: exercise.resistanceMakeup, 
           bandsEndToEnd: exercise.bandsEndToEnd, 
           recommendationReason: exercise.recommendationReason

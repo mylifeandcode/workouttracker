@@ -6,4 +6,5 @@
 /* This class DOES work. */
 .exerciseName {
     cursor: pointer;
+    color: blue;
 }

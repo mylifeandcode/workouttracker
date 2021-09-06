@@ -16,15 +16,22 @@
         </div>
       </div>
 
+      <div *ngIf="!workoutHasBeenExecutedBefore" class="row">
+        <div class="col-12">
+          <h4 class="no-last-time">This workout hasn't been done before, so no "Last Time" information is shown.</h4>
+        </div>
+      </div>
+
       <wt-exercise-plan 
         *ngFor="let exercise of exercisesArray.controls; let i=index"
         [formGroup]="exercise"
+        [workoutHasBeenExecutedBefore]="workoutPlan.hasBeenExecutedBefore"
         (resistanceBandsModalRequested)="resistanceBandsModalEnabled($event)">
       </wt-exercise-plan>
       
       <div class="row">
         <div class="col-12">
-          <button type="submit" class="btn btn-primary" (click)="startWorkout()">Start Workout</button>
+          <button type="submit" class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutPlanForm.invalid">Start Workout</button>
         </div>
       </div>
       

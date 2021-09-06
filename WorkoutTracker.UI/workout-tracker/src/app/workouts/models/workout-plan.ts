@@ -6,4 +6,5 @@ export class WorkoutPlan {
   public userId: number;
   public hasBeenExecutedBefore: boolean;
   public exercises: ExercisePlan[];
+  public submittedDateTime?: Date;
 }

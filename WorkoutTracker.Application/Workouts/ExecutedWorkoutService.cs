@@ -198,7 +198,7 @@ namespace WorkoutTracker.Application.Workouts
                     //and initialize that way instead.
                     var exerciseToExecute = new ExecutedExercise();
                     exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
-                    exerciseToExecute.CreatedDateTime = DateTime.Now.ToUniversalTime();
+                    exerciseToExecute.CreatedDateTime = plan.SubmittedDateTime.Value;
                     exerciseToExecute.Exercise = exercise.Exercise;
                     exerciseToExecute.ExerciseId = exercise.Exercise.Id;
                     exerciseToExecute.Sequence = x;
@@ -212,7 +212,7 @@ namespace WorkoutTracker.Application.Workouts
                 }
             }
 
-            executedWorkout.StartDateTime = DateTime.Now;
+            executedWorkout.StartDateTime = plan.SubmittedDateTime.Value;
             _repo.Add(executedWorkout, true);
 
             return executedWorkout;

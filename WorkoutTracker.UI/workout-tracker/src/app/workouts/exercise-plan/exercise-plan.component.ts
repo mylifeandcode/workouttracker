@@ -11,6 +11,9 @@ export class ExercisePlanComponent {
   @Input()
   formGroup: FormGroup; //TODO: Use a strong-typed structure
 
+  @Input()
+  workoutHasBeenExecutedBefore: boolean;
+
   @Output()
   resistanceBandsModalRequested: EventEmitter<FormGroup>;
 
