@@ -12,7 +12,6 @@ import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
 import { WorkoutSetDefinitionComponent } from './workout-set-definition/workout-set-definition.component';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { InsertSpaceBeforeCapitalPipe } from './pipes/insert-space-before-capital.pipe';
 import { ResistanceBandSelectComponent } from './resistance-band-select/resistance-band-select.component';
 import { PickListModule } from 'primeng/picklist';
 import { TooltipModule } from 'primeng/tooltip';
@@ -38,7 +37,6 @@ import { ExercisesModule } from 'app/exercises/exercises.module';
     WorkoutEditComponent,
     WorkoutSetDefinitionComponent,
     WorkoutExerciseComponent,
-    InsertSpaceBeforeCapitalPipe,
     ResistanceBandSelectComponent,
     CountdownTimerComponent,
     WorkoutHistoryComponent,
