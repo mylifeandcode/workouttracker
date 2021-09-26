@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExerciseService } from '../exercise.service';
+import { ExerciseService } from '../../exercises/exercise.service';
 import { ExecutedExercise } from '../models/executed-exercise';
 import { ExecutedWorkout } from '../models/executed-workout';
 import { Exercise } from '../models/exercise';

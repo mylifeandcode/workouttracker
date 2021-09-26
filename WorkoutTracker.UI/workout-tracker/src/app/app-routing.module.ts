@@ -30,6 +30,10 @@ const routes: Routes = [
     loadChildren: () => import('./workouts/workouts.module').then(m => m.WorkoutsModule)
   },
   {
+    path: 'exercises',
+    loadChildren: () => import('./exercises/exercises.module').then(m => m.ExercisesModule)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

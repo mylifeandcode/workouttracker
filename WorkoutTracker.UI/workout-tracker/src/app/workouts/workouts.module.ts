@@ -11,9 +11,6 @@ import { WorkoutListComponent } from './workout-list/workout-list.component';
 import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
 import { WorkoutSetDefinitionComponent } from './workout-set-definition/workout-set-definition.component';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
-import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
-import { ExerciseListComponent } from './exercise-list/exercise-list.component';
-import { ExerciseListMiniComponent } from './exercise-list-mini/exercise-list-mini.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InsertSpaceBeforeCapitalPipe } from './pipes/insert-space-before-capital.pipe';
 import { ResistanceBandSelectComponent } from './resistance-band-select/resistance-band-select.component';
@@ -31,6 +28,7 @@ import { ResistanceTypePipe } from './pipes/resistance-type.pipe';
 import { TargetAreasPipe } from './pipes/target-areas.pipe';
 import { WorkoutPlanComponent } from './workout-plan/workout-plan.component';
 import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
+import { ExercisesModule } from 'app/exercises/exercises.module';
 
 
 @NgModule({
@@ -40,9 +38,6 @@ import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
     WorkoutEditComponent,
     WorkoutSetDefinitionComponent,
     WorkoutExerciseComponent,
-    ExerciseEditComponent,
-    ExerciseListComponent,
-    ExerciseListMiniComponent,
     InsertSpaceBeforeCapitalPipe,
     ResistanceBandSelectComponent,
     CountdownTimerComponent,
@@ -68,7 +63,8 @@ import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
     PickListModule,
     ProgressSpinnerModule,
     MultiSelectModule,
-    WorkoutsRoutingModule
+    WorkoutsRoutingModule, 
+    ExercisesModule
   ]
 })
 export class WorkoutsModule { }

@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { UserSelectedGuard } from 'app/core/guards/user-selected.guard'; //TODO: Correct path/method of import?
-import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
-import { ExerciseListComponent } from './exercise-list/exercise-list.component';
 import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
 import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
 import { WorkoutListComponent } from './workout-list/workout-list.component';
@@ -31,16 +29,6 @@ const routes: Routes = [
   {
     path: 'view/:id',
     component: WorkoutViewComponent,
-    canActivate: [UserSelectedGuard]
-  },
-  {
-    path: 'exercises',
-    component: ExerciseListComponent,
-    canActivate: [UserSelectedGuard]
-  },
-  {
-    path: 'exercises/edit/:id',
-    component: ExerciseEditComponent,
     canActivate: [UserSelectedGuard]
   },
   {

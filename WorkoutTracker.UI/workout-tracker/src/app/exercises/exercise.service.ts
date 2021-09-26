@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Exercise } from './models/exercise';
-import { TargetArea } from './models/target-area';
+import { Exercise } from '../workouts/models/exercise';
+import { TargetArea } from '../workouts/models/target-area';
 import { map, catchError } from 'rxjs/operators';
 import { PaginatedResults } from '../core/models/paginated-results';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ExerciseService } from 'app/workouts/exercise.service';
+import { ExerciseService } from 'app/exercises/exercise.service';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { finalize, map } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
