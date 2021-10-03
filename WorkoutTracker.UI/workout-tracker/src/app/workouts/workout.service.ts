@@ -22,7 +22,7 @@ export class WorkoutService {
   private readonly API_ROOT: string;
 
   constructor(private _http: HttpClient, private _configService: ConfigService) { 
-    this.API_ROOT = this._configService.get("apiRoot") + "workouts;"
+    this.API_ROOT = this._configService.get("apiRoot") + "workouts";
   }
 
   public getAll(firstRecOffset: number, pageSize: number, userId: number, nameContains: string = null): Observable<PaginatedResults<WorkoutDTO>> {
