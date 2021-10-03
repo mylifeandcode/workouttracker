@@ -64,11 +64,16 @@
         <label>
           Resistance Amount
           <!--TODO: Get these *ngIfs to work with the enum type instead-->
-          <input *ngIf="formGroup.controls['resistanceType'].value!=2" type="text" class="amount" formControlName="resistanceAmount" required />
-          <span *ngIf="formGroup.controls['resistanceType'].value==2">
-            {{formGroup.controls['resistanceAmount'].value}}
-            ({{formGroup.controls['resistanceMakeup'].value}})
+          <input *ngIf="formGroup.controls['resistanceType'].value!=2 && formGroup.controls['resistanceType'].value!=3" type="text" class="amount" formControlName="resistanceAmount" required />
+          <span *ngIf="formGroup.controls['resistanceType'].value==2" class="no-input-value">
+            <ng-container *ngIf="formGroup.controls['resistanceAmount'].value">
+              {{formGroup.controls['resistanceAmount'].value}}
+              ({{formGroup.controls['resistanceMakeup'].value}})
+            </ng-container>
             <button class="lead-space btn btn-primary btn-sm" (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
+          </span>
+          <span *ngIf="formGroup.controls['resistanceType'].value==3" class="no-input-value">
+            Body Weight
           </span>
         </label>
       </div>

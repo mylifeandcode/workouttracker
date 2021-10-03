@@ -16,3 +16,11 @@
 .lead-space {
   margin-left: 14px;
 }
+
+label {
+  font-weight: bold;
+}
+
+.no-input-value {
+  font-weight: normal;
+}

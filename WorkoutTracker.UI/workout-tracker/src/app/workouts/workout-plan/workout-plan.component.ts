@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../models/workout-plan';
 import { WorkoutService } from '../workout.service';
@@ -11,7 +11,6 @@ import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-indi
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 import { finalize } from 'rxjs/operators';
-import { UserService } from 'app/core/user.service';
 
 
 @Component({
@@ -100,7 +99,8 @@ export class WorkoutPlanComponent implements OnInit {
 
   public resistanceBandsModalCancelled(): void {
     this.showResistanceBandsSelectModal = false;
-  }  
+  }
+  
   //END PUBLIC METHODS
 
   //PRIVATE METHODS
@@ -153,7 +153,7 @@ export class WorkoutPlanComponent implements OnInit {
           resistanceMakeupLastTime: exercise.resistanceMakeupLastTime, 
           recommendedResistanceAmount: exercise.recommendedResistanceAmount,
           recommendedResistanceMakeup: exercise.recommendedResistanceMakeup, 
-          resistanceAmount: [exercise.resistanceAmount, Validators.min(0.1)], 
+          resistanceAmount: [exercise.resistanceAmount, (exercise.resistanceType != 3 ? Validators.min(0.1) : null)], 
           resistanceMakeup: exercise.resistanceMakeup, 
           bandsEndToEnd: exercise.bandsEndToEnd, 
           recommendationReason: exercise.recommendationReason
@@ -195,7 +195,8 @@ export class WorkoutPlanComponent implements OnInit {
       this.errorInfo = error.message;
     else
       this.errorInfo = defaultMessage;
-  }  
+  }
+  
   //END PRIVATE METHODS
 
 }
