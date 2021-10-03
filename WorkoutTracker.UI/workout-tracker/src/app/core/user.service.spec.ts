@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { CookieService } from 'ng2-cookies';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { User } from 'app/core/models/user';
+import { ConfigService } from './config.service';
 
 const TEST_USER_ID: string = "1";
 
@@ -11,6 +12,10 @@ class CookieServiceMock {
   get = jasmine.createSpy('get').and.returnValue(TEST_USER_ID);
   set = jasmine.createSpy('set');
   delete = jasmine.createSpy('delete');
+}
+
+class ConfigServiceMock {
+  get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
 }
 
 describe('UserService', () => {
@@ -21,6 +26,10 @@ describe('UserService', () => {
         {
           provide: CookieService,
           useClass: CookieServiceMock
+        }, 
+        {
+          provide: ConfigService, 
+          useClass: ConfigServiceMock
         }
       ],
       imports :[

@@ -2,7 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WorkoutSelectComponent } from './workout-select.component';
 
-describe('WorkoutSelectComponent', () => {
+//TODO: This component is currently deprecated. Remove if we don't refactor to use it again.
+xdescribe('WorkoutSelectComponent', () => {
   let component: WorkoutSelectComponent;
   let fixture: ComponentFixture<WorkoutSelectComponent>;
 

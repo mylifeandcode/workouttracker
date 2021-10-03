@@ -251,7 +251,7 @@ describe('WorkoutComponent', () => {
     const expectedExecutedWorkout = getFakeExecutedWorkout();
 
     //ACT
-    component.workoutSelected(12);
+    //component.workoutSelected(12);
 
     //ASSERT
     expect(executedWorkoutService.getNew).toHaveBeenCalledTimes(1);
@@ -311,7 +311,7 @@ describe('WorkoutComponent', () => {
 
   it('should enable the resistance bands selection modal', () => {
     //ARRANGE
-    component.workoutSelected(12);
+    //component.workoutSelected(12);
     const exerciseFormGroup = getFirstExerciseFormGroup(component);
 
     //ACT
@@ -328,7 +328,7 @@ describe('WorkoutComponent', () => {
 
   it('should accept the input from the resistance bands modal', () => {
     //ARRANGE
-    component.workoutSelected(12);
+    //component.workoutSelected(12);
     const exerciseFormGroup = getFirstExerciseFormGroup(component);
 
     component.resistanceBandsModalEnabled(exerciseFormGroup);
@@ -350,7 +350,7 @@ describe('WorkoutComponent', () => {
 
   it('should hide the resistance bands select modal when cancelled and not do anything else', () => {
     //ARRANGE
-    component.workoutSelected(12);
+    //component.workoutSelected(12);
     const exerciseFormGroup = getFirstExerciseFormGroup(component);
 
     component.resistanceBandsModalEnabled(exerciseFormGroup);
@@ -368,7 +368,7 @@ describe('WorkoutComponent', () => {
 
   it('should show the timer', () => {
     //ARRANGE
-    component.workoutSelected(12);
+    //component.workoutSelected(12);
     const exerciseFormGroup = getFirstExerciseFormGroup(component);
 
     //ACT
@@ -381,7 +381,7 @@ describe('WorkoutComponent', () => {
 
   it('should start a workout', () => {
     //ARRANGE
-    component.workoutSelected(12);
+    //component.workoutSelected(12);
 
     //ACT
     component.startWorkout();
@@ -397,7 +397,7 @@ describe('WorkoutComponent', () => {
   it('should complete a workout', () => {
     //ARRANGE
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    component.workoutSelected(12);
+    //component.workoutSelected(12);
     component.startWorkout();
 
     component.workoutForm.patchValue({journal: '38 degrees, sunny. ST: TOS - \"The Omega Glory\" and YouTube'});

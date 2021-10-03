@@ -4,11 +4,22 @@ import { ExerciseService } from './exercise.service';
 import { PaginatedResults } from '../core/models/paginated-results';
 import { Exercise } from 'app/workouts/models/exercise';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
+import { ConfigService } from 'app/core/config.service';
+
+class ConfigServiceMock {
+  get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
+}
 
 describe('ExerciseService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ExerciseService],
+      providers: [
+        ExerciseService, 
+        {
+          provide: ConfigService,
+          useClass: ConfigServiceMock
+        }
+      ],
       imports :[
         HttpClientTestingModule
       ]
