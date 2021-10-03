@@ -6,6 +6,7 @@ import { map, catchError } from 'rxjs/operators';
 import { PaginatedResults } from '../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { WorkoutPlan } from './models/workout-plan';
+import { ConfigService } from 'app/core/config.service';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -18,9 +19,11 @@ const HTTP_OPTIONS = {
 })
 export class WorkoutService {
 
-  private readonly API_ROOT: string = "http://localhost:5600/api/workouts"; //TODO: Get from environment config
+  private readonly API_ROOT: string;
 
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient, private _configService: ConfigService) { 
+    this.API_ROOT = this._configService.get("apiRoot") + "workouts;"
+  }
 
   public getAll(firstRecOffset: number, pageSize: number, userId: number, nameContains: string = null): Observable<PaginatedResults<WorkoutDTO>> {
         

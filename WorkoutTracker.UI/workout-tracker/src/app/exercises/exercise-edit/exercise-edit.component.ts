@@ -9,7 +9,8 @@ import { User } from 'app/core/models/user';
 import { UserService } from 'app/core/user.service';
 import { ExerciseTargetAreaLink } from '../../workouts/models/exercise-target-area-link';
 import * as _ from 'lodash';
-import { finalize } from 'rxjs/internal/operators/finalize';
+import { finalize } from 'rxjs/operators';
+
 
 @Component({
   selector: 'wt-exercise-edit',

@@ -4,6 +4,7 @@ import { User } from './models/user';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { LocalStorageService } from './local-storage.service';
+import { ConfigService } from './config.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -18,11 +19,18 @@ export class UserService {
 
   private readonly LOCAL_STORAGE_KEY = "WorkoutTrackerUser";
 
-  private _rootUrl: string = "http://localhost:5600/api/Users"; //TODO: Get from config service
+  private _rootUrl: string;
   private _userSubject$ = new BehaviorSubject<User>(null);
   private _userObservable$: Observable<User> = this._userSubject$.asObservable();
 
-  constructor(private _http: HttpClient, private _localStorageService: LocalStorageService) { }
+  constructor(
+    private _http: HttpClient, 
+    private _localStorageService: LocalStorageService, 
+    private _configService: ConfigService) { 
+
+      this._rootUrl = this._configService.get("apiRoot") + "Users";
+
+  }
 
   
   //PROPERTIES ////////////////////////////////////////////////////////////////

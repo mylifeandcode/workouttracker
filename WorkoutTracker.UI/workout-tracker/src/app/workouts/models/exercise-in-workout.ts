@@ -2,7 +2,7 @@ import { Exercise } from './exercise';
 
 export class ExerciseInWorkout {
 
-  //TODO: Refactor! These class differs from the server-side version for client-side 
+  //TODO: Refactor! This class differs from the server-side version for client-side 
   //needs, which seems like a bad idea.
 
   public id: number;

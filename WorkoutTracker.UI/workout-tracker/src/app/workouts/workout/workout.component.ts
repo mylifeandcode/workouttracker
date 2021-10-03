@@ -119,7 +119,7 @@ export class WorkoutComponent implements OnInit {
   }
 
   public startWorkout(): void {
-    //TODO: Refactor to remove this, nol onger needed
+    //TODO: Refactor to remove this, no longer needed
     //this.workout.startDateTime = new Date();
     this.workoutForm.controls.journal.enable();
     this.workoutForm.controls.exercises.enable();

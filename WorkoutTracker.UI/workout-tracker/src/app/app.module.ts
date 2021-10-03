@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
 //Third-Party imports
-import { CookieService } from 'ng2-cookies';
+
 import { ModalModule } from 'ngx-bootstrap/modal'; //TODO: Deprecate in favor of PrimeNg dialog
 
 //My imports
@@ -29,6 +29,7 @@ import { UserSelectComponent } from './user-select/user-select.component';
 //Other
 import { environment } from 'environments/environment';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
+import { CookieService } from 'ng2-cookies/cookie';
 
 
 export function initializeApp(configService: ConfigService, userService: UserService) {

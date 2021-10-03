@@ -6,6 +6,7 @@ import { TargetArea } from '../workouts/models/target-area';
 import { map, catchError } from 'rxjs/operators';
 import { PaginatedResults } from '../core/models/paginated-results';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
+import { ConfigService } from 'app/core/config.service';
 
 const HTTP_OPTIONS = {
     headers: new HttpHeaders({
@@ -18,11 +19,16 @@ const HTTP_OPTIONS = {
 })
 export class ExerciseService {
 
-    private readonly API_ROOT: string = "http://localhost:5600/api/exercises"; //TODO: Get from environment config
+    private readonly API_ROOT: string;
     private _targetAreas: Observable<Array<TargetArea>>;
     private _resistanceTypes: Observable<Map<number, string>>;
+    private readonly TARGET_AREAS_API_ROOT: string; //TODO: Create TargetAreaService
 
-    constructor(private _http: HttpClient) { }
+    constructor(private _http: HttpClient, private _configService: ConfigService) { 
+        const apiRoot: string = this._configService.get("apiRoot");
+        this.API_ROOT = apiRoot + "exercises";
+        this.TARGET_AREAS_API_ROOT = apiRoot + "TargetAreas";
+    }
 
     public getAll(firstRecOffset: number, pageSize: number, nameContains: string = null, targetAreaContains: string = null): Observable<PaginatedResults<ExerciseDTO>> {
         
@@ -45,11 +51,8 @@ export class ExerciseService {
     }
 
     public getTargetAreas(): Observable<Array<TargetArea>> {
-        //TODO: Move this into its own service?
-        //TODO: Refactor to use config service for API URL
-        return this._http.get("http://localhost:5600/api/TargetAreas")
-            //.pipe(map((resp: Response) => <Array<TargetArea>>resp));
-            .pipe(map((resp: Array<TargetArea>) => resp));
+        //TODO: Move this into its own service
+        return this._http.get<Array<TargetArea>>(this.TARGET_AREAS_API_ROOT);
     }
 
     public add(exercise: Exercise): Observable<Exercise> {
