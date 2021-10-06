@@ -38,6 +38,8 @@ export class WorkoutPlanComponent implements OnInit {
 
   //TODO: Component needs to show target reps and allow for setting target resistance
   //TODO: Consolidate code duplicated between this component and WorkoutComponent
+  //TODO: Ask for duration for timed sets
+  //TODO: Ask for targets for each set
 
   //PUBLIC PROPERTIES
   /**

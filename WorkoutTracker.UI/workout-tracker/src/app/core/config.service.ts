@@ -25,7 +25,7 @@ export class ConfigService {
   public get(key: string): any {
     
     let setting = ConfigService._configValues.get(key);
-    
+
     if (setting)
       return setting;
     else

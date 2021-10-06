@@ -316,7 +316,7 @@ export class WorkoutComponent implements OnInit {
       .subscribe((workout: ExecutedWorkout) => {
           this.workout = workout;
           this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
-          this.workoutCompleted = true;
+          this.workoutCompleted = true; //TODO: Disable form
         }, 
         (error: any) => { this.setErrorInfo(error, "An error occurred saving workout information. See console for details."); 
       });

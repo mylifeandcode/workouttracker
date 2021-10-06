@@ -17,7 +17,7 @@ export class UserSelectComponent implements OnInit {
 
   constructor(private _userSvc: UserService, private _router: Router) { }
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.loadingUsers = true;
     this._userSvc.getAll().subscribe((results: Array<User>) => {
       this.users = results;

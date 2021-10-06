@@ -24,7 +24,6 @@ import { AdminHomeComponent } from './admin-home/admin-home.component';
 import { ResistanceBandsComponent } from './resistance-bands/resistance-bands.component';
 import { UserEditComponent } from './user-edit/user-edit.component';
 import { UserListComponent } from './user-list/user-list.component';
-import { CoreModule } from 'app/core/core.module';
 
 
 @NgModule({
@@ -39,7 +38,6 @@ import { CoreModule } from 'app/core/core.module';
     ButtonModule,
     ConfirmDialogModule,
     CommonModule, 
-    CoreModule, 
     DialogModule,
     FormsModule,
     MessageModule,

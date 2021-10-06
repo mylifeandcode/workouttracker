@@ -53,7 +53,7 @@ export class CountdownTimerComponent implements OnInit {
 
   public handlePreCountdownEvent(countdownEvent: CountdownEvent): void {
     if(countdownEvent.action == 'done') {
-      this.showPreCountdown = false;
+      this.showPreCountdown = false; //TODO: Modify HTML to hide Begin button
       this.playSound();
       this.countdownHasBegun = true;
       this._countdown.begin();
@@ -63,7 +63,7 @@ export class CountdownTimerComponent implements OnInit {
   public handleCountdownEvent(countdownEvent: CountdownEvent): void {
     if (this.countdownHasBegun) { //If statement added because the 'done' event was firing on init, before countdown even began
       if(countdownEvent.action == 'done') {
-        this.playSound();
+        this.playSound(); //TODO: Reset
       }
     }
   }

@@ -34,7 +34,9 @@ import { CookieService } from 'ng2-cookies/cookie';
 
 export function initializeApp(configService: ConfigService, userService: UserService) {
   return () => {
+    console.log("APP IS INITIALIZING");
     configService.init(environment);
+    userService.init();
     userService.restoreUserSessionIfApplicable();
   };
 }

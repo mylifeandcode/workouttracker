@@ -59,7 +59,7 @@ namespace WorkoutTracker.Application.Resistances
             //Based on the current resistance amount, assemble a list of bands which exceeds the amount 
             //by the next available increment.
 
-            short multiplier = doubleBandResistanceAmounts ? 2 : 1;
+            short multiplier = doubleBandResistanceAmounts ? (short)2 : (short)1; //Crazy that I need to cast these!
             decimal minimum = currentAmount + minimalIncrease;
             decimal preferredMax = currentAmount + preferredMaxIncrease;
 
@@ -167,7 +167,7 @@ namespace WorkoutTracker.Application.Resistances
         {
             //Based on the current resistance amount, assemble a list of bands which decreases the amount 
             //by the previous available decrement.
-            short multiplier = doubleBandResistanceAmounts ? 2 : 1;
+            short multiplier = doubleBandResistanceAmounts ? (short)2 : (short)1; //Cast required for some strange reason!
             decimal maximum = currentAmount - minimalDecrease;
             decimal preferredMin = currentAmount - preferredMaxDecrease;
 

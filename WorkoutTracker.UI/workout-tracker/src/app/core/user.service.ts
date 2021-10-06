@@ -19,7 +19,7 @@ export class UserService {
 
   private readonly LOCAL_STORAGE_KEY = "WorkoutTrackerUser";
 
-  private _rootUrl: string;
+  private _apiRoot: string;
   private _userSubject$ = new BehaviorSubject<User>(null);
   private _userObservable$: Observable<User> = this._userSubject$.asObservable();
 
@@ -28,12 +28,14 @@ export class UserService {
     private _localStorageService: LocalStorageService, 
     private _configService: ConfigService) { 
 
-      this._rootUrl = this._configService.get("apiRoot") + "Users";
-
   }
 
   
   //PROPERTIES ////////////////////////////////////////////////////////////////
+  public init(): void {
+    //Race condition in app initializer prevents this from being done in constructor
+    this._apiRoot = this._configService.get("apiRoot") + "Users";
+  }
 
   public get currentUserId(): number {
     if (!this.isUserLoggedIn())
@@ -52,7 +54,7 @@ export class UserService {
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
 
   public getAll() : Observable<Array<User>> {
-    return this._http.get<Array<User>>(this._rootUrl);
+    return this._http.get<Array<User>>(this._apiRoot);
   }
 
   public getCurrentUserInfo(): Observable<User> {
@@ -60,19 +62,19 @@ export class UserService {
   }
 
   public getUserInfo(userId: number): Observable<User> {
-    return this._http.get<User>(`${this._rootUrl}/${userId}`);
+    return this._http.get<User>(`${this._apiRoot}/${userId}`);
   }
 
   public addUser(user: User): Observable<User> {
-    return this._http.post<User>(this._rootUrl, user, httpOptions);
+    return this._http.post<User>(this._apiRoot, user, httpOptions);
   }
 
   public updateUser(user: User): Observable<User> {
-    return this._http.put<User>(`${this._rootUrl}/${user.id}`, user, httpOptions);
+    return this._http.put<User>(`${this._apiRoot}/${user.id}`, user, httpOptions);
   }
 
   public deleteUser(userId: number): Observable<any> {
-    return this._http.delete(`${this._rootUrl}/${userId}`);
+    return this._http.delete(`${this._apiRoot}/${userId}`);
   }
 
   public isUserLoggedIn(): boolean {
