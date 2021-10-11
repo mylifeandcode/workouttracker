@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
-import { Howl } from 'howler';
 import { SoundService } from 'app/core/sound.service';
 
 @Component({
@@ -13,10 +12,12 @@ export class CountdownTimerComponent implements OnInit {
   @ViewChild('preCountdown', { static: false }) private _preCountdown: CountdownComponent;
   @ViewChild('mainCountdown', { static: false }) private _countdown: CountdownComponent;
 
-  public countdownConfig: CountdownConfig;
-  public preCountdownConfig: CountdownConfig;
+  public countdownConfig: CountdownConfig = this.getCountdownConfig(0);
+  public preCountdownConfig: CountdownConfig = this.getCountdownConfig(0);
   public showPreCountdown: boolean = false;
   public countdownHasBegun: boolean = false;
+
+  private _preCountdownHasBegun: boolean = false;
 
   @Input()
   public get secondsToCountdown(): number {
@@ -24,7 +25,6 @@ export class CountdownTimerComponent implements OnInit {
   }
   public set secondsToCountdown(value: number) {
     this._secondsToCountdown = value;
-    this.setCountdownConfig();
     this.reset();
   }
 
@@ -34,7 +34,6 @@ export class CountdownTimerComponent implements OnInit {
   }
   public set secondsLeadInTime(value: number) {
     this._secondsLeadInTime = value;
-    this.setPreCountdownConfig();
   }
 
   private _secondsToCountdown: number;
@@ -43,17 +42,20 @@ export class CountdownTimerComponent implements OnInit {
   constructor(private _soundService: SoundService) { 
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
 
   public startCountdown(): void {
     this.showPreCountdown = true;
+    this._preCountdownHasBegun = true;
     this._preCountdown.begin();
   }
 
+  //TODO: Add ability to pause
+
   public handlePreCountdownEvent(countdownEvent: CountdownEvent): void {
-    if(countdownEvent.action == 'done') {
-      this.showPreCountdown = false; //TODO: Modify HTML to hide Begin button
+    if(this._preCountdownHasBegun && countdownEvent.action == 'done') {
+      this.showPreCountdown = false; 
       this.playSound();
       this.countdownHasBegun = true;
       this._countdown.begin();
@@ -63,7 +65,7 @@ export class CountdownTimerComponent implements OnInit {
   public handleCountdownEvent(countdownEvent: CountdownEvent): void {
     if (this.countdownHasBegun) { //If statement added because the 'done' event was firing on init, before countdown even began
       if(countdownEvent.action == 'done') {
-        this.playSound(); //TODO: Reset
+        this.playSound(); 
       }
     }
   }
@@ -87,8 +89,13 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   private reset(): void {
-    this.showPreCountdown = false;
-    this.countdownHasBegun = false;
+    if (this.secondsToCountdown) {
+      this.setPreCountdownConfig();
+      this.setCountdownConfig();
+      this.showPreCountdown = false;
+      this.countdownHasBegun = false;
+      this._preCountdownHasBegun = false;
+    }
   }
 
   private playSound(): void {

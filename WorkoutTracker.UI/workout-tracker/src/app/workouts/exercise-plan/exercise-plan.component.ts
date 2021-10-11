@@ -25,4 +25,8 @@ export class ExercisePlanComponent {
     this.resistanceBandsModalRequested.emit(formGroup);
   }
 
+  public useSameResistanceAsLastTime(formGroup: FormGroup): void {
+    window.alert("Functionality not ready yet."); //TODO: Implement
+  }
+
 }

@@ -4,12 +4,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { of } from 'rxjs';
+import { WorkoutPlan } from '../models/workout-plan';
 import { WorkoutService } from '../workout.service';
 
 import { WorkoutPlanComponent } from './workout-plan.component';
 
 class WorkoutServiceMock {
-
+  getPlan = jasmine.createSpy('getPlan').and.returnValue(of(new WorkoutPlan()));
 }
 
 class ResistanceBandServiceMock {

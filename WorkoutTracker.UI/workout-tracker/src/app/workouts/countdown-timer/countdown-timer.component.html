@@ -16,6 +16,6 @@ that the newly-rendered countdown is null.
 </div>
 <p></p>
 <div class="centeredText">
-  <button *ngIf="!showPreCountdown" class="btn btn-success" (click)="startCountdown()">Begin</button>
+  <button *ngIf="!showPreCountdown && !countdownHasBegun" class="btn btn-success" (click)="startCountdown()">Begin</button>
 </div>
 

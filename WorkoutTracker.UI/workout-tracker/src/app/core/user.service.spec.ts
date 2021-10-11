@@ -36,6 +36,9 @@ describe('UserService', () => {
         HttpClientTestingModule
       ]
     });
+
+    const service = TestBed.inject(UserService);
+    service.init();
   });
 
   it('should be creatable', inject([UserService], (service: UserService) => {

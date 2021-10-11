@@ -3,15 +3,26 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 
 import { WorkoutService } from './workout.service';
 import { Workout } from 'app/workouts/models/workout';
+import { ConfigService } from 'app/core/config.service';
 
 const TEST_WORKOUT_ID = "5";
 const API_ROOT_URL = "http://localhost:5600/api/workouts";
+
+class MockConfigService {
+  get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
+}
 
 describe('WorkoutService', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
       imports :[
         HttpClientTestingModule
+      ], 
+      providers: [
+        {
+          provide: ConfigService, 
+          useClass: MockConfigService
+        }
       ]
     }));
 
