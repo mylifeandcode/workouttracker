@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { Component } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Pipe, PipeTransform } from '@angular/core';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { of } from 'rxjs';
@@ -10,35 +10,41 @@ import { TableModule } from 'primeng/table';
 import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../exercise.service';
 import { UserService } from 'app/core/user.service';
-import { User } from 'app/core/models/user';
 import { TargetArea } from 'app/workouts/models/target-area';
 import { Exercise } from 'app/workouts/models/exercise';
 import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
 
 const USER_ID: number = 5;
+const EXERCISE: Exercise = <Exercise> {
+  id: 2, 
+  name: 'Some Exercise', 
+  description: 'This is a nice exercise. Blah, blah, blah.', 
+  setup: 'Get ready', 
+  movement: 'Whatever', 
+  pointsToRemember: 'Be careful'
+}
 
 class ExerciseServiceMock {
   resistanceTypes: Map<number, string> = new Map<number, string>();
 
   constructor() {
-    //this.resistanceTypes = new Map<number, string>();
     this.resistanceTypes.set(0, 'Free Weight');
     this.resistanceTypes.set(1, 'Resistance Band');
-    console.log("RESISTANCE TYPES: ", this.resistanceTypes);
   }
 
   getTargetAreas = jasmine.createSpy('getTargetAreas').and.returnValue(of(new Array<TargetArea>()));
-  getById = jasmine.createSpy('getById').and.returnValue(of(new Exercise()));
+  getById = jasmine.createSpy('getById').and.returnValue(of(EXERCISE));
   getResistanceTypes =
     jasmine.createSpy('getResistanceTypes')
       .and.returnValue(of(this.resistanceTypes));
 }
 
-class UserServiceMock {
-  getCurrentUserInfo =
-    jasmine.createSpy('getCurrentUserInfo')
-      .and.returnValue(of(new User({ id: USER_ID })));
+@Pipe({
+  name: 'insertSpaceBeforeCapital'
+})
+class InsertSpaceBeforeCapitalPipeMock implements PipeTransform {
+  transform(value: string) { return "I'm just a mock!"; }
 }
 
 describe('ExerciseEditComponent', () => {
@@ -48,7 +54,8 @@ describe('ExerciseEditComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        ExerciseEditComponent
+        ExerciseEditComponent, 
+        InsertSpaceBeforeCapitalPipeMock
       ],
       imports: [
         ProgressSpinnerModule,
@@ -63,7 +70,7 @@ describe('ExerciseEditComponent', () => {
          },
          {
            provide: UserService,
-           useClass: UserServiceMock
+           useValue: jasmine.createSpyObj("UserService", [], { currentUserId: USER_ID })
          },
          {
            provide: ActivatedRoute,
@@ -88,52 +95,72 @@ describe('ExerciseEditComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get exercise when id is not 0', waitForAsync(() => {
-    const exerciseService: ExerciseService = TestBed.inject(ExerciseService);
-    fixture.whenStable().then(() => {
-      expect(exerciseService.getById).toHaveBeenCalled();
-      expect(component.currentUserId).not.toBeNull();
-    });
-  }));
+  it('should create form', () => {
+    expect(component.exerciseForm).toBeTruthy();
+    expect(component.exerciseForm.controls.id).toBeTruthy();
+    expect(component.exerciseForm.controls.id.hasValidator(Validators.required)).toBeTrue();
+    expect(component.exerciseForm.controls.name).toBeTruthy();
+    expect(component.exerciseForm.controls.name.hasValidator(Validators.required)).toBeTrue();
+    expect(component.exerciseForm.controls.description).toBeTruthy();
+    
+    //TODO: Determine why this check fails
+    //expect(component.exerciseForm.controls.description.hasValidator(Validators.compose([Validators.required, Validators.maxLength(4000)]))).toBeTrue();
+    
+    expect(component.exerciseForm.controls.resistanceTypes).toBeTruthy();
+    expect(component.exerciseForm.controls.oneSided).toBeTruthy();
+    expect(component.exerciseForm.controls.targetAreas).toBeTruthy();
+    expect(component.exerciseForm.controls.setup).toBeTruthy();
+    expect(component.exerciseForm.controls.movement).toBeTruthy();
+    expect(component.exerciseForm.controls.pointsToRemember).toBeTruthy();
+  });
 
-  it('should create form', waitForAsync(() => {
-    fixture.whenStable().then(() => {
-      expect(component.exerciseForm).toBeTruthy();
-      expect(component.exerciseForm.controls.id).toBeTruthy();
-      expect(component.exerciseForm.controls.name).toBeTruthy();
-      expect(component.exerciseForm.controls.description).toBeTruthy();
-      expect(component.exerciseForm.controls.resistanceTypes).toBeTruthy();
-      expect(component.exerciseForm.controls.oneSided).toBeTruthy();
-      expect(component.exerciseForm.controls.targetAreas).toBeTruthy();
-      expect(component.exerciseForm.controls.setup).toBeTruthy();
-      expect(component.exerciseForm.controls.movement).toBeTruthy();
-      expect(component.exerciseForm.controls.pointsToRemember).toBeTruthy();
-    });
-  }));
+  it('should have default values for form if no exercise loaded', () => {
+    //ARRANGE
+    let activatedRoute = TestBed.inject(ActivatedRoute);
+    activatedRoute.params = of({id: 0});
 
-  it('should get the current user ID', waitForAsync(() => {
+    //ACT
+    component.ngOnInit(); //Because we changed ActivatedRoute
+
+    //ASSERT
+    expect(component.exerciseForm.controls.id.value).toEqual(0);
+    
+  });
+
+  it('should get the current user ID', () => {
     const userService = TestBed.inject(UserService);
-    fixture.whenStable().then(() => {
-      expect(component.currentUserId).toEqual(USER_ID);
-      expect(userService.getCurrentUserInfo).toHaveBeenCalledTimes(1);
-    });
-  }));
+    expect(component.currentUserId).toEqual(USER_ID);
+    //TODO: Not sure how we can confirm that the property on the spy was accessed
+    //expect(userService.currentUserId).toHaveBeenCalledTimes(1);
+  });
 
-  it('should get all target areas', waitForAsync(() => {
+  it('should get all target areas', () => {
     const exerciseService = TestBed.inject(ExerciseService);
-    fixture.whenStable().then(() => {
-      expect(component.allTargetAreas).toBeTruthy();
-      expect(exerciseService.getTargetAreas).toHaveBeenCalledTimes(1);
-    });
-  }));
+    expect(component.allTargetAreas).toBeTruthy();
+    expect(exerciseService.getTargetAreas).toHaveBeenCalledTimes(1);
+  });
 
-  it('should get resistance types', waitForAsync(() => {
+  it('should load exercise when editing', () => {
+    //Our default route mock includes a value for exercise ID
     const exerciseService = TestBed.inject(ExerciseService);
-    fixture.whenStable().then(() => {
-      expect(component.resistanceTypes).toBeTruthy();
-      expect(exerciseService.getResistanceTypes).toHaveBeenCalledTimes(1);
-    });
-  }));
+    expect(exerciseService.getById).toHaveBeenCalledWith(2);
+    expect(component.exercise).toEqual(EXERCISE);
+    expect(component.exerciseForm).not.toBeNull();
+    expect(component.exerciseForm).toBeTruthy();
+    expect(component.exerciseForm.controls.id.value).toEqual(EXERCISE.id);
+    expect(component.exerciseForm.controls.id.validator).toBeTruthy();
+    expect(component.exerciseForm.controls.name.value).toEqual(EXERCISE.name);
+    expect(component.exerciseForm.controls.description.value).toEqual(EXERCISE.description);
+    expect(component.exerciseForm.controls.setup.value).toEqual(EXERCISE.setup);
+    expect(component.exerciseForm.controls.movement.value).toEqual(EXERCISE.movement);
+    expect(component.exerciseForm.controls.pointsToRemember.value).toEqual(EXERCISE.pointsToRemember);
+  });
+
+  it('should get resistance types', () => {
+    const exerciseService = TestBed.inject(ExerciseService);
+    expect(component.resistanceTypes).toBeTruthy();
+    expect(exerciseService.getResistanceTypes).toHaveBeenCalledTimes(1);
+  });
 
   //TODO: Complete
   xit('should save exercise', waitForAsync(() => {
