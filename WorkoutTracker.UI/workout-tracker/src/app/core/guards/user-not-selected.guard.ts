@@ -32,7 +32,6 @@ export class UserNotSelectedGuard implements CanActivate {
 
           this._router.navigate(['login']);
           returnValue = false;
-
         }
       );
 

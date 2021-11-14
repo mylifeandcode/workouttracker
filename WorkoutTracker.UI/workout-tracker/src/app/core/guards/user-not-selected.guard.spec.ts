@@ -44,7 +44,6 @@ describe('UserNotSelectedGuard', () => {
   it('should return false from canActivate() and redirect to home when user is not null', () => {
 
     //ARRANGE
-    const userService = TestBed.inject(UserService);
     const router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.callThrough();
 

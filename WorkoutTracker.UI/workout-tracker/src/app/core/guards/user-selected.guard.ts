@@ -11,12 +11,15 @@ export class UserSelectedGuard implements CanActivate {
 
   public canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
+    let returnValue: boolean = true;
+
     this._userSvc.getCurrentUserInfo().subscribe(
       (user: User) => {
 
         if (user == null) {
           this._router.navigate(['login']);
-          return false;
+
+          returnValue = false;
         }
 
       },
@@ -25,12 +28,11 @@ export class UserSelectedGuard implements CanActivate {
         console.log("Error getting current user info: ", error);
 
         this._router.navigate(['login']);
-        return false;
-
+        returnValue =  false;
       }
     );
 
-    return true;
+    return returnValue;
 
   }
 

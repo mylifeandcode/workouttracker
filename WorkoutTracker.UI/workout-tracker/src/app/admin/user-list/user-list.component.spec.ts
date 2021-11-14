@@ -9,8 +9,9 @@ import { User } from 'app/core/models/user';
 class UserServiceMock {
   private fakeUsers: User[] =
   [
-    new User({name: 'Fred'}),
-    new User({name: 'Joe'})
+    new User({id: 1, name: 'Fred'}),
+    new User({id: 2, name: 'Joe'}), 
+    new User({id: 3, name: 'Paul'})
   ];
 
   getAll = jasmine.createSpy('getAll').and.returnValue(of(this.fakeUsers));
@@ -21,6 +22,7 @@ class UserServiceMock {
 describe('UserListComponent', () => {
   let component: UserListComponent;
   let fixture: ComponentFixture<UserListComponent>;
+  let userService: UserService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -40,6 +42,7 @@ describe('UserListComponent', () => {
     fixture = TestBed.createComponent(UserListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    userService = TestBed.inject(UserService);
   });
 
   it('should create', () => {
@@ -47,22 +50,42 @@ describe('UserListComponent', () => {
   });
 
   it('should load users on init', () => {
-    fixture.detectChanges();
-    const userSvc: UserService = TestBed.get(UserService);
-    expect(userSvc.getAll).toHaveBeenCalledTimes(1);
+    expect(userService.getAll).toHaveBeenCalledTimes(1);
     expect(component.users.length).toBeGreaterThan(0);
   });
 
   it('should prevent deleting user if user confirm dialog returns false', () => {
     //ARRANGE
     spyOn(window, 'confirm').and.returnValue(false);
-    const userSvc: UserService = TestBed.get(UserService);
 
     //ACT
-    fixture.detectChanges();
     component.deleteUser(1);
 
     //ASSERT
-    expect(userSvc.deleteUser).not.toHaveBeenCalled();
+    expect(userService.deleteUser).not.toHaveBeenCalled();
+  });
+
+  it('should call service to delete user when confirm dialog returns true', () => {
+    //ARRANGE
+    spyOn(window, 'confirm').and.returnValue(true);
+ 
+    //ACT
+    component.deleteUser(2);
+
+    //ASSERT
+    expect(userService.deleteUser).toHaveBeenCalledWith(2);
+  });
+
+  it('should remove deleted user from users array when user is deleted', () => {
+    //ARRANGE
+    spyOn(window, 'confirm').and.returnValue(true);
+
+    //ACT
+    component.deleteUser(2);
+
+    //ASSERT
+    expect(component.users.length).toBe(2);
+    expect(component.users[0].id).toBe(1);
+    expect(component.users[1].id).toBe(3);
   });
 });
