@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ namespace WorkoutTracker.UI.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [EnableCors("SiteCorsPolicy")]
+    [Authorize]
     [ApiController]
     public class ExecutedWorkoutController : ControllerBase
     {
@@ -59,13 +61,19 @@ namespace WorkoutTracker.UI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<PaginatedResults<ExecutedWorkoutDTO>> Get(int userId, int firstRecord, short pageSize, DateTime? startDateTime = null, DateTime? endDateTime = null, bool newestFirst = true)
+        public ActionResult<PaginatedResults<ExecutedWorkoutDTO>> Get(int firstRecord, short pageSize, DateTime? startDateTime = null, DateTime? endDateTime = null, bool newestFirst = true)
         {
             try
             {
+                //TODO: Consolidate this code somewhere!
+                var userId = User.FindFirst("UserID");
+
+                if (userId == null)
+                    return BadRequest(); //TODO: Add more info
+
                 var filter = 
                     BuildExecutedWorkoutFilter(
-                        userId, startDateTime, endDateTime);
+                        Convert.ToInt32(userId.Value), startDateTime, endDateTime);
                 
                 int totalCount = _executedWorkoutService.GetTotalCount(); //TODO: Modify to get total count by filter
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace WorkoutTracker.UI.Controllers
     [Produces("application/json")]
     [Route("api/Users")]
     [EnableCors("SiteCorsPolicy")]
+    [Authorize]
     [ApiController]
     public class UsersController : SimpleAPIControllerBase<User>
     {
@@ -68,6 +70,12 @@ namespace WorkoutTracker.UI.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [AllowAnonymous]
+        public override ActionResult<IEnumerable<User>> Get()
+        {
+            return base.Get();
         }
     }
 }

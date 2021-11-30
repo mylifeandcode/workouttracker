@@ -72,7 +72,7 @@ describe('UserService', () => {
     expectedResults.id = userId;
 
     //We need to log in first so we'll have a current user
-    userService.logIn(userId).subscribe(
+    userService.setLoggedInUser(userId).subscribe(
       (user: User) => expect(user).toEqual(expectedResults),
       fail
     );
@@ -179,7 +179,7 @@ describe('UserService', () => {
     const userId: number = parseInt(TEST_USER_ID);
     expectedResults.id = userId;
 
-    service.logIn(userId).subscribe(
+    service.setLoggedInUser(userId).subscribe(
       (user: User) => expect(user).toEqual(expectedResults),
       fail
     );
@@ -216,7 +216,7 @@ describe('UserService', () => {
     const userId = parseInt(TEST_USER_ID);
     const expectedResults = new User({id: userId}); //CookieService mock returns TEST_USER_ID for get() calls
 
-    service.logIn(userId).subscribe(
+    service.setLoggedInUser(userId).subscribe(
       (user: User) => expect(user).toEqual(expectedResults),
       fail
     );

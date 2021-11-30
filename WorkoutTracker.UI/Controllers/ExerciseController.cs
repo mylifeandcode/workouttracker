@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApplication.Domain.Exercises;
@@ -16,6 +17,7 @@ namespace WorkoutTracker.UI.Controllers
     [Produces("application/json")]
     [Route("api/Exercises")]
     [EnableCors("SiteCorsPolicy")]
+    [Authorize]
     [ApiController]
     public class ExerciseController : Controller
     {

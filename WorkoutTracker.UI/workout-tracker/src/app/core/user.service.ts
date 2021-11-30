@@ -32,11 +32,7 @@ export class UserService {
 
   
   //PROPERTIES ////////////////////////////////////////////////////////////////
-  public init(): void {
-    //Race condition in app initializer prevents this from being done in constructor
-    this._apiRoot = this._configService.get("apiRoot") + "Users";
-  }
-
+  
   public get currentUserId(): number {
     if (!this.isUserLoggedIn())
       throw new Error("No user is currently logged in.");
@@ -52,6 +48,11 @@ export class UserService {
 
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
+
+  public init(): void {
+    //Race condition in app initializer prevents this from being done in constructor
+    this._apiRoot = this._configService.get("apiRoot") + "Users";
+  }
 
   public getAll() : Observable<Array<User>> {
     return this._http.get<Array<User>>(this._apiRoot);
@@ -81,7 +82,7 @@ export class UserService {
     return (this._userSubject$.value != null);
   }
 
-  public logIn(userId: number): Observable<User> {
+  public setLoggedInUser(userId: number): Observable<User> {
     return this.getUserInfo(userId)
       .pipe(
         map((user: User) => {
