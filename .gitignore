@@ -73,6 +73,8 @@ Release/
 *.css.shim.ts
 *.ngsummary.json
 *.shim.ngstyle.ts
+
+# Visual Studio #
 bin/
 obj/
 .vs/
@@ -88,3 +90,10 @@ obj/
 /WorkoutApplication.Infrastructure/obj
 /WorkoutApplication.Repository/obj
 /WorkoutTracker.Tests/obj
+
+# Visual Studio User-specific files #
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates

@@ -44,10 +44,15 @@ export class ExerciseEditComponent implements OnInit {
     this.createForm();
 
     this.currentUserId = this._userSvc.currentUserId;
-    this._exerciseSvc.getTargetAreas().subscribe((targetAreas: TargetArea[]) => { this.allTargetAreas = targetAreas; });
-    this._exerciseSvc.getResistanceTypes().subscribe((resistanceTypes: Map<number, string>) => {this.resistanceTypes = resistanceTypes;});
-    this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
 
+    //TODO: Rethink the following. This can probably be done a much better way.
+    this._exerciseSvc.getTargetAreas().subscribe((targetAreas: TargetArea[]) => { 
+      this.allTargetAreas = targetAreas; 
+      this._exerciseSvc.getResistanceTypes().subscribe((resistanceTypes: Map<number, string>) => {
+        this.resistanceTypes = resistanceTypes;
+        this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
+      });
+    });
   }
 
   private setupTargetAreas(exerciseTargetAreaLinks: ExerciseTargetAreaLink[]): void {

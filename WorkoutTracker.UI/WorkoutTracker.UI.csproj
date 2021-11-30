@@ -4,6 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
     <StartupObject>WorkoutTracker.Program</StartupObject>
+    <UserSecretsId>bb48a3b1-794e-4418-9ad9-e5646ca5bdcd</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
