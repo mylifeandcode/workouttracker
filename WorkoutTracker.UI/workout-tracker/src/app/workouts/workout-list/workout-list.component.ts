@@ -30,17 +30,14 @@ export class WorkoutListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-      this._userService.getCurrentUserInfo().subscribe((user: User) => {
-        this._userId = user.id;
-        this.getWorkouts(0, null);
-      });
+    this.getWorkouts(0, null);
   }
 
   public getWorkouts(first: number, nameContains: string): void {
       //this.loading = true;
       this.totalRecords = 0;
 
-      this._workoutSvc.getAll(first, 20, this._userId)
+      this._workoutSvc.getAll(first, 20)
         .pipe(finalize(() => { this.loading = false; }))
         .subscribe(
             (results: PaginatedResults<WorkoutDTO>) => {

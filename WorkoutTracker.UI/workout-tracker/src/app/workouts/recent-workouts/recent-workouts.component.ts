@@ -26,7 +26,7 @@ export class RecentWorkoutsComponent implements OnInit {
 
   public ngOnInit(): void {
     this._executedWorkoutService
-      .getRecent(this._userService.currentUserId)
+      .getRecent()
       .subscribe((workouts: ExecutedWorkoutDTO[]) => this.recentWorkouts = workouts);
   }
 

@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 
@@ -27,10 +27,24 @@ export class AuthService {
   private _apiRoot: string;
 
   public token: string;
-  
+
+  private _userSubject$ = new BehaviorSubject<string>(null);
+  private _userObservable$: Observable<string> = this._userSubject$.asObservable();
+
+ 
   constructor(private _http: HttpClient, private _configService: ConfigService) { 
 
   }
+
+  //PROPERTIES ////////////////////////////////////////////////////////////////
+  
+  public get currentUserName(): Observable<string> {
+    return this._userObservable$;
+  }
+
+  //END PROPERTIES ////////////////////////////////////////////////////////////
+
+  //PUBLIC METHODS ////////////////////////////////////////////////////////////
 
   public init(): void {
     //Race condition in app initializer prevents this from being done in constructor
@@ -43,10 +57,23 @@ export class AuthService {
         map((token: string) => {
           window.alert("TOKEN: " + token);
           this.token = token;
+          this._userSubject$.next(username);
           return true;
         })
       );
   }
+
+  public isUserLoggedIn(): boolean {
+    //return (this._userSubject$.value != null);
+    return (this.token != null);
+  }
+
+  public logOff(): void {
+    //this._localStorageService.remove(this.LOCAL_STORAGE_KEY);
+    this._userSubject$.next(null);
+  }  
+
+  //END PUBLIC METHODS ////////////////////////////////////////////////////////
 
 }
 

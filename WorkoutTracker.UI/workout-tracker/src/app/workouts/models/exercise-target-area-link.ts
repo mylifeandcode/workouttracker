@@ -6,11 +6,9 @@ export class ExerciseTargetAreaLink extends Entity {
     targetAreaId: number;
     targetArea: TargetArea;
 
-    constructor(exId: number, targId: number, createdBy: number) {
+    constructor(exId: number, targId: number) {
         super();
         this.exerciseId = exId;
         this.targetAreaId = targId;
-        this.createdByUserId = createdBy;
-        this.createdDateTime = new Date();
     }
 }

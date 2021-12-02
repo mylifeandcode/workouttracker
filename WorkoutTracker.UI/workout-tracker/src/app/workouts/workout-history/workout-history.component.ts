@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'app/core/auth.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
-import { UserService } from 'app/core/user.service';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
@@ -27,8 +27,7 @@ export class WorkoutHistoryComponent implements OnInit {
 
 
   constructor(
-    private _executedWorkoutService: ExecutedWorkoutService,
-    private _userService: UserService) {
+    private _executedWorkoutService: ExecutedWorkoutService) {
 
   }
 
@@ -38,21 +37,17 @@ export class WorkoutHistoryComponent implements OnInit {
   public getExecutedWorkouts(first: number, nameContains: string): void {
 
     //this.totalRecords = 0;
-
-    if(this._userService.currentUserId != null) {
-
-      this._executedWorkoutService.getFilteredSubset(this._userService.currentUserId, first, this.pageSize)
-        .pipe(finalize(() => { this.loading = false; }))
-        .subscribe(
-            (results: PaginatedResults<ExecutedWorkoutDTO>) => {
-                this.executedWorkouts = results.results;
-                console.log('executedWorkouts: ', this.executedWorkouts);
-                this.totalRecords = results.totalCount;
-            },
-            (error: any) => window.alert("An error occurred getting executed workouts: " + error)
-        );
-
-    }
+    //TODO: Refactor. Get user ID in API from token.
+    this._executedWorkoutService.getFilteredSubset(first, this.pageSize)
+      .pipe(finalize(() => { this.loading = false; }))
+      .subscribe(
+          (results: PaginatedResults<ExecutedWorkoutDTO>) => {
+              this.executedWorkouts = results.results;
+              console.log('executedWorkouts: ', this.executedWorkouts);
+              this.totalRecords = results.totalCount;
+          },
+          (error: any) => window.alert("An error occurred getting executed workouts: " + error)
+      );
   }
 
   public getExecutedWorkoutsLazy(event: any): void {

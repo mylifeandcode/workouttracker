@@ -21,7 +21,7 @@ export class UserService {
 
   private _apiRoot: string;
   private _userSubject$ = new BehaviorSubject<User>(null);
-  private _userObservable$: Observable<User> = this._userSubject$.asObservable();
+  //private _userObservable$: Observable<User> = this._userSubject$.asObservable();
 
   constructor(
     private _http: HttpClient, 
@@ -33,6 +33,8 @@ export class UserService {
   
   //PROPERTIES ////////////////////////////////////////////////////////////////
   
+  //TODO: Move to AuthService
+  /*
   public get currentUserId(): number {
     if (!this.isUserLoggedIn())
       throw new Error("No user is currently logged in.");
@@ -40,10 +42,11 @@ export class UserService {
     return this._userSubject$.value?.id;
   }
 
+  //TODO: Move to AuthService
   public get currentUserInfo(): Observable<User> {
     return this._userObservable$;
   }
-
+  */
   //END PROPERTIES ////////////////////////////////////////////////////////////
 
 
@@ -58,9 +61,11 @@ export class UserService {
     return this._http.get<Array<User>>(this._apiRoot);
   }
 
+  /*
   public getCurrentUserInfo(): Observable<User> {
     return of(this._userSubject$.value);
   }
+  */
 
   public getUserInfo(userId: number): Observable<User> {
     return this._http.get<User>(`${this._apiRoot}/${userId}`);
@@ -78,10 +83,12 @@ export class UserService {
     return this._http.delete(`${this._apiRoot}/${userId}`);
   }
 
+  //TODO: Move to AuthService
   public isUserLoggedIn(): boolean {
     return (this._userSubject$.value != null);
   }
 
+  //TODO: Move to AuthService
   public setLoggedInUser(userId: number): Observable<User> {
     return this.getUserInfo(userId)
       .pipe(
@@ -94,11 +101,13 @@ export class UserService {
     );
   }
 
+  //TODO: Move to AuthService
   public logOff(): void {
     this._localStorageService.remove(this.LOCAL_STORAGE_KEY);
     this._userSubject$.next(null);
   }
 
+  //TODO: Remove altogether?
   public restoreUserSessionIfApplicable(): void {
     const user: User = this._localStorageService.get(this.LOCAL_STORAGE_KEY);
     if (user) {

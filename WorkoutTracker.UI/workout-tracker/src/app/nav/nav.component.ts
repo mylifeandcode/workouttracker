@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/core/auth.service';
-import { User } from '../core/models/user';
-import { UserService } from '../core/user.service';
 
 @Component({
   selector: 'wt-nav',
@@ -17,18 +15,17 @@ export class NavComponent implements OnInit {
    return this.userName != null;
   }
 
-  constructor(private _userService: UserService, private _router: Router, private _authService: AuthService) { }
+  constructor(private _authService: AuthService, private _router: Router) { }
 
   public ngOnInit(): void {
-    this._userService.currentUserInfo.subscribe(
-      (user: User) => {
-        this.userName = (user ? user.name : null);
+    this._authService.currentUserName.subscribe(
+      (username: string) => {
+        this.userName = username;
       });
   }
 
   public logOff(): void {
-    this._userService.logOff();
-    this._authService.token = null; //TODO: Revisit
+    this._authService.logOff();
     this._router.navigate(['login']);
   }
 
