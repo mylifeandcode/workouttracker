@@ -39,7 +39,7 @@ export function initializeApp(configService: ConfigService, userService: UserSer
     configService.init(environment);
     authService.init();
     userService.init();
-    userService.restoreUserSessionIfApplicable(); //TODO: Verify, now that we're using tokens
+    //userService.restoreUserSessionIfApplicable(); //TODO: Verify, now that we're using tokens
   };
 }
 

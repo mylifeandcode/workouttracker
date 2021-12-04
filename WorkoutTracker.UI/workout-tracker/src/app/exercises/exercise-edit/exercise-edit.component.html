@@ -5,7 +5,7 @@
         </div>
     </div>
     <form *ngIf="exerciseForm && !loading" [formGroup]="exerciseForm" novalidate>
-        <h3 class="headroom">Exercise {{ exercise ? 'Edit' : 'Creation' }}</h3>
+        <h3 class="headroom">Exercise {{ isNew ? 'Creation' : 'Edit' }}</h3>
         <div class="row">
 
             <div class="col-md-8 form-group">

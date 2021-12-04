@@ -230,19 +230,7 @@ export class WorkoutEditComponent implements OnInit {
   private getWorkoutForPersist(): Workout {
     let workout = new Workout();
     workout.id = this.workoutId;
-    workout.userId = this._currentUserId;
-
-    if (workout.id == 0) {
-      workout.createdByUserId = this._currentUserId;
-      workout.createdDateTime = new Date();
-    }
-    else {
-      workout.createdByUserId = this._workout.createdByUserId;
-      workout.createdDateTime = this._workout.createdDateTime;
-    }
-
-    workout.modifiedByUserId = this._currentUserId;
-    workout.modifiedDateTime = new Date();
+    workout.userId = this._currentUserId; //TODO: Evaluate -- do we need this?
 
     workout.name = this.workoutForm.get("name").value;
     workout.exercises = this.getExercisesFromForm();

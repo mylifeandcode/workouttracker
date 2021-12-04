@@ -5,7 +5,6 @@ import { ExerciseService } from '../exercise.service';
 import { Exercise } from '../../workouts/models/exercise';
 import { TargetArea } from '../../workouts/models/target-area';
 import { CustomValidators } from '../../validators/custom-validators';
-import { UserService } from 'app/core/user.service';
 import { ExerciseTargetAreaLink } from '../../workouts/models/exercise-target-area-link';
 import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
@@ -19,14 +18,19 @@ import { finalize } from 'rxjs/operators';
 export class ExerciseEditComponent implements OnInit {
 
   //PUBLIC FIELDS
-  public exercise: Exercise;
   public exerciseForm: FormGroup;
   public loading: boolean = true;
   public allTargetAreas: TargetArea[];
   public resistanceTypes: Map<number, string>;
   public infoMsg: string = null;
 
+  //PUBLIC PROPERTIES
+  public get isNew(): boolean {
+    return !(this._exercise.id > 0);
+  }
+
   //PRIVATE FIELDS
+  private _exercise: Exercise; 
   private _exerciseId: number = 0; //TODO: Refactor. We have an exercise variable. Why have this too?
   private _saving: boolean = false;
   private _errorMsg: string = null;
@@ -34,8 +38,7 @@ export class ExerciseEditComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
-    private _exerciseSvc: ExerciseService,
-    private _userSvc: UserService) {
+    private _exerciseSvc: ExerciseService) {
   }
 
   public ngOnInit(): void {
@@ -82,7 +85,7 @@ export class ExerciseEditComponent implements OnInit {
         this.setupTargetAreas([]);
         this.exerciseForm.reset();
         this.exerciseForm.controls["id"].setValue(0);
-        this.exercise = null;
+        this._exercise = new Exercise();
         this.loading = false;
       }
     });
@@ -114,30 +117,29 @@ export class ExerciseEditComponent implements OnInit {
     this.loading = true;
 
     this._exerciseSvc.getById(this._exerciseId).subscribe((value: Exercise) => {
-      this.exercise = value;
+      this._exercise = value;
       this.updateFormWithExerciseValues();
       this.loading = false;
     }); //TODO: Handle errors
   }
 
-  private getExerciseForPersist(): Exercise {
-    let exercise = new Exercise();
+  private updateExerciseForPersisting(): void {
 
-    exercise.id = this.exerciseForm.get("id").value;
-    exercise.name = this.exerciseForm.get("name").value;
-    exercise.description = this.exerciseForm.get("description").value;
-    exercise.setup = this.exerciseForm.get("setup").value;
-    exercise.movement = this.exerciseForm.get("movement").value;
-    exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember").value;
-    exercise.resistanceType = this.exerciseForm.get("resistanceTypes").value;
-    exercise.oneSided = Boolean(this.exerciseForm.get("oneSided").value); //Call to Boolean() is a workaround to initializer and setValue() not setting value to false as stated
+    //exercise.id = this.exerciseForm.get("id").value;
+    this._exercise.name = this.exerciseForm.get("name").value;
+    this._exercise.description = this.exerciseForm.get("description").value;
+    this._exercise.setup = this.exerciseForm.get("setup").value;
+    this._exercise.movement = this.exerciseForm.get("movement").value;
+    this._exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember").value;
+    this._exercise.resistanceType = this.exerciseForm.get("resistanceTypes").value;
+    this._exercise.oneSided = Boolean(this.exerciseForm.get("oneSided").value); //Call to Boolean() is a workaround to initializer and setValue() not setting value to false as stated
     
-    if (exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
-      exercise.bandsEndToEnd = Boolean(this.exerciseForm.get("endToEnd").value); //Call to Boolean() is a workaround (see above)
+    if (this._exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
+    this._exercise.bandsEndToEnd = Boolean(this.exerciseForm.get("endToEnd").value); //Call to Boolean() is a workaround (see above)
 
-    exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
+    this._exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
 
-    return exercise;
+    //return this.exercise;
   }
 
   private getExerciseTargetAreaLinksForPersist(): ExerciseTargetAreaLink[] {
@@ -163,37 +165,37 @@ export class ExerciseEditComponent implements OnInit {
 
   private updateFormWithExerciseValues(): void {
     this.exerciseForm.patchValue ({
-      id: this.exercise.id,
-      name: this.exercise.name, 
-      description: this.exercise.description,
-      setup: this.exercise.setup,
-      movement: this.exercise.movement,
-      pointsToRemember: this.exercise.pointsToRemember
+      id: this._exercise.id,
+      name: this._exercise.name, 
+      description: this._exercise.description,
+      setup: this._exercise.setup,
+      movement: this._exercise.movement,
+      pointsToRemember: this._exercise.pointsToRemember
     });
 
-    if (this.exercise.exerciseTargetAreaLinks) {
-      this.setupTargetAreas(this.exercise.exerciseTargetAreaLinks);
+    if (this._exercise.exerciseTargetAreaLinks) {
+      this.setupTargetAreas(this._exercise.exerciseTargetAreaLinks);
     }
 
-    this.exerciseForm.controls["resistanceTypes"].setValue(this.exercise.resistanceType);
-    this.exerciseForm.controls["oneSided"].setValue(this.exercise.oneSided);
-    this.exerciseForm.controls["endToEnd"].setValue(this.exercise.bandsEndToEnd);
+    this.exerciseForm.controls["resistanceTypes"].setValue(this._exercise.resistanceType);
+    this.exerciseForm.controls["oneSided"].setValue(this._exercise.oneSided);
+    this.exerciseForm.controls["endToEnd"].setValue(this._exercise.bandsEndToEnd);
   }
 
   private saveExercise(): void {
     //Called by Save button
     this._saving = true;
     this.infoMsg = "Saving...";
-    var exercise = this.getExerciseForPersist();
+    this.updateExerciseForPersisting();
 
     if (this._exerciseId == 0)
-      this._exerciseSvc.add(exercise)
+      this._exerciseSvc.add(this._exercise)
         .pipe(finalize(() => {
           this._saving = false;
         }))
-        .subscribe((value: Exercise) => {
-          this.exercise = value;
-          this._exerciseId = this.exercise.id;
+        .subscribe((addedExercise: Exercise) => {
+          this._exercise = addedExercise;
+          this._exerciseId = this._exercise.id;
           this.infoMsg = "Exercise created at " + new Date().toLocaleTimeString();
         },
         (error: any) => {
@@ -201,11 +203,12 @@ export class ExerciseEditComponent implements OnInit {
         }
       );
     else
-      this._exerciseSvc.update(exercise)
+      this._exerciseSvc.update(this._exercise)
         .pipe(finalize(() => {
           this._saving = false;
         }))
-        .subscribe((value: Exercise) => {
+        .subscribe((updatedExercise: Exercise) => {
+          this._exercise = updatedExercise;
           this._saving = false;
           this.infoMsg = "Exercise updated at " + new Date().toLocaleTimeString();
         }, 

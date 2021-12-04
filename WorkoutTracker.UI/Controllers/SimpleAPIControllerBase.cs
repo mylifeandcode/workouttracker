@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WorkoutApplication.Domain.BaseClasses;
 using WorkoutTracker.Application;
 
 namespace WorkoutTracker.UI.Controllers
 {
-    public abstract class SimpleAPIControllerBase<T> : ControllerBase
+    public abstract class SimpleAPIControllerBase<T> : UserAwareController where T: Entity
     {
         protected ISimpleService<T> _service;
 
@@ -50,7 +52,12 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
+                SetCreatedAuditFields(value);
                 return Ok(_service.Add(value));
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return BadRequest(ex);
             }
             catch (Exception ex)
             {
@@ -63,7 +70,12 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
+                SetModifiedAuditFields(value);
                 return Ok(_service.Update(value));
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return BadRequest(ex);
             }
             catch (Exception ex)
             {

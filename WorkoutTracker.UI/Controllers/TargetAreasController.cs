@@ -16,7 +16,7 @@ namespace WorkoutTracker.UI.Controllers
     [Route("api/[controller]")]
     [EnableCors("SiteCorsPolicy")]
     [Authorize]
-    public class TargetAreasController : Controller
+    public class TargetAreasController : UserAwareController
     {
         protected ITargetAreaService _svc;
 

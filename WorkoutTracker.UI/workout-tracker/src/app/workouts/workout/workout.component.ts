@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
-import { UserService } from 'app/core/user.service';
-import { User } from 'app/core/models/user';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { PaginatedResults } from '../../core/models/paginated-results';
@@ -28,7 +26,7 @@ export class WorkoutComponent implements OnInit {
   public errorInfo: string;
   public workoutForm: FormGroup;
   public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
-  public workout: ExecutedWorkout;
+  public workout: ExecutedWorkout; //TODO: Make this private, and instead expose the date values the template needs as component properties
   public showResistanceBandsSelectModal: boolean = false;
   public showCountdownModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
@@ -78,7 +76,6 @@ export class WorkoutComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _workoutService: WorkoutService, 
     private _executedWorkoutService: ExecutedWorkoutService, 
-    private _userService: UserService, 
     private _resistanceBandService: ResistanceBandService) { 
   }
   
@@ -87,7 +84,6 @@ export class WorkoutComponent implements OnInit {
 
   public ngOnInit(): void {
     this.createForm();
-    //this.getCurrentUserInfo();
     this.getWorkoutDefinitons();
     this.getResistanceBands();
     this.subscribeToRouteParams();
@@ -120,11 +116,8 @@ export class WorkoutComponent implements OnInit {
   }
 
   public startWorkout(): void {
-    //TODO: Refactor to remove this, no longer needed
-    //this.workout.startDateTime = new Date();
     this.workoutForm.controls.journal.enable();
     this.workoutForm.controls.exercises.enable();
-    //this.workout.createdByUserId = this._userService.currentUserId;
   }
 
   public completeWorkout(): void {

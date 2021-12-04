@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
@@ -19,7 +19,7 @@ namespace WorkoutTracker.UI.Controllers
     [EnableCors("SiteCorsPolicy")]
     [Authorize]
     [ApiController]
-    public class ExerciseController : Controller
+    public class ExerciseController : UserAwareController
     {
         private IExerciseService _exerciseService;
 
@@ -88,7 +88,12 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
+                SetCreatedAuditFields(value);
                 return Ok(_exerciseService.Add(value, true));
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return BadRequest(ex);
             }
             catch (Exception ex)
             {
@@ -102,7 +107,12 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
+                SetModifiedAuditFields(value);
                 return Ok(_exerciseService.Update(value, true));
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return BadRequest(ex);
             }
             catch (Exception ex)
             {

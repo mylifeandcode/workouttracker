@@ -19,7 +19,7 @@ namespace WorkoutTracker.UI.Controllers
     [EnableCors("SiteCorsPolicy")]
     [Authorize]
     [ApiController]
-    public class ExecutedWorkoutController : ControllerBase
+    public class ExecutedWorkoutController : UserAwareController
     {
         private IExecutedWorkoutService _executedWorkoutService;
 
@@ -65,19 +65,15 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
-                //TODO: Consolidate this code somewhere!
-                var userId = User.FindFirst("UserID");
+                var userId = GetUserID();
 
-                if (userId == null)
-                    return BadRequest(); //TODO: Add more info
-
-                var filter = 
+                var filter =
                     BuildExecutedWorkoutFilter(
-                        Convert.ToInt32(userId.Value), startDateTime, endDateTime);
-                
+                        userId, startDateTime, endDateTime);
+
                 int totalCount = _executedWorkoutService.GetTotalCount(); //TODO: Modify to get total count by filter
 
-                var executedWorkouts = 
+                var executedWorkouts =
                     _executedWorkoutService
                         .GetFilteredSubset(firstRecord, pageSize, filter, newestFirst)
                         .ToList();
@@ -85,16 +81,20 @@ namespace WorkoutTracker.UI.Controllers
                 var results = executedWorkouts.Select((executedWorkout) =>
                 {
                     return new ExecutedWorkoutDTO(
-                        executedWorkout.Id, 
-                        executedWorkout.Workout.Name, 
-                        executedWorkout.WorkoutId, 
-                        executedWorkout.StartDateTime, 
+                        executedWorkout.Id,
+                        executedWorkout.Workout.Name,
+                        executedWorkout.WorkoutId,
+                        executedWorkout.StartDateTime,
                         executedWorkout.EndDateTime);
                 });
 
                 var result = new PaginatedResults<ExecutedWorkoutDTO>(results, totalCount);
 
                 return Ok(result);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return BadRequest(ex);
             }
             catch (Exception ex)
             {
@@ -108,7 +108,12 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
+                SetCreatedAuditFields(value);
                 return _executedWorkoutService.Add(value, true);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return BadRequest(ex);
             }
             catch (Exception ex)
             {
@@ -121,7 +126,12 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
+                SetModifiedAuditFields(value);
                 return _executedWorkoutService.Update(value, true);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return BadRequest(ex);
             }
             catch (Exception ex)
             {

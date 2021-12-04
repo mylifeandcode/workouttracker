@@ -12,7 +12,7 @@ namespace WorkoutTracker.UI.Auth
     //code differs somewhat from what they implemented
     public class TokenService : ITokenService
     {
-        private const double EXPIRY_DURATION_MINUTES = 360;
+        private const double EXPIRY_DURATION_MINUTES = 360; //TODO: Drive via config
 
         public string BuildToken(string key, string issuer, User user)
         {

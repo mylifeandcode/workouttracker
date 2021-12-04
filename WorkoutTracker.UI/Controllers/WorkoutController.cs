@@ -16,7 +16,7 @@ namespace WorkoutTracker.UI.Controllers
     [EnableCors("SiteCorsPolicy")]
     [Authorize]
     [ApiController]
-    public class WorkoutController : ControllerBase
+    public class WorkoutController : UserAwareController
     {
         private IWorkoutService _workoutService;
         private IWorkoutPlanService _workoutPlanService;
@@ -39,12 +39,9 @@ namespace WorkoutTracker.UI.Controllers
             try
             {
                 //TODO: Consolidate this code somewhere!
-                var userId = User.FindFirst("UserID");
-                
-                if (userId == null)
-                    return BadRequest(); //TODO: Add more info
+                var userId = GetUserID();
 
-                var filter = BuildWorkoutFilter(Convert.ToInt32(userId.Value), nameContains);
+                var filter = BuildWorkoutFilter(userId, nameContains);
 
                 int totalCount = _workoutService.GetTotalCount(); //TODO: Modify to get total count by filter
 
@@ -148,6 +145,7 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
+                SetCreatedAuditFields(value);
                 return Ok(_workoutService.Add(value, true));
             }
             catch (Exception ex)
@@ -162,6 +160,7 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
+                SetModifiedAuditFields(value);
                 return Ok(_workoutService.Update(value, true));
             }
             catch (Exception ex)
