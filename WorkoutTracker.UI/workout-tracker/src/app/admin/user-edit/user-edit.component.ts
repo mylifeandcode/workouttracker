@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../core/user.service';
-import { User } from '../../core/models/user';
+import { User } from 'app/core/models/user';
 import { FormBuilder, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -18,8 +18,8 @@ export class UserEditComponent implements OnInit {
   public savingUserInfo: boolean = false;
   public errorMsg: string;
   public userEditForm: FormGroup;
+
   private _user: User;
-  private _currentUserId: number; //The ID of the user performing the add or edit
 
   constructor(
     private _route: ActivatedRoute,
@@ -33,7 +33,6 @@ export class UserEditComponent implements OnInit {
     this.loadingUserInfo = true;
     this.createForm();
     this.getUserInfo();
-    this._currentUserId = await this.getCurrentUserId();
   }
 
   public saveUser(): void {
@@ -100,21 +99,11 @@ export class UserEditComponent implements OnInit {
 
   }
 
-  private async getCurrentUserId(): Promise<number> {
-    const result: User =  await this._userSvc.getCurrentUserInfo().toPromise();
-    return result ? result.id : 0;
-  }
-
   private getUserForPersist(): User {
     const user = new User();
 
     user.id = this.userEditForm.get("id").value;
     user.name = this.userEditForm.get("name").value;
-
-    if (this._user.id > 0)
-      user.modifiedByUserId = this._currentUserId;
-    else
-      user.createdByUserId = this._currentUserId;
 
     return user;
   }

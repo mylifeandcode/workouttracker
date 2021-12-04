@@ -34,16 +34,19 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
    * @param startingIndex The index of the record to start with.
    * @param pageSize The number of records to return. Could be less if on the final page.
    */
-  public getFilteredSubset(userId: number, startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutDTO>> {
-    return this._http.get<PaginatedResults<ExecutedWorkoutDTO>>(`${this._apiRoot}?userId=${userId}&firstRecord=${startingIndex}&pageSize=${pageSize}`);
+
+  //TODO: Refactor. Get user ID in API from token.
+  public getFilteredSubset(startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutDTO>> {
+    return this._http.get<PaginatedResults<ExecutedWorkoutDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}`);
   }
 
   /**
    * Gets recently executed workouts
    * @returns an array of recently executed workouts
    */
-  public getRecent(userId: number): Observable<ExecutedWorkoutDTO[]> {
-    return this.getFilteredSubset(userId, 0, 5)
+  //TODO: Refactor. Get user ID in API from token.
+  public getRecent(): Observable<ExecutedWorkoutDTO[]> {
+    return this.getFilteredSubset(0, 5)
       .pipe(map((results: PaginatedResults<ExecutedWorkoutDTO>) => results.results));
   }
 }

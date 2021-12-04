@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../core/user.service';
 import { User } from '../core/models/user';
+import { AuthService } from 'app/core/auth.service';
 
 @Component({
   selector: 'wt-user-select',
@@ -15,7 +16,10 @@ export class UserSelectComponent implements OnInit {
   public gettingUserInfo: boolean = false;
   public username: string = null;
 
-  constructor(private _userSvc: UserService, private _router: Router) { }
+  constructor(
+    private _authService: AuthService, 
+    private _userSvc: UserService, 
+    private _router: Router) { }
 
   public ngOnInit(): void {
     this.loadingUsers = true;
@@ -32,15 +36,20 @@ export class UserSelectComponent implements OnInit {
     this.gettingUserInfo = true;
     this.username = userName;
 
-    //this._userSvc.getUserInfo(userId)
-    this._userSvc.logIn(userId)
-      .subscribe(
-        (user: User) => {
-          //this._userSvc.setCurrentUser(user);
-          this._router.navigate(['home']);
-        },
-        (error: any) => this.errorMsg = error,
-        () => this.gettingUserInfo = false);
+    this._authService.logIn(userName, "") //TODO: Refactor to require password if user has specified one
+      .subscribe((result: boolean) => {
+        if(result) {
+          this._userSvc.setLoggedInUser(userId)
+            .subscribe(
+              (user: User) => {
+                this._router.navigate(['home']);
+              },
+              (error: any) => this.errorMsg = error,
+              () => this.gettingUserInfo = false);
+        }
+        else
+          window.alert("Login attempt failed.");
+      });
   }
 
 }

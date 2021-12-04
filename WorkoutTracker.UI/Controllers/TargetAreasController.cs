@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutApplication.Domain.Exercises;
@@ -14,6 +15,7 @@ namespace WorkoutTracker.UI.Controllers
 {
     [Route("api/[controller]")]
     [EnableCors("SiteCorsPolicy")]
+    [Authorize]
     public class TargetAreasController : Controller
     {
         protected ITargetAreaService _svc;

@@ -74,7 +74,7 @@ describe('UserSelectComponent', () => {
     component.selectUser(userId, userName);
 
     //ASSERT
-    expect(userService.logIn).toHaveBeenCalledOnceWith(userId);
+    expect(userService.setLoggedInUser).toHaveBeenCalledOnceWith(userId);
     expect(component.username).toBe(userName);
     expect(router.navigate).toHaveBeenCalledOnceWith(['home']);
 

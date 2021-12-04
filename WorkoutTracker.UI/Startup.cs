@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using StructureMap;
 using WorkoutApplication.Data;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +11,13 @@ using WorkoutApplication.Repository;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
 using WorkoutApplication.Domain.Users;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.SpaServices.Extensions;
 using WorkoutApplication.Domain.Workouts;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Hosting;
 using WorkoutApplication.Domain.Resistances;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace WorkoutTracker
 {
@@ -46,7 +43,7 @@ namespace WorkoutTracker
                 loggingBuilder.AddConsole();
                 loggingBuilder.AddDebug();
             });
-            
+
             services.AddCors(options =>
             {
                 /*
@@ -100,6 +97,26 @@ namespace WorkoutTracker
             });
             */
 
+            //Originally from https://www.codemag.com/Article/2105051/Implementing-JWT-Authentication-in-ASP.NET-Core-5 .
+            //See also https://github.com/joydipkanjilal/jwt-aspnetcore/tree/master/jwt-aspnetcore for differences between the 
+            //article's code and the code they implemented
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new
+                    SymmetricSecurityKey
+                    (Encoding.UTF8.GetBytes
+                    (Configuration["Jwt:Key"]))
+                };
+            });
+
             return ConfigureIoC(services);
         }
 
@@ -108,6 +125,19 @@ namespace WorkoutTracker
         {
             //app.UseMvcWithDefaultRoute();
 
+            //From https://www.codemag.com/Article/2105051/Implementing-JWT-Authentication-in-ASP.NET-Core-5
+            //app.UseSession();
+            /*
+            app.Use(async (context, next) =>
+            {
+                var token = context.Session.GetString("Token");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Request.Headers.Add("Authorization", "Bearer " + token);
+                }
+                await next();
+            });
+            */
             app.UseStaticFiles();
             app.UseRouting();
             //app.UseSpaStaticFiles();
@@ -134,7 +164,10 @@ namespace WorkoutTracker
                 }
             });
             */
-
+            
+            app.UseAuthentication();
+            app.UseAuthorization();
+            
             app.UseEndpoints(endpoints => 
             {
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
@@ -145,6 +178,7 @@ namespace WorkoutTracker
                 serviceScope.ServiceProvider.GetService<WorkoutsContext>().Database.Migrate();
                 serviceScope.ServiceProvider.GetService<WorkoutsContext>().EnsureSeedData();
             }
+
         }
 
         public IServiceProvider ConfigureIoC(IServiceCollection services)

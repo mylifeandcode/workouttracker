@@ -5,8 +5,8 @@ import { EnsureModuleLoadedOnceGuard } from './guards/ensure-module-loaded-once.
 import { Optional } from '@angular/core';
 import { SkipSelf } from '@angular/core';
 import { SharedModule } from 'app/shared/shared.module';
-
-
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './auth.interceptor';
 
 @NgModule({
   declarations: [],
@@ -16,6 +16,11 @@ import { SharedModule } from 'app/shared/shared.module';
   ],
   exports: [],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS, 
+      useClass: AuthInterceptor, 
+      multi: true
+    }, 
     UserSelectedGuard
   ] //UserService is provided in root
 })

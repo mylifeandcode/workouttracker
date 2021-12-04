@@ -87,7 +87,8 @@ export class WorkoutComponent implements OnInit {
 
   public ngOnInit(): void {
     this.createForm();
-    this.getCurrentUserInfo();
+    //this.getCurrentUserInfo();
+    this.getWorkoutDefinitons();
     this.getResistanceBands();
     this.subscribeToRouteParams();
     this.startWorkout();
@@ -150,20 +151,22 @@ export class WorkoutComponent implements OnInit {
     });
   }
 
+  /*
   private getCurrentUserInfo(): void {
     this._apiCallsInProgress++;
     this._userService.getCurrentUserInfo()
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe(
         (user: User) => {
-          this.getWorkoutDefinitons(user.id);
+          this.getWorkoutDefinitons();
         }, 
         (error: any) => {
           this.setErrorInfo(error, "An error occurred getting user info. See console for more info.");
         }
       );
   }
-
+  */
+ 
   private getResistanceBands(): void {
     this._apiCallsInProgress++;
     this._resistanceBandService.getAllIndividualBands()
@@ -178,8 +181,8 @@ export class WorkoutComponent implements OnInit {
       );
   }
   
-  private getWorkoutDefinitons(userId: number): void {
-    this._workoutService.getAll(0, 500, userId) //TODO: Clean this up. Don't harcode page size of 500. Maybe a better endpoint is needed for this.
+  private getWorkoutDefinitons(): void {
+    this._workoutService.getAll(0, 500) //TODO: Clean this up. Don't harcode page size of 500. Maybe a better endpoint is needed for this.
       .pipe(finalize(() => {
         this._apiCallsInProgress--;
       }))

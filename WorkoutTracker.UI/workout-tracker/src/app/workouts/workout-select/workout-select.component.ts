@@ -1,12 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/models/paginated-results';
-import { User } from 'app/core/models/user';
-import { UserService } from 'app/core/user.service';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
+import { AuthService } from 'app/core/auth.service';
 import * as _ from 'lodash';
 
 @Component({
@@ -41,7 +40,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
 
   constructor(
     private _workoutService: WorkoutService, 
-    private _userService: UserService, 
+    private _authService: AuthService, 
     private _router: Router) { }
 
   public ngOnInit(): void {
@@ -58,13 +57,13 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToUser(): void {
-    this._userService.currentUserInfo.subscribe((user: User) => {
-      this.getUserWorkouts(user.id);
+    this._authService.currentUserName.subscribe((username: string) => {
+      this.getUserWorkouts();
     });
   }
 
-  private getUserWorkouts(userId: number): void {
-    this._userSusbscription = this._workoutService.getAll(0, 500, userId) //TODO: Page size...come up with a better solution
+  private getUserWorkouts(): void {
+    this._userSusbscription = this._workoutService.getAll(0, 500) //TODO: Page size...come up with a better solution
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
         this.workouts = _.sortBy(result.results, 'name');

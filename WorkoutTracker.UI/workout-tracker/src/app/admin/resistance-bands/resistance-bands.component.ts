@@ -97,8 +97,8 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   private addResistanceBand(): void {
-    this.newResistanceBand.createdByUserId = this._userService.currentUserId;
-    this.newResistanceBand.createdDateTime = new Date();
+    //this.newResistanceBand.createdByUserId = this._userService.currentUserId; //TODO: Refactor. Set in API based on User ID from token.
+    //this.newResistanceBand.createdDateTime = new Date();
     this._resistanceBandService
       .add(this.newResistanceBand)
       .subscribe(
@@ -113,8 +113,8 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   private updateResistanceBand(band: ResistanceBand): void {
-    band.modifiedByUserId = this._userService.currentUserId;
-    band.modifiedDateTime = new Date();
+    //band.modifiedByUserId = this._userService.currentUserId; //TODO: Refactor. Set in API based on User ID from token.
+    //band.modifiedDateTime = new Date();
     this._resistanceBandService
       .update(band)
       .subscribe(

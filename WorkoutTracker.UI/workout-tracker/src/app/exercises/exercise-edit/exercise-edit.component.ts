@@ -22,7 +22,6 @@ export class ExerciseEditComponent implements OnInit {
   public exercise: Exercise;
   public exerciseForm: FormGroup;
   public loading: boolean = true;
-  public currentUserId: number; //The ID of the user performing the add or edit
   public allTargetAreas: TargetArea[];
   public resistanceTypes: Map<number, string>;
   public infoMsg: string = null;
@@ -42,8 +41,6 @@ export class ExerciseEditComponent implements OnInit {
   public ngOnInit(): void {
 
     this.createForm();
-
-    this.currentUserId = this._userSvc.currentUserId;
 
     //TODO: Rethink the following. This can probably be done a much better way.
     this._exerciseSvc.getTargetAreas().subscribe((targetAreas: TargetArea[]) => { 
@@ -138,11 +135,6 @@ export class ExerciseEditComponent implements OnInit {
     if (exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
       exercise.bandsEndToEnd = Boolean(this.exerciseForm.get("endToEnd").value); //Call to Boolean() is a workaround (see above)
 
-    if (exercise.id > 0)
-      exercise.modifiedByUserId = this.currentUserId;
-    else
-      exercise.createdByUserId = this.currentUserId;
-
     exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
 
     return exercise;
@@ -161,8 +153,7 @@ export class ExerciseEditComponent implements OnInit {
         let selectedTargetArea = _.find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key); 
         output.push(new ExerciseTargetAreaLink(
           this._exerciseId, 
-          selectedTargetArea.id, 
-          this.currentUserId
+          selectedTargetArea.id
         ));
       }
     }

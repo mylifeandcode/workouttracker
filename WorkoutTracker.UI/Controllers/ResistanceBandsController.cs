@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using WorkoutApplication.Domain.Resistances;
@@ -9,6 +10,7 @@ namespace WorkoutTracker.UI.Controllers
     [Produces("application/json")]
     [Route("api/ResistanceBands")]
     [EnableCors("SiteCorsPolicy")]
+    [Authorize]
     [ApiController]
     public class ResistanceBandsController : SimpleAPIControllerBase<ResistanceBand>
     {

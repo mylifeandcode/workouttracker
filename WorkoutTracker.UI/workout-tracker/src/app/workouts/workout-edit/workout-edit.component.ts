@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl } from '
 import { WorkoutService } from '../workout.service';
 import { UserService } from 'app/core/user.service';
 import { Workout } from 'app/workouts/models/workout';
-import { User } from 'app/core/models/user';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
@@ -42,7 +41,6 @@ export class WorkoutEditComponent implements OnInit {
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
     private _workoutSvc: WorkoutService,
-    private _userSvc: UserService, 
     private _modalSvc: BsModalService) {
   }
 
@@ -51,7 +49,7 @@ export class WorkoutEditComponent implements OnInit {
     this.getRouteParams();
     this.createForm();
 
-    this._currentUserId = await this.getCurrentUserId();
+    //this._currentUserId = await this.getCurrentUserId();
 
     /*
     if (this._workoutId != 0) 
@@ -95,13 +93,14 @@ export class WorkoutEditComponent implements OnInit {
 
   }
 
+  /*
   private async getCurrentUserId(): Promise<number> {
     //TODO: Create edit form base component that would contain this function and be extended by other
     //edit components
     let result: User = await this._userSvc.getCurrentUserInfo().toPromise();
     return result ? result.id : 0;
   }
-
+  */
 
   private loadWorkout(): void {
     this.loading = true;

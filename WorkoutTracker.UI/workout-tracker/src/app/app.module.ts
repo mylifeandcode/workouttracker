@@ -30,14 +30,16 @@ import { UserSelectComponent } from './user-select/user-select.component';
 import { environment } from 'environments/environment';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { CookieService } from 'ng2-cookies/cookie';
+import { AuthService } from './core/auth.service';
 
 
-export function initializeApp(configService: ConfigService, userService: UserService) {
+export function initializeApp(configService: ConfigService, userService: UserService, authService: AuthService) {
   return () => {
     console.log("APP IS INITIALIZING");
     configService.init(environment);
+    authService.init();
     userService.init();
-    userService.restoreUserSessionIfApplicable();
+    userService.restoreUserSessionIfApplicable(); //TODO: Verify, now that we're using tokens
   };
 }
 
@@ -65,7 +67,7 @@ export function initializeApp(configService: ConfigService, userService: UserSer
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
-      deps: [ConfigService, UserService],
+      deps: [ConfigService, UserService, AuthService],
       multi: true
     },
     CookieService

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'app/core/user.service';
 import { Router } from '@angular/router';
+import { AuthService } from 'app/core/auth.service';
 
 @Component({
   selector: 'wt-home',
@@ -9,13 +10,14 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private _userService: UserService, private _router: Router) { }
+  constructor(private _userService: UserService, private _router: Router, private _authService: AuthService) { }
 
   ngOnInit() {
   }
 
   public logOff(): void {
     this._userService.logOff();
+    this._authService.token = null; //TODO: Revisit
     this._router.navigate(['login']);
   }
 
