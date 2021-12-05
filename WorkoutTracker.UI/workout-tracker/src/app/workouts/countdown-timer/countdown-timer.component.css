@@ -3,5 +3,9 @@ div {
 }
 
 .timer-text {
-  font-size: xx-large;
+  font-size: 5em;
+}
+
+.target-reps-text {
+  font-size: 3em;
 }

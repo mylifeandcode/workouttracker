@@ -159,22 +159,22 @@ export class WorkoutEditComponent implements OnInit {
     //Called by Save button
     
     if (!this.workoutForm.invalid) {
-      const workout = this.getWorkoutForPersist();
+      this.updateWorkoutFromFormValues();
 
       this._saving = true;
       this.infoMsg = "Saving...";
 
-      if (workout.id == 0)
-        this.addWorkout(workout);
+      if (this._workout.id == 0)
+        this.addWorkout();
       else
-        this.updateWorkout(workout);
+        this.updateWorkout();
 
     }
   }
 
-  private addWorkout(workout: Workout): void {
+  private addWorkout(): void {
 
-    this._workoutSvc.add(workout)
+    this._workoutSvc.add(this._workout)
       .pipe(finalize(() => {
           this._saving = false;
       }))
@@ -191,9 +191,9 @@ export class WorkoutEditComponent implements OnInit {
   
   }
 
-  private updateWorkout(workout: Workout): void {
-    console.log("WORKOUT: ", workout);
-    this._workoutSvc.update(workout)
+  private updateWorkout(): void {
+    console.log("WORKOUT: ", this._workout);
+    this._workoutSvc.update(this._workout)
       .pipe(finalize(() => {
           this._saving = false;
       }))
@@ -227,15 +227,15 @@ export class WorkoutEditComponent implements OnInit {
     });
   }
 
-  private getWorkoutForPersist(): Workout {
-    let workout = new Workout();
-    workout.id = this.workoutId;
-    workout.userId = this._currentUserId; //TODO: Evaluate -- do we need this?
+  private updateWorkoutFromFormValues(): void {
+    //let workout = new Workout();
+    //workout.id = this.workoutId;
+    //workout.userId = this._currentUserId; //TODO: Evaluate -- do we need this?
 
-    workout.name = this.workoutForm.get("name").value;
-    workout.exercises = this.getExercisesFromForm();
+    this._workout.name = this.workoutForm.get("name").value;
+    this._workout.exercises = this.getExercisesFromForm();
 
-    return workout;
+    //return workout;
   }
 
   private getExercisesFromForm(): Array<ExerciseInWorkout> {

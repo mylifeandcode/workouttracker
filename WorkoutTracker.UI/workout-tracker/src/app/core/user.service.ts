@@ -17,8 +17,6 @@ const httpOptions = {
 })
 export class UserService {
 
-  private readonly LOCAL_STORAGE_KEY = "WorkoutTrackerUser";
-
   private _apiRoot: string;
   private _userSubject$ = new BehaviorSubject<User>(null);
   //private _userObservable$: Observable<User> = this._userSubject$.asObservable();
@@ -88,12 +86,13 @@ export class UserService {
     return (this._userSubject$.value != null);
   }
 
+  /*
   //TODO: Move to AuthService
   public setLoggedInUser(userId: number): Observable<User> {
     return this.getUserInfo(userId)
       .pipe(
         map((user: User) => {
-          this._localStorageService.set(this.LOCAL_STORAGE_KEY, user);
+          //this._localStorageService.set(this.LOCAL_STORAGE_KEY, user);
           this._userSubject$.next(user);
           return user;
         }
@@ -106,7 +105,7 @@ export class UserService {
     this._localStorageService.remove(this.LOCAL_STORAGE_KEY);
     this._userSubject$.next(null);
   }
-
+ 
   //TODO: Remove altogether?
   public restoreUserSessionIfApplicable(): void {
     const user: User = this._localStorageService.get(this.LOCAL_STORAGE_KEY);
@@ -114,6 +113,7 @@ export class UserService {
       this._userSubject$.next(user);
     }
   }
+  */
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
 }

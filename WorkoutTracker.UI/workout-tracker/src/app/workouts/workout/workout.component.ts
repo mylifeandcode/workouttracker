@@ -32,6 +32,7 @@ export class WorkoutComponent implements OnInit {
   public allResistanceBands: ResistanceBandIndividual[] = [];
   public formGroupForResistanceSelection: FormGroup;
   public formGroupForCountdownModal: FormGroup;
+  public countdownModalActivatedDateTime: Date;
   public saving: boolean = false;
   public infoMsg: string;
   public workoutCompleted: boolean = false;
@@ -112,6 +113,7 @@ export class WorkoutComponent implements OnInit {
 
   public showTimer(exerciseFormGroup: FormGroup): void {
     this.formGroupForCountdownModal = exerciseFormGroup;
+    this.countdownModalActivatedDateTime = new Date();
     this.showCountdownModal = true;
   }
 

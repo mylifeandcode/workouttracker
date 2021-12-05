@@ -42,10 +42,12 @@
     </wt-resistance-band-select>
   </p-dialog>
 
-  <p-dialog header="Timed Set Countdown" [(visible)]="showCountdownModal">
+  <p-dialog [style]="{width: '50vw'}" header="Timed Set Countdown" [(visible)]="showCountdownModal">
     <wt-countdown-timer
       [secondsToCountdown]="formGroupForCountdownModal?.controls?.duration?.value"
-      [secondsLeadInTime]="10">
+      [secondsLeadInTime]="10"
+      [activatedDateTime]="countdownModalActivatedDateTime"
+      [targetReps]="formGroupForCountdownModal?.controls?.targetReps?.value">
     </wt-countdown-timer>
   </p-dialog>
 </div>

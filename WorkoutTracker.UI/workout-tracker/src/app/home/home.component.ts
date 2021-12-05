@@ -16,8 +16,7 @@ export class HomeComponent implements OnInit {
   }
 
   public logOff(): void {
-    this._userService.logOff();
-    this._authService.token = null; //TODO: Revisit
+    this._authService.logOut();
     this._router.navigate(['login']);
   }
 

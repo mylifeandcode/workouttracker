@@ -20,21 +20,29 @@ export class CountdownTimerComponent implements OnInit {
   private _preCountdownHasBegun: boolean = false;
 
   @Input()
+  public set secondsToCountdown(value: number) {
+    this._secondsToCountdown = value;
+    //this.reset();
+  }
   public get secondsToCountdown(): number {
     return this._secondsToCountdown;
   }
-  public set secondsToCountdown(value: number) {
-    this._secondsToCountdown = value;
+
+  @Input()
+  public set secondsLeadInTime(value: number) {
+    this._secondsLeadInTime = value;
+  }
+  public get secondsLeadInTime(): number {
+    return this._secondsLeadInTime;
+  }
+
+  @Input()
+  public set activatedDateTime(value: Date) {
     this.reset();
   }
 
   @Input()
-  public get secondsLeadInTime(): number {
-    return this._secondsLeadInTime;
-  }
-  public set secondsLeadInTime(value: number) {
-    this._secondsLeadInTime = value;
-  }
+  public targetReps: number;
 
   private _secondsToCountdown: number;
   private _secondsLeadInTime: number;

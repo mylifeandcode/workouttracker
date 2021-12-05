@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { ConfigService } from './config.service';
+import { LocalStorageService } from './local-storage.service';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -25,6 +26,8 @@ const HTTP_OPTIONS_FOR_TEXT_RESPONSE = {
 })
 export class AuthService {
   
+  private readonly LOCAL_STORAGE_KEY = "WorkoutTrackerUser";
+
   private _apiRoot: string;
 
   public token: string;
@@ -36,6 +39,7 @@ export class AuthService {
   constructor(
     private _http: HttpClient, 
     private _configService: ConfigService, 
+    private _localStorageService: LocalStorageService, 
     private _router: Router) { 
 
   }
@@ -69,6 +73,7 @@ export class AuthService {
           //TODO: Revisit the approach I'm using here. Probably a better way of doing this.
           this.token = token;
           this._userSubject$.next(username);
+          this._localStorageService.set(this.LOCAL_STORAGE_KEY, token);
           return true;
         })
       );
@@ -76,11 +81,19 @@ export class AuthService {
 
 
   public logOut(): void {
-    //this._localStorageService.remove(this.LOCAL_STORAGE_KEY);
+    this._localStorageService.remove(this.LOCAL_STORAGE_KEY);
     this.token = null;
     this._userSubject$.next(null);
     this._router.navigate(['login']);
-  }  
+  }
+  
+  public restoreUserSessionIfApplicable(): void {
+    const token: string = this._localStorageService.get(this.LOCAL_STORAGE_KEY);
+    if (token) {
+      this.token = token;
+      this._userSubject$.next("TODO: Fix!");
+    }
+  }
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
 

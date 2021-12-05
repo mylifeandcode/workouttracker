@@ -38,8 +38,8 @@ export function initializeApp(configService: ConfigService, userService: UserSer
     console.log("APP IS INITIALIZING");
     configService.init(environment);
     authService.init();
+    authService.restoreUserSessionIfApplicable(); 
     userService.init();
-    //userService.restoreUserSessionIfApplicable(); //TODO: Verify, now that we're using tokens
   };
 }
 

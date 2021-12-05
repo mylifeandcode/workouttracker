@@ -1,7 +1,9 @@
 <div [formGroup]="formGroup" class="row">
     <div class="col-md-3">
         <input type="hidden" formControlName="exerciseId" />
-        <input type="text" formControlName="exerciseName" [readonly]="true" class="form-control-plaintext exerciseName" required />
+
+        <!--TODO: Re-evaluate this approach. A FormGroup is used as an @Input on this component to allow for a structured, easy way to pass in the info...but the end result may be overkill.-->
+        <textarea formControlName="exerciseName" [readonly]="true" class="form-control-plaintext exerciseName" required></textarea>
     </div>
     <div class="col-md-9" class="setType">
         {{formGroup?.controls?.setType?.value == 0 ? "Repetition" : "Timed"}} Set(s):
@@ -40,7 +42,7 @@
 
             <!--Set Detail Rows Loop-->
             <div *ngFor="let exerciseSet of setsArray?.controls; let i = index" class="col-md-12" [formGroupName]="i">
-                <div class="row" [ngStyle]="{'backgroundColor': (i % 2 === 0)?'#d3d3d3':'#ffffff'}">
+                <div class="exercise-row row" [ngStyle]="{'backgroundColor': (i % 2 === 0)?'#d3d3d3':'#ffffff'}">
                     
                     <div class="col-1 exercise-info-div">
                         {{i + 1}} <button class="btn btn-sm btn-success" *ngIf="formGroup?.controls?.setType?.value==1" (click)="showTimer(setsArray?.controls[i])">Start</button>

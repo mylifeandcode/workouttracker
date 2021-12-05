@@ -38,15 +38,8 @@ export class UserSelectComponent implements OnInit {
 
     this._authService.logIn(userName, "") //TODO: Refactor to require password if user has specified one
       .subscribe((result: boolean) => {
-        if(result) {
-          this._userSvc.setLoggedInUser(userId)
-            .subscribe(
-              (user: User) => {
-                this._router.navigate(['home']);
-              },
-              (error: any) => this.errorMsg = error,
-              () => this.gettingUserInfo = false);
-        }
+        if(result)
+          this._router.navigate(['home']);
         else
           window.alert("Login attempt failed.");
       });

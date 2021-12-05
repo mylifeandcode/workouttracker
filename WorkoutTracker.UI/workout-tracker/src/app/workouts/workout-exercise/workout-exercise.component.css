@@ -1,5 +1,6 @@
 .exerciseName {
     font-weight: bold;
+    resize: none;
 }
 
 .setType {
@@ -22,7 +23,7 @@
 }
 
 .exercise-info-div {
-    padding-top: 8px;
+    padding-top: 5px;
 }
 
 .exercise-input-div {
@@ -30,7 +31,7 @@
 }
 
 .exercise-info-div > input {
-    margin-top: -4px;
+    margin-top: -1px;
 }
 
 .exercise-info-span {
@@ -43,6 +44,15 @@
 }
 
 input {
-    margin: 4px;
+    margin: 8px;
+    height: 3.5em;
 }
 
+select {
+    margin: 4px;
+    height: 3.5em;
+}
+
+.exercise-row {
+    line-height: 4em !important;
+}
