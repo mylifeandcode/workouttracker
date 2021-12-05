@@ -28,6 +28,7 @@
     "core-js": "^3.6.5",
     "font-awesome": "^4.7.0",
     "howler": "^2.2.1",
+    "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "ng2-cookies": "^1.0.12",
     "ngx-bootstrap": "^5.6.1",

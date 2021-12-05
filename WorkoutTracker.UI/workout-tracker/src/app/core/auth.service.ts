@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 import { LocalStorageService } from './local-storage.service';
+import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -26,11 +27,15 @@ const HTTP_OPTIONS_FOR_TEXT_RESPONSE = {
 })
 export class AuthService {
   
-  private readonly LOCAL_STORAGE_KEY = "WorkoutTrackerUser";
+  //READ-ONLY FIELDS
+  private readonly LOCAL_STORAGE_TOKEN_KEY = "WorkoutTrackerToken";
 
-  private _apiRoot: string;
-
+  //PUBLIC FIELDS
   public token: string;
+  public decodedTokenPayload: JwtPayload;
+
+  //PRIVATE FIELDS
+  private _apiRoot: string;
 
   private _userSubject$ = new BehaviorSubject<string>(null);
   private _userObservable$: Observable<string> = this._userSubject$.asObservable();
@@ -73,7 +78,8 @@ export class AuthService {
           //TODO: Revisit the approach I'm using here. Probably a better way of doing this.
           this.token = token;
           this._userSubject$.next(username);
-          this._localStorageService.set(this.LOCAL_STORAGE_KEY, token);
+          this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, token);
+          this.setDecodedToken();
           return true;
         })
       );
@@ -81,21 +87,33 @@ export class AuthService {
 
 
   public logOut(): void {
-    this._localStorageService.remove(this.LOCAL_STORAGE_KEY);
+    this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);
     this.token = null;
     this._userSubject$.next(null);
     this._router.navigate(['login']);
   }
   
   public restoreUserSessionIfApplicable(): void {
-    const token: string = this._localStorageService.get(this.LOCAL_STORAGE_KEY);
+    const token: string = this._localStorageService.get(this.LOCAL_STORAGE_TOKEN_KEY);
+
     if (token) {
       this.token = token;
-      this._userSubject$.next("TODO: Fix!");
+      this.setDecodedToken();
     }
+    
+    const username = this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
+    if(username)
+      this._userSubject$.next(username);
+
   }
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
+
+  private setDecodedToken(): void {
+    this.decodedTokenPayload = jwtDecode<JwtPayload>(this.token);
+    console.log("DECODED TOKEN: ", this.decodedTokenPayload);
+    console.log("NAME: ", this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']);
+  }
 
 }
 
