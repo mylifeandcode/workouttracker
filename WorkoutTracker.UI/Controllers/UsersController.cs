@@ -52,8 +52,6 @@ namespace WorkoutTracker.UI.Controllers
             //This method replaces the default implementation because we don't 
             //want to return the domain object which includes the user's 
             //hashed password.
-            //TODO: Implement a different authentication approach.
-            //Is an STS overkill for this little home workout tracker?
             try
             {
                 var entity = _service.GetById(id);
@@ -76,6 +74,12 @@ namespace WorkoutTracker.UI.Controllers
         public override ActionResult<IEnumerable<User>> Get()
         {
             return base.Get();
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public override ActionResult<User> Post([FromBody] User value)
+        {
+            return base.Post(value);
         }
     }
 }
