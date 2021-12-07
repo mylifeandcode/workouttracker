@@ -11,9 +11,9 @@ describe('TargetAreasPipe', () => {
   it('should return a string of the target area names', () => {
 
     //ARRANGE
-    let link1 = new ExerciseTargetAreaLink(1, 2, 3);
-    let link2 = new ExerciseTargetAreaLink(4, 5, 6);
-    let link3 = new ExerciseTargetAreaLink(7, 8, 9);
+    let link1 = new ExerciseTargetAreaLink(1, 2);
+    let link2 = new ExerciseTargetAreaLink(4, 5);
+    let link3 = new ExerciseTargetAreaLink(7, 8);
 
     link1.targetArea = new TargetArea(1, "Chest", 1, new Date(), null, null, false);
     link2.targetArea = new TargetArea(2, "Triceps", 1, new Date(), null, null, false);

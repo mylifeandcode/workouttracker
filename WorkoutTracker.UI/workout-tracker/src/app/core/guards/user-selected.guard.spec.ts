@@ -1,16 +1,11 @@
-import { TestBed, inject, waitForAsync } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { UserSelectedGuard } from './user-selected.guard';
-import { UserService } from 'app/core/user.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
-class UserServiceMock {
-  getCurrentUserInfo =
-    jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(null));
-}
 
 @Component({})
 class FakeComponent {
@@ -28,8 +23,8 @@ describe('UserSelectedGuard', () => {
       providers: [
         UserSelectedGuard,
         {
-          provide: UserService,
-          useClass: UserServiceMock
+          provide: AuthService,
+          useValue: jasmine.createSpyObj("AuthService", {}, { isUserLoggedIn: false })
         }
       ]
     });

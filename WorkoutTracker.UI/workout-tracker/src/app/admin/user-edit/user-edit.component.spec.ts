@@ -76,18 +76,11 @@ describe('UserEditComponent', () => {
     });
   }));
 
-  it('should get current user ID', waitForAsync(() => {
-    fixture.whenStable().then(() => {
-      const userService = TestBed.inject(UserService);
-      expect(userService.getCurrentUserInfo).toHaveBeenCalledTimes(1);
-    });
-  }));
-
   it('should add new user', waitForAsync(() => {
     fixture.whenStable().then(() => {
       //ARRANGE
       const userService = TestBed.inject(UserService);
-      const expectedUser = new User({id: 0, name: 'Dr. Klahn', createdByUserId: CURRENT_USER_ID});
+      const expectedUser = new User({id: 0, name: 'Dr. Klahn'});
       component.userEditForm.controls.id.setValue(expectedUser.id);
       component.userEditForm.controls.name.setValue(expectedUser.name);
 
@@ -103,7 +96,7 @@ describe('UserEditComponent', () => {
     fixture.whenStable().then(() => {
       //ARRANGE
       const userService = TestBed.inject(UserService);
-      const expectedUser = new User({id: 100, name: 'Big Jim Slade', createdByUserId: CURRENT_USER_ID});
+      const expectedUser = new User({id: 100, name: 'Big Jim Slade'});
       component.userEditForm.controls.id.setValue(expectedUser.id);
       component.userEditForm.controls.name.setValue(expectedUser.name);
 

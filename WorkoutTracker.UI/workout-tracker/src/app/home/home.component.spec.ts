@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HomeComponent } from './home.component';
-import { UserService } from 'app/core/user.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'app/core/auth.service';
 
-class UserServiceMock {
-  logOff = jasmine.createSpy('logOff');
+class AuthServiceMock {
+  logOut = jasmine.createSpy('logOut');
 }
 
 @Component({})
@@ -26,8 +26,8 @@ describe('HomeComponent', () => {
       declarations: [ HomeComponent ],
       providers: [
         {
-          provide: UserService,
-          useClass: UserServiceMock
+          provide: AuthService,
+          useClass: AuthServiceMock
         }
       ]
     })
@@ -47,7 +47,7 @@ describe('HomeComponent', () => {
   it('should allow user to log off', () => {
 
     //ARRANGE
-    const userService = TestBed.inject(UserService);
+    const authService = TestBed.inject(AuthService);
     const router = TestBed.inject(Router);
 
     spyOn(router, 'navigate').and.callThrough();
@@ -56,7 +56,7 @@ describe('HomeComponent', () => {
     component.logOff();
 
     //ASSERT
-    expect(userService.logOff).toHaveBeenCalledTimes(1);
+    expect(authService.logOut).toHaveBeenCalledTimes(1);
     expect(router.navigate).toHaveBeenCalledWith(['login']);
 
   });

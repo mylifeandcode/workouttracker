@@ -103,14 +103,6 @@ class WorkoutServiceMock {
     .and.returnValue(of(getFakeUserWorkouts()));
 }
 
-class UserServiceMock {
-  getCurrentUserInfo =
-    jasmine.createSpy('getCurrentUserInfo')
-      .and.returnValue(of(new User({id: MOCK_USER_ID})));
-
-  get currentUserId(): number { return MOCK_USER_ID; }
-}
-
 class ResistanceBandServiceMock {
   getAllIndividualBands =
     jasmine.createSpy('getAllIndividualBands')
@@ -191,10 +183,6 @@ xdescribe('WorkoutComponent', () => {
           useClass: WorkoutServiceMock
         },
         {
-          provide: UserService,
-          useClass: UserServiceMock
-        },
-        {
           provide: ResistanceBandService,
           useClass: ResistanceBandServiceMock
         },
@@ -235,16 +223,6 @@ xdescribe('WorkoutComponent', () => {
     expect(component.workoutForm.controls.id.value).toBe(0);
     expect(component.workoutForm.controls.exercises).toBeDefined();
     expect(component.workoutForm.controls.journal.value).toBe('');
-  });
-
-  it('should get current user info on init', () => {
-    //ARRANGE
-    const userService = TestBed.inject(UserService);
-    const expectedResults = getFakeUserWorkouts().results;
-
-    //ASSERT
-    expect(userService.getCurrentUserInfo).toHaveBeenCalledTimes(1);
-    expect(component.workouts).toEqual(expectedResults);
   });
 
   it('should get resistance bancs on init', () => {

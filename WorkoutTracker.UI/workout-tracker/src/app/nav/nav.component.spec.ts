@@ -3,16 +3,18 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { NavComponent } from './nav.component';
 import { UserService } from 'app/core/user.service';
 import { of } from 'rxjs';
-import { User } from 'app/core/models/user';
 import { Component } from '@angular/core';
+import { AuthService } from 'app/core/auth.service';
 
 const username = 'someuser';
 
-class UserServiceMock {
+class AuthServiceMock {
 
-  currentUserInfo =
-    of(new User({name: username}));
+  currentUserName =
+    of(username);
 
+  logOff = jasmine.createSpy('logOff');
+  
 }
 
 @Component({})
@@ -31,8 +33,8 @@ describe('NavComponent', () => {
       declarations: [ NavComponent ],
       providers: [
         {
-          provide: UserService,
-          useClass: UserServiceMock
+          provide: AuthService,
+          useClass: AuthServiceMock
         }
       ]
     })
@@ -52,7 +54,7 @@ describe('NavComponent', () => {
   it('should determine if user is logged in', () => {
 
     //ARRANGE
-    const userService = TestBed.inject(UserService);
+    const authService = TestBed.inject(AuthService);
 
     //ACT
     //Nothing else to do here
@@ -65,7 +67,7 @@ describe('NavComponent', () => {
   it('should get current user info', () => {
 
     //ARRANGE
-    const userService = TestBed.inject(UserService);
+    const authService = TestBed.inject(AuthService);
 
     //ACT
     //Nothing extra needed here

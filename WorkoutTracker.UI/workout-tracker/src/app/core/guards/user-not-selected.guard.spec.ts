@@ -2,15 +2,12 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
-import { User } from '../models/user';
-import { UserService } from '../user.service';
-
+import { AuthService } from '../auth.service';
 import { UserNotSelectedGuard } from './user-not-selected.guard';
 
-class UserServiceMock {
-  getCurrentUserInfo =
-    jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
+class AuthServiceMock {
+  isUserLoggedIn =
+    jasmine.createSpy('isUserLoggedIn').and.returnValue(true);
 }
 
 @Component({})
@@ -29,8 +26,8 @@ describe('UserNotSelectedGuard', () => {
       ],
       providers: [
         {
-          provide: UserService,
-          useClass: UserServiceMock
+          provide: AuthService,
+          useClass: AuthServiceMock
         }
       ]
     });
