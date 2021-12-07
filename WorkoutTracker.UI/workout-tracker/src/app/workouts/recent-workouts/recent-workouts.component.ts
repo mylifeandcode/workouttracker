@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from 'app/core/user.service';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { Workout } from '../models/workout';
@@ -18,7 +17,6 @@ export class RecentWorkoutsComponent implements OnInit {
   public selectedWorkout: Workout;
 
   constructor(
-    private _userService: UserService, 
     private _executedWorkoutService: ExecutedWorkoutService, 
     private _workoutService: WorkoutService, 
     private _router: Router) 

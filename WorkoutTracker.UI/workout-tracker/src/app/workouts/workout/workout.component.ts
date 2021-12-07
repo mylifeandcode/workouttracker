@@ -146,22 +146,6 @@ export class WorkoutComponent implements OnInit {
     });
   }
 
-  /*
-  private getCurrentUserInfo(): void {
-    this._apiCallsInProgress++;
-    this._userService.getCurrentUserInfo()
-      .pipe(finalize(() => { this._apiCallsInProgress--; }))
-      .subscribe(
-        (user: User) => {
-          this.getWorkoutDefinitons();
-        }, 
-        (error: any) => {
-          this.setErrorInfo(error, "An error occurred getting user info. See console for more info.");
-        }
-      );
-  }
-  */
- 
   private getResistanceBands(): void {
     this._apiCallsInProgress++;
     this._resistanceBandService.getAllIndividualBands()

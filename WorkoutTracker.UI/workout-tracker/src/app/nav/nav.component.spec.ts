@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NavComponent } from './nav.component';
-import { UserService } from 'app/core/user.service';
 import { of } from 'rxjs';
 import { Component } from '@angular/core';
 import { AuthService } from 'app/core/auth.service';

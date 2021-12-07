@@ -1,6 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { UserService } from 'app/core/user.service';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
 import { of } from 'rxjs';
@@ -15,10 +14,6 @@ class ResistanceBandServiceMock {
   add = jasmine.createSpy('add').and.returnValue(of(new ResistanceBand()));
   update = jasmine.createSpy('update').and.returnValue(of(new ResistanceBand()));
   delete = jasmine.createSpy('delete').and.returnValue(of(new HttpResponse<string>()));
-}
-
-class UserServiceMock {
-  currentUserId = jasmine.createSpy('currentUserId').and.returnValue(TEST_USER_ID);
 }
 
 class MessageServiceMock {
@@ -44,10 +39,6 @@ describe('ResistanceBandsComponent', () => {
         {
           provide: ResistanceBandService,
           useClass: ResistanceBandServiceMock
-        },
-        {
-          provide: UserService,
-          useClass: UserServiceMock
         },
         {
           provide: MessageService,

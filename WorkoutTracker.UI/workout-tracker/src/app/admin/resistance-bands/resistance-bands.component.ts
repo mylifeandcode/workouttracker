@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import { ConfirmationService, MessageService } from 'primeng/api';
 
-import { UserService } from 'app/core/user.service';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from './resistance-band.service';
 
@@ -27,7 +26,6 @@ export class ResistanceBandsComponent implements OnInit {
 
   constructor(
     private _resistanceBandService: ResistanceBandService,
-    private _userService: UserService,
     private _messageService: MessageService,
     private _confirmationService: ConfirmationService) { }
 

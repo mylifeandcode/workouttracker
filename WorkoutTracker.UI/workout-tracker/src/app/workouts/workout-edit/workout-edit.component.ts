@@ -2,7 +2,6 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
-import { UserService } from 'app/core/user.service';
 import { Workout } from 'app/workouts/models/workout';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';

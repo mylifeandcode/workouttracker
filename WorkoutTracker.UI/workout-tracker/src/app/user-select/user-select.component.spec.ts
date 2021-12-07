@@ -12,7 +12,6 @@ import { AuthService } from 'app/core/auth.service';
 
 class UserServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new Array<User>()));
-  logIn = jasmine.createSpy('logIn').and.returnValue(of(new User()));
 }
 
 class AuthServiceMock {

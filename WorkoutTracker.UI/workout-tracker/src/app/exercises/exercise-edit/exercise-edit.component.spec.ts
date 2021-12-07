@@ -9,7 +9,6 @@ import { TableModule } from 'primeng/table';
 
 import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../exercise.service';
-import { UserService } from 'app/core/user.service';
 import { TargetArea } from 'app/workouts/models/target-area';
 import { Exercise } from 'app/workouts/models/exercise';
 import { ActivatedRoute } from '@angular/router';
@@ -67,10 +66,6 @@ describe('ExerciseEditComponent', () => {
          {
            provide: ExerciseService,
            useClass: ExerciseServiceMock
-         },
-         {
-           provide: UserService,
-           useValue: jasmine.createSpyObj("UserService", [], { currentUserId: USER_ID })
          },
          {
            provide: ActivatedRoute,
