@@ -18,9 +18,6 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   @Output()
   workoutSelected: EventEmitter<number> = new EventEmitter<number>();
 
-  //TODO: This is another component that needs to know the current user and the API calls 
-  //in progress. Let's consolidate this code into something reusable. :)
-
   //PUBLIC PROPERTIES
   /**
    * A property indicating whether or not the component is loading information it requires
