@@ -25,7 +25,7 @@ export class WorkoutComponent implements OnInit {
   //PUBLIC FIELDS
   public errorInfo: string;
   public workoutForm: FormGroup;
-  public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
+  //public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
   public workout: ExecutedWorkout; //TODO: Make this private, and instead expose the date values the template needs as component properties
   public showResistanceBandsSelectModal: boolean = false;
   public showCountdownModal: boolean = false;
@@ -85,7 +85,7 @@ export class WorkoutComponent implements OnInit {
 
   public ngOnInit(): void {
     this.createForm();
-    this.getWorkoutDefinitons();
+    //this.getWorkoutDefinitons();
     this.getResistanceBands();
     this.subscribeToRouteParams();
     this.startWorkout();
@@ -160,6 +160,7 @@ export class WorkoutComponent implements OnInit {
       );
   }
   
+  /*
   private getWorkoutDefinitons(): void {
     this._workoutService.getAll(0, 500) //TODO: Clean this up. Don't harcode page size of 500. Maybe a better endpoint is needed for this.
       .pipe(finalize(() => {
@@ -177,7 +178,8 @@ export class WorkoutComponent implements OnInit {
         }
       );
   }
-
+  */
+ 
   private setupWorkout(id: number): void {
     this._apiCallsInProgress++;
     //this._executedWorkoutService.getNew(id)
