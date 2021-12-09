@@ -99,12 +99,17 @@ export class AuthService {
     if (token) {
       this.token = token;
       this.setDecodedToken();
+
+      if(this.decodedTokenPayload) {
+
+        const username = this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
+        if(username)
+          this._userSubject$.next(username);
+  
+      }
+
     }
     
-    const username = this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
-    if(username)
-      this._userSubject$.next(username);
-
   }
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
