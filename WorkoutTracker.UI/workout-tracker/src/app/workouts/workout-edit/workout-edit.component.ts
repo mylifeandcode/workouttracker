@@ -44,19 +44,8 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     this.getRouteParams();
     this.createForm();
-
-    //this._currentUserId = await this.getCurrentUserId();
-
-    /*
-    if (this._workoutId != 0) 
-        this.loadWorkout(); //Is this safe? route.params is an observable.
-    else
-      this.loading = false;
-    */
-
     this.subscribeToRouteParamsToSetupFormOnWorkoutIdChange();
   }
 
@@ -67,7 +56,8 @@ export class WorkoutEditComponent implements OnInit {
         if (this.workoutId != 0) 
             this.loadWorkout(); 
         else {
-            this.loading = false;
+          this._workout = new Workout();
+          this.loading = false;
         }
     });
 }  
@@ -172,7 +162,7 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private addWorkout(): void {
-
+    console.log("ADDING WORKOUT: ", this._workout);
     this._workoutSvc.add(this._workout)
       .pipe(finalize(() => {
           this._saving = false;
@@ -191,7 +181,7 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private updateWorkout(): void {
-    console.log("WORKOUT: ", this._workout);
+    console.log("UPDATING WORKOUT: ", this._workout);
     this._workoutSvc.update(this._workout)
       .pipe(finalize(() => {
           this._saving = false;
@@ -230,7 +220,7 @@ export class WorkoutEditComponent implements OnInit {
     //let workout = new Workout();
     //workout.id = this.workoutId;
     //workout.userId = this._currentUserId; //TODO: Evaluate -- do we need this?
-
+    console.log("this._workout: ", this._workout);
     this._workout.name = this.workoutForm.get("name").value;
     this._workout.exercises = this.getExercisesFromForm();
 

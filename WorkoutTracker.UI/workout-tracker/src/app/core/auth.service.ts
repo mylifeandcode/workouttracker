@@ -79,7 +79,7 @@ export class AuthService {
           this.token = token;
           this._userSubject$.next(username);
           this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, token);
-          this.setDecodedToken();
+          this.decodedTokenPayload = jwtDecode<JwtPayload>(this.token);
           return true;
         })
       );
@@ -97,27 +97,40 @@ export class AuthService {
     const token: string = this._localStorageService.get(this.LOCAL_STORAGE_TOKEN_KEY);
 
     if (token) {
-      this.token = token;
-      this.setDecodedToken();
+      const decodedToken = jwtDecode<JwtPayload>(token);
+      if(decodedToken) {
 
-      if(this.decodedTokenPayload) {
+        if(!this.isExpired(decodedToken?.exp)) {
+          console.log("NOT EXPIRED");
+          this.decodedTokenPayload = decodedToken;
+          this.token = token;
 
-        const username = this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
-        if(username)
-          this._userSubject$.next(username);
-  
+          const username = this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
+          if(username)
+            this._userSubject$.next(username);
+      
+        }
+        else
+          console.log("EXPIRED!");
       }
-
     }
-    
   }
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
 
-  private setDecodedToken(): void {
-    this.decodedTokenPayload = jwtDecode<JwtPayload>(this.token);
-    console.log("DECODED TOKEN: ", this.decodedTokenPayload);
-    console.log("NAME: ", this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']);
+  private isExpired(expirationSecondsSinceEpoch: number): boolean {
+    console.log("expirationSecondsSinceEpoch: ", expirationSecondsSinceEpoch);
+    if(!expirationSecondsSinceEpoch) return true;
+    return expirationSecondsSinceEpoch < this.getSecondsSinceEpoch();
+  }
+
+  private getSecondsSinceEpoch(): number {
+    //Hat tip to https://futurestud.io/tutorials/get-number-of-seconds-since-epoch-in-javascript
+    const now = new Date();
+    const utcMilllisecondsSinceEpoch = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
+    const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
+    console.log("utcSecondsSinceEpoch: ", utcSecondsSinceEpoch);
+    return utcSecondsSinceEpoch;
   }
 
 }
