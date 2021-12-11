@@ -47,7 +47,12 @@ export class UserEditComponent implements OnInit {
           .pipe(finalize(() => { this.savingUserInfo = false; }))
           .subscribe(
             (savedUser: User) => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
-            (error: any) => this.errorMsg = error);
+            (error: any) => { 
+              if(error?.status == 403)
+                this.errorMsg = "You do not have permission to add or edit users.";
+              else
+                this.errorMsg = error.error ? error.error : "An error has occurred. Please contact an administrator.";
+            });
   }
 
   public cancel(): void {

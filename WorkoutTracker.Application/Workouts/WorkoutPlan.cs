@@ -40,7 +40,7 @@ namespace WorkoutApplication.Application.Workouts
         private void SetupExercises(ICollection<ExerciseInWorkout> exercisesInWorkout)
         {
             Exercises = new List<ExercisePlan>(exercisesInWorkout.Count);
-            foreach (var exercise in exercisesInWorkout)
+            foreach (var exercise in exercisesInWorkout.OrderBy(x => x.Sequence))
             {
                 Exercises.Add(new ExercisePlan(exercise));
             }

@@ -2,10 +2,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { catchError, finalize, map } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 import { LocalStorageService } from './local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
+import { map } from 'rxjs/operators';
+
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -40,6 +41,8 @@ export class AuthService {
   private _userSubject$ = new BehaviorSubject<string>(null);
   private _userObservable$: Observable<string> = this._userSubject$.asObservable();
 
+  //PRIVATE READ-ONLY FIELDS
+  private readonly ROLE_CLAIM_TYPE: string = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
  
   constructor(
     private _http: HttpClient, 
@@ -60,6 +63,10 @@ export class AuthService {
     return (this.token != null);
   }
 
+  public get isUserAdmin(): boolean {
+    return this.isUserLoggedIn
+      && this.decodedTokenPayload[this.ROLE_CLAIM_TYPE] == "Administrator";
+  }
 
   //END PROPERTIES ////////////////////////////////////////////////////////////
 

@@ -32,14 +32,14 @@ namespace WorkoutTracker.Application.Workouts
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        public WorkoutPlan Create(int workoutId)
+        public WorkoutPlan Create(int workoutId, int userId)
         {
             try
             {
                 ExecutedWorkout lastExecutedWorkout = _executedWorkoutService.GetLatest(workoutId);
 
                 if (lastExecutedWorkout == null)
-                    return CreatePlanForNewWorkout(workoutId);
+                    return CreatePlanForNewWorkout(workoutId, userId);
                 else
                     return CreatePlanForExecutedWorkout(lastExecutedWorkout);
             }
@@ -50,10 +50,10 @@ namespace WorkoutTracker.Application.Workouts
             }
         }
 
-        private WorkoutPlan CreatePlanForNewWorkout(int workoutId)
+        private WorkoutPlan CreatePlanForNewWorkout(int workoutId, int userId)
         {
             Workout workout = _workoutService.GetById(workoutId);
-            var userSettings = GetUserSettings(workout.UserId);
+            var userSettings = GetUserSettings(userId);
 
             var plan = new WorkoutPlan(workout, false);
 
@@ -74,7 +74,7 @@ namespace WorkoutTracker.Application.Workouts
         {
             var output = new WorkoutPlan(lastExecutedWorkout.Workout, true);
             var exercisesInWorkout = lastExecutedWorkout.Workout.Exercises.ToList();
-            var userSettings = GetUserSettings(lastExecutedWorkout.Workout.UserId);
+            var userSettings = GetUserSettings(lastExecutedWorkout.Workout.CreatedByUserId);
 
             for (short x = 0; x < exercisesInWorkout.Count; x++)
             {

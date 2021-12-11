@@ -10,6 +10,6 @@ namespace WorkoutTracker.Application.Workouts
 {
     public interface IWorkoutPlanService
     {
-        WorkoutPlan Create(int workoutId);
+        WorkoutPlan Create(int workoutId, int userId);
     }
 }

@@ -133,9 +133,10 @@ namespace WorkoutTracker.Tests.Services
                 .Returns(_executedWorkout);
 
             const int WORKOUT_ID = 1;
+            const int USER_ID = 5;
 
             //ACT
-            var plan = _sut.Create(WORKOUT_ID);
+            var plan = _sut.Create(WORKOUT_ID, USER_ID);
 
             //ASSERT
             plan.ShouldNotBeNull();

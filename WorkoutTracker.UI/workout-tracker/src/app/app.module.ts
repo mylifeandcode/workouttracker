@@ -31,6 +31,7 @@ import { environment } from 'environments/environment';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { CookieService } from 'ng2-cookies/cookie';
 import { AuthService } from './core/auth.service';
+import { AccessDeniedComponent } from './access-denied/access-denied.component';
 
 
 export function initializeApp(configService: ConfigService, userService: UserService, authService: AuthService) {
@@ -50,7 +51,8 @@ export function initializeApp(configService: ConfigService, userService: UserSer
     NavComponent,
     HomeComponent,
     UserSelectComponent,
-    UserSettingsComponent
+    UserSettingsComponent,
+    AccessDeniedComponent
   ],
   imports: [
     AppRoutingModule,

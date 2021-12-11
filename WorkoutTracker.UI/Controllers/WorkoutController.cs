@@ -115,7 +115,7 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
-                var plan = _workoutPlanService.Create(id);
+                var plan = _workoutPlanService.Create(id, this.GetUserID());
                 return Ok(plan);
             }
             catch (Exception ex)

@@ -13,7 +13,6 @@ namespace WorkoutApplication.Data.EntitySetup.Workouts
             var entity = builder.Entity<Workout>();
 
             entity.Property(x => x.Name).HasMaxLength(50).IsRequired();
-            entity.Property(x => x.UserId).IsRequired();
             entity.HasMany(x => x.Exercises);
 
             base.SetupAuditFields<Workout>(builder);
