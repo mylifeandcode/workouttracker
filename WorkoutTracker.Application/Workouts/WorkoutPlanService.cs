@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkoutApplication.Application.Workouts;
-using WorkoutApplication.Domain.Exercises;
 using WorkoutApplication.Domain.Users;
 using WorkoutApplication.Domain.Workouts;
 using WorkoutTracker.Application.Exercises;
@@ -72,21 +68,27 @@ namespace WorkoutTracker.Application.Workouts
 
         private WorkoutPlan CreatePlanForExecutedWorkout(ExecutedWorkout lastExecutedWorkout)
         {
-            var output = new WorkoutPlan(lastExecutedWorkout.Workout, true);
+            var workoutPlan = new WorkoutPlan(lastExecutedWorkout.Workout, true);
             var exercisesInWorkout = lastExecutedWorkout.Workout.Exercises.ToList();
             var userSettings = GetUserSettings(lastExecutedWorkout.Workout.CreatedByUserId);
 
             for (short x = 0; x < exercisesInWorkout.Count; x++)
             {
                 var exerciseInWorkout = exercisesInWorkout[x];
-                var exercisePlan = output.Exercises.First(x => x.Sequence == exerciseInWorkout.Sequence);
-                var executedExercises =
+
+                //Find the ExercisePlan object from our new WorkoutPlan object for this exercise
+                var exercisePlan = workoutPlan.Exercises.First(x => x.Sequence == exerciseInWorkout.Sequence);
+                
+                //Get the ExecutedExercises for this exercise from the last time this workout 
+                //was performed
+                var exercisesFromLastTime =
                     lastExecutedWorkout
                         .Exercises
                         .Where(x => x.ExerciseId == exerciseInWorkout.ExerciseId);
 
-                exercisePlan.SetLastTimeValues(executedExercises);
+                exercisePlan.SetLastTimeValues(exercisesFromLastTime);
 
+                //If recommendations are enabled, apply them
                 if (userSettings != null && userSettings.RecommendationsEnabled)
                 {
                     var recommendation = 
@@ -97,7 +99,7 @@ namespace WorkoutTracker.Application.Workouts
                 }
             }
 
-            return output;
+            return workoutPlan;
         }
 
         private UserSettings GetUserSettings(int userId)

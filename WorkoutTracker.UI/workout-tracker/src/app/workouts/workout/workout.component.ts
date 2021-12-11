@@ -75,7 +75,6 @@ export class WorkoutComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
-    private _workoutService: WorkoutService, 
     private _executedWorkoutService: ExecutedWorkoutService, 
     private _resistanceBandService: ResistanceBandService) { 
   }
@@ -85,7 +84,6 @@ export class WorkoutComponent implements OnInit {
 
   public ngOnInit(): void {
     this.createForm();
-    //this.getWorkoutDefinitons();
     this.getResistanceBands();
     this.subscribeToRouteParams();
     this.startWorkout();
@@ -160,29 +158,8 @@ export class WorkoutComponent implements OnInit {
       );
   }
   
-  /*
-  private getWorkoutDefinitons(): void {
-    this._workoutService.getAll(0, 500) //TODO: Clean this up. Don't harcode page size of 500. Maybe a better endpoint is needed for this.
-      .pipe(finalize(() => {
-        this._apiCallsInProgress--;
-      }))
-      .subscribe(
-        (workouts: PaginatedResults<WorkoutDTO>) => {
-          //TODO: Add each workout as an item in the workoutDefinitions array
-          if(workouts?.results != null) {
-            this.workouts = workouts.results;
-          }
-        }, 
-        (error: any) => {
-          this.setErrorInfo(error, "An error occurred getting workout definitions. See console for details.");
-        }
-      );
-  }
-  */
- 
   private setupWorkout(id: number): void {
     this._apiCallsInProgress++;
-    //this._executedWorkoutService.getNew(id)
     this._executedWorkoutService.getById(id)
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe(
@@ -199,6 +176,8 @@ export class WorkoutComponent implements OnInit {
 
   private setupExercisesFormGroup(exercises: ExecutedExercise[]): void {
     this.exercisesArray.clear();
+
+    exercises = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
 
     //Group ExecutedExercise by Exercise and Set Type
     let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { 

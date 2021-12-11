@@ -49,6 +49,9 @@ namespace WorkoutTracker.Application.Workouts
 
         public ExecutedWorkout Create(WorkoutPlan plan)
         {
+            if (plan == null)
+                throw new ArgumentNullException(nameof(plan));
+
             return CreateFromPlan(plan);
         }
 
@@ -189,9 +192,12 @@ namespace WorkoutTracker.Application.Workouts
             executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
             var workout = _workoutRepo.Get(plan.WorkoutId);
 
+            byte exerciseSequence = 0;
             foreach (var exercise in workout.Exercises?.OrderBy(x => x.Sequence))
             {
+                //Find the ExercisePlan in the submitted WorkoutPlan for this exercise
                 var exercisePlan = plan.Exercises.First(x => x.ExerciseId == exercise.ExerciseId);
+                
                 for (byte x = 0; x < exercise.NumberOfSets; x++)
                 {
                     //TODO: Add new constructor to ExecutedExercise which takes an ExercisePlan param 
@@ -201,7 +207,7 @@ namespace WorkoutTracker.Application.Workouts
                     exerciseToExecute.CreatedDateTime = plan.SubmittedDateTime.Value;
                     exerciseToExecute.Exercise = exercise.Exercise;
                     exerciseToExecute.ExerciseId = exercise.Exercise.Id;
-                    exerciseToExecute.Sequence = x;
+                    exerciseToExecute.Sequence = exerciseSequence;
                     exerciseToExecute.SetType = exercise.SetType;
 
                     exerciseToExecute.TargetRepCount = exercisePlan.TargetRepCount;
@@ -209,6 +215,7 @@ namespace WorkoutTracker.Application.Workouts
                     exerciseToExecute.ResistanceMakeup = exercisePlan.ResistanceMakeup;
 
                     executedWorkout.Exercises.Add(exerciseToExecute);
+                    exerciseSequence++;
                 }
             }
 
