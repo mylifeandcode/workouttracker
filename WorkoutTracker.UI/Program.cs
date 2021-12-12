@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Serilog;
 
 namespace WorkoutTracker
 {
@@ -29,14 +25,21 @@ namespace WorkoutTracker
 
         public static IWebHost BuildWebHost(string[] args) =>
                     WebHost.CreateDefaultBuilder(args)
-            /*
-                        .ConfigureLogging((hostingContext, logging) =>
-                        {
-                            logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                            logging.AddConsole();
-                            logging.AddDebug();
+                        /*
+                                    .ConfigureLogging((hostingContext, logging) =>
+                                    {
+                                        logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                                        logging.AddConsole();
+                                        logging.AddDebug();
+                                    })
+                        */
+                        .UseSerilog((hostingContext, loggerConfiguration) => {
+                            loggerConfiguration
+                                .ReadFrom.Configuration(hostingContext.Configuration)
+                                .Enrich.FromLogContext();
+                                //.Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name)
+                                //.Enrich.WithProperty("Environment", hostingContext.HostingEnvironment);
                         })
-            */
                         .UseStartup<Startup>()
                         .Build();
     }

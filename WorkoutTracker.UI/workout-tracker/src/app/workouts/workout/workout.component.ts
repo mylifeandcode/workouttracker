@@ -1,9 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
-import { WorkoutService } from '../workout.service';
 import { finalize } from 'rxjs/operators';
-import { WorkoutDTO } from 'app/workouts/models/workout-dto';
-import { PaginatedResults } from '../../core/models/paginated-results';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';

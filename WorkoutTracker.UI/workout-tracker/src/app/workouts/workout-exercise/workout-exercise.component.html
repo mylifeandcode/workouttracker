@@ -1,14 +1,19 @@
 <div [formGroup]="formGroup" class="row">
-    <div class="col-md-3">
-        <input type="hidden" formControlName="exerciseId" />
+    <div class="col-md-12">
+        
 
         <!--TODO: Re-evaluate this approach. A FormGroup is used as an @Input on this component to allow for a structured, easy way to pass in the info...but the end result may be overkill.-->
         <textarea formControlName="exerciseName" [readonly]="true" class="form-control-plaintext exerciseName" required></textarea>
     </div>
-    <div class="col-md-9" class="setType">
+</div>
+
+<div [formGroup]="formGroup" class="row">
+    <input type="hidden" formControlName="exerciseId" />
+    <div class="col-md-12">
         {{formGroup?.controls?.setType?.value == 0 ? "Repetition" : "Timed"}} Set(s):
     </div>
 </div>
+
 <div [formGroup]="formGroup" class="row">
     <div class="col-md-12">
         <!--exerciseSets is the name of the FormArray on the FormGroup representing an Exercise which is passed in via an @Input()-->

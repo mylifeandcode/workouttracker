@@ -18,6 +18,7 @@ using WorkoutApplication.Domain.Resistances;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Serilog;
 
 namespace WorkoutTracker
 {
@@ -110,10 +111,7 @@ namespace WorkoutTracker
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Configuration["Jwt:Issuer"],
                     ValidAudience = Configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new
-                    SymmetricSecurityKey
-                    (Encoding.UTF8.GetBytes
-                    (Configuration["Jwt:Key"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                 };
             });
 
@@ -142,6 +140,8 @@ namespace WorkoutTracker
             app.UseRouting();
             //app.UseSpaStaticFiles();
 
+            app.UseSerilogRequestLogging();
+
             //app.UseCors(options => options.WithOrigins("http://localhost:4200").AllowAnyMethod());
             app.UseCors();
 
@@ -167,7 +167,7 @@ namespace WorkoutTracker
             
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseEndpoints(endpoints => 
             {
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
@@ -204,7 +204,7 @@ namespace WorkoutTracker
                 config.For<IRepository<Workout>>().Use<Repository<Workout>>();
                 config.For<IRepository<ExecutedWorkout>>().Use<Repository<ExecutedWorkout>>();
                 config.For<IRepository<ResistanceBand>>().Use<Repository<ResistanceBand>>();
-
+                //config.For<Microsoft.Extensions.Logging.ILogger>().Use<Serilog.Log.Logger>().Singleton();
                 //Populate the container using the service collection
                 config.Populate(services);
             });
