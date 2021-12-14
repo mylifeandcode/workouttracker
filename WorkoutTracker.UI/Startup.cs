@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Serilog;
+using Autofac;
 
 namespace WorkoutTracker
 {
@@ -183,6 +184,7 @@ namespace WorkoutTracker
 
         public IServiceProvider ConfigureIoC(IServiceCollection services)
         {
+            /*
             //See this URL for more info:
             //https://andrewlock.net/getting-started-with-structuremap-in-asp-net-core/
 
@@ -208,7 +210,23 @@ namespace WorkoutTracker
                 //Populate the container using the service collection
                 config.Populate(services);
             });
+            */
 
+            var builder = new ContainerBuilder();
+
+            // Register individual components
+            builder.RegisterInstance(new TaskRepository())
+                   .As<ITaskRepository>();
+            builder.RegisterType<TaskController>();
+            builder.Register(c => new LogManager(DateTime.Now))
+                   .As<ILogger>();
+
+            // Scan an assembly for components
+            builder.RegisterAssemblyTypes(myAssembly)
+                   .Where(t => t.Name.EndsWith("Repository"))
+                   .AsImplementedInterfaces();
+
+            var container = builder.Build();
             return container.GetInstance<IServiceProvider>();
 
         }

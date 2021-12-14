@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Autofac.Extensions.DependencyInjection;
 using Serilog;
 
 namespace WorkoutTracker
@@ -33,6 +34,7 @@ namespace WorkoutTracker
                                         logging.AddDebug();
                                     })
                         */
+                        .ConfigureServices(services => services.AddAutofac())
                         .UseSerilog((hostingContext, loggerConfiguration) => {
                             loggerConfiguration
                                 .ReadFrom.Configuration(hostingContext.Configuration)
