@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Autofac.Extensions.DependencyInjection;
 using Serilog;
+using Microsoft.Extensions.Hosting;
 
 namespace WorkoutTracker
 {
@@ -10,39 +11,36 @@ namespace WorkoutTracker
     {
         public static void Main(string[] args)
         {
-            /*
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .UseApplicationInsights()
-                .Build();
-
-            host.Run();
-            */
-            BuildWebHost(args).Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .UseSerilog((hostingContext, loggerConfiguration) => {
+                    loggerConfiguration
+                        .ReadFrom.Configuration(hostingContext.Configuration)
+                        .Enrich.FromLogContext();
+                    //.Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name)
+                    //.Enrich.WithProperty("Environment", hostingContext.HostingEnvironment);
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder
+                        .UseStartup<Startup>();
+                });
+
+        /*
         public static IWebHost BuildWebHost(string[] args) =>
                     WebHost.CreateDefaultBuilder(args)
-                        /*
-                                    .ConfigureLogging((hostingContext, logging) =>
-                                    {
-                                        logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                                        logging.AddConsole();
-                                        logging.AddDebug();
-                                    })
-                        */
                         .ConfigureServices(services => services.AddAutofac())
                         .UseSerilog((hostingContext, loggerConfiguration) => {
                             loggerConfiguration
                                 .ReadFrom.Configuration(hostingContext.Configuration)
                                 .Enrich.FromLogContext();
-                                //.Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name)
-                                //.Enrich.WithProperty("Environment", hostingContext.HostingEnvironment);
                         })
                         .UseStartup<Startup>()
                         .Build();
+        */
     }
 }
