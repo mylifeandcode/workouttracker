@@ -9,7 +9,9 @@
     <h3 class="headroom">{{workout.workout.name}}</h3>
     
     <ng-container *ngIf="workout != null">
-      <span *ngIf="workoutStarted" class="mild-margins">Workout started at {{workout.startDateTime | date:'short'}}</span>
+      <p>
+        <span *ngIf="workoutStarted">Workout started at {{workout.startDateTime | date:'short'}}</span>
+      </p>
       <wt-workout-exercise 
         *ngFor="let exercise of exercisesArray.controls; let i = index" 
         [formGroup]="exercise" 
