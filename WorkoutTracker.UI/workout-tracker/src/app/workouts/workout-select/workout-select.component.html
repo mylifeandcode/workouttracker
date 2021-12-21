@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <div class="row">
+  <div *ngIf="!loading && workouts.length > 0" class="row">
     <div class="col-md-12 form-group">
       <h3 class="headroom">Select a Workout to Start</h3>
       <label>Select a Workout</label>&nbsp;
@@ -11,6 +11,11 @@
       </select>
     </div>
   </div>
-  <wt-recent-workouts></wt-recent-workouts>
+  <div *ngIf="!loading && workouts.length == 0">
+    <p>
+      <br />You haven't defined any workouts yet. Please use the menu to create one.
+    </p>
+  </div>
+  <wt-recent-workouts *ngIf="!loading && workouts.length > 0"></wt-recent-workouts>
 </div>
 
