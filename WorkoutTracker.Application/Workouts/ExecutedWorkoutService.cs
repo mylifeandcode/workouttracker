@@ -29,24 +29,6 @@ namespace WorkoutTracker.Application.Workouts
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        public ExecutedWorkout Create(int workoutId)
-        {
-            //TODO: Deprecate
-            try
-            {
-                var workout = _workoutRepo.Get(workoutId);
-                if (workout == null)
-                    throw new ArgumentException($"Workout {workoutId} not found.");
-                else
-                    return CreateNewExecutedWorkout(workout);
-            }
-            catch (Exception ex)
-            {
-                //TODO: Log
-                throw;
-            }
-        }
-
         public ExecutedWorkout Create(WorkoutPlan plan)
         {
             if (plan == null)
@@ -135,54 +117,6 @@ namespace WorkoutTracker.Application.Workouts
         }
 
         #region Private Methods
-        private ExecutedWorkout CreateNewExecutedWorkout(Workout workout)
-        {
-            var executedWorkout = new ExecutedWorkout();
-            executedWorkout.WorkoutId = workout.Id;
-            executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
-
-            foreach (var exercise in workout.Exercises?.OrderBy(x => x.Sequence))
-            {
-                for(byte x = 0; x < exercise.NumberOfSets; x++)
-                { 
-                    //TODO: Add new constructor to ExecutedExercise which takes an ExerciseInWorkout param 
-                    //and initialize that way instead.
-                    var exerciseToExecute = new ExecutedExercise();
-                    exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
-                    exerciseToExecute.CreatedDateTime = DateTime.Now.ToUniversalTime();
-                    exerciseToExecute.Exercise = exercise.Exercise;
-                    exerciseToExecute.ExerciseId = exercise.Exercise.Id;
-                    exerciseToExecute.Sequence = x;
-                    exerciseToExecute.SetType = exercise.SetType;
-
-                    var lastWorkoutWithThisExercise = new ExecutedWorkout(); //TODO: Get last workout with this exercise!
-
-                    ExerciseAmountRecommendation recommendation;
-
-                    //TODO: This is temp code. Refactor for a better way of getting the current user.
-                    var user = _userService.GetById(workout.CreatedByUserId);
-
-                    if (user == null)
-                        throw new ApplicationException($"Couldn't find user {workout.CreatedByUserId}");
-
-                    var recommendationsEnabled = (user?.Settings?.RecommendationsEnabled ?? false);
-
-                    if (recommendationsEnabled)
-                        recommendation = _exerciseRecommendationService.GetRecommendation(
-                            exercise.Exercise, lastWorkoutWithThisExercise); //TODO: Provide user settings!
-                    else
-                        recommendation = new ExerciseAmountRecommendation();
-
-                    exerciseToExecute.TargetRepCount = recommendation.Reps;
-                    exerciseToExecute.ResistanceAmount = recommendation.ResistanceAmount;
-                    exerciseToExecute.ResistanceMakeup = recommendation.ResistanceMakeup;
-
-                    executedWorkout.Exercises.Add(exerciseToExecute);
-                }
-            }
-
-            return executedWorkout;
-        }
 
         private ExecutedWorkout CreateFromPlan(WorkoutPlan plan)
         {

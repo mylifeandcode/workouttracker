@@ -46,20 +46,6 @@ namespace WorkoutTracker.UI.Controllers
             }
         }
 
-        // GET api/ExecutedWorkout/5/new
-        [HttpGet("new/{workoutId}")]
-        public ActionResult<ExecutedWorkout> GetNew(int workoutId)
-        {
-            try
-            {
-                return _executedWorkoutService.Create(workoutId);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [HttpGet]
         public ActionResult<PaginatedResults<ExecutedWorkoutDTO>> Get(int firstRecord, short pageSize, DateTime? startDateTime = null, DateTime? endDateTime = null, bool newestFirst = true)
         {

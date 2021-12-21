@@ -259,7 +259,7 @@ export class WorkoutComponent implements OnInit {
         exercises[x].resistanceAmount = sets[x].resistance;
         exercises[x].resistanceMakeup = sets[x].resistanceMakeup;
         exercises[x].targetRepCount = Number(sets[x].targetReps);
-        exercises[x].sequence = x;
+        //exercises[x].sequence = x;
         exercises[x].formRating = Number(sets[x].formRating);
         exercises[x].rangeOfMotionRating = Number(sets[x].rangeOfMotionRating);
       }

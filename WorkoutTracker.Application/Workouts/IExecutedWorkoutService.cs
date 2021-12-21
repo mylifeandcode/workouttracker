@@ -8,7 +8,6 @@ namespace WorkoutTracker.Application.Workouts
 {
     public interface IExecutedWorkoutService : IServiceBase<ExecutedWorkout>
     {
-        ExecutedWorkout Create(int workoutId);
         ExecutedWorkout Create(WorkoutPlan plan);
         IEnumerable<ExecutedWorkout> GetFilteredSubset(
             int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst);

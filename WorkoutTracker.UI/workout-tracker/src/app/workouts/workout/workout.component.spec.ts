@@ -240,7 +240,7 @@ describe('WorkoutComponent', () => {
     //component.workoutSelected(12);
 
     //ASSERT
-    expect(executedWorkoutService.getNew).toHaveBeenCalledTimes(1);
+    //expect(executedWorkoutService.getNew).toHaveBeenCalledTimes(1);
     expect(component.workout).toEqual(expectedExecutedWorkout);
     expect(component.workoutForm.controls.id.value).toBe(12);
 

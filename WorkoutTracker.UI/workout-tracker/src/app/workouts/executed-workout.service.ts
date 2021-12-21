@@ -19,15 +19,6 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
   }
 
   /**
-   * Gets a new ExecutedWorkout to be used for the specified Workout
-   *
-   * @param workoutId The ID of the Workout to get a new ExecutedWorkout for
-   */
-  public getNew(workoutId: number): Observable<ExecutedWorkout> {
-    return this._http.get<ExecutedWorkout>(`${this._apiRoot}/new/${workoutId}`);
-  }
-
-  /**
    * Gets a subset of ExecutedWorkoutDTOs
    *
    * @param userId The ID of the user to get ExecutedWorkoutDTOs for.

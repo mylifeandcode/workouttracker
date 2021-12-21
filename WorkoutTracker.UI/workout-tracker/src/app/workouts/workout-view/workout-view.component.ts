@@ -37,12 +37,25 @@ export class WorkoutViewComponent implements OnInit {
     this._executedWorkoutService.getById(id)
       .pipe(finalize(() => { this.loading = false; }))
       .subscribe((executedWorkout: ExecutedWorkout) => {
+        
         this.executedWorkout = executedWorkout;
+        
+        //Make sure the exercises are in sequence order
+        this.executedWorkout.exercises = 
+          this.executedWorkout.exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
+
+        //Group the exercises
         this.groupedExercises =
           _.groupBy(executedWorkout.exercises, (exercise: ExecutedExercise) => exercise.exercise.id.toString() + '-' + exercise.setType.toString());
+        
+        //Restore the correct order (groupBy() will mangle it) based on the correct order in this.executedWorkout.exercises
+        this.groupedExercises =
+          _.orderBy(this.groupedExercises, 
+            ['values[0].sequence'], 
+            ['asc']);
+
       });
   }
-
   //END PRIVATE METHODS ///////////////////////////////////////////////////////
 
 }
