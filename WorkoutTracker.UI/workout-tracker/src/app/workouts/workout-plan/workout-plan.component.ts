@@ -27,6 +27,7 @@ export class WorkoutPlanComponent implements OnInit {
   public allResistanceBands: ResistanceBandIndividual[] = [];
   public formGroupForResistanceSelection: FormGroup;
   public errorInfo: string;
+  public isProcessing: boolean = false;
   //END PUBLIC FIELDS
 
   //VIEWCHILD
@@ -77,7 +78,9 @@ export class WorkoutPlanComponent implements OnInit {
   public startWorkout(): void {
     this.updateWorkoutPlanFromForm();
     this.workoutPlan.submittedDateTime = new Date();
+    this.isProcessing = true;
     this._workoutService.submitPlan(this.workoutPlan)
+      .pipe(finalize(() => { this.isProcessing = false; }))
       .subscribe((executedWorkoutId: number) => {
         this._router.navigate([`workouts/start/${executedWorkoutId}`]);
       });

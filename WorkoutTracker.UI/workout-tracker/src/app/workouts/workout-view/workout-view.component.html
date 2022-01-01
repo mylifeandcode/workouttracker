@@ -7,13 +7,13 @@
 
   <ng-container *ngIf="!loading">
     <div class="row">
-      <div class="col-4">
+      <div class="col-12">
         <h3 class="headroom">Workout: {{executedWorkout.workout.name}}</h3>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-4">
+      <div class="col-12">
         Started {{executedWorkout.startDateTime | date: 'short'}}, Completed {{executedWorkout.endDateTime | date: 'short'}}
       </div>
     </div>

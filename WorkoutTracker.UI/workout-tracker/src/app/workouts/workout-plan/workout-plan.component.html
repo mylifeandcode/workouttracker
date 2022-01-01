@@ -9,32 +9,34 @@
     <h2 class="headroom">Plan Your Workout</h2>
     <div class="row"></div>
     <form [formGroup]="workoutPlanForm" novalidate>
-      <div class="row">
-        <div class="col-12">
-            <input type="hidden" formControlName="workoutId" />
-            <h3>{{workoutPlanForm.controls['workoutName'].value}}</h3>
+      <fieldset [disabled]="isProcessing">
+        <div class="row">
+          <div class="col-12">
+              <input type="hidden" formControlName="workoutId" />
+              <h3>{{workoutPlanForm.controls['workoutName'].value}}</h3>
+          </div>
         </div>
-      </div>
 
-      <div *ngIf="!workoutPlan.hasBeenExecutedBefore" class="row">
-        <div class="col-12">
-          <h4 class="no-last-time">This workout hasn't been done before, so no "Last Time" information is shown.</h4>
+        <div *ngIf="!workoutPlan.hasBeenExecutedBefore" class="row">
+          <div class="col-12">
+            <h4 class="no-last-time">This workout hasn't been done before, so no "Last Time" information is shown.</h4>
+          </div>
         </div>
-      </div>
 
-      <wt-exercise-plan 
-        *ngFor="let exercise of exercisesArray.controls; let i=index"
-        [formGroup]="exercise"
-        [workoutHasBeenExecutedBefore]="workoutPlan.hasBeenExecutedBefore"
-        (resistanceBandsModalRequested)="resistanceBandsModalEnabled($event)">
-      </wt-exercise-plan>
-      
-      <div class="row">
-        <div class="col-12">
-          <button type="submit" class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutPlanForm.invalid">Start Workout</button>
+        <wt-exercise-plan 
+          *ngFor="let exercise of exercisesArray.controls; let i=index"
+          [formGroup]="exercise"
+          [workoutHasBeenExecutedBefore]="workoutPlan.hasBeenExecutedBefore"
+          (resistanceBandsModalRequested)="resistanceBandsModalEnabled($event)">
+        </wt-exercise-plan>
+        
+        <div class="row">
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
+            &nbsp;<span *ngIf="isProcessing">Processing...</span>
+          </div>
         </div>
-      </div>
-      
+      </fieldset>
     </form>
 
     <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal">
