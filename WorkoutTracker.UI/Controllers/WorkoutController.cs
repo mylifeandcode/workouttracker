@@ -50,12 +50,18 @@ namespace WorkoutTracker.UI.Controllers
                 //Had to add .ToList() to the call below.
                 var workouts = _workoutService.Get(firstRecord, pageSize, filter).ToList();
 
+                //TODO: Consolidate this and the other identical code further down in this class. Adapter class maybe?
                 var results = workouts.Select((workout) =>
                 {
                     return new WorkoutDTO(
-                        workout.Id, 
-                        workout.Name, 
-                        workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise)));
+                        workout.Id,
+                        workout.Name,
+                        workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise)),
+                        string.Join(", ",
+                             workout.Exercises.SelectMany(x =>
+                                x.Exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name))
+                            .OrderBy(x => x)
+                            .Distinct()));
                 });
 
                 var result = new PaginatedResults<WorkoutDTO>(results, totalCount);
@@ -97,10 +103,16 @@ namespace WorkoutTracker.UI.Controllers
                 if (workout == null)
                     return NotFound(id);
 
+                //TODO: This code is duplicated. Consolidate, maybe in an adapter class.
                 var dto = new WorkoutDTO(
                     workout.Id, 
                     workout.Name, 
-                    workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise)));
+                    workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise)),
+                    string.Join(", ",
+                        workout.Exercises.SelectMany(x =>
+                            x.Exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name))
+                        .OrderBy(x => x)
+                        .Distinct()));
 
                 return Ok(dto);
             }

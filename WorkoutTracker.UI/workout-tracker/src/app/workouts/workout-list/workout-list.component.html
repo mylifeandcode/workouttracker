@@ -1,16 +1,17 @@
 <div class="container-fluid">
   <h3 class="headroom">Workouts</h3>
   <div class="row">
-      <div class="col-md-12">
+    <div class="col-4">
+      Filter by Name &nbsp;<input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'in')" />
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-12">
           <p-table #dt class="table table-striped w-auto"  [value]="workouts" [paginator]="true" [columns]="cols" [rows]="pageSize" [lazy]="true" (onLazyLoad)="getWorkoutsLazy($event)" [totalRecords]="totalRecords" [loading]="loading">
               <ng-template pTemplate="header" let-columns>
                   <tr>
                       <th>Name</th>
-                  </tr>
-                  <tr>
-                      <th>
-                          <input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'in')" />
-                      </th>
+                      <th></th>
                   </tr>
               </ng-template>
               <ng-template pTemplate="body" let-workout>

@@ -33,7 +33,7 @@ export class WorkoutListComponent implements OnInit {
       //this.loading = true;
       this.totalRecords = 0;
 
-      this._workoutSvc.getAll(first, 20)
+      this._workoutSvc.getAll(first, 20, nameContains)
         .pipe(finalize(() => { this.loading = false; }))
         .subscribe(
             (results: PaginatedResults<WorkoutDTO>) => {

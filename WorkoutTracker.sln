@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutApplication.Data", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutApplication.Domain", "WorkoutApplication.Domain\WorkoutApplication.Domain.csproj", "{E830AE12-D04F-4F2A-B2FE-293934D17220}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutApplication.Infrastructure", "WorkoutApplication.Infrastructure\WorkoutApplication.Infrastructure.csproj", "{7B26A9A4-9BD9-459E-8FB3-70AF4125D11E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.UI", "WorkoutTracker.UI\WorkoutTracker.UI.csproj", "{A52405EE-2073-49E4-AA2E-51A93361FA0B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.Tests", "WorkoutTracker.Tests\WorkoutTracker.Tests.csproj", "{DF90C6D5-DEE9-4F58-9BC0-E61F38E01557}"
@@ -44,10 +42,6 @@ Global
 		{E830AE12-D04F-4F2A-B2FE-293934D17220}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E830AE12-D04F-4F2A-B2FE-293934D17220}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E830AE12-D04F-4F2A-B2FE-293934D17220}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B26A9A4-9BD9-459E-8FB3-70AF4125D11E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B26A9A4-9BD9-459E-8FB3-70AF4125D11E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B26A9A4-9BD9-459E-8FB3-70AF4125D11E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B26A9A4-9BD9-459E-8FB3-70AF4125D11E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A52405EE-2073-49E4-AA2E-51A93361FA0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A52405EE-2073-49E4-AA2E-51A93361FA0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A52405EE-2073-49E4-AA2E-51A93361FA0B}.Release|Any CPU.ActiveCfg = Release|Any CPU

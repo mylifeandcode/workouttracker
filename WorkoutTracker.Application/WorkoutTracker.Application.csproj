@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WorkoutApplication.Domain\WorkoutApplication.Domain.csproj" />
-    <ProjectReference Include="..\WorkoutApplication.Infrastructure\WorkoutApplication.Infrastructure.csproj" />
     <ProjectReference Include="..\WorkoutApplication.Repository\WorkoutApplication.Repository.csproj" />
   </ItemGroup>
 

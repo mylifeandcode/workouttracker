@@ -11,7 +11,6 @@
   <ItemGroup>
     <ProjectReference Include="..\WorkoutApplication.Data\WorkoutApplication.Data.csproj" />
     <ProjectReference Include="..\WorkoutApplication.Domain\WorkoutApplication.Domain.csproj" />
-    <ProjectReference Include="..\WorkoutApplication.Infrastructure\WorkoutApplication.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
