@@ -3,6 +3,7 @@ import { WorkoutService } from '../workout.service';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'wt-workout-list',
@@ -19,46 +20,76 @@ export class WorkoutListComponent implements OnInit {
   public pageSize: number = 10;
   public workouts: WorkoutDTO[];
   public cols: any = [
-      { field: 'name', header: 'Name' }, 
-      { field: 'targetAreas', header: 'Target Areas' }, 
-      { field: 'active', header: 'Status' }
+    { field: 'name', header: 'Name' }, 
+    { field: 'targetAreas', header: 'Target Areas' }, 
+    { field: 'active', header: 'Status' }
   ]; //TODO: Create specific type
+
+  private _filterByNameContains: string = null;
+  private _filterByActiveOnly: boolean = true;
 
   constructor(private _workoutSvc: WorkoutService) { 
   }
 
   ngOnInit(): void {
-    this.getWorkouts(0, true, null);
+    this.getWorkouts(0);
   }
 
-  public getWorkouts(first: number, activeOnly: boolean, nameContains: string): void {
-      //this.loading = true;
-      this.totalRecords = 0;
-
-      this._workoutSvc.getAll(first, 20, activeOnly, nameContains)
-        .pipe(finalize(() => { this.loading = false; }))
-        .subscribe(
-            (results: PaginatedResults<WorkoutDTO>) => {
-                this.workouts = results.results;
-                this.totalRecords = results.totalCount;
-            }, 
-            (error: any) => window.alert("An error occurred getting exercises: " + error)
-        );
+  public getWorkouts(first: number): void {
+    this.totalRecords = 0;
+    this.loading = true;
+    this._workoutSvc.getAll(first, 20, this._filterByActiveOnly, this._filterByNameContains)
+      .pipe(finalize(() => { this.loading = false; }))
+      .subscribe(
+          (results: PaginatedResults<WorkoutDTO>) => {
+            this.workouts = results.results;
+            this.totalRecords = results.totalCount;
+          }, 
+          (error: any) => window.alert("An error occurred getting workouts: " + error)
+      );
   }
 
   public getWorkoutsLazy(event: any): void {
-    let nameContains: string;
-    let activeOnly: boolean = true;
 
     if (event.filters["name"])
-      nameContains = event.filters["name"].value;
+      this._filterByNameContains = event.filters["name"].value;
+    else
+      this._filterByNameContains = null;
 
-    if (event.filters["activeOnly"]) {
-      console.log("event.filters['activeOnly']", event.filters["activeOnly"]);
-      activeOnly = event.filters["activeOnly"].value;
+    if (event.filters["activeOnly"])
+      this._filterByActiveOnly = event.filters["activeOnly"].value;
+    else
+      this._filterByActiveOnly = true;
+
+    this.getWorkouts(event.first);
+  }
+
+  public retireWorkout(workoutId: number, workoutName: string): void {
+    if(window.confirm(`Are you sure you want to retire workout "${workoutName}"?`)){
+      this.loading = true;
+      this._workoutSvc.retire(workoutId)
+        .pipe(finalize(() => { this.loading = false; }))
+        .subscribe(
+          (response: HttpResponse<any>) => { 
+            this.getWorkouts(0);
+          }, 
+          (error: any) => window.alert("An error occurred while retiring workout: " + error)
+        );
     }
+  }
 
-    this.getWorkouts(event.first, activeOnly, nameContains);
+  public reactivateWorkout(workoutId: number, workoutName: string): void {
+    if(window.confirm(`Are you sure you want to reactivate workout "${workoutName}"?`)){
+      this.loading = true;
+      this._workoutSvc.reactivate(workoutId)
+        .pipe(finalize(() => { this.loading = false; }))
+        .subscribe(
+          (response: HttpResponse<any>) => { 
+            this.getWorkouts(0);
+          }, 
+          (error: any) => window.alert("An error occurred while reactivating workout: " + error)
+        );
+    }
   }
 
 }

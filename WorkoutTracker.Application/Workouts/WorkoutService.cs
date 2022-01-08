@@ -39,6 +39,16 @@ namespace WorkoutTracker.Application.Workouts
             return modifiedWorkout;
         }
 
+        public void Retire(int workoutId)
+        {
+            SetActive(workoutId, false);
+        }
+
+        public void Reactivate(int workoutId)
+        { 
+            SetActive(workoutId, true); 
+        }
+
         private static void ApplyQueryFilters(ref IQueryable<Workout> query, WorkoutFilter filter)
         {
             if (filter == null)
@@ -51,6 +61,23 @@ namespace WorkoutTracker.Application.Workouts
 
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
                 query = query.Where(workout => EF.Functions.Like(workout.Name, "%" + filter.NameContains + "%"));
+        }
+
+        private void SetActive(int workoutId, bool active)
+        {
+            try
+            {
+                var workout = _repo.Get().First(x => x.Id == workoutId);
+                workout.Active = active;
+                workout.ModifiedByUserId = workout.CreatedByUserId;
+                workout.ModifiedDateTime = DateTime.Now;
+                _repo.Update(workout, true);
+            }
+            catch (Exception ex)
+            {
+                //TODO: Log
+                throw;
+            }
         }
     }
 }

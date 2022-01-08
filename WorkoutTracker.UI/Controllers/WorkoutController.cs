@@ -190,6 +190,34 @@ namespace WorkoutTracker.UI.Controllers
             throw new NotImplementedException();
         }
 
+        [HttpPut("{id}/retire")]
+        public ActionResult Retire(int id)
+        {
+            try
+            {
+                _workoutService.Retire(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{id}/reactivate")]
+        public ActionResult Reactivate(int id)
+        {
+            try
+            {
+                _workoutService.Reactivate(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         private WorkoutFilter BuildWorkoutFilter(int userId, bool activeOnly, string nameContains)
         {
             var filter = new WorkoutFilter();

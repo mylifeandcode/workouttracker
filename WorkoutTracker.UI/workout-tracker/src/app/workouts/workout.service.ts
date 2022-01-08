@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Workout } from 'app/workouts/models/workout';
 import { map, catchError } from 'rxjs/operators';
@@ -70,4 +70,12 @@ export class WorkoutService {
   public submitPlan(plan: WorkoutPlan): Observable<number> {
     return this._http.post<number>(`${this.API_ROOT}/${plan.workoutId}/plan`, plan);
   }
+
+  public retire(id: number): Observable<HttpResponse<any>> {
+    return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${id}/retire`, null);
+  }
+
+  public reactivate(id: number): Observable<HttpResponse<any>> {
+    return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${id}/reactivate`, null);
+  }  
 }

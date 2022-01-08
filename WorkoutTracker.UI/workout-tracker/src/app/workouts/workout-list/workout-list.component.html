@@ -25,8 +25,8 @@
                       <td>
                           {{workout.active ? 'Active' : 'Retired'}}
                           &nbsp;
-                          <button *ngIf="workout.active" class="btn btn-danger">Retire</button>
-                          <button *ngIf="!workout.active" class="btn btn-success">Reactivate</button>
+                          <button *ngIf="workout.active" class="btn btn-danger" (click)="retireWorkout(workout.id, workout.name)">Retire</button>
+                          <button *ngIf="!workout.active" class="btn btn-success" (click)="reactivateWorkout(workout.id, workout.name)">Reactivate</button>
                       </td>
                   </tr>
               </ng-template>
