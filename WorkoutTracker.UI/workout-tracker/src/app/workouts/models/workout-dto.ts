@@ -5,6 +5,7 @@ export class WorkoutDTO {
     public workoutName: string;
     public exercises: ExerciseInWorkoutDTO[];
     public targetAreas: string;
+    public active: boolean;
 
     constructor() {
         this.exercises = [];

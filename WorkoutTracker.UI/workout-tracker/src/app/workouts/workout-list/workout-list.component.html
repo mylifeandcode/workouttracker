@@ -4,6 +4,9 @@
     <div class="col-4">
       Filter by Name &nbsp;<input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'in')" />
     </div>
+    <div class="col-4">
+      Active Workouts Only &nbsp;<input type="checkbox" checked (input)="dt.filter($event.target.checked, 'activeOnly', 'equals')" /> 
+    </div>
   </div>
   <div class="row">
       <div class="col-12">
@@ -11,13 +14,20 @@
               <ng-template pTemplate="header" let-columns>
                   <tr>
                       <th>Name</th>
-                      <th></th>
+                      <th>Target Areas</th>
+                      <th>Status</th>
                   </tr>
               </ng-template>
               <ng-template pTemplate="body" let-workout>
                   <tr>
                       <td><a [routerLink]="['/workouts/edit/', workout.id]">{{workout.name}}</a></td>
                       <td [style]="{'overflow': 'visible'}">{{workout.targetAreas}}</td>
+                      <td>
+                          {{workout.active ? 'Active' : 'Retired'}}
+                          &nbsp;
+                          <button *ngIf="workout.active" class="btn btn-danger">Retire</button>
+                          <button *ngIf="!workout.active" class="btn btn-success">Reactivate</button>
+                      </td>
                   </tr>
               </ng-template>
           </p-table>

@@ -6,7 +6,8 @@ namespace WorkoutTracker.Application.FilterClasses
 {
     public class WorkoutFilter
     {
-        public string NameContains { get; set; }
         public int UserId { get; set; }
+        public string NameContains { get; set; }
+        public bool ActiveOnly { get; set; }
     }
 }

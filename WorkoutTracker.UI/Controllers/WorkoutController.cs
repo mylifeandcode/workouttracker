@@ -34,14 +34,14 @@ namespace WorkoutTracker.UI.Controllers
 
         // GET: api/Workouts
         [HttpGet]
-        public ActionResult<PaginatedResults<WorkoutDTO>> Get(int firstRecord, short pageSize, string nameContains = null)
+        public ActionResult<PaginatedResults<WorkoutDTO>> Get(int firstRecord, short pageSize, bool activeOnly, string nameContains = null)
         {
             try
             {
                 //TODO: Consolidate this code somewhere!
                 var userId = GetUserID();
 
-                var filter = BuildWorkoutFilter(userId, nameContains);
+                var filter = BuildWorkoutFilter(userId, activeOnly, nameContains);
 
                 int totalCount = _workoutService.GetTotalCount(); //TODO: Modify to get total count by filter
 
@@ -61,7 +61,8 @@ namespace WorkoutTracker.UI.Controllers
                              workout.Exercises.SelectMany(x =>
                                 x.Exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name))
                             .OrderBy(x => x)
-                            .Distinct()));
+                            .Distinct()), 
+                        workout.Active);
                 });
 
                 var result = new PaginatedResults<WorkoutDTO>(results, totalCount);
@@ -112,7 +113,8 @@ namespace WorkoutTracker.UI.Controllers
                         workout.Exercises.SelectMany(x =>
                             x.Exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name))
                         .OrderBy(x => x)
-                        .Distinct()));
+                        .Distinct()), 
+                    workout.Active);
 
                 return Ok(dto);
             }
@@ -188,11 +190,12 @@ namespace WorkoutTracker.UI.Controllers
             throw new NotImplementedException();
         }
 
-        private WorkoutFilter BuildWorkoutFilter(int userId, string nameContains)
+        private WorkoutFilter BuildWorkoutFilter(int userId, bool activeOnly, string nameContains)
         {
             var filter = new WorkoutFilter();
 
             filter.UserId = userId;
+            filter.ActiveOnly = activeOnly;
 
             if (!String.IsNullOrWhiteSpace(nameContains))
                 filter.NameContains = nameContains;

@@ -10,5 +10,6 @@ namespace WorkoutApplication.Domain.Workouts
     public class Workout : NamedEntity
     {
         public virtual ICollection<ExerciseInWorkout> Exercises { get; set; }
+        public bool Active { get; set; }
     }
 }

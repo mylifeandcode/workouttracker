@@ -9,8 +9,9 @@ namespace WorkoutTracker.UI.Models
     {
         public IEnumerable<ExerciseInWorkoutDTO> Exercises { get; }
         public string TargetAreas { get; }
+        public bool Active { get; set; }
 
-        public WorkoutDTO(int id, string name, IEnumerable<ExerciseInWorkoutDTO> exercises, string targetAreas) : base(id, name)
-            => (Exercises, TargetAreas) = (exercises, targetAreas);
+        public WorkoutDTO(int id, string name, IEnumerable<ExerciseInWorkoutDTO> exercises, string targetAreas, bool active) : base(id, name)
+            => (Exercises, TargetAreas, Active) = (exercises, targetAreas, active);
     }
 }

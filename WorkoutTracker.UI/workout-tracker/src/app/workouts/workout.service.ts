@@ -25,9 +25,9 @@ export class WorkoutService {
     this.API_ROOT = this._configService.get("apiRoot") + "workouts";
   }
 
-  public getAll(firstRecOffset: number, pageSize: number, nameContains: string = null): Observable<PaginatedResults<WorkoutDTO>> {
+  public getAll(firstRecOffset: number, pageSize: number, activeOnly: boolean, nameContains: string = null): Observable<PaginatedResults<WorkoutDTO>> {
         
-    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
+    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&activeOnly=${activeOnly}`;
 
     if(nameContains)
         url += `&nameContains=${nameContains}`;

@@ -19,21 +19,23 @@ export class WorkoutListComponent implements OnInit {
   public pageSize: number = 10;
   public workouts: WorkoutDTO[];
   public cols: any = [
-      { field: 'name', header: 'Name' }
+      { field: 'name', header: 'Name' }, 
+      { field: 'targetAreas', header: 'Target Areas' }, 
+      { field: 'active', header: 'Status' }
   ]; //TODO: Create specific type
 
   constructor(private _workoutSvc: WorkoutService) { 
   }
 
   ngOnInit(): void {
-    this.getWorkouts(0, null);
+    this.getWorkouts(0, true, null);
   }
 
-  public getWorkouts(first: number, nameContains: string): void {
+  public getWorkouts(first: number, activeOnly: boolean, nameContains: string): void {
       //this.loading = true;
       this.totalRecords = 0;
 
-      this._workoutSvc.getAll(first, 20, nameContains)
+      this._workoutSvc.getAll(first, 20, activeOnly, nameContains)
         .pipe(finalize(() => { this.loading = false; }))
         .subscribe(
             (results: PaginatedResults<WorkoutDTO>) => {
@@ -45,12 +47,18 @@ export class WorkoutListComponent implements OnInit {
   }
 
   public getWorkoutsLazy(event: any): void {
-      let nameContains: string;
+    let nameContains: string;
+    let activeOnly: boolean = true;
 
-      if (event.filters["name"])
-          nameContains = event.filters["name"].value;
+    if (event.filters["name"])
+      nameContains = event.filters["name"].value;
 
-      this.getWorkouts(event.first, nameContains);
+    if (event.filters["activeOnly"]) {
+      console.log("event.filters['activeOnly']", event.filters["activeOnly"]);
+      activeOnly = event.filters["activeOnly"].value;
+    }
+
+    this.getWorkouts(event.first, activeOnly, nameContains);
   }
 
 }

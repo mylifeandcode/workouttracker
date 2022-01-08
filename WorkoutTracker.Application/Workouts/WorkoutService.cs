@@ -39,12 +39,15 @@ namespace WorkoutTracker.Application.Workouts
             return modifiedWorkout;
         }
 
-        private void ApplyQueryFilters(ref IQueryable<Workout> query, WorkoutFilter filter)
+        private static void ApplyQueryFilters(ref IQueryable<Workout> query, WorkoutFilter filter)
         {
             if (filter == null)
                 return;
 
             query = query.Where(workout => workout.CreatedByUserId == filter.UserId);
+
+            if (filter.ActiveOnly)
+                query = query.Where(workout => workout.Active);
 
             if (!String.IsNullOrWhiteSpace(filter.NameContains))
                 query = query.Where(workout => EF.Functions.Like(workout.Name, "%" + filter.NameContains + "%"));

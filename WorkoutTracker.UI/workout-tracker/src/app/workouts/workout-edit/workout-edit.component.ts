@@ -76,6 +76,7 @@ export class WorkoutEditComponent implements OnInit {
 
     this.workoutForm = this._formBuilder.group({
         id: [0, Validators.required ], 
+        active: [true, Validators.required],
         name: ['', Validators.required],
         exercises: this._formBuilder.array([])
     });
@@ -103,6 +104,7 @@ export class WorkoutEditComponent implements OnInit {
   private updateFormWithWorkoutValues(workout: Workout): void {
     this.workoutForm.patchValue({
       id: workout.id, 
+      active: workout.active, 
       name: workout.name
     });
 
@@ -137,11 +139,6 @@ export class WorkoutEditComponent implements OnInit {
     let exerciseControl: AbstractControl = this.exercisesArray.at(index);
     this.exercisesArray.removeAt(index);
     this.exercisesArray.insert((index + 1), exerciseControl);
-  }
-
-  private getWorkoutDTOFromWorkout(workout: Workout): WorkoutDTO {
-    //TODO: Implement
-    return null;
   }
 
   private saveWorkout(): void {
