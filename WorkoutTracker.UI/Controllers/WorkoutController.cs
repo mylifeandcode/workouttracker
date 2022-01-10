@@ -7,6 +7,7 @@ using WorkoutApplication.Application.Workouts;
 using WorkoutApplication.Domain.Workouts;
 using WorkoutTracker.Application.FilterClasses;
 using WorkoutTracker.Application.Workouts;
+using WorkoutTracker.UI.Adapters;
 using WorkoutTracker.UI.Models;
 
 namespace WorkoutTracker.UI.Controllers
@@ -21,15 +22,18 @@ namespace WorkoutTracker.UI.Controllers
         private IWorkoutService _workoutService;
         private IWorkoutPlanService _workoutPlanService;
         private IExecutedWorkoutService _executedWorkoutService;
+        private IWorkoutDTOAdapter _workoutDTOAdapter;
 
         public WorkoutController(
             IWorkoutService workoutService, 
             IWorkoutPlanService workoutPlanService, 
-            IExecutedWorkoutService executedWorkoutService)
+            IExecutedWorkoutService executedWorkoutService, 
+            IWorkoutDTOAdapter workoutDTOAdapter)
         {
             _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));
             _workoutPlanService = workoutPlanService ?? throw new ArgumentNullException(nameof(workoutPlanService));
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
+            _workoutDTOAdapter = workoutDTOAdapter ?? throw new ArgumentNullException(nameof(workoutDTOAdapter));
         }
 
         // GET: api/Workouts
@@ -50,19 +54,9 @@ namespace WorkoutTracker.UI.Controllers
                 //Had to add .ToList() to the call below.
                 var workouts = _workoutService.Get(firstRecord, pageSize, filter).ToList();
 
-                //TODO: Consolidate this and the other identical code further down in this class. Adapter class maybe?
                 var results = workouts.Select((workout) =>
                 {
-                    return new WorkoutDTO(
-                        workout.Id,
-                        workout.Name,
-                        workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise)),
-                        string.Join(", ",
-                             workout.Exercises.SelectMany(x =>
-                                x.Exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name))
-                            .OrderBy(x => x)
-                            .Distinct()), 
-                        workout.Active);
+                    return _workoutDTOAdapter.AdaptFromWorkout(workout);
                 });
 
                 var result = new PaginatedResults<WorkoutDTO>(results, totalCount);
@@ -104,17 +98,7 @@ namespace WorkoutTracker.UI.Controllers
                 if (workout == null)
                     return NotFound(id);
 
-                //TODO: This code is duplicated. Consolidate, maybe in an adapter class.
-                var dto = new WorkoutDTO(
-                    workout.Id, 
-                    workout.Name, 
-                    workout.Exercises.Select(exercise => new ExerciseInWorkoutDTO(exercise)),
-                    string.Join(", ",
-                        workout.Exercises.SelectMany(x =>
-                            x.Exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name))
-                        .OrderBy(x => x)
-                        .Distinct()), 
-                    workout.Active);
+                var dto = _workoutDTOAdapter.AdaptFromWorkout(workout);
 
                 return Ok(dto);
             }

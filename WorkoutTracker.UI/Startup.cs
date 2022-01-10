@@ -107,7 +107,6 @@ namespace WorkoutTracker
                 .InstancePerLifetimeScope();
             */
 
-            //var dataAccess = Assembly.GetExecutingAssembly();
             var assemblies =
                 Assembly
                     .GetExecutingAssembly()
@@ -115,16 +114,21 @@ namespace WorkoutTracker
                     .Select((item) => Assembly.Load(item))
                     .Where(x => x.FullName.StartsWith("Workout")).ToArray();
 
+            //We also need THIS assembly, the one we're running from right now            
+            assemblies = assemblies.Concat(new Assembly[] { Assembly.GetExecutingAssembly() }).ToArray();
+
             builder.RegisterAssemblyTypes(assemblies)
                .Where(t => t.Name.EndsWith("Service"))
                .AsImplementedInterfaces();
 
             builder.RegisterAssemblyTypes(assemblies)
-                   .Where(t => t.Name.EndsWith("Repository"))
-                   .AsImplementedInterfaces();
+                .Where(t => t.Name.EndsWith("Repository"))
+                .AsImplementedInterfaces();
 
-            //This one lives in the UI project -- maybe it should move to the application layer
-            builder.RegisterType<TokenService>().As<ITokenService>();
+            builder.RegisterAssemblyTypes(assemblies)
+                .Where(t => t.Name.EndsWith("Adapter"))
+                .AsImplementedInterfaces()
+                .SingleInstance();
 
             builder.RegisterType<Repository<TargetArea>>().As<IRepository<TargetArea>>();
             builder.RegisterType<Repository<User>>().As<IRepository<User>>();
