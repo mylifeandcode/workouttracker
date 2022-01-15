@@ -152,6 +152,8 @@ export class WorkoutPlanComponent implements OnInit {
           sequence: exercise.sequence, 
           targetRepCountLastTime: exercise.targetRepCountLastTime, 
           maxActualRepCountLastTime: exercise.maxActualRepCountLastTime,
+          maxRangeOfMotionLastTime: exercise.maxRangeOfMotionLastTime, 
+          maxFormLastTime: exercise.maxFormLastTime, 
           recommendedTargetRepCount: exercise.recommendedTargetRepCount, 
           targetRepCount: [exercise.targetRepCount, Validators.min(1)],
           resistanceAmountLastTime: exercise.resistanceAmountLastTime, 

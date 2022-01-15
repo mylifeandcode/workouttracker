@@ -25,6 +25,9 @@ namespace WorkoutApplication.Application.Exercises
 
         public byte TargetRepCountLastTime { get; set; }
         public byte MaxActualRepCountLastTime { get; set; }
+        public byte MaxRangeOfMotionLastTime { get; set; }
+        public byte MaxFormLastTime { get; set; }
+
         public byte? RecommendedTargetRepCount { get; set; }
         public byte TargetRepCount { get; set; }
 
@@ -59,6 +62,8 @@ namespace WorkoutApplication.Application.Exercises
         {
             TargetRepCountLastTime = executedExercises.Max(x => x.TargetRepCount);
             MaxActualRepCountLastTime = executedExercises.Max(x => x.ActualRepCount);
+            MaxRangeOfMotionLastTime = executedExercises.Max(x => x.RangeOfMotionRating);
+            MaxFormLastTime = executedExercises.Max(x => x.FormRating);
 
             var executedWithMaxResitance = 
                 executedExercises.OrderByDescending(x => x.ResistanceAmount).First();

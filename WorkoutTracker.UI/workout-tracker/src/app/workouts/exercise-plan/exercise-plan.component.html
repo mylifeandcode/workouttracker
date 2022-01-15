@@ -18,6 +18,12 @@
       <div class="col-2 form-group">
         Max Actual Rep Count: <span class="pre-pop-value">{{formGroup.controls['maxActualRepCountLastTime'].value}}</span>
       </div>
+      <div class="col-2 form-group">
+        Max Range of Motion: <span class="pre-pop-value">{{formGroup.controls['maxRangeOfMotionLastTime'].value | rating}}</span>
+      </div>
+      <div class="col-2 form-group">
+        Max Form: <span class="pre-pop-value">{{formGroup.controls['maxFormLastTime'].value | rating}}</span>
+      </div>
       <div class="col-4 form-group">
         Resistance: <span class="pre-pop-value">{{formGroup.controls['resistanceType'].value==3 ? 'Body Weight' : formGroup.controls['resistanceAmountLastTime'].value}}</span>
         <span *ngIf="formGroup.controls['resistanceMakeupLastTime'].value">
