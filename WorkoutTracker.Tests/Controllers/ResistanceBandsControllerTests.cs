@@ -9,7 +9,7 @@ using WorkoutTracker.UI.Controllers;
 namespace WorkoutTracker.Tests.Controllers
 {
     [TestClass]
-    public class ResistanceBandsControllerTests
+    public class ResistanceBandsControllerTests : UserAwareControllerTestsBase
     {
         [TestMethod]
         public void Should_Get_All()
@@ -75,6 +75,7 @@ namespace WorkoutTracker.Tests.Controllers
             var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
             service.Setup(mock => mock.Add(resistanceBand)).Returns(resistanceBand);
             var sut = new ResistanceBandsController(service.Object);
+            SetupUser(sut);
 
             //ACT
             var result = sut.Post(resistanceBand);
@@ -94,6 +95,7 @@ namespace WorkoutTracker.Tests.Controllers
             var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
             service.Setup(mock => mock.Update(resistanceBand)).Returns(resistanceBand);
             var sut = new ResistanceBandsController(service.Object);
+            SetupUser(sut);
 
             //ACT
             var result = sut.Put(5, resistanceBand);

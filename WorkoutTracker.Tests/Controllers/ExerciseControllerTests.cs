@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using WorkoutApplication.Domain.Exercises;
 using WorkoutTracker.Application.Exercises;
 using WorkoutTracker.Application.FilterClasses;
@@ -14,7 +12,7 @@ using WorkoutTracker.UI.Models;
 namespace WorkoutTracker.Tests.Controllers
 {
     [TestClass]
-    public class ExerciseControllerTests
+    public class ExerciseControllerTests : UserAwareControllerTestsBase
     {
         [TestMethod]
         public void Should_Get_Exercise_By_ID()
@@ -24,6 +22,7 @@ namespace WorkoutTracker.Tests.Controllers
             var exercise = new Exercise();
             exerciseSvc.Setup(x => x.GetById(It.IsAny<int>())).Returns(exercise);
             var sut = new ExerciseController(exerciseSvc.Object);
+            SetupUser(sut);
 
             //ACT
             var response = sut.Get(12345);
@@ -61,6 +60,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Returns((Exercise newExercise, bool save) => exercise);
 
             var sut = new ExerciseController(exerciseSvc.Object);
+            SetupUser(sut);
 
             //ACT
             var response = sut.Post(exercise);
@@ -82,6 +82,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Returns((Exercise newExercise, bool save) => exercise);
 
             var sut = new ExerciseController(exerciseSvc.Object);
+            SetupUser(sut);
 
             //ACT
             var response = sut.Put(exercise.Id, exercise);

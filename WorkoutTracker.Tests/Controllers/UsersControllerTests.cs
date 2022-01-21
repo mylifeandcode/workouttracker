@@ -9,7 +9,7 @@ using WorkoutTracker.UI.Controllers;
 namespace WorkoutTracker.Tests.Controllers
 {
     [TestClass]
-    public class UsersControllerTests
+    public class UsersControllerTests : UserAwareControllerTestsBase
     {
         [TestMethod]
         public void Should_Get_All()
@@ -76,6 +76,7 @@ namespace WorkoutTracker.Tests.Controllers
             var service = new Mock<IUserService>(MockBehavior.Strict);
             service.Setup(mock => mock.Add(user)).Returns(user);
             var sut = new UsersController(service.Object);
+            SetupUser(sut);
 
             //ACT
             var result = sut.Post(user);
@@ -95,6 +96,7 @@ namespace WorkoutTracker.Tests.Controllers
             var service = new Mock<IUserService>(MockBehavior.Strict);
             service.Setup(mock => mock.Update(user)).Returns(user);
             var sut = new UsersController(service.Object);
+            SetupUser(sut);
 
             //ACT
             var result = sut.Put(5, user);
