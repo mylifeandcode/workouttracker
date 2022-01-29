@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WorkoutApplication.Domain\WorkoutApplication.Domain.csproj" />
-    <ProjectReference Include="..\WorkoutApplication.Repository\WorkoutApplication.Repository.csproj" />
+    <ProjectReference Include="..\WorkoutTracker.Domain\WorkoutTracker.Domain.csproj" />
+    <ProjectReference Include="..\WorkoutTracker.Repository\WorkoutTracker.Repository.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,10 +3,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutApplication.Application.Workouts;
-using WorkoutApplication.Domain.Workouts;
-using WorkoutTracker.Application.FilterClasses;
-using WorkoutTracker.Application.Workouts;
+using WorkoutTracker.Application.Workouts.Models;
+using WorkoutTracker.Domain.Workouts;
+using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.UI.Adapters;
 using WorkoutTracker.UI.Models;
 

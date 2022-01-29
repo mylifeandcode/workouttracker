@@ -3,9 +3,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
-using WorkoutApplication.Domain.Exercises;
-using WorkoutTracker.Application.Exercises;
-using WorkoutTracker.Application.FilterClasses;
+using WorkoutTracker.Domain.Exercises;
+using WorkoutTracker.Application.Exercises.Interfaces;
+using WorkoutTracker.Application.Exercises.Models;
 using WorkoutTracker.UI.Controllers;
 using WorkoutTracker.UI.Models;
 

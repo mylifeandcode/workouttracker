@@ -1,0 +1,264 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using WorkoutTracker.Domain.Resistances;
+using WorkoutTracker.Repository;
+using WorkoutTracker.Application.Resistances.Interfaces;
+using WorkoutTracker.Application.Shared.BaseClasses;
+
+namespace WorkoutTracker.Application.Resistances.Services
+{
+    public class ResistanceBandService : ServiceBase<ResistanceBand>, IResistanceBandService
+    {
+        protected ResistanceBand _lowestResistanceBand;
+
+        public ResistanceBandService(IRepository<ResistanceBand> repository) : base(repository) { }
+
+        public ResistanceBand Add(ResistanceBand resistanceBand)
+        {
+            return Add(resistanceBand, true);
+        }
+
+        public ResistanceBand Update(ResistanceBand resistanceBand)
+        {
+            return Update(resistanceBand, true);
+        }
+
+        public List<ResistanceBand> GetIndividualBands()
+        {
+            List<ResistanceBand> bandsByColor = _repo.Get().ToList();
+            List<ResistanceBand> output = new List<ResistanceBand>(bandsByColor.Sum(band => band.NumberAvailable));
+
+            bandsByColor.ForEach((band) =>
+            {
+                for (short x = 0; x < band.NumberAvailable; x++)
+                {
+                    output.Add(new ResistanceBand { Color = band.Color, MaxResistanceAmount = band.MaxResistanceAmount });
+                }
+            });
+
+            return output;
+        }
+
+        /// <summary>
+        /// Calculates which resistance bands should be used to meet the specified 
+        /// resistance requirements to increase resistance
+        /// </summary>
+        /// <param name="currentAmount">The current resistance amount</param>
+        /// <param name="minimalIncrease">The minimal amount to increase resistance by</param>
+        /// <param name="preferredMaxIncrease">The preferred maximum amount to increase 
+        /// resistance by</param>
+        /// <returns>A list of ResistanceBands meeting the specified criteria, or an 
+        /// empty list if the criteria could not be met</returns>
+        public List<ResistanceBand> CalculateNextAvailableResistanceAmount(
+            decimal currentAmount,
+            decimal minimalIncrease,
+            decimal preferredMaxIncrease,
+            bool doubleBandResistanceAmounts)
+        {
+            //Based on the current resistance amount, assemble a list of bands which exceeds the amount 
+            //by the next available increment.
+
+            short multiplier = doubleBandResistanceAmounts ? (short)2 : (short)1; //Crazy that I need to cast these!
+            decimal minimum = currentAmount + minimalIncrease;
+            decimal preferredMax = currentAmount + preferredMaxIncrease;
+
+            List<ResistanceBand> availableBands =
+                GetIndividualBands()
+                    .OrderByDescending(band => band.MaxResistanceAmount)
+                    .ToList();
+
+            List<ResistanceBand> selectedBands = new List<ResistanceBand>(5); //Set capacity to 5, just to be a little more optimal than default
+            List<ResistanceBand> skippedBands = new List<ResistanceBand>(5);
+            bool amountOk = false;
+
+            if (currentAmount > availableBands.Max(band => band.MaxResistanceAmount) * multiplier)
+            {
+                //We're gonna need multiple bands and we can start with the one with the highest max resistance.
+
+                selectedBands.Add(availableBands[0]);
+                availableBands.RemoveAt(0);
+
+                amountOk = AmountIsInRange(
+                    selectedBands.Sum(band => band.MaxResistanceAmount) * multiplier,
+                    minimum,
+                    preferredMax);
+
+                if (!amountOk)
+                    amountOk = AssembleListOfBandsBasedOnResistanceCriteria(
+                        ref selectedBands, ref availableBands, minimum, preferredMax, multiplier);
+
+                if (!amountOk)
+                {
+                    //We've added bands in order from heaviest to light, but still aren't in range.
+                    //Now, let's try to add what's left from light to heavy to fill the gap.
+                    availableBands = skippedBands.OrderBy(band => band.MaxResistanceAmount).ToList();
+                    skippedBands.Clear();
+
+                    amountOk = AssembleListOfBandsBasedOnResistanceCriteria(
+                        ref selectedBands, ref availableBands, minimum, preferredMax, multiplier);
+                }
+
+                if (!amountOk)
+                {
+                    //We were unable to assemble a list of bands meeting our criteria. Clear the list 
+                    //of selected bands so we return an empty list.
+                    selectedBands.Clear();
+                }
+            }
+            else
+            {
+                //Our highest max resistance band is heavier than the max we're looking for.
+                //Try to target a single band. If not possible, start stacking.
+                var bandThatMatchesCriteria =
+                    availableBands.FirstOrDefault(band =>
+                        band.MaxResistanceAmount * multiplier >= minimum
+                        && band.MaxResistanceAmount * multiplier <= preferredMax);
+
+                if (bandThatMatchesCriteria != null)
+                {
+                    selectedBands.Add(bandThatMatchesCriteria);
+                }
+                else
+                {
+                    //Get to stacking...
+                    availableBands =
+                        GetIndividualBands()
+                            .Where(band => band.MaxResistanceAmount * multiplier < preferredMax)
+                            .OrderByDescending(band => band.MaxResistanceAmount)
+                            .ToList();
+
+                    if (availableBands.Any())
+                    {
+                        selectedBands.Add(availableBands[0]);
+                        availableBands.RemoveAt(0);
+
+                        while (availableBands.Any() && !amountOk)
+                        {
+                            if ((availableBands[0].MaxResistanceAmount + selectedBands.Sum(band => band.MaxResistanceAmount)) * multiplier <= preferredMax)
+                            {
+                                selectedBands.Add(availableBands[0]);
+                                amountOk = selectedBands.Sum(band => band.MaxResistanceAmount) == preferredMax;
+                            }
+                            availableBands.RemoveAt(0);
+                        }
+                    }
+                }
+            }
+
+            return selectedBands;
+        }
+
+        /// <summary>
+        /// Calculates which resistance bands should be used to meet the specified 
+        /// resistance requirements to decrease resistance
+        /// </summary>
+        /// <param name="currentAmount">The current resistance amount</param>
+        /// <param name="minimalDecrease">The minimal amount to decrease resistance by</param>
+        /// <param name="preferredMaxDecrease">The preferred maximum amount to decrease 
+        /// resistance by</param>
+        /// <returns>A list of ResistanceBands meeting the specified criteria, or an 
+        /// empty list if the criteria could not be met</returns>
+        public List<ResistanceBand> CalculatePreviousAvailableResistanceAmount(
+            decimal currentAmount,
+            decimal minimalDecrease,
+            decimal preferredMaxDecrease,
+            bool doubleBandResistanceAmounts)
+        {
+            //Based on the current resistance amount, assemble a list of bands which decreases the amount 
+            //by the previous available decrement.
+            short multiplier = doubleBandResistanceAmounts ? (short)2 : (short)1; //Cast required for some strange reason!
+            decimal maximum = currentAmount - minimalDecrease;
+            decimal preferredMin = currentAmount - preferredMaxDecrease;
+
+            List<ResistanceBand> availableBands =
+                GetIndividualBands()
+                    .Where(band => band.MaxResistanceAmount * multiplier <= preferredMin)
+                    .OrderByDescending(band => band.MaxResistanceAmount)
+                    .ToList();
+
+            if (!availableBands.Any())
+                availableBands =
+                    GetIndividualBands()
+                        .Where(band => band.MaxResistanceAmount * multiplier <= maximum)
+                        .OrderByDescending(band => band.MaxResistanceAmount)
+                        .ToList();
+
+            if (!availableBands.Any())
+                return new List<ResistanceBand>(0);
+
+            List<ResistanceBand> selectedBands = new List<ResistanceBand>(5); //Set capacity to 5, just to be a little more optimal than default
+
+            selectedBands.Add(availableBands[0]);
+            availableBands.RemoveAt(0);
+
+            bool amountOk = AmountIsInRange(
+                selectedBands.Sum(band => band.MaxResistanceAmount * multiplier),
+                preferredMin,
+                maximum);
+
+            if (amountOk)
+                return selectedBands;
+
+            List<ResistanceBand> skippedBands = new List<ResistanceBand>(5);
+
+            availableBands =
+                availableBands.OrderBy(band => band.MaxResistanceAmount).ToList();
+
+            //Try to get the preferred minimum resistance. It's okay to go over, but 
+            //we can't exceed the maximum.
+            amountOk = AssembleListOfBandsBasedOnResistanceCriteria(
+                ref selectedBands, ref availableBands, preferredMin, maximum, multiplier);
+
+            //TODO: Refine: Attempt to get same resistance with less bands
+
+            return selectedBands;
+        }
+
+        private static bool AssembleListOfBandsBasedOnResistanceCriteria(
+            ref List<ResistanceBand> selectedBands,
+            ref List<ResistanceBand> availableBands,
+            decimal minResistance,
+            decimal maxResistance,
+            short multiplier)
+        {
+            bool amountOk = false;
+            while (!amountOk && availableBands.Any())
+            {
+                if ((availableBands[0].MaxResistanceAmount + selectedBands.Sum(band => band.MaxResistanceAmount)) * multiplier <= maxResistance)
+                {
+                    selectedBands.Add(availableBands[0]);
+                    amountOk = AmountIsInRange(selectedBands.Sum(band => band.MaxResistanceAmount) * multiplier, minResistance, maxResistance);
+                }
+
+                availableBands.RemoveAt(0);
+            }
+
+            return amountOk;
+        }
+
+        private static bool AmountIsInRange(decimal actual, decimal min, decimal max)
+        {
+            return actual >= min && actual <= max;
+        }
+
+        public ResistanceBand GetLowestResistanceBand()
+        {
+            if (_lowestResistanceBand == null)
+                _lowestResistanceBand =
+                    GetIndividualBands()
+                        .OrderBy(band => band.MaxResistanceAmount)
+                        .FirstOrDefault();
+
+            if (_lowestResistanceBand == null)
+            {
+                _lowestResistanceBand = new ResistanceBand();
+                _lowestResistanceBand.MaxResistanceAmount = 3; //Safeguard against no resistance bands having been defined yet
+                _lowestResistanceBand.Color = "Undefined";
+            }
+
+            return _lowestResistanceBand;
+        }
+    }
+}

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WorkoutApplication.Domain.Users;
+using WorkoutTracker.Domain.Users;
 using WorkoutTracker.UI.Models;
 
 namespace WorkoutTracker.UI.Auth

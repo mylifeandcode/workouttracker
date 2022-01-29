@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WorkoutApplication.Domain.Workouts;
+using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.UI.Models;
 
 namespace WorkoutTracker.UI.Adapters

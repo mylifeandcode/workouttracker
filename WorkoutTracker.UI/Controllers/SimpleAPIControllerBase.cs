@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutApplication.Domain.BaseClasses;
-using WorkoutTracker.Application;
+using WorkoutTracker.Domain.BaseClasses;
+using WorkoutTracker.Application.Shared.Interfaces;
 
 namespace WorkoutTracker.UI.Controllers
 {

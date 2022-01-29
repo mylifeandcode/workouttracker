@@ -107,9 +107,9 @@
     <None Include="workout-tracker\src\karma.conf.js" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WorkoutApplication.Data\WorkoutApplication.Data.csproj" />
-    <ProjectReference Include="..\WorkoutApplication.Domain\WorkoutApplication.Domain.csproj" />
-    <ProjectReference Include="..\WorkoutApplication.Repository\WorkoutApplication.Repository.csproj" />
+    <ProjectReference Include="..\WorkoutTracker.Data\WorkoutTracker.Data.csproj" />
+    <ProjectReference Include="..\WorkoutTracker.Domain\WorkoutTracker.Domain.csproj" />
+    <ProjectReference Include="..\WorkoutTracker.Repository\WorkoutTracker.Repository.csproj" />
     <ProjectReference Include="..\WorkoutTracker.Application\WorkoutTracker.Application.csproj" />
   </ItemGroup>
   <ItemGroup>

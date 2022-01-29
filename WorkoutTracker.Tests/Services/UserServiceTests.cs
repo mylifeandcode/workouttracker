@@ -2,10 +2,11 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using WorkoutApplication.Domain.Users;
-using WorkoutApplication.Repository;
+using WorkoutTracker.Domain.Users;
+using WorkoutTracker.Repository;
 using Shouldly;
 using WorkoutTracker.Application.Users;
+using WorkoutTracker.Application.Users.Services;
 
 namespace WorkoutTracker.Tests.Services
 {

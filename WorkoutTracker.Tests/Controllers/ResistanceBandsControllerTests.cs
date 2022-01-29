@@ -2,8 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
-using WorkoutApplication.Domain.Resistances;
-using WorkoutTracker.Application.Resistances;
+using WorkoutTracker.Domain.Resistances;
+using WorkoutTracker.Application.Resistances.Interfaces;
 using WorkoutTracker.UI.Controllers;
 
 namespace WorkoutTracker.Tests.Controllers

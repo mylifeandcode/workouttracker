@@ -2,19 +2,19 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using WorkoutApplication.Domain.Workouts;
-using WorkoutApplication.Repository;
-using WorkoutTracker.Application.Workouts;
-using WorkoutTracker.Application.FilterClasses;
+using WorkoutTracker.Domain.Workouts;
+using WorkoutTracker.Repository;
 using Shouldly;
-using WorkoutApplication.Domain.Exercises;
+using WorkoutTracker.Domain.Exercises;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WorkoutTracker.Tests.TestHelpers.Builders;
-using WorkoutTracker.Application.Exercises;
-using WorkoutTracker.Application.Users;
-using WorkoutApplication.Domain.Users;
+using WorkoutTracker.Domain.Users;
+using WorkoutTracker.Application.Exercises.Interfaces;
+using WorkoutTracker.Application.Users.Interfaces;
+using WorkoutTracker.Application.Workouts.Interfaces;
+using WorkoutTracker.Application.Workouts.Services;
 
 namespace WorkoutTracker.Tests.Services
 {

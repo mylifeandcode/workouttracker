@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WorkoutApplication.Domain.Users;
-using WorkoutTracker.Application.Users;
+using WorkoutTracker.Domain.Users;
+using WorkoutTracker.Application.Users.Interfaces;
 
 namespace WorkoutTracker.UI.Controllers
 {

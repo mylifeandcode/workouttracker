@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WorkoutApplication.Domain.Resistances;
-using WorkoutTracker.Application.Resistances;
+using WorkoutTracker.Domain.Resistances;
+using WorkoutTracker.Application.Resistances.Interfaces;
 
 namespace WorkoutTracker.UI.Controllers
 {

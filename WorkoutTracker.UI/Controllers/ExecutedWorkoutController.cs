@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutApplication.Domain.Exercises;
-using WorkoutApplication.Domain.Workouts;
-using WorkoutTracker.Application.FilterClasses;
-using WorkoutTracker.Application.Workouts;
+using WorkoutTracker.Application.Workouts.Models;
+using WorkoutTracker.Domain.Exercises;
+using WorkoutTracker.Domain.Workouts;
+using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.UI.Models;
 
 namespace WorkoutTracker.UI.Controllers

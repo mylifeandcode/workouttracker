@@ -3,7 +3,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WorkoutApplication.Domain.Users;
+using WorkoutTracker.Domain.Users;
 
 namespace WorkoutTracker.UI.Auth
 {

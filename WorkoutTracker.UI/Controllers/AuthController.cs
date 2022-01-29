@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WorkoutTracker.Application.Users;
+using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.UI.Auth;
 using WorkoutTracker.UI.Models;
 

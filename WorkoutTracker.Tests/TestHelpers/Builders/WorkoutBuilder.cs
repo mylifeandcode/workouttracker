@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WorkoutApplication.Domain.Exercises;
-using WorkoutApplication.Domain.Workouts;
+using WorkoutTracker.Domain.Exercises;
+using WorkoutTracker.Domain.Workouts;
 
 namespace WorkoutTracker.Tests.TestHelpers.Builders
 {

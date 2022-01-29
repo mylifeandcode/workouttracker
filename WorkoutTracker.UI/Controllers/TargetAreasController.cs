@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutApplication.Domain.Exercises;
+using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Application;
-using WorkoutTracker.Application.Exercises;
+using WorkoutTracker.Application.Exercises.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
