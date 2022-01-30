@@ -8,7 +8,7 @@ namespace WorkoutTracker.Domain.Sets
 {
     public abstract class ExecutedSet : Entity
     {
-        public virtual Set Set { get; set; }
+        //public virtual Set Set { get; set; }
         public virtual ExecutedExercise ExecutedExercise { get; set; }
     }
 }

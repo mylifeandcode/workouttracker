@@ -15,7 +15,7 @@ namespace WorkoutTracker.Data
         public DbSet<ExecutedWorkout> ExecutedWorkouts { get; set; }
 
         //Sets
-        public DbSet<Set> Sets { get; set; }
+        //public DbSet<Set> Sets { get; set; }
         public DbSet<ExecutedSet> ExecutedSets { get; set; }
 
         //Exercises
@@ -38,8 +38,8 @@ namespace WorkoutTracker.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<RepetitionSet>();
-            builder.Entity<TimedSet>();
+            //builder.Entity<RepetitionSet>();
+            //builder.Entity<TimedSet>();
             builder.Entity<ExecutedRepetitionSet>();
             builder.Entity<ExecutedTimedSet>();
             base.OnModelCreating(builder);

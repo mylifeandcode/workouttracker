@@ -12,7 +12,7 @@ namespace WorkoutTracker.Data.EntitySetup.Sets
         {
             var entity = builder.Entity<ExecutedSet>();
 
-            entity.HasOne(x => x.Set);
+            //entity.HasOne(x => x.Set);
             entity.HasOne(x => x.ExecutedExercise);
 
             base.SetupAuditFields<ExecutedSet>(builder);

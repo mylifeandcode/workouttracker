@@ -32,9 +32,9 @@ namespace WorkoutTracker.Data.EntitySetup
             _setups.Add(new ResistanceBandSetup());
 
             //Set Entity Setup
-            _setups.Add(new SetSetup());
-            _setups.Add(new TimedSetSetup());
-            _setups.Add(new RepetitionSetSetup());
+            //_setups.Add(new SetSetup());
+            //_setups.Add(new TimedSetSetup());
+            //_setups.Add(new RepetitionSetSetup());
             _setups.Add(new ExecutedSetSetup());
             _setups.Add(new ExecutedTimedSetSetup());
             _setups.Add(new ExecutedRepetitionSetSetup());
