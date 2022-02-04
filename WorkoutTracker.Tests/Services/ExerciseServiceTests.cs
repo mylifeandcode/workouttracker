@@ -4,9 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Repository;
-using WorkoutTracker.Application.Exercises;
 using Shouldly;
-using Microsoft.ApplicationInsights.Common;
 using System;
 using WorkoutTracker.Application.Exercises.Services;
 

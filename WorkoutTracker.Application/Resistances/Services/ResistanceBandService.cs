@@ -49,8 +49,10 @@ namespace WorkoutTracker.Application.Resistances.Services
         /// <param name="minimalIncrease">The minimal amount to increase resistance by</param>
         /// <param name="preferredMaxIncrease">The preferred maximum amount to increase 
         /// resistance by</param>
-        /// <returns>A list of ResistanceBands meeting the specified criteria, or an 
-        /// empty list if the criteria could not be met</returns>
+        /// <returns>
+        /// A list of ResistanceBands meeting the specified criteria, or an 
+        /// empty list if the criteria could not be met
+        /// </returns>
         public List<ResistanceBand> CalculateNextAvailableResistanceAmount(
             decimal currentAmount,
             decimal minimalIncrease,
@@ -158,8 +160,10 @@ namespace WorkoutTracker.Application.Resistances.Services
         /// <param name="minimalDecrease">The minimal amount to decrease resistance by</param>
         /// <param name="preferredMaxDecrease">The preferred maximum amount to decrease 
         /// resistance by</param>
-        /// <returns>A list of ResistanceBands meeting the specified criteria, or an 
-        /// empty list if the criteria could not be met</returns>
+        /// <returns>
+        /// A list of ResistanceBands meeting the specified criteria, or an 
+        /// empty list if the criteria could not be met
+        /// </returns>
         public List<ResistanceBand> CalculatePreviousAvailableResistanceAmount(
             decimal currentAmount,
             decimal minimalDecrease,
@@ -216,6 +220,28 @@ namespace WorkoutTracker.Application.Resistances.Services
             return selectedBands;
         }
 
+        /// <summary>
+        /// Gets the resistance band with the lowest amount of resistance
+        /// </summary>
+        /// <returns>The lowest resistance band</returns>
+        public ResistanceBand GetLowestResistanceBand()
+        {
+            if (_lowestResistanceBand == null)
+                _lowestResistanceBand =
+                    GetIndividualBands()
+                        .OrderBy(band => band.MaxResistanceAmount)
+                        .FirstOrDefault();
+
+            if (_lowestResistanceBand == null)
+            {
+                _lowestResistanceBand = new ResistanceBand();
+                _lowestResistanceBand.MaxResistanceAmount = 3; //Safeguard against no resistance bands having been defined yet
+                _lowestResistanceBand.Color = "Undefined";
+            }
+
+            return _lowestResistanceBand;
+        }
+
         private static bool AssembleListOfBandsBasedOnResistanceCriteria(
             ref List<ResistanceBand> selectedBands,
             ref List<ResistanceBand> availableBands,
@@ -241,24 +267,6 @@ namespace WorkoutTracker.Application.Resistances.Services
         private static bool AmountIsInRange(decimal actual, decimal min, decimal max)
         {
             return actual >= min && actual <= max;
-        }
-
-        public ResistanceBand GetLowestResistanceBand()
-        {
-            if (_lowestResistanceBand == null)
-                _lowestResistanceBand =
-                    GetIndividualBands()
-                        .OrderBy(band => band.MaxResistanceAmount)
-                        .FirstOrDefault();
-
-            if (_lowestResistanceBand == null)
-            {
-                _lowestResistanceBand = new ResistanceBand();
-                _lowestResistanceBand.MaxResistanceAmount = 3; //Safeguard against no resistance bands having been defined yet
-                _lowestResistanceBand.Color = "Undefined";
-            }
-
-            return _lowestResistanceBand;
         }
     }
 }

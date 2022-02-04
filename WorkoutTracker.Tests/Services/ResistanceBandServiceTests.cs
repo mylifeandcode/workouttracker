@@ -171,7 +171,7 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual(53, result.Sum(band => band.MaxResistanceAmount));
             Assert.IsTrue(
-                result.Count(band => band.Color == "Black40") == 1
+                result.Count(band => band.Color == "Onyx") == 1
                 && result.Count(band => band.Color == "Blue") == 1);
         }
 
@@ -190,7 +190,7 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual(70, result.Sum(band => band.MaxResistanceAmount));
             Assert.IsTrue(
-                result.Count(band => band.Color == "Black40") == 1
+                result.Count(band => band.Color == "Onyx") == 1
                 && result.Count(band => band.Color == "Orange") == 1);
         }
 
@@ -209,7 +209,7 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual(63, result.Sum(band => band.MaxResistanceAmount));
             Assert.IsTrue(
-                result.Count(band => band.Color == "Black40") == 1
+                result.Count(band => band.Color == "Onyx") == 1
                 && result.Count(band => band.Color == "Purple") == 1);
         }
 
@@ -228,7 +228,7 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(3, result.Count);
             Assert.AreEqual(132, result.Sum(band => band.MaxResistanceAmount) * 2);
             Assert.IsTrue(
-                result.Count(band => band.Color == "Black40") == 1
+                result.Count(band => band.Color == "Onyx") == 1
                 && result.Count(band => band.Color == "Purple") == 1
                 && result.Count(band => band.Color == "Yellow") == 1);
         }
@@ -284,7 +284,7 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(4, result.Count);
             Assert.AreEqual(56, result.Sum(band => band.MaxResistanceAmount));
             Assert.IsTrue(
-                result.Count(band => band.Color == "Black40") == 1
+                result.Count(band => band.Color == "Onyx") == 1
                 && result.Count(band => band.Color == "Yellow") == 1
                 && result.Count(band => band.Color == "Green") == 1
                 && result.Count(band => band.Color == "Red") == 1);
@@ -305,16 +305,49 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(3, result.Count);
             Assert.AreEqual(96, result.Sum(band => band.MaxResistanceAmount) * 2);
             Assert.IsTrue(
-                result.Count(band => band.Color == "Black40") == 1
+                result.Count(band => band.Color == "Onyx") == 1
                 && result.Count(band => band.Color == "Green") == 1
                 && result.Count(band => band.Color == "Yellow") == 1);
+        }
+
+        [TestMethod]
+        public void Should_Get_Lowest_Resistance_Band()
+        {
+            //ARRANGE
+            var lowestBand = _bands.MinBy(x => x.MaxResistanceAmount);
+            var sut = new ResistanceBandService(_repo.Object);
+
+            //ACT
+            var result = sut.GetLowestResistanceBand();
+
+            //ASSERT
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.MaxResistanceAmount == lowestBand.MaxResistanceAmount);
+            _repo.Verify(x => x.Get(), Times.Once);
+        }
+
+        [TestMethod]
+        public void Should_Get_Lowest_Resistance_Band_From_Variable_If_Already_Retrieved()
+        {
+            //ARRANGE
+            var lowestBand = _bands.MinBy(x => x.MaxResistanceAmount);
+            var sut = new ResistanceBandService(_repo.Object);
+
+            //ACT
+            var result = sut.GetLowestResistanceBand();
+            var resultAgain = sut.GetLowestResistanceBand();
+
+            //ASSERT
+            Assert.IsNotNull(resultAgain);
+            Assert.IsTrue(resultAgain.MaxResistanceAmount == lowestBand.MaxResistanceAmount);
+            _repo.Verify(x => x.Get(), Times.Once);
         }
 
         private void SetupRepoMock()
         {
             _repo = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);
             _bands = new List<ResistanceBand>(8);
-            _bands.Add(new ResistanceBand { Color = "Black40", MaxResistanceAmount = 40, NumberAvailable = 2 });
+            _bands.Add(new ResistanceBand { Color = "Onyx", MaxResistanceAmount = 40, NumberAvailable = 2 });
             _bands.Add(new ResistanceBand { Color = "Orange", MaxResistanceAmount = 30, NumberAvailable = 4 });
             _bands.Add(new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23, NumberAvailable = 1 });
             _bands.Add(new ResistanceBand { Color = "Black", MaxResistanceAmount = 19, NumberAvailable = 1 });

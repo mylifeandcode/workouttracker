@@ -118,31 +118,31 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         #region Private Methods
 
-        private ExecutedWorkout CreateFromPlan(WorkoutPlan plan)
+        private ExecutedWorkout CreateFromPlan(WorkoutPlan workoutPlan)
         {
             var executedWorkout = new ExecutedWorkout();
-            executedWorkout.WorkoutId = plan.WorkoutId;
-            executedWorkout.CreatedByUserId = plan.UserId;
+            executedWorkout.WorkoutId = workoutPlan.WorkoutId;
+            executedWorkout.CreatedByUserId = workoutPlan.UserId;
             executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
-            var workout = _workoutRepo.Get(plan.WorkoutId);
+            var workout = _workoutRepo.Get(workoutPlan.WorkoutId);
 
             byte exerciseSequence = 0;
-            foreach (var exercise in workout.Exercises?.OrderBy(x => x.Sequence))
+            foreach (var exerciseInWorkout in workout.Exercises?.OrderBy(x => x.Sequence))
             {
                 //Find the ExercisePlan in the submitted WorkoutPlan for this exercise
-                var exercisePlan = plan.Exercises.First(x => x.ExerciseId == exercise.ExerciseId);
+                var exercisePlan = workoutPlan.Exercises.First(exPlan => exPlan.ExerciseId == exerciseInWorkout.ExerciseId);
 
-                for (byte x = 0; x < exercise.NumberOfSets; x++)
+                for (byte x = 0; x < exerciseInWorkout.NumberOfSets; x++)
                 {
                     //TODO: Add new constructor to ExecutedExercise which takes an ExercisePlan param 
                     //and initialize that way instead.
                     var exerciseToExecute = new ExecutedExercise();
                     exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
-                    exerciseToExecute.CreatedDateTime = plan.SubmittedDateTime.Value;
-                    exerciseToExecute.Exercise = exercise.Exercise;
-                    exerciseToExecute.ExerciseId = exercise.Exercise.Id;
+                    exerciseToExecute.CreatedDateTime = workoutPlan.SubmittedDateTime.Value;
+                    exerciseToExecute.Exercise = exerciseInWorkout.Exercise;
+                    exerciseToExecute.ExerciseId = exerciseInWorkout.Exercise.Id;
                     exerciseToExecute.Sequence = exerciseSequence;
-                    exerciseToExecute.SetType = exercise.SetType;
+                    exerciseToExecute.SetType = exerciseInWorkout.SetType;
 
                     exerciseToExecute.TargetRepCount = exercisePlan.TargetRepCount;
                     exerciseToExecute.ResistanceAmount = exercisePlan.ResistanceAmount;
@@ -153,7 +153,7 @@ namespace WorkoutTracker.Application.Workouts.Services
                 }
             }
 
-            executedWorkout.StartDateTime = plan.SubmittedDateTime.Value;
+            executedWorkout.StartDateTime = workoutPlan.SubmittedDateTime.Value;
             _repo.Add(executedWorkout, true);
 
             return executedWorkout;
