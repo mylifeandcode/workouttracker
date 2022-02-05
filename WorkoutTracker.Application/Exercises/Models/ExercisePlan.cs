@@ -17,7 +17,7 @@ namespace WorkoutTracker.Application.Exercises.Models
         public int ExerciseInWorkoutId { get; set; }
         public int ExerciseId { get; set; }
         public string ExerciseName { get; set; }
-        public byte NumberOfSets { get; set; }
+        public byte NumberOfSets { get; set; } //TODO: Evaluate. I think this can be removed.
         public SetType SetType { get; set; }
         public ResistanceType ResistanceType { get; set; }
         public byte Sequence { get; set; }
@@ -50,7 +50,7 @@ namespace WorkoutTracker.Application.Exercises.Models
             ExerciseInWorkoutId = exercise.Id;
             ExerciseId = exercise.Exercise.Id;
             ExerciseName = exercise.Exercise.Name;
-            NumberOfSets = exercise.NumberOfSets;
+            NumberOfSets = exercise.NumberOfSets; //TODO: Evaluate. I think this can be removed.
             SetType = exercise.SetType;
             ResistanceType = exercise.Exercise.ResistanceType;
             BandsEndToEnd = exercise.Exercise.BandsEndToEnd;

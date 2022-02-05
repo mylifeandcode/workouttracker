@@ -24,13 +24,14 @@ namespace WorkoutTracker.Tests.Services
         {
             //ARRANGE
             DateTime submittedDate = new DateTime(2020, 2, 3);
-            var plan = new WorkoutPlan();
-            plan.WorkoutId = 5;
-            plan.WorkoutName = "Chest and Arms v1";
-            plan.UserId = 1;
-            plan.SubmittedDateTime = submittedDate;
-            plan.Exercises = new List<ExercisePlan>(3);
-            plan.Exercises.Add(
+            int userId = 123;
+            var workoutPlan = new WorkoutPlan();
+            workoutPlan.WorkoutId = 5;
+            workoutPlan.WorkoutName = "Chest and Arms v1";
+            workoutPlan.UserId = 1;
+            workoutPlan.SubmittedDateTime = submittedDate;
+            workoutPlan.Exercises = new List<ExercisePlan>(3);
+            workoutPlan.Exercises.Add(
                 new ExercisePlan()
                 {
                     ExerciseId = 101, 
@@ -39,7 +40,7 @@ namespace WorkoutTracker.Tests.Services
                     ResistanceMakeup = "Onyx, Onxy"
                 }
             );
-            plan.Exercises.Add(
+            workoutPlan.Exercises.Add(
                 new ExercisePlan()
                 {
                     ExerciseId = 102,
@@ -48,7 +49,7 @@ namespace WorkoutTracker.Tests.Services
                     ResistanceMakeup = "Orange"
                 }
             );
-            plan.Exercises.Add(
+            workoutPlan.Exercises.Add(
                 new ExercisePlan()
                 {
                     ExerciseId = 103,
@@ -59,12 +60,14 @@ namespace WorkoutTracker.Tests.Services
             );
 
             var workout = new Workout();
+            workout.CreatedByUserId = userId;
             workout.Exercises = new List<ExerciseInWorkout>(3);
             workout.Exercises.Add(
                 new ExerciseInWorkout()
                 {
                     ExerciseId = 101, 
                     Exercise = new Exercise() { Id = 101 }, 
+                    NumberOfSets = 2, 
                     SetType = SetType.Repetition, 
                     Sequence = 0
                 }
@@ -74,6 +77,7 @@ namespace WorkoutTracker.Tests.Services
                 {
                     ExerciseId = 102,
                     Exercise = new Exercise() { Id = 102 },
+                    NumberOfSets = 3, 
                     SetType = SetType.Timed,
                     Sequence = 1
                 }
@@ -82,16 +86,24 @@ namespace WorkoutTracker.Tests.Services
                 new ExerciseInWorkout()
                 {
                     ExerciseId = 103,
-                    Exercise = new Exercise() { Id = 102 },
+                    Exercise = new Exercise() { Id = 103 },
+                    NumberOfSets = 4, 
                     SetType = SetType.Repetition,
                     Sequence = 2
                 }
             );
+
             var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
             workoutRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(workout);
+            
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
+            executedWorkoutRepo
+                .Setup(x => x.Add(It.IsAny<ExecutedWorkout>(), true))
+                .Returns((ExecutedWorkout executedWorkout, bool saveChanges) => executedWorkout);
+
             var recommendationService = new Mock<IExerciseAmountRecommendationService>(MockBehavior.Strict);
             var userService = new Mock<IUserService>(MockBehavior.Strict);
+            
             var sut =
                 new ExecutedWorkoutService(
                     executedWorkoutRepo.Object,
@@ -100,11 +112,46 @@ namespace WorkoutTracker.Tests.Services
                     userService.Object);
 
             //ACT
-            var result = sut.Create(plan);
+            var result = sut.Create(workoutPlan);
 
             //ASSERT
-            Assert.IsNotNull(result);
-            //TODO: Finish this test
+            Assert.IsNotNull(result, "result is null.");
+            Assert.IsNotNull(result.Exercises, "result.Exercises is null.");
+            Assert.AreEqual(workout.Exercises.Sum(x => x.NumberOfSets), result.Exercises.Count, "result.Exercises.Count isn't as expected.");
+            Assert.AreEqual(submittedDate, result.StartDateTime, "result.StartDateTime is not as expected.");
+            
+            byte exerciseSequence = 0;
+            foreach (var exerciseInWorkout in workout.Exercises?.OrderBy(x => x.Sequence))
+            {
+                //Find the ExercisePlan in the submitted WorkoutPlan for this exercise
+                var exercisePlan = workoutPlan.Exercises.First(exPlan => exPlan.ExerciseId == exerciseInWorkout.ExerciseId);
+                var executedExercisesInResult = result.Exercises.Where(x => x.ExerciseId == exerciseInWorkout.ExerciseId).OrderBy(x => x.Sequence).ToList();
+                Assert.AreEqual(exerciseInWorkout.NumberOfSets, executedExercisesInResult.Count, $"Number of exercise in result not as expected for ExerciseId {exerciseInWorkout.ExerciseId}.");
+                for (byte x = 0; x < exerciseInWorkout.NumberOfSets; x++)
+                {
+                    //Confirm audit values
+                    Assert.AreEqual(workout.CreatedByUserId, executedExercisesInResult[x].CreatedByUserId);
+                    Assert.AreEqual(submittedDate, executedExercisesInResult[x].CreatedDateTime);
+                    
+                    //Confirm exercise
+                    Assert.AreEqual(exerciseInWorkout.Exercise, executedExercisesInResult[x].Exercise);
+                    Assert.AreEqual(exerciseInWorkout.ExerciseId, executedExercisesInResult[x].ExerciseId);
+                    Assert.AreEqual(exerciseInWorkout.SetType, executedExercisesInResult[x].SetType);
+
+                    //Confirm sequence
+                    Assert.AreEqual(exerciseSequence, executedExercisesInResult[x].Sequence);
+
+                    //Confirm exercise plan values
+                    Assert.AreEqual(exercisePlan.TargetRepCount, executedExercisesInResult[x].TargetRepCount);
+                    Assert.AreEqual(exercisePlan.ResistanceAmount, executedExercisesInResult[x].ResistanceAmount);
+                    Assert.AreEqual(exercisePlan.ResistanceMakeup, executedExercisesInResult[x].ResistanceMakeup);
+
+                    exerciseSequence++;
+                }
+            }
+
+            
+
         }
     }
 }
