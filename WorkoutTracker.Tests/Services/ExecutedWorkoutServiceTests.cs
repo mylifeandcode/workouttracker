@@ -1,8 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
@@ -149,9 +151,53 @@ namespace WorkoutTracker.Tests.Services
                     exerciseSequence++;
                 }
             }
-
-            
+            executedWorkoutRepo.Verify(x => x.Add(It.IsAny<ExecutedWorkout>(), true), Times.Once());
 
         }
+
+        [TestMethod]
+        public void Should_Add_ExecutedWorkout()
+        {
+            //TODO: Implement
+        }
+
+        [TestMethod]
+        public void Should_Update_ExecutedWorkout()
+        {
+            //ARRANGE
+            var modifiedExecutedWorkout = new ExecutedWorkout();
+            byte numberOfExercises = 3;
+            modifiedExecutedWorkout.Exercises = new List<ExecutedExercise>(numberOfExercises);
+            for (byte x = 0; x < numberOfExercises; x++)
+            {
+                modifiedExecutedWorkout.Exercises.Add(new ExecutedExercise());
+            }
+            var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
+
+            var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
+            executedWorkoutRepo
+                .Setup(x => x.UpdateAsync<ExecutedWorkout>(modifiedExecutedWorkout, It.IsAny<Expression<Func<ExecutedWorkout, object>>[]>()))
+                .Returns(Task.FromResult(modifiedExecutedWorkout.Exercises.Count + 1));
+
+            var recommendationService = new Mock<IExerciseAmountRecommendationService>(MockBehavior.Strict);
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+
+            var sut =
+                new ExecutedWorkoutService(
+                    executedWorkoutRepo.Object,
+                    workoutRepo.Object,
+                    recommendationService.Object,
+                    userService.Object);
+
+            //ACT
+            var result = sut.Update(modifiedExecutedWorkout);
+
+            //ASSERT
+            result.ShouldBeSameAs(modifiedExecutedWorkout);
+            executedWorkoutRepo
+                .Verify(mock => mock.UpdateAsync(modifiedExecutedWorkout, It.IsAny<Expression<Func<ExecutedWorkout, object>>[]>()), 
+                Times.Once);
+        }
+
     }
 }
