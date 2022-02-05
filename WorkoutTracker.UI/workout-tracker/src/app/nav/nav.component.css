@@ -5,3 +5,7 @@ nav {
 .nav-link {
     cursor: pointer;
 }
+
+.nav-app-title {
+    color:greenyellow;
+}
