@@ -16,6 +16,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { Workout } from '../models/workout';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -41,6 +42,8 @@ function getResistanceBands(): ResistanceBandIndividual[] {
 
 function getFakeExecutedWorkout(): ExecutedWorkout {
   const executedWorkout = new ExecutedWorkout();
+  executedWorkout.workout = new Workout();
+  executedWorkout.workout.name = "Fake Workout";
   executedWorkout.exercises = [];
   for(let x = 0; x < NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT; x++) {
     const exercise = new ExecutedExercise();
@@ -54,7 +57,6 @@ function getFakeExecutedWorkout(): ExecutedWorkout {
     exercise.targetRepCount = x * 5;
     exercise.setType = ((x + 1) % 2);
     exercise.sequence = x;
-    console.log("exercise.sequence = " + exercise.sequence);
     executedWorkout.exercises.push(exercise);
   }
 
@@ -162,6 +164,29 @@ class ResistanceBandSelectComponentMock extends ResistanceBandSelectComponent {
   }
   */
 }
+
+//TODO: This mock doesn't require any difference between specs. Put it somewhere it can be reused.
+@Component({
+  selector: 'p-dialog', 
+  template: ''
+})
+class DialogComponentMock {
+  @Input() 
+  visible: boolean;
+  
+  @Input()
+  style: any; 
+  
+  @Input()
+  header:string; 
+  
+  @Input()
+  modal: boolean; 
+  
+  @Input()
+  styleClass: string;
+}
+
 //END COMPONENT MOCK CLASSES //////////////////////////////////////////////////
 //TODO: Repair and augment -- refactoring the component destroyed this spec! :O
 describe('WorkoutComponent', () => {
@@ -171,7 +196,11 @@ describe('WorkoutComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule ],
-      declarations: [ WorkoutComponent, ResistanceBandSelectComponentMock ],
+      declarations: [ 
+        WorkoutComponent, 
+        ResistanceBandSelectComponentMock, 
+        DialogComponentMock 
+      ],
       providers: [
         {
           provide: WorkoutService,

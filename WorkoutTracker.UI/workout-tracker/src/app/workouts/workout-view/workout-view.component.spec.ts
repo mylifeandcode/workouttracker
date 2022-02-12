@@ -2,13 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExerciseService } from '../../exercises/exercise.service';
 import { ExecutedExercise } from '../models/executed-exercise';
 import { ExecutedWorkout } from '../models/executed-workout';
 import { Exercise } from '../models/exercise';
 import { Workout } from '../models/workout';
 
 import { WorkoutViewComponent } from './workout-view.component';
+import { Component, Input } from '@angular/core';
 
 const EXECUTED_WORKOUT_ID = 5;
 
@@ -51,13 +51,27 @@ class ExecutedWorkoutServiceMock {
   }
 }
 
+@Component({
+  selector: 'wt-executed-exercises',
+  template: ''
+})
+export class ExecutedExercisesComponentMock {
+
+  @Input()
+  executedExercises: ExecutedExercise[];
+
+}
+
 describe('WorkoutViewComponent', () => {
   let component: WorkoutViewComponent;
   let fixture: ComponentFixture<WorkoutViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutViewComponent ],
+      declarations: [ 
+        WorkoutViewComponent, 
+        ExecutedExercisesComponentMock
+      ],
       providers: [
         {
           provide: ActivatedRoute,
@@ -91,8 +105,13 @@ describe('WorkoutViewComponent', () => {
     expect(executedWorkoutService.getById).toHaveBeenCalledOnceWith(EXECUTED_WORKOUT_ID);
     expect(component.executedWorkout).toBeTruthy();
     expect(component.groupedExercises).toBeTruthy();
-    //TODO: Verify key count
-    expect(component.groupedExercises["1-0"].length).toBe(2);
-    expect(component.groupedExercises["2-1"].length).toBe(1);
+    
+    //TypeScript documentation says "size" is the way to determine the number of entries in the 
+    //map, but I get "Expected undefined to be 2." from the line below:
+    //expect(component.groupedExercises.size).toBe(2);
+    //It looks like "length" would work when I view it in the debugger, but that blows up too.
+
+    expect(component.groupedExercises[0].length).toBe(2);
+    expect(component.groupedExercises[1].length).toBe(1);
   });
 });

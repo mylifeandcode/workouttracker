@@ -1,5 +1,6 @@
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
@@ -24,13 +25,38 @@ class ResistanceBandServiceMock {
       });
 }
 
+//TODO: This mock doesn't require any difference between specs. Put it somewhere it can be reused.
+@Component({
+  selector: 'p-dialog', 
+  template: ''
+})
+class DialogComponentMock {
+  @Input() 
+  visible: boolean;
+  
+  @Input()
+  style: any; 
+  
+  @Input()
+  header:string; 
+  
+  @Input()
+  modal: boolean; 
+  
+  @Input()
+  styleClass: string;
+}
+
 describe('WorkoutPlanComponent', () => {
   let component: WorkoutPlanComponent;
   let fixture: ComponentFixture<WorkoutPlanComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutPlanComponent ], 
+      declarations: [ 
+        WorkoutPlanComponent, 
+        DialogComponentMock
+      ], 
       providers: [
         {
           provide: WorkoutService, 
@@ -43,7 +69,8 @@ describe('WorkoutPlanComponent', () => {
         FormBuilder //TODO: Determine if this is kosher or if there's a preferred mocking approach
       ],
       imports: [
-        RouterTestingModule
+        RouterTestingModule, 
+        ReactiveFormsModule
       ]
     })
     .compileComponents();

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { WorkoutExerciseComponent } from './workout-exercise.component';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 describe('WorkoutExerciseComponent', () => {
   let component: WorkoutExerciseComponent;
@@ -10,6 +10,7 @@ describe('WorkoutExerciseComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [ ReactiveFormsModule ], 
       declarations: [ WorkoutExerciseComponent ]
     })
     .compileComponents();

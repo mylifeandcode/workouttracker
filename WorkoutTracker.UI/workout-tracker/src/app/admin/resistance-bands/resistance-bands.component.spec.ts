@@ -1,4 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
@@ -27,6 +28,36 @@ class ConfirmationServiceMock {
       //.and.returnValue(this);
 }
 
+@Component({
+  selector: 'p-toast',
+  template: ''
+})
+class ToastComponentMock {
+  @Input()
+  position: string;
+}
+
+//TODO: This mock doesn't require any difference between specs. Put it somewhere it can be reused.
+@Component({
+  selector: 'p-dialog', 
+  template: ''
+})
+class DialogComponentMock {
+  @Input() 
+  visible: boolean;
+  
+  @Input()
+  style: any; 
+  
+  @Input()
+  header:string; 
+  
+  @Input()
+  modal: boolean; 
+  
+  @Input()
+  styleClass: string;
+}
 
 describe('ResistanceBandsComponent', () => {
   let component: ResistanceBandsComponent;
@@ -34,7 +65,11 @@ describe('ResistanceBandsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ResistanceBandsComponent ],
+      declarations: [ 
+        ResistanceBandsComponent, 
+        ToastComponentMock, 
+        DialogComponentMock 
+      ],
       providers: [
         {
           provide: ResistanceBandService,
