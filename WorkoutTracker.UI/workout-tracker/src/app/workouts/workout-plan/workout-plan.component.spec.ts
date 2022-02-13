@@ -1,11 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
+import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
+import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { of } from 'rxjs';
+import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { WorkoutPlan } from '../models/workout-plan';
+import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { WorkoutService } from '../workout.service';
 
 import { WorkoutPlanComponent } from './workout-plan.component';
@@ -25,26 +29,23 @@ class ResistanceBandServiceMock {
       });
 }
 
-//TODO: This mock doesn't require any difference between specs. Put it somewhere it can be reused.
 @Component({
-  selector: 'p-dialog', 
+  selector: 'wt-resistance-band-select',
   template: ''
 })
-class DialogComponentMock {
-  @Input() 
-  visible: boolean;
-  
+class ResistanceBandSelectComponentMock extends ResistanceBandSelectComponent {
+
   @Input()
-  style: any; 
-  
-  @Input()
-  header:string; 
-  
-  @Input()
-  modal: boolean; 
-  
-  @Input()
-  styleClass: string;
+  public resistanceBandInventory: ResistanceBandIndividual[];
+
+  @Output()
+  public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
+
+  @Output()
+  public cancelClicked: EventEmitter<void> = new EventEmitter<void>();
+
+  setBandAllocation = jasmine.createSpy('setBandAllocation');
+
 }
 
 describe('WorkoutPlanComponent', () => {
@@ -55,7 +56,9 @@ describe('WorkoutPlanComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ 
         WorkoutPlanComponent, 
-        DialogComponentMock
+        DialogComponentMock, 
+        ResistanceBandSelectComponentMock, 
+        ProgressSpinnerComponentMock
       ], 
       providers: [
         {

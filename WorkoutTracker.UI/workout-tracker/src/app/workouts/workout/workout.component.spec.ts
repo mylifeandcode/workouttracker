@@ -17,6 +17,8 @@ import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { Workout } from '../models/workout';
+import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
+import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -165,28 +167,6 @@ class ResistanceBandSelectComponentMock extends ResistanceBandSelectComponent {
   */
 }
 
-//TODO: This mock doesn't require any difference between specs. Put it somewhere it can be reused.
-@Component({
-  selector: 'p-dialog', 
-  template: ''
-})
-class DialogComponentMock {
-  @Input() 
-  visible: boolean;
-  
-  @Input()
-  style: any; 
-  
-  @Input()
-  header:string; 
-  
-  @Input()
-  modal: boolean; 
-  
-  @Input()
-  styleClass: string;
-}
-
 //END COMPONENT MOCK CLASSES //////////////////////////////////////////////////
 //TODO: Repair and augment -- refactoring the component destroyed this spec! :O
 describe('WorkoutComponent', () => {
@@ -199,7 +179,8 @@ describe('WorkoutComponent', () => {
       declarations: [ 
         WorkoutComponent, 
         ResistanceBandSelectComponentMock, 
-        DialogComponentMock 
+        DialogComponentMock, 
+        ProgressSpinnerComponentMock
       ],
       providers: [
         {

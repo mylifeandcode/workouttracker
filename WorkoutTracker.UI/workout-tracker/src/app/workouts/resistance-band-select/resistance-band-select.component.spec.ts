@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PickListComponentMock } from 'app/testing/component-mocks/primeNg/p-pick-list-mock';
 
 import { ResistanceBandSelectComponent } from './resistance-band-select.component';
 
@@ -8,7 +9,10 @@ describe('ResistanceBandSelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ResistanceBandSelectComponent ]
+      declarations: [ 
+        ResistanceBandSelectComponent, 
+        PickListComponentMock
+      ]
     })
     .compileComponents();
   });

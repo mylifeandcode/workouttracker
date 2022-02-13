@@ -4,8 +4,6 @@ import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { of } from 'rxjs';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TableModule } from 'primeng/table';
 
 import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../exercise.service';
@@ -13,6 +11,7 @@ import { TargetArea } from 'app/workouts/models/target-area';
 import { Exercise } from 'app/workouts/models/exercise';
 import { ActivatedRoute } from '@angular/router';
 import { By } from '@angular/platform-browser';
+import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 
 const USER_ID: number = 5;
 const EXERCISE: Exercise = <Exercise> {
@@ -54,13 +53,12 @@ describe('ExerciseEditComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         ExerciseEditComponent, 
-        InsertSpaceBeforeCapitalPipeMock
+        InsertSpaceBeforeCapitalPipeMock, 
+        ProgressSpinnerComponentMock
       ],
       imports: [
-        ProgressSpinnerModule,
         ReactiveFormsModule,
-        RouterTestingModule,
-        TableModule
+        RouterTestingModule
        ],
        providers: [
          {

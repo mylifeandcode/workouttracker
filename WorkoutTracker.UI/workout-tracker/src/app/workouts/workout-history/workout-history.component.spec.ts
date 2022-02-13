@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { WorkoutHistoryComponent } from './workout-history.component';
+import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 
 describe('WorkoutHistoryComponent', () => {
   let component: WorkoutHistoryComponent;
@@ -8,7 +9,10 @@ describe('WorkoutHistoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutHistoryComponent ],
+      declarations: [ 
+        WorkoutHistoryComponent, 
+        TableComponentMock
+      ],
       imports: [
         HttpClientTestingModule
       ]

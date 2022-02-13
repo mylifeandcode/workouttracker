@@ -9,6 +9,7 @@ import { Workout } from '../models/workout';
 
 import { WorkoutViewComponent } from './workout-view.component';
 import { Component, Input } from '@angular/core';
+import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 
 const EXECUTED_WORKOUT_ID = 5;
 
@@ -70,7 +71,8 @@ describe('WorkoutViewComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ 
         WorkoutViewComponent, 
-        ExecutedExercisesComponentMock
+        ExecutedExercisesComponentMock, 
+        ProgressSpinnerComponentMock
       ],
       providers: [
         {

@@ -8,6 +8,7 @@ import { PaginatedResults } from '../../core/models/paginated-results';
 import { of } from 'rxjs';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 import { TargetArea } from 'app/workouts/models/target-area';
+import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<ExerciseDTO>()));
@@ -20,7 +21,10 @@ describe('ExerciseListMiniComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExerciseListMiniComponent ],
+      declarations: [ 
+        ExerciseListMiniComponent, 
+        TableComponentMock 
+      ],
       providers: [
         {
           provide: ExerciseService,
@@ -28,7 +32,6 @@ describe('ExerciseListMiniComponent', () => {
         }
       ],
       imports: [
-        TableModule,
         MultiSelectModule
       ]
     })

@@ -5,13 +5,12 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { of } from 'rxjs';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { WorkoutEditComponent } from './workout-edit.component';
 import { WorkoutService } from '../workout.service';
-import { User } from 'app/core/models/user';
 import { Workout } from 'app/workouts/models/workout';
+import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 
 @Component({
   selector: 'wt-exercise-list-mini',
@@ -44,11 +43,11 @@ describe('WorkoutEditComponent', () => {
       declarations: [
         WorkoutEditComponent,
         FakeExerciseListMiniComponent,
-        FakeWorkoutSetDefComponent
+        FakeWorkoutSetDefComponent, 
+        ProgressSpinnerComponentMock
       ],
       imports: [
         ReactiveFormsModule,
-        ProgressSpinnerModule,
         RouterTestingModule
       ],
       providers: [

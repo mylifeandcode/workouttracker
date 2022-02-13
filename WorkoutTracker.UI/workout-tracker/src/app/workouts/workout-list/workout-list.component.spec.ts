@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { User } from 'app/core/models/user';
+import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 
 
 class WorkoutServiceMock {
@@ -21,9 +22,11 @@ describe('WorkoutListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ WorkoutListComponent ],
+      declarations: [ 
+        WorkoutListComponent, 
+        TableComponentMock 
+      ],
       imports: [
-        TableModule,
         RouterTestingModule
       ],
       providers: [

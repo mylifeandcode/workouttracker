@@ -1,0 +1,3 @@
+Normally, one-size-fits-all mocks are a bad idea. But for these component mocks, it seems harmless
+to declare these in one place and reuse them, because they don't affect test behavior. 
+They're just here to prevent the need for CUSTOM_ELEMENTS_SCHEMA.

@@ -20,9 +20,11 @@ export class WorkoutExerciseComponent implements OnInit {
   @Input()
   formGroup: FormGroup; //TODO: Use a strong-typed structure
 
+  /*
   @Input()
   exerciseSetsFormArray: FormArray;
-
+  */
+ 
   @Output()
   resistanceBandsSelect = new EventEmitter<FormGroup>();
 

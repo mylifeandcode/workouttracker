@@ -51,7 +51,6 @@ export class WorkoutEditComponent implements OnInit {
 
   private subscribeToRouteParamsToSetupFormOnWorkoutIdChange(): void {
     this._route.params.subscribe(params => {
-        console.log("params['id']: ", params['id']);
         this.workoutId = params['id'];
         if (this.workoutId != 0) 
             this.loadWorkout(); 

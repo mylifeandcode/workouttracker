@@ -77,11 +77,9 @@ export class ExerciseEditComponent implements OnInit {
 
       this._exerciseId = params['id'];
       if (this._exerciseId != 0) {
-        console.log("LOADING: ", this._exerciseId);
         this.loadExercise(); 
       }
       else {
-        console.log("CLEARING: ", this._exerciseId);
         this.setupTargetAreas([]);
         this.exerciseForm.reset();
         this.exerciseForm.controls["id"].setValue(0);

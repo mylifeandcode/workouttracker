@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TargetArea } from 'app/workouts/models/target-area';
+import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<Exercise>()));
@@ -21,9 +22,11 @@ describe('ExerciseListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExerciseListComponent ],
+      declarations: [ 
+        ExerciseListComponent, 
+        TableComponentMock
+      ],
       imports: [
-        TableModule,
         RouterTestingModule,
         MultiSelectModule
       ],

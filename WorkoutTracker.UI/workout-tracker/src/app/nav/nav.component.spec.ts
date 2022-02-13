@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NavComponent } from './nav.component';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Component } from '@angular/core';
 import { AuthService } from 'app/core/auth.service';
 
@@ -9,7 +9,7 @@ const username = 'someuser';
 
 class AuthServiceMock {
 
-  currentUserName =
+  currentUserName: Observable<string> =
     of(username);
 
   logOff = jasmine.createSpy('logOff');
@@ -65,14 +65,8 @@ describe('NavComponent', () => {
 
   it('should get current user info', () => {
 
-    //ARRANGE
-    const authService = TestBed.inject(AuthService);
-
-    //ACT
-    //Nothing extra needed here
-
     //ASSERT
-    expect(component.userName = username);
+    expect(component.userName).toBe(username);
 
   });
 

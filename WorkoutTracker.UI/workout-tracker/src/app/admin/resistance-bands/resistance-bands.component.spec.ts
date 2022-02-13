@@ -2,6 +2,9 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
+import { ConfirmDialogComponentMock } from 'app/testing/component-mocks/primeNg/p-confirm-dialog-mock';
+import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
+import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
 import { of } from 'rxjs';
 import { ResistanceBandService } from './resistance-band.service';
@@ -37,27 +40,6 @@ class ToastComponentMock {
   position: string;
 }
 
-//TODO: This mock doesn't require any difference between specs. Put it somewhere it can be reused.
-@Component({
-  selector: 'p-dialog', 
-  template: ''
-})
-class DialogComponentMock {
-  @Input() 
-  visible: boolean;
-  
-  @Input()
-  style: any; 
-  
-  @Input()
-  header:string; 
-  
-  @Input()
-  modal: boolean; 
-  
-  @Input()
-  styleClass: string;
-}
 
 describe('ResistanceBandsComponent', () => {
   let component: ResistanceBandsComponent;
@@ -68,7 +50,9 @@ describe('ResistanceBandsComponent', () => {
       declarations: [ 
         ResistanceBandsComponent, 
         ToastComponentMock, 
-        DialogComponentMock 
+        DialogComponentMock, 
+        TableComponentMock, 
+        ConfirmDialogComponentMock 
       ],
       providers: [
         {

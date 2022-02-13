@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 
 import { WorkoutInfoComponent } from './workout-info.component';
 
@@ -8,7 +9,10 @@ describe('WorkoutInfoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutInfoComponent ]
+      declarations: [ 
+        WorkoutInfoComponent, 
+        ProgressSpinnerComponentMock
+      ]
     })
     .compileComponents();
   });
