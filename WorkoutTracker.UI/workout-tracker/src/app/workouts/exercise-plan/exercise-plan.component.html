@@ -16,13 +16,13 @@
         Target Rep Count: <span class="pre-pop-value">{{formGroup.controls['targetRepCountLastTime'].value}}</span>
       </div>
       <div class="col-2 form-group">
-        Max Actual Rep Count: <span class="pre-pop-value">{{formGroup.controls['maxActualRepCountLastTime'].value}}</span>
+        Avg Actual Rep Count: <span class="pre-pop-value">{{formGroup.controls['avgActualRepCountLastTime'].value}}</span>
       </div>
       <div class="col-2 form-group">
-        Max Range of Motion: <span class="pre-pop-value">{{formGroup.controls['maxRangeOfMotionLastTime'].value | rating}}</span>
+        Avg Range of Motion: <span class="pre-pop-value">{{formGroup.controls['avgRangeOfMotionLastTime'].value | rating}}</span>
       </div>
       <div class="col-2 form-group">
-        Max Form: <span class="pre-pop-value">{{formGroup.controls['maxFormLastTime'].value | rating}}</span>
+        Avg Form: <span class="pre-pop-value">{{formGroup.controls['avgFormLastTime'].value | rating}}</span>
       </div>
       <div class="col-4 form-group">
         Resistance: <span class="pre-pop-value">{{formGroup.controls['resistanceType'].value==3 ? 'Body Weight' : formGroup.controls['resistanceAmountLastTime'].value}}</span>
@@ -63,14 +63,14 @@
       <div class="col-2 form-group">
         <label>
           Target Rep Count
-          <input type="text" class="amount" formControlName="targetRepCount" required />
+          <input type="number" class="amount" formControlName="targetRepCount" required />
         </label>
       </div>
       <div class="col-10 form-group">
         <label>
           Resistance Amount
           <!--TODO: Get these *ngIfs to work with the enum type instead-->
-          <input *ngIf="formGroup.controls['resistanceType'].value!=2 && formGroup.controls['resistanceType'].value!=3" type="text" class="amount" formControlName="resistanceAmount" required />
+          <input *ngIf="formGroup.controls['resistanceType'].value!=2 && formGroup.controls['resistanceType'].value!=3" type="number" class="amount" formControlName="resistanceAmount" required />
           <span *ngIf="formGroup.controls['resistanceType'].value==2" class="no-input-value">
             <ng-container *ngIf="formGroup.controls['resistanceAmount'].value">
               {{formGroup.controls['resistanceAmount'].value}}

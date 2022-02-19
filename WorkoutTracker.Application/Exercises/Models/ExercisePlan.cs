@@ -24,8 +24,13 @@ namespace WorkoutTracker.Application.Exercises.Models
 
         public byte TargetRepCountLastTime { get; set; }
         public byte MaxActualRepCountLastTime { get; set; }
+        public double AvgActualRepCountLastTime { get; set; }
+
         public byte MaxRangeOfMotionLastTime { get; set; }
+        public double AvgRangeOfMotionLastTime { get; set; }
+
         public byte MaxFormLastTime { get; set; }
+        public double AvgFormLastTime { get; set; }
 
         public byte? RecommendedTargetRepCount { get; set; }
         public byte TargetRepCount { get; set; }
@@ -46,7 +51,7 @@ namespace WorkoutTracker.Application.Exercises.Models
         {
             if (exercise == null)
                 throw new ArgumentNullException(nameof(exercise));
-
+            
             ExerciseInWorkoutId = exercise.Id;
             ExerciseId = exercise.Exercise.Id;
             ExerciseName = exercise.Exercise.Name;
@@ -59,10 +64,18 @@ namespace WorkoutTracker.Application.Exercises.Models
 
         public void SetLastTimeValues(IEnumerable<ExecutedExercise> executedExercises)
         {
+            if (executedExercises == null || !executedExercises.Any())
+                return;
+
             TargetRepCountLastTime = executedExercises.Max(x => x.TargetRepCount);
             MaxActualRepCountLastTime = executedExercises.Max(x => x.ActualRepCount);
+            AvgActualRepCountLastTime = Math.Round(executedExercises.Average(x => x.ActualRepCount), 2);
+
             MaxRangeOfMotionLastTime = executedExercises.Max(x => x.RangeOfMotionRating);
+            AvgRangeOfMotionLastTime = Math.Round(executedExercises.Average(x => x.RangeOfMotionRating), 2);
+
             MaxFormLastTime = executedExercises.Max(x => x.FormRating);
+            AvgFormLastTime = Math.Round(executedExercises.Average(x => x.FormRating), 2);
 
             var executedWithMaxResitance =
                 executedExercises.OrderByDescending(x => x.ResistanceAmount).First();

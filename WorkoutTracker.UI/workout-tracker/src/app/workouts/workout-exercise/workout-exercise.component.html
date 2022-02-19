@@ -54,7 +54,7 @@
                     
                     <!--Resistance Amount-->
                     <div class="col-4 exercise-info-div">
-                        <input *ngIf="formGroup?.controls?.resistanceType?.value < 2" type="text" class="form-control resistance-amount" formControlName="resistance" required />
+                        <input *ngIf="formGroup?.controls?.resistanceType?.value < 2" type="number" class="form-control resistance-amount" formControlName="resistance" required />
                         <span *ngIf="formGroup?.controls?.resistanceType?.value==3">Body Weight</span>
                         <span *ngIf="formGroup?.controls?.resistanceType?.value==2">
                             <button class="btn btn-sm btn-primary mild-margins" (click)="selectResistanceBands(setsArray?.controls[i])">Set</button>                            
@@ -70,10 +70,10 @@
                     </div>
 
                     <div class="col-1">
-                        <input type="text" class="form-control reps" formControlName="targetReps" required />
+                        <input type="number" class="form-control reps" formControlName="targetReps" required />
                     </div>
                     <div class="col-1">
-                        <input type="text" class="form-control reps" formControlName="actualReps" required /> 
+                        <input type="number" class="form-control reps" formControlName="actualReps" required /> 
                     </div>
                     <div class="col-2 exercise-dropdown-cell">
                         <select class="form-control" formControlName="formRating" required> <!--TODO: Set up differenty, this is just for POC-->

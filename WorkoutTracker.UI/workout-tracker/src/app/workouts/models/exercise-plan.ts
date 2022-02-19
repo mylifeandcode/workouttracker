@@ -12,8 +12,14 @@ export class ExercisePlan {
 
   public targetRepCountLastTime: number;
   public maxActualRepCountLastTime: number;
+  public avgActualRepCountLastTime: number;
+
   public maxRangeOfMotionLastTime: number;
+  public avgRangeOfMotionLastTime: number;
+
   public maxFormLastTime: number;
+  public avgFormLastTime: number;
+
   public recommendedTargetRepCount?: number;
   public targetRepCount: number;
 
