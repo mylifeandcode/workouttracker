@@ -3,7 +3,8 @@ import { TargetArea } from '../models/target-area';
 import { TargetAreasPipe } from './target-areas.pipe';
 
 describe('TargetAreasPipe', () => {
-  it('create an instance', () => {
+  
+  it('should create an instance', () => {
     const pipe = new TargetAreasPipe();
     expect(pipe).toBeTruthy();
   });
