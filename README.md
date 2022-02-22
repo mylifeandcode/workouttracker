@@ -7,8 +7,6 @@ A website for creating and tracking workouts. I wrote this to replicate and expa
 
 ![Plan Workout](PreviewImages/plan-workout.png)<br /><br />
 
-![Plan Workout - Select Bands](PreviewImages/plan-workout-select-bands.png)<br /><br />
-
 ![Workout](PreviewImages/workout.PNG)<br /><br />
 
 ![Manage Workouts](PreviewImages/manage-workouts.png)<br /><br />
