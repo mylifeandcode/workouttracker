@@ -88,4 +88,8 @@ describe('WorkoutPlanComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should submit plan', () => {});
+
+  it('should submit plan for later', () => {});
 });

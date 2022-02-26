@@ -28,6 +28,7 @@ export class WorkoutPlanComponent implements OnInit {
   public formGroupForResistanceSelection: FormGroup;
   public errorInfo: string;
   public isProcessing: boolean = false;
+  public planningForLater: boolean = false;
   //END PUBLIC FIELDS
 
   //VIEWCHILD
@@ -73,16 +74,24 @@ export class WorkoutPlanComponent implements OnInit {
     this.getResistanceBandInventory();
     this.createForm();
     this.subscribeToRoute();
+    this.planningForLater = this._router.url.includes("for-later");
   }
 
   public startWorkout(): void {
-    this.updateWorkoutPlanFromForm();
-    this.workoutPlan.submittedDateTime = new Date();
-    this.isProcessing = true;
+    this.setupDataForPlanSubmission();
     this._workoutService.submitPlan(this.workoutPlan)
       .pipe(finalize(() => { this.isProcessing = false; }))
       .subscribe((executedWorkoutId: number) => {
         this._router.navigate([`workouts/start/${executedWorkoutId}`]);
+      });
+  }
+
+  public submitPlanForLater(): void {
+    this.setupDataForPlanSubmission();
+    this._workoutService.submitPlanForLater(this.workoutPlan)
+      .pipe(finalize(() => { this.isProcessing = false; }))
+      .subscribe((executedWorkoutId: number) => {
+        this._router.navigate([`workouts/select-planned`]);
       });
   }
 
@@ -204,6 +213,12 @@ export class WorkoutPlanComponent implements OnInit {
       this.errorInfo = defaultMessage;
   }
   
+  private setupDataForPlanSubmission(): void {
+    this.updateWorkoutPlanFromForm();
+    this.workoutPlan.submittedDateTime = new Date();
+    this.isProcessing = true;
+  }
+
   //END PRIVATE METHODS
 
 }

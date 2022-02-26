@@ -114,7 +114,7 @@ namespace WorkoutTracker.Tests.Services
                     userService.Object);
 
             //ACT
-            var result = sut.Create(workoutPlan);
+            var result = sut.Create(workoutPlan, true);
 
             //ASSERT
             Assert.IsNotNull(result, "result is null.");

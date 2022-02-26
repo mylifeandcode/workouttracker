@@ -7,7 +7,7 @@ namespace WorkoutTracker.Application.Workouts.Interfaces
 {
     public interface IExecutedWorkoutService : IServiceBase<ExecutedWorkout>
     {
-        ExecutedWorkout Create(WorkoutPlan plan);
+        ExecutedWorkout Create(WorkoutPlan plan, bool startWorkout);
         IEnumerable<ExecutedWorkout> GetFilteredSubset(
             int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst);
         IEnumerable<ExecutedWorkout> GetRecent(int numberOfMostRecent);

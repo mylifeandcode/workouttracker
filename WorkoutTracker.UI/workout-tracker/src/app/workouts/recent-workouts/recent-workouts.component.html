@@ -6,8 +6,11 @@
   <div class="col-3">
     <a type="button" class="button-type-link" (click)="viewExercises(workout.workoutId)">View Exercises</a>
   </div>
-  <div class="col-3">
+  <div *ngIf="!planningForLater" class="col-3">
     <a type="button" class="button-type-link" (click)="doWorkout(workout.workoutId)">Do This Workout</a>
+  </div>
+  <div *ngIf="planningForLater" class="col-3">
+    <a type="button" class="button-type-link" (click)="planWorkout(workout.workoutId)">Plan This Workout</a>
   </div>
   <div class="col-3">
     {{workout.startDateTime | date:'short'}}

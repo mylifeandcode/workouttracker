@@ -32,7 +32,8 @@
         
         <div class="row">
           <div class="col-12">
-            <button type="submit" class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
+            <button *ngIf="!planningForLater" type="submit" class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
+            <button *ngIf="planningForLater" type="submit" class="btn btn-primary" (click)="submitPlanForLater()" [disabled]="workoutPlanForm.invalid || isProcessing">Save Workout Plan</button>
             &nbsp;<span *ngIf="isProcessing">Processing...</span>
           </div>
         </div>

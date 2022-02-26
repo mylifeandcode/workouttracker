@@ -4,6 +4,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { WorkoutService } from './workout.service';
 import { Workout } from 'app/workouts/models/workout';
 import { ConfigService } from 'app/core/config.service';
+import { WorkoutPlan } from './models/workout-plan';
 
 const TEST_WORKOUT_ID = "5";
 const API_ROOT_URL = "http://localhost:5600/api/workouts";
@@ -12,8 +13,10 @@ class MockConfigService {
   get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
 }
 
+let service: WorkoutService;
+
 describe('WorkoutService', () => {
-  beforeEach(() =>
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports :[
         HttpClientTestingModule
@@ -24,15 +27,15 @@ describe('WorkoutService', () => {
           useClass: MockConfigService
         }
       ]
-    }));
+    });
+    service = TestBed.inject(WorkoutService);
+  });
 
   it('should be created', () => {
-    const service: WorkoutService = TestBed.inject(WorkoutService);
     expect(service).toBeTruthy();
   });
 
   it('should get workout by ID', (done: DoneFn) => {
-    const service: WorkoutService = TestBed.inject(WorkoutService);
     const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
 
     const expectedResults = new Workout();
@@ -58,7 +61,6 @@ describe('WorkoutService', () => {
   it('should add new workout', (done: DoneFn) => {
 
     //ARRANGE
-    const service: WorkoutService = TestBed.inject(WorkoutService);
     const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
     const workout = new Workout();
 
@@ -71,7 +73,6 @@ describe('WorkoutService', () => {
         },
         fail
     );
-
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}`);
@@ -86,8 +87,7 @@ describe('WorkoutService', () => {
   it('should update existing workout', (done: DoneFn) => {
 
     //ARRANGE
-    const service: WorkoutService = TestBed.get(WorkoutService);
-    const httpMock: HttpTestingController = TestBed.get(HttpTestingController);
+    const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
     const workout = new Workout();
     workout.id = 100;
 
@@ -109,6 +109,62 @@ describe('WorkoutService', () => {
 
     // Respond with the mock results
     req.flush(workout);
+
+  });
+
+  it('should submit a workout plan', (done: DoneFn) => {
+
+    //ARRANGE
+    const workoutPlan = new WorkoutPlan();
+    const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
+    const expectedNewExecutedWorkoutId: number = 456;
+
+    workoutPlan.workoutId = 25;
+
+    //ACT
+    service.submitPlan(workoutPlan)
+      .subscribe(
+        (executedWorkoutId: number) => {
+          expect(executedWorkoutId).toEqual(expectedNewExecutedWorkoutId); //ASSERT
+          done();
+        },
+        fail
+      );
+
+    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan`);
+    expect(req.request.method).toEqual('POST');
+    expect(req.request.body).toBe(workoutPlan);
+
+    // Respond with the mock results
+    req.flush(expectedNewExecutedWorkoutId);
+
+  });
+
+  it('should submit a workout plan for later', (done: DoneFn) => {
+
+    //ARRANGE
+    const workoutPlan = new WorkoutPlan();
+    const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
+    const expectedNewExecutedWorkoutId: number = 789;
+
+    workoutPlan.workoutId = 30;
+
+    //ACT
+    service.submitPlanForLater(workoutPlan)
+      .subscribe(
+        (executedWorkoutId: number) => {
+          expect(executedWorkoutId).toEqual(expectedNewExecutedWorkoutId); //ASSERT
+          done();
+        },
+        fail
+      );
+
+    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan-for-later`);
+    expect(req.request.method).toEqual('POST');
+    expect(req.request.body).toBe(workoutPlan);
+
+    // Respond with the mock results
+    req.flush(expectedNewExecutedWorkoutId);
 
   });
 

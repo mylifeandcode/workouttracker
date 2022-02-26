@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
@@ -15,6 +15,9 @@ export class RecentWorkoutsComponent implements OnInit {
   public recentWorkouts: ExecutedWorkoutDTO[];
   public showExercises: boolean = false;
   public selectedWorkout: Workout;
+
+  @Input()
+  planningForLater: boolean;
 
   constructor(
     private _executedWorkoutService: ExecutedWorkoutService, 
@@ -40,5 +43,9 @@ export class RecentWorkoutsComponent implements OnInit {
 
   public doWorkout(workoutId: number): void {
     this._router.navigate([`workouts/plan/${workoutId}`]);
+  }
+
+  public planWorkout(workoutId: number): void {
+    this._router.navigate([`workouts/plan-for-later/${workoutId}`]);
   }
 }

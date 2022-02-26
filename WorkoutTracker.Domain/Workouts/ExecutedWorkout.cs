@@ -25,12 +25,12 @@ namespace WorkoutTracker.Domain.Workouts
         /// <summary>
         /// The date/time the user began the Workout.
         /// </summary>
-        public DateTime StartDateTime { get; set; }
+        public DateTime? StartDateTime { get; set; }
         
         /// <summary>
         /// THe date/time the user completed or stopped the Workout.
         /// </summary>
-        public DateTime EndDateTime { get; set; }
+        public DateTime? EndDateTime { get; set; }
         
         /// <summary>
         /// Any notes related to this occurrence of the Workout. For example, 

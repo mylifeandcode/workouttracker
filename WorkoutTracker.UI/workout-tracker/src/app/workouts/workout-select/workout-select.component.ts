@@ -28,6 +28,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
 
   //PUBLIC FIELDS
   public workouts: WorkoutDTO[];
+  public planningForLater: boolean = true;
   //END PUBLIC FIELDS
 
   //PRIVATE FIELDS
@@ -42,6 +43,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.subscribeToUser();
+    this.planningForLater = this._router.url.includes("for-later");
   }
 
   public ngOnDestroy(): void {
@@ -49,8 +51,10 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   }
 
   public workoutSelectChange(event: any): void { //TODO: Get concrete type instead of using any
-    //this.workoutSelected.emit(event.target.value);
-    this._router.navigate([`workouts/plan/${event.target.value}`]);
+    if(this.planningForLater)
+      this._router.navigate([`workouts/plan-for-later/${event.target.value}`]);
+    else
+      this._router.navigate([`workouts/plan/${event.target.value}`]);
   }
 
   private subscribeToUser(): void {

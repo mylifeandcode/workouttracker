@@ -29,12 +29,12 @@ namespace WorkoutTracker.Application.Workouts.Services
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        public ExecutedWorkout Create(WorkoutPlan plan)
+        public ExecutedWorkout Create(WorkoutPlan plan, bool startWorkout)
         {
             if (plan == null)
                 throw new ArgumentNullException(nameof(plan));
 
-            return CreateFromPlan(plan);
+            return CreateFromPlan(plan, startWorkout);
         }
 
         public override ExecutedWorkout Add(ExecutedWorkout entity, bool saveChanges = false)
@@ -118,7 +118,7 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         #region Private Methods
 
-        private ExecutedWorkout CreateFromPlan(WorkoutPlan workoutPlan)
+        private ExecutedWorkout CreateFromPlan(WorkoutPlan workoutPlan, bool startWorkout)
         {
             var executedWorkout = new ExecutedWorkout();
             executedWorkout.WorkoutId = workoutPlan.WorkoutId;
@@ -153,7 +153,9 @@ namespace WorkoutTracker.Application.Workouts.Services
                 }
             }
 
-            executedWorkout.StartDateTime = workoutPlan.SubmittedDateTime.Value;
+            if (startWorkout)
+                executedWorkout.StartDateTime = workoutPlan.SubmittedDateTime.Value;
+            
             _repo.Add(executedWorkout, true);
 
             return executedWorkout;

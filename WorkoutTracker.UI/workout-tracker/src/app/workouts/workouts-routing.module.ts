@@ -5,6 +5,7 @@ import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
 import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
 import { WorkoutListComponent } from './workout-list/workout-list.component';
 import { WorkoutPlanComponent } from './workout-plan/workout-plan.component';
+import { WorkoutSelectPlannedComponent } from './workout-select-planned/workout-select-planned.component';
 import { WorkoutSelectComponent } from './workout-select/workout-select.component';
 import { WorkoutViewComponent } from './workout-view/workout-view.component';
 import { WorkoutComponent } from './workout/workout.component';
@@ -19,6 +20,16 @@ const routes: Routes = [
   {
     path: 'select', 
     component: WorkoutSelectComponent, 
+    canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'select-for-later', 
+    component: WorkoutSelectComponent, 
+    canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'select-planned', 
+    component: WorkoutSelectPlannedComponent, 
     canActivate: [UserSelectedGuard]
   },
   {
@@ -38,6 +49,11 @@ const routes: Routes = [
   },
   {
     path: 'plan/:id',
+    component: WorkoutPlanComponent, 
+    canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'plan-for-later/:id',
     component: WorkoutPlanComponent, 
     canActivate: [UserSelectedGuard]
   },

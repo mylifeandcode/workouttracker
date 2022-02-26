@@ -124,16 +124,15 @@ namespace WorkoutTracker.UI.Controllers
         [HttpPost("{id}/plan")]
         public ActionResult<int> SubmitPlan([FromBody] WorkoutPlan plan)
         {
-            try
-            {
-                var executedWorkout = _executedWorkoutService.Create(plan);
-                return Ok(executedWorkout.Id);
+            //TODO: Change URL -- id isn't needed
+            return CreateWorkoutFromWorkoutPlan(plan, true);
+        }
 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+        [HttpPost("{id}/plan-for-later")]
+        public ActionResult<int> SubmitPlanForLater([FromBody] WorkoutPlan plan)
+        {
+            //TODO: Change URL -- id isn't needed
+            return CreateWorkoutFromWorkoutPlan(plan, false);
         }
 
         // POST api/Workouts
@@ -212,6 +211,20 @@ namespace WorkoutTracker.UI.Controllers
                 filter.NameContains = nameContains;
 
             return filter;
+        }
+
+        private ActionResult<int> CreateWorkoutFromWorkoutPlan(WorkoutPlan plan, bool startWorkout)
+        {
+            try
+            {
+                var executedWorkout = _executedWorkoutService.Create(plan, startWorkout);
+                return Ok(executedWorkout.Id);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }
