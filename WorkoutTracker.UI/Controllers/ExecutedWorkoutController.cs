@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Application.Workouts.Models;
-using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.UI.Models;
@@ -71,7 +68,52 @@ namespace WorkoutTracker.UI.Controllers
                         executedWorkout.Workout.Name,
                         executedWorkout.WorkoutId,
                         executedWorkout.StartDateTime,
-                        executedWorkout.EndDateTime);
+                        executedWorkout.EndDateTime, 
+                        executedWorkout.CreatedDateTime);
+                });
+
+                var result = new PaginatedResults<ExecutedWorkoutDTO>(results, totalCount);
+
+                return Ok(result);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return BadRequest(ex);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [HttpGet("planned")]
+        public ActionResult<PaginatedResults<ExecutedWorkoutDTO>> GetPlanned(int firstRecord, short pageSize, bool newestFirst = true)
+        {
+            try
+            {
+                var userId = GetUserID();
+
+                var filter =
+                    BuildExecutedWorkoutFilter(
+                        userId, null, null, true);
+
+                int totalCount = _executedWorkoutService.GetTotalCount(); //TODO: Modify to get total count by filter
+
+                var executedWorkouts =
+                    _executedWorkoutService
+                        .GetFilteredSubset(firstRecord, pageSize, filter, newestFirst)
+                        .ToList();
+
+                var results = executedWorkouts.Select((executedWorkout) =>
+                {
+                    return new ExecutedWorkoutDTO(
+                        executedWorkout.Id,
+                        executedWorkout.Workout.Name,
+                        executedWorkout.WorkoutId,
+                        executedWorkout.StartDateTime,
+                        executedWorkout.EndDateTime, 
+                        executedWorkout.CreatedDateTime);
                 });
 
                 var result = new PaginatedResults<ExecutedWorkoutDTO>(results, totalCount);
@@ -128,17 +170,22 @@ namespace WorkoutTracker.UI.Controllers
         private ExecutedWorkoutFilter BuildExecutedWorkoutFilter(
             int userId, 
             DateTime? startDateTime, 
-            DateTime? endDateTime)
+            DateTime? endDateTime,
+            bool plannedOnly = false)
         {
             var filter = new ExecutedWorkoutFilter();
 
             filter.UserId = userId;
+            filter.PlannedOnly = plannedOnly;
 
-            if(filter.StartDateTime.HasValue)
-                filter.StartDateTime = startDateTime;
+            if (!plannedOnly) //TODO: Rethink. This is kind of kludgey.
+            { 
+                if(filter.StartDateTime.HasValue)
+                    filter.StartDateTime = startDateTime;
             
-            if(filter.EndDateTime.HasValue)
-                filter.EndDateTime = endDateTime;
+                if(filter.EndDateTime.HasValue)
+                    filter.EndDateTime = endDateTime;
+            }
 
             return filter;
         }

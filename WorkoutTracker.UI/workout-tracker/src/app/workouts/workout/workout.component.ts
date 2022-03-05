@@ -160,11 +160,16 @@ export class WorkoutComponent implements OnInit {
     this._executedWorkoutService.getById(id)
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe(
-          (executedWorkout: ExecutedWorkout) => {
+        (executedWorkout: ExecutedWorkout) => {
           this.workout = executedWorkout;
+
+          if (this.workout.startDateTime == null)
+            this.workout.startDateTime = new Date();
+
           this.workoutForm.patchValue({
             id: id
           });
+          
           this.setupExercisesFormGroup(executedWorkout.exercises);
         }, 
         (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }

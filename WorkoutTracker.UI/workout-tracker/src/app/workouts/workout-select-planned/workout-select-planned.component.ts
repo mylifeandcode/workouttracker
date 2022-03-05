@@ -1,4 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { PaginatedResults } from 'app/core/models/paginated-results';
+import { finalize } from 'rxjs/operators';
+import { ExecutedWorkoutService } from '../executed-workout.service';
+import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
+
+//TODO: This component shares similarities with WorkoutListComponent. Consolidate code.
 
 @Component({
   selector: 'wt-workout-select-planned',
@@ -7,9 +13,36 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WorkoutSelectPlannedComponent implements OnInit {
 
-  constructor() { }
+  public plannedWorkouts: ExecutedWorkoutDTO[];
+  public totalCount: number;
+  public loading: boolean = true;
+  public pageSize: number = 10;
+  public cols: any = [
+    { field: 'name', header: 'Workout Name' }, 
+    { field: 'createdDateTime', header: 'Created' }
+  ]; //TODO: Create specific type
 
-  ngOnInit(): void {
+  constructor(private _executedWorkoutService: ExecutedWorkoutService) { }
+
+  public ngOnInit(): void {
+    this.getPlannedWorkouts(0);
+  }
+
+  private getPlannedWorkouts(first: number): void {
+    this.totalCount = 0;
+    this.loading = true;
+
+    this._executedWorkoutService
+      .getPlanned(first, this.pageSize)
+      .pipe(finalize(() => { this.loading = false; }))      
+      .subscribe((plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutDTO>) => {
+        this.plannedWorkouts = plannedWorkoutInfo.results;
+        this.totalCount = plannedWorkoutInfo.totalCount;
+      });
+  }
+
+  public getPlannedWorkoutsLazy(event: any): void {
+    this.getPlannedWorkouts(event.first);
   }
 
 }

@@ -168,11 +168,22 @@ namespace WorkoutTracker.Application.Workouts.Services
 
             query = query.Where(x => x.CreatedByUserId == filter.UserId);
 
-            if (filter.StartDateTime.HasValue)
-                query = query.Where(x => x.StartDateTime >= filter.StartDateTime);
+            if (filter.PlannedOnly) //TODO: Rethink. This approach is kind of kludgey. Maybe use a base class instead, and check the type.
+            { 
+                query = query.Where(x => x.StartDateTime == null && x.EndDateTime == null);
+            }
+            else 
+            {
+                if (filter.StartDateTime.HasValue)
+                    query = query.Where(x => x.StartDateTime >= filter.StartDateTime);
+                else
+                    query = query.Where(x => x.StartDateTime != null);
 
-            if (filter.EndDateTime.HasValue)
-                query = query.Where(x => x.EndDateTime <= filter.EndDateTime);
+                if (filter.EndDateTime.HasValue)
+                    query = query.Where(x => x.EndDateTime <= filter.EndDateTime);
+                else
+                    query = query.Where(x => x.EndDateTime != null);
+            }
         }
 
         #endregion Private Methods
