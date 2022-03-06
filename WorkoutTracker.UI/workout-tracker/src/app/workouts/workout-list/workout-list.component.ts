@@ -38,7 +38,7 @@ export class WorkoutListComponent implements OnInit {
   public getWorkouts(first: number): void {
     this.totalRecords = 0;
     this.loading = true;
-    this._workoutSvc.getAll(first, 20, this._filterByActiveOnly, this._filterByNameContains)
+    this._workoutSvc.getFilteredSubset(first, 20, this._filterByActiveOnly, this._filterByNameContains)
       .pipe(finalize(() => { this.loading = false; }))
       .subscribe(
           (results: PaginatedResults<WorkoutDTO>) => {

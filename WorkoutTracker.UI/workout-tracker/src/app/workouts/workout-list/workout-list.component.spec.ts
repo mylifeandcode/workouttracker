@@ -8,12 +8,11 @@ import { WorkoutService } from '../workout.service';
 import { of } from 'rxjs';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
-import { User } from 'app/core/models/user';
 import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 
 
 class WorkoutServiceMock {
-  getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<WorkoutDTO>()));
+  getFilteredSubset = jasmine.createSpy('getFilteredSubset').and.returnValue(of(new PaginatedResults<WorkoutDTO>()));
 }
 
 describe('WorkoutListComponent', () => {

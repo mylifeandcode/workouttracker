@@ -10,7 +10,7 @@ import { WorkoutService } from '../workout.service';
 import { WorkoutSelectComponent } from './workout-select.component';
 
 class WorkoutServiceMock {
-  getAll = jasmine.createSpy('getAll').and.callFake(() => {
+  getFilteredSubset = jasmine.createSpy('getFilteredSubset').and.callFake(() => {
       let fakeResponse = new PaginatedResults<WorkoutDTO>();
       fakeResponse.results = [];
       fakeResponse.results.push(new WorkoutDTO());

@@ -64,7 +64,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   }
 
   private getUserWorkouts(): void {
-    this._userSusbscription = this._workoutService.getAll(0, 500, true) //TODO: Page size...come up with a better solution
+    this._userSusbscription = this._workoutService.getFilteredSubset(0, 500, true) //TODO: Page size...come up with a better solution
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
         this.workouts = _.sortBy(result.results, 'name');

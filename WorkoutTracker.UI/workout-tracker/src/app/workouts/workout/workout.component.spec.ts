@@ -98,7 +98,7 @@ function getRandomInt(max): number {
 
 //SERVICE MOCK CLASSES ////////////////////////////////////////////////////////
 class WorkoutServiceMock {
-  getAll = jasmine.createSpy('getAll')
+  getFilteredSubset = jasmine.createSpy('getFilteredSubset')
     .and.returnValue(of(getFakeUserWorkouts()));
 }
 
