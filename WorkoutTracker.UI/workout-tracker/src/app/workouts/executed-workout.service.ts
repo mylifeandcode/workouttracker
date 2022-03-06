@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ExecutedWorkout } from './models/executed-workout';
 import { ExecutedWorkoutDTO } from './models/executed-workout-dto';
-import { WorkoutDTO } from './models/workout-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -25,8 +24,8 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
    * @param pageSize The number of records to return. Could be less if on the final page.
    * @returns An Observable<PaginatedResults<ExecutedWorkoutDTO>> containing information about ExecutedWorkouts
    */
-
   public getFilteredSubset(startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutDTO>> {
+    //TODO: Add parameters for filtering
     return this._http.get<PaginatedResults<ExecutedWorkoutDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}`);
   }
 
@@ -46,7 +45,8 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
    * @returns an array of recently executed workouts
    */
   public getRecent(): Observable<ExecutedWorkoutDTO[]> {
+    //TODO: Add parameter so we're not locked into getting 5 -- maybe users could increase this?
     return this.getFilteredSubset(0, 5)
-      .pipe(map((results: PaginatedResults<ExecutedWorkoutDTO>) => results.results));
+      .pipe(map((response: PaginatedResults<ExecutedWorkoutDTO>) => response.results));
   }
 }

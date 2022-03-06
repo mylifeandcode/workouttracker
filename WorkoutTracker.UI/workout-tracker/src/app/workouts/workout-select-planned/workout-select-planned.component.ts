@@ -14,7 +14,7 @@ import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 export class WorkoutSelectPlannedComponent implements OnInit {
 
   public plannedWorkouts: ExecutedWorkoutDTO[];
-  public totalCount: number;
+  public totalCount: number = 0;
   public loading: boolean = true;
   public pageSize: number = 10;
   public cols: any = [
