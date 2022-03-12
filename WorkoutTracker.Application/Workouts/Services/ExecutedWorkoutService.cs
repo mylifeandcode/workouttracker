@@ -91,9 +91,9 @@ namespace WorkoutTracker.Application.Workouts.Services
                 ApplyQueryFilters(ref query, filter);
 
             if (newestFirst)
-                query = query.OrderByDescending(x => x.CreatedDateTime);
+                query = query.OrderByDescending(x => x.StartDateTime);
             else
-                query = query.OrderBy(x => x.CreatedDateTime);
+                query = query.OrderBy(x => x.StartDateTime);
 
             var output = query.Skip(firstRecordIndex).Take(subsetSize);
             return output;

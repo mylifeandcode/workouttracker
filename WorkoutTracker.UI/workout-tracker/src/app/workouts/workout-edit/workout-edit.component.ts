@@ -5,7 +5,6 @@ import { WorkoutService } from '../workout.service';
 import { Workout } from 'app/workouts/models/workout';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
-import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
 
@@ -43,7 +42,7 @@ export class WorkoutEditComponent implements OnInit {
     private _modalSvc: BsModalService) {
   }
 
-  async ngOnInit() {
+  public ngOnInit(): void {
     this.getRouteParams();
     this.createForm();
     this.subscribeToRouteParamsToSetupFormOnWorkoutIdChange();
@@ -202,7 +201,7 @@ export class WorkoutEditComponent implements OnInit {
     setType: number = 0, 
     numberOfSets: number = 0): FormGroup {
       
-    console.log("getExerciseFormGroup: exerciseInWorkoutId = " + exerciseInWorkoutId + ", exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
+    //console.log("getExerciseFormGroup: exerciseInWorkoutId = " + exerciseInWorkoutId + ", exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
     return this._formBuilder.group({
       id: exerciseInWorkoutId, 
       exerciseId: exerciseId, 
