@@ -1,0 +1,9 @@
+.greeting {
+  color: white;
+  background-color: grey;
+}
+
+.welcome-wallpaper {
+  background-image: url('../../assets/images/weight-room.jpg');
+  height: 100vh;
+}

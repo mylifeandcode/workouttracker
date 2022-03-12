@@ -32,6 +32,9 @@ import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { CookieService } from 'ng2-cookies/cookie';
 import { AuthService } from './core/auth.service';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
+import { WelcomeComponent } from './welcome/welcome.component';
+import { QuickActionsComponent } from './quick-actions/quick-actions.component';
+import { UserOverviewComponent } from './user-overview/user-overview.component';
 
 
 export function initializeApp(configService: ConfigService, userService: UserService, authService: AuthService) {
@@ -52,7 +55,10 @@ export function initializeApp(configService: ConfigService, userService: UserSer
     HomeComponent,
     UserSelectComponent,
     UserSettingsComponent,
-    AccessDeniedComponent
+    AccessDeniedComponent,
+    WelcomeComponent,
+    QuickActionsComponent,
+    UserOverviewComponent
   ],
   imports: [
     AppRoutingModule,

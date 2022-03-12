@@ -6,6 +6,7 @@ import { UserSelectedGuard } from './core/guards/user-selected.guard';
 import { UserNotSelectedGuard } from './core/guards/user-not-selected.guard';
 import { UserIsAdminGuard } from './admin/guards/user-is-admin.guard';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
+import { WelcomeComponent } from './welcome/welcome.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,11 @@ const routes: Routes = [
     path: 'exercises',
     loadChildren: () => import('./exercises/exercises.module').then(m => m.ExercisesModule)
   },
+  {
+    path: 'welcome', 
+    component: WelcomeComponent, 
+    canActivate: [UserSelectedGuard]
+  }, 
   {
     path: '**',
     redirectTo: ''
