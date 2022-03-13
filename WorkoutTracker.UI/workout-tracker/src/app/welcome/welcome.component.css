@@ -1,6 +1,9 @@
 .greeting {
-  color: white;
-  background-color: grey;
+  color: greenyellow;
+  text-shadow: -1px 1px 0 #000,
+				  1px 1px 0 #000,
+				 1px -1px 0 #000,
+				-1px -1px 0 #000;
 }
 
 .welcome-wallpaper {

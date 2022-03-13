@@ -1,0 +1,43 @@
+.quick-actions {
+  color: white;
+  border-radius: 25px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.button-headroom {
+  margin-top: 6px;
+}
+
+.start-workout {
+  color: white;
+  background-color: blue;
+  opacity: 1;
+}
+
+.plan-workout {
+  color: white;
+  background-color: cornflowerblue;
+}
+
+.start-planned-workout {
+  color: white;
+  background-color: orange;
+}
+
+.view-workout-history {
+  color: white;
+  background-color: green;
+}
+
+.manage-workouts {
+  color: white;
+  background-color: crimson;
+}
+
+.manage-exercises {
+  color: white;
+  background-color: goldenrod;
+}

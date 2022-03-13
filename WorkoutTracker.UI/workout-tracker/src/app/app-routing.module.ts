@@ -21,7 +21,7 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    component: HomeComponent,
+    component: WelcomeComponent,
     canActivate: [UserSelectedGuard]
   },
   {
@@ -42,11 +42,6 @@ const routes: Routes = [
     path: 'exercises',
     loadChildren: () => import('./exercises/exercises.module').then(m => m.ExercisesModule)
   },
-  {
-    path: 'welcome', 
-    component: WelcomeComponent, 
-    canActivate: [UserSelectedGuard]
-  }, 
   {
     path: '**',
     redirectTo: ''
