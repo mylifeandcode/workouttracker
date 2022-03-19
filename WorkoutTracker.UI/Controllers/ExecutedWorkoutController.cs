@@ -54,7 +54,7 @@ namespace WorkoutTracker.UI.Controllers
                     BuildExecutedWorkoutFilter(
                         userId, startDateTime, endDateTime);
 
-                int totalCount = _executedWorkoutService.GetTotalCount(); //TODO: Modify to get total count by filter
+                int totalCount = _executedWorkoutService.GetTotalCount(filter);
 
                 var executedWorkouts =
                     _executedWorkoutService
@@ -98,7 +98,7 @@ namespace WorkoutTracker.UI.Controllers
                     BuildExecutedWorkoutFilter(
                         userId, null, null, true);
 
-                int totalCount = _executedWorkoutService.GetTotalCount(); //TODO: Modify to get total count by filter
+                int totalCount = _executedWorkoutService.GetTotalCount(filter);
 
                 var executedWorkouts =
                     _executedWorkoutService

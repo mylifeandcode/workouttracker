@@ -12,5 +12,7 @@ namespace WorkoutTracker.Application.Workouts.Interfaces
             int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst);
         IEnumerable<ExecutedWorkout> GetRecent(int numberOfMostRecent);
         ExecutedWorkout GetLatest(int workoutId);
+        int GetTotalCount(ExecutedWorkoutFilter filter);
+        int GetPlannedCount(int userId);
     }
 }

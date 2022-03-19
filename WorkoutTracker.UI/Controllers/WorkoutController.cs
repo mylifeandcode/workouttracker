@@ -46,7 +46,7 @@ namespace WorkoutTracker.UI.Controllers
 
                 var filter = BuildWorkoutFilter(userId, activeOnly, nameContains);
 
-                int totalCount = _workoutService.GetTotalCount(); //TODO: Modify to get total count by filter
+                int totalCount = _workoutService.GetTotalCount(filter); //TODO: Modify to get total count by filter
 
                 //Blows up after upgrading to EF Core 3.1 from 2.2!
                 //More info at https://stackoverflow.com/questions/59677609/problem-with-ef-core-after-migrating-from-2-2-to-3-1

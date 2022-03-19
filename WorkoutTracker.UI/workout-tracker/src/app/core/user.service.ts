@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { LocalStorageService } from './local-storage.service';
 import { ConfigService } from './config.service';
+import { UserOverview } from './models/user-overview';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -84,6 +85,10 @@ export class UserService {
   //TODO: Move to AuthService
   public isUserLoggedIn(): boolean {
     return (this._userSubject$.value != null);
+  }
+
+  public getOverview(): Observable<UserOverview> {
+    return this._http.get<UserOverview>(`${this._apiRoot}/overview`);
   }
 
   /*

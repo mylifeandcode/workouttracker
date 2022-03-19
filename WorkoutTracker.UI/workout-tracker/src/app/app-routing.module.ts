@@ -25,6 +25,11 @@ const routes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
+    path: 'oldhome',
+    component: HomeComponent,
+    canActivate: [UserSelectedGuard]
+  }, 
+  {
     path: 'denied',
     component: AccessDeniedComponent
   },

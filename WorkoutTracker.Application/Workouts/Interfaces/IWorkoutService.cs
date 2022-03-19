@@ -16,5 +16,6 @@ namespace WorkoutTracker.Application.Workouts.Interfaces
         Workout GetById(int workoutId);
         void Retire(int workoutId);
         void Reactivate(int workoutId);
+        int GetTotalCount(WorkoutFilter filter);
     }
 }

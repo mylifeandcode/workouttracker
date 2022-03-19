@@ -35,6 +35,7 @@ import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { QuickActionsComponent } from './quick-actions/quick-actions.component';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 export function initializeApp(configService: ConfigService, userService: UserService, authService: AuthService) {
@@ -68,6 +69,7 @@ export function initializeApp(configService: ConfigService, userService: UserSer
     CoreModule,
     HttpClientModule,
     ModalModule.forRoot(),
+    ProgressSpinnerModule, 
     ReactiveFormsModule,
     SharedModule
   ],

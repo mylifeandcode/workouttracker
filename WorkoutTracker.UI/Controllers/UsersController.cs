@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Users.Interfaces;
+using WorkoutTracker.UI.Models;
+using WorkoutTracker.Application.Workouts.Interfaces;
 
 namespace WorkoutTracker.UI.Controllers
 {
@@ -17,8 +19,13 @@ namespace WorkoutTracker.UI.Controllers
     [ApiController]
     public class UsersController : SimpleAPIControllerBase<User>
     {
-        public UsersController(IUserService service) : base(service)
+        private readonly IExecutedWorkoutService _executedWorkoutService;
+
+        public UsersController(
+            IUserService userService, 
+            IExecutedWorkoutService executedWorkoutService) : base(userService)
         {
+            _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
         }
 
         //TODO: Revisit. The below was causing a 500 response.
@@ -81,6 +88,26 @@ namespace WorkoutTracker.UI.Controllers
         public override ActionResult<User> Post([FromBody] User value)
         {
             return base.Post(value);
+        }
+
+        [HttpGet("overview")]
+        public ActionResult<UserOverview> GetUserOverview()
+        {
+            var overview = new UserOverview();
+            var user = _service.GetById(GetUserID());
+
+            if (user == null)
+                return StatusCode(500, "User not found.");
+            
+            overview.Username = user.Name;
+
+            var mostRecentWorkout = _executedWorkoutService.GetRecent(1);
+            if (mostRecentWorkout.Any())
+                overview.LastWorkoutDateTime = mostRecentWorkout.First().StartDateTime;
+            
+            overview.PlannedWorkoutCount = _executedWorkoutService.GetPlannedCount(GetUserID());
+
+            return Ok(overview);
         }
     }
 }

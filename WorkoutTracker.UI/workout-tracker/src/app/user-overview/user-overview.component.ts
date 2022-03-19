@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { UserOverview } from 'app/core/models/user-overview';
 
 @Component({
   selector: 'wt-user-overview',
@@ -6,6 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./user-overview.component.css']
 })
 export class UserOverviewComponent implements OnInit {
+
+  @Input()
+  userOverview: UserOverview;
+
+  @Input()
+  public loading: boolean;
 
   constructor() { }
 

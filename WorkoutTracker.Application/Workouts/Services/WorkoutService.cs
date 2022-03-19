@@ -50,6 +50,13 @@ namespace WorkoutTracker.Application.Workouts.Services
             SetActive(workoutId, true);
         }
 
+        public int GetTotalCount(WorkoutFilter filter)
+        {
+            var query = _repo.Get();
+            ApplyQueryFilters(ref query, filter);
+            return query.Count();
+        }
+
         private static void ApplyQueryFilters(ref IQueryable<Workout> query, WorkoutFilter filter)
         {
             if (filter == null)

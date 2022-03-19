@@ -103,6 +103,7 @@ namespace WorkoutTracker.Application.Workouts.Services
         {
             IQueryable<ExecutedWorkout> query = _repo.Get();
             var output = query
+                .Where(workout => workout.StartDateTime.HasValue)
                 .OrderByDescending(workout => workout.Id)
                 //.Distinct(workout.Workout.Id) //TODO: Get last n number of distinct by Workout
                 .Take(numberOfMostRecent);
@@ -112,8 +113,25 @@ namespace WorkoutTracker.Application.Workouts.Services
         public ExecutedWorkout GetLatest(int workoutId)
         {
             return _repo.Get()
+                .Where(x => x.StartDateTime.HasValue && x.EndDateTime.HasValue)
                 .OrderByDescending(x => x.Id)
                 .FirstOrDefault(x => x.WorkoutId == workoutId);
+        }
+
+        public int GetTotalCount(ExecutedWorkoutFilter filter)
+        {
+            var query = _repo.Get();
+            ApplyQueryFilters(ref query, filter);
+            return query.Count();
+        }
+
+        public int GetPlannedCount(int userId)
+        {
+            return 
+                _repo.Get()
+                    .Where(x => x.CreatedByUserId == userId 
+                        && !x.StartDateTime.HasValue 
+                        && !x.EndDateTime.HasValue).Count();
         }
 
         #region Private Methods
