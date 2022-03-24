@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
+import { MessageService } from 'primeng/api';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
@@ -73,7 +74,8 @@ export class WorkoutComponent implements OnInit {
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
     private _executedWorkoutService: ExecutedWorkoutService, 
-    private _resistanceBandService: ResistanceBandService) { 
+    private _resistanceBandService: ResistanceBandService, 
+    private _messageService: MessageService) { 
   }
   
 
@@ -120,7 +122,12 @@ export class WorkoutComponent implements OnInit {
   public completeWorkout(): void {
     this.setWorkoutValuesFromFormGroup();
     this.workout.endDateTime = new Date();
-    this.persistWorkoutToServer();
+    this.persistWorkoutToServer(true);
+  }
+
+  public saveWorkoutInProgress(): void {
+    this.setWorkoutValuesFromFormGroup();
+    this.persistWorkoutToServer(false);
   }
   
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
@@ -171,6 +178,12 @@ export class WorkoutComponent implements OnInit {
           });
           
           this.setupExercisesFormGroup(executedWorkout.exercises);
+
+          this.workoutCompleted = (this.workout.endDateTime != null);
+
+          if (executedWorkout.journal) {
+            this.workoutForm.controls.journal.setValue(executedWorkout.journal);
+          }
         }, 
         (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
       );
@@ -214,9 +227,9 @@ export class WorkoutComponent implements OnInit {
         sequence: [exercises[i].sequence], 
         resistance: [exercises[i].resistanceAmount, Validators.required], 
         targetReps: [exercises[i].targetRepCount, Validators.required], //TODO: Populate with data from API once refactored to provide it!
-        actualReps: [0, Validators.required], 
-        formRating: [null, Validators.required], 
-        rangeOfMotionRating: [null, Validators.required], 
+        actualReps: [exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, Validators.required], 
+        formRating: [exercises[i].formRating ? exercises[i].formRating : null, Validators.required], 
+        rangeOfMotionRating: [exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, Validators.required], 
         resistanceMakeup: [exercises[i].resistanceMakeup], 
         bandsEndToEnd: [exercises[i].exercise.bandsEndToEnd], //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
         duration: [120] //TODO: Get/set value from API
@@ -273,15 +286,20 @@ export class WorkoutComponent implements OnInit {
     
   }
 
-  private persistWorkoutToServer(): void {
+  private persistWorkoutToServer(completed: boolean): void {
     this.saving = true;
     this._executedWorkoutService
       .update(this.workout)
       .pipe(finalize(() => { this.saving = false; }))
       .subscribe((workout: ExecutedWorkout) => {
           this.workout = workout;
-          this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
-          this.workoutCompleted = true; //TODO: Disable form
+          if (completed) {
+            this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
+            this.workoutCompleted = true;
+            this._messageService.add({severity:'success', summary: 'Successful', detail: 'Workout completed!', life: 3000});
+          }
+          else
+            this._messageService.add({severity:'success', summary: 'Successful', detail: 'Workout saved!', life: 1000});
         }, 
         (error: any) => { this.setErrorInfo(error, "An error occurred saving workout information. See console for details."); 
       });

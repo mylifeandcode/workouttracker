@@ -4,43 +4,46 @@
           <p-progressSpinner></p-progressSpinner>
       </div>
   </div>
-
+  <p-toast position="center"></p-toast>
   <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
     <h3 class="headroom">{{workout.workout.name}}</h3>
-    
-    <ng-container *ngIf="workout != null">
-      <p>
-        <span *ngIf="workoutStarted">Workout started at {{workout.startDateTime | date:'short'}}</span>
-      </p>
-      <wt-workout-exercise 
-        *ngFor="let exercise of exercisesArray.controls; let i = index" 
-        [formGroup]="exercise" 
-        (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
-        (showTimerRequest)="showTimer($event)">
-      </wt-workout-exercise>
+    <fieldset [disabled]="saving || workoutCompleted">
+      <ng-container *ngIf="workout != null">
+        <p>
+          <span *ngIf="workoutStarted">Workout started at {{workout.startDateTime | date:'short'}}</span>
+          <span *ngIf="workoutCompleted">, completed at {{workout.endDateTime | date:'short'}}</span>
+        </p>
+        <wt-workout-exercise 
+          *ngFor="let exercise of exercisesArray.controls; let i = index" 
+          [formGroup]="exercise" 
+          (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
+          (showTimerRequest)="showTimer($event)"
+          (rangeOfMotionEntered)="saveWorkoutInProgress()">
+        </wt-workout-exercise>
 
-      <div class="row">
-        <div class="col-12">&nbsp;</div>
-      </div>
-
-      <div class="row form-group">
-        <div class="col-md-12">
-          <label for="journal">Notes/Journal</label>
-          <textarea id="journal" class="form-control" formControlName="journal"></textarea>
+        <div class="row">
+          <div class="col-12">&nbsp;</div>
         </div>
-      </div>
 
-      <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || workoutCompleted" (click)="completeWorkout()">Complete Workout</button>
-      <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
-    </ng-container>
-    
+        <div class="row form-group">
+          <div class="col-md-12">
+            <label for="journal">Notes/Journal</label>
+            <textarea id="journal" class="form-control" formControlName="journal"></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || workoutCompleted" (click)="completeWorkout()">Complete Workout</button>
+        <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
+      </ng-container>
+    </fieldset>
   </form>
 
   <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal">
     <wt-resistance-band-select 
       [resistanceBandInventory]="allResistanceBands"
       (okClicked)="resistanceBandsModalAccepted($event)"
-      (cancelClicked)="resistanceBandsModalCancelled()">
+      (cancelClicked)="resistanceBandsModalCancelled()"
+      (rangeOfMotionEntered)="saveWorkoutInProgress()">
     </wt-resistance-band-select>
   </p-dialog>
 

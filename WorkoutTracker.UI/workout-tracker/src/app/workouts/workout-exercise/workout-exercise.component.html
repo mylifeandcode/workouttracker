@@ -86,7 +86,7 @@
                         </select>
                     </div>
                     <div class="col-2 exercise-dropdown-cell">
-                        <select class="form-control" formControlName="rangeOfMotionRating" required> <!--TODO: Set up differenty, this is just for POC-->
+                        <select class="form-control" formControlName="rangeOfMotionRating" (change)="rangeOfMotionChanged()" required> <!--TODO: Set up differenty, this is just for POC-->
                             <option value=0>N/A</option>
                             <option value=1>Bad</option>
                             <option value=2>Poor</option>

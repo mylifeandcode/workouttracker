@@ -31,6 +31,9 @@ export class WorkoutExerciseComponent implements OnInit {
   @Output()
   showTimerRequest = new EventEmitter<FormGroup>();
 
+  @Output()
+  rangeOfMotionEntered = new EventEmitter();
+
   //Properties
   get setsArray(): FormArray {
     //This property provides an easier way for the template to access this information,
@@ -49,5 +52,9 @@ export class WorkoutExerciseComponent implements OnInit {
 
   public showTimer(formGroup: FormGroup): void {
     this.showTimerRequest.emit(formGroup);
+  }
+
+  public rangeOfMotionChanged(): void {
+    this.rangeOfMotionEntered.emit();
   }
 }
