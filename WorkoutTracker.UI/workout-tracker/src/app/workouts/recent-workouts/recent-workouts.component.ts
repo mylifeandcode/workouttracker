@@ -15,6 +15,7 @@ export class RecentWorkoutsComponent implements OnInit {
   public recentWorkouts: ExecutedWorkoutDTO[];
   public showExercises: boolean = false;
   public selectedWorkout: Workout;
+  public loading: boolean = true;
 
   @Input()
   planningForLater: boolean;
@@ -28,7 +29,10 @@ export class RecentWorkoutsComponent implements OnInit {
   public ngOnInit(): void {
     this._executedWorkoutService
       .getRecent()
-      .subscribe((workouts: ExecutedWorkoutDTO[]) => this.recentWorkouts = workouts);
+      .subscribe((workouts: ExecutedWorkoutDTO[]) => {
+        this.recentWorkouts = workouts;
+        this.loading = false; //TODO: Use finalize and set this there instead.
+      });
   }
 
   public viewExercises(workoutId: number): void {
