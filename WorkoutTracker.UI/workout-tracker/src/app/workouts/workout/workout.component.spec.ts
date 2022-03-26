@@ -19,6 +19,7 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { Workout } from '../models/workout';
 import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
+import { MessageService } from 'primeng/api';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -119,6 +120,10 @@ class ActivatedRouteMock {
       executedWorkoutId: 12         
   }));
 }
+
+class MessageServiceMock {
+  add = jasmine.createSpy('add');
+}
 //END SERVICE MOCK CLASSES ////////////////////////////////////////////////////
 
 //COMPONENT MOCK CLASSES //////////////////////////////////////////////////////
@@ -198,6 +203,10 @@ describe('WorkoutComponent', () => {
         {
           provide: ActivatedRoute, 
           useClass: ActivatedRouteMock
+        },
+        {
+          provide: MessageService,
+          useClass: MessageServiceMock
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

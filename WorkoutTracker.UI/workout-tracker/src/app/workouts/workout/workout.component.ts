@@ -296,10 +296,10 @@ export class WorkoutComponent implements OnInit {
           if (completed) {
             this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
             this.workoutCompleted = true;
-            this._messageService.add({severity:'success', summary: 'Successful', detail: 'Workout completed!', life: 3000});
+            this._messageService.add({severity:'success', summary: 'Success!', detail: 'Workout completed!', life: 3000});
           }
           else
-            this._messageService.add({severity:'success', summary: 'Successful', detail: 'Workout saved!', life: 1000});
+            this._messageService.add({severity:'success', summary: 'Success!', detail: 'Progress updated!', life: 1000});
         }, 
         (error: any) => { this.setErrorInfo(error, "An error occurred saving workout information. See console for details."); 
       });
