@@ -3,7 +3,7 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
 //Third-Party imports
@@ -36,18 +36,26 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { QuickActionsComponent } from './quick-actions/quick-actions.component';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { Config } from './core/models/config';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-
-export function initializeApp(configService: ConfigService, userService: UserService, authService: AuthService) {
-  return () => {
-    console.log("APP IS INITIALIZING");
-    configService.init(environment);
-    authService.init();
-    authService.restoreUserSessionIfApplicable(); 
-    userService.init();
-  };
+function initializeApp(
+  configService: ConfigService, 
+  userService: UserService, 
+  authService: AuthService, 
+  http: HttpClient): () => Observable<any> {
+  return () => http.get("config.json")
+    .pipe(
+      tap((config: Config) => {
+        console.log("Loaded config: ", config);
+        configService.init(config);
+        authService.init();
+        authService.restoreUserSessionIfApplicable(); 
+        userService.init();
+      })
+    );
 }
-
 
 @NgModule({
   declarations: [
@@ -77,7 +85,7 @@ export function initializeApp(configService: ConfigService, userService: UserSer
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
-      deps: [ConfigService, UserService, AuthService],
+      deps: [ConfigService, UserService, AuthService, HttpClient],
       multi: true
     },
     CookieService
