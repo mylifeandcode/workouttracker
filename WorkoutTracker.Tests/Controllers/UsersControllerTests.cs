@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.UI.Controllers;
+using WorkoutTracker.Application.Workouts.Interfaces;
 
 namespace WorkoutTracker.Tests.Controllers
 {
@@ -16,9 +17,10 @@ namespace WorkoutTracker.Tests.Controllers
         {
             //ARRANGE
             var users = new List<User>(2) { new User { Id = 1 }, new User { Id = 2 } };
-            var service = new Mock<IUserService>(MockBehavior.Strict);
-            service.Setup(mock => mock.GetAll()).Returns(users);
-            var sut = new UsersController(service.Object);
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+            userService.Setup(mock => mock.GetAll()).Returns(users);
+            var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
 
             //ACT
             var result = sut.Get();
@@ -28,7 +30,7 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             Assert.AreEqual(users, (result.Result as OkObjectResult).Value);
 
-            service.Verify(mock => mock.GetAll(), Times.Once);
+            userService.Verify(mock => mock.GetAll(), Times.Once);
         }
 
         [TestMethod]
@@ -36,9 +38,10 @@ namespace WorkoutTracker.Tests.Controllers
         {
             //ARRANGE
             var user = new User();
-            var service = new Mock<IUserService>(MockBehavior.Strict);
-            service.Setup(mock => mock.GetById(It.IsAny<int>())).Returns(user);
-            var sut = new UsersController(service.Object);
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+            userService.Setup(mock => mock.GetById(It.IsAny<int>())).Returns(user);
+            var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
 
             //ACT
             var result = sut.Get(1);
@@ -47,7 +50,7 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             Assert.AreEqual(user, (result.Result as OkObjectResult).Value);
-            service.Verify(mock => mock.GetById(1), Times.Once);
+            userService.Verify(mock => mock.GetById(1), Times.Once);
         }
 
         [TestMethod]
@@ -55,9 +58,10 @@ namespace WorkoutTracker.Tests.Controllers
         {
             //ARRANGE
             User user = null;
-            var service = new Mock<IUserService>(MockBehavior.Strict);
-            service.Setup(mock => mock.GetById(It.IsAny<int>())).Returns(user);
-            var sut = new UsersController(service.Object);
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+            userService.Setup(mock => mock.GetById(It.IsAny<int>())).Returns(user);
+            var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
 
             //ACT
             var result = sut.Get(2);
@@ -65,7 +69,7 @@ namespace WorkoutTracker.Tests.Controllers
             //ASSERT
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
-            service.Verify(mock => mock.GetById(2), Times.Once);
+            userService.Verify(mock => mock.GetById(2), Times.Once);
         }
 
         [TestMethod]
@@ -73,9 +77,10 @@ namespace WorkoutTracker.Tests.Controllers
         {
             //ARRANGE
             var user = new User();
-            var service = new Mock<IUserService>(MockBehavior.Strict);
-            service.Setup(mock => mock.Add(user)).Returns(user);
-            var sut = new UsersController(service.Object);
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+            userService.Setup(mock => mock.Add(user)).Returns(user);
+            var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
             SetupUser(sut);
 
             //ACT
@@ -85,7 +90,7 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             Assert.AreEqual(user, (result.Result as OkObjectResult).Value);
-            service.Verify(mock => mock.Add(user), Times.Once);
+            userService.Verify(mock => mock.Add(user), Times.Once);
         }
 
         [TestMethod]
@@ -93,9 +98,10 @@ namespace WorkoutTracker.Tests.Controllers
         {
             //ARRANGE
             var user = new User();
-            var service = new Mock<IUserService>(MockBehavior.Strict);
-            service.Setup(mock => mock.Update(user)).Returns(user);
-            var sut = new UsersController(service.Object);
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+            userService.Setup(mock => mock.Update(user)).Returns(user);
+            var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
             SetupUser(sut);
 
             //ACT
@@ -105,16 +111,17 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             Assert.AreEqual(user, (result.Result as OkObjectResult).Value);
-            service.Verify(mock => mock.Update(user), Times.Once);
+            userService.Verify(mock => mock.Update(user), Times.Once);
         }
 
         [TestMethod]
         public void Should_Delete()
         {
             //ARRANGE
-            var service = new Mock<IUserService>(MockBehavior.Strict);
-            service.Setup(mock => mock.Delete(It.IsAny<int>()));
-            var sut = new UsersController(service.Object);
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+            userService.Setup(mock => mock.Delete(It.IsAny<int>()));
+            var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
 
             //ACT
             var result = sut.Delete(1);
@@ -122,7 +129,7 @@ namespace WorkoutTracker.Tests.Controllers
             //ASSERT
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
-            service.Verify(mock => mock.Delete(1), Times.Once);
+            userService.Verify(mock => mock.Delete(1), Times.Once);
         }
     }
 }
