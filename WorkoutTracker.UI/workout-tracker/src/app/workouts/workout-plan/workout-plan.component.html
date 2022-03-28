@@ -29,8 +29,8 @@
           [workoutHasBeenExecutedBefore]="workoutPlan.hasBeenExecutedBefore"
           (resistanceBandsModalRequested)="resistanceBandsModalEnabled($event)">
         </wt-exercise-plan>
-        
-        <div class="row">
+
+        <div class="row submit-row">
           <div class="col-12">
             <button *ngIf="!planningForLater" type="submit" class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
             <button *ngIf="planningForLater" type="submit" class="btn btn-primary" (click)="submitPlanForLater()" [disabled]="workoutPlanForm.invalid || isProcessing">Save Workout Plan</button>

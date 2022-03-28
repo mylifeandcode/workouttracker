@@ -1,17 +1,17 @@
 <div class="row" *ngIf="formGroup" [formGroup]="formGroup">
   <div class="col-12">
 
-    <div class="row">
+    <div class="row exercise-name">
       <div class="col-12"><h5 class="exercise-header-row">{{formGroup.controls['exerciseName'].value}}</h5></div>
     </div>
 
     <!--LAST TIME-->
-    <div *ngIf="workoutHasBeenExecutedBefore" class="row">
+    <div *ngIf="workoutHasBeenExecutedBefore" class="row last-time">
       <div class="col-12">
         <strong>Last Time</strong>
       </div>
     </div>
-    <div *ngIf="workoutHasBeenExecutedBefore" class="row">
+    <div *ngIf="workoutHasBeenExecutedBefore" class="row last-time">
       <div class="col-2 form-group">
         Target Rep Count: <span class="pre-pop-value">{{formGroup.controls['targetRepCountLastTime'].value}}</span>
       </div>
@@ -54,12 +54,12 @@
     </div>
 
     <!--THIS TIME-->
-    <div *ngIf="workoutHasBeenExecutedBefore" class="row">
+    <div *ngIf="workoutHasBeenExecutedBefore" class="row this-time">
       <div class="col-12">
         <strong>This Time</strong>
       </div>
     </div>
-    <div class="row">
+    <div class="row this-time">
       <div class="col-2 form-group">
         <label>
           Target Rep Count
