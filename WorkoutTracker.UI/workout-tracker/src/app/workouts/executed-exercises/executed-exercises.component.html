@@ -25,13 +25,13 @@
     <div class="col-1 reps-div">
         Target Reps
     </div>
-    <div class="col-1 reps-div">
+    <div *ngIf="showResults" class="col-1 reps-div">
         Actual Reps
     </div>
-    <div class="col-2">
+    <div *ngIf="showResults" class="col-2">
         Form
     </div>
-    <div class="col-2">
+    <div *ngIf="showResults" class="col-2">
         Range of Motion
     </div>
   </div>
@@ -57,15 +57,15 @@
     <div class="col-1">
         {{exercise.targetRepCount}}
     </div>
-    <div class="col-1">
+    <div *ngIf="showResults" class="col-1">
         {{exercise.actualRepCount}}
     </div>
 
-    <div class="col-2">
+    <div *ngIf="showResults" class="col-2">
         {{exercise.formRating | rating}}
     </div>
 
-    <div class="col-2">
+    <div *ngIf="showResults" class="col-2">
         {{exercise.rangeOfMotionRating | rating}}
     </div>
     

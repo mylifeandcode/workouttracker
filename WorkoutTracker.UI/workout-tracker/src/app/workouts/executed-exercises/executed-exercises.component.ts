@@ -11,6 +11,9 @@ export class ExecutedExercisesComponent implements OnInit {
   @Input()
   executedExercises: ExecutedExercise[];
 
+  @Input()
+  showResults: boolean;
+
   constructor() { }
 
   ngOnInit(): void {

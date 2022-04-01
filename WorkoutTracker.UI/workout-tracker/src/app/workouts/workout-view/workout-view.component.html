@@ -13,17 +13,21 @@
     </div>
 
     <div class="row">
-      <div class="col-12">
+      <div *ngIf="executedWorkout.startDateTime != null" class="col-12">
         Started {{executedWorkout.startDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}, completed {{executedWorkout.endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}
+      </div>
+      <div *ngIf="executedWorkout.startDateTime == null" class="col-12">
+        This is a <strong>planned</strong> workout. Currently, planned workouts can't be edited, so to make changes, start the workout and edit the values as you go. Currently, planned workouts can't be deleted.
       </div>
     </div>
 
     <wt-executed-exercises
       *ngFor="let exerciseGroup of groupedExercises | keyvalue" 
-      [executedExercises]="exerciseGroup.value">
+      [executedExercises]="exerciseGroup.value"
+      [showResults]="executedWorkout.startDateTime != null">
     </wt-executed-exercises>
 
-    <div class="row headroom">
+    <div *ngIf="executedWorkout.startDateTime != null" class="row headroom">
       <div class="col-12">
         Notes/Journal<br />
         {{executedWorkout.journal}}
