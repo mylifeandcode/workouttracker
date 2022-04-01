@@ -25,8 +25,14 @@ export class ExercisePlanComponent {
     this.resistanceBandsModalRequested.emit(formGroup);
   }
 
-  public useSameResistanceAsLastTime(formGroup: FormGroup): void {
-    window.alert("Functionality not ready yet."); //TODO: Implement
+  public useSameResistanceAsLastTime(): void {
+    
+    //A strong-typed FormGroup would be great for this
+    this.formGroup.patchValue({
+      resistanceAmount: this.formGroup.controls['resistanceAmountLastTime'].value, 
+      resistanceMakeup: this.formGroup.controls['resistanceMakeupLastTime'].value
+    }); 
+
   }
 
 }

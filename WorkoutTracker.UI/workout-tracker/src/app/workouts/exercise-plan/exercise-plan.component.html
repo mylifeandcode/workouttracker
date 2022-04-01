@@ -77,8 +77,8 @@
               ({{formGroup.controls['resistanceMakeup'].value}})
             </ng-container>
             <button class="lead-space btn btn-primary btn-sm" (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
-            <button *ngIf="workoutHasBeenExecutedBefore" class="lead-space btn btn-primary btn-sm" (click)="useSameResistanceAsLastTime(formGroup)">Use Same Resistance as Last Time</button>
           </span>
+          <button *ngIf="workoutHasBeenExecutedBefore && formGroup.controls['resistanceType'].value!=3" class="lead-space btn btn-primary btn-sm" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last Time</button>
           <span *ngIf="formGroup.controls['resistanceType'].value==3" class="no-input-value">
             Body Weight
           </span>
