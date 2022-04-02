@@ -22,12 +22,15 @@ export class UserSelectComponent implements OnInit {
     private _router: Router) { }
 
   public ngOnInit(): void {
+    if (this._authService.loginRoute != "user-select")
+      this._router.navigate([this._authService.loginRoute]);
+
     this.loadingUsers = true;
     this._userSvc.getAll().subscribe((results: Array<User>) => {
       this.users = results;
       this.loadingUsers = false;
     }, (error: any) => {
-      this.errorMsg = error;
+      this.errorMsg = error.message;
       this.loadingUsers = false;
     });
   }

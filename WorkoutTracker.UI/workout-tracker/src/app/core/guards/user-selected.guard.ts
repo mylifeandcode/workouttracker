@@ -14,7 +14,7 @@ export class UserSelectedGuard implements CanActivate {
 
     if (!this._authService.isUserLoggedIn) {
       returnValue = false;
-      this._router.navigate(['login']);
+      this._router.navigate([this._authService.loginRoute]);
     }
 
     return returnValue;

@@ -24,7 +24,7 @@ describe('UserSelectedGuard', () => {
         UserSelectedGuard,
         {
           provide: AuthService,
-          useValue: jasmine.createSpyObj("AuthService", {}, { isUserLoggedIn: false })
+          useValue: jasmine.createSpyObj("AuthService", {}, { isUserLoggedIn: false, loginRoute: 'login' })
         }
       ]
     });

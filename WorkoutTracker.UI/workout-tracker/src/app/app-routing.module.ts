@@ -16,7 +16,7 @@ const routes: Routes = [
     canActivate: [UserNotSelectedGuard]
   },
   {
-    path: 'login',
+    path: 'user-select',
     component: UserSelectComponent,
     canActivate: [UserNotSelectedGuard]
   },
@@ -31,7 +31,7 @@ const routes: Routes = [
     canActivate: [UserSelectedGuard]
   }, 
   {
-    path: 'userlogin', 
+    path: 'login', 
     component: LoginComponent
   },
   {

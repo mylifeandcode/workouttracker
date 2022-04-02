@@ -1,16 +1,27 @@
-<div *ngIf="loadingUsers" class="container-fluid row offset-md-4 col-md-4 centeredText">
-  Loading users...
+<div *ngIf="loadingUsers" class="container-fluid wallpaper">
+  <br />
+  <div class="row">
+    <div class="col-12 text-center">
+      <h4>Loading users...</h4><br />
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  </div>
 </div>
 
-<div *ngIf="!loadingUsers" class="container-fluid wallpaper">
+<div *ngIf="errorMsg" class="container-fluid wallpaper">
+  <div class="row">
+    <div class="offset-2 col-8 text-center">
+      <br />
+      <h4>Oops! An error occurred: {{errorMsg}}</h4>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!loadingUsers && errorMsg==null" class="container-fluid wallpaper">
   <br />
   <div class="row offset-md-4 col-md-4">
     <h3 *ngIf="!gettingUserInfo" class="text-center mx-auto greeting-text">Who are you?</h3>
     <h3 *ngIf="gettingUserInfo" class="text-center mx-auto greeting-text">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
-  </div>
-
-  <div *ngIf="errorMsg">
-    <h3>{{errorMsg}}</h3>
   </div>
 
   <ng-container *ngIf="!gettingUserInfo">

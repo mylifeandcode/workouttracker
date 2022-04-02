@@ -7,6 +7,9 @@ import { AuthService } from 'app/core/auth.service';
 
 class AuthServiceMock {
   logOut = jasmine.createSpy('logOut');
+  public get loginRoute(): string {
+    return "login";
+  }
 }
 
 @Component({})

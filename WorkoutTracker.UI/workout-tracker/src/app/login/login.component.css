@@ -11,5 +11,11 @@ button {
 }
 
 .login-failed {
+  padding-top: 14px;
+  color: red;
+  font-weight: bold;
+}
+
+.form-error {
   color: red;
 }

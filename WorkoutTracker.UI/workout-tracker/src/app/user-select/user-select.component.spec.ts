@@ -16,6 +16,9 @@ class UserServiceMock {
 
 class AuthServiceMock {
   logIn = jasmine.createSpy('logIn').and.returnValue(of(true));
+  public get loginRoute(): string {
+    return "user-select";
+  }
 }
 
 describe('UserSelectComponent', () => {

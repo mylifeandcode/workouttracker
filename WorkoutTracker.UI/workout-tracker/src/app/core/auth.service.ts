@@ -1,12 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { ConfigService } from './config.service';
 import { LocalStorageService } from './local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
-import { catchError, map, of } from 'rxjs/operators';
-
+import { catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -31,12 +31,18 @@ export class AuthService {
   //READ-ONLY FIELDS
   private readonly LOCAL_STORAGE_TOKEN_KEY = "WorkoutTrackerToken";
 
+  //READ-ONLY PROPERTIES
+  public get loginRoute(): string {
+    return this._loginRoute;
+  }
+
   //PUBLIC FIELDS
   public token: string;
   public decodedTokenPayload: JwtPayload;
 
   //PRIVATE FIELDS
   private _apiRoot: string;
+  private _loginRoute: string;
 
   private _userSubject$ = new BehaviorSubject<string>(null);
   private _userObservable$: Observable<string> = this._userSubject$.asObservable();
@@ -75,10 +81,12 @@ export class AuthService {
   public init(): void {
     //Race condition in app initializer prevents this from being done in constructor
     this._apiRoot = this._configService.get("apiRoot") + "auth";
+    this._loginRoute = this._configService.get("loginWithUserSelect") ? "user-select" : "login";
   }
 
   public logIn(username: string, password: string): Observable<boolean> {
-    return this._http.post<string>(`${this._apiRoot}/login`, { username, password }, HTTP_OPTIONS_FOR_TEXT_RESPONSE) //TODO: Create strong type for credentials object
+    return this._http
+      .post<string>(`${this._apiRoot}/login`, { username, password }, HTTP_OPTIONS_FOR_TEXT_RESPONSE) //TODO: Create strong type for credentials object
       .pipe(
         map((token: string) => {
           //Using map() here so I can act on the result and then return a boolean.
@@ -88,19 +96,16 @@ export class AuthService {
           this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, token);
           this.decodedTokenPayload = jwtDecode<JwtPayload>(this.token);
           return true;
-        })/*,
-        catchError(error => {
-          return of(false);
-        })*/
+        }), 
+        catchError((err: any, caught: Observable<boolean>) => of(false))
       );
   }
-
 
   public logOut(): void {
     this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);
     this.token = null;
     this._userSubject$.next(null);
-    this._router.navigate(['login']);
+    this._router.navigate([this._loginRoute]);
   }
   
   public restoreUserSessionIfApplicable(): void {

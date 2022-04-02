@@ -23,6 +23,9 @@ export class LoginComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    if (this._authService.loginRoute != "login")
+      this._router.navigate([this._authService.loginRoute]);
+
     this.createForm();
   }
 
@@ -33,7 +36,6 @@ export class LoginComponent implements OnInit {
       .logIn(this.loginForm.controls.username.value, this.loginForm.controls.password.value)
       .pipe(finalize(() => { this.loggingIn = false; }))
       .subscribe((success: boolean) => {
-        window.alert('success: ' + success);
         if(success)
           this._router.navigate(['home']);
         else
@@ -41,10 +43,14 @@ export class LoginComponent implements OnInit {
       });
   }
 
+  public registerNewUser(): void {
+    window.alert("Coming soon for this version of login!");
+  }
+
   private createForm(): void {
     this.loginForm = this._formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
+      username: [null, Validators.required],
+      password: [null, Validators.required]
     });
   }
 
