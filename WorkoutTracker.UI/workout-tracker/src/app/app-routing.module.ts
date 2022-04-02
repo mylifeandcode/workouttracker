@@ -7,6 +7,7 @@ import { UserNotSelectedGuard } from './core/guards/user-not-selected.guard';
 import { UserIsAdminGuard } from './admin/guards/user-is-admin.guard';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   {
@@ -29,6 +30,10 @@ const routes: Routes = [
     component: HomeComponent,
     canActivate: [UserSelectedGuard]
   }, 
+  {
+    path: 'userlogin', 
+    component: LoginComponent
+  },
   {
     path: 'denied',
     component: AccessDeniedComponent

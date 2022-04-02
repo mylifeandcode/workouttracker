@@ -1,0 +1,15 @@
+div {
+  color: white;
+}
+
+.bump-it-down {
+  padding-top: 24px;
+}
+
+button {
+  width: 80%;
+}
+
+.login-failed {
+  color: red;
+}

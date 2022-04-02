@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { ConfigService } from './config.service';
 import { LocalStorageService } from './local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
-import { map } from 'rxjs/operators';
+import { catchError, map, of } from 'rxjs/operators';
 
 
 const HTTP_OPTIONS = {
@@ -88,7 +88,10 @@ export class AuthService {
           this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, token);
           this.decodedTokenPayload = jwtDecode<JwtPayload>(this.token);
           return true;
-        })
+        })/*,
+        catchError(error => {
+          return of(false);
+        })*/
       );
   }
 
@@ -141,4 +144,3 @@ export class AuthService {
   }
 
 }
-

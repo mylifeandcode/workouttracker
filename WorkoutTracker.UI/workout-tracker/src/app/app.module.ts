@@ -39,6 +39,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Config } from './core/models/config';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { LoginComponent } from './login/login.component';
 
 function initializeApp(
   configService: ConfigService, 
@@ -67,7 +68,8 @@ function initializeApp(
     AccessDeniedComponent,
     WelcomeComponent,
     QuickActionsComponent,
-    UserOverviewComponent
+    UserOverviewComponent,
+    LoginComponent
   ],
   imports: [
     AppRoutingModule,

@@ -43,6 +43,9 @@ namespace WorkoutTracker.UI.Controllers
 
             var user = _userService.GetAll().FirstOrDefault(x => x.Name == credentials.Username);
 
+            if (user == null)
+                return new NotFoundResult();
+
             if (!string.IsNullOrWhiteSpace(user.HashedPassword))
             {
                 //TODO: Hash the supplied password and compared it hashed password on the user object
