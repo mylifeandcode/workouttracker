@@ -23,9 +23,6 @@ export class LoginComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    if (this._authService.loginRoute != "login")
-      this._router.navigate([this._authService.loginRoute]);
-
     this.createForm();
   }
 

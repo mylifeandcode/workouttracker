@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
 
@@ -20,6 +20,9 @@ export class UserNotSelectedGuard implements CanActivate {
         returnValue = false;
         this._router.navigate(['home']);
       }
+
+      if(state.url.indexOf(this._authService.loginRoute) < 0)
+        this._router.navigate([this._authService.loginRoute]);
 
       return returnValue;
 

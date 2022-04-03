@@ -32,11 +32,14 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || workoutCompleted" (click)="completeWorkout()">Complete Workout</button>
+        <button type="submit" *ngIf="!workoutCompleted" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || workoutCompleted" (click)="completeWorkout()">Complete Workout</button>
         <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
       </ng-container>
     </fieldset>
   </form>
+  <button *ngIf="workoutCompleted" class="btn btn-success" routerLink="/workouts/history">View Workout History</button>
+  &nbsp;
+  <button *ngIf="workoutCompleted" class="btn btn-success" routerLink="/workouts/select-for-later">Plan Next Workout</button>
 
   <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal">
     <wt-resistance-band-select 

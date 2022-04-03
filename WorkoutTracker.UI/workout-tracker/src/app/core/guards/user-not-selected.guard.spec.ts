@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { Router, RouterStateSnapshot } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from '../auth.service';
 import { UserNotSelectedGuard } from './user-not-selected.guard';
@@ -8,6 +8,8 @@ import { UserNotSelectedGuard } from './user-not-selected.guard';
 class AuthServiceMock {
   isUserLoggedIn =
     jasmine.createSpy('isUserLoggedIn').and.returnValue(true);
+
+  loginRoute: string = "login";
 }
 
 @Component({})
@@ -43,9 +45,10 @@ describe('UserNotSelectedGuard', () => {
     //ARRANGE
     const router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.callThrough();
+    const state = <RouterStateSnapshot>{ url: "login" };
 
     //ACT
-    const result = guard.canActivate(null, null);
+    const result = guard.canActivate(null, state);
 
     //ASSERT
     expect(result).toBeFalse();

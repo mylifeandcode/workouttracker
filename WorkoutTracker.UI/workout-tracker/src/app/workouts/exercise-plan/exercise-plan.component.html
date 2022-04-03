@@ -18,13 +18,13 @@
       <div class="col-2 form-group">
         Avg Actual Rep Count: <span class="pre-pop-value">{{formGroup.controls['avgActualRepCountLastTime'].value}}</span>
       </div>
-      <div class="col-2 form-group">
+      <div class="col-3 form-group">
         Avg Range of Motion: <span class="pre-pop-value">{{formGroup.controls['avgRangeOfMotionLastTime'].value | rating}}</span>
       </div>
       <div class="col-2 form-group">
         Avg Form: <span class="pre-pop-value">{{formGroup.controls['avgFormLastTime'].value | rating}}</span>
       </div>
-      <div class="col-4 form-group">
+      <div class="col-3 form-group">
         Resistance: <span class="pre-pop-value">{{formGroup.controls['resistanceType'].value==3 ? 'Body Weight' : formGroup.controls['resistanceAmountLastTime'].value}}</span>
         <span *ngIf="formGroup.controls['resistanceMakeupLastTime'].value">
           ({{formGroup.controls['resistanceMakeupLastTime'].value}})
@@ -76,9 +76,9 @@
               {{formGroup.controls['resistanceAmount'].value}}
               ({{formGroup.controls['resistanceMakeup'].value}})
             </ng-container>
-            <button class="lead-space btn btn-primary btn-sm" (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
+            <button class="lead-space btn btn-choose-resistance btn-sm" (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
           </span>
-          <button *ngIf="workoutHasBeenExecutedBefore && formGroup.controls['resistanceType'].value!=3" class="lead-space btn btn-primary btn-sm" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last Time</button>
+          <button *ngIf="workoutHasBeenExecutedBefore && formGroup.controls['resistanceType'].value!=3" class="lead-space btn btn-same-as-last-time btn-sm" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last Time</button>
           <span *ngIf="formGroup.controls['resistanceType'].value==3" class="no-input-value">
             Body Weight
           </span>
