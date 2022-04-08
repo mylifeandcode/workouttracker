@@ -22,7 +22,7 @@ export class ExerciseEditComponent implements OnInit {
   public loading: boolean = true;
   public allTargetAreas: TargetArea[];
   public resistanceTypes: Map<number, string>;
-  public infoMsg: string = null;
+  public infoMsg: string | null = null;
 
   //PUBLIC PROPERTIES
   public get isNew(): boolean {
@@ -33,7 +33,7 @@ export class ExerciseEditComponent implements OnInit {
   private _exercise: Exercise; 
   private _exerciseId: number = 0; //TODO: Refactor. We have an exercise variable. Why have this too?
   private _saving: boolean = false;
-  private _errorMsg: string = null;
+  private _errorMsg: string | null = null;
 
   constructor(
     private _route: ActivatedRoute,
@@ -58,16 +58,16 @@ export class ExerciseEditComponent implements OnInit {
   private setupTargetAreas(exerciseTargetAreaLinks: ExerciseTargetAreaLink[]): void {
     //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
 
-    const checkboxes = <FormGroup>this.exerciseForm.get('targetAreas');
+    const checkboxesFormGroup = <FormGroup>this.exerciseForm.get('targetAreas');
 
     //I wanted to set the value of each checkbox to the ID of the target area, which was fine 
     //initially, but on toggling Angular set the value to a boolean.
 
     this.allTargetAreas.forEach((targetArea: TargetArea) => {
-      checkboxes.addControl(targetArea.name, new FormControl(_.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id)));
+      checkboxesFormGroup.addControl(targetArea.name, new FormControl(_.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id)));
     });
 
-    checkboxes.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);
+    checkboxesFormGroup.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);
   }
 
   private subscribeToRouteParamsToSetupFormOnExerciseIdChange(): void {
@@ -124,16 +124,16 @@ export class ExerciseEditComponent implements OnInit {
   private updateExerciseForPersisting(): void {
 
     //exercise.id = this.exerciseForm.get("id").value;
-    this._exercise.name = this.exerciseForm.get("name").value;
-    this._exercise.description = this.exerciseForm.get("description").value;
-    this._exercise.setup = this.exerciseForm.get("setup").value;
-    this._exercise.movement = this.exerciseForm.get("movement").value;
-    this._exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember").value;
-    this._exercise.resistanceType = this.exerciseForm.get("resistanceTypes").value;
-    this._exercise.oneSided = Boolean(this.exerciseForm.get("oneSided").value); //Call to Boolean() is a workaround to initializer and setValue() not setting value to false as stated
+    this._exercise.name = this.exerciseForm.get("name")?.value;
+    this._exercise.description = this.exerciseForm.get("description")?.value;
+    this._exercise.setup = this.exerciseForm.get("setup")?.value;
+    this._exercise.movement = this.exerciseForm.get("movement")?.value;
+    this._exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember")?.value;
+    this._exercise.resistanceType = this.exerciseForm.get("resistanceTypes")?.value;
+    this._exercise.oneSided = Boolean(this.exerciseForm.get("oneSided")?.value); //Call to Boolean() is a workaround to initializer and setValue() not setting value to false as stated
     
     if (this._exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
-    this._exercise.bandsEndToEnd = Boolean(this.exerciseForm.get("endToEnd").value); //Call to Boolean() is a workaround (see above)
+    this._exercise.bandsEndToEnd = Boolean(this.exerciseForm.get("endToEnd")?.value); //Call to Boolean() is a workaround (see above)
 
     this._exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
 
@@ -151,10 +151,12 @@ export class ExerciseEditComponent implements OnInit {
     for(var key in this.exerciseForm.value.targetAreas) {
       if (this.exerciseForm.value.targetAreas[key]) {
         let selectedTargetArea = _.find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key); 
-        output.push(new ExerciseTargetAreaLink(
-          this._exerciseId, 
-          selectedTargetArea.id
-        ));
+        if (selectedTargetArea) {
+          output.push(new ExerciseTargetAreaLink(
+            this._exerciseId, 
+            selectedTargetArea.id
+          ));
+        }
       }
     }
 

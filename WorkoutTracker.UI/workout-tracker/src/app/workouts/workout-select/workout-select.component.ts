@@ -58,7 +58,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToUser(): void {
-    this._authService.currentUserName.subscribe((username: string) => {
+    this._authService.currentUserName.subscribe((username: string | null) => {
       this.getUserWorkouts();
     });
   }

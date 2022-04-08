@@ -17,16 +17,19 @@ export class ExerciseListMiniComponent extends ExerciseListBase {
   }
 
   public getExercisesLazy(event: any): void {
-      let nameContains: string;
-      let targetAreaContains: string;
 
-      if (event.filters["name"])
-          nameContains = event.filters["name"].value;
+    //TODO: Revisit. Similar code exists in ExerciseListComponent.
 
-      if (event.filters["targetAreas"])
-          targetAreaContains = event.filters["targetAreas"].value;
+    let nameContains: string | null = null;
+    let targetAreaContains: string | null = null;
 
-      this.getExercises(event.first, nameContains, targetAreaContains);
+    if (event.filters["name"])
+        nameContains = event.filters["name"].value;
+
+    if (event.filters["targetAreas"])
+        targetAreaContains = event.filters["targetAreas"].value;
+
+    this.getExercises(event.first, nameContains, targetAreaContains);
   }
 
   private selectExercise(exercise: ExerciseDTO): void {

@@ -107,8 +107,8 @@ export class UserEditComponent implements OnInit {
   private getUserForPersist(): User {
     const user = new User();
 
-    user.id = this.userEditForm.get("id").value;
-    user.name = this.userEditForm.get("name").value;
+    user.id = this.userEditForm.get("id")?.value;
+    user.name = this.userEditForm.get("name")?.value;
 
     return user;
   }

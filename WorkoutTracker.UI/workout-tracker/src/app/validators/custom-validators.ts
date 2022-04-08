@@ -1,5 +1,5 @@
 ﻿//From https://stackoverflow.com/questions/42038099/validation-on-a-list-of-checkboxes-angular-2
-import { FormArray, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export class CustomValidators {
     static multipleCheckboxRequireOne(fa: FormArray) {
@@ -17,13 +17,20 @@ export class CustomValidators {
         };
     }
 
-    static formGroupOfBooleansRequireOneTrue(formGroup: FormGroup) {
+    /*
+    This validator is an example of cross-field validation.
+    For more info: https://angular.io/guide/form-validation#cross-field-validation
+    */
+    static formGroupOfBooleansRequireOneTrue: ValidatorFn = 
+      (control: AbstractControl): ValidationErrors | null => {
         let valid = false;
 
-        for (const field in formGroup.controls) {
-            const control = formGroup.get(field);
+        const formGroup = <FormGroup>control;
 
-            if(control.value) {
+        for (const field in formGroup.controls) {
+            const formGroupControl = control.get(field);
+
+            if(formGroupControl?.value) {
                 valid = true;
                 break;
             }
@@ -32,6 +39,5 @@ export class CustomValidators {
         return valid ? null : {
             formGroupOfBooleansRequireOneTrue: true
         };
-
-    }
+      }
 }

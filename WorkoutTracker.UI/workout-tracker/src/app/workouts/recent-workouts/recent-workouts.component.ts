@@ -14,7 +14,7 @@ export class RecentWorkoutsComponent implements OnInit {
 
   public recentWorkouts: ExecutedWorkoutDTO[];
   public showExercises: boolean = false;
-  public selectedWorkout: Workout;
+  public selectedWorkout: Workout | null;
   public loading: boolean = true;
 
   @Input()

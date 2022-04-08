@@ -70,7 +70,7 @@ export class ResistanceBandSelectComponent implements OnInit {
     selectedBandColors.forEach((bandColor: string) => {
       //Find first match in array of available bands
       bandColor = bandColor.trim();
-      let foundBand: ResistanceBandIndividual = this.availableBands.find(band => band.color == bandColor);
+      let foundBand: ResistanceBandIndividual | undefined = this.availableBands.find(band => band.color == bandColor);
       if (foundBand) {
         this.selectedBands.push(foundBand);
         let indexInAvailableArray = this.availableBands.findIndex(band => band.color == bandColor);

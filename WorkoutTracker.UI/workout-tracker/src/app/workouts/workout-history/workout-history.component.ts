@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from 'app/core/auth.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
@@ -34,7 +33,7 @@ export class WorkoutHistoryComponent implements OnInit {
   public ngOnInit(): void {
   }
 
-  public getExecutedWorkouts(first: number, nameContains: string): void {
+  public getExecutedWorkouts(first: number, nameContains: string | null): void {
 
     //this.totalRecords = 0;
     //TODO: Refactor. Get user ID in API from token.

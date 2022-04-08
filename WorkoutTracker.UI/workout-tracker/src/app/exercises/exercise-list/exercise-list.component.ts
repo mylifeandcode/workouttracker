@@ -21,8 +21,8 @@ export class ExerciseListComponent extends ExerciseListBase {
     }
 
     public getExercisesLazy(event: any): void {
-        let nameContains: string;
-        let targetAreaContains: string;
+        let nameContains: string | null = null;
+        let targetAreaContains: string | null = null;
 
         if (event.filters["name"])
             nameContains = event.filters["name"].value;

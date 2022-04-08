@@ -13,9 +13,7 @@ export class ConfigService {
   public init(configValues: any): void { //TODO: Strong type
 
       //Split config values up into array of objects containing key as first element and value as second
-      let pairs = _.toPairs(configValues, (value, key) => {
-        return key;
-      });
+      let pairs: [string, unknown][] = _.toPairs(configValues);
 
       _.forEach(pairs, (pair) => {
         ConfigService._configValues.set(pair[0], pair[1]);

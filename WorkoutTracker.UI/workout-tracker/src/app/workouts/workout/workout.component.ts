@@ -257,7 +257,7 @@ export class WorkoutComponent implements OnInit {
 
     this.exercisesArray.controls.forEach((value: AbstractControl) => {
       let formGroup = <FormGroup>value;
-      let sets = <FormArray>formGroup.controls.exerciseSets.value;
+      let sets: FormArray = <FormArray>formGroup.controls.exerciseSets.value;
       let exerciseId = formGroup.controls.exerciseId.value;
       let exercises = this.workout.exercises.filter((exercise: ExecutedExercise) => {
         return exercise.exercise.id == exerciseId; 
@@ -271,15 +271,23 @@ export class WorkoutComponent implements OnInit {
       }
 
       for(let x = 0; x < exercises.length; x++) {
-        exercises[x].actualRepCount = Number(sets[x].actualReps);
-        exercises[x].duration = sets[x].duration;
+        const setControls = (sets.get([x]) as FormGroup).controls;
+        //exercises[x].actualRepCount = Number(sets[x].actualReps);
+        exercises[x].actualRepCount = Number(setControls.actualReps.value);
+        //exercises[x].duration = sets[x].duration;
+        exercises[x].duration = setControls.duration.value;
         //exercises[x].notes //TODO: Implement
-        exercises[x].resistanceAmount = sets[x].resistance;
-        exercises[x].resistanceMakeup = sets[x].resistanceMakeup;
-        exercises[x].targetRepCount = Number(sets[x].targetReps);
+        //exercises[x].resistanceAmount = sets[x].resistance;
+        exercises[x].resistanceAmount = setControls.resistance.value;
+        //exercises[x].resistanceMakeup = sets[x].resistanceMakeup;
+        exercises[x].resistanceMakeup = setControls.resistanceMakeup.value;
+        //exercises[x].targetRepCount = Number(sets[x].targetReps);
+        exercises[x].targetRepCount = Number(setControls.targetReps.value);
         //exercises[x].sequence = x;
-        exercises[x].formRating = Number(sets[x].formRating);
-        exercises[x].rangeOfMotionRating = Number(sets[x].rangeOfMotionRating);
+        //exercises[x].formRating = Number(sets[x].formRating);
+        exercises[x].formRating = Number(setControls.formRating.value);
+        //exercises[x].rangeOfMotionRating = Number(sets[x].rangeOfMotionRating);
+        exercises[x].rangeOfMotionRating = Number(setControls.rangeOfMotionRating.value);
       }
 
     });

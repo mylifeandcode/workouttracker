@@ -21,7 +21,7 @@ import { finalize } from 'rxjs/operators';
 export class WorkoutPlanComponent implements OnInit {
 
   //PUBLIC FIELDS
-  public workoutPlan: WorkoutPlan;
+  public workoutPlan: WorkoutPlan | null; //Null before retrieved
   public workoutPlanForm: FormGroup;
   public showResistanceBandsSelectModal: boolean;
   public allResistanceBands: ResistanceBandIndividual[] = [];
@@ -78,21 +78,25 @@ export class WorkoutPlanComponent implements OnInit {
   }
 
   public startWorkout(): void {
-    this.setupDataForPlanSubmission();
-    this._workoutService.submitPlan(this.workoutPlan)
-      .pipe(finalize(() => { this.isProcessing = false; }))
-      .subscribe((executedWorkoutId: number) => {
-        this._router.navigate([`workouts/start/${executedWorkoutId}`]);
-      });
+    if (this.workoutPlan) {
+      this.setupDataForPlanSubmission();
+      this._workoutService.submitPlan(this.workoutPlan)
+        .pipe(finalize(() => { this.isProcessing = false; }))
+        .subscribe((executedWorkoutId: number) => {
+          this._router.navigate([`workouts/start/${executedWorkoutId}`]);
+        });
+    }
   }
 
   public submitPlanForLater(): void {
-    this.setupDataForPlanSubmission();
-    this._workoutService.submitPlanForLater(this.workoutPlan)
-      .pipe(finalize(() => { this.isProcessing = false; }))
-      .subscribe((executedWorkoutId: number) => {
-        this._router.navigate([`workouts/select-planned`]);
-      });
+    if (this.workoutPlan) {
+      this.setupDataForPlanSubmission();
+      this._workoutService.submitPlanForLater(this.workoutPlan)
+        .pipe(finalize(() => { this.isProcessing = false; }))
+        .subscribe((executedWorkoutId: number) => {
+          this._router.navigate([`workouts/select-planned`]);
+        });
+    }
   }
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
@@ -181,15 +185,19 @@ export class WorkoutPlanComponent implements OnInit {
   }
 
   private updateWorkoutPlanFromForm(): void {
-    this.exercisesArray.controls.forEach((control: AbstractControl, index: number, array: AbstractControl[]) => {
-      
-      const exerciseFormGroup = control as FormGroup;
-      const exercisePlan = this.workoutPlan.exercises[index];
-      console.log(control);
-      exercisePlan.targetRepCount = exerciseFormGroup.controls.targetRepCount.value;
-      exercisePlan.resistanceAmount = exerciseFormGroup.controls.resistanceAmount.value;
-      exercisePlan.resistanceMakeup = exerciseFormGroup.controls.resistanceMakeup.value;
-    });
+    if (this.workoutPlan) {
+      this.exercisesArray.controls.forEach((control: AbstractControl, index: number, array: AbstractControl[]) => {
+        
+        const exerciseFormGroup = control as FormGroup;
+        const exercisePlan = this.workoutPlan?.exercises[index];
+        if (exercisePlan) {
+          console.log(control);
+          exercisePlan.targetRepCount = exerciseFormGroup.controls.targetRepCount.value;
+          exercisePlan.resistanceAmount = exerciseFormGroup.controls.resistanceAmount.value;
+          exercisePlan.resistanceMakeup = exerciseFormGroup.controls.resistanceMakeup.value;
+        }
+      });
+    }
   }
 
   private getResistanceBandInventory(): void {
@@ -214,9 +222,11 @@ export class WorkoutPlanComponent implements OnInit {
   }
   
   private setupDataForPlanSubmission(): void {
-    this.updateWorkoutPlanFromForm();
-    this.workoutPlan.submittedDateTime = new Date();
-    this.isProcessing = true;
+    if (this.workoutPlan) {
+      this.updateWorkoutPlanFromForm();
+      this.workoutPlan.submittedDateTime = new Date();
+      this.isProcessing = true;
+    }
   }
 
   //END PRIVATE METHODS

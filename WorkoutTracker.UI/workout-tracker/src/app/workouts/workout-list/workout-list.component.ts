@@ -25,7 +25,7 @@ export class WorkoutListComponent implements OnInit {
     { field: 'active', header: 'Status' }
   ]; //TODO: Create specific type
 
-  private _filterByNameContains: string = null;
+  private _filterByNameContains: string | null = null;
   private _filterByActiveOnly: boolean = true;
 
   constructor(private _workoutSvc: WorkoutService) { 

@@ -11,7 +11,7 @@ export class ExerciseInWorkout {
   public numberOfSets: number;
   public setType: number;
   public sequence: number;
-  public exercise: Exercise;
+  public exercise: Exercise | null;
 
   constructor(
     id: number,

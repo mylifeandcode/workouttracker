@@ -12,9 +12,9 @@ import { AuthService } from 'app/core/auth.service';
 export class UserSelectComponent implements OnInit {
   public users: Array<User>;
   public loadingUsers: boolean = true;
-  public errorMsg: string = null;
+  public errorMsg: string | null = null;
   public gettingUserInfo: boolean = false;
-  public username: string = null;
+  public username: string | null = null;
 
   constructor(
     private _authService: AuthService, 

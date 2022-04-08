@@ -21,11 +21,11 @@ export class WorkoutEditComponent implements OnInit {
   public workoutId: number;
   public workoutForm: FormGroup;
   public loading: boolean = true;
-  public infoMsg: string = null;
+  public infoMsg: string | null = null;
 
   //Private fields
   private _saving: boolean = false;
-  private _errorMsg: string = null;
+  private _errorMsg: string | null = null;
   private _currentUserId: number; //The ID of the user performing the add or edit
   private _modalRef: BsModalRef;
   private _workout: Workout;
@@ -107,9 +107,11 @@ export class WorkoutEditComponent implements OnInit {
     });
 
     workout.exercises.forEach(exerciseInWorkout => {
-      this.exercisesArray.push(
-        this.createExerciseFormGroup(
-          exerciseInWorkout.id, exerciseInWorkout.exerciseId, exerciseInWorkout.exercise.name, exerciseInWorkout.setType, exerciseInWorkout.numberOfSets));
+      if(exerciseInWorkout && exerciseInWorkout?.exercise?.name) {
+        this.exercisesArray.push(
+          this.createExerciseFormGroup(
+            exerciseInWorkout.id, exerciseInWorkout.exerciseId, exerciseInWorkout?.exercise?.name, exerciseInWorkout.setType, exerciseInWorkout.numberOfSets));
+      }
     });
   }
 
@@ -212,14 +214,11 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private updateWorkoutFromFormValues(): void {
-    //let workout = new Workout();
-    //workout.id = this.workoutId;
-    //workout.userId = this._currentUserId; //TODO: Evaluate -- do we need this?
-    console.log("this._workout: ", this._workout);
-    this._workout.name = this.workoutForm.get("name").value;
-    this._workout.exercises = this.getExercisesFromForm();
-
-    //return workout;
+    if (this.workoutForm) {
+      console.log("this._workout: ", this._workout);
+      this._workout.name = this.workoutForm.get("name")?.value;
+      this._workout.exercises = this.getExercisesFromForm();
+    }
   }
 
   private getExercisesFromForm(): Array<ExerciseInWorkout> {
@@ -229,15 +228,17 @@ export class WorkoutEditComponent implements OnInit {
     for (let control of this.exercisesArray.controls) {
       if (control instanceof FormGroup) {
         let exerciseGroup = <FormGroup>control;
-        output.push(
-          new ExerciseInWorkout(
-            exerciseGroup.get("id").value,
-            exerciseGroup.get("exerciseId").value, 
-            exerciseGroup.get("exerciseName").value, 
-            exerciseGroup.get("numberOfSets").value, 
-            exerciseGroup.get("setType").value,
-            index) 
-        );
+        if (exerciseGroup) {
+          output.push(
+            new ExerciseInWorkout(
+              exerciseGroup.get("id")?.value,
+              exerciseGroup.get("exerciseId")?.value, 
+              exerciseGroup.get("exerciseName")?.value, 
+              exerciseGroup.get("numberOfSets")?.value, 
+              exerciseGroup.get("setType")?.value,
+              index) 
+          );
+        }
         index++;
       }
     }

@@ -9,7 +9,7 @@ import { AuthService } from 'app/core/auth.service';
 })
 export class NavComponent implements OnInit {
 
-  public userName: string;
+  public userName: string | null;
 
   get userIsLoggedIn(): boolean {
    return this.userName != null;
@@ -19,7 +19,7 @@ export class NavComponent implements OnInit {
 
   public ngOnInit(): void {
     this._authService.currentUserName.subscribe(
-      (username: string) => {
+      (username: string | null) => {
         this.userName = username;
       });
   }

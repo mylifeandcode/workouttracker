@@ -37,15 +37,15 @@ export class AuthService {
   }
 
   //PUBLIC FIELDS
-  public token: string;
+  public token: string | null;
   public decodedTokenPayload: JwtPayload;
 
   //PRIVATE FIELDS
   private _apiRoot: string;
   private _loginRoute: string;
 
-  private _userSubject$ = new BehaviorSubject<string>(null);
-  private _userObservable$: Observable<string> = this._userSubject$.asObservable();
+  private _userSubject$ = new BehaviorSubject<string | null>(null);
+  private _userObservable$: Observable<string | null> = this._userSubject$.asObservable();
 
   //PRIVATE READ-ONLY FIELDS
   private readonly ROLE_CLAIM_TYPE: string = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
@@ -60,7 +60,7 @@ export class AuthService {
 
   //PROPERTIES ////////////////////////////////////////////////////////////////
   
-  public get currentUserName(): Observable<string> {
+  public get currentUserName(): Observable<string | null> {
     return this._userObservable$;
   }
 
@@ -71,7 +71,7 @@ export class AuthService {
 
   public get isUserAdmin(): boolean {
     return this.isUserLoggedIn
-      && this.decodedTokenPayload[this.ROLE_CLAIM_TYPE] == "Administrator";
+      && this.decodedTokenPayload[this.ROLE_CLAIM_TYPE as keyof JwtPayload] == "Administrator";
   }
 
   //END PROPERTIES ////////////////////////////////////////////////////////////
@@ -120,7 +120,7 @@ export class AuthService {
           this.decodedTokenPayload = decodedToken;
           this.token = token;
 
-          const username = this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
+          const username = <string | null>this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name' as keyof JwtPayload];
           if(username)
             this._userSubject$.next(username);
       
@@ -133,7 +133,7 @@ export class AuthService {
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
 
-  private isExpired(expirationSecondsSinceEpoch: number): boolean {
+  private isExpired(expirationSecondsSinceEpoch: number | undefined): boolean {
     console.log("expirationSecondsSinceEpoch: ", expirationSecondsSinceEpoch);
     if(!expirationSecondsSinceEpoch) return true;
     return expirationSecondsSinceEpoch < this.getSecondsSinceEpoch();

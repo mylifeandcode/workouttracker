@@ -12,13 +12,13 @@ import { ResistanceBandService } from './resistance-band.service';
 })
 export class ResistanceBandsComponent implements OnInit {
 
-  public resistanceBands: ResistanceBand[] = null;
+  public resistanceBands: ResistanceBand[] | null = null;
   public busy: boolean = false;
   public busyMsg: string;
 
   //Add modal related
   public showAddDialog: boolean;
-  public newResistanceBand: ResistanceBand = null; //TODO: Revisit. Not really a fan of this approach.
+  public newResistanceBand: ResistanceBand | null = null; //TODO: Revisit. Not really a fan of this approach.
   public modalSubmitted: boolean;
 
   //This is used to store the original row when we go into edit mode
@@ -50,6 +50,8 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   public onRowEditCancel(band: ResistanceBand, index: number): void {
+    if (!this.resistanceBands) return;
+
     //Replace the row we were editing with the clone, so in case we made any changes we'll get the original
     //version back.
     this.resistanceBands[index] = this._clonedResistanceBands[band.id];
@@ -97,6 +99,8 @@ export class ResistanceBandsComponent implements OnInit {
   private addResistanceBand(): void {
     //this.newResistanceBand.createdByUserId = this._userService.currentUserId; //TODO: Refactor. Set in API based on User ID from token.
     //this.newResistanceBand.createdDateTime = new Date();
+    if(!this.newResistanceBand) return;
+
     this._resistanceBandService
       .add(this.newResistanceBand)
       .subscribe(

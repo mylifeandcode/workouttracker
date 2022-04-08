@@ -15,7 +15,11 @@ export class LocalStorageService {
 
   public get(key: string): any {
     if (this.isLocalStorageSupported) {
-      return JSON.parse(this._localStorage.getItem(key));
+      const localStorageItem: string | null = this._localStorage.getItem(key);
+      if (localStorageItem)
+        return JSON.parse(localStorageItem);
+      else
+        return null;
     }
 
     return null;

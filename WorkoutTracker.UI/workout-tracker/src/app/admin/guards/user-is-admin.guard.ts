@@ -19,8 +19,10 @@ export class UserIsAdminGuard implements CanLoad, CanActivate {
   }
   
   private isAdmin(): boolean {
-    if (!this._authService.isUserAdmin)
+    if (!this._authService.isUserAdmin) {
       this._router.navigate(['denied']);
+      return false;
+    }
     else
       return true;
   }

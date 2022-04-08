@@ -25,49 +25,47 @@ export class ExerciseService {
     private readonly TARGET_AREAS_API_ROOT: string; //TODO: Create TargetAreaService
 
     constructor(private _http: HttpClient, private _configService: ConfigService) { 
-        const apiRoot: string = this._configService.get("apiRoot");
-        this.API_ROOT = apiRoot + "exercises";
-        this.TARGET_AREAS_API_ROOT = apiRoot + "TargetAreas";
+      const apiRoot: string = this._configService.get("apiRoot");
+      this.API_ROOT = apiRoot + "exercises";
+      this.TARGET_AREAS_API_ROOT = apiRoot + "TargetAreas";
     }
 
-    public getAll(firstRecOffset: number, pageSize: number, nameContains: string = null, targetAreaContains: string = null): Observable<PaginatedResults<ExerciseDTO>> {
+    public getAll(firstRecOffset: number, pageSize: number, nameContains: string | null = null, targetAreaContains: string | null = null): Observable<PaginatedResults<ExerciseDTO>> {
         
-        let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
+      let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
 
-        if(nameContains)
-            url += `&nameContains=${nameContains}`;
+      if(nameContains)
+        url += `&nameContains=${nameContains}`;
 
-        if(targetAreaContains)
-            url += `&hasTargetAreas=${targetAreaContains}`;
+      if(targetAreaContains)
+        url += `&hasTargetAreas=${targetAreaContains}`;
 
-        return this._http
-            .get(url)
-            .pipe(map((resp: PaginatedResults<ExerciseDTO>) => resp));
+      return this._http.get<PaginatedResults<ExerciseDTO>>(url);
+
     }
 
     public getById(id: number): Observable<Exercise> {
-        return this._http.get(`${this.API_ROOT}/${id}`)
-            .pipe(map((resp: Exercise) => resp));
+      return this._http.get<Exercise>(`${this.API_ROOT}/${id}`);
     }
 
     public getTargetAreas(): Observable<Array<TargetArea>> {
-        //TODO: Move this into its own service
-        return this._http.get<Array<TargetArea>>(this.TARGET_AREAS_API_ROOT);
+      //TODO: Move this into its own service
+      return this._http.get<Array<TargetArea>>(this.TARGET_AREAS_API_ROOT);
     }
 
     public add(exercise: Exercise): Observable<Exercise> {
-        return this._http.post<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS);
+      return this._http.post<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS);
     }
 
     public update(exercise: Exercise): Observable<Exercise> {
-        return this._http.put<Exercise>(`${this.API_ROOT}/${exercise.id}`, exercise, HTTP_OPTIONS);
+      return this._http.put<Exercise>(`${this.API_ROOT}/${exercise.id}`, exercise, HTTP_OPTIONS);
     }
 
     public getResistanceTypes(): Observable<Map<number, string>> {
-        if (!this._resistanceTypes)
-            this._resistanceTypes = this._http.get<Map<number, string>>(`${this.API_ROOT}/ResistanceTypes`);
+      if (!this._resistanceTypes)
+        this._resistanceTypes = this._http.get<Map<number, string>>(`${this.API_ROOT}/ResistanceTypes`);
 
-        return this._resistanceTypes;
+      return this._resistanceTypes;
     }
 
 }

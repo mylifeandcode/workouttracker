@@ -48,7 +48,7 @@ function initializeApp(
   http: HttpClient): () => Observable<any> {
   return () => http.get("config.json")
     .pipe(
-      tap((config: Config) => {
+      tap((config: Object) => {
         console.log("Loaded config: ", config);
         configService.init(config);
         authService.init();

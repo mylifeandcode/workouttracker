@@ -25,21 +25,18 @@ export class WorkoutService {
     this.API_ROOT = this._configService.get("apiRoot") + "workouts";
   }
 
-  public getFilteredSubset(firstRecOffset: number, pageSize: number, activeOnly: boolean, nameContains: string = null): Observable<PaginatedResults<WorkoutDTO>> {
+  public getFilteredSubset(firstRecOffset: number, pageSize: number, activeOnly: boolean, nameContains: string | null = null): Observable<PaginatedResults<WorkoutDTO>> {
         
     let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&activeOnly=${activeOnly}`;
 
     if(nameContains)
         url += `&nameContains=${nameContains}`;
 
-    return this._http
-        .get(url)
-        .pipe(map((resp: PaginatedResults<WorkoutDTO>) => resp));
+    return this._http.get<PaginatedResults<WorkoutDTO>>(url);
   }
 
   public getById(id: number): Observable<Workout> {
-    return this._http.get(`${this.API_ROOT}/${id}`)
-      .pipe(map((resp: Workout) => resp));
+    return this._http.get<Workout>(`${this.API_ROOT}/${id}`);
   }
 
   /*
@@ -49,18 +46,15 @@ export class WorkoutService {
   */
 
   public getByUserId(id: number): Observable<WorkoutDTO[]> {
-    return this._http.get(`${this.API_ROOT}/user/${id}`)
-      .pipe(map((resp: WorkoutDTO[]) => resp));
+    return this._http.get<WorkoutDTO[]>(`${this.API_ROOT}/user/${id}`);
   }
 
   public add(workout: Workout): Observable<Workout> {
-    return this._http.post(this.API_ROOT, workout, HTTP_OPTIONS)
-      .pipe(map((response: Workout) => response));
+    return this._http.post<Workout>(this.API_ROOT, workout, HTTP_OPTIONS);
   }
 
   public update(workout: Workout): Observable<Workout> {
-    return this._http.put(`${this.API_ROOT}/${workout.id}`, workout, HTTP_OPTIONS)
-      .pipe(map((response: Workout) => response));
+    return this._http.put<Workout>(`${this.API_ROOT}/${workout.id}`, workout, HTTP_OPTIONS);
   }
 
   public getPlan(workoutId: number): Observable<WorkoutPlan> {

@@ -15,7 +15,8 @@ export class WorkoutViewComponent implements OnInit {
 
   public loading: boolean;
   public executedWorkout: ExecutedWorkout;
-  public groupedExercises: Map<string, ExecutedExercise[]>;
+  public groupedExercises: _.Dictionary<ExecutedExercise[]>;
+  //public groupedExercises: Map<string, ExecutedExercise[]>;
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -44,16 +45,26 @@ export class WorkoutViewComponent implements OnInit {
         this.executedWorkout.exercises = 
           this.executedWorkout.exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
 
+        console.log("this.executedWorkout.exercises: ", this.executedWorkout.exercises);
+
         //Group the exercises
         this.groupedExercises =
-          _.groupBy(executedWorkout.exercises, (exercise: ExecutedExercise) => exercise.exercise.id.toString() + '-' + exercise.setType.toString());
+          _.groupBy(
+            executedWorkout.exercises, 
+            (exercise: ExecutedExercise) => exercise.exercise.id.toString() + '-' + exercise.setType.toString());
         
-        //Restore the correct order (groupBy() will mangle it) based on the correct order in this.executedWorkout.exercises
-        this.groupedExercises =
-          _.orderBy(this.groupedExercises, 
-            ['values[0].sequence'], 
-            ['asc']);
 
+        console.log("GROUPED EXERCISES: ", this.groupedExercises);
+        //Restore the correct order (groupBy() will mangle it) based on the correct order in this.executedWorkout.exercises
+        //this.groupedExercises =
+        //  _.orderBy(this.groupedExercises, 
+        //    ['values[0].sequence'], 
+        //    ['asc']);
+
+        //TODO: Fix!
+        //this.groupedExercises = _.orderBy(this.groupedExercises, (key) => {
+
+        //});
       });
   }
   //END PRIVATE METHODS ///////////////////////////////////////////////////////
