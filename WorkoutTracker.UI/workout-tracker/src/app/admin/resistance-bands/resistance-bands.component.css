@@ -9,3 +9,7 @@ tr.band-row {
 td {
     padding: 8px !important;
 }
+
+.resistance-band {
+    text-shadow: 1px 1px #000000;
+}

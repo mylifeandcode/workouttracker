@@ -58,7 +58,7 @@
                         <span *ngIf="formGroup?.controls?.resistanceType?.value==3">Body Weight</span>
                         <span *ngIf="formGroup?.controls?.resistanceType?.value==2">
                             <button class="btn btn-sm btn-primary mild-margins" (click)="selectResistanceBands(setsArray?.controls[i])">Set</button>                            
-                            <span *ngIf="exerciseSet.controls.resistanceMakeup.value">{{exerciseSet.controls.resistanceMakeup.value}} (Max {{exerciseSet.controls.resistance.value}})</span>
+                            <span *ngIf="exerciseSet.controls.resistanceMakeup.value" [innerHTML]="exerciseSet.controls.resistanceMakeup.value | resistanceBandColor"> (Max {{exerciseSet.controls.resistance.value}})</span>
                             <span *ngIf="!exerciseSet.controls.resistanceMakeup.value">Not set</span>
                         </span>
                     </div>

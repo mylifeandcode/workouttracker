@@ -23,7 +23,7 @@
                             <input pInputText type="text" [(ngModel)]="resistanceBand.color" required>
                         </ng-template>
                         <ng-template pTemplate="output">
-                            <span [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
+                            <span class="resistance-band" [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
                         </ng-template>
                     </p-cellEditor>
                 </td>

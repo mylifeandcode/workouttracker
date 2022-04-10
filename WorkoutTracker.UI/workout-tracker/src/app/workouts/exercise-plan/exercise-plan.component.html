@@ -27,7 +27,7 @@
       <div class="col-3 form-group">
         Resistance: <span class="pre-pop-value">{{formGroup.controls['resistanceType'].value==3 ? 'Body Weight' : formGroup.controls['resistanceAmountLastTime'].value}}</span>
         <span *ngIf="formGroup.controls['resistanceMakeupLastTime'].value">
-          ({{formGroup.controls['resistanceMakeupLastTime'].value}})
+          (<span [innerHTML]="formGroup.controls['resistanceMakeupLastTime'].value | resistanceBandColor"></span>)
         </span>
       </div>
     </div>
@@ -74,7 +74,7 @@
           <span *ngIf="formGroup.controls['resistanceType'].value==2" class="no-input-value">
             <ng-container *ngIf="formGroup.controls['resistanceAmount'].value">
               {{formGroup.controls['resistanceAmount'].value}}
-              ({{formGroup.controls['resistanceMakeup'].value}})
+              <span>(<span [innerHTML]="formGroup.controls['resistanceMakeup'].value | resistanceBandColor"></span>)</span>
             </ng-container>
             <button class="lead-space btn btn-choose-resistance btn-sm" (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
           </span>

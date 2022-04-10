@@ -33,6 +33,7 @@ import { WorkoutPlanComponent } from './workout-plan/workout-plan.component';
 import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
 import { ExercisesModule } from 'app/exercises/exercises.module';
 import { WorkoutSelectPlannedComponent } from './workout-select-planned/workout-select-planned.component';
+import { SharedModule } from 'app/shared/shared.module';
 
 
 @NgModule({
@@ -71,7 +72,8 @@ import { WorkoutSelectPlannedComponent } from './workout-select-planned/workout-
     MessageModule,
     MessagesModule,
     WorkoutsRoutingModule, 
-    ExercisesModule
+    ExercisesModule,
+    SharedModule
   ], 
   providers: [
     MessageService
