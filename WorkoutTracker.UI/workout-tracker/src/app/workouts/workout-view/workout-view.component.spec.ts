@@ -10,6 +10,7 @@ import { Workout } from '../models/workout';
 import { WorkoutViewComponent } from './workout-view.component';
 import { Component, Input } from '@angular/core';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
+import * as _ from 'lodash';
 
 const EXECUTED_WORKOUT_ID = 5;
 
@@ -18,7 +19,7 @@ class ExecutedWorkoutServiceMock {
     jasmine.createSpy('getById')
       .and.returnValue(of(this.getFakeExecutedWorkout()));
 
-  getFakeExecutedWorkout(): ExecutedWorkout {
+  private getFakeExecutedWorkout(): ExecutedWorkout {
 
     const executedWorkout = new ExecutedWorkout();
     const executedExercise1 = new ExecutedExercise();
@@ -50,6 +51,16 @@ class ExecutedWorkoutServiceMock {
     return executedWorkout;
 
   }
+
+  public groupExecutedExercises(exercises: ExecutedExercise[]): _.Dictionary<ExecutedExercise[]> {
+    const sortedExercises: ExecutedExercise[] = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
+    
+    let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { 
+      return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
+    });
+    return groupedExercises;
+  }
+
 }
 
 @Component({
@@ -102,10 +113,7 @@ describe('WorkoutViewComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  //Disabled after TypeScript compiler set to strict. I need to resolve issues with checking 
-  //the length of each group. This has been weird from the get-go, but at least worked 
-  //prior to strict.
-  xit('should get executed workout based on route', () => {
+  it('should get executed workout based on route', () => {
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
     expect(executedWorkoutService.getById).toHaveBeenCalledOnceWith(EXECUTED_WORKOUT_ID);
     expect(component.executedWorkout).toBeTruthy();
@@ -116,8 +124,23 @@ describe('WorkoutViewComponent', () => {
     //expect(component.groupedExercises.size).toBe(2);
     //It looks like "length" would work when I view it in the debugger, but that blows up too.
     //This got even worse after the TypeScript compiler change to strict.
+
+    //TODO: CLEAN THIS UP
+
     console.log("component.groupedExercises: ", component.groupedExercises);
-    expect(component.groupedExercises[0].length).toBe(2);
-    expect(component.groupedExercises[1].length).toBe(2);
+    const entries: IterableIterator<[string, ExecutedExercise[]]> = component.groupedExercises.entries();
+
+    console.log("ENTRIES: ", entries);
+
+    const first = entries.next();
+    console.log("FIRST: ", first);
+    expect(first.value[1].length).toBe(2);
+
+    const second = entries.next();
+    console.log("SECOND: ", second);
+    expect(second.value[1].length).toBe(1);
+
+    entries.next();
+    console.log("ENTRIES: ", entries);
   });
 });

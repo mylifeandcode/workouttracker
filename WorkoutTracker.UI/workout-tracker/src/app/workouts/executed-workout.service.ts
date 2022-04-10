@@ -55,8 +55,6 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
   public groupExecutedExercises(exercises: ExecutedExercise[]): _.Dictionary<ExecutedExercise[]> {
     const sortedExercises: ExecutedExercise[] = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
     
-    console.log("SORTED: ", sortedExercises);
-    
     let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { 
       return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
     });
