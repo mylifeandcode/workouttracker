@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SoundService } from 'app/core/sound.service';
-import { CountdownEvent } from 'ngx-countdown';
+import { CountdownEvent, CountdownStatus } from 'ngx-countdown';
 
 import { CountdownTimerComponent } from './countdown-timer.component';
 
@@ -46,7 +46,7 @@ xdescribe('CountdownTimerComponent', () => {
   it('should start countdown on final pre-countdown event', () => {
     //ARRANGE
     const soundService = TestBed.inject(SoundService);
-    const preCountdownEvent = <CountdownEvent>{ action: 'done', status: null, left: null, text: null };
+    const preCountdownEvent = <CountdownEvent>{ action: 'done', status: CountdownStatus.done, left: 0, text: '' };
 
     //ACT
     component.handlePreCountdownEvent(preCountdownEvent);

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from '../auth.service';
 import { UserNotSelectedGuard } from './user-not-selected.guard';
@@ -30,6 +30,10 @@ describe('UserNotSelectedGuard', () => {
         {
           provide: AuthService,
           useClass: AuthServiceMock
+        },
+        {
+          provide: RouterStateSnapshot,
+          useFactory: jasmine.createSpyObj<RouterStateSnapshot>("RouterStateSnapshot", ['toString'])
         }
       ]
     });
@@ -48,7 +52,7 @@ describe('UserNotSelectedGuard', () => {
     const state = <RouterStateSnapshot>{ url: "login" };
 
     //ACT
-    const result = guard.canActivate(null, state);
+    const result = guard.canActivate(new ActivatedRouteSnapshot(), state);
 
     //ASSERT
     expect(result).toBeFalse();

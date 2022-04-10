@@ -51,7 +51,7 @@ describe('UserListComponent', () => {
 
   it('should load users on init', () => {
     expect(userService.getAll).toHaveBeenCalledTimes(1);
-    expect(component.users.length).toBeGreaterThan(0);
+    expect(component?.users?.length).toBeGreaterThan(0);
   });
 
   it('should prevent deleting user if user confirm dialog returns false', () => {
@@ -84,8 +84,12 @@ describe('UserListComponent', () => {
     component.deleteUser(2);
 
     //ASSERT
-    expect(component.users.length).toBe(2);
-    expect(component.users[0].id).toBe(1);
-    expect(component.users[1].id).toBe(3);
+    expect(component?.users?.length).toBe(2);
+    if(component?.users != null) {
+      expect(component?.users[0].id).toBe(1);
+      expect(component?.users[1].id).toBe(3);
+    }
+    else
+      fail("component or component.users is null.");
   });
 });

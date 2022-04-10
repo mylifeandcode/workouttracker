@@ -92,7 +92,7 @@ function getFirstExerciseFormGroup(component: WorkoutComponent): FormGroup {
   return <FormGroup>exerciseSets[0];
 }
 
-function getRandomInt(max): number {
+function getRandomInt(max: number): number {
   return Math.floor(Math.random() * Math.floor(max));
 }
 //END HELPER FUNCTIONS ////////////////////////////////////////////////////////

@@ -192,12 +192,15 @@ export class WorkoutComponent implements OnInit {
   private setupExercisesFormGroup(exercises: ExecutedExercise[]): void {
     this.exercisesArray.clear();
 
+    /*
     exercises = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
 
     //Group ExecutedExercise by Exercise and Set Type
     let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { 
         return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
       });
+    */
+    let groupedExercises = this._executedWorkoutService.groupExecutedExercises(exercises);
 
     _.forEach(groupedExercises, (exerciseArray: ExecutedExercise[]) => {
 
@@ -257,7 +260,7 @@ export class WorkoutComponent implements OnInit {
 
     this.exercisesArray.controls.forEach((value: AbstractControl) => {
       let formGroup = <FormGroup>value;
-      let sets: FormArray = <FormArray>formGroup.controls.exerciseSets.value;
+      let sets: FormArray = <FormArray>formGroup.controls.exerciseSets;
       let exerciseId = formGroup.controls.exerciseId.value;
       let exercises = this.workout.exercises.filter((exercise: ExecutedExercise) => {
         return exercise.exercise.id == exerciseId; 
@@ -271,7 +274,7 @@ export class WorkoutComponent implements OnInit {
       }
 
       for(let x = 0; x < exercises.length; x++) {
-        const setControls = (sets.get([x]) as FormGroup).controls;
+        const setControls = (sets.at(x) as FormGroup).controls;
         //exercises[x].actualRepCount = Number(sets[x].actualReps);
         exercises[x].actualRepCount = Number(setControls.actualReps.value);
         //exercises[x].duration = sets[x].duration;

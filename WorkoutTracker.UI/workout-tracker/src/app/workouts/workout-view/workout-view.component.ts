@@ -15,8 +15,14 @@ export class WorkoutViewComponent implements OnInit {
 
   public loading: boolean;
   public executedWorkout: ExecutedWorkout;
-  public groupedExercises: _.Dictionary<ExecutedExercise[]>;
-  //public groupedExercises: Map<string, ExecutedExercise[]>;
+  
+  /*
+  Before setting TypeScript compiler to strict, the below variable was of type Map<string, ExecutedExercise[]>.
+  But the compiler complained and I had to install @types/lodash, which defined the return type of 
+  the _.groupBy() function as _.Dictionary. And this caused other problems, particularly with the unit test.
+  */
+  //public groupedExercises: _.Dictionary<ExecutedExercise[]>;
+  public groupedExercises: Map<string, ExecutedExercise[]>;
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -42,29 +48,29 @@ export class WorkoutViewComponent implements OnInit {
         this.executedWorkout = executedWorkout;
         
         //Make sure the exercises are in sequence order
-        this.executedWorkout.exercises = 
-          this.executedWorkout.exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
-
-        console.log("this.executedWorkout.exercises: ", this.executedWorkout.exercises);
+        //const sortedExercises: ExecutedExercise[] = 
+          //this.executedWorkout.exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
 
         //Group the exercises
-        this.groupedExercises =
-          _.groupBy(
-            executedWorkout.exercises, 
-            (exercise: ExecutedExercise) => exercise.exercise.id.toString() + '-' + exercise.setType.toString());
+        console.log("EXERCISES: ", this.executedWorkout.exercises);
+        const groups = this._executedWorkoutService.groupExecutedExercises(this.executedWorkout.exercises);
         
+        const groupsMap = new Map<string, ExecutedExercise[]>();
+
+        let x: number = 0;
+        _.forEach(groups, (exerciseArray: ExecutedExercise[]) => {
+          groupsMap.set(
+            x.toString(), exerciseArray);
+          console.log("Added ", exerciseArray[0].exercise.id.toString() + "-" + exerciseArray[0].setType.toString());
+          x++;
+        });
+
+        this.groupedExercises = groupsMap;
+
+        //console.log("BLAH: ", Object.values(groupsMap));
 
         console.log("GROUPED EXERCISES: ", this.groupedExercises);
-        //Restore the correct order (groupBy() will mangle it) based on the correct order in this.executedWorkout.exercises
-        //this.groupedExercises =
-        //  _.orderBy(this.groupedExercises, 
-        //    ['values[0].sequence'], 
-        //    ['asc']);
 
-        //TODO: Fix!
-        //this.groupedExercises = _.orderBy(this.groupedExercises, (key) => {
-
-        //});
       });
   }
   //END PRIVATE METHODS ///////////////////////////////////////////////////////

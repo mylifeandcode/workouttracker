@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { UserSelectedGuard } from './user-selected.guard';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../auth.service';
 
 
@@ -25,6 +25,10 @@ describe('UserSelectedGuard', () => {
         {
           provide: AuthService,
           useValue: jasmine.createSpyObj("AuthService", {}, { isUserLoggedIn: false, loginRoute: 'login' })
+        },
+        {
+          provide: RouterStateSnapshot,
+          useFactory: jasmine.createSpyObj<RouterStateSnapshot>("RouterStateSnapshot", ['toString'])
         }
       ]
     });
@@ -39,9 +43,10 @@ describe('UserSelectedGuard', () => {
     //ARRANGE
     const router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.callThrough();
+    const state = <RouterStateSnapshot>{ url: "login" };
 
     //ACT
-    const result = guard.canActivate(null, null);
+    const result = guard.canActivate(new ActivatedRouteSnapshot(), state);
 
     //ASSERT
     expect(result).toBeFalse();

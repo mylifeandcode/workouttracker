@@ -7,8 +7,8 @@ export class TargetArea extends NamedEntity {
         name: string,
         createdByUserId: number,
         createdDateTime: Date,
-        modifiedByUserId: number,
-        modifiedDateTime: Date,
+        modifiedByUserId: number | null,
+        modifiedDateTime: Date | null,
         public selected: boolean) {
 
             super();

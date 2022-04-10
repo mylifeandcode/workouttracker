@@ -27,7 +27,9 @@ class MessageServiceMock {
 class ConfirmationServiceMock {
   confirm =
     jasmine.createSpy('confirm')
-      .and.callFake((confirmation: Confirmation) => { confirmation.accept(); });
+      .and.callFake((confirmation: Confirmation) => {
+        confirmation?.accept?.(); //Because confirmation could be undefined
+      });
       //.and.returnValue(this);
 }
 
@@ -99,7 +101,8 @@ describe('ResistanceBandsComponent', () => {
     component.saveNewBand();
 
     //ASSERT
-    expect(resistanceBandService.add).toHaveBeenCalledWith(component.newResistanceBand);
+    expect(component.newResistanceBand).not.toBeNull();
+    expect(resistanceBandService.add).toHaveBeenCalledWith(<ResistanceBand>component.newResistanceBand);
     expect(messageService.add)
       .toHaveBeenCalledWith({
         severity:'success',
