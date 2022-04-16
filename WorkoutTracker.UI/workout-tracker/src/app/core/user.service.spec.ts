@@ -66,9 +66,6 @@ describe('UserService', () => {
     // Respond with the mock results
     req.flush(expectedResults);
 
-    expect(cookieSvcMock.get).not.toHaveBeenCalled();
-    expect(cookieSvcMock.set).not.toHaveBeenCalled();
-
   }));
 
   it('should add user', inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
