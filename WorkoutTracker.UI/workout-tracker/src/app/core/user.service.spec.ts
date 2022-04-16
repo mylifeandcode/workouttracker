@@ -1,18 +1,11 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { UserService } from './user.service';
-import { CookieService } from 'ng2-cookies';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { User } from 'app/core/models/user';
 import { ConfigService } from './config.service';
 
 const TEST_USER_ID: string = "1";
-
-class CookieServiceMock {
-  get = jasmine.createSpy('get').and.returnValue(TEST_USER_ID);
-  set = jasmine.createSpy('set');
-  delete = jasmine.createSpy('delete');
-}
 
 class ConfigServiceMock {
   get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
@@ -23,10 +16,6 @@ describe('UserService', () => {
     TestBed.configureTestingModule({
       providers: [
         UserService,
-        {
-          provide: CookieService,
-          useClass: CookieServiceMock
-        }, 
         {
           provide: ConfigService, 
           useClass: ConfigServiceMock
@@ -61,7 +50,7 @@ describe('UserService', () => {
 
   }));
 
-  it('should get user info by user ID',  inject([HttpTestingController, UserService, CookieService], (httpMock: HttpTestingController, service: UserService, cookieSvcMock: CookieServiceMock) => {
+  it('should get user info by user ID',  inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
     const expectedResults = new User();
     const userId: number = parseInt(TEST_USER_ID);
     expectedResults.id = userId;

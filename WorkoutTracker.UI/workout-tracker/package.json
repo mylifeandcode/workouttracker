@@ -15,6 +15,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^13.3.3",
+    "@angular/cdk": "^13.3.3",
     "@angular/common": "~13.3.3",
     "@angular/compiler": "~13.3.3",
     "@angular/core": "~13.3.3",
@@ -30,7 +31,6 @@
     "howler": "^2.2.1",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
-    "ng2-cookies": "^1.0.12",
     "ngx-bootstrap": "^5.6.1",
     "ngx-countdown": "^11.0.1",
     "primeicons": "^4.1.0",

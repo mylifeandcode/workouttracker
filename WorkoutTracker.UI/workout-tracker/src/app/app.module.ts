@@ -29,7 +29,6 @@ import { UserSelectComponent } from './user-select/user-select.component';
 //Other
 import { environment } from 'environments/environment';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
-import { CookieService } from 'ng2-cookies/cookie';
 import { AuthService } from './core/auth.service';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { WelcomeComponent } from './welcome/welcome.component';
@@ -89,8 +88,7 @@ function initializeApp(
       useFactory: initializeApp,
       deps: [ConfigService, UserService, AuthService, HttpClient],
       multi: true
-    },
-    CookieService
+    }
   ],
   bootstrap: [AppComponent]
 })
