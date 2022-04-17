@@ -1,3 +1,10 @@
 tr.workout-history {
     line-height: 10px; 
 }
+
+h3 {
+    padding: 6px;
+    background-image: linear-gradient(to right, olivedrab, palegreen);
+    font-style: italic;
+    color: white;
+}

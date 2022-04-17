@@ -1,0 +1,10 @@
+h3 {
+  padding: 6px;
+  background-image: linear-gradient(to right, green, yellowgreen);
+  font-style: italic;
+  color: white;
+}
+
+select {
+  height: 30px;
+}

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -34,6 +35,7 @@ import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
 import { ExercisesModule } from 'app/exercises/exercises.module';
 import { WorkoutSelectPlannedComponent } from './workout-select-planned/workout-select-planned.component';
 import { SharedModule } from 'app/shared/shared.module';
+import { WorkoutLogPastStartComponent } from '../workouts/workout-log-past-start/workout-log-past-start.component';
 
 
 @NgModule({
@@ -56,10 +58,12 @@ import { SharedModule } from 'app/shared/shared.module';
     TargetAreasPipe,
     WorkoutPlanComponent,
     ExercisePlanComponent,
-    WorkoutSelectPlannedComponent
+    WorkoutSelectPlannedComponent,
+    WorkoutLogPastStartComponent
   ],
   imports: [
     CommonModule,
+    CalendarModule,
     CountdownModule,
     DialogModule,
     ReactiveFormsModule,

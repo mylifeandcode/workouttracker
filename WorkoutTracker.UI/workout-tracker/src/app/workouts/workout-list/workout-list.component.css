@@ -1,0 +1,6 @@
+h3 {
+  padding: 6px;
+  background-image: linear-gradient(to right, forestgreen, springgreen);
+  font-style: italic;
+  color: white;
+}

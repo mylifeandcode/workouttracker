@@ -1,0 +1,66 @@
+<h3>Log a Past Workout</h3>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      From here, you can enter information about a workout performed but not entered into Workout Tracker.
+    </div>
+  </div>
+  <form [formGroup]="formGroup">
+    <div class="row a-little-space">
+      <div class="col-2">Select a Workout</div>
+      <div class="col-2">
+        <select id="workoutDefinitions" formControlName="workoutId">
+          <option value="" selected disabled>Choose a Workout</option>
+          <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
+            {{workouts[i].name}}
+          </option>          
+        </select>
+      </div>
+      <div class="col-8">
+        <span *ngIf="formGroup?.get('workoutId')?.dirty && formGroup?.get('workoutId')?.errors" class="text-danger">Required</span>
+      </div>
+    </div>
+    <div class="row a-little-space">
+      <div class="col-2">
+        <label for="startDateTime">Start Date/Time</label>
+      </div>
+      <div class="col-2">
+        <p-calendar formControlName="startDateTime" [showTime]="true" [hourFormat]="12" inputId="startDateTime"></p-calendar>      
+      </div>
+      <div class="col-8">
+        <span *ngIf="startDateTime?.invalid && (startDateTime?.touched || startDateTime?.dirty)" class="text-danger">
+          <span *ngIf="startDateTime?.errors?.['required']">
+            Start Date/Time is required.
+          </span>
+        </span>
+      </div>
+    </div>
+    <div class="row a-little-space">
+      <div class="col-2">
+        <label for="endDateTime">End Date/Time</label>
+      </div>
+      <div class="col-2">
+        <p-calendar id="endDateTime" name="endDateTime" formControlName="endDateTime" [showTime]="true" [hourFormat]="12" inputId="endDateTime"></p-calendar>      
+      </div>
+      <div class="col-8">
+        <span *ngIf="endDateTime?.invalid && (endDateTime?.touched || endDateTime?.dirty)" class="text-danger">
+          <span *ngIf="endDateTime?.errors?.['required']">
+            End Date/Time is required.
+          </span>
+        </span>
+      </div>
+    </div>
+    <div class="row a-little-space">
+      <div class="offset-1 col-3">
+        <button [disabled]="!formGroup.valid" type="submit" (click)="proceedToWorkoutEntry()" class="btn btn-success">Enter Workout Information</button>
+      </div>
+      <div class="col-8">
+        <span *ngIf="formGroup?.invalid && (endDateTime?.touched || endDateTime?.dirty)" class="text-danger">
+          <span *ngIf="formGroup?.errors?.['startDateTimeVsEndDateTime']">
+            Start Date/Time must be earlier than End Date/Time
+          </span>
+        </span>
+      </div>
+    </div>
+  </form>
+</div>

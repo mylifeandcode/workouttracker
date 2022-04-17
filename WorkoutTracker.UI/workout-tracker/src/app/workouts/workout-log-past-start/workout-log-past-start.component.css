@@ -1,0 +1,14 @@
+.a-little-space {
+  padding-top: 12px;
+}
+
+h3 {
+  padding: 6px;
+  background-image: linear-gradient(to right, limegreen, seagreen);
+  font-style: italic;
+  color: white;
+}
+
+select {
+  height: 30px;
+}

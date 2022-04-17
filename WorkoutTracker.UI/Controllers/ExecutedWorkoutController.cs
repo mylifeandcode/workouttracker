@@ -96,7 +96,7 @@ namespace WorkoutTracker.UI.Controllers
 
                 var filter =
                     BuildExecutedWorkoutFilter(
-                        userId, null, null, true);
+                        userId, null, null, true); //last param of true is "planned only"
 
                 int totalCount = _executedWorkoutService.GetTotalCount(filter);
 

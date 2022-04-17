@@ -13,7 +13,7 @@
 }
 
 .exercise-name {
-  background-image: linear-gradient(darkgreen , black);
+  background-image: linear-gradient(to right, black , green);
   padding-top: 10px;
 }
 

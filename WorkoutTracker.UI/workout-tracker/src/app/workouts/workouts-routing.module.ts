@@ -4,6 +4,7 @@ import { UserSelectedGuard } from 'app/core/guards/user-selected.guard'; //TODO:
 import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
 import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
 import { WorkoutListComponent } from './workout-list/workout-list.component';
+import { WorkoutLogPastStartComponent } from './workout-log-past-start/workout-log-past-start.component';
 import { WorkoutPlanComponent } from './workout-plan/workout-plan.component';
 import { WorkoutSelectPlannedComponent } from './workout-select-planned/workout-select-planned.component';
 import { WorkoutSelectComponent } from './workout-select/workout-select.component';
@@ -55,6 +56,11 @@ const routes: Routes = [
   {
     path: 'plan-for-later/:id',
     component: WorkoutPlanComponent, 
+    canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'log-past',
+    component: WorkoutLogPastStartComponent, 
     canActivate: [UserSelectedGuard]
   },
   {

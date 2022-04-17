@@ -1,5 +1,5 @@
+<h3 class="headroom">Workout History</h3>
 <div class="container-fluid">
-  <h3 class="headroom">Workout History</h3>
   <div class="row">
       <div class="col-md-12">
           <p-table #dt class="table table-striped w-auto"  [value]="executedWorkouts" [paginator]="true" [columns]="cols" [rows]="pageSize" [lazy]="true" (onLazyLoad)="getExecutedWorkoutsLazy($event)" [totalRecords]="totalRecords" [loading]="loading">

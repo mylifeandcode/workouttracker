@@ -5,15 +5,15 @@
 </div>
 
 <ng-container *ngIf="workoutPlan">
+  <h3 class="headroom">Plan Your Workout</h3>
   <div class="container-fluid form-group">
-    <h2 class="headroom">Plan Your Workout</h2>
     <div class="row"></div>
     <form [formGroup]="workoutPlanForm" novalidate>
       <fieldset [disabled]="isProcessing">
         <div class="row">
           <div class="col-12">
               <input type="hidden" formControlName="workoutId" />
-              <h3>{{workoutPlanForm.controls['workoutName'].value}}</h3>
+              <h4>{{workoutPlanForm.controls['workoutName'].value}}</h4>
           </div>
         </div>
 
