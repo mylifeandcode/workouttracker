@@ -31,11 +31,17 @@ export class WorkoutPlanComponent implements OnInit {
   public planningForLater: boolean = false;
   //END PUBLIC FIELDS
 
+  //PUBLIC PROPERTIES
+  public get isForPastWorkout(): boolean { return this._pastWorkoutStartDateTime != null; }
+  //END PUBLIC PROPERTIES
+
   //VIEWCHILD
   @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
 
   //PRIVATE FIELDS
   private _apiCallsInProgress: number = 0;
+  private _pastWorkoutStartDateTime: Date | null = null;
+  private _pastWorkoutEndDateTime: Date | null = null;
   //END PRIVATE FIELDS
 
   //TODO: Component needs to show target reps and allow for setting target resistance
@@ -99,6 +105,17 @@ export class WorkoutPlanComponent implements OnInit {
     }
   }
 
+  public submitPlanForPast(): void {
+    if (this.workoutPlan && this._pastWorkoutStartDateTime && this._pastWorkoutEndDateTime) {
+      this.setupDataForPlanSubmission();
+      this._workoutService.submitPlanForPast(this.workoutPlan, this._pastWorkoutStartDateTime, this._pastWorkoutEndDateTime)
+        .pipe(finalize(() => { this.isProcessing = false; }))
+        .subscribe((executedWorkoutId: number) => {
+          this._router.navigate([`workouts/start/${executedWorkoutId}`], { queryParams: { pastWorkout: true }});
+        });
+    }
+  }
+
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
@@ -126,6 +143,13 @@ export class WorkoutPlanComponent implements OnInit {
     this._activatedRoute.params.subscribe((params: Params) => {
       this.workoutPlan = null;
       const workoutId = params["id"];
+
+      if (params["start"])
+        this._pastWorkoutStartDateTime = new Date(params["start"]);
+
+      if (params["end"])
+        this._pastWorkoutEndDateTime = new Date(params["end"]);
+
       this._apiCallsInProgress++;
       this._workoutService.getPlan(workoutId)
         .pipe(finalize(() => { this._apiCallsInProgress--; }))
@@ -225,6 +249,8 @@ export class WorkoutPlanComponent implements OnInit {
     if (this.workoutPlan) {
       this.updateWorkoutPlanFromForm();
       this.workoutPlan.submittedDateTime = new Date();
+      this.workoutPlan.pastWorkoutStartDateTime = this._pastWorkoutStartDateTime;
+      this.workoutPlan.pastWorkoutEndDateTime = this._pastWorkoutEndDateTime;
       this.isProcessing = true;
     }
   }

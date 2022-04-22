@@ -188,6 +188,35 @@ describe('WorkoutService', () => {
 
   });
 
+  it('should submit a workout plan for a past workout', (done: DoneFn) => {
+
+    //ARRANGE
+    const workoutPlan = new WorkoutPlan();
+    const expectedNewExecutedWorkoutId: number = 909;
+
+    workoutPlan.workoutId = 50;
+    const startDateTime = new Date(2022, 3, 22, 13, 30, 0);
+    const endDateTime = new Date(2022, 3, 4, 14, 5, 30);
+
+    //ACT
+    service.submitPlanForPast(workoutPlan, startDateTime, endDateTime)
+      .subscribe(
+        (executedWorkoutId: number) => {
+          expect(executedWorkoutId).toEqual(expectedNewExecutedWorkoutId); //ASSERT
+          done();
+        },
+        fail
+      );
+
+    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`);
+    expect(req.request.method).toEqual('POST');
+    expect(req.request.body).toBe(workoutPlan);
+
+    // Respond with the mock results
+    req.flush(expectedNewExecutedWorkoutId);
+
+  });
+
 });
 
 

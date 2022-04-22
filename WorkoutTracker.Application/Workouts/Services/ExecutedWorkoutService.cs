@@ -34,7 +34,18 @@ namespace WorkoutTracker.Application.Workouts.Services
             if (plan == null)
                 throw new ArgumentNullException(nameof(plan));
 
-            return CreateFromPlan(plan, startWorkout);
+            if (startWorkout)
+                return CreateFromPlan(plan, plan.SubmittedDateTime, null);
+            else
+                return CreateFromPlan(plan, null, null);
+        }
+
+        public ExecutedWorkout Create(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime)
+        {
+            if (plan == null)
+                throw new ArgumentNullException(nameof(plan));
+
+            return CreateFromPlan(plan, startDateTime, endDateTime);
         }
 
         public override ExecutedWorkout Add(ExecutedWorkout entity, bool saveChanges = false)
@@ -104,7 +115,7 @@ namespace WorkoutTracker.Application.Workouts.Services
             IQueryable<ExecutedWorkout> query = _repo.Get();
             var output = query
                 .Where(workout => workout.StartDateTime.HasValue)
-                .OrderByDescending(workout => workout.Id)
+                .OrderByDescending(workout => workout.StartDateTime.Value)
                 //.Distinct(workout.Workout.Id) //TODO: Get last n number of distinct by Workout
                 .Take(numberOfMostRecent);
             return output;
@@ -136,7 +147,7 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         #region Private Methods
 
-        private ExecutedWorkout CreateFromPlan(WorkoutPlan workoutPlan, bool startWorkout)
+        private ExecutedWorkout CreateFromPlan(WorkoutPlan workoutPlan, DateTime? startDateTime, DateTime? endDateTime)
         {
             var executedWorkout = new ExecutedWorkout();
             executedWorkout.WorkoutId = workoutPlan.WorkoutId;
@@ -171,8 +182,8 @@ namespace WorkoutTracker.Application.Workouts.Services
                 }
             }
 
-            if (startWorkout)
-                executedWorkout.StartDateTime = workoutPlan.SubmittedDateTime.Value;
+            executedWorkout.StartDateTime = startDateTime;
+            executedWorkout.EndDateTime = endDateTime;
             
             _repo.Add(executedWorkout, true);
 

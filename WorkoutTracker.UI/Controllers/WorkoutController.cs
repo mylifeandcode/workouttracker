@@ -135,6 +135,12 @@ namespace WorkoutTracker.UI.Controllers
             return CreateWorkoutFromWorkoutPlan(plan, false);
         }
 
+        [HttpPost("{id}/plan-for-past/{startDateTime}/{endDateTime}")]
+        public ActionResult<int> SubmitPlanForPast([FromBody] WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime) {
+            //TODO: Change URL -- id isn't needed
+            return CreateWorkoutFromWorkoutPlanForPast(plan, startDateTime, endDateTime);
+        }
+
         // POST api/Workouts
         [HttpPost]
         public ActionResult<Workout> Post([FromBody]Workout value)
@@ -218,6 +224,20 @@ namespace WorkoutTracker.UI.Controllers
             try
             {
                 var executedWorkout = _executedWorkoutService.Create(plan, startWorkout);
+                return Ok(executedWorkout.Id);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        private ActionResult<int> CreateWorkoutFromWorkoutPlanForPast(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime)
+        {
+            try
+            {
+                var executedWorkout = _executedWorkoutService.Create(plan, startDateTime, endDateTime);
                 return Ok(executedWorkout.Id);
 
             }

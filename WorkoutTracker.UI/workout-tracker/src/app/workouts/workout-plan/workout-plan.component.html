@@ -5,7 +5,8 @@
 </div>
 
 <ng-container *ngIf="workoutPlan">
-  <h3 class="headroom">Plan Your Workout</h3>
+  <h3 *ngIf="!isForPastWorkout" class="headroom">Plan Your Workout</h3>
+  <h3 *ngIf="isForPastWorkout" class="headroom">What Was Your Plan For This Workout?</h3>
   <div class="container-fluid form-group">
     <div class="row"></div>
     <form [formGroup]="workoutPlanForm" novalidate>
@@ -32,8 +33,9 @@
 
         <div class="row submit-row">
           <div class="col-12">
-            <button *ngIf="!planningForLater" type="submit" class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
+            <button *ngIf="!planningForLater && !isForPastWorkout" type="submit" class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
             <button *ngIf="planningForLater" type="submit" class="btn btn-primary" (click)="submitPlanForLater()" [disabled]="workoutPlanForm.invalid || isProcessing">Save Workout Plan</button>
+            <button *ngIf="isForPastWorkout" type="submit" class="btn btn-primary" (click)="submitPlanForPast()" [disabled]="workoutPlanForm.invalid || isProcessing">Log Past Workout</button>
             &nbsp;<span *ngIf="isProcessing">Processing...</span>
           </div>
         </div>

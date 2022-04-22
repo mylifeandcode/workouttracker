@@ -1,3 +1,17 @@
 .bigger {
   width: 80%;
 }
+
+h3 {
+  padding-top: 6px;
+  padding-right: 6px;
+  padding-bottom: 6px;
+  padding-left: 14px;
+  background-image: linear-gradient(to right, rgb(235, 5, 5), black);
+  font-style: italic;
+  color: white;
+}
+
+h4 {
+  padding-left: 14px;
+}

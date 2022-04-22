@@ -7,4 +7,6 @@ export class WorkoutPlan {
   public hasBeenExecutedBefore: boolean;
   public exercises: ExercisePlan[];
   public submittedDateTime?: Date;
+  public pastWorkoutStartDateTime?: Date | null;
+  public pastWorkoutEndDateTime?: Date | null;
 }

@@ -13,3 +13,10 @@ td {
 .resistance-band {
     text-shadow: 1px 1px #000000;
 }
+
+h3 {
+  padding: 6px;
+  background-image: linear-gradient(to right, purple, lightgrey);
+  font-style: italic;
+  color: white;
+}

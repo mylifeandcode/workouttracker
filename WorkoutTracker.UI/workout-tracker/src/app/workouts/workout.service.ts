@@ -69,6 +69,10 @@ export class WorkoutService {
     return this._http.post<number>(`${this.API_ROOT}/${plan.workoutId}/plan-for-later`, plan);
   }
 
+  public submitPlanForPast(plan: WorkoutPlan, startDateTime: Date, endDateTime: Date): Observable<number> {
+    return this._http.post<number>(`${this.API_ROOT}/${plan.workoutId}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`, plan);
+  }
+
   public retire(id: number): Observable<HttpResponse<any>> {
     return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${id}/retire`, null);
   }

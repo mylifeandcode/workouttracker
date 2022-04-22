@@ -1,3 +1,13 @@
 .end-to-end-selection {
   padding-top: 38px;
 }
+
+.header {
+  padding-top: 6px;
+  padding-right: 6px;
+  padding-bottom: 6px;
+  padding-left: 14px;
+  background-image: linear-gradient(to right, steelblue, black);
+  font-style: italic;
+  color: white;
+}

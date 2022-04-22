@@ -1,10 +1,10 @@
 <span *ngIf="busy">{{busyMsg}}</span>
+<h3 *ngIf="!busy" class="headroom">Resistance Band Inventory</h3>
 
 <p-toast position="center"></p-toast>
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
 <div *ngIf="!busy" class="container-fluid">
-  <h3 class="headroom">Resistance Band Inventory</h3>
 
     <p-table #dt [value]="resistanceBands" dataKey="id" editMode="row">
         <ng-template pTemplate="header">

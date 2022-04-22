@@ -10,7 +10,7 @@ import { ExecutedWorkout } from '../models/executed-workout';
 import { ExecutedExercise } from '../models/executed-exercise';
 import * as _ from 'lodash';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 
 
 @Component({
@@ -34,6 +34,7 @@ export class WorkoutComponent implements OnInit {
   public saving: boolean = false;
   public infoMsg: string;
   public workoutCompleted: boolean = false;
+  public isLoggingPastWorkout: boolean = false;
   //END PUBLIC FIELDS
 
   //VIEWCHILD
@@ -85,6 +86,7 @@ export class WorkoutComponent implements OnInit {
     this.createForm();
     this.getResistanceBands();
     this.subscribeToRouteParams();
+    this.subscribeToQueryParams(); //For optional parameters, such as pastWorkout
     this.startWorkout();
   }
 
@@ -133,9 +135,16 @@ export class WorkoutComponent implements OnInit {
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
   private subscribeToRouteParams(): void {
-    this._route.params.subscribe((params) => {
+    this._route.params.subscribe((params: Params) => {
       this._executedWorkoutId = params['executedWorkoutId'];
       this.setupWorkout(this._executedWorkoutId);
+    });
+  }
+
+  private subscribeToQueryParams(): void {
+    this._route.queryParams.subscribe((queryParams: Params) => {
+      if(queryParams['pastWorkout'])
+        this.isLoggingPastWorkout = queryParams['pastWorkout'];
     });
   }
 

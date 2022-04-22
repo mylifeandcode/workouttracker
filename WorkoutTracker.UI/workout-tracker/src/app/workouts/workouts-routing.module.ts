@@ -59,7 +59,12 @@ const routes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
-    path: 'log-past',
+    path: 'plan-for-past/:id/:start/:end',
+    component: WorkoutPlanComponent, 
+    canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'log-past-start',
     component: WorkoutLogPastStartComponent, 
     canActivate: [UserSelectedGuard]
   },

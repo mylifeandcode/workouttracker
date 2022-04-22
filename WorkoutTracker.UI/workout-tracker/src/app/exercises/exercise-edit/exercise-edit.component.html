@@ -1,3 +1,4 @@
+<h3 *ngIf="!loading" class="headroom header">Exercise {{ isNew ? 'Creation' : 'Edit' }}</h3>
 <div class="container-fluid form-group">
     <div *ngIf="loading" class="row">
         <div class="offset-md-5 col-md-1">
@@ -5,7 +6,6 @@
         </div>
     </div>
     <form *ngIf="exerciseForm && !loading" [formGroup]="exerciseForm" novalidate>
-        <h3 class="headroom">Exercise {{ isNew ? 'Creation' : 'Edit' }}</h3>
         <div class="row">
 
             <div class="col-md-8 form-group">
