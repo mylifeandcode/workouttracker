@@ -15,6 +15,8 @@ A website for creating and tracking workouts. I wrote this to replicate and expa
 
 ![View Executed Workout](PreviewImages/executed-workout.png)<br /><br />
 
+![Planned Workouts](PreviewImages/planned-workouts.png)<br /><br />
+
 ![Manage Exercises](PreviewImages/manage-exercises.png)<br /><br />
 
 ![Exercise Edit](PreviewImages/exercise-edit.png)<br /><br />
