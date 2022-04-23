@@ -60,7 +60,13 @@
             <div class="col-md-3 form-group">
                 <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" formControlName="oneSided" id="oneSided">
-                    <label class="custom-control-label" for="oneSided">One Sided</label>
+                    <label class="custom-control-label" for="oneSided">One Sided</label> <small style="margin-left: 12px;" pTooltip="''One Sided'' specifies that the exercise is performed on one side. For example, Dumbbell Concentration Curls is an exercise where bicep curls are performed for one arm for a set, followed by a set for the other arm." tooltipPosition="right">(What's this?)</small>
+                </div>
+            </div>
+            <div class="col-md-3 form-group">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" formControlName="involvesReps" id="involvesReps">
+                    <label class="custom-control-label" for="involvesReps">Involves Repetitions</label> <small style="margin-left: 12px;" pTooltip="''Involves Repetitions'' specifies that the exercise is performed using repetitions. An exercise like Bench Press involves lifting a weight for a number of repetitions, whereas Jogging is an exercise which does not." tooltipPosition="right">(What's this?)</small>
                 </div>
             </div>
         </div>

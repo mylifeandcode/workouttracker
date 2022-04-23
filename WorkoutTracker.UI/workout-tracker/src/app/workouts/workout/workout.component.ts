@@ -244,7 +244,8 @@ export class WorkoutComponent implements OnInit {
         rangeOfMotionRating: [exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, Validators.required], 
         resistanceMakeup: [exercises[i].resistanceMakeup], 
         bandsEndToEnd: [exercises[i].exercise.bandsEndToEnd], //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
-        duration: [120] //TODO: Get/set value from API
+        duration: [120], //TODO: Get/set value from API
+        involvesReps: [exercises[i].exercise.involvesReps] //Kind of a hack, but I need to pass this value along
       });
 
       //formGroup.controls.actualReps.disable();

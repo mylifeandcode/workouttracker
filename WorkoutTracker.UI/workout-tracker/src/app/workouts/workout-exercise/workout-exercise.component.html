@@ -26,8 +26,8 @@
                 <div class="col-4">
                     Resistance
                 </div>
-                <div class="col-1">
-                    Duration
+                <div class="col-1 duration-div">
+                    Duration (secs)
                 </div>
                 <div class="col-1 reps-div">
                     Target Reps
@@ -70,10 +70,12 @@
                     </div>
 
                     <div class="col-1">
-                        <input type="number" class="form-control reps" formControlName="targetReps" required />
+                        <input type="number" *ngIf="formGroup?.controls?.involvesReps?.value==true" class="form-control reps" formControlName="targetReps" required />
+                        <span *ngIf="formGroup?.controls?.involvesReps?.value==false">N/A</span>
                     </div>
                     <div class="col-1">
-                        <input type="number" class="form-control reps" formControlName="actualReps" required /> 
+                        <input type="number" *ngIf="formGroup?.controls?.involvesReps?.value==true" class="form-control reps" formControlName="actualReps" required /> 
+                        <span *ngIf="formGroup?.controls?.involvesReps?.value==false">N/A</span>
                     </div>
                     <div class="col-2 exercise-dropdown-cell">
                         <select class="form-control" formControlName="formRating" required> <!--TODO: Set up differenty, this is just for POC-->

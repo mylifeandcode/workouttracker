@@ -10,4 +10,5 @@ export class Exercise extends NamedEntity {
     resistanceType: number;
     oneSided: boolean;
     bandsEndToEnd: boolean;
+    involvesReps: boolean;
 }

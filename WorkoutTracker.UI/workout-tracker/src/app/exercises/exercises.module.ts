@@ -7,7 +7,7 @@ import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
 import { TableModule } from 'primeng/table';
 import { SharedModule } from 'app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
-
+import { TooltipModule } from 'primeng/tooltip';
 
 
 @NgModule({
@@ -21,7 +21,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     TableModule, 
     ExercisesRoutingModule, 
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TooltipModule
   ], 
   exports: [
     ExerciseListMiniComponent

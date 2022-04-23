@@ -17,5 +17,6 @@ namespace WorkoutTracker.Domain.Exercises
         public ResistanceType ResistanceType { get; set; }
         public bool OneSided { get; set; }
         public bool? BandsEndToEnd { get; set; }
+        public bool InvolvesReps { get; set; }
     }
 }

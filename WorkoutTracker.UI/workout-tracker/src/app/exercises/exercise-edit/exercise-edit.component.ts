@@ -80,9 +80,14 @@ export class ExerciseEditComponent implements OnInit {
         this.loadExercise(); 
       }
       else {
+        //Creating a new exercise
         this.setupTargetAreas([]);
         this.exerciseForm.reset();
         this.exerciseForm.controls["id"].setValue(0);
+        this.exerciseForm.controls["oneSided"].setValue(false);
+        this.exerciseForm.controls["endToEnd"].setValue(false);
+        this.exerciseForm.controls["involvesReps"].setValue(true);
+
         this._exercise = new Exercise();
         this.loading = false;
       }
@@ -99,6 +104,7 @@ export class ExerciseEditComponent implements OnInit {
       resistanceTypes: [0, Validators.required], 
       oneSided: [false], //TODO: Solve -- this value remains null, not false, until checked
       endToEnd: [false], //TODO: Same as above
+      involvesReps: [true], //TODO: Ditto! -- probably caused by reset() being called later!
       targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
       setup: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
       movement: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
@@ -108,7 +114,7 @@ export class ExerciseEditComponent implements OnInit {
     //TODO: Solve. The below lines don't change anything. Values remain false.
     this.exerciseForm.controls["oneSided"].setValue(false);
     this.exerciseForm.controls["endToEnd"].setValue(false);
-      
+    this.exerciseForm.controls["involvesReps"].setValue(true);
   }
 
   private loadExercise(): void {
@@ -131,9 +137,11 @@ export class ExerciseEditComponent implements OnInit {
     this._exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember")?.value;
     this._exercise.resistanceType = this.exerciseForm.get("resistanceTypes")?.value;
     this._exercise.oneSided = Boolean(this.exerciseForm.get("oneSided")?.value); //Call to Boolean() is a workaround to initializer and setValue() not setting value to false as stated
-    
+        
     if (this._exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
     this._exercise.bandsEndToEnd = Boolean(this.exerciseForm.get("endToEnd")?.value); //Call to Boolean() is a workaround (see above)
+
+    this._exercise.involvesReps = Boolean(this.exerciseForm.get("involvesReps")?.value); //Call to Boolean() is a workaround (see above)
 
     this._exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
 
@@ -180,6 +188,7 @@ export class ExerciseEditComponent implements OnInit {
     this.exerciseForm.controls["resistanceTypes"].setValue(this._exercise.resistanceType);
     this.exerciseForm.controls["oneSided"].setValue(this._exercise.oneSided);
     this.exerciseForm.controls["endToEnd"].setValue(this._exercise.bandsEndToEnd);
+    this.exerciseForm.controls["involvesReps"].setValue(this._exercise.involvesReps);
   }
 
   private saveExercise(): void {

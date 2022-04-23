@@ -62,6 +62,13 @@ namespace WorkoutTracker.Data
 
                 context.SaveChanges();
             }
+
+            //4/23/2022 - Add CARDIO target area
+            if (!context.TargetAreas.Any(x => x.Name == "Cardio"))
+            {
+                context.TargetAreas.Add(new TargetArea { Name = "Cardio", CreatedByUserId = systemUserId, CreatedDateTime = DateTime.Now.ToUniversalTime() });
+                context.SaveChanges();
+            }
         }
     }
 }
