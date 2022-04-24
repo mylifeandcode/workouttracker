@@ -30,6 +30,7 @@ export class ExercisePlan {
   public resistanceAmount: number;
   public resistanceMakeup: string;
   public bandsEndToEnd?: boolean;
+  public involvesReps: boolean;
 
   public recommendationReason: string;
 }

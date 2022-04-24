@@ -8,7 +8,7 @@
 
   <div class="row">
     <div class="col-12 setType">
-      <strong>{{executedExercises[0].setType == 0 ? "Repetition" : "Timed"}} Set(s):</strong>
+      <strong>{{executedExercises[0].setType == 0 ? "Repetition" : "Timed"}} Set(s) using <em>{{executedExercises[0].exercise.resistanceType | resistanceType:false}}</em> resistance:</strong>
     </div>
   </div>
 
@@ -44,9 +44,10 @@
   
     <div class="col-4 exercise-info-div">
         <!--TODO: Create a pipe for this-->
-      <span *ngIf="exercise.exercise.resistanceType < 2">{{exercise.resistanceAmount}}</span>
-      <span *ngIf="exercise.exercise.resistanceType == 3">Body Weight</span>
+      <span *ngIf="exercise.exercise.resistanceType < 2"><strong>{{exercise.resistanceAmount}}</strong></span>
+      <span *ngIf="exercise.exercise.resistanceType == 3"><strong>Body Weight</strong></span>
       <span *ngIf="exercise.exercise.resistanceType == 2" [innerHTML]="exercise.resistanceMakeup | resistanceBandColor"></span>
+      <span *ngIf="exercise.exercise.resistanceType == 4"><strong>Other - {{exercise.resistanceAmount}}</strong></span>
     </div>
 
     <div class="col-1">
@@ -55,10 +56,12 @@
     </div>
 
     <div class="col-1">
-        {{exercise.targetRepCount}}
+        <span *ngIf="exercise.exercise.involvesReps">{{exercise.targetRepCount}}</span>
+        <span *ngIf="!exercise.exercise.involvesReps">N/A</span>
     </div>
     <div *ngIf="showResults" class="col-1">
-        {{exercise.actualRepCount}}
+      <span *ngIf="exercise.exercise.involvesReps">{{exercise.actualRepCount}}</span>
+      <span *ngIf="!exercise.exercise.involvesReps">N/A</span>
     </div>
 
     <div *ngIf="showResults" class="col-2">

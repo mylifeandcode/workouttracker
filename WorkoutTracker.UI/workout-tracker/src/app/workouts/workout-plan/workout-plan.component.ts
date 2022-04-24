@@ -192,7 +192,7 @@ export class WorkoutPlanComponent implements OnInit {
           avgRangeOfMotionLastTime: exercise.avgRangeOfMotionLastTime, 
           avgFormLastTime: exercise.avgFormLastTime, 
           recommendedTargetRepCount: exercise.recommendedTargetRepCount, 
-          targetRepCount: [exercise.targetRepCount, Validators.min(1)],
+          targetRepCount: [exercise.targetRepCount, Validators.min(exercise.involvesReps ? 1 : 0)],
           resistanceAmountLastTime: exercise.resistanceAmountLastTime, 
           resistanceMakeupLastTime: exercise.resistanceMakeupLastTime, 
           recommendedResistanceAmount: exercise.recommendedResistanceAmount,
@@ -200,7 +200,8 @@ export class WorkoutPlanComponent implements OnInit {
           resistanceAmount: [exercise.resistanceAmount, (exercise.resistanceType != 3 ? Validators.min(0.1) : null)], 
           resistanceMakeup: exercise.resistanceMakeup, 
           bandsEndToEnd: exercise.bandsEndToEnd, 
-          recommendationReason: exercise.recommendationReason
+          involvesReps: exercise.involvesReps,
+          recommendationReason: exercise.recommendationReason,
         })
       );
 

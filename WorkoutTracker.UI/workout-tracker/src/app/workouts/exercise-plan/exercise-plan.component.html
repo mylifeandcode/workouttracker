@@ -13,10 +13,12 @@
     </div>
     <div *ngIf="workoutHasBeenExecutedBefore" class="row last-time">
       <div class="col-2 form-group">
-        Target Rep Count: <span class="pre-pop-value">{{formGroup.controls['targetRepCountLastTime'].value}}</span>
+        Target Rep Count: <span *ngIf="formGroup.controls['involvesReps'].value" class="pre-pop-value">{{formGroup.controls['targetRepCountLastTime'].value}}</span>
+        <span *ngIf="!formGroup.controls['involvesReps'].value" class="pre-pop-value">N/A</span>
       </div>
       <div class="col-2 form-group">
-        Avg Actual Rep Count: <span class="pre-pop-value">{{formGroup.controls['avgActualRepCountLastTime'].value}}</span>
+        Avg Actual Rep Count: <span *ngIf="formGroup.controls['involvesReps'].value" class="pre-pop-value">{{formGroup.controls['avgActualRepCountLastTime'].value}}</span>
+        <span *ngIf="!formGroup.controls['involvesReps'].value" class="pre-pop-value">N/A</span>
       </div>
       <div class="col-3 form-group">
         Avg Range of Motion: <span class="pre-pop-value">{{formGroup.controls['avgRangeOfMotionLastTime'].value | rating}}</span>
@@ -46,7 +48,8 @@
         </span>
       </div>
       <div class="col-4 form-group">
-        Recommended Target Rep Count <span class="pre-pop-value">{{formGroup.controls['recommendedTargetRepCount'].value}}</span>
+        Recommended Target Rep Count <span *ngIf="formGroup.controls['involvesReps'].value" class="pre-pop-value">{{formGroup.controls['recommendedTargetRepCount'].value}}</span>
+        <span *ngIf="!formGroup.controls['involvesReps'].value" class="pre-pop-value">N/A</span>
       </div>
       <div class="col-4 form-group">
         Recommendation Reason <span class="pre-pop-value">{{formGroup.controls['recommendationReason'].value}}</span>
@@ -63,7 +66,8 @@
       <div class="col-2 form-group">
         <label>
           Target Rep Count
-          <input type="number" class="amount" formControlName="targetRepCount" required />
+          <input *ngIf="formGroup.controls['involvesReps'].value" type="number" class="amount" formControlName="targetRepCount" required />
+          <span *ngIf="!formGroup.controls['involvesReps'].value" class="pre-pop-value">N/A</span>
         </label>
       </div>
       <div class="col-10 form-group">

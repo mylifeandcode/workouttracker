@@ -4,7 +4,17 @@ import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { ExecutedExercise } from '../models/executed-exercise';
 import { Exercise } from '../models/exercise';
 import * as _ from 'lodash';
-import { compileComponentFromMetadata } from '@angular/compiler';
+import { Pipe } from '@angular/core';
+import { ResistanceType } from '../enums/resistance-type';
+
+@Pipe({
+  name: 'resistanceType'
+})
+class ResistanceTypePipeMock {
+  transform(value: ResistanceType, capitalizeEachWord: boolean = true): string {
+    return 'whatever';
+  }
+}
 
 describe('WorkoutExerciseComponent', () => {
   let component: WorkoutExerciseComponent;
@@ -14,7 +24,7 @@ describe('WorkoutExerciseComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule ], 
-      declarations: [ WorkoutExerciseComponent ]
+      declarations: [ WorkoutExerciseComponent, ResistanceTypePipeMock ]
     })
     .compileComponents();
   }));

@@ -42,6 +42,7 @@ namespace WorkoutTracker.Application.Exercises.Models
         public decimal ResistanceAmount { get; set; }
         public string ResistanceMakeup { get; set; }
         public bool? BandsEndToEnd { get; set; }
+        public bool InvolvesReps { get; set; }
 
         public string RecommendationReason { get; set; }
 
@@ -59,6 +60,7 @@ namespace WorkoutTracker.Application.Exercises.Models
             SetType = exercise.SetType;
             ResistanceType = exercise.Exercise.ResistanceType;
             BandsEndToEnd = exercise.Exercise.BandsEndToEnd;
+            InvolvesReps = exercise.Exercise.InvolvesReps;
             Sequence = exercise.Sequence;
         }
 

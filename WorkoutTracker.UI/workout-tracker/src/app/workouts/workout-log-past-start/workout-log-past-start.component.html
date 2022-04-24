@@ -10,7 +10,7 @@
       <div class="col-2">Select a Workout</div>
       <div class="col-2">
         <select id="workoutDefinitions" formControlName="workoutId">
-          <option value="" selected disabled>Choose a Workout</option>
+          <option disabled [value]="null">Choose a Workout</option>
           <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
             {{workouts[i].name}}
           </option>          
