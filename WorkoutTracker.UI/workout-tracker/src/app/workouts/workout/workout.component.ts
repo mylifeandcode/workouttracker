@@ -123,8 +123,11 @@ export class WorkoutComponent implements OnInit {
 
   public completeWorkout(): void {
     this.setWorkoutValuesFromFormGroup();
-    this.workout.endDateTime = new Date();
-    this.persistWorkoutToServer(true);
+    
+    if(this.workout.endDateTime == null) //Because we could be entering information for a past workout
+      this.workout.endDateTime = new Date();
+    
+      this.persistWorkoutToServer(true);
   }
 
   public saveWorkoutInProgress(): void {

@@ -21,6 +21,7 @@ import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialo
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { MessageService } from 'primeng/api';
 import * as _ from 'lodash';
+import * as exp from 'constants';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -124,6 +125,7 @@ class ExecutedWorkoutServiceMock {
     return groupedExercises;
   }
 
+  update = jasmine.createSpy('update').and.callFake((workout: ExecutedWorkout) => { return of(workout);});
 }
 
 class ActivatedRouteMock {
@@ -522,6 +524,28 @@ describe('WorkoutComponent', () => {
 
     //ASSERT
     expect(component.isLoggingPastWorkout).toBeFalse();
+  });
+
+  it("should not change the end date of a workout when completing it if it already has an end date", () => {
+
+    //ARRANGE
+    const expectedEndDateTime = new Date(2022, 1, 2, 13, 45, 0);
+    const workout = new ExecutedWorkout();
+    workout.exercises = [];
+    workout.startDateTime = new Date(2022, 1, 2, 12, 30, 0);
+    workout.endDateTime = expectedEndDateTime;
+
+    component.workout = workout;
+
+    const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
+    
+    //ACT
+    component.completeWorkout();
+
+    //ASSERT
+    expect(component.workout.endDateTime).toBe(expectedEndDateTime); //Service mock returns the same object
+    expect(executedWorkoutService.update).toHaveBeenCalledWith(workout);
+
   });
 
 });
