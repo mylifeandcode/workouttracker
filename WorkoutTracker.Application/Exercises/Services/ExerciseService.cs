@@ -56,6 +56,13 @@ namespace WorkoutTracker.Application.Exercises.Services
                     .ToDictionary(enumValue => enumValue, enumValue => Enum.GetName(typeof(ResistanceType), enumValue));
         }
 
+        public int GetTotalCount(ExerciseFilter filter)
+        {
+            var query = _repo.Get();
+            ApplyQueryFilters(ref query, filter);
+            return query.Count();
+        }
+
         #region Private Methods
         private void ApplyQueryFilters(ref IQueryable<Exercise> query, ExerciseFilter filter)
         {
@@ -102,6 +109,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             foreach (var link in linksToRemove)
                 existingExercise.ExerciseTargetAreaLinks.Remove(link);
         }
+
         #endregion Private Methods
     }
 }

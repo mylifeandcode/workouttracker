@@ -4,9 +4,10 @@ import { ExercisesRoutingModule } from './exercises-routing.module';
 import { ExerciseListComponent } from './exercise-list/exercise-list.component';
 import { ExerciseListMiniComponent } from './exercise-list-mini/exercise-list-mini.component';
 import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
-import { TableModule } from 'primeng/table';
 import { SharedModule } from 'app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 
 
@@ -22,7 +23,8 @@ import { TooltipModule } from 'primeng/tooltip';
     ExercisesRoutingModule, 
     SharedModule,
     ReactiveFormsModule,
-    TooltipModule
+    TooltipModule,
+    MultiSelectModule
   ], 
   exports: [
     ExerciseListMiniComponent

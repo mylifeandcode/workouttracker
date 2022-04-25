@@ -39,12 +39,15 @@ namespace WorkoutTracker.UI.Controllers
             {
                 var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
 
-                int totalCount = _exerciseService.GetTotalCount(); //TODO: Modify to get total count by filter
+                int totalCount = _exerciseService.GetTotalCount(filter); //TODO: Modify to get total count by filter
 
                 //Blows up after upgrading to EF Core 3.1 from 2.2!
                 //More info at https://stackoverflow.com/questions/59677609/problem-with-ef-core-after-migrating-from-2-2-to-3-1
                 //Had to add .ToList() to the call below.
-                var exercises = _exerciseService.Get(firstRecord, pageSize, filter).ToList();
+                var exercises =
+                    _exerciseService
+                        .Get(firstRecord, pageSize, filter)
+                        .OrderBy(x => x.Name);
 
                 var results = exercises.Select((exercise) =>
                 {

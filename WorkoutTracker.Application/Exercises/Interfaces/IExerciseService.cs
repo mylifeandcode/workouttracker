@@ -15,5 +15,6 @@ namespace WorkoutTracker.Application.Exercises.Interfaces
         int GetTotalCount();
         Exercise GetById(int exerciseId);
         Dictionary<int, string> GetResistanceTypes();
+        int GetTotalCount(ExerciseFilter filter);
     }
 }
