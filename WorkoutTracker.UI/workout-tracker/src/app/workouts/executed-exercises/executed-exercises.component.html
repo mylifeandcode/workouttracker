@@ -20,7 +20,7 @@
         Resistance
     </div>
     <div class="col-1">
-        Duration<br /><small>(in seconds)</small>
+        Duration
     </div>
     <div class="col-1 reps-div">
         Target Reps
@@ -52,7 +52,7 @@
 
     <div class="col-1">
         <span *ngIf="exercise.setType == 0">N/A</span>
-        <span *ngIf="exercise.setType == 1">{{exercise.duration}}</span>
+        <span *ngIf="exercise.setType == 1">{{exercise.duration | duration}}</span>
     </div>
 
     <div class="col-1">

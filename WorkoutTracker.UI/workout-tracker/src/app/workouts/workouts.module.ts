@@ -36,6 +36,7 @@ import { ExercisesModule } from 'app/exercises/exercises.module';
 import { WorkoutSelectPlannedComponent } from './workout-select-planned/workout-select-planned.component';
 import { SharedModule } from 'app/shared/shared.module';
 import { WorkoutLogPastStartComponent } from '../workouts/workout-log-past-start/workout-log-past-start.component';
+import { DurationPipe } from './pipes/duration.pipe';
 
 
 @NgModule({
@@ -59,7 +60,8 @@ import { WorkoutLogPastStartComponent } from '../workouts/workout-log-past-start
     WorkoutPlanComponent,
     ExercisePlanComponent,
     WorkoutSelectPlannedComponent,
-    WorkoutLogPastStartComponent
+    WorkoutLogPastStartComponent,
+    DurationPipe
   ],
   imports: [
     CommonModule,
