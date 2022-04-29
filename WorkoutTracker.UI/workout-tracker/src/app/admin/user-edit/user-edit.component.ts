@@ -41,7 +41,7 @@ export class UserEditComponent implements OnInit {
     const user = this.getUserForPersist();
 
     const result: Observable<User> =
-      (user.id === 0 ? this._userSvc.addUser(user) : this._userSvc.updateUser(user));
+      (user.id === 0 ? this._userSvc.add(user) : this._userSvc.update(user));
 
       result
           .pipe(finalize(() => { this.savingUserInfo = false; }))
@@ -83,7 +83,7 @@ export class UserEditComponent implements OnInit {
 
   private getUserInfoFromService(userId: number): void {
 
-    this._userSvc.getUserInfo(userId)
+    this._userSvc.getById(userId)
       .subscribe(
       (user: User) => {
         this._user = user;

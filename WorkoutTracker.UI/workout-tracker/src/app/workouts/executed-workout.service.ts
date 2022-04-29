@@ -4,8 +4,8 @@ import { ApiBaseService } from 'app/core/api-base.service';
 import { ConfigService } from 'app/core/config.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, pipe } from 'rxjs';
+import { map, shareReplay, tap } from 'rxjs/operators';
 import { ExecutedExercise } from './models/executed-exercise';
 import { ExecutedWorkout } from './models/executed-workout';
 import { ExecutedWorkoutDTO } from './models/executed-workout-dto';
@@ -28,7 +28,14 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
    */
   public getFilteredSubset(startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutDTO>> {
     //TODO: Add parameters for filtering
-    return this._http.get<PaginatedResults<ExecutedWorkoutDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}`);
+    const result: Observable<PaginatedResults<ExecutedWorkoutDTO>> =
+      this._http.get<PaginatedResults<ExecutedWorkoutDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}`)
+        .pipe(
+          tap(() => { console.log("Got executed workouts"); }), 
+          shareReplay(1)
+        );
+        
+    return result;
   }
 
   /**

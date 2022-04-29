@@ -68,7 +68,7 @@ describe('UserSelectComponent', () => {
     //Nothing else to do here
 
     //ASSERT
-    expect(userService.getAll).toHaveBeenCalledTimes(1);
+    expect(userService.all).toHaveBeenCalledTimes(1);
 
   });
 

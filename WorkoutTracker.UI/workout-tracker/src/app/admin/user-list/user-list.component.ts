@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../core/user.service';
 import { User } from '../../core/models/user';
 import * as _ from 'lodash';
+import { catchError, finalize } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'wt-user-list',
@@ -27,7 +29,7 @@ export class UserListComponent implements OnInit {
 
       this.busy = true;
       this.busyMsg = "Deleting...";
-      this._userSvc.deleteUser(userId).subscribe(
+      this._userSvc.delete(userId).subscribe(
           () => {
               const index = _.findIndex(this.users, (user: User) => user.id == userId);
               this.users?.splice(index, 1);
@@ -41,15 +43,34 @@ export class UserListComponent implements OnInit {
     }
 
     private loadUsers(): void {
-        this.busy = true;
-        this.busyMsg = "Loading users...";
-        this._userSvc.getAll().subscribe( //TODO: Add paging and sorting
-            (users: User[]) => this.users = users,
-            (error: any) => this.errorMsg = error,
-            () => {
-                this.busy = false;
-                this.busyMsg = "";
-            });
+      this.setBusy("Loading users...");
+      this._userSvc.all
+        .pipe(
+          catchError((error: any) => {
+            this.errorMsg = error;
+            this.setNotBusy();
+            return throwError(error);
+          }),
+          /*
+          Can't use finalize here anymore because we're subscribing to an Observable which does not complete
+          finalize(() => {
+            this.busy = false;
+            this.busyMsg = "";            
+          })
+          */
+        )
+        .subscribe((users: User[]) => {
+          this.users = users;
+          this.setNotBusy();
+        });
+    }
+
+    private setBusy(busyMessage: string): void {
+
+    }
+
+    private setNotBusy(): void {
+
     }
 
 }

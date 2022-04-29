@@ -37,7 +37,7 @@ describe('UserService', () => {
   it('should get all users',  inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
     const expectedResults = new Array<User>();
 
-    service.getAll().subscribe(
+    service.all.subscribe(
       (users: Array<User>) => expect(users).toEqual(expectedResults),
       fail
     );
@@ -55,7 +55,7 @@ describe('UserService', () => {
     const userId: number = parseInt(TEST_USER_ID);
     expectedResults.id = userId;
 
-    service.getUserInfo(userId).subscribe(
+    service.getById(userId).subscribe(
       (user: User) => expect(user).toEqual(expectedResults),
       fail
     );
@@ -71,7 +71,7 @@ describe('UserService', () => {
   it('should add user', inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
     const user = new User();
 
-    service.addUser(user)
+    service.add(user)
       .subscribe(
         (result: User) => expect(result).toEqual(user),
         fail
@@ -90,7 +90,7 @@ describe('UserService', () => {
     const user = new User();
     user.id = parseInt(TEST_USER_ID);
 
-    service.updateUser(user)
+    service.update(user)
       .subscribe(
         (result: User) => expect(result).toEqual(user),
         fail
@@ -108,7 +108,7 @@ describe('UserService', () => {
   it('should delete user', inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
     const userId = 7;
 
-    service.deleteUser(7)
+    service.delete(7)
       .subscribe(
         (result: any) => expect(result).toBeNull(),
         fail

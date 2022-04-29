@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/com
 import { LocalStorageService } from './local-storage.service';
 import { ConfigService } from './config.service';
 import { UserOverview } from './models/user-overview';
+import { ApiBaseService } from './api-base.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -16,16 +17,14 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
+export class UserService extends ApiBaseService<User> {
 
-  private _apiRoot: string;
+  //private _apiRoot: string;
   private _userSubject$ = new BehaviorSubject<User | null>(null);
   //private _userObservable$: Observable<User> = this._userSubject$.asObservable();
 
-  constructor(
-    private _http: HttpClient, 
-    private _configService: ConfigService) { 
-
+  constructor(private _configService: ConfigService, _http: HttpClient) { 
+    super(_configService.get('apiRoot') + "Users", _http);
   }
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
@@ -35,25 +34,11 @@ export class UserService {
     this._apiRoot = this._configService.get("apiRoot") + "Users";
   }
 
+  /*
   public getAll() : Observable<Array<User>> {
     return this._http.get<Array<User>>(this._apiRoot);
   }
-
-  public getUserInfo(userId: number): Observable<User> {
-    return this._http.get<User>(`${this._apiRoot}/${userId}`);
-  }
-
-  public addUser(user: User): Observable<User> {
-    return this._http.post<User>(this._apiRoot, user, httpOptions);
-  }
-
-  public updateUser(user: User): Observable<User> {
-    return this._http.put<User>(`${this._apiRoot}/${user.id}`, user, httpOptions);
-  }
-
-  public deleteUser(userId: number): Observable<any> {
-    return this._http.delete(`${this._apiRoot}/${userId}`);
-  }
+  */
 
   //TODO: Move to AuthService
   public isUserLoggedIn(): boolean {

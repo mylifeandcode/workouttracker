@@ -50,7 +50,7 @@ describe('UserListComponent', () => {
   });
 
   it('should load users on init', () => {
-    expect(userService.getAll).toHaveBeenCalledTimes(1);
+    expect(userService.all).toHaveBeenCalledTimes(1);
     expect(component?.users?.length).toBeGreaterThan(0);
   });
 

@@ -72,7 +72,7 @@ describe('UserEditComponent', () => {
   it('should get user info when route specifies a user ID', waitForAsync(() => {
     fixture.whenStable().then(() => {
       const userService = TestBed.inject(UserService);
-      expect(userService.getUserInfo).toHaveBeenCalledTimes(1);
+      expect(userService.getById).toHaveBeenCalledTimes(1);
     });
   }));
 
@@ -88,7 +88,7 @@ describe('UserEditComponent', () => {
       component.saveUser();
 
       //ASSERT
-      expect(userService.addUser).toHaveBeenCalledWith(expectedUser);
+      expect(userService.add).toHaveBeenCalledWith(expectedUser);
     });
   }));
 
@@ -104,7 +104,7 @@ describe('UserEditComponent', () => {
       component.saveUser();
 
       //ASSERT
-      expect(userService.updateUser).toHaveBeenCalledWith(expectedUser);
+      expect(userService.update).toHaveBeenCalledWith(expectedUser);
     });
   }));
 
