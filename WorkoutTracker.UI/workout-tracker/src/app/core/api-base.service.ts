@@ -97,6 +97,13 @@ export abstract class ApiBaseService<T extends Entity> {
         tap(() => this._refreshGetAll.next()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
   }
+
+  /**
+   * Invalidates cached data
+   */
+  public invalidateCache(): void {
+    this._refreshGetAll.next();
+  }
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
 
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
