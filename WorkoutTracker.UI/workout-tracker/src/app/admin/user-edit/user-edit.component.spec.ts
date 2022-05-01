@@ -13,9 +13,9 @@ const CURRENT_USER_ID = 5150;
 
 class UserServiceMock {
   getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User({id: CURRENT_USER_ID})));
-  getUserInfo = jasmine.createSpy('getUserInfo').and.returnValue(of(new User()));
-  addUser = jasmine.createSpy('addUser').and.returnValue(of(new User()));
-  updateUser = jasmine.createSpy('updateUser').and.returnValue(of(new User()));
+  getById = jasmine.createSpy('getById').and.returnValue(of(new User()));
+  add = jasmine.createSpy('add').and.returnValue(of(new User()));
+  update = jasmine.createSpy('update').and.returnValue(of(new User()));
 }
 
 @Component({})
@@ -61,51 +61,43 @@ describe('UserEditComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should create the form', waitForAsync(() => {
-    fixture.whenStable().then(() => {
-      expect(component.userEditForm).toBeTruthy();
-      expect(component.userEditForm.controls.id).toBeTruthy();
-      expect(component.userEditForm.controls.name).toBeTruthy();
-    });
-  }));
+  it('should create the form', () => {
+    expect(component.userEditForm).toBeTruthy();
+    expect(component.userEditForm.controls.id).toBeTruthy();
+    expect(component.userEditForm.controls.name).toBeTruthy();
+  });
 
-  it('should get user info when route specifies a user ID', waitForAsync(() => {
-    fixture.whenStable().then(() => {
-      const userService = TestBed.inject(UserService);
-      expect(userService.getById).toHaveBeenCalledTimes(1);
-    });
-  }));
+  it('should get user info when route specifies a user ID', () => {
+    const userService = TestBed.inject(UserService);
+    expect(userService.getById).toHaveBeenCalledTimes(1);
+  });
 
-  it('should add new user', waitForAsync(() => {
-    fixture.whenStable().then(() => {
-      //ARRANGE
-      const userService = TestBed.inject(UserService);
-      const expectedUser = new User({id: 0, name: 'Dr. Klahn'});
-      component.userEditForm.controls.id.setValue(expectedUser.id);
-      component.userEditForm.controls.name.setValue(expectedUser.name);
+  it('should add new user', () => {
+    //ARRANGE
+    const userService = TestBed.inject(UserService);
+    const expectedUser = new User({id: 0, name: 'Dr. Klahn'});
+    component.userEditForm.controls.id.setValue(expectedUser.id);
+    component.userEditForm.controls.name.setValue(expectedUser.name);
 
-      //ACT
-      component.saveUser();
+    //ACT
+    component.saveUser();
 
-      //ASSERT
-      expect(userService.add).toHaveBeenCalledWith(expectedUser);
-    });
-  }));
+    //ASSERT
+    expect(userService.add).toHaveBeenCalledWith(expectedUser);
+  });
 
-  it('should update existing user', waitForAsync(() => {
-    fixture.whenStable().then(() => {
-      //ARRANGE
-      const userService = TestBed.inject(UserService);
-      const expectedUser = new User({id: 100, name: 'Big Jim Slade'});
-      component.userEditForm.controls.id.setValue(expectedUser.id);
-      component.userEditForm.controls.name.setValue(expectedUser.name);
+  it('should update existing user', () => {
+    //ARRANGE
+    const userService = TestBed.inject(UserService);
+    const expectedUser = new User({id: 100, name: 'Big Jim Slade'});
+    component.userEditForm.controls.id.setValue(expectedUser.id);
+    component.userEditForm.controls.name.setValue(expectedUser.name);
 
-      //ACT
-      component.saveUser();
+    //ACT
+    component.saveUser();
 
-      //ASSERT
-      expect(userService.update).toHaveBeenCalledWith(expectedUser);
-    });
-  }));
+    //ASSERT
+    expect(userService.update).toHaveBeenCalledWith(expectedUser);
+  });
 
 });

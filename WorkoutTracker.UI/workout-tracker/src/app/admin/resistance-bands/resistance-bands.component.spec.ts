@@ -86,7 +86,7 @@ describe('ResistanceBandsComponent', () => {
 
   it('should get resistance band data on init', () => {
     const resistanceBandService: ResistanceBandService = TestBed.inject(ResistanceBandService);
-    expect(resistanceBandService.all).toHaveBeenCalled();
+    expect(resistanceBandService.getAll).toHaveBeenCalledTimes(1);
     expect(component.resistanceBands).not.toBeNull();
   })
 
@@ -109,7 +109,7 @@ describe('ResistanceBandsComponent', () => {
         summary: 'Successful',
         detail: 'Resistance Band added', life: 3000
       });
-    expect(resistanceBandService.all).toHaveBeenCalledTimes(2); //The initial call and then the refrsh after the save
+    expect(resistanceBandService.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refrsh after the save
 
   });
 
@@ -154,7 +154,7 @@ describe('ResistanceBandsComponent', () => {
         summary: 'Successful',
         detail: 'Resistance Band deleted', life: 3000
       });
-    expect(resistanceBandService.all).toHaveBeenCalledTimes(2); //The initial call and then the refresh after deletion
+    expect(resistanceBandService.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refresh after deletion
 
   });
 
@@ -174,7 +174,7 @@ describe('ResistanceBandsComponent', () => {
     //ASSERT
     expect(resistanceBandService.delete).not.toHaveBeenCalled();
     expect(messageService.add).not.toHaveBeenCalled();
-    expect(resistanceBandService.all).toHaveBeenCalledTimes(1); //Just the initial call
+    expect(resistanceBandService.getAll).toHaveBeenCalledTimes(1); //Just the initial call
 
   });
 

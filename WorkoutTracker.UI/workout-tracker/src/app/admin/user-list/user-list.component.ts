@@ -12,65 +12,47 @@ import { throwError } from 'rxjs';
 })
 export class UserListComponent implements OnInit {
 
-    public busy: boolean;
-    public busyMsg: string;
-    public users: User[] | null = null;
-    public errorMsg: string;
+  public busy: boolean;
+  public busyMsg: string;
+  public users: User[] | null = null;
+  public errorMsg: string;
 
-    constructor(private _userSvc: UserService) { }
+  constructor(private _userSvc: UserService) { }
 
-    ngOnInit(): void {
-        this.loadUsers();
-    }
+  public ngOnInit(): void {
+    this.loadUsers();
+  }
 
-    public deleteUser(userId: number): void {
-      if (!window.confirm("Are you sure you want to delete this user?"))
-          return;
+  public deleteUser(userId: number): void {
+    if (!window.confirm("Are you sure you want to delete this user?"))
+      return;
 
-      this.busy = true;
-      this.busyMsg = "Deleting...";
-      this._userSvc.delete(userId).subscribe(
-          () => {
-              const index = _.findIndex(this.users, (user: User) => user.id == userId);
-              this.users?.splice(index, 1);
-          },
-          (error: any) => this.errorMsg = error,
-          () => {
-              this.busy = false;
-              this.busyMsg = "";
-          }
-      );
-    }
+    this.busy = true;
+    this.busyMsg = "Deleting...";
+    this._userSvc.delete(userId).subscribe(
+      () => {
+          const index = _.findIndex(this.users, (user: User) => user.id == userId);
+          this.users?.splice(index, 1);
+      },
+      (error: any) => this.errorMsg = error,
+      () => {
+          this.busy = false;
+          this.busyMsg = "";
+      }
+    );
+  }
 
-    private loadUsers(): void {
-      this.setBusy("Loading users...");
-      this._userSvc.all
-        .pipe(
-          catchError((error: any) => {
-            this.errorMsg = error;
-            this.setNotBusy();
-            return throwError(error);
-          }),
-          /*
-          Can't use finalize here anymore because we're subscribing to an Observable which does not complete
-          finalize(() => {
-            this.busy = false;
-            this.busyMsg = "";            
-          })
-          */
-        )
-        .subscribe((users: User[]) => {
-          this.users = users;
-          this.setNotBusy();
-        });
-    }
-
-    private setBusy(busyMessage: string): void {
-
-    }
-
-    private setNotBusy(): void {
-
-    }
+  private loadUsers(): void {
+    this._userSvc.getAll()
+      .pipe(
+        finalize(() => {
+          this.busy = false;
+          this.busyMsg = "";            
+        })
+      )
+      .subscribe((users: User[]) => {
+        this.users = users;
+      });
+  }
 
 }

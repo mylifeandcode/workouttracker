@@ -4,14 +4,13 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from './resistance-band.service';
-import { Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'wt-resistance-bands',
   templateUrl: './resistance-bands.component.html',
   styleUrls: ['./resistance-bands.component.css']
 })
-export class ResistanceBandsComponent implements OnInit, OnDestroy {
+export class ResistanceBandsComponent implements OnInit {
 
   public resistanceBands: ResistanceBand[] | null = null;
   public busy: boolean = false;
@@ -24,21 +23,15 @@ export class ResistanceBandsComponent implements OnInit, OnDestroy {
 
   //This is used to store the original row when we go into edit mode
   private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {};
-  private _allResistanceBands: Subscription;
 
   constructor(
     private _resistanceBandService: ResistanceBandService,
     private _messageService: MessageService,
     private _confirmationService: ConfirmationService) { }
 
-  public ngOnDestroy(): void {
-    if(this._allResistanceBands)
-      this._allResistanceBands.unsubscribe();
-  }
-
   //Table edit code based on PrimeNg's example at https://www.primefaces.org/primeng/showcase/#/table/edit
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.getResistanceBandData();
   }
 
@@ -97,8 +90,8 @@ export class ResistanceBandsComponent implements OnInit, OnDestroy {
   }
 
   private getResistanceBandData(): void {
-    this._allResistanceBands = this._resistanceBandService
-      .all
+    this._resistanceBandService
+      .getAll()
       .subscribe((results: ResistanceBand[]) => this.resistanceBands = results);
   }
 

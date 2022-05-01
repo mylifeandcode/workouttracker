@@ -29,7 +29,7 @@ export class UserEditComponent implements OnInit {
 
   //PUBLIC METHODS
 
-  public async ngOnInit() {
+  public ngOnInit(): void {
     this.loadingUserInfo = true;
     this.createForm();
     this.getUserInfo();
