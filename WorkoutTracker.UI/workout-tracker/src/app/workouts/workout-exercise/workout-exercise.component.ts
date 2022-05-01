@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 /**
  * A component representing an Exercise as part of a Workout instance,
@@ -34,6 +34,9 @@ export class WorkoutExerciseComponent implements OnInit {
   @Output()
   rangeOfMotionEntered = new EventEmitter();
 
+  @Output()
+  durationEdit = new EventEmitter<FormControl>();
+
   //Properties
   get setsArray(): FormArray {
     //This property provides an easier way for the template to access this information,
@@ -56,5 +59,9 @@ export class WorkoutExerciseComponent implements OnInit {
 
   public rangeOfMotionChanged(): void {
     this.rangeOfMotionEntered.emit();
+  }
+
+  public editDuration(formControl: FormControl): void {
+    this.durationEdit.emit(formControl);
   }
 }

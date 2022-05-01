@@ -27,7 +27,7 @@
                     Resistance
                 </div>
                 <div class="col-1 duration-div">
-                    Duration (secs)
+                    Duration (click to edit)
                 </div>
                 <div class="col-1 reps-div">
                     Target Reps
@@ -66,7 +66,10 @@
                     <!--Duration-->
                     <div class="col-1">
                         <span *ngIf="formGroup?.controls?.setType?.value==0" class="exercise-info-span">N/A</span>
-                        <input *ngIf="formGroup?.controls?.setType?.value==1" type="text" class="form-control" formControlName="duration" required />
+                        <button class="btn btn-sm btn-primary duration-button" *ngIf="formGroup?.controls?.setType?.value==1" (click)="editDuration(exerciseSet.controls.duration)">
+                          {{exerciseSet.controls.duration.value | duration:true}}
+                        </button>
+                        <!--<input *ngIf="formGroup?.controls?.setType?.value==1" type="text" class="form-control" formControlName="duration" required />-->
                     </div>
                     
                     <!--Target Reps-->

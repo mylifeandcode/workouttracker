@@ -1,0 +1,12 @@
+<h5>Enter Duration</h5>
+<form *ngIf="form" [formGroup]="form">
+  <p>
+    <label for="hours">Hours</label><input formControlName="hours" id="hours" type="number" min="0"> 
+    <label for="minutes">Minutes</label><input formControlName="minutes" id="minutes" type="number" min="0"> 
+    <label for="seconds">Seconds</label><input formControlName="seconds" id="seconds" type="number" min="0">
+  </p>
+</form>
+<p>
+  <button class="btn btn-danger pull-right" (click)="cancel()">Cancel</button>
+  <button class="btn btn-success pull-right" (click)="ok()" [disabled]="!form.valid">OK</button>
+</p>

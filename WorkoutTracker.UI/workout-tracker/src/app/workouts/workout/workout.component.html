@@ -21,7 +21,8 @@
           [formGroup]="exercise" 
           (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
           (showTimerRequest)="showTimer($event)"
-          (rangeOfMotionEntered)="saveWorkoutInProgress()">
+          (rangeOfMotionEntered)="saveWorkoutInProgress()"
+          (durationEdit)="openDurationModal($event)">
         </wt-workout-exercise>
 
         <div class="row">
@@ -34,7 +35,7 @@
             <textarea id="journal" class="form-control" formControlName="journal"></textarea>
           </div>
         </div>
-
+        <button type="button" class="btn" (click)="openDurationModal()">Show Duration Modal</button>
         <button type="submit" *ngIf="!workoutCompleted || isLoggingPastWorkout" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !isLoggingPastWorkout)" (click)="completeWorkout()">Complete Workout</button>
         <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
       </ng-container>
@@ -60,5 +61,13 @@
       [activatedDateTime]="countdownModalActivatedDateTime"
       [targetReps]="formGroupForCountdownModal?.controls?.targetReps?.value">
     </wt-countdown-timer>
+  </p-dialog>
+
+  <p-dialog header="Duration" [(visible)]="showDurationModal">
+    <wt-duration 
+      [currentDuration]="formControlForDurationEdit?.value"
+      (okClicked)="durationModalAccepted($event)"
+      (cancelClicked)="durationModalCancelled()">
+    </wt-duration>
   </p-dialog>
 </div>

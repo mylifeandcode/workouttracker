@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl, FormControl } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
@@ -35,6 +35,8 @@ export class WorkoutComponent implements OnInit {
   public infoMsg: string;
   public workoutCompleted: boolean = false;
   public isLoggingPastWorkout: boolean = false;
+  public showDurationModal: boolean = false;
+  public formControlForDurationEdit: FormControl | null = null;
   //END PUBLIC FIELDS
 
   //VIEWCHILD
@@ -135,6 +137,20 @@ export class WorkoutComponent implements OnInit {
     this.persistWorkoutToServer(false);
   }
   
+  public openDurationModal(formControl: FormControl): void {
+    this.formControlForDurationEdit = formControl;
+    this.showDurationModal = true;
+  }
+
+  public durationModalAccepted(duration: number): void {
+    this.formControlForDurationEdit?.setValue(duration);
+    this.showDurationModal = false;
+  }
+
+  public durationModalCancelled(): void {
+    this.formControlForDurationEdit = null;
+    this.showDurationModal = false;
+  }
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
   private subscribeToRouteParams(): void {

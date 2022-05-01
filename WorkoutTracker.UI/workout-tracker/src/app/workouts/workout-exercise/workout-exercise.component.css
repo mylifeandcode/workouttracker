@@ -26,6 +26,10 @@
     font-size: smaller;
 }
 
+.duration-button {
+  margin-top: 8px;
+}
+
 .exercise-info-div {
     padding-top: 5px;
 }
