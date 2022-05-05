@@ -35,7 +35,6 @@
             <textarea id="journal" class="form-control" formControlName="journal"></textarea>
           </div>
         </div>
-        <button type="button" class="btn" (click)="openDurationModal()">Show Duration Modal</button>
         <button type="submit" *ngIf="!workoutCompleted || isLoggingPastWorkout" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !isLoggingPastWorkout)" (click)="completeWorkout()">Complete Workout</button>
         <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
       </ng-container>
