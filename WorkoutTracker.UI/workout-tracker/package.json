@@ -10,7 +10,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "ngcc",
-    "watch": "ng build --watch"
+    "watch": "ng build --watch --configuration development"
   },
   "private": true,
   "dependencies": {
