@@ -16,6 +16,15 @@ class ResistanceTypePipeMock {
   }
 }
 
+@Pipe({
+  name: 'duration'
+})
+class DurationPipeMock {
+  transform(value: number, precise: boolean = false): number {
+    return 0;
+  }
+}
+
 describe('WorkoutExerciseComponent', () => {
   let component: WorkoutExerciseComponent;
   let fixture: ComponentFixture<WorkoutExerciseComponent>;
@@ -24,7 +33,11 @@ describe('WorkoutExerciseComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule ], 
-      declarations: [ WorkoutExerciseComponent, ResistanceTypePipeMock ]
+      declarations: [ 
+        WorkoutExerciseComponent, 
+        ResistanceTypePipeMock,
+        DurationPipeMock 
+      ]
     })
     .compileComponents();
   }));
