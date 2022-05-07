@@ -11,7 +11,6 @@ import { WorkoutsRoutingModule } from './workouts-routing.module';
 import { WorkoutComponent } from './workout/workout.component';
 import { WorkoutListComponent } from './workout-list/workout-list.component';
 import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
-import { WorkoutSetDefinitionComponent } from './workout-set-definition/workout-set-definition.component';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ResistanceBandSelectComponent } from './resistance-band-select/resistance-band-select.component';
@@ -45,7 +44,6 @@ import { DurationComponent } from '../workouts/duration/duration.component';
     WorkoutComponent,
     WorkoutListComponent,
     WorkoutEditComponent,
-    WorkoutSetDefinitionComponent,
     WorkoutExerciseComponent,
     ResistanceBandSelectComponent,
     CountdownTimerComponent,

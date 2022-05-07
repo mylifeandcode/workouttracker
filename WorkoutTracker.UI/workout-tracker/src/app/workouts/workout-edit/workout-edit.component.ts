@@ -1,9 +1,8 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { Workout } from 'app/workouts/models/workout';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
@@ -22,12 +21,11 @@ export class WorkoutEditComponent implements OnInit {
   public workoutForm: FormGroup;
   public loading: boolean = true;
   public infoMsg: string | null = null;
+  public showExerciseSelectModal: boolean = false;
 
   //Private fields
   private _saving: boolean = false;
   private _errorMsg: string | null = null;
-  private _currentUserId: number; //The ID of the user performing the add or edit
-  private _modalRef: BsModalRef;
   private _workout: Workout;
 
   //Properties
@@ -38,8 +36,7 @@ export class WorkoutEditComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
-    private _workoutSvc: WorkoutService,
-    private _modalSvc: BsModalService) {
+    private _workoutService: WorkoutService) {
   }
 
   public ngOnInit(): void {
@@ -60,8 +57,8 @@ export class WorkoutEditComponent implements OnInit {
     });
 }  
 
-  private openModal(template: TemplateRef<any>): void {
-    this._modalRef = this._modalSvc.show(template);
+  private openModal(): void {
+    this.showExerciseSelectModal = true;
   }
 
   private getRouteParams(): void {
@@ -81,18 +78,9 @@ export class WorkoutEditComponent implements OnInit {
 
   }
 
-  /*
-  private async getCurrentUserId(): Promise<number> {
-    //TODO: Create edit form base component that would contain this function and be extended by other
-    //edit components
-    let result: User = await this._userSvc.getCurrentUserInfo().toPromise();
-    return result ? result.id : 0;
-  }
-  */
-
   private loadWorkout(): void {
     this.loading = true;
-    this._workoutSvc.getById(this.workoutId).subscribe((workout: Workout) => {
+    this._workoutService.getById(this.workoutId).subscribe((workout: Workout) => {
         this.updateFormWithWorkoutValues(workout);
         this.loading = false;
         this._workout = workout;
@@ -116,8 +104,6 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private addExercise(exercise: ExerciseDTO): void {
-    //Called by button click in template
-    this._modalRef.hide();     //TODO: Check this out: https://valor-software.com/ngx-bootstrap/#/modals
     this.exercisesArray.push(this.createExerciseFormGroup(0, exercise.id, exercise.name));
   }
 
@@ -160,7 +146,7 @@ export class WorkoutEditComponent implements OnInit {
 
   private addWorkout(): void {
     console.log("ADDING WORKOUT: ", this._workout);
-    this._workoutSvc.add(this._workout)
+    this._workoutService.add(this._workout)
       .pipe(finalize(() => {
           this._saving = false;
       }))
@@ -179,7 +165,7 @@ export class WorkoutEditComponent implements OnInit {
 
   private updateWorkout(): void {
     console.log("UPDATING WORKOUT: ", this._workout);
-    this._workoutSvc.update(this._workout)
+    this._workoutService.update(this._workout)
       .pipe(finalize(() => {
           this._saving = false;
       }))

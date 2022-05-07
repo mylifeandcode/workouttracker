@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { of } from 'rxjs';
-import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { WorkoutEditComponent } from './workout-edit.component';
 import { WorkoutService } from '../workout.service';
@@ -79,10 +78,6 @@ describe('WorkoutEditComponent', () => {
         {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
-        },
-        {
-          provide: BsModalService,
-          useClass: BsModalServiceMock
         }
       ]
     })

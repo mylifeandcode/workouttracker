@@ -8,8 +8,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 //Third-Party imports
 
-import { ModalModule } from 'ngx-bootstrap/modal'; //TODO: Deprecate in favor of PrimeNg dialog
-
 //My imports
 //Modules
 import { AppRoutingModule } from './app-routing.module';
@@ -77,7 +75,6 @@ function initializeApp(
     CommonModule,
     CoreModule,
     HttpClientModule,
-    ModalModule.forRoot(),
     ProgressSpinnerModule, 
     ReactiveFormsModule,
     SharedModule
