@@ -1,8 +1,8 @@
 <h3 class="headroom">Workout History</h3>
 <div class="container-fluid">
   <div class="row">
-      <div class="col-md-12">
-          <p-table #dt class="table table-striped w-auto"  [value]="executedWorkouts" [paginator]="true" [columns]="cols" [rows]="pageSize" [lazy]="true" (onLazyLoad)="getExecutedWorkoutsLazy($event)" [totalRecords]="totalRecords" [loading]="loading">
+      <div class="col-12">
+          <p-table #dt class="p-datatable-striped w-auto"  [value]="executedWorkouts" [paginator]="true" [columns]="cols" [rows]="pageSize" [lazy]="true" (onLazyLoad)="getExecutedWorkoutsLazy($event)" [totalRecords]="totalRecords" [loading]="loading">
               <ng-template pTemplate="header" let-columns>
                   <tr>
                       <th>Workout Name</th>
@@ -26,7 +26,9 @@
       <div class="col-12" *ngIf="totalRecords > 0">{{totalRecords}} total workouts</div>
       <div class="col-12" *ngIf="totalRecords == 0" style="font-style: italic">No workouts have been executed yet.</div>
   </div>
-  <div class="row col-md-12">
+  <div class="row">
+    <div class="col-12">
       <button routerLink="/workouts/select" [disabled]="loading" class="btn btn-primary"><i class="fa fa-plus"></i> Start a Workout</button>
+    </div>
   </div>
 </div>

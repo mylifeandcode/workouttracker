@@ -26,9 +26,9 @@
 
   <ng-container *ngIf="!gettingUserInfo">
 
-    <div class="row offset-md-4 col-md-4 card centeredText userSelect">
+    <div class="row offset-md-4 col-md-4 card centeredText user-select">
       <div class="list-group">
-        <div *ngFor="let user of users" (click)="selectUser(user.id, user.name)" class="list-group-item list-group-item-action list-group-item-success userSelectPanel">
+        <div *ngFor="let user of users" (click)="selectUser(user.id, user.name)" class="list-group-item list-group-item-action list-group-item-success user-select-panel">
           {{user.name}}
         </div>
       </div>

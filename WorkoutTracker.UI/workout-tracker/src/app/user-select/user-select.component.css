@@ -1,11 +1,15 @@
-.userSelect {
+.list-group {
+  padding: 0px;
+}
+
+.user-select {
   cursor: pointer;
-  width: 100%;
+  /*width: 100%;*/
   padding-left: 0px;
   padding-right: 0px;
 }
 
-.userSelectPanel {
+.user-select-panel {
   color: white;
   background-color: forestgreen;
 }
