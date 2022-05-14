@@ -1,7 +1,7 @@
 <h5>Recent Workouts</h5>
 <div class="row">
   <div class="col-12">
-    <p-table #dt class="table table-striped w-auto"  [value]="recentWorkouts" [loading]="loading">
+    <p-table #dt styleClass="p-datatable-striped" [value]="recentWorkouts" [loading]="loading">
         <ng-template pTemplate="body" let-executedWorkout>
             <tr class="workout-history">
                 <td>{{executedWorkout.name}}</td>

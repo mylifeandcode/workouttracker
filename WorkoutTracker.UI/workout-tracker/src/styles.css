@@ -65,3 +65,7 @@ body {
     margin-left: 6px;
     margin-right: 6px;
 }
+
+.bottom-padded {
+    padding-bottom: 12px;
+}

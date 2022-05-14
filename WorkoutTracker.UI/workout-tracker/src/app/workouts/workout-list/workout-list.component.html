@@ -5,39 +5,49 @@
       Filter by Name &nbsp;<input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'in')" />
     </div>
     <div class="col-4">
-      Active Workouts Only &nbsp;<input type="checkbox" checked (input)="dt.filter($event.target.checked, 'activeOnly', 'equals')" /> 
+      Active Workouts Only &nbsp;<input type="checkbox" checked
+        (input)="dt.filter($event.target.checked, 'activeOnly', 'equals')" />
     </div>
   </div>
   <div class="row">
-      <div class="col-12">
-          <p-table #dt class="table table-striped w-auto"  [value]="workouts" [paginator]="true" [columns]="cols" [rows]="pageSize" [lazy]="true" (onLazyLoad)="getWorkoutsLazy($event)" [totalRecords]="totalRecords" [loading]="loading">
-              <ng-template pTemplate="header" let-columns>
-                  <tr>
-                      <th>Name</th>
-                      <th>Target Areas</th>
-                      <th>Status</th>
-                  </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-workout>
-                  <tr>
-                      <td><a [routerLink]="['/workouts/edit/', workout.id]">{{workout.name}}</a></td>
-                      <td [style]="{'overflow': 'visible'}">{{workout.targetAreas}}</td>
-                      <td>
-                          {{workout.active ? 'Active' : 'Retired'}}
-                          &nbsp;
-                          <button *ngIf="workout.active" class="btn btn-danger" (click)="retireWorkout(workout.id, workout.name)">Retire</button>
-                          <button *ngIf="!workout.active" class="btn btn-success" (click)="reactivateWorkout(workout.id, workout.name)">Reactivate</button>
-                      </td>
-                  </tr>
-              </ng-template>
-          </p-table>
-      </div>
+    <div class="col-12">
+      <p-table #dt styleClass="p-datatable-striped" [value]="workouts" [paginator]="true" [columns]="cols"
+        [rows]="pageSize" [lazy]="true" (onLazyLoad)="getWorkoutsLazy($event)" [totalRecords]="totalRecords"
+        [loading]="loading">
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th>Name</th>
+            <th>Target Areas</th>
+            <th>Status</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-workout>
+          <tr>
+            <td><a [routerLink]="['/workouts/edit/', workout.id]">{{workout.name}}</a></td>
+            <td [style]="{'overflow': 'visible'}">{{workout.targetAreas}}</td>
+            <td>
+              {{workout.active ? 'Active' : 'Retired'}}
+              &nbsp;
+              <button *ngIf="workout.active" class="btn btn-danger"
+                (click)="retireWorkout(workout.id, workout.name)">Retire</button>
+              <button *ngIf="!workout.active" class="btn btn-success"
+                (click)="reactivateWorkout(workout.id, workout.name)">Reactivate</button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
   <div class="row" *ngIf="totalRecords != null">
-      <div class="col-md-2">{{totalRecords}} total workout(s)</div>
-      <div class="col-md-10" *ngIf="totalRecords == 0" style="font-style: italic">No workouts have been defined. Please create one using the "Add New" button below.</div>
+    <div class="col-2">{{totalRecords}} total workout(s)</div>
+    <div class="col-10" *ngIf="totalRecords == 0" style="font-style: italic">No workouts have been defined. Please
+      create one using the "Add New" button below.</div>
   </div>
-  <div class="row col-md-12">
-      <button routerLink="/workouts/edit/0" [disabled]="loading" class="btn btn-primary"><i class="fa fa-plus"></i> Add New</button>
+  <div class="row">
+    <div class="col-12">
+      <button routerLink="/workouts/edit/0" [disabled]="loading" class="btn btn-primary"><i class="fa fa-plus"></i> Add
+        New
+      </button>
+    </div>
   </div>
 </div>

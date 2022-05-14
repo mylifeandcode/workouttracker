@@ -2,7 +2,7 @@
   <h3 class="headroom">{{workout.workout.name}}</h3>
   <h4 *ngIf="isLoggingPastWorkout">PLEASE ENTER INFORMATION FOR THIS PREVIOUSLY COMPLETED WORKOUT BELOW</h4>
 </ng-container>
-<div class="container-fluid form-group">
+<div class="container-fluid">
   <div *ngIf="loading" class="row">
       <div class="offset-md-5 col-md-1">
           <p-progressSpinner></p-progressSpinner>
@@ -29,14 +29,20 @@
           <div class="col-12">&nbsp;</div>
         </div>
 
-        <div class="row form-group">
-          <div class="col-md-12">
+        <div class="row bottom-padded">
+          <div class="col-12">
             <label for="journal">Notes/Journal</label>
             <textarea id="journal" class="form-control" formControlName="journal"></textarea>
           </div>
         </div>
-        <button type="submit" *ngIf="!workoutCompleted || isLoggingPastWorkout" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !isLoggingPastWorkout)" (click)="completeWorkout()">Complete Workout</button>
-        <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
+
+        <div class="row">
+          <div class="col-12">
+            <button type="submit" *ngIf="!workoutCompleted || isLoggingPastWorkout" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !isLoggingPastWorkout)" (click)="completeWorkout()">Complete Workout</button>
+            <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
+          </div>
+        </div>
+
       </ng-container>
     </fieldset>
   </form>

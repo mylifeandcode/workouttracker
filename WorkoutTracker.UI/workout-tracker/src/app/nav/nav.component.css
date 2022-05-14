@@ -1,11 +1,16 @@
 nav {
-    color: black;
+  color: black;
 }
 
 .nav-link {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .nav-app-title {
-    color:greenyellow;
+  color:greenyellow;
+  padding-left: 8px;
+}
+
+.nav-github {
+  padding-right: 8px;
 }

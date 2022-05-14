@@ -1,4 +1,4 @@
-.numberOfSets {
+.number-of-sets {
     width: 50px;
 }
 
@@ -20,4 +20,8 @@
 
 button.exerciseButton {
     margin-right: 4px;
+}
+
+.table>:not(:first-child) {
+  border-top: 2px !important;
 }

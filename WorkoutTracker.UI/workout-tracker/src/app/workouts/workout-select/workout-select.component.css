@@ -8,3 +8,7 @@ h3 {
 select {
   height: 30px;
 }
+
+.select-row {
+  padding-bottom: 18px;
+}

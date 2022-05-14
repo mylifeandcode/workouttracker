@@ -1,34 +1,36 @@
 <h3 class="headroom">Planned Workouts</h3>
 <div class="container-fluid">
   <div class="row">
-      <div class="col-12">
-          <p-table #dt class="table table-striped w-auto"  [value]="plannedWorkouts" [paginator]="true" [columns]="cols" [rows]="pageSize" [lazy]="true" (onLazyLoad)="getPlannedWorkoutsLazy($event)" [totalRecords]="totalCount" [loading]="loading">
-              <ng-template pTemplate="header" let-columns>
-                  <tr>
-                      <th>Workout Name</th>
-                      <th>Created</th>
-                      <th>Actions</th>
-                  </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-plannedWorkout>
-                  <tr>
-                      <td>{{plannedWorkout.name}}</td>
-                      <td>{{plannedWorkout.createdDateTime | date:'short'}}</td>
-                      <td>
-                        <a [routerLink]="['/workouts/start/', plannedWorkout.id]">Start</a>
-                        &nbsp;&nbsp;
-                        <a [routerLink]="['/workouts/view/', plannedWorkout.id]">Review</a>
-                      </td>
-                  </tr>
-              </ng-template>
-          </p-table>
-      </div>
+    <div class="col-12">
+      <p-table #dt styleClass="p-datatable-striped" [value]="plannedWorkouts" [paginator]="true" [columns]="cols" [rows]="pageSize" [lazy]="true" (onLazyLoad)="getPlannedWorkoutsLazy($event)" [totalRecords]="totalCount" [loading]="loading">
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th>Workout Name</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+          <ng-template pTemplate="body" let-plannedWorkout>
+            <tr>
+              <td>{{plannedWorkout.name}}</td>
+              <td>{{plannedWorkout.createdDateTime | date:'short'}}</td>
+              <td>
+                <a [routerLink]="['/workouts/start/', plannedWorkout.id]">Start</a>
+                &nbsp;&nbsp;
+                <a [routerLink]="['/workouts/view/', plannedWorkout.id]">Review</a>
+              </td>
+            </tr>
+          </ng-template>
+      </p-table>
+    </div>
   </div>
   <div class="row" *ngIf="totalCount != null">
-      <div class="col-md-2">{{totalCount}} total planned workouts</div>
-      <div class="col-md-10" *ngIf="totalCount == 0" style="font-style: italic">No workouts have been planned. You can plan one using the "Plan" button below.</div>
+    <div class="col-2">{{totalCount}} total planned workouts</div>
+    <div class="col-10" *ngIf="totalCount == 0" style="font-style: italic">No workouts have been planned. You can plan one using the "Plan" button below.</div>
   </div>
-  <div class="row col-md-12">
+  <div class="row">
+    <div class="col-12">
       <button routerLink="/workouts/select-for-later" [disabled]="loading" class="btn btn-primary"><i class="fa fa-plus"></i> Plan</button>
+    </div>
   </div>
 </div>
