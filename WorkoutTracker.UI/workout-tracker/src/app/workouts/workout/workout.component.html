@@ -46,10 +46,11 @@
       </ng-container>
     </fieldset>
   </form>
+  
   <button *ngIf="workoutCompleted && !isLoggingPastWorkout" class="btn btn-success" routerLink="/workouts/history">View Workout History</button>
   &nbsp;
   <button *ngIf="workoutCompleted && !isLoggingPastWorkout" class="btn btn-success" routerLink="/workouts/select-for-later">Plan Next Workout</button>
-
+  <p></p>  
   <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal">
     <wt-resistance-band-select 
       [resistanceBandInventory]="allResistanceBands"

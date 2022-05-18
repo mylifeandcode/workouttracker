@@ -5,13 +5,13 @@
     <thead>
       <tr>
         <th scope="col">Username</th>
-        <th scope="col" class="text-right">Actions</th>
+        <th scope="col" class="text-end">Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let user of users">
         <td>{{user.name}}</td>
-        <td class="text-right">
+        <td class="text-end">
           <button type="button" routerLink="edit/{{user.id}}" class="btn btn-primary">Edit</button>
             &nbsp;
           <button type="button" (click)="deleteUser(user.id)" class="btn btn-danger">Delete</button>
