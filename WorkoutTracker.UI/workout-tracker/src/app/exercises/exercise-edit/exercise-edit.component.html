@@ -6,9 +6,9 @@
         </div>
     </div>
     <form *ngIf="exerciseForm && !loading" [formGroup]="exerciseForm" novalidate>
-        <div class="row">
+        <div class="row bottom-padded">
 
-            <div class="col-md-8 form-group">
+            <div class="col-9 form-group">
                 <input type="hidden" formControlName="id" />
 
                 <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['name'].touched && exerciseForm.controls['name'].errors}">
@@ -27,7 +27,7 @@
                 <span *ngIf="exerciseForm.controls['description'].touched && exerciseForm.controls['description']?.errors?.maxlength" class="errorText">Max length exceeded</span>
             </div>
 
-            <div *ngIf="exerciseForm.get('targetAreas')" class="col-md-4 form-group" formGroupName="targetAreas">
+            <div *ngIf="exerciseForm.get('targetAreas')" class="col-3 form-group" formGroupName="targetAreas">
                 <strong>Target Areas</strong>
 
                 <div *ngFor="let area of exerciseForm.get('targetAreas').value | keyvalue" [ngClass]="{'has-error': exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas'].errors}">
@@ -38,43 +38,43 @@
             </div>
 
         </div>
-        <div class="row">
-            <div class="col-md-3 form-group">
+        <div class="row bottom-padded">
+            <div class="col-3 form-group">
                 <label class="center-block" for="resistanceTypes">
                     Resistance Type
                 </label>
-                <select *ngIf="resistanceTypes" formControlName="resistanceTypes" id="resistanceTypes" class="form-control">
+                <select *ngIf="resistanceTypes" formControlName="resistanceTypes" id="resistanceTypes" class="form-select">
                     <option *ngFor="let resistanceType of resistanceTypes | keyvalue" [value]="resistanceType.key">
                         {{resistanceType.value | insertSpaceBeforeCapital}}
                     </option>
                 </select>
             </div>
-            <div class="col-md-3 form-group" *ngIf="exerciseForm.controls['resistanceTypes'].value=='2'"> <!--TODO: Replace with constant or data-driven value-->
+            <div class="col-3 form-group" *ngIf="exerciseForm.controls['resistanceTypes'].value=='2'"> <!--TODO: Replace with constant or data-driven value-->
                 <div class="custom-control custom-checkbox end-to-end-selection">
                     <input type="checkbox" class="custom-control-input" formControlName="endToEnd" id="endToEnd">
                     <label class="custom-control-label" for="endToEnd">End to End</label> <small style="margin-left: 12px;" pTooltip="''End to End'' specifies that the exercise is performed with one end of the band clipped to a ring, and the other hand clipped to a handle, as opposed to looped through an anchor." tooltipPosition="right">(What's this?)</small>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-3 form-group">
+        <div class="row bottom-padded">
+            <div class="col-3 form-group">
                 <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" formControlName="oneSided" id="oneSided">
                     <label class="custom-control-label" for="oneSided">One Sided</label> <small style="margin-left: 12px;" pTooltip="''One Sided'' specifies that the exercise is performed on one side. For example, Dumbbell Concentration Curls is an exercise where bicep curls are performed for one arm for a set, followed by a set for the other arm." tooltipPosition="right">(What's this?)</small>
                 </div>
             </div>
-            <div class="col-md-3 form-group">
+            <div class="col-3 form-group">
                 <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" formControlName="involvesReps" id="involvesReps">
                     <label class="custom-control-label" for="involvesReps">Involves Repetitions</label> <small style="margin-left: 12px;" pTooltip="''Involves Repetitions'' specifies that the exercise is performed using repetitions. An exercise like Bench Press involves lifting a weight for a number of repetitions, whereas Jogging is an exercise which does not." tooltipPosition="right">(What's this?)</small>
                 </div>
             </div>
         </div>
-        <div class="row col-md-12">
+        <div class="row col-12">
             <h3>Instructions</h3>
         </div>
-        <div class="row">
-            <div class="col-md-3 form-group">
+        <div class="row bottom-padded">
+            <div class="col-4 form-group">
                 <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['setup'].touched && exerciseForm.controls['setup'].errors}">
                     Setup
                 </label>
@@ -82,7 +82,7 @@
                 <span *ngIf="exerciseForm.controls['setup'].touched && exerciseForm.controls['setup']?.errors?.required" class="errorText">Required</span>
                 <span *ngIf="exerciseForm.controls['setup'].touched && exerciseForm.controls['setup']?.errors?.maxlength" class="errorText">Max length exceeded</span>
             </div>
-            <div class="col-md-3 form-group">
+            <div class="col-4 form-group">
                 <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['movement'].touched && exerciseForm.controls['movement'].errors}">
                     Movement
                 </label>
@@ -90,7 +90,7 @@
                 <span *ngIf="exerciseForm.controls['movement'].touched && exerciseForm.controls['movement']?.errors?.required" class="errorText">Required</span>
                 <span *ngIf="exerciseForm.controls['movement'].touched && exerciseForm.controls['movement']?.errors?.maxlength" class="errorText">Max length exceeded</span>
             </div>
-            <div class="col-md-4 form-group">
+            <div class="col-4 form-group">
                 <label class="center-block" [ngClass]="{'has-error': exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember'].errors}">
                     Points to Remember
                 </label>
@@ -99,7 +99,7 @@
                 <span *ngIf="exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember']?.errors?.maxlength" class="errorText">Max length exceeded</span>
             </div>
         </div>
-        <div class="row">
+        <div class="row bottom-padded">
             <div class="col-md-4">
                 <button type="submit" [disabled]="exerciseForm.invalid || _saving" (click)="saveExercise()" class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
             </div>

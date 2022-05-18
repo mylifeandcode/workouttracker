@@ -27,53 +27,51 @@
       Exercises
     </label>
 
-    <div class="table table-striped">
-      <div class="row">
-        <div class="col-6">Exercise Name</div>
-        <div class="col-2">Number of Sets</div>
-        <div class="col-2">Set Type</div>
-        <div class="col-2">Move/Delete</div>
+    <div class="row">
+      <div class="col-6">Exercise Name</div>
+      <div class="col-2">Number of Sets</div>
+      <div class="col-2">Set Type</div>
+      <div class="col-2">Move/Delete</div>
+    </div>
+
+    <!--
+          Useful example code at:
+          https://jasonwatmore.com/post/2019/06/25/angular-8-dynamic-reactive-forms-example
+          -->
+
+    <div *ngFor="let exercise of exercisesArray.controls; let i = index" class="row exerciseRow"
+      [formGroup]="exercise">
+
+      <div class="col-6">
+        <input type="hidden" formControlName="exerciseId" />
+        <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
       </div>
-
-      <!--
-            Useful example code at:
-            https://jasonwatmore.com/post/2019/06/25/angular-8-dynamic-reactive-forms-example
-            -->
-
-      <div *ngFor="let exercise of exercisesArray.controls; let i = index" class="row exerciseRow"
-        [formGroup]="exercise">
-
-        <div class="col-6">
-          <input type="hidden" formControlName="exerciseId" />
-          <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
-        </div>
-        <div class="col-2">
-          # of sets: <input type="number" formControlName="number-of-sets" class="number-of-sets" />
-          <span *ngIf="exercise.controls['number-of-sets'].invalid" class="errorText"><br />Must be > 0</span>
-        </div>
-        <div class="col-2">
-          <select formControlName="setType">
-            <option value="0">Repetition</option>
-            <option value="1">Timed</option>
-          </select>
-          <span *ngIf="exercise.controls['setType'].invalid" class="errorText"><br />Required</span>
-        </div>
-        <div class="col-2">
-          <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp(i)" [disabled]="i == 0">
-            <i class="fa fa-arrow-up"></i>
-          </button>
-          <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseDown(i)"
-            [disabled]="i == (exercisesArray.controls.length - 1)">
-            <i class="fa fa-arrow-down"></i>
-          </button>
-          <button class="btn btn-danger btn-sm exerciseButton" (click)="removeExercise(i)">
-            <i class="fa fa-minus-circle"></i>
-          </button>
-        </div>
-
+      <div class="col-2">
+        # of sets: <input type="number" formControlName="numberOfSets" class="number-of-sets" />
+        <span *ngIf="exercise.controls['numberOfSets'].invalid" class="errorText"><br />Must be > 0</span>
+      </div>
+      <div class="col-2">
+        <select formControlName="setType">
+          <option value="0">Repetition</option>
+          <option value="1">Timed</option>
+        </select>
+        <span *ngIf="exercise.controls['setType'].invalid" class="errorText"><br />Required</span>
+      </div>
+      <div class="col-2">
+        <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp(i)" [disabled]="i == 0">
+          <i class="fa fa-arrow-up"></i>
+        </button>
+        <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseDown(i)"
+          [disabled]="i == (exercisesArray.controls.length - 1)">
+          <i class="fa fa-arrow-down"></i>
+        </button>
+        <button class="btn btn-danger btn-sm exerciseButton" (click)="removeExercise(i)">
+          <i class="fa fa-minus-circle"></i>
+        </button>
       </div>
 
     </div>
+
 
     <p>
       <button class="btn btn-primary btn-sm" (click)="openModal()"><i class="fa fa-plus"></i> Add Exercise to
