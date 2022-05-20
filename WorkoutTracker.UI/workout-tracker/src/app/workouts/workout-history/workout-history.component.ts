@@ -20,6 +20,8 @@ export class WorkoutHistoryComponent implements OnInit {
   public loading: boolean = true;
   public pageSize: number = 10;
   public executedWorkouts: ExecutedWorkoutDTO[];
+  public showNotesModal: boolean = false;
+  public notes: string = '';
   public cols: any = [
       { field: 'name', header: 'Name' }
   ]; //TODO: Create specific type
@@ -51,6 +53,15 @@ export class WorkoutHistoryComponent implements OnInit {
 
   public getExecutedWorkoutsLazy(event: any): void {
     this.getExecutedWorkouts(event.first, null);
+  }
+
+  public openNotesModal(notes: string): void {
+    this.notes = notes;
+    this.showNotesModal = true;
+  }
+
+  public closeNotesModal(): void {
+    this.showNotesModal = false;
   }
 
 }

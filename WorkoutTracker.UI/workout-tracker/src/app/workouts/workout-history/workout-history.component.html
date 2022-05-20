@@ -16,7 +16,7 @@
                       <td><a [routerLink]="['/workouts/history/view/', executedWorkout.id]">{{executedWorkout.name}}</a></td>
                       <td>{{executedWorkout.startDateTime | date:'M/d/yyyy, h:mm a'}}</td>
                       <td>{{executedWorkout.endDateTime | date:'M/d/yyyy, h:mm a'}}</td>
-                      <td><span *ngIf="executedWorkout.journal" pTooltip="{{executedWorkout.journal}}">Notes</span></td>
+                      <td><span *ngIf="executedWorkout.journal" (click)="openNotesModal(executedWorkout.journal)" pTooltip="{{executedWorkout.journal}}">Notes</span></td>
                   </tr>
               </ng-template>
           </p-table>
@@ -32,3 +32,11 @@
     </div>
   </div>
 </div>
+<p-dialog [(visible)]="showNotesModal" [style]="{width: '450px'}" header="Notes/Journal" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    {{notes}}
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Close" icon="pi pi-times" class="p-button-text" (click)="closeNotesModal()"></button>
+  </ng-template>  
+</p-dialog>
