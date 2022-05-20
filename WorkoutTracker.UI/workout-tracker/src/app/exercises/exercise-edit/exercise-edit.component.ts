@@ -23,6 +23,7 @@ export class ExerciseEditComponent implements OnInit {
   public allTargetAreas: TargetArea[];
   public resistanceTypes: Map<number, string>;
   public infoMsg: string | null = null;
+  public readOnlyMode: boolean = false;
 
   //PUBLIC PROPERTIES
   public get isNew(): boolean {
@@ -42,7 +43,8 @@ export class ExerciseEditComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-
+    console.log("SNAPSHOT: ", this._route.snapshot);
+    this.readOnlyMode = this._route.snapshot.url.join('').indexOf('view') > -1;
     this.createForm();
 
     //TODO: Rethink the following. This can probably be done a much better way.
@@ -73,9 +75,9 @@ export class ExerciseEditComponent implements OnInit {
   private subscribeToRouteParamsToSetupFormOnExerciseIdChange(): void {
 
     //TODO: Re-evaluate. Do I really need to do this? I think a better solution might be to just look at the snapshot.
-    this._route.params.subscribe(params => {
+    //this._route.params.subscribe(params => {
 
-      this._exerciseId = params['id'];
+      this._exerciseId = this._route.snapshot.params['id'];
       if (this._exerciseId != 0) {
         this.loadExercise(); 
       }
@@ -91,7 +93,7 @@ export class ExerciseEditComponent implements OnInit {
         this._exercise = new Exercise();
         this.loading = false;
       }
-    });
+    //}
 
   }
 

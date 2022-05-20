@@ -1,4 +1,5 @@
-<h3 *ngIf="!loading" class="headroom header">Exercise {{ isNew ? 'Creation' : 'Edit' }}</h3>
+<h3 *ngIf="!readOnlyMode && !loading" class="headroom header">Exercise {{ isNew ? 'Creation' : 'Edit' }}</h3>
+<h3 *ngIf="readOnlyMode" class="headroom header">Exercise</h3>
 <div class="container-fluid form-group">
     <div *ngIf="loading" class="row">
         <div class="offset-md-5 col-md-1">
@@ -6,6 +7,7 @@
         </div>
     </div>
     <form *ngIf="exerciseForm && !loading" [formGroup]="exerciseForm" novalidate>
+      <fieldset [disabled]="readOnlyMode">
         <div class="row bottom-padded">
 
             <div class="col-9 form-group">
@@ -101,11 +103,12 @@
         </div>
         <div class="row bottom-padded">
             <div class="col-md-4">
-                <button type="submit" [disabled]="exerciseForm.invalid || _saving" (click)="saveExercise()" class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
+                <button *ngIf="!readOnlyMode" type="submit" [disabled]="exerciseForm.invalid || _saving" (click)="saveExercise()" class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
             </div>
         </div>
         <div *ngIf="_errorMsg" class="col-md-4 errorText">
             {{_errorMsg}}
         </div>
+      </fieldset>
     </form>
 </div>

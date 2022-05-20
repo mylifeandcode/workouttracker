@@ -17,6 +17,11 @@ const routes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
+    path: 'view/:id',
+    component: ExerciseEditComponent,
+    canActivate: [UserSelectedGuard]
+  },
+  {
     path: '**',
     component: ExerciseListComponent,
     canActivate: [UserSelectedGuard]

@@ -9,7 +9,7 @@ import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../exercise.service';
 import { TargetArea } from 'app/workouts/models/target-area';
 import { Exercise } from 'app/workouts/models/exercise';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 
@@ -45,6 +45,14 @@ class InsertSpaceBeforeCapitalPipeMock implements PipeTransform {
   transform(value: string) { return "I'm just a mock!"; }
 }
 
+function getActivatedRouteSnapshot() {
+  let activatedRouteSnapshot = new ActivatedRouteSnapshot();
+  activatedRouteSnapshot.url = [];
+  activatedRouteSnapshot.url.push(new UrlSegment('edit', {}));
+  activatedRouteSnapshot.params = { 'id': 2 };
+  return activatedRouteSnapshot;
+}
+
 describe('ExerciseEditComponent', () => {
   let component: ExerciseEditComponent;
   let fixture: ComponentFixture<ExerciseEditComponent>;
@@ -70,7 +78,8 @@ describe('ExerciseEditComponent', () => {
            useValue: {
              params: of({
                id: 2,
-             })
+             }), 
+             snapshot: getActivatedRouteSnapshot()
             }
          }
        ]
@@ -110,7 +119,7 @@ describe('ExerciseEditComponent', () => {
   it('should have default values for form if no exercise loaded', () => {
     //ARRANGE
     let activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.params = of({id: 0});
+    activatedRoute.snapshot.params = {id: 0};
 
     //ACT
     component.ngOnInit(); //Because we changed ActivatedRoute
