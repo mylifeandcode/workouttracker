@@ -30,6 +30,10 @@ export class ExerciseEditComponent implements OnInit {
     return !(this._exercise.id > 0);
   }
 
+  public get exerciseId(): number {
+    return this._exercise?.id;
+  }
+
   //PRIVATE FIELDS
   private _exercise: Exercise; 
   private _exerciseId: number = 0; //TODO: Refactor. We have an exercise variable. Why have this too?
@@ -43,7 +47,6 @@ export class ExerciseEditComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    console.log("SNAPSHOT: ", this._route.snapshot);
     this.readOnlyMode = this._route.snapshot.url.join('').indexOf('view') > -1;
     this.createForm();
 
