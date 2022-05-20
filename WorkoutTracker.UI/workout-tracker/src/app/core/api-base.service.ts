@@ -47,9 +47,18 @@ export abstract class ApiBaseService<T extends Entity> {
    * completes after the value is emitted. Value is cached, and refreshed when changes are made 
    * or a call is made to invalidate the cache. Use this instead of the all Observable when you 
    * want an Observable which will complete once the value is emitted.
+   * WARNING: Due to timing considerations with the way the cache refreshes, this value may 
+   * not reflect the true state of the data if called directly after an add, update, or delete.
    */
-  public getAll(): Observable<T[]> {
-    return this.all.pipe(take(1)); //Originally was using from() here, but despite that, the output Observable would not complete.
+  public getAll(fromCache: boolean = true): Observable<T[]> {
+    if (fromCache) {
+      console.log("GETTING ALL FROM CACHE");
+      return this.all.pipe(take(1)); //Originally was using from() here, but despite that, the output Observable would not complete.
+    }
+    else {
+      console.log("GETTING ALL FROM API");
+      return this.getAllFromAPI();
+    }
   }
 
   /**
@@ -92,6 +101,7 @@ export abstract class ApiBaseService<T extends Entity> {
    * @returns The response from the API to the DELETE request.
    */
   public delete(id: number): Observable<any> { //TODO: Re-evaluate use of "any" type here, should probably be HttpResponse.
+    console.log("DELETING");
     return this._http.delete(`${this._apiRoot}/${id}`)
       .pipe(
         tap(() => this._refreshGetAll.next()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects

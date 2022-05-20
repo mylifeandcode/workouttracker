@@ -32,7 +32,7 @@ export class ResistanceBandsComponent implements OnInit {
   //Table edit code based on PrimeNg's example at https://www.primefaces.org/primeng/showcase/#/table/edit
 
   public ngOnInit(): void {
-    this.getResistanceBandData();
+    this.getResistanceBandData(true);
   }
 
   public onRowEditInit(band: ResistanceBand): void {
@@ -43,8 +43,6 @@ export class ResistanceBandsComponent implements OnInit {
   public onRowEditSave(band: ResistanceBand): void {
     //Delete our cloned row, we don't need it any more.
     delete this._clonedResistanceBands[band.id];
-
-    //this.messageService.add({severity:'success', summary: 'Success', detail:'Product is updated'});
     this.updateResistanceBand(band);
   }
 
@@ -78,7 +76,7 @@ export class ResistanceBandsComponent implements OnInit {
           .delete(resistanceBand.id)
           .subscribe((response: any) => {
             this._messageService.add({severity:'success', summary: 'Successful', detail: 'Resistance Band deleted', life: 3000});
-            this.getResistanceBandData();
+            this.getResistanceBandData(false);
           });
         }
     });
@@ -89,15 +87,15 @@ export class ResistanceBandsComponent implements OnInit {
     this.modalSubmitted = false;
   }
 
-  private getResistanceBandData(): void {
+  private getResistanceBandData(fromCache: boolean): void {
     this._resistanceBandService
-      .getAll()
-      .subscribe((results: ResistanceBand[]) => this.resistanceBands = results);
+      .getAll(fromCache)
+      .subscribe((results: ResistanceBand[]) => { 
+        this.resistanceBands = results;
+      });
   }
 
   private addResistanceBand(): void {
-    //this.newResistanceBand.createdByUserId = this._userService.currentUserId; //TODO: Refactor. Set in API based on User ID from token.
-    //this.newResistanceBand.createdDateTime = new Date();
     if(!this.newResistanceBand) return;
 
     this._resistanceBandService
@@ -105,7 +103,7 @@ export class ResistanceBandsComponent implements OnInit {
       .subscribe(
         (band: ResistanceBand) => {
           this._messageService.add({severity:'success', summary: 'Successful', detail: 'Resistance Band added', life: 3000});
-          this.getResistanceBandData();
+          this.getResistanceBandData(false);
         },
         (error: any) => {
           this._messageService.add({severity:'error', summary: 'Error', detail: 'Failed to add Resistance Band', sticky: true});
@@ -114,8 +112,6 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   private updateResistanceBand(band: ResistanceBand): void {
-    //band.modifiedByUserId = this._userService.currentUserId; //TODO: Refactor. Set in API based on User ID from token.
-    //band.modifiedDateTime = new Date();
     this._resistanceBandService
       .update(band)
       .subscribe(
