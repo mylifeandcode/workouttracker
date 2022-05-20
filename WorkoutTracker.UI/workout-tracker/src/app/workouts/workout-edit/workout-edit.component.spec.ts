@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { of } from 'rxjs';
@@ -48,6 +48,14 @@ class BsModalServiceMock {
 
 const WORKOUT_ID: number = 5;
 
+function getActivatedRouteSnapshot() {
+  let activatedRouteSnapshot = new ActivatedRouteSnapshot();
+  activatedRouteSnapshot.url = [];
+  activatedRouteSnapshot.url.push(new UrlSegment('edit', {}));
+  activatedRouteSnapshot.params = { 'id': WORKOUT_ID };
+  return activatedRouteSnapshot;
+}
+
 describe('WorkoutEditComponent', () => {
   let component: WorkoutEditComponent;
   let fixture: ComponentFixture<WorkoutEditComponent>;
@@ -72,7 +80,8 @@ describe('WorkoutEditComponent', () => {
           useValue: {
             params: of({
               id: WORKOUT_ID
-            })
+            }),
+            snapshot: getActivatedRouteSnapshot()            
           }
         },
         {

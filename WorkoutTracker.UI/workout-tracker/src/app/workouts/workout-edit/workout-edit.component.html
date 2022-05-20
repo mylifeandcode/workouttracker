@@ -6,101 +6,110 @@
   </div>
 
   <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
-    <h3 class="headroom">Workout {{ workoutId > 0 ? 'Edit' : 'Creation' }}</h3>
-    <div class="row bottom-padded">
-      <div class="col-12">
-        <input type="hidden" formControlName="id" />
-        <input type="hidden" formControlName="active" />
+    <h3 *ngIf="!readOnlyMode" class="headroom">Workout {{ workoutId > 0 ? 'Edit' : 'Creation' }}</h3>
+    <h3 *ngIf="readOnlyMode" class="headroom">Workout</h3>
+    <fieldset [disabled]="readOnlyMode">
+      <div class="row bottom-padded">
+        <div class="col-12">
+          <input type="hidden" formControlName="id" />
+          <input type="hidden" formControlName="active" />
 
-        <label class="center-block"
-          [ngClass]="{'has-error': workoutForm.controls['name'].touched && workoutForm.controls['name'].errors}">
-          Name:
-        </label>
-        <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
-        <span *ngIf="workoutForm.controls['name'].touched && workoutForm.controls['name']?.errors"
-          class="errorText">Required</span>
+          <label class="center-block"
+            [ngClass]="{'has-error': workoutForm.controls['name'].touched && workoutForm.controls['name'].errors}">
+            Name:
+          </label>
+          <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
+          <span *ngIf="workoutForm.controls['name'].touched && workoutForm.controls['name']?.errors"
+            class="errorText">Required</span>
+        </div>
       </div>
-    </div>
 
-    <label class="center-block bottom-padded">
-      <!--Sets (Repetition vs Timed vs Super)-->
-      Exercises
-    </label>
+      <label class="center-block bottom-padded">
+        <!--Sets (Repetition vs Timed vs Super)-->
+        Exercises
+      </label>
 
-    <div class="row">
-      <div class="col-6">Exercise Name</div>
-      <div class="col-2">Number of Sets</div>
-      <div class="col-2">Set Type</div>
-      <div class="col-2">Move/Delete</div>
-    </div>
+      <div class="row">
+        <div class="col-6">Exercise Name</div>
+        <div class="col-2">Number of Sets</div>
+        <div class="col-2">Set Type</div>
+        <div *ngIf="!readOnlyMode" class="col-2">Move/Delete</div>
+      </div>
 
-    <!--
-          Useful example code at:
-          https://jasonwatmore.com/post/2019/06/25/angular-8-dynamic-reactive-forms-example
+      <!--
+            Useful example code at:
+            https://jasonwatmore.com/post/2019/06/25/angular-8-dynamic-reactive-forms-example
+            -->
+
+      <div *ngFor="let exercise of exercisesArray.controls; let i = index" class="row exerciseRow"
+        [formGroup]="exercise">
+
+        <div class="col-6">
+          <input type="hidden" formControlName="exerciseId" />
+          <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
+        </div>
+        <div class="col-2">
+          # of sets: <input type="number" formControlName="numberOfSets" class="number-of-sets" />
+          <span *ngIf="exercise.controls['numberOfSets'].invalid" class="errorText"><br />Must be > 0</span>
+        </div>
+        <div class="col-2">
+          <select formControlName="setType">
+            <option value="0">Repetition</option>
+            <option value="1">Timed</option>
+          </select>
+          <span *ngIf="exercise.controls['setType'].invalid" class="errorText"><br />Required</span>
+        </div>
+        <div *ngIf="!readOnlyMode" class="col-2">
+          <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp(i)" [disabled]="i == 0">
+            <i class="fa fa-arrow-up"></i>
+          </button>
+          <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseDown(i)"
+            [disabled]="i == (exercisesArray.controls.length - 1)">
+            <i class="fa fa-arrow-down"></i>
+          </button>
+          <button class="btn btn-danger btn-sm exerciseButton" (click)="removeExercise(i)">
+            <i class="fa fa-minus-circle"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <p *ngIf="!readOnlyMode">
+        <button class="btn btn-primary btn-sm" (click)="openModal()">
+          <i class="fa fa-plus"></i> Add Exercise to Workout
+        </button>
+      </p>
+
+      <div *ngIf="!readOnlyMode" class="row">
+        <div class="col-8">
+          <button type="submit" [disabled]="workoutForm.invalid || _saving" (click)="saveWorkout()"
+            class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
+          <span *ngIf="workoutForm.touched && workoutForm.invalid" class="errorText">Please enter required
+            information</span>
+        </div>
+      </div>
+      <div *ngIf="_errorMsg" class="offset-2 col-4 errorText">
+        {{_errorMsg}}
+      </div>
+
+      <!--Select Exercise Modal-->
+
+      <!--
+          FUN FACT: Private methods like addExercise() are accessible from within the template 
+          if referenced from within the form group! I learned this while removing the old ngx-bootstrap 
+          modal to replace it with the PrimeNg one.
           -->
 
-    <div *ngFor="let exercise of exercisesArray.controls; let i = index" class="row exerciseRow"
-      [formGroup]="exercise">
-
-      <div class="col-6">
-        <input type="hidden" formControlName="exerciseId" />
-        <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
-      </div>
-      <div class="col-2">
-        # of sets: <input type="number" formControlName="numberOfSets" class="number-of-sets" />
-        <span *ngIf="exercise.controls['numberOfSets'].invalid" class="errorText"><br />Must be > 0</span>
-      </div>
-      <div class="col-2">
-        <select formControlName="setType">
-          <option value="0">Repetition</option>
-          <option value="1">Timed</option>
-        </select>
-        <span *ngIf="exercise.controls['setType'].invalid" class="errorText"><br />Required</span>
-      </div>
-      <div class="col-2">
-        <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp(i)" [disabled]="i == 0">
-          <i class="fa fa-arrow-up"></i>
-        </button>
-        <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseDown(i)"
-          [disabled]="i == (exercisesArray.controls.length - 1)">
-          <i class="fa fa-arrow-down"></i>
-        </button>
-        <button class="btn btn-danger btn-sm exerciseButton" (click)="removeExercise(i)">
-          <i class="fa fa-minus-circle"></i>
-        </button>
-      </div>
-
-    </div>
-
-
-    <p>
-      <button class="btn btn-primary btn-sm" (click)="openModal()"><i class="fa fa-plus"></i> Add Exercise to
-        Workout</button>
-    </p>
-
-    <div class="row">
-      <div class="col-8">
-        <button type="submit" [disabled]="workoutForm.invalid || _saving" (click)="saveWorkout()"
-          class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
-        <span *ngIf="workoutForm.touched && workoutForm.invalid" class="errorText">Please enter required
-          information</span>
-      </div>
-    </div>
-    <div *ngIf="_errorMsg" class="offset-2 col-4 errorText">
-      {{_errorMsg}}
-    </div>
-
-    <!--Select Exercise Modal-->
-
-    <!--
-        FUN FACT: Private methods like addExercise() are accessible from within the template 
-        if referenced from within the form group! I learned this while removing the old ngx-bootstrap 
-        modal to replace it with the PrimeNg one.
-        -->
-
-    <p-dialog header="Select an Exercise" [(visible)]="showExerciseSelectModal">
-      <wt-exercise-list-mini (exerciseSelected)="addExercise($event)"></wt-exercise-list-mini>
-    </p-dialog>
-
+      <p-dialog header="Select an Exercise" [(visible)]="showExerciseSelectModal">
+        <wt-exercise-list-mini (exerciseSelected)="addExercise($event)"></wt-exercise-list-mini>
+      </p-dialog>
+    </fieldset>
   </form>
+
+  <div *ngIf="readOnlyMode" class="row">
+    <div class="col-12">
+      <button class="btn btn-info" [routerLink]="['/workouts/edit', workoutId]">Edit this Workout</button>
+    </div>
+  </div>
+
 </div>

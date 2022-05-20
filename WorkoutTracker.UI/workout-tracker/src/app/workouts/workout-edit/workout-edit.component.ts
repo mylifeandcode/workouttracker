@@ -22,6 +22,7 @@ export class WorkoutEditComponent implements OnInit {
   public loading: boolean = true;
   public infoMsg: string | null = null;
   public showExerciseSelectModal: boolean = false;
+  public readOnlyMode: boolean = false;
 
   //Private fields
   private _saving: boolean = false;
@@ -40,31 +41,27 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.getRouteParams();
+    this.readOnlyMode = this._route.snapshot.url.join('').indexOf('view') > -1;
+    this.getWorkoutIdFromRouteParams();
     this.createForm();
-    this.subscribeToRouteParamsToSetupFormOnWorkoutIdChange();
+    this.setupForm();
   }
 
-  private subscribeToRouteParamsToSetupFormOnWorkoutIdChange(): void {
-    this._route.params.subscribe(params => {
-        this.workoutId = params['id'];
-        if (this.workoutId != 0) 
-            this.loadWorkout(); 
-        else {
-          this._workout = new Workout();
-          this.loading = false;
-        }
-    });
-}  
+  private setupForm(): void {
+    if (this.workoutId != 0) 
+      this.loadWorkout(); 
+    else {
+      this._workout = new Workout();
+      this.loading = false;
+    }
+  }  
 
   private openModal(): void {
     this.showExerciseSelectModal = true;
   }
 
-  private getRouteParams(): void {
-    this._route.params.subscribe(params => {
-        this.workoutId = params['id'];
-    });
+  private getWorkoutIdFromRouteParams(): void {
+    this.workoutId = this._route.snapshot.params['id'];
   }
 
   private createForm(): void {

@@ -19,6 +19,11 @@ const routes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
+    path: 'view/:id',
+    component: WorkoutEditComponent,
+    canActivate: [UserSelectedGuard]
+  },
+  {
     path: 'select', 
     component: WorkoutSelectComponent, 
     canActivate: [UserSelectedGuard]
@@ -39,7 +44,7 @@ const routes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
-    path: 'view/:id',
+    path: 'history/view/:id',
     component: WorkoutViewComponent,
     canActivate: [UserSelectedGuard]
   },
