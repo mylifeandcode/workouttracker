@@ -1,3 +1,6 @@
+<h3 *ngIf="!readOnlyMode" class="headroom">Workout {{ workoutId > 0 ? 'Edit' : 'Creation' }}</h3>
+<h3 *ngIf="readOnlyMode" class="headroom">Workout</h3>
+
 <div class="container-fluid form-group">
   <div *ngIf="loading" class="row">
     <div class="offset-5 col-1">
@@ -6,8 +9,6 @@
   </div>
 
   <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
-    <h3 *ngIf="!readOnlyMode" class="headroom">Workout {{ workoutId > 0 ? 'Edit' : 'Creation' }}</h3>
-    <h3 *ngIf="readOnlyMode" class="headroom">Workout</h3>
     <fieldset [disabled]="readOnlyMode">
       <div class="row bottom-padded">
         <div class="col-12">

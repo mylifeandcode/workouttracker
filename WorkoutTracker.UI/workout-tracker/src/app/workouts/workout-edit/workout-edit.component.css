@@ -25,3 +25,10 @@ button.exerciseButton {
 .table>:not(:first-child) {
   border-top: 2px !important;
 }
+
+h3 {
+  padding: 6px;
+  background-image: linear-gradient(to right, darkgreen, limegreen);
+  font-style: italic;
+  color: white;
+}
