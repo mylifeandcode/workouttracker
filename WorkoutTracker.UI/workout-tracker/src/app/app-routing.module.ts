@@ -54,6 +54,10 @@ const routes: Routes = [
     loadChildren: () => import('./exercises/exercises.module').then(m => m.ExercisesModule)
   },
   {
+    path: 'analytics',
+    loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsModule)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
