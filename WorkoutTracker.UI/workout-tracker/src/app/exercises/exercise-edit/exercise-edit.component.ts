@@ -24,6 +24,7 @@ export class ExerciseEditComponent implements OnInit {
   public resistanceTypes: Map<number, string>;
   public infoMsg: string | null = null;
   public readOnlyMode: boolean = false;
+  public fromViewRoute: boolean = false;
 
   //PUBLIC PROPERTIES
   public get isNew(): boolean {
@@ -47,7 +48,7 @@ export class ExerciseEditComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.readOnlyMode = this._route.snapshot.url.join('').indexOf('view') > -1;
+    this.readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
     this.createForm();
 
     //TODO: Rethink the following. This can probably be done a much better way.
@@ -58,6 +59,10 @@ export class ExerciseEditComponent implements OnInit {
         this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
       });
     });
+  }
+
+  public editModeToggled(event: any): void { //TODO: Get or specify a concrete type for the event param
+    this.readOnlyMode = !event.checked;
   }
 
   private setupTargetAreas(exerciseTargetAreaLinks: ExerciseTargetAreaLink[]): void {

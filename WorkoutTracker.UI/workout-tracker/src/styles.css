@@ -1,71 +1,68 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import 'fonts.css'; 
-
-/*
-body {
-    background-color: #212529;
-    color: white;
-}
-*/
+@import 'fonts.css';
 
 * {
-    font-family: "Pangolin", Arial, Helvetica, sans-serif;
+  font-family: "Pangolin", Arial, Helvetica, sans-serif;
 }
 
 .gimmeSomeSpace {
-    padding: 6px;
+  padding: 6px;
 }
 
 .centeredText {
-    text-align: center;
+  text-align: center;
 }
 
 .btn.btn-fullWidth {
-    width: 100%;
+  width: 100%;
 }
 
 .welcome-text {
-    color: white;
+  color: white;
 }
 
 .errorText {
-    color: red;
-    font-style: italic;
+  color: red;
+  font-style: italic;
 }
 
 .ui-multiselect-panel {
-    background-color: white;
+  background-color: white;
 }
 
 .ng-trigger {
-    z-index: 10000 !important;
+  z-index: 10000 !important;
 }
 
 .wallpaper {
-    height: 100vh;
-    width: 100vw;
-    position: relative;
-    /*top: 50px;*/
-    background-image: url('./assets/images/fitness-background.jpg'); 
-    background-size: cover;
-    background-position-y: -90px;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  /*top: 50px;*/
+  background-image: url('./assets/images/fitness-background.jpg');
+  background-size: cover;
+  background-position-y: -90px;
 }
 
 .wallpaper-friendly {
-    position: fixed;
-    top: 100px;
+  position: fixed;
+  top: 100px;
 }
 
 .headroom {
-    padding-top: 14px;
+  padding-top: 14px;
 }
 
 .mild-margins {
-    margin-left: 6px;
-    margin-right: 6px;
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+.mild-right-margin {
+  margin-right: 6px;
 }
 
 .bottom-padded {
-    padding-bottom: 12px;
+  padding-bottom: 12px;
 }

@@ -1,24 +1,32 @@
+//Angular
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
+
+//PrimeNG
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { CountdownModule } from 'ngx-countdown';
-import { WorkoutsRoutingModule } from './workouts-routing.module';
-import { WorkoutComponent } from './workout/workout.component';
-import { WorkoutListComponent } from './workout-list/workout-list.component';
-import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
-import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { ResistanceBandSelectComponent } from './resistance-band-select/resistance-band-select.component';
 import { PickListModule } from 'primeng/picklist';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { MessageService } from 'primeng/api';
+import { InputSwitchModule } from 'primeng/inputswitch';
+
+//Other 3rd Party
+import { CountdownModule } from 'ngx-countdown';
+
+//WorkoutTracker
+import { WorkoutsRoutingModule } from './workouts-routing.module';
+import { WorkoutComponent } from './workout/workout.component';
+import { WorkoutListComponent } from './workout-list/workout-list.component';
+import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
+import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
+import { ResistanceBandSelectComponent } from './resistance-band-select/resistance-band-select.component';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
 import { WorkoutSelectComponent } from './workout-select/workout-select.component';
@@ -37,7 +45,6 @@ import { SharedModule } from 'app/shared/shared.module';
 import { WorkoutLogPastStartComponent } from '../workouts/workout-log-past-start/workout-log-past-start.component';
 import { DurationPipe } from './pipes/duration.pipe';
 import { DurationComponent } from '../workouts/duration/duration.component';
-
 
 @NgModule({
   declarations: [
@@ -69,6 +76,7 @@ import { DurationComponent } from '../workouts/duration/duration.component';
     CountdownModule,
     DialogModule,
     ReactiveFormsModule,
+    InputSwitchModule,
     TableModule,
     TooltipModule,
     PickListModule,

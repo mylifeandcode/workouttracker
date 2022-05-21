@@ -23,6 +23,7 @@ export class WorkoutEditComponent implements OnInit {
   public infoMsg: string | null = null;
   public showExerciseSelectModal: boolean = false;
   public readOnlyMode: boolean = false;
+  public fromViewRoute: boolean = false;
 
   //Private fields
   private _saving: boolean = false;
@@ -41,10 +42,14 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.readOnlyMode = this._route.snapshot.url.join('').indexOf('view') > -1;
+    this.readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
     this.getWorkoutIdFromRouteParams();
     this.createForm();
     this.setupForm();
+  }
+
+  public editModeToggled(event: any): void { //TODO: Get or specify a concrete type for the event param
+    this.readOnlyMode = !event.checked;
   }
 
   private setupForm(): void {

@@ -81,8 +81,12 @@
         </button>
       </p>
 
-      <div *ngIf="!readOnlyMode" class="row">
-        <div class="col-8">
+      <div class="row">
+        <div class="col-2" *ngIf="fromViewRoute">
+          <span class="mild-right-margin align-middle">Enable Editing</span>
+          <p-inputSwitch id="editModeToggle" styleClass="align-middle" (onChange)="editModeToggled($event)"></p-inputSwitch>
+        </div>       
+        <div *ngIf="!readOnlyMode" class="col-8">
           <button type="submit" [disabled]="workoutForm.invalid || _saving" (click)="saveWorkout()"
             class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
           <span *ngIf="workoutForm.touched && workoutForm.invalid" class="errorText">Please enter required
@@ -106,11 +110,5 @@
       </p-dialog>
     </fieldset>
   </form>
-
-  <div *ngIf="readOnlyMode" class="row">
-    <div class="col-12">
-      <button class="btn btn-info" [routerLink]="['/workouts/edit', workoutId]">Edit this Workout</button>
-    </div>
-  </div>
 
 </div>
