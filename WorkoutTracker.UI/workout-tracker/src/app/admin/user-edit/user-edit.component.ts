@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../core/user.service';
 import { User } from 'app/core/models/user';
-import { FormBuilder, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
@@ -17,14 +17,14 @@ export class UserEditComponent implements OnInit {
   public loadingUserInfo: boolean = true;
   public savingUserInfo: boolean = false;
   public errorMsg: string;
-  public userEditForm: FormGroup;
+  public userEditForm: UntypedFormGroup;
 
   private _user: User;
 
   constructor(
     private _route: ActivatedRoute,
     private _userSvc: UserService,
-    private _formBuilder: FormBuilder,
+    private _formBuilder: UntypedFormBuilder,
     private _router: Router) { }
 
   //PUBLIC METHODS

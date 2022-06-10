@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { of } from 'rxjs';
@@ -48,7 +48,7 @@ describe('WorkoutLogPastStartComponent', () => {
           provide: Router,
           useClass: RouterMock
         },
-        FormBuilder //TODO: Find out what the proper ettiquite is for components which use a FormBuilder -- should we mock it like other dependencies?
+        UntypedFormBuilder //TODO: Find out what the proper ettiquite is for components which use a FormBuilder -- should we mock it like other dependencies?
       ]
     })
     .compileComponents();

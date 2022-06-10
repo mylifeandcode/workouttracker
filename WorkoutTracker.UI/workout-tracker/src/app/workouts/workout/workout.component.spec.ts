@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { WorkoutComponent } from './workout.component';
-import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { of } from 'rxjs';
 import { PaginatedResults } from '../../core/models/paginated-results';
@@ -86,12 +86,12 @@ function getFakeExecutedWorkout(): ExecutedWorkout {
   return executedWorkout;
 }
 
-function getFirstExerciseFormGroup(component: WorkoutComponent): FormGroup {
+function getFirstExerciseFormGroup(component: WorkoutComponent): UntypedFormGroup {
   //Reactive Forms can get CONFUSING!
   const firstExercise = component.exercisesArray.controls[0];
-  const formGroup = <FormGroup>firstExercise;
-  const exerciseSets = (<FormArray>formGroup.controls.exerciseSets).controls;
-  return <FormGroup>exerciseSets[0];
+  const formGroup = <UntypedFormGroup>firstExercise;
+  const exerciseSets = (<UntypedFormArray>formGroup.controls.exerciseSets).controls;
+  return <UntypedFormGroup>exerciseSets[0];
 }
 
 function getRandomInt(max: number): number {
@@ -282,7 +282,7 @@ describe('WorkoutComponent', () => {
     expect(component.exercisesArray.controls.length).toBe(NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT);
 
     component.exercisesArray.controls.forEach((value: AbstractControl) => {
-      const formGroup = <FormGroup>value;
+      const formGroup = <UntypedFormGroup>value;
       expect(formGroup).toBeDefined();
       expect(formGroup.controls.id).toBeDefined();
       //expect(formGroup.controls.id.value).toBe(0); //TODO: Revisit -- similar comment in component
@@ -296,7 +296,7 @@ describe('WorkoutComponent', () => {
       //IMPORTANT DISTINCTION:
       //The above approach only gets any values which were set.
       //The *below* approach gets the controls we've defined.
-      const exerciseSets = (<FormArray>formGroup.controls.exerciseSets).controls;
+      const exerciseSets = (<UntypedFormArray>formGroup.controls.exerciseSets).controls;
 
       expect(exerciseSets).toBeDefined();
       expect(exerciseSets.length).toBeGreaterThan(0);
@@ -307,7 +307,7 @@ describe('WorkoutComponent', () => {
 
       //Make sure each set was initialized correctly
       for(let x = 0; x < exerciseSets.length; x++) {
-        const exerciseSetFormGroup = <FormGroup>exerciseSets[x];
+        const exerciseSetFormGroup = <UntypedFormGroup>exerciseSets[x];
 
         expect(exerciseSetFormGroup.controls.actualReps).toBeDefined();
         expect(exerciseSetFormGroup.controls.bandsEndToEnd).toBeDefined();
@@ -432,14 +432,14 @@ describe('WorkoutComponent', () => {
     //the user has entered
     component.exercisesArray.controls.forEach((value: AbstractControl) => {
       //Remember, each control in the exercises array is a FormGroup
-      const formGroup = <FormGroup>value;
+      const formGroup = <UntypedFormGroup>value;
 
       //Each exercise has a FormArray of exercise sets
-      const sets = <FormArray>formGroup.controls.exerciseSets;
+      const sets = <UntypedFormArray>formGroup.controls.exerciseSets;
       //sets.controls.forEach(set => {
       for(let x = 0; x < sets.controls.length; x++) {
 
-        const setGroup = <FormGroup>sets.controls[x];
+        const setGroup = <UntypedFormGroup>sets.controls[x];
         setGroup.patchValue({
           actualReps: getRandomInt(10),
           duration: getRandomInt(240),

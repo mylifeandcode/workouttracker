@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../models/workout-plan';
 import { WorkoutService } from '../workout.service';
@@ -22,10 +22,10 @@ export class WorkoutPlanComponent implements OnInit {
 
   //PUBLIC FIELDS
   public workoutPlan: WorkoutPlan | null; //Null before retrieved
-  public workoutPlanForm: FormGroup;
+  public workoutPlanForm: UntypedFormGroup;
   public showResistanceBandsSelectModal: boolean;
   public allResistanceBands: ResistanceBandIndividual[] = [];
-  public formGroupForResistanceSelection: FormGroup;
+  public formGroupForResistanceSelection: UntypedFormGroup;
   public errorInfo: string;
   public isProcessing: boolean = false;
   public planningForLater: boolean = false;
@@ -53,10 +53,10 @@ export class WorkoutPlanComponent implements OnInit {
   /**
    * A property representing all of the Exercises which are part of the Workout
    */
-   get exercisesArray(): FormArray {
+   get exercisesArray(): UntypedFormArray {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
-    return this.workoutPlanForm.get('exercises') as FormArray;
+    return this.workoutPlanForm.get('exercises') as UntypedFormArray;
   }
 
   /**
@@ -72,7 +72,7 @@ export class WorkoutPlanComponent implements OnInit {
     private _resistanceBandService: ResistanceBandService, 
     private _activatedRoute: ActivatedRoute, 
     private _router: Router, 
-    private _formBuilder: FormBuilder) { 
+    private _formBuilder: UntypedFormBuilder) { 
   }
 
   //PUBLIC METHODS
@@ -116,7 +116,7 @@ export class WorkoutPlanComponent implements OnInit {
     }
   }
 
-  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
+  public resistanceBandsModalEnabled(exerciseFormGroup: UntypedFormGroup): void {
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
     this.bandSelect.setBandAllocation(
@@ -213,7 +213,7 @@ export class WorkoutPlanComponent implements OnInit {
     if (this.workoutPlan) {
       this.exercisesArray.controls.forEach((control: AbstractControl, index: number, array: AbstractControl[]) => {
         
-        const exerciseFormGroup = control as FormGroup;
+        const exerciseFormGroup = control as UntypedFormGroup;
         const exercisePlan = this.workoutPlan?.exercises[index];
         if (exercisePlan) {
           console.log(control);

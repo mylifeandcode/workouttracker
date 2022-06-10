@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WorkoutExerciseComponent } from './workout-exercise.component';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ExecutedExercise } from '../models/executed-exercise';
 import { Exercise } from '../models/exercise';
 import * as _ from 'lodash';
@@ -28,7 +28,7 @@ class DurationPipeMock {
 describe('WorkoutExerciseComponent', () => {
   let component: WorkoutExerciseComponent;
   let fixture: ComponentFixture<WorkoutExerciseComponent>;
-  let formBuilder: FormBuilder;
+  let formBuilder: UntypedFormBuilder;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -45,7 +45,7 @@ describe('WorkoutExerciseComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutExerciseComponent);
     component = fixture.componentInstance;
-    formBuilder = new FormBuilder();
+    formBuilder = new UntypedFormBuilder();
     component.formGroup = formBuilder.group({
       id: [0, Validators.required ],
       workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
@@ -62,7 +62,7 @@ describe('WorkoutExerciseComponent', () => {
   function setupExercisesFormGroup(): void {
 
     let exercises = new Array<ExecutedExercise>();
-    const formBuilder = new FormBuilder();
+    const formBuilder = new UntypedFormBuilder();
     component.formGroup.addControl('exerciseSets', formBuilder.array([]));
 
     //TODO: Create a builder for this
@@ -86,7 +86,7 @@ describe('WorkoutExerciseComponent', () => {
 
   function getExerciseSetsFormArray(
     exercises: ExecutedExercise[], 
-    formBuilder: FormBuilder): FormArray {
+    formBuilder: UntypedFormBuilder): UntypedFormArray {
 
     let formArray = formBuilder.array([]);
 

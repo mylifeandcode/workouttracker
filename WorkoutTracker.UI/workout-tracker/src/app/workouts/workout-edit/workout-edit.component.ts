@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormArray, AbstractControl } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { Workout } from 'app/workouts/models/workout';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
@@ -18,7 +18,7 @@ export class WorkoutEditComponent implements OnInit {
 
   //Public fields
   public workoutId: number;
-  public workoutForm: FormGroup;
+  public workoutForm: UntypedFormGroup;
   public loading: boolean = true;
   public infoMsg: string | null = null;
   public showExerciseSelectModal: boolean = false;
@@ -30,13 +30,13 @@ export class WorkoutEditComponent implements OnInit {
   private _workout: Workout;
 
   //Properties
-  get exercisesArray(): FormArray {
-    return this.workoutForm.get('exercises') as FormArray;
+  get exercisesArray(): UntypedFormArray {
+    return this.workoutForm.get('exercises') as UntypedFormArray;
   }
 
   constructor(
     private _route: ActivatedRoute,
-    private _formBuilder: FormBuilder,
+    private _formBuilder: UntypedFormBuilder,
     private _workoutService: WorkoutService) {
   }
 
@@ -184,7 +184,7 @@ export class WorkoutEditComponent implements OnInit {
     exerciseId: number, 
     exerciseName: string, 
     setType: number = 0, 
-    numberOfSets: number = 0): FormGroup {
+    numberOfSets: number = 0): UntypedFormGroup {
       
     //console.log("getExerciseFormGroup: exerciseInWorkoutId = " + exerciseInWorkoutId + ", exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
     return this._formBuilder.group({
@@ -209,8 +209,8 @@ export class WorkoutEditComponent implements OnInit {
     let index = 0;
 
     for (let control of this.exercisesArray.controls) {
-      if (control instanceof FormGroup) {
-        let exerciseGroup = <FormGroup>control;
+      if (control instanceof UntypedFormGroup) {
+        let exerciseGroup = <UntypedFormGroup>control;
         if (exerciseGroup) {
           output.push(
             new ExerciseInWorkout(

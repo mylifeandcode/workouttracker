@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
   selector: 'wt-exercise-plan',
@@ -9,19 +9,19 @@ import { FormGroup } from '@angular/forms';
 export class ExercisePlanComponent {
 
   @Input()
-  formGroup: FormGroup; //TODO: Use a strong-typed structure
+  formGroup: UntypedFormGroup; //TODO: Use a strong-typed structure
 
   @Input()
   workoutHasBeenExecutedBefore: boolean;
 
   @Output()
-  resistanceBandsModalRequested: EventEmitter<FormGroup>;
+  resistanceBandsModalRequested: EventEmitter<UntypedFormGroup>;
 
   constructor() { 
-    this.resistanceBandsModalRequested = new EventEmitter<FormGroup>();
+    this.resistanceBandsModalRequested = new EventEmitter<UntypedFormGroup>();
   }
 
-  public selectResistanceBands(formGroup: FormGroup): void {
+  public selectResistanceBands(formGroup: UntypedFormGroup): void {
     this.resistanceBandsModalRequested.emit(formGroup);
   }
 

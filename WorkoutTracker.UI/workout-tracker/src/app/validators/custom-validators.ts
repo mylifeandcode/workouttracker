@@ -1,5 +1,5 @@
 ﻿//From https://stackoverflow.com/questions/42038099/validation-on-a-list-of-checkboxes-angular-2
-import { AbstractControl, FormArray, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormArray, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export class CustomValidators {
     /*
@@ -10,7 +10,7 @@ export class CustomValidators {
       (control: AbstractControl): ValidationErrors | null => {
         let valid = false;
 
-        const formGroup = <FormGroup>control;
+        const formGroup = <UntypedFormGroup>control;
 
         for (const field in formGroup.controls) {
             const formGroupControl = control.get(field);

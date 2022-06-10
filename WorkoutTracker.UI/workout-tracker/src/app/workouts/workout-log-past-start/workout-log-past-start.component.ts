@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { CustomValidators } from 'app/validators/custom-validators';
@@ -29,12 +29,12 @@ export class WorkoutLogPastStartComponent implements OnInit {
     return this.formGroup.get('endDateTime');
   } 
 
-  public formGroup: FormGroup;
+  public formGroup: UntypedFormGroup;
   public workouts: WorkoutDTO[];
   public gettingData: boolean = true;
 
   constructor(
-    private _formBuilder: FormBuilder, 
+    private _formBuilder: UntypedFormBuilder, 
     private _workoutService: WorkoutService, 
     private _router: Router) { 
 
