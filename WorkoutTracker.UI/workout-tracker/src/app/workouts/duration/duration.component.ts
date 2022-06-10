@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'wt-duration',
@@ -16,9 +16,9 @@ export class DurationComponent implements OnInit, OnChanges {;
   @Output()
   cancelClicked: EventEmitter<void> = new EventEmitter<void>();
 
-  public form: FormGroup;
+  public form: UntypedFormGroup;
 
-  constructor(private _formBuilder: FormBuilder) { }
+  constructor(private _formBuilder: UntypedFormBuilder) { }
 
   public ngOnInit(): void {
     this.setupFormGroup();

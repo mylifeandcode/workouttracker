@@ -168,5 +168,7 @@
       }
     }
   },
-  "defaultProject": "workout-tracker"
+  "cli": {
+    "analytics": false
+  }
 }

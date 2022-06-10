@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { ExerciseService } from '../exercise.service';
 import { Exercise } from '../../workouts/models/exercise';
 import { TargetArea } from '../../workouts/models/target-area';
@@ -18,7 +18,7 @@ import { finalize } from 'rxjs/operators';
 export class ExerciseEditComponent implements OnInit {
 
   //PUBLIC FIELDS
-  public exerciseForm: FormGroup;
+  public exerciseForm: UntypedFormGroup;
   public loading: boolean = true;
   public allTargetAreas: TargetArea[];
   public resistanceTypes: Map<number, string>;
@@ -43,7 +43,7 @@ export class ExerciseEditComponent implements OnInit {
 
   constructor(
     private _route: ActivatedRoute,
-    private _formBuilder: FormBuilder,
+    private _formBuilder: UntypedFormBuilder,
     private _exerciseSvc: ExerciseService) {
   }
 
@@ -68,13 +68,13 @@ export class ExerciseEditComponent implements OnInit {
   private setupTargetAreas(exerciseTargetAreaLinks: ExerciseTargetAreaLink[]): void {
     //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
 
-    const checkboxesFormGroup = <FormGroup>this.exerciseForm.get('targetAreas');
+    const checkboxesFormGroup = <UntypedFormGroup>this.exerciseForm.get('targetAreas');
 
     //I wanted to set the value of each checkbox to the ID of the target area, which was fine 
     //initially, but on toggling Angular set the value to a boolean.
 
     this.allTargetAreas.forEach((targetArea: TargetArea) => {
-      checkboxesFormGroup.addControl(targetArea.name, new FormControl(_.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id)));
+      checkboxesFormGroup.addControl(targetArea.name, new UntypedFormControl(_.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id)));
     });
 
     checkboxesFormGroup.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);

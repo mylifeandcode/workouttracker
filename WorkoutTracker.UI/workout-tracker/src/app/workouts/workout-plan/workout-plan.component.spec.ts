@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
@@ -77,7 +77,7 @@ describe('WorkoutPlanComponent', () => {
           provide: ActivatedRoute,
           useValue: { params: of({}) }
         },
-        FormBuilder //TODO: Determine if this is kosher or if there's a preferred mocking approach
+        UntypedFormBuilder //TODO: Determine if this is kosher or if there's a preferred mocking approach
       ],
       imports: [
         RouterTestingModule, 

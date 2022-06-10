@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { ExercisePlanComponent } from './exercise-plan.component';
 
@@ -28,7 +28,7 @@ describe('ExercisePlanComponent', () => {
   it('should apply last resistance values when user chooses to', () => {
 
     //ARRANGE
-    const formBuilder = new FormBuilder();
+    const formBuilder = new UntypedFormBuilder();
     component.formGroup = formBuilder.group({
       resistanceAmountLastTime: 50, 
       resistanceMakeupLastTime: 'Mauve, Tiel', 

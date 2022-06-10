@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 
 /**
  * A component representing an Exercise as part of a Workout instance,
@@ -18,7 +18,7 @@ export class WorkoutExerciseComponent implements OnInit {
    * a FormArray for the Sets
    */
   @Input()
-  formGroup: FormGroup; //TODO: Use a strong-typed structure
+  formGroup: UntypedFormGroup; //TODO: Use a strong-typed structure
 
   /*
   @Input()
@@ -26,22 +26,22 @@ export class WorkoutExerciseComponent implements OnInit {
   */
  
   @Output()
-  resistanceBandsSelect = new EventEmitter<FormGroup>();
+  resistanceBandsSelect = new EventEmitter<UntypedFormGroup>();
 
   @Output()
-  showTimerRequest = new EventEmitter<FormGroup>();
+  showTimerRequest = new EventEmitter<UntypedFormGroup>();
 
   @Output()
   rangeOfMotionEntered = new EventEmitter();
 
   @Output()
-  durationEdit = new EventEmitter<FormControl>();
+  durationEdit = new EventEmitter<UntypedFormControl>();
 
   //Properties
-  get setsArray(): FormArray {
+  get setsArray(): UntypedFormArray {
     //This property provides an easier way for the template to access this information,
     //and is used by the component code as a short-hand reference to the form array.
-    return this.formGroup.get('exerciseSets') as FormArray;
+    return this.formGroup.get('exerciseSets') as UntypedFormArray;
   }
 
   constructor() { }
@@ -49,11 +49,11 @@ export class WorkoutExerciseComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public selectResistanceBands(formGroup: FormGroup): void {
+  public selectResistanceBands(formGroup: UntypedFormGroup): void {
     this.resistanceBandsSelect.emit(formGroup);
   }
 
-  public showTimer(formGroup: FormGroup): void {
+  public showTimer(formGroup: UntypedFormGroup): void {
     this.showTimerRequest.emit(formGroup);
   }
 
@@ -61,7 +61,7 @@ export class WorkoutExerciseComponent implements OnInit {
     this.rangeOfMotionEntered.emit();
   }
 
-  public editDuration(formControl: FormControl): void {
+  public editDuration(formControl: UntypedFormControl): void {
     this.durationEdit.emit(formControl);
   }
 }

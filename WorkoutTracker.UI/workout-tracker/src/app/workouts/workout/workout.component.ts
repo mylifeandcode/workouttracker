@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormArray, AbstractControl, UntypedFormControl } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
@@ -22,21 +22,21 @@ export class WorkoutComponent implements OnInit {
 
   //PUBLIC FIELDS
   public errorInfo: string;
-  public workoutForm: FormGroup;
+  public workoutForm: UntypedFormGroup;
   //public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
   public workout: ExecutedWorkout; //TODO: Make this private, and instead expose the date values the template needs as component properties
   public showResistanceBandsSelectModal: boolean = false;
   public showCountdownModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
-  public formGroupForResistanceSelection: FormGroup;
-  public formGroupForCountdownModal: FormGroup;
+  public formGroupForResistanceSelection: UntypedFormGroup;
+  public formGroupForCountdownModal: UntypedFormGroup;
   public countdownModalActivatedDateTime: Date;
   public saving: boolean = false;
   public infoMsg: string;
   public workoutCompleted: boolean = false;
   public isLoggingPastWorkout: boolean = false;
   public showDurationModal: boolean = false;
-  public formControlForDurationEdit: FormControl | null = null;
+  public formControlForDurationEdit: UntypedFormControl | null = null;
   //END PUBLIC FIELDS
 
   //VIEWCHILD
@@ -53,10 +53,10 @@ export class WorkoutComponent implements OnInit {
   /**
    * A property representing all of the Exercises which are part of the Workout
    */
-  get exercisesArray(): FormArray {
+  get exercisesArray(): UntypedFormArray {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
-    return this.workoutForm.get('exercises') as FormArray;
+    return this.workoutForm.get('exercises') as UntypedFormArray;
   }
 
   /**
@@ -75,7 +75,7 @@ export class WorkoutComponent implements OnInit {
 
   constructor(
     private _route: ActivatedRoute,
-    private _formBuilder: FormBuilder,
+    private _formBuilder: UntypedFormBuilder,
     private _executedWorkoutService: ExecutedWorkoutService, 
     private _resistanceBandService: ResistanceBandService, 
     private _messageService: MessageService) { 
@@ -92,7 +92,7 @@ export class WorkoutComponent implements OnInit {
     this.startWorkout();
   }
 
-  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
+  public resistanceBandsModalEnabled(exerciseFormGroup: UntypedFormGroup): void {
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
     this.bandSelect.setBandAllocation(
@@ -112,7 +112,7 @@ export class WorkoutComponent implements OnInit {
     this.showResistanceBandsSelectModal = false;
   }
 
-  public showTimer(exerciseFormGroup: FormGroup): void {
+  public showTimer(exerciseFormGroup: UntypedFormGroup): void {
     this.formGroupForCountdownModal = exerciseFormGroup;
     this.countdownModalActivatedDateTime = new Date();
     this.showCountdownModal = true;
@@ -137,7 +137,7 @@ export class WorkoutComponent implements OnInit {
     this.persistWorkoutToServer(false);
   }
   
-  public openDurationModal(formControl: FormControl): void {
+  public openDurationModal(formControl: UntypedFormControl): void {
     this.formControlForDurationEdit = formControl;
     this.showDurationModal = true;
   }
@@ -248,7 +248,7 @@ export class WorkoutComponent implements OnInit {
     //this.exercisesArray.disable();
   }
 
-  private getExerciseSetsFormArray(exercises: ExecutedExercise[]): FormArray {
+  private getExerciseSetsFormArray(exercises: ExecutedExercise[]): UntypedFormArray {
 
     let formArray = this._formBuilder.array([]);
 
@@ -288,8 +288,8 @@ export class WorkoutComponent implements OnInit {
     this.workout.journal = this.workoutForm.controls.journal.value;
 
     this.exercisesArray.controls.forEach((value: AbstractControl) => {
-      let formGroup = <FormGroup>value;
-      let sets: FormArray = <FormArray>formGroup.controls.exerciseSets;
+      let formGroup = <UntypedFormGroup>value;
+      let sets: UntypedFormArray = <UntypedFormArray>formGroup.controls.exerciseSets;
       let exerciseId = formGroup.controls.exerciseId.value;
       let exercises = this.workout.exercises.filter((exercise: ExecutedExercise) => {
         return exercise.exercise.id == exerciseId; 
@@ -303,7 +303,7 @@ export class WorkoutComponent implements OnInit {
       }
 
       for(let x = 0; x < exercises.length; x++) {
-        const setControls = (sets.at(x) as FormGroup).controls;
+        const setControls = (sets.at(x) as UntypedFormGroup).controls;
         //exercises[x].actualRepCount = Number(sets[x].actualReps);
         exercises[x].actualRepCount = Number(setControls.actualReps.value);
         //exercises[x].duration = sets[x].duration;
