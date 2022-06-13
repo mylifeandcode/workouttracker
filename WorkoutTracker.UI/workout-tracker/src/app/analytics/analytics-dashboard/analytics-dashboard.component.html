@@ -1,1 +1,13 @@
-<p>analytics-dashboard works!</p>
+<div *ngIf="gettingData" class="container-fluid">
+  <br />
+  <div class="row">
+    <div class="col-12 text-center">
+      <h4>Getting data...</h4><br />
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!gettingData" class="container-fluid">
+  {{executedWorkoutsSummary.totalLoggedWorkouts}} logged workouts since {{executedWorkoutsSummary.firstLoggedWorkoutDateTime | date:'M/d/yyyy'}}
+</div>

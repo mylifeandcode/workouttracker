@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using WorkoutTracker.Repository;
 using WorkoutTracker.Application.Shared.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace WorkoutTracker.Application.Shared.BaseClasses
 {

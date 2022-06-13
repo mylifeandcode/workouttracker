@@ -100,10 +100,13 @@
       <!--Select Exercise Modal-->
 
       <!--
-          FUN FACT: Private methods like addExercise() are accessible from within the template 
-          if referenced from within the form group! I learned this while removing the old ngx-bootstrap 
-          modal to replace it with the PrimeNg one.
-          -->
+        TODO: The private members of the component are accessible here due to the use of *ngIf 
+        to render the div and the lack of strictTemplates or fullTemplateTypeCheck in tsconfig.json.
+        I should update tsconfig.json and make the members I need accessible from the template 
+        public instead of private.
+        Here's the issue I submitted to the Angular GitHub repo which led me to the answer:
+        https://github.com/angular/angular/issues/46333
+      -->
 
       <p-dialog header="Select an Exercise" [(visible)]="showExerciseSelectModal">
         <wt-exercise-list-mini (exerciseSelected)="addExercise($event)"></wt-exercise-list-mini>
