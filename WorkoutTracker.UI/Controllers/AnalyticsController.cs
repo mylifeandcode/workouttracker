@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.UI.Models;
 
@@ -18,10 +19,12 @@ namespace WorkoutTracker.UI.Controllers
     public class AnalyticsController : UserAwareController
     {
         private IExecutedWorkoutService _executedWorkoutService;
+        private ITargetAreaService _targetAreaService;
 
-        public AnalyticsController(IExecutedWorkoutService executedWorkoutService)
+        public AnalyticsController(IExecutedWorkoutService executedWorkoutService, ITargetAreaService targetAreaService)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(IExecutedWorkoutService));
+            _targetAreaService = targetAreaService ?? throw new ArgumentNullException(nameof(ITargetAreaService));
         }
 
         [HttpGet("executed-workouts")]
@@ -29,12 +32,6 @@ namespace WorkoutTracker.UI.Controllers
         {
             var summary = new ExecutedWorkoutsSummary();
             int userId = this.GetUserID();
-            /*
-            summary.FirstLoggedWorkoutDateTime =
-                _executedWorkoutService.GetAll()
-                    .Where(x => x.CreatedByUserId == userId)
-                    .OrderBy(x => x.StartDateTime).Take(1).FirstOrDefault()?.StartDateTime;
-            */
 
             var firstWorkout = 
                 _executedWorkoutService
@@ -52,7 +49,7 @@ namespace WorkoutTracker.UI.Controllers
                     .Where(x => x.CreatedByUserId == userId)
                     .Count();
 
-            var x = GetCountOfWorkoutsByTargetArea(userId);
+            summary.TargetAreasWithWorkoutCounts = GetCountOfWorkoutsByTargetArea(userId);
 
             return Ok(summary);
         }
@@ -70,25 +67,18 @@ namespace WorkoutTracker.UI.Controllers
             join	ExecutedWorkouts ew on ew.id = exex.ExecutedWorkoutId
             group by ta.Name
             order by ta.Name
+
+            I couldn't figure out a way to do this in LINQ, and didn't want to resort to doing a straight SQL call, so I took the 
+            less-than-ideal approach below.
             */
 
-            /*
-            var executedExercises =
-                _executedWorkoutService
-                    .GetAll()
-                    .Where(executedWorkout => executedWorkout.CreatedByUserId == userId)
-                    .SelectMany(executedWorkout => executedWorkout.Exercises)
-                    .SelectMany(executedExercise => executedExercise.Exercise.ExerciseTargetAreaLinks)
-                    .Select(exerciseTargetAreaLink => exerciseTargetAreaLink.TargetArea.Name);
-            */
+            //TODO: Find a better way to do this.
 
-            var executedExercisesList =
+            var executedWorkoutIdsWithTargetAreas =
                 _executedWorkoutService
                     .GetAll()
                     .Where(executedWorkout => executedWorkout.CreatedByUserId == userId && executedWorkout.EndDateTime.HasValue)
-                    .ToList();
-
-            var executedExercises = executedExercisesList
+                    .ToList()
                     .Select(executedWorkout =>
                         new
                         {
@@ -102,37 +92,15 @@ namespace WorkoutTracker.UI.Controllers
                     .Distinct()
                     .ToList();
 
-            /*
-            var results =
-                executedExercises
-                    .GroupBy(x => new
-                    {
-                        TargetArea = x.TargetAreas.SelectMany(x => x),
-                        Count = x.Count()
-                    }
-                    );
-            */
+            var allTargetAreas = _targetAreaService.GetAll().OrderBy(x => x.Name).ToList();
+            var output = new Dictionary<string, int>(allTargetAreas.Count);
 
-            return null;
+            foreach (var area in allTargetAreas)
+            {
+                output.Add(area.Name, executedWorkoutIdsWithTargetAreas.Count(x => x.TargetAreas.Contains(area.Name)));
+            }
 
-            /*
-            var results =
-                executedExercises
-                    .GroupBy(x => 
-                        new 
-                        {
-                            ExecutedWorkoutId = x.,
-                            TargetAreaName = 
-                                executedExercises
-                                    .Where(executedExercise => ex)
-                                    .SelectMany(executedExercise => executedExercise.Exercise.ExerciseTargetAreaLinks.Select(targetAreaLinks => targetAreaLinks.TargetArea.Name))
-
-                        });
-            */
-
-
-            return null;
-
+            return output;
         }
     }
 }

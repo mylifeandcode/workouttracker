@@ -10,4 +10,19 @@
 
 <div *ngIf="!gettingData" class="container-fluid">
   {{executedWorkoutsSummary.totalLoggedWorkouts}} logged workouts since {{executedWorkoutsSummary.firstLoggedWorkoutDateTime | date:'M/d/yyyy'}}
+
+  <table>
+    <thead>
+      <tr>
+        <th>Target Area</th>
+        <th>Workouts Completed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let workout of executedWorkoutsSummary.targetAreasWithWorkoutCounts | keyvalue">
+        <td>{{workout.key}}</td>
+        <td class="text-center">{{workout.value}}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
