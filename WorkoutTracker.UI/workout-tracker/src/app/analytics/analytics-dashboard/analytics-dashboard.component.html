@@ -8,9 +8,14 @@
   </div>
 </div>
 
+<h3 *ngIf="!gettingData" class="headroom">Analytics</h3>
 <div *ngIf="!gettingData" class="container-fluid">
-  {{executedWorkoutsSummary.totalLoggedWorkouts}} logged workouts since {{executedWorkoutsSummary.firstLoggedWorkoutDateTime | date:'M/d/yyyy'}}
-
+  <p>
+    You have logged {{executedWorkoutsSummary.totalLoggedWorkouts}} workouts since {{executedWorkoutsSummary.firstLoggedWorkoutDateTime | date:'M/d/yyyy'}}.
+  </p>
+  <p>
+    Here's the breakdown of each target area and the number of times you've completed a workout that includes it:
+  </p>
   <table>
     <thead>
       <tr>
@@ -21,7 +26,7 @@
     <tbody>
       <tr *ngFor="let workout of executedWorkoutsSummary.targetAreasWithWorkoutCounts | keyvalue">
         <td>{{workout.key}}</td>
-        <td class="text-center">{{workout.value}}</td>
+        <td class="text-center" [innerHTML]="workout.value | zeroIsBad"></td>
       </tr>
     </tbody>
   </table>

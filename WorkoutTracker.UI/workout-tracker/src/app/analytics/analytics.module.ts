@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AnalyticsDashboardComponent } from './analytics-dashboard/analytics-dashboard.component';
 import { AnalyticsRoutingModule } from './analytics-routing.module';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { SharedModule } from 'app/shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -11,7 +12,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   imports: [
     CommonModule,
     AnalyticsRoutingModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    SharedModule
   ]
 })
 export class AnalyticsModule { }
