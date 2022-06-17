@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from 'app/core/config.service';
 import { Observable } from 'rxjs';
+import { ExecutedWorkoutMetrics } from './models/executed-workout-metrics';
 import { ExecutedWorkoutsSummary } from './models/executed-workouts-summary';
 
 //TODO: This service doesn't fit the normal API service pattern due to different types, not just 
@@ -26,5 +27,9 @@ export class AnalyticsService {
 
   public getExecutedWorkoutsSummary(): Observable<ExecutedWorkoutsSummary> {
     return this._http.get<ExecutedWorkoutsSummary>(`${this.API_ROOT}/executed-workouts`);
+  }
+
+  public getExecutedWorkoutMetrics(workoutId: number, count: number = 5): Observable<ExecutedWorkoutMetrics[]> {
+    return this._http.get<ExecutedWorkoutMetrics[]>(`${this.API_ROOT}/workout-metrics/${workoutId}/${count}`);
   }
 }

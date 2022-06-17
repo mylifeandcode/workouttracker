@@ -91,6 +91,9 @@ import { DurationComponent } from '../workouts/duration/duration.component';
   ], 
   providers: [
     MessageService
+  ],
+  exports: [
+    WorkoutSelectComponent
   ]
 })
 export class WorkoutsModule { }

@@ -16,7 +16,7 @@ export class AnalyticsDashboardComponent implements OnInit {
 
   constructor(private _analyticsService: AnalyticsService) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this._analyticsService
       .getExecutedWorkoutsSummary()
       .pipe(
@@ -31,5 +31,4 @@ export class AnalyticsDashboardComponent implements OnInit {
         }
       );
   }
-
 }

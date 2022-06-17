@@ -1,0 +1,27 @@
+<h3 class="headroom">Workout Progress</h3>
+
+<wt-workout-select 
+  [showRecent]="false" 
+  [showHeading]="false"
+  [navigateOnSelect]="false"
+  (workoutsLoaded)="workoutsLoaded()"
+  (workoutSelected)="workoutSelected($event)">
+</wt-workout-select>
+
+<div *ngIf="loadingData" class="container-fluid">
+  <br />
+  <div class="row">
+    <div class="col-12 text-center">
+      <h4>Getting data...</h4><br />
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!loadingData" class="container-fluid"> <!--TODO: Ditch the container and use a style to give us some margins-->
+  <div class="row">
+    <div class="col-12">
+      <p-chart type="line" [data]="chartData"></p-chart>
+    </div>
+  </div>
+</div>

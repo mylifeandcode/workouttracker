@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WorkoutTracker.UI.Models
+namespace WorkoutTracker.Application.Workouts.Models
 {
     public class ExecutedWorkoutsSummary
     {
