@@ -38,21 +38,6 @@ export class WorkoutProgressComponent implements OnInit {
   }
 
   private setupChartData(): void {
-    //TODO: Configure
-    this.chartData = {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      datasets: [
-          {
-              label: 'First Dataset',
-              data: [65, 59, 80, 81, 56, 55, 40],
-              borderColor: '#42A5F5'
-          },
-          {
-              label: 'Second Dataset',
-              data: [28, 48, 40, 19, 86, 27, 90],
-              borderColor: '#FFA726'
-          }
-      ]
-    };    
+    this.chartData = this._analyticsService.getChartData(this.metrics);
   }
 }
