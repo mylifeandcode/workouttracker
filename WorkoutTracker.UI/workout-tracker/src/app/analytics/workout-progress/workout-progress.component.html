@@ -1,12 +1,27 @@
 <h3 class="headroom">Workout Progress</h3>
 
-<wt-workout-select 
-  [showRecent]="false" 
-  [showHeading]="false"
-  [navigateOnSelect]="false"
-  (workoutsLoaded)="workoutsLoaded()"
-  (workoutSelected)="workoutSelected($event)">
-</wt-workout-select>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-6">
+      <label>Select a Workout</label>&nbsp;
+      <select id="workoutDefinitions" (change)="workoutSelected($event.target.value)">
+        <option value="" selected disabled>Choose a Workout</option>
+        <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
+          {{workouts[i].name}}
+        </option>          
+      </select>
+    </div>
+    <div class="col-6">
+      <label>Metric Type</label>&nbsp;
+      <select (change)="metricChange($event.target.value)">
+        <option value="0">Form</option>
+        <option value="1">Range of Motion</option>
+        <option value="2">Reps</option>
+        <option value="3">Resistance</option>
+      </select>
+    </div>
+  </div>
+</div>
 
 <div *ngIf="loadingData" class="container-fluid">
   <br />
@@ -18,7 +33,8 @@
   </div>
 </div>
 
-<div *ngIf="!loadingData" class="container-fluid"> <!--TODO: Ditch the container and use a style to give us some margins-->
+<div *ngIf="!loadingData" class="container-fluid">
+  <!--TODO: Ditch the container and use a style to give us some margins-->
   <div class="row">
     <div class="col-12">
       <p-chart type="line" [data]="chartData"></p-chart>

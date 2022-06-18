@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from 'app/core/config.service';
+import { BubbleDataPoint, ScatterDataPoint } from 'chart.js';
 import { Observable } from 'rxjs';
 import { AnalyticsChartData } from './models/analytics-chart-data';
 import { ExecutedExerciseMetrics } from './models/executed-exercise-metrics';
@@ -15,6 +16,13 @@ const HTTP_OPTIONS = {
     'Content-Type':  'application/json'
   })
 };
+
+enum CHART_DATA_TYPE {
+  Form,
+  RangeOfMotion,
+  Reps,
+  Resistance
+}
 
 @Injectable({
   providedIn: 'root'
@@ -44,74 +52,42 @@ export class AnalyticsService {
     return this._http.get<ExecutedWorkoutsSummary>(`${this.API_ROOT}/executed-workouts`);
   }
 
-  public getExecutedWorkoutMetrics(workoutId: number, count: number = 5): Observable<ExecutedWorkoutMetrics[]> {
+  public getExecutedWorkoutMetrics(workoutId: number, count: number = 10): Observable<ExecutedWorkoutMetrics[]> {
     return this._http.get<ExecutedWorkoutMetrics[]>(`${this.API_ROOT}/workout-metrics/${workoutId}/${count}`);
   }
 
-  public getChartData(metrics: ExecutedWorkoutMetrics[]): AnalyticsChartData {
+  public getChartData(metrics: ExecutedWorkoutMetrics[], chartDataType: CHART_DATA_TYPE = CHART_DATA_TYPE.Resistance): AnalyticsChartData {
     let chartData = new AnalyticsChartData();
-    
-    //Example data
-    /*
-    this.chartData = {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      datasets: [
-          {
-              label: 'First Dataset',
-              data: [65, 59, 80, 81, 56, 55, 40],
-              borderColor: '#42A5F5'
-          },
-          {
-              label: 'Second Dataset',
-              data: [28, 48, 40, 19, 86, 27, 90],
-              borderColor: '#FFA726'
-          }
-      ]
-    };
-    */    
 
     if(metrics) {
-
-      /*
-      Overall ChartData labels should be the dates
-      In the ChartData.dataSets, we should have:
-      - One dataset per exercise that appears in the workout
-      - The data of each of this should be an array of objects containing the metrics values
-      */
 
       //Set up the labels
       metrics.forEach((executedWorkoutMetrics: ExecutedWorkoutMetrics) => {
         chartData.labels?.push(new Date(executedWorkoutMetrics.endDateTime).toDateString());
-        //Example data
-        /*
-        chartData.datasets.push({
-          label: 'First Dataset',
-          data: [65, 59, 80, 81, 56, 55, 40],
-          borderColor: '#42A5F5'
-        });
-        */
-       /*
-       chartData.datasets.push(...executedWorkoutMetrics.exerciseMetrics.map((exerciseMetrics: ExecutedExerciseMetrics, index: number) => {
-        return {
-          label: exerciseMetrics.name,
-          data: [exerciseMetrics.averageForm, exerciseMetrics.averageRangeOfMotion, exerciseMetrics.averageRepCount, exerciseMetrics.averageResistanceAmount],
-          borderColor: (index < 10 ? this.BORDERCOLORS[index] : this.BORDERCOLORS[index-10])
-        }
-       }));
-       */
       });
 
       //Set up the dataSets
       metrics[0].exerciseMetrics.forEach((exercise: ExecutedExerciseMetrics, index: number) => {
         chartData.datasets.push({
           label: exercise.name,
-          data: [1,2,3,4,5], //TODO: Implement
+          data: metrics.flatMap((metric: ExecutedWorkoutMetrics) => metric.exerciseMetrics.filter((executedExerciseMetrics: ExecutedExerciseMetrics) => executedExerciseMetrics.name == exercise.name).map((executedExerciseMetrics: ExecutedExerciseMetrics) => {
+            switch(chartDataType) {
+              case CHART_DATA_TYPE.Form:
+                return executedExerciseMetrics.averageForm;
+              case CHART_DATA_TYPE.RangeOfMotion:
+                return executedExerciseMetrics.averageRangeOfMotion;
+              case CHART_DATA_TYPE.Reps:
+                return executedExerciseMetrics.averageRepCount;
+              case CHART_DATA_TYPE.Resistance:
+                return executedExerciseMetrics.averageResistanceAmount;
+              default:
+                throw new Error("UNKNOWN CHART DATA TYPE");
+            }
+          })),
           borderColor: (index < 10 ? this.BORDERCOLORS[index] : this.BORDERCOLORS[index-10])
         });
       });
     }
-
-    //console.log("chartData: ", chartData);
 
     return chartData;
   }

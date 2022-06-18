@@ -5,7 +5,7 @@ export class ExecutedExerciseMetrics {
   public sequence: number;
   public setType: SetType;
   public averageRepCount: number;
-  public averageResistanceAmount: number;
+  public averageResistanceAmount: number; //TODO: Make nullable for body weight: add code to handle
   public averageForm: number;
   public averageRangeOfMotion: number;
 }

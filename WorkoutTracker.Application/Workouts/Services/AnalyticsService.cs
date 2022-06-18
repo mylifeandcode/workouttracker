@@ -107,8 +107,9 @@ namespace WorkoutTracker.Application.Workouts.Services
         {
             return _executedWorkoutService
                     .GetAll()
-                    .OrderBy(x => x.EndDateTime)
+                    .OrderByDescending(x => x.EndDateTime)
                     .Where(x => x.WorkoutId == workoutId && x.EndDateTime.HasValue)
+                    .OrderBy(x => x.EndDateTime)
                     .Take(count);
         }
         #endregion Private Methods
