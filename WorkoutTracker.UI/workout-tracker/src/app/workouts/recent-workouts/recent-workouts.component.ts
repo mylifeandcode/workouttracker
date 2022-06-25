@@ -14,7 +14,7 @@ export class RecentWorkoutsComponent implements OnInit {
 
   public recentWorkouts: ExecutedWorkoutDTO[];
   public showExercises: boolean = false;
-  public selectedWorkout: Workout | null;
+  public selectedWorkout: Workout;
   public loading: boolean = true;
 
   @Input()
@@ -36,7 +36,7 @@ export class RecentWorkoutsComponent implements OnInit {
   }
 
   public viewExercises(workoutId: number): void {
-    this.selectedWorkout = null;
+    //this.selectedWorkout = null;
     this._workoutService
       .getById(workoutId)
       .subscribe((result: Workout) => {

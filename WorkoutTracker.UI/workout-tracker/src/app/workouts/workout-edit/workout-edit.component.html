@@ -87,27 +87,17 @@
           <p-inputSwitch id="editModeToggle" styleClass="align-middle" (onChange)="editModeToggled($event)"></p-inputSwitch>
         </div>       
         <div *ngIf="!readOnlyMode" class="col-8">
-          <button type="submit" [disabled]="workoutForm.invalid || _saving" (click)="saveWorkout()"
+          <button type="submit" [disabled]="workoutForm.invalid || saving" (click)="saveWorkout()"
             class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
           <span *ngIf="workoutForm.touched && workoutForm.invalid" class="errorText">Please enter required
             information</span>
         </div>
       </div>
-      <div *ngIf="_errorMsg" class="offset-2 col-4 errorText">
-        {{_errorMsg}}
+      <div *ngIf="errorMsg" class="offset-2 col-4 errorText">
+        {{errorMsg}}
       </div>
 
       <!--Select Exercise Modal-->
-
-      <!--
-        TODO: The private members of the component are accessible here due to the use of *ngIf 
-        to render the div and the lack of strictTemplates or fullTemplateTypeCheck in tsconfig.json.
-        I should update tsconfig.json and make the members I need accessible from the template 
-        public instead of private.
-        Here's the issue I submitted to the Angular GitHub repo which led me to the answer:
-        https://github.com/angular/angular/issues/46333
-      -->
-
       <p-dialog header="Select an Exercise" [(visible)]="showExerciseSelectModal">
         <wt-exercise-list-mini (exerciseSelected)="addExercise($event)"></wt-exercise-list-mini>
       </p-dialog>

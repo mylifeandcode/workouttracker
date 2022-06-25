@@ -24,10 +24,10 @@ export class WorkoutEditComponent implements OnInit {
   public showExerciseSelectModal: boolean = false;
   public readOnlyMode: boolean = false;
   public fromViewRoute: boolean = false;
+  public errorMsg: string | null = null;
+  public saving: boolean = false;
 
   //Private fields
-  private _saving: boolean = false;
-  private _errorMsg: string | null = null;
   private _workout: Workout;
 
   //Properties
@@ -61,7 +61,7 @@ export class WorkoutEditComponent implements OnInit {
     }
   }  
 
-  private openModal(): void {
+  public openModal(): void {
     this.showExerciseSelectModal = true;
   }
 
@@ -105,16 +105,16 @@ export class WorkoutEditComponent implements OnInit {
     });
   }
 
-  private addExercise(exercise: ExerciseDTO): void {
+  public addExercise(exercise: ExerciseDTO): void {
     this.exercisesArray.push(this.createExerciseFormGroup(0, exercise.id, exercise.name));
   }
 
-  private removeExercise(index: number): void {
+  public removeExercise(index: number): void {
     //Called by button click in template
     this.exercisesArray.removeAt(index);
   }
 
-  private moveExerciseUp(index: number): void {
+  public moveExerciseUp(index: number): void {
     //Called by button click in template
     let exerciseControl: AbstractControl = this.exercisesArray.at(index);
     this.exercisesArray.removeAt(index);
@@ -122,20 +122,20 @@ export class WorkoutEditComponent implements OnInit {
     //this.exercisesArray[index - 1].controls.sequnce
   }
 
-  private moveExerciseDown(index: number): void {
+  public moveExerciseDown(index: number): void {
     //Called by button click in template
     let exerciseControl: AbstractControl = this.exercisesArray.at(index);
     this.exercisesArray.removeAt(index);
     this.exercisesArray.insert((index + 1), exerciseControl);
   }
 
-  private saveWorkout(): void {
+  public saveWorkout(): void {
     //Called by Save button
     
     if (!this.workoutForm.invalid) {
       this.updateWorkoutFromFormValues();
 
-      this._saving = true;
+      this.saving = true;
       this.infoMsg = "Saving...";
 
       if (this._workout.id == 0)
@@ -150,7 +150,7 @@ export class WorkoutEditComponent implements OnInit {
     console.log("ADDING WORKOUT: ", this._workout);
     this._workoutService.add(this._workout)
       .pipe(finalize(() => {
-          this._saving = false;
+          this.saving = false;
       }))
       .subscribe((addedWorkout: Workout) => {
           //this.workout = value;
@@ -158,7 +158,7 @@ export class WorkoutEditComponent implements OnInit {
           this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
       },
       (error: any) => {
-          this._errorMsg = error.message;
+          this.errorMsg = error.message;
           this.infoMsg = null;
       }
     );
@@ -169,15 +169,15 @@ export class WorkoutEditComponent implements OnInit {
     console.log("UPDATING WORKOUT: ", this._workout);
     this._workoutService.update(this._workout)
       .pipe(finalize(() => {
-          this._saving = false;
+          this.saving = false;
       }))
       .subscribe((updatedWorkout: Workout) => {
-          this._saving = false;
+          this.saving = false;
           this.infoMsg = "Workout updated at " + new Date().toLocaleTimeString();
       }, 
       (error: any) => {
           console.log("ERROR: ", error);
-          this._errorMsg = error.message;
+          this.errorMsg = error.message;
           this.infoMsg = null;
       }
     );

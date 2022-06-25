@@ -6,7 +6,7 @@ import { ExerciseTargetAreaLink } from '../models/exercise-target-area-link';
 })
 export class TargetAreasPipe implements PipeTransform {
 
-  transform(value: ExerciseTargetAreaLink[]): string {
+  transform(value: ExerciseTargetAreaLink[] | undefined): string {
     if (!value)
       return '';
 

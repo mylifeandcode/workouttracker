@@ -2,11 +2,11 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-4">
-      Filter by Name &nbsp;<input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'in')" />
+      Filter by Name &nbsp;<input pInputText type="text" (input)="dt.filter($event?.target?.value, 'name', 'in')" />
     </div>
     <div class="col-4">
       Active Workouts Only &nbsp;<input type="checkbox" checked
-        (input)="dt.filter($event.target.checked, 'activeOnly', 'equals')" />
+        (input)="dt.filter($event?.target?.checked, 'activeOnly', 'equals')" />
     </div>
   </div>
   <div class="row">

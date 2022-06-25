@@ -23,9 +23,11 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         public List<ExecutedWorkoutMetrics> GetExecutedWorkoutMetrics(int workoutId, int count = 5)
         {
-            var executedWorkouts = GetExecutedWorkouts(workoutId, count).ToList();
-            var output = new List<ExecutedWorkoutMetrics>(executedWorkouts.Count);
+            var executedWorkouts = GetRecentExecutedWorkouts(workoutId, count).ToList();
+            var output = new List<ExecutedWorkoutMetrics>(executedWorkouts.Count).OrderBy(x => x.EndDateTime).ToList();
+
             executedWorkouts.ForEach(x => output.Add(new ExecutedWorkoutMetrics(x)));
+            
             return output;
         }
 
@@ -103,13 +105,12 @@ namespace WorkoutTracker.Application.Workouts.Services
             return output;
         }
 
-        private IEnumerable<ExecutedWorkout> GetExecutedWorkouts(int workoutId, int count = 5)
+        private IEnumerable<ExecutedWorkout> GetRecentExecutedWorkouts(int workoutId, int count = 5)
         {
             return _executedWorkoutService
                     .GetAll()
-                    .OrderByDescending(x => x.EndDateTime)
                     .Where(x => x.WorkoutId == workoutId && x.EndDateTime.HasValue)
-                    .OrderBy(x => x.EndDateTime)
+                    .OrderByDescending(x => x.EndDateTime)
                     .Take(count);
         }
         #endregion Private Methods

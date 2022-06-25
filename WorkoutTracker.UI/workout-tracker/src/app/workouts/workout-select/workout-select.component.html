@@ -1,12 +1,12 @@
 <h3 *ngIf="showHeading" class="headroom">Select a Workout to {{planningForLater ? "Plan" : "Start"}}</h3>
 <div class="container-fluid">
-  <div *ngIf="!loading && workouts?.length > 0" class="row select-row">
+  <div *ngIf="!loading && workouts?.length" class="row select-row">
     <div class="col-12">
       <label>Select a Workout</label>&nbsp;
       <select id="workoutDefinitions" (change)="workoutSelectChange($event)">
         <option value="" selected disabled>Choose a Workout</option>
         <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
-          {{workouts[i].name}}
+          {{workouts[i].workoutName}}
         </option>          
       </select>
     </div>
@@ -16,6 +16,6 @@
       <br />You haven't defined any workouts yet. Please use the menu to create one.
     </p>
   </div>
-  <wt-recent-workouts *ngIf="!loading && showRecent && workouts?.length > 0" [planningForLater]="planningForLater"></wt-recent-workouts>
+  <wt-recent-workouts *ngIf="!loading && showRecent && workouts?.length" [planningForLater]="planningForLater"></wt-recent-workouts>
 </div>
 

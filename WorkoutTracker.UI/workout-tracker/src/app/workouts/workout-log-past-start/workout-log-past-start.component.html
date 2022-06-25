@@ -12,7 +12,7 @@
         <select id="workoutDefinitions" formControlName="workoutId">
           <option disabled [value]="null">Choose a Workout</option>
           <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
-            {{workouts[i].name}}
+            {{workouts[i].workoutName}}
           </option>          
         </select>
       </div>
@@ -25,7 +25,7 @@
         <label for="startDateTime">Start Date/Time</label>
       </div>
       <div class="col-2">
-        <p-calendar formControlName="startDateTime" [showTime]="true" [hourFormat]="12" inputId="startDateTime"></p-calendar>      
+        <p-calendar formControlName="startDateTime" [showTime]="true" hourFormat="12" inputId="startDateTime"></p-calendar>      
       </div>
       <div class="col-8">
         <span *ngIf="startDateTime?.invalid && (startDateTime?.touched || startDateTime?.dirty)" class="text-danger">
@@ -40,7 +40,7 @@
         <label for="endDateTime">End Date/Time</label>
       </div>
       <div class="col-2">
-        <p-calendar id="endDateTime" name="endDateTime" formControlName="endDateTime" [showTime]="true" [hourFormat]="12" inputId="endDateTime"></p-calendar>      
+        <p-calendar id="endDateTime" name="endDateTime" formControlName="endDateTime" [showTime]="true" hourFormat="12" inputId="endDateTime"></p-calendar>      
       </div>
       <div class="col-8">
         <span *ngIf="endDateTime?.invalid && (endDateTime?.touched || endDateTime?.dirty)" class="text-danger">

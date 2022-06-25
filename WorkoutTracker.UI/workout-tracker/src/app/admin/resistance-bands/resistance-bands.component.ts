@@ -12,7 +12,7 @@ import { ResistanceBandService } from './resistance-band.service';
 })
 export class ResistanceBandsComponent implements OnInit {
 
-  public resistanceBands: ResistanceBand[] | null = null;
+  public resistanceBands: ResistanceBand[] = [];
   public busy: boolean = false;
   public busyMsg: string;
 

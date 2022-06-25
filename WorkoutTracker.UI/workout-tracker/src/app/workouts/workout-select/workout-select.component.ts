@@ -42,16 +42,20 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
    * A property indicating whether or not the component is loading information it requires
    */
   public get loading(): boolean {
-    return this._apiCallsInProgress > 0; 
+    if(this._apiCallsInProgress > 0)
+      return true;
+    else
+      return false;
+    //return this._apiCallsInProgress > 0; 
   }
 
   //PUBLIC FIELDS
-  public workouts: WorkoutDTO[];
+  public workouts: WorkoutDTO[] = [];
   public planningForLater: boolean = true;
   //END PUBLIC FIELDS
 
   //PRIVATE FIELDS
-  private _apiCallsInProgress: number;
+  private _apiCallsInProgress: number = 0;
   private _userSusbscription: Subscription;
   //END PRIVATE FIELDS
 

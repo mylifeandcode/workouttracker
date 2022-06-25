@@ -12,10 +12,10 @@
     </thead>
     <tbody>
       <tr *ngFor="let exercise of workout.exercises">
-        <td>{{exercise.exercise.name}}</td>
+        <td>{{exercise.exercise?.name}}</td>
         <td>{{exercise.numberOfSets}}</td>
-        <td>{{exercise.exercise.resistanceType | resistanceType}}</td>
-        <td>{{exercise.exercise.exerciseTargetAreaLinks | targetAreas}}</td>
+        <td>{{exercise.exercise?.resistanceType | resistanceType}}</td>
+        <td>{{exercise.exercise?.exerciseTargetAreaLinks | targetAreas}}</td>
       </tr>
     </tbody>
   </table>
