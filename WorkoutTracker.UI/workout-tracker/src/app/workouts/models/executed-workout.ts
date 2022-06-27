@@ -6,7 +6,7 @@ export class ExecutedWorkout extends Entity {
   public workout: Workout;
   public startDateTime: Date;
   public endDateTime: Date;
-  public journal: string;
+  public journal: string | null;
   public rating: number;
   public exercises: Array<ExecutedExercise>;
 }

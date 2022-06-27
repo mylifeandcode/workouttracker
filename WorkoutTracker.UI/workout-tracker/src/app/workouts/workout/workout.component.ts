@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormArray, AbstractControl, UntypedFormControl } from '@angular/forms';
+import { UntypedFormGroup, Validators, AbstractControl, FormGroup, FormArray, FormControl, FormBuilder } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
@@ -12,6 +12,33 @@ import * as _ from 'lodash';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ActivatedRoute, Params } from '@angular/router';
 
+interface IWorkoutFormExercise {
+  id: FormControl<number>;
+  exerciseId: FormControl<number>;
+  exerciseName: FormControl<string>;
+  exerciseSets: FormArray<FormGroup<IWorkoutFormExerciseSet>>;
+  setType: FormControl<number>;
+  resistanceType: FormControl<number>;
+}
+
+interface IWorkoutFormExerciseSet {
+  sequence: FormControl<number>; 
+  resistance: FormControl<number>; 
+  targetReps: FormControl<number>;
+  actualReps: FormControl<number>;
+  formRating: FormControl<number | null>;
+  rangeOfMotionRating: FormControl<number | null>;
+  resistanceMakeup: FormControl<string | null>;
+  bandsEndToEnd: FormControl<boolean | null>;
+  duration: FormControl<number>;
+  involvesReps: FormControl<boolean>;
+}
+
+interface IWorkoutForm {
+  id: FormControl<number | null>;
+  exercises: FormArray<FormGroup<IWorkoutFormExercise>>; 
+  journal:FormControl<string | null>;
+}
 
 @Component({
   selector: 'wt-workout',
@@ -22,7 +49,7 @@ export class WorkoutComponent implements OnInit {
 
   //PUBLIC FIELDS
   public errorInfo: string;
-  public workoutForm: UntypedFormGroup;
+  public workoutForm: FormGroup<IWorkoutForm>;
   //public workouts: WorkoutDTO[]; //Refactor. We only need the IDs and Names for this.
   public workout: ExecutedWorkout; //TODO: Make this private, and instead expose the date values the template needs as component properties
   public showResistanceBandsSelectModal: boolean = false;
@@ -36,7 +63,7 @@ export class WorkoutComponent implements OnInit {
   public workoutCompleted: boolean = false;
   public isLoggingPastWorkout: boolean = false;
   public showDurationModal: boolean = false;
-  public formControlForDurationEdit: UntypedFormControl | null = null;
+  public formControlForDurationEdit: FormControl<number> | null = null;
   //END PUBLIC FIELDS
 
   //VIEWCHILD
@@ -53,10 +80,11 @@ export class WorkoutComponent implements OnInit {
   /**
    * A property representing all of the Exercises which are part of the Workout
    */
-  get exercisesArray(): UntypedFormArray {
+  get exercisesArray(): FormArray<FormGroup<IWorkoutFormExercise>> {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
-    return this.workoutForm.get('exercises') as UntypedFormArray;
+    //return this.workoutForm.get('exercises') as FormArray;
+    return this.workoutForm.controls.exercises;
   }
 
   /**
@@ -75,7 +103,7 @@ export class WorkoutComponent implements OnInit {
 
   constructor(
     private _route: ActivatedRoute,
-    private _formBuilder: UntypedFormBuilder,
+    private _formBuilder: FormBuilder,
     private _executedWorkoutService: ExecutedWorkoutService, 
     private _resistanceBandService: ResistanceBandService, 
     private _messageService: MessageService) { 
@@ -112,7 +140,7 @@ export class WorkoutComponent implements OnInit {
     this.showResistanceBandsSelectModal = false;
   }
 
-  public showTimer(exerciseFormGroup: UntypedFormGroup): void {
+  public showTimer(exerciseFormGroup: FormGroup): void {
     this.formGroupForCountdownModal = exerciseFormGroup;
     this.countdownModalActivatedDateTime = new Date();
     this.showCountdownModal = true;
@@ -137,7 +165,7 @@ export class WorkoutComponent implements OnInit {
     this.persistWorkoutToServer(false);
   }
   
-  public openDurationModal(formControl: UntypedFormControl): void {
+  public openDurationModal(formControl: FormControl<number>): void {
     this.formControlForDurationEdit = formControl;
     this.showDurationModal = true;
   }
@@ -168,11 +196,13 @@ export class WorkoutComponent implements OnInit {
   }
 
   private createForm(): void {
-    this.workoutForm = this._formBuilder.group({
-        id: [0, Validators.required ], 
-        //workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
-        exercises: this._formBuilder.array([]), 
-        journal: ['']
+    this.workoutForm = this._formBuilder.group<IWorkoutForm>({
+        //id: [0, Validators.required ], 
+        id: new FormControl<number | null>(0, Validators.required),
+        //exercises: this._formBuilder.array([]), 
+        exercises: new FormArray<FormGroup<IWorkoutFormExercise>>([]), 
+        //journal: ['']
+        journal: new FormControl<string | null>('')
     });
   }
 
@@ -220,26 +250,24 @@ export class WorkoutComponent implements OnInit {
   private setupExercisesFormGroup(exercises: ExecutedExercise[]): void {
     this.exercisesArray.clear();
 
-    /*
-    exercises = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
-
-    //Group ExecutedExercise by Exercise and Set Type
-    let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { 
-        return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
-      });
-    */
     let groupedExercises = this._executedWorkoutService.groupExecutedExercises(exercises);
 
     _.forEach(groupedExercises, (exerciseArray: ExecutedExercise[]) => {
 
       this.exercisesArray.push(
-        this._formBuilder.group({
-          id: exerciseArray[0].id, //WARN: Pretty sure this will still just be 0 at this point
-          exerciseId: exerciseArray[0].exercise.id, 
-          exerciseName: [exerciseArray[0].exercise.name, Validators.compose([Validators.required])],
+        this._formBuilder.group<IWorkoutFormExercise>({
+          //id: exerciseArray[0].id, //WARN: Pretty sure this will still just be 0 at this point
+          id: new FormControl<number>(exerciseArray[0].id, { nonNullable: true }),
+          //exerciseId: exerciseArray[0].exercise.id, 
+          exerciseId: new FormControl<number>(exerciseArray[0].exercise.id, { nonNullable: true }), 
+          //exerciseName: [exerciseArray[0].exercise.name, Validators.compose([Validators.required])],
+          exerciseName: new FormControl<string>(exerciseArray[0].exercise.name, { nonNullable: true }),
+          //exerciseSets: this.getExerciseSetsFormArray(exerciseArray), 
           exerciseSets: this.getExerciseSetsFormArray(exerciseArray), 
-          setType: [exerciseArray[0].setType, Validators.compose([Validators.required])], 
-          resistanceType: [exerciseArray[0].exercise.resistanceType, Validators.compose([Validators.required])]
+          //setType: [exerciseArray[0].setType, Validators.compose([Validators.required])], 
+          setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }), 
+          //resistanceType: [exerciseArray[0].exercise.resistanceType, Validators.compose([Validators.required])]
+          resistanceType: new FormControl<number>(exerciseArray[0].exercise.resistanceType, { nonNullable: true })
         })
       );
 
@@ -248,23 +276,23 @@ export class WorkoutComponent implements OnInit {
     //this.exercisesArray.disable();
   }
 
-  private getExerciseSetsFormArray(exercises: ExecutedExercise[]): UntypedFormArray {
+  private getExerciseSetsFormArray(exercises: ExecutedExercise[]): FormArray<FormGroup<IWorkoutFormExerciseSet>> {
 
-    let formArray = this._formBuilder.array([]);
+    let formArray = new FormArray<FormGroup<IWorkoutFormExerciseSet>>([]);
 
     //Each member of the array is a FormGroup
     for(let i = 0; i < exercises.length; i++) {
-      let formGroup = this._formBuilder.group({
-        sequence: [exercises[i].sequence], 
-        resistance: [exercises[i].resistanceAmount, Validators.required], 
-        targetReps: [exercises[i].targetRepCount, Validators.required], //TODO: Populate with data from API once refactored to provide it!
-        actualReps: [exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, Validators.required], 
-        formRating: [exercises[i].formRating ? exercises[i].formRating : null, Validators.required], 
-        rangeOfMotionRating: [exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, Validators.required], 
-        resistanceMakeup: [exercises[i].resistanceMakeup], 
-        bandsEndToEnd: [exercises[i].exercise.bandsEndToEnd], //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
-        duration: [120], //TODO: Get/set value from API
-        involvesReps: [exercises[i].exercise.involvesReps] //Kind of a hack, but I need to pass this value along
+      let formGroup = this._formBuilder.group<IWorkoutFormExerciseSet>({
+        sequence: new FormControl<number>(exercises[i].sequence, {nonNullable: true}), 
+        resistance: new FormControl<number>(exercises[i].resistanceAmount, {nonNullable: true}), //, Validators.required,), 
+        targetReps: new FormControl<number>(exercises[i].targetRepCount, {nonNullable: true}), //Validators.required), //TODO: Populate with data from API once refactored to provide it!
+        actualReps: new FormControl<number>(exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, {nonNullable: true}), // Validators.required), 
+        formRating: new FormControl<number | null>(exercises[i].formRating ? exercises[i].formRating : null, {nonNullable: true}), //Validators.required), 
+        rangeOfMotionRating: new FormControl<number | null>(exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, {nonNullable: true}), //Validators.required), 
+        resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup), 
+        bandsEndToEnd: new FormControl<boolean | null>(exercises[i].exercise.bandsEndToEnd), //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
+        duration: new FormControl<number>(120, {nonNullable: true}), //TODO: Get/set value from API
+        involvesReps: new FormControl<boolean>(exercises[i].exercise.involvesReps, {nonNullable: true}), //Kind of a hack, but I need to pass this value along
       });
 
       //formGroup.controls.actualReps.disable();
@@ -287,10 +315,9 @@ export class WorkoutComponent implements OnInit {
   private setWorkoutValuesFromFormGroup(): void {
     this.workout.journal = this.workoutForm.controls.journal.value;
 
-    this.exercisesArray.controls.forEach((value: AbstractControl) => {
-      let formGroup = <UntypedFormGroup>value;
-      let sets: UntypedFormArray = <UntypedFormArray>formGroup.controls.exerciseSets;
-      let exerciseId = formGroup.controls.exerciseId.value;
+    this.exercisesArray.controls.forEach((exerciseFormGroup: FormGroup<IWorkoutFormExercise>) => {
+      let sets = exerciseFormGroup.controls.exerciseSets;
+      let exerciseId = exerciseFormGroup.controls.exerciseId.value;
       let exercises = this.workout.exercises.filter((exercise: ExecutedExercise) => {
         return exercise.exercise.id == exerciseId; 
       });
