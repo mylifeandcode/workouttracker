@@ -2,10 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../core/user.service';
 import { User } from 'app/core/models/user';
-import { UntypedFormBuilder, UntypedFormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormControl, FormArray, Validators, AbstractControl, FormGroup, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+
+interface IUserEditForm {
+  id: FormControl<number>;
+  name: FormControl<string>;
+}
 
 @Component({
   selector: 'wt-user-edit',
@@ -17,14 +22,14 @@ export class UserEditComponent implements OnInit {
   public loadingUserInfo: boolean = true;
   public savingUserInfo: boolean = false;
   public errorMsg: string;
-  public userEditForm: UntypedFormGroup;
+  public userEditForm: FormGroup<IUserEditForm>;
 
   private _user: User;
 
   constructor(
     private _route: ActivatedRoute,
     private _userSvc: UserService,
-    private _formBuilder: UntypedFormBuilder,
+    private _formBuilder: FormBuilder,
     private _router: Router) { }
 
   //PUBLIC METHODS
@@ -97,9 +102,9 @@ export class UserEditComponent implements OnInit {
   private createForm(): void {
 
     //Use FormBuilder to create our root FormGroup
-    this.userEditForm = this._formBuilder.group({
-      id: [0, Validators.required],
-      name: ['', Validators.required]
+    this.userEditForm = this._formBuilder.group<IUserEditForm>({
+      id: new FormControl<number>(0, { nonNullable: true}),
+      name: new FormControl<string>('', { nonNullable: true})
     });
 
   }
@@ -107,8 +112,8 @@ export class UserEditComponent implements OnInit {
   private getUserForPersist(): User {
     const user = new User();
 
-    user.id = this.userEditForm.get("id")?.value;
-    user.name = this.userEditForm.get("name")?.value;
+    user.id = this.userEditForm.controls.id.value;
+    user.name = this.userEditForm.controls.name.value;
 
     return user;
   }

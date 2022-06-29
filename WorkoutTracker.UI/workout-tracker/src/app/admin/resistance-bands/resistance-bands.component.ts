@@ -18,7 +18,8 @@ export class ResistanceBandsComponent implements OnInit {
 
   //Add modal related
   public showAddDialog: boolean;
-  public newResistanceBand: ResistanceBand | null = null; //TODO: Revisit. Not really a fan of this approach.
+  //public newResistanceBand: ResistanceBand | null = null; //TODO: Revisit. Not really a fan of this approach.
+  public newResistanceBand: ResistanceBand = new ResistanceBand();
   public modalSubmitted: boolean;
 
   //This is used to store the original row when we go into edit mode
@@ -96,7 +97,7 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   private addResistanceBand(): void {
-    if(!this.newResistanceBand) return;
+    //if(!this.newResistanceBand) return;
 
     this._resistanceBandService
       .add(this.newResistanceBand)

@@ -4,7 +4,7 @@
   <div class="row">
     <div class="col-6">
       <label>Select a Workout</label>&nbsp;
-      <select id="workoutDefinitions" (change)="workoutSelected($event.target.value)">
+      <select id="workoutDefinitions" (change)="workoutSelected($event)">
         <option value="" selected disabled>Choose a Workout</option>
         <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
           {{workouts[i].name}}
@@ -13,7 +13,7 @@
     </div>
     <div class="col-6">
       <label>Metric Type</label>&nbsp;
-      <select (change)="metricChange($event.target.value)">
+      <select (change)="metricChange($event)">
         <option value="0">Form</option>
         <option value="1">Range of Motion</option>
         <option value="2">Reps</option>

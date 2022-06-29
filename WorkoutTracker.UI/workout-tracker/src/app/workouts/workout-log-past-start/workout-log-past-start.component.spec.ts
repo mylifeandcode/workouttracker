@@ -20,7 +20,7 @@ class WorkoutServiceMock {
     for(let x = 0; x < 3; x++) {
       result.results.push(new WorkoutDTO());
       result.results[x].id = x;
-      result.results[x].workoutName = `Workout ${x}`;  
+      result.results[x].name = `Workout ${x}`;  
     }
 
     return result;

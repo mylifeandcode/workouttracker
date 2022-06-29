@@ -8,7 +8,7 @@
         <label class="center-block">
           Name:
           <input class="form-control" formControlName="name" placeholder="User Name (required)" />
-          <span *ngIf="userEditForm.name?.errors">REQUIRED</span>
+          <span *ngIf="userEditForm.controls.name.errors">REQUIRED</span>
         </label>
 
         <!--TODO: Add ability to set password, upload profile pic-->

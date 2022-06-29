@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from 'app/core/auth.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { WorkoutService } from 'app/workouts/workout.service';
@@ -28,8 +27,13 @@ export class WorkoutProgressComponent implements OnInit {
     this.getUserWorkouts();
   }
 
-  public workoutSelected(workoutId: number): void {
+  public workoutSelected(event: Event): void {
     this.loadingData = true;
+
+    let workoutId = Number((event.target as HTMLSelectElement).value);
+    if(workoutId == NaN)
+      return
+
     this._analyticsService.getExecutedWorkoutMetrics(workoutId)
       .pipe(
         finalize(() => {
@@ -42,8 +46,10 @@ export class WorkoutProgressComponent implements OnInit {
       });
   }
 
-  public metricChange(metricType: number): void {
-    this.setupChartData(Number(metricType));
+  public metricChange(event: Event): void {
+    let metricType: number = Number((event.target as HTMLSelectElement).value);
+    if (metricType == NaN) return;
+    this.setupChartData(metricType);
   }
 
   private setupChartData(chartDataType: number): void {
