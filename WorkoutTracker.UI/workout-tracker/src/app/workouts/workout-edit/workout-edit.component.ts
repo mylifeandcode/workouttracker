@@ -1,11 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators, UntypedFormArray, AbstractControl } from '@angular/forms';
+import { Validators, AbstractControl, FormControl, FormGroup, FormArray, FormBuilder } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { Workout } from 'app/workouts/models/workout';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
+
+interface IExerciseInWorkout {
+  id: FormControl<number>;
+  exerciseId: FormControl<number>; 
+  exerciseName: FormControl<string>;
+  numberOfSets: FormControl<number>;
+  setType: FormControl<number>;
+}
+
+interface IWorkoutEditForm {
+  id: FormControl<number>;
+  active: FormControl<boolean>;
+  name: FormControl<string>;
+  exercises: FormArray<FormGroup<IExerciseInWorkout>>;
+}
 
 @Component({
   selector: 'app-workout-edit',
@@ -18,7 +33,7 @@ export class WorkoutEditComponent implements OnInit {
 
   //Public fields
   public workoutId: number;
-  public workoutForm: UntypedFormGroup;
+  public workoutForm: FormGroup<IWorkoutEditForm>;
   public loading: boolean = true;
   public infoMsg: string | null = null;
   public showExerciseSelectModal: boolean = false;
@@ -31,13 +46,13 @@ export class WorkoutEditComponent implements OnInit {
   private _workout: Workout;
 
   //Properties
-  get exercisesArray(): UntypedFormArray {
-    return this.workoutForm.get('exercises') as UntypedFormArray;
+  get exercisesArray(): FormArray<FormGroup<IExerciseInWorkout>> {
+    return this.workoutForm.controls.exercises;
   }
 
   constructor(
     private _route: ActivatedRoute,
-    private _formBuilder: UntypedFormBuilder,
+    private _formBuilder: FormBuilder,
     private _workoutService: WorkoutService) {
   }
 
@@ -71,11 +86,11 @@ export class WorkoutEditComponent implements OnInit {
 
   private createForm(): void {
 
-    this.workoutForm = this._formBuilder.group({
-        id: [0, Validators.required ], 
-        active: [true, Validators.required],
-        name: ['', Validators.required],
-        exercises: this._formBuilder.array([])
+    this.workoutForm = this._formBuilder.group<IWorkoutEditForm>({
+        id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
+        active: new FormControl<boolean>(true, { nonNullable: true, validators: Validators.required }), 
+        name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }), 
+        exercises: new FormArray<FormGroup<IExerciseInWorkout>>([])
     });
 
   }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import { Validators, FormControl, FormGroup, FormRecord, FormBuilder } from '@angular/forms';
 import { ExerciseService } from '../exercise.service';
 import { Exercise } from '../../workouts/models/exercise';
 import { TargetArea } from '../../workouts/models/target-area';
@@ -8,6 +8,26 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ExerciseTargetAreaLink } from '../../workouts/models/exercise-target-area-link';
 import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
+
+
+interface IExerciseEditForm {
+  id: FormControl<number>;
+  name: FormControl<string>;
+  description: FormControl<string>;
+  resistanceTypes: FormControl<number>; 
+  oneSided: FormControl<boolean>;
+  endToEnd: FormControl<boolean | null>;
+  involvesReps: FormControl<boolean>;
+  
+  //targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
+  //Because our target area keys aren't known until run time, we need to us a FormRecord instead of a FormGroup
+  //https://angular.io/guide/typed-forms#formrecord
+  targetAreas: FormRecord<FormControl<boolean>>;
+  
+  setup: FormControl<string>;
+  movement: FormControl<string>;
+  pointsToRemember: FormControl<string>;
+}
 
 
 @Component({
@@ -18,7 +38,7 @@ import { finalize } from 'rxjs/operators';
 export class ExerciseEditComponent implements OnInit {
 
   //PUBLIC FIELDS
-  public exerciseForm: UntypedFormGroup;
+  public exerciseForm: FormGroup<IExerciseEditForm>;
   public loading: boolean = true;
   public allTargetAreas: TargetArea[];
   public resistanceTypes: Map<number, string>;
@@ -35,18 +55,21 @@ export class ExerciseEditComponent implements OnInit {
     return this._exercise?.id;
   }
 
+  //PUBLIC FIELDS
+  public saving: boolean = false;
+  public errorMsg: string | null = null;
+
   //PRIVATE FIELDS
   private _exercise: Exercise; 
   private _exerciseId: number = 0; //TODO: Refactor. We have an exercise variable. Why have this too?
-  private _saving: boolean = false;
-  private _errorMsg: string | null = null;
 
   constructor(
     private _route: ActivatedRoute,
-    private _formBuilder: UntypedFormBuilder,
+    private _formBuilder: FormBuilder,
     private _exerciseSvc: ExerciseService) {
   }
 
+  //PUBLIC METHODS ////////////////////////////////////////////////////////////
   public ngOnInit(): void {
     this.readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
     this.createForm();
@@ -65,19 +88,63 @@ export class ExerciseEditComponent implements OnInit {
     this.readOnlyMode = !event.checked;
   }
 
-  private setupTargetAreas(exerciseTargetAreaLinks: ExerciseTargetAreaLink[]): void {
-    //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
+  public saveExercise(): void {
+    //Called by Save button
+    this.saving = true;
+    this.infoMsg = "Saving...";
+    this.updateExerciseForPersisting();
 
-    const checkboxesFormGroup = <UntypedFormGroup>this.exerciseForm.get('targetAreas');
+    if (this._exerciseId == 0)
+      this._exerciseSvc.add(this._exercise)
+        .pipe(finalize(() => {
+          this.saving = false;
+        }))
+        .subscribe((addedExercise: Exercise) => {
+          this._exercise = addedExercise;
+          this._exerciseId = this._exercise.id;
+          this.infoMsg = "Exercise created at " + new Date().toLocaleTimeString();
+        },
+        (error: any) => {
+          this.errorMsg = error.message;
+        }
+      );
+    else
+      this._exerciseSvc.update(this._exercise)
+        .pipe(finalize(() => {
+          this.saving = false;
+        }))
+        .subscribe((updatedExercise: Exercise) => {
+          this._exercise = updatedExercise;
+          this.saving = false;
+          this.infoMsg = "Exercise updated at " + new Date().toLocaleTimeString();
+        }, 
+        (error: any) => {
+          this.errorMsg = error.message;
+        }
+      );
+  }
+
+  //PRIVATE METHODS ///////////////////////////////////////////////////////////
+
+  private setupTargetAreas(exerciseTargetAreaLinks: ExerciseTargetAreaLink[]): void {
+    //Original approach was using information from
+    //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
+    //This has since been updated for Typed Forms, which is nicer. :)
+    //const checkboxesFormGroup = <UntypedFormGroup>this.exerciseForm.get('targetAreas');
 
     //I wanted to set the value of each checkbox to the ID of the target area, which was fine 
     //initially, but on toggling Angular set the value to a boolean.
 
     this.allTargetAreas.forEach((targetArea: TargetArea) => {
-      checkboxesFormGroup.addControl(targetArea.name, new UntypedFormControl(_.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id)));
+      //checkboxesFormGroup.addControl(targetArea.name, new UntypedFormControl(_.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id)));
+
+      const thisTargetAreaIsSelected: boolean = _.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id);
+      this.exerciseForm.controls.targetAreas.addControl(
+        targetArea.name, 
+        new FormControl<boolean>(thisTargetAreaIsSelected, { nonNullable: true }));
     });
 
-    checkboxesFormGroup.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);
+    //checkboxesFormGroup.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);
   }
 
   private subscribeToRouteParamsToSetupFormOnExerciseIdChange(): void {
@@ -107,25 +174,22 @@ export class ExerciseEditComponent implements OnInit {
 
   private createForm(): void {
 
-    this.exerciseForm = this._formBuilder.group({
-      id: [0, Validators.required ], 
-      name: ['', Validators.required], 
-      description: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])], 
-      resistanceTypes: [0, Validators.required], 
-      oneSided: [false], //TODO: Solve -- this value remains null, not false, until checked
-      endToEnd: [false], //TODO: Same as above
-      involvesReps: [true], //TODO: Ditto! -- probably caused by reset() being called later!
-      targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
-      setup: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
-      movement: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])],
-      pointsToRemember: ['', Validators.compose([Validators.required, Validators.maxLength(4000)])]
+    this.exerciseForm = this._formBuilder.group<IExerciseEditForm>({
+      id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
+      name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }), 
+      description: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}), 
+      resistanceTypes: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+      oneSided: new FormControl<boolean>(false, { nonNullable: true }),
+      endToEnd: new FormControl<boolean | null>(false),
+      involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
+      //targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
+      targetAreas: new FormRecord<FormControl<boolean>>({}, { validators: CustomValidators.formGroupOfBooleansRequireOneTrue}),
+      setup: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}),
+      movement: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}),
+      pointsToRemember: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])})
     });
 
-    //TODO: Solve. The below lines don't change anything. Values remain false.
-    this.exerciseForm.controls["oneSided"].setValue(false);
-    this.exerciseForm.controls["endToEnd"].setValue(false);
-    this.exerciseForm.controls["involvesReps"].setValue(true);
-  }
+ }
 
   private loadExercise(): void {
     this.loading = true;
@@ -140,22 +204,20 @@ export class ExerciseEditComponent implements OnInit {
   private updateExerciseForPersisting(): void {
 
     //exercise.id = this.exerciseForm.get("id").value;
-    this._exercise.name = this.exerciseForm.get("name")?.value;
-    this._exercise.description = this.exerciseForm.get("description")?.value;
-    this._exercise.setup = this.exerciseForm.get("setup")?.value;
-    this._exercise.movement = this.exerciseForm.get("movement")?.value;
-    this._exercise.pointsToRemember = this.exerciseForm.get("pointsToRemember")?.value;
-    this._exercise.resistanceType = this.exerciseForm.get("resistanceTypes")?.value;
-    this._exercise.oneSided = Boolean(this.exerciseForm.get("oneSided")?.value); //Call to Boolean() is a workaround to initializer and setValue() not setting value to false as stated
+    this._exercise.name = this.exerciseForm.controls.name.value;
+    this._exercise.description = this.exerciseForm.controls.description.value;
+    this._exercise.setup = this.exerciseForm.controls.setup.value;
+    this._exercise.movement = this.exerciseForm.controls.movement.value;
+    this._exercise.pointsToRemember = this.exerciseForm.controls.pointsToRemember.value;
+    this._exercise.resistanceType = this.exerciseForm.controls.resistanceTypes.value;
+    this._exercise.oneSided = this.exerciseForm.controls.oneSided.value;
         
     if (this._exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
-    this._exercise.bandsEndToEnd = Boolean(this.exerciseForm.get("endToEnd")?.value); //Call to Boolean() is a workaround (see above)
+      this._exercise.bandsEndToEnd = this.exerciseForm.controls.endToEnd?.value;
 
-    this._exercise.involvesReps = Boolean(this.exerciseForm.get("involvesReps")?.value); //Call to Boolean() is a workaround (see above)
-
+    this._exercise.involvesReps = this.exerciseForm.controls.involvesReps.value;
     this._exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
 
-    //return this.exercise;
   }
 
   private getExerciseTargetAreaLinksForPersist(): ExerciseTargetAreaLink[] {
@@ -195,46 +257,10 @@ export class ExerciseEditComponent implements OnInit {
       this.setupTargetAreas(this._exercise.exerciseTargetAreaLinks);
     }
 
-    this.exerciseForm.controls["resistanceTypes"].setValue(this._exercise.resistanceType);
-    this.exerciseForm.controls["oneSided"].setValue(this._exercise.oneSided);
-    this.exerciseForm.controls["endToEnd"].setValue(this._exercise.bandsEndToEnd);
-    this.exerciseForm.controls["involvesReps"].setValue(this._exercise.involvesReps);
-  }
-
-  private saveExercise(): void {
-    //Called by Save button
-    this._saving = true;
-    this.infoMsg = "Saving...";
-    this.updateExerciseForPersisting();
-
-    if (this._exerciseId == 0)
-      this._exerciseSvc.add(this._exercise)
-        .pipe(finalize(() => {
-          this._saving = false;
-        }))
-        .subscribe((addedExercise: Exercise) => {
-          this._exercise = addedExercise;
-          this._exerciseId = this._exercise.id;
-          this.infoMsg = "Exercise created at " + new Date().toLocaleTimeString();
-        },
-        (error: any) => {
-          this._errorMsg = error.message;
-        }
-      );
-    else
-      this._exerciseSvc.update(this._exercise)
-        .pipe(finalize(() => {
-          this._saving = false;
-        }))
-        .subscribe((updatedExercise: Exercise) => {
-          this._exercise = updatedExercise;
-          this._saving = false;
-          this.infoMsg = "Exercise updated at " + new Date().toLocaleTimeString();
-        }, 
-        (error: any) => {
-          this._errorMsg = error.message;
-        }
-      );
+    this.exerciseForm.controls.resistanceTypes.setValue(this._exercise.resistanceType);
+    this.exerciseForm.controls.oneSided.setValue(this._exercise.oneSided);
+    this.exerciseForm.controls.endToEnd.setValue(this._exercise.bandsEndToEnd);
+    this.exerciseForm.controls.involvesReps.setValue(this._exercise.involvesReps);
   }
 
 }

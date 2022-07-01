@@ -1,7 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { ExerciseListBase } from '../exercise-list-base';
 import { ExerciseService } from '../exercise.service';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'wt-exercise-list-mini',
@@ -11,6 +12,7 @@ import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 export class ExerciseListMiniComponent extends ExerciseListBase {
 
   @Output() exerciseSelected = new EventEmitter<ExerciseDTO>();
+  @ViewChild('dt') exerciseTable: Table;
 
   constructor(protected _exerciseSvc: ExerciseService) { 
       super(_exerciseSvc);
@@ -32,7 +34,7 @@ export class ExerciseListMiniComponent extends ExerciseListBase {
     this.getExercises(event.first, nameContains, targetAreaContains);
   }
 
-  private selectExercise(exercise: ExerciseDTO): void {
+  public selectExercise(exercise: ExerciseDTO): void {
     this.exerciseSelected.emit(exercise);
   }
 }

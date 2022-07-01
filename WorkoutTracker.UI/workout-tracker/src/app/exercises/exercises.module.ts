@@ -15,6 +15,7 @@ import { ExerciseListComponent } from './exercise-list/exercise-list.component';
 import { ExerciseListMiniComponent } from './exercise-list-mini/exercise-list-mini.component';
 import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
 import { SharedModule } from 'app/shared/shared.module';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { SharedModule } from 'app/shared/shared.module';
     ReactiveFormsModule,
     InputSwitchModule,
     TooltipModule,
-    MultiSelectModule
+    MultiSelectModule,
+    ProgressSpinnerModule
   ], 
   exports: [
     ExerciseListMiniComponent

@@ -2,7 +2,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-6">
-      Filter by Name &nbsp;<input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'in')" />
+      Filter by Name &nbsp;<input pInputText type="text" (input)="filterTableByInput(dt, $event, 'name', 'in')" />
     </div>
     <div class="col-6">
       Filter by Target Areas &nbsp;<p-multiSelect appendTo="body" [style]="{'min-width': '180px'}" [options]="targetAreas" defaultLabel="All" (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>

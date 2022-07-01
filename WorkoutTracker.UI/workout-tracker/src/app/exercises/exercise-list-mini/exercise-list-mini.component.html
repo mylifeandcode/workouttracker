@@ -6,7 +6,7 @@
         </tr>
         <tr>
             <th>
-                <input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'in')" />
+                <input pInputText type="text" (input)="filterTableByInput(dt, $event, 'name', 'in')" />
             </th>
             <th>
                 <p-multiSelect appendTo="body" [style]="{'min-width': '180px'}" [options]="targetAreas" defaultLabel="All" (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>

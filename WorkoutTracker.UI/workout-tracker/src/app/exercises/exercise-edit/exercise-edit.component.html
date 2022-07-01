@@ -40,8 +40,8 @@
         <div *ngIf="exerciseForm.get('targetAreas')" class="col-3" formGroupName="targetAreas">
           <strong>Target Areas</strong>
 
-          <div *ngFor="let area of exerciseForm.get('targetAreas').value | keyvalue"
-            [ngClass]="{'has-error': exerciseForm.controls['targetAreas'].touched && exerciseForm.controls['targetAreas'].errors}">
+          <div *ngFor="let area of exerciseForm.controls.targetAreas.value | keyvalue"
+            [ngClass]="{'has-error': exerciseForm.controls.targetAreas.touched && exerciseForm.controls.targetAreas.errors}">
             <input type="checkbox" [formControlName]="area.key" [value]="area.value" /> {{area.key}}
           </div>
 
@@ -61,7 +61,7 @@
             </option>
           </select>
         </div>
-        <div class="col-3" *ngIf="exerciseForm.controls['resistanceTypes'].value=='2'">
+        <div class="col-3" *ngIf="exerciseForm.controls.resistanceTypes.value==2">
           <!--TODO: Replace with constant or data-driven value-->
           <div class="form-check end-to-end-selection">
             <input type="checkbox" class="form-check-input" formControlName="endToEnd" id="endToEnd">
@@ -140,13 +140,13 @@
           <p-inputSwitch id="editModeToggle" styleClass="align-middle" (onChange)="editModeToggled($event)"></p-inputSwitch>
         </div>       
         <div *ngIf="!readOnlyMode" class="col-4">
-          <button type="submit" [disabled]="exerciseForm.invalid || _saving" (click)="saveExercise()"
+          <button type="submit" [disabled]="exerciseForm.invalid || saving" (click)="saveExercise()"
             class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
         </div>
       </div>
       <div class="row">
-        <div *ngIf="_errorMsg" class="col-4 errorText">
-          {{_errorMsg}}
+        <div *ngIf="errorMsg" class="col-4 errorText">
+          {{errorMsg}}
         </div>
       </div>
     </fieldset>
