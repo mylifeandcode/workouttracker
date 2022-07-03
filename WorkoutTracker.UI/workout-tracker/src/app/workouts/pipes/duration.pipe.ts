@@ -5,7 +5,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class DurationPipe implements PipeTransform {
 
-  transform(durationInSeconds: number, precise: boolean = false): string {
+  transform(durationInSeconds: number | null, precise: boolean = false): string {
+    if (!durationInSeconds) return '';
+    
     if (durationInSeconds <= 0)
       return "0s";
 

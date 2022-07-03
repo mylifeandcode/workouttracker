@@ -62,16 +62,16 @@
 
   <p-dialog [style]="{width: '50vw'}" header="Timed Set Countdown" [(visible)]="showCountdownModal">
     <wt-countdown-timer
-      [secondsToCountdown]="formGroupForCountdownModal?.controls?.duration?.value"
+      [secondsToCountdown]="formGroupForCountdownModal.controls.duration!.value!"
       [secondsLeadInTime]="10"
       [activatedDateTime]="countdownModalActivatedDateTime"
-      [targetReps]="formGroupForCountdownModal?.controls?.targetReps?.value">
+      [targetReps]="formGroupForCountdownModal.controls.targetReps.value">
     </wt-countdown-timer>
   </p-dialog>
 
   <p-dialog header="Duration" [(visible)]="showDurationModal">
     <wt-duration 
-      [currentDuration]="formControlForDurationEdit?.value"
+      [currentDuration]="formControlForDurationEdit!.value!"
       (okClicked)="durationModalAccepted($event)"
       (cancelClicked)="durationModalCancelled()">
     </wt-duration>

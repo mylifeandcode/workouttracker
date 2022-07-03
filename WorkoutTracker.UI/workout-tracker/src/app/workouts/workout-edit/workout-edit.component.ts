@@ -131,7 +131,7 @@ export class WorkoutEditComponent implements OnInit {
 
   public moveExerciseUp(index: number): void {
     //Called by button click in template
-    let exerciseControl: AbstractControl = this.exercisesArray.at(index);
+    let exerciseControl: FormGroup<IExerciseInWorkout> = this.exercisesArray.at(index);
     this.exercisesArray.removeAt(index);
     this.exercisesArray.insert((index - 1), exerciseControl);
     //this.exercisesArray[index - 1].controls.sequnce
@@ -139,7 +139,7 @@ export class WorkoutEditComponent implements OnInit {
 
   public moveExerciseDown(index: number): void {
     //Called by button click in template
-    let exerciseControl: AbstractControl = this.exercisesArray.at(index);
+    let exerciseControl: FormGroup<IExerciseInWorkout> = this.exercisesArray.at(index);
     this.exercisesArray.removeAt(index);
     this.exercisesArray.insert((index + 1), exerciseControl);
   }
@@ -204,22 +204,22 @@ export class WorkoutEditComponent implements OnInit {
     exerciseId: number, 
     exerciseName: string, 
     setType: number = 0, 
-    numberOfSets: number = 0): UntypedFormGroup {
+    numberOfSets: number = 0): FormGroup<IExerciseInWorkout> {
       
     //console.log("getExerciseFormGroup: exerciseInWorkoutId = " + exerciseInWorkoutId + ", exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
-    return this._formBuilder.group({
-      id: exerciseInWorkoutId, 
-      exerciseId: exerciseId, 
-      exerciseName: [exerciseName, Validators.compose([Validators.required])],
-      numberOfSets: [numberOfSets, Validators.compose([Validators.required, Validators.min(1)])], 
-      setType: [setType, Validators.compose([Validators.required])]
+    return this._formBuilder.group<IExerciseInWorkout>({
+      id: new FormControl<number>(exerciseInWorkoutId, { nonNullable: true }), 
+      exerciseId: new FormControl<number>(exerciseId, { nonNullable: true }),  
+      exerciseName: new FormControl<string>(exerciseName, { nonNullable: true, validators: Validators.compose([Validators.required])}),
+      numberOfSets: new FormControl<number>(numberOfSets, { nonNullable: true, validators: Validators.compose([Validators.required, Validators.min(1)])}), 
+      setType: new FormControl<number>(setType, { nonNullable: true, validators: Validators.compose([Validators.required])})
     });
   }
 
   private updateWorkoutFromFormValues(): void {
     if (this.workoutForm) {
       console.log("this._workout: ", this._workout);
-      this._workout.name = this.workoutForm.get("name")?.value;
+      this._workout.name = this.workoutForm.controls.name.value;
       this._workout.exercises = this.getExercisesFromForm();
     }
   }
@@ -228,22 +228,17 @@ export class WorkoutEditComponent implements OnInit {
     let output = new Array<ExerciseInWorkout>();
     let index = 0;
 
-    for (let control of this.exercisesArray.controls) {
-      if (control instanceof UntypedFormGroup) {
-        let exerciseGroup = <UntypedFormGroup>control;
-        if (exerciseGroup) {
-          output.push(
-            new ExerciseInWorkout(
-              exerciseGroup.get("id")?.value,
-              exerciseGroup.get("exerciseId")?.value, 
-              exerciseGroup.get("exerciseName")?.value, 
-              exerciseGroup.get("numberOfSets")?.value, 
-              exerciseGroup.get("setType")?.value,
-              index) 
-          );
-        }
-        index++;
-      }
+    for (let exerciseFormGroup of this.exercisesArray.controls) {
+      output.push(
+        new ExerciseInWorkout(
+          exerciseFormGroup.controls.id.value,
+          exerciseFormGroup.controls.exerciseId.value, 
+          exerciseFormGroup.controls.exerciseName.value, 
+          exerciseFormGroup.controls.numberOfSets.value, 
+          exerciseFormGroup.controls.setType.value,
+          index) 
+      );
+      index++;
     }
 
     return output;

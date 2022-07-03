@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, Validators, AbstractControl, FormGroup, FormArray, FormControl, FormBuilder } from '@angular/forms';
+import { Validators, FormGroup, FormArray, FormControl, FormBuilder } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
@@ -11,28 +11,9 @@ import { ExecutedExercise } from '../models/executed-exercise';
 import * as _ from 'lodash';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ActivatedRoute, Params } from '@angular/router';
+import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
+import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
 
-interface IWorkoutFormExercise {
-  id: FormControl<number>;
-  exerciseId: FormControl<number>;
-  exerciseName: FormControl<string>;
-  exerciseSets: FormArray<FormGroup<IWorkoutFormExerciseSet>>;
-  setType: FormControl<number>;
-  resistanceType: FormControl<number>;
-}
-
-interface IWorkoutFormExerciseSet {
-  sequence: FormControl<number>; 
-  resistance: FormControl<number>; 
-  targetReps: FormControl<number>;
-  actualReps: FormControl<number>;
-  formRating: FormControl<number | null>;
-  rangeOfMotionRating: FormControl<number | null>;
-  resistanceMakeup: FormControl<string | null>;
-  bandsEndToEnd: FormControl<boolean | null>;
-  duration: FormControl<number>;
-  involvesReps: FormControl<boolean>;
-}
 
 interface IWorkoutForm {
   id: FormControl<number | null>;
@@ -55,15 +36,15 @@ export class WorkoutComponent implements OnInit {
   public showResistanceBandsSelectModal: boolean = false;
   public showCountdownModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
-  public formGroupForResistanceSelection: UntypedFormGroup;
-  public formGroupForCountdownModal: UntypedFormGroup;
+  public formGroupForResistanceSelection: FormGroup<IWorkoutFormExerciseSet>;
+  public formGroupForCountdownModal: FormGroup<IWorkoutFormExerciseSet>;
   public countdownModalActivatedDateTime: Date;
   public saving: boolean = false;
   public infoMsg: string;
   public workoutCompleted: boolean = false;
   public isLoggingPastWorkout: boolean = false;
   public showDurationModal: boolean = false;
-  public formControlForDurationEdit: FormControl<number> | null = null;
+  public formControlForDurationEdit: FormControl<number | null> | null = null;
   //END PUBLIC FIELDS
 
   //VIEWCHILD
@@ -120,11 +101,11 @@ export class WorkoutComponent implements OnInit {
     this.startWorkout();
   }
 
-  public resistanceBandsModalEnabled(exerciseFormGroup: UntypedFormGroup): void {
+  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup<IWorkoutFormExerciseSet>): void {
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
     this.bandSelect.setBandAllocation(
-      exerciseFormGroup.controls.resistanceMakeup.value, 
+      exerciseFormGroup.controls.resistanceMakeup.value ?? '', //TODO: Revisit. This is a hack. Type is nullable but we know we'll have a value here.
       !exerciseFormGroup.controls.bandsEndToEnd.value);
   }
 
@@ -165,7 +146,7 @@ export class WorkoutComponent implements OnInit {
     this.persistWorkoutToServer(false);
   }
   
-  public openDurationModal(formControl: FormControl<number>): void {
+  public openDurationModal(formControl: FormControl<number | null>): void {
     this.formControlForDurationEdit = formControl;
     this.showDurationModal = true;
   }
@@ -283,16 +264,16 @@ export class WorkoutComponent implements OnInit {
     //Each member of the array is a FormGroup
     for(let i = 0; i < exercises.length; i++) {
       let formGroup = this._formBuilder.group<IWorkoutFormExerciseSet>({
-        sequence: new FormControl<number>(exercises[i].sequence, {nonNullable: true}), 
-        resistance: new FormControl<number>(exercises[i].resistanceAmount, {nonNullable: true}), //, Validators.required,), 
-        targetReps: new FormControl<number>(exercises[i].targetRepCount, {nonNullable: true}), //Validators.required), //TODO: Populate with data from API once refactored to provide it!
-        actualReps: new FormControl<number>(exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, {nonNullable: true}), // Validators.required), 
-        formRating: new FormControl<number | null>(exercises[i].formRating ? exercises[i].formRating : null, {nonNullable: true}), //Validators.required), 
-        rangeOfMotionRating: new FormControl<number | null>(exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, {nonNullable: true}), //Validators.required), 
+        sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }), 
+        resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
+        targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }), 
+        actualReps: new FormControl<number>(exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, { nonNullable: true, validators: Validators.required }),
+        formRating: new FormControl<number | null>(exercises[i].formRating ? exercises[i].formRating : null, { validators: Validators.required }),
+        rangeOfMotionRating: new FormControl<number | null>(exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, { validators: Validators.required }),
         resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup), 
         bandsEndToEnd: new FormControl<boolean | null>(exercises[i].exercise.bandsEndToEnd), //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
-        duration: new FormControl<number>(120, {nonNullable: true}), //TODO: Get/set value from API
-        involvesReps: new FormControl<boolean>(exercises[i].exercise.involvesReps, {nonNullable: true}), //Kind of a hack, but I need to pass this value along
+        duration: new FormControl<number | null>(120), //TODO: Get/set value from API
+        involvesReps: new FormControl<boolean>(exercises[i].exercise.involvesReps, { nonNullable: true }), //Kind of a hack, but I need to pass this value along
       });
 
       //formGroup.controls.actualReps.disable();
@@ -330,7 +311,7 @@ export class WorkoutComponent implements OnInit {
       }
 
       for(let x = 0; x < exercises.length; x++) {
-        const setControls = (sets.at(x) as UntypedFormGroup).controls;
+        const setControls = (sets.at(x) as FormGroup<IWorkoutFormExerciseSet>).controls; //TODO: Revisit. Can probably simplify this.
         //exercises[x].actualRepCount = Number(sets[x].actualReps);
         exercises[x].actualRepCount = Number(setControls.actualReps.value);
         //exercises[x].duration = sets[x].duration;

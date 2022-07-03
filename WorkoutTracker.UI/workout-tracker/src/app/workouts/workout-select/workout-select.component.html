@@ -6,7 +6,7 @@
       <select id="workoutDefinitions" (change)="workoutSelectChange($event)">
         <option value="" selected disabled>Choose a Workout</option>
         <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
-          {{workouts[i].workoutName}}
+          {{workouts[i].name}}
         </option>          
       </select>
     </div>

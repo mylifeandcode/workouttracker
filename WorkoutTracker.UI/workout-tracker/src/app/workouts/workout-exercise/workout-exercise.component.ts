@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
+import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
 
 /**
  * A component representing an Exercise as part of a Workout instance,
@@ -18,7 +20,7 @@ export class WorkoutExerciseComponent implements OnInit {
    * a FormArray for the Sets
    */
   @Input()
-  formGroup: UntypedFormGroup; //TODO: Use a strong-typed structure
+  formGroup: FormGroup<IWorkoutFormExercise>;
 
   /*
   @Input()
@@ -26,22 +28,22 @@ export class WorkoutExerciseComponent implements OnInit {
   */
  
   @Output()
-  resistanceBandsSelect = new EventEmitter<UntypedFormGroup>();
+  resistanceBandsSelect = new EventEmitter<FormGroup<IWorkoutFormExerciseSet>>();
 
   @Output()
-  showTimerRequest = new EventEmitter<UntypedFormGroup>();
+  showTimerRequest = new EventEmitter<FormGroup<IWorkoutFormExerciseSet>>();
 
   @Output()
   rangeOfMotionEntered = new EventEmitter();
 
   @Output()
-  durationEdit = new EventEmitter<UntypedFormControl>();
+  durationEdit = new EventEmitter<FormControl<number | null>>();
 
   //Properties
-  get setsArray(): UntypedFormArray {
+  get setsArray(): FormArray<FormGroup<IWorkoutFormExerciseSet>> {
     //This property provides an easier way for the template to access this information,
     //and is used by the component code as a short-hand reference to the form array.
-    return this.formGroup.get('exerciseSets') as UntypedFormArray;
+    return this.formGroup.controls.exerciseSets;
   }
 
   constructor() { }
@@ -49,11 +51,11 @@ export class WorkoutExerciseComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public selectResistanceBands(formGroup: UntypedFormGroup): void {
+  public selectResistanceBands(formGroup: FormGroup<IWorkoutFormExerciseSet>): void {
     this.resistanceBandsSelect.emit(formGroup);
   }
 
-  public showTimer(formGroup: UntypedFormGroup): void {
+  public showTimer(formGroup: FormGroup<IWorkoutFormExerciseSet>): void {
     this.showTimerRequest.emit(formGroup);
   }
 
@@ -61,7 +63,7 @@ export class WorkoutExerciseComponent implements OnInit {
     this.rangeOfMotionEntered.emit();
   }
 
-  public editDuration(formControl: UntypedFormControl): void {
+  public editDuration(formControl: FormControl<number | null>): void {
     this.durationEdit.emit(formControl);
   }
 }

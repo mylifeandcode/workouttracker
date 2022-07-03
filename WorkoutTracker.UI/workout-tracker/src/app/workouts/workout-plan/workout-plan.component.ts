@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../models/workout-plan';
 import { WorkoutService } from '../workout.service';
@@ -11,6 +11,8 @@ import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-indi
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
 import { finalize } from 'rxjs/operators';
+import { IWorkoutPlanForm } from '../interfaces/i-workout-plan-form';
+import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 
 
 @Component({
@@ -22,10 +24,10 @@ export class WorkoutPlanComponent implements OnInit {
 
   //PUBLIC FIELDS
   public workoutPlan: WorkoutPlan | null; //Null before retrieved
-  public workoutPlanForm: UntypedFormGroup;
+  public workoutPlanForm: FormGroup<IWorkoutPlanForm>;
   public showResistanceBandsSelectModal: boolean;
   public allResistanceBands: ResistanceBandIndividual[] = [];
-  public formGroupForResistanceSelection: UntypedFormGroup;
+  public formGroupForResistanceSelection: FormGroup;
   public errorInfo: string;
   public isProcessing: boolean = false;
   public planningForLater: boolean = false;
@@ -53,10 +55,10 @@ export class WorkoutPlanComponent implements OnInit {
   /**
    * A property representing all of the Exercises which are part of the Workout
    */
-   get exercisesArray(): UntypedFormArray {
+   get exercisesArray(): FormArray<FormGroup<IExercisePlanFormGroup>> {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
-    return this.workoutPlanForm.get('exercises') as UntypedFormArray;
+    return this.workoutPlanForm.controls.exercises;
   }
 
   /**
@@ -72,7 +74,7 @@ export class WorkoutPlanComponent implements OnInit {
     private _resistanceBandService: ResistanceBandService, 
     private _activatedRoute: ActivatedRoute, 
     private _router: Router, 
-    private _formBuilder: UntypedFormBuilder) { 
+    private _formBuilder: FormBuilder) { 
   }
 
   //PUBLIC METHODS
@@ -116,7 +118,7 @@ export class WorkoutPlanComponent implements OnInit {
     }
   }
 
-  public resistanceBandsModalEnabled(exerciseFormGroup: UntypedFormGroup): void {
+  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
     this.bandSelect.setBandAllocation(
@@ -166,11 +168,11 @@ export class WorkoutPlanComponent implements OnInit {
   }
 
   private createForm(): void {
-    this.workoutPlanForm = this._formBuilder.group({
-        workoutId: [0, Validators.required ], 
-        workoutName: '', 
-        hasBeenExecutedBefore: false, 
-        exercises: this._formBuilder.array([])
+    this.workoutPlanForm = this._formBuilder.group<IWorkoutPlanForm>({
+        workoutId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
+        workoutName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }), 
+        hasBeenExecutedBefore: new FormControl<boolean>(false, { nonNullable: true }), 
+        exercises: new FormArray<FormGroup<IExercisePlanFormGroup>>([])
     });
   }
   
@@ -179,29 +181,29 @@ export class WorkoutPlanComponent implements OnInit {
     _.forEach(exercises, (exercise: ExercisePlan) => {
 
       this.exercisesArray.push(
-        this._formBuilder.group({
-          exerciseInWorkoutId: exercise.exerciseInWorkoutId, 
-          exerciseId: exercise.exerciseId,
-          exerciseName: exercise.exerciseName,
-          numberOfSets: exercise.numberOfSets, 
-          setType: exercise.setType, 
-          resistanceType: exercise.resistanceType, 
-          sequence: exercise.sequence, 
-          targetRepCountLastTime: exercise.targetRepCountLastTime, 
-          avgActualRepCountLastTime: exercise.avgActualRepCountLastTime,
-          avgRangeOfMotionLastTime: exercise.avgRangeOfMotionLastTime, 
-          avgFormLastTime: exercise.avgFormLastTime, 
-          recommendedTargetRepCount: exercise.recommendedTargetRepCount, 
-          targetRepCount: [exercise.targetRepCount, Validators.min(exercise.involvesReps ? 1 : 0)],
-          resistanceAmountLastTime: exercise.resistanceAmountLastTime, 
-          resistanceMakeupLastTime: exercise.resistanceMakeupLastTime, 
-          recommendedResistanceAmount: exercise.recommendedResistanceAmount,
-          recommendedResistanceMakeup: exercise.recommendedResistanceMakeup, 
-          resistanceAmount: [exercise.resistanceAmount, (exercise.resistanceType != 3 ? Validators.min(0.1) : null)], 
-          resistanceMakeup: exercise.resistanceMakeup, 
-          bandsEndToEnd: exercise.bandsEndToEnd, 
-          involvesReps: exercise.involvesReps,
-          recommendationReason: exercise.recommendationReason,
+        this._formBuilder.group<IExercisePlanFormGroup>({
+          exerciseInWorkoutId: new FormControl<number>(exercise.exerciseInWorkoutId, { nonNullable: true, validators: Validators.required }), 
+          exerciseId: new FormControl<number>(exercise.exerciseId, { nonNullable: true, validators: Validators.required }), 
+          exerciseName: new FormControl<string>(exercise.exerciseName, { nonNullable: true, validators: Validators.required }),
+          numberOfSets: new FormControl<number>(exercise.numberOfSets, { nonNullable: true, validators: Validators.required }),
+          setType: new FormControl<number>(exercise.setType, { nonNullable: true, validators: Validators.required }),
+          resistanceType: new FormControl<number>(exercise.resistanceType, { nonNullable: true, validators: Validators.required }),
+          sequence: new FormControl<number>(exercise.sequence, { nonNullable: true, validators: Validators.required }),
+          targetRepCountLastTime: new FormControl<number | null>(exercise.targetRepCountLastTime), 
+          avgActualRepCountLastTime: new FormControl<number | null>(exercise.avgActualRepCountLastTime),
+          avgRangeOfMotionLastTime: new FormControl<number | null>(exercise.avgRangeOfMotionLastTime), 
+          avgFormLastTime: new FormControl<number | null>(exercise.avgFormLastTime), 
+          recommendedTargetRepCount: new FormControl<number | null>(exercise.recommendedTargetRepCount), 
+          targetRepCount: new FormControl<number | null>(exercise.targetRepCount, { validators: Validators.min(exercise.involvesReps ? 1 : 0) }),
+          resistanceAmountLastTime: new FormControl<number | null>(exercise.resistanceAmountLastTime), 
+          resistanceMakeupLastTime: new FormControl<string | null>(exercise.resistanceMakeupLastTime), 
+          recommendedResistanceAmount: new FormControl<number | null>(exercise.recommendedResistanceAmount),
+          recommendedResistanceMakeup: new FormControl<string | null>(exercise.recommendedResistanceMakeup), 
+          resistanceAmount: new FormControl<number>(exercise.resistanceAmount, { nonNullable: true, validators: (exercise.resistanceType != 3 ? Validators.min(0.1) : null)} ), 
+          resistanceMakeup: new FormControl<string | null>(exercise.resistanceMakeup), 
+          bandsEndToEnd: new FormControl<boolean | null>(exercise.bandsEndToEnd), 
+          involvesReps: new FormControl<boolean>(exercise.involvesReps, { nonNullable: true }),
+          recommendationReason: new FormControl<string | null>(exercise.recommendationReason)
         })
       );
 
@@ -211,12 +213,13 @@ export class WorkoutPlanComponent implements OnInit {
 
   private updateWorkoutPlanFromForm(): void {
     if (this.workoutPlan) {
-      this.exercisesArray.controls.forEach((control: AbstractControl, index: number, array: AbstractControl[]) => {
+      this.exercisesArray.controls.forEach((exerciseFormGroup: FormGroup<IExercisePlanFormGroup>, index: number) => {
         
-        const exerciseFormGroup = control as UntypedFormGroup;
+        //TODO: Revisit. Maybe can be made simpler now that we have Typed Forms. :)
+
+        //const exerciseFormGroup = control as UntypedFormGroup;
         const exercisePlan = this.workoutPlan?.exercises[index];
         if (exercisePlan) {
-          console.log(control);
           exercisePlan.targetRepCount = exerciseFormGroup.controls.targetRepCount.value;
           exercisePlan.resistanceAmount = exerciseFormGroup.controls.resistanceAmount.value;
           exercisePlan.resistanceMakeup = exerciseFormGroup.controls.resistanceMakeup.value;

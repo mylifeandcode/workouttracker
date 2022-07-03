@@ -8,9 +8,9 @@ export class ExecutedExercise extends Entity {
   public actualRepCount: number;
   public notes: string;
   public resistanceAmount: number;
-  public resistanceMakeup: string;
+  public resistanceMakeup: string | null;
   public setType: number;
-  public duration: number;
+  public duration: number | null;
   public formRating: number;
   public rangeOfMotionRating: number;
 }

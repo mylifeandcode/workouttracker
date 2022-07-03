@@ -5,6 +5,7 @@ export class ExercisePlan {
   public exerciseInWorkoutId: number;
   public exerciseId: number;
   public exerciseName: string;
+
   public numberOfSets: number;
   public setType: SetType;
   public resistanceType: ResistanceType;
@@ -20,16 +21,19 @@ export class ExercisePlan {
   public maxFormLastTime: number;
   public avgFormLastTime: number;
 
-  public recommendedTargetRepCount?: number;
-  public targetRepCount: number;
+  public recommendedTargetRepCount: number | null;
+  public targetRepCount: number | null; //Nullable because not all exercises use reps (example: running on a treadmill)
 
   public resistanceAmountLastTime: number;
   public resistanceMakeupLastTime: string;
-  public recommendedResistanceAmount?: number;
-  public recommendedResistanceMakeup: string;
+
+  public recommendedResistanceAmount: number | null;
+  public recommendedResistanceMakeup: string | null;
+
   public resistanceAmount: number;
-  public resistanceMakeup: string;
-  public bandsEndToEnd?: boolean;
+  public resistanceMakeup: string | null; //Only applies to resistance band exercises
+
+  public bandsEndToEnd: boolean | null;
   public involvesReps: boolean;
 
   public recommendationReason: string;

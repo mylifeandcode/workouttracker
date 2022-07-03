@@ -42,7 +42,7 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   @Input()
-  public targetReps: number;
+  public targetReps: number | null;
 
   private _secondsToCountdown: number;
   private _secondsLeadInTime: number;
