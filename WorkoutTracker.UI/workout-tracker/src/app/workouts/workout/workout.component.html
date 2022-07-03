@@ -60,7 +60,7 @@
     </wt-resistance-band-select>
   </p-dialog>
 
-  <p-dialog [style]="{width: '50vw'}" header="Timed Set Countdown" [(visible)]="showCountdownModal">
+  <p-dialog [style]="{width: '50vw'}" header="Timed Set Countdown" *ngIf="formGroupForCountdownModal" [(visible)]="showCountdownModal">
     <wt-countdown-timer
       [secondsToCountdown]="formGroupForCountdownModal.controls.duration!.value!"
       [secondsLeadInTime]="10"
@@ -69,7 +69,7 @@
     </wt-countdown-timer>
   </p-dialog>
 
-  <p-dialog header="Duration" [(visible)]="showDurationModal">
+  <p-dialog header="Duration" *ngIf="formControlForDurationEdit" [(visible)]="showDurationModal">
     <wt-duration 
       [currentDuration]="formControlForDurationEdit!.value!"
       (okClicked)="durationModalAccepted($event)"

@@ -17,7 +17,7 @@ export class UserListComponent implements OnInit {
   public users: User[] | null = null;
   public errorMsg: string;
 
-  constructor(private _userSvc: UserService) { }
+  constructor(private _userSvc: UserService) { } //TODO: We have a caching issue! Fix it!
 
   public ngOnInit(): void {
     this.loadUsers();

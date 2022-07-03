@@ -53,7 +53,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
 
   public proceedToWorkoutEntry(): void {
     this._router.navigate(
-      [`/workouts/plan-for-past/${this.formGroup.controls.workoutId}/${this.formGroup.controls.startDateTime!.value!.toISOString()}/${this.formGroup.controls.endDateTime!.value!.toISOString()}`] 
+      [`/workouts/plan-for-past/${this.formGroup.controls.workoutId.value}/${this.formGroup.controls.startDateTime.value!.toISOString()}/${this.formGroup.controls.endDateTime.value!.toISOString()}`] 
     );
   }
 

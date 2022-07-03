@@ -4,6 +4,7 @@ import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'wt-workout-list',
@@ -50,13 +51,13 @@ export class WorkoutListComponent implements OnInit {
   }
 
   public getWorkoutsLazy(event: any): void {
-
-    if (event.filters["name"])
+    console.log("GETTING WORKOUTS: ", event);
+    if (event?.filters["name"])
       this._filterByNameContains = event.filters["name"].value;
     else
       this._filterByNameContains = null;
 
-    if (event.filters["activeOnly"])
+    if (event?.filters["activeOnly"])
       this._filterByActiveOnly = event.filters["activeOnly"].value;
     else
       this._filterByActiveOnly = true;
@@ -90,6 +91,18 @@ export class WorkoutListComponent implements OnInit {
           (error: any) => window.alert("An error occurred while reactivating workout: " + error)
         );
     }
+  }
+
+  //TODO: Find out if I can consolidate these 2 methods into a generic one and call it from HTML (those brackets may cause problems)
+  //TODO: Consolidate these into a service. These are copied from another component. :(
+  public filterTableByInput(table: Table, event: Event, filterOn: string, filterType: string = 'in'): void {
+    console.log("EVENT: ", event);
+    table.filter((event.target as HTMLInputElement).value, filterOn, filterType);
+  }
+
+  public filterTableByActive(table: Table, event: Event): void {
+    console.log("CHECKBOX EVENT: ", event);
+    table.filter((event.target as HTMLInputElement).checked, 'activeOnly', 'equals');
   }
 
 }

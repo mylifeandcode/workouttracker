@@ -2,11 +2,11 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-4">
-      Filter by Name &nbsp;<input pInputText type="text" (input)="getWorkoutsLazy($event)" />
+      Filter by Name &nbsp;<input pInputText type="text" (input)="filterTableByInput(dt, $event, 'name')" />
     </div>
     <div class="col-4">
       Active Workouts Only &nbsp;<input type="checkbox" checked
-        (input)="getWorkoutsLazy($event)" />
+        (input)="filterTableByActive(dt, $event)" />
     </div>
   </div>
   <div class="row">
