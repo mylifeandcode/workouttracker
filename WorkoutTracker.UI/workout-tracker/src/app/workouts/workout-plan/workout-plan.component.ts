@@ -217,7 +217,6 @@ export class WorkoutPlanComponent implements OnInit {
         
         //TODO: Revisit. Maybe can be made simpler now that we have Typed Forms. :)
 
-        //const exerciseFormGroup = control as UntypedFormGroup;
         const exercisePlan = this.workoutPlan?.exercises[index];
         if (exercisePlan) {
           exercisePlan.targetRepCount = exerciseFormGroup.controls.targetRepCount.value;

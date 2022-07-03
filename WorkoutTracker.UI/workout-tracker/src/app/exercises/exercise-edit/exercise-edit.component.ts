@@ -130,14 +130,11 @@ export class ExerciseEditComponent implements OnInit {
     //Original approach was using information from
     //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
     //This has since been updated for Typed Forms, which is nicer. :)
-    //const checkboxesFormGroup = <UntypedFormGroup>this.exerciseForm.get('targetAreas');
 
     //I wanted to set the value of each checkbox to the ID of the target area, which was fine 
     //initially, but on toggling Angular set the value to a boolean.
 
     this.allTargetAreas.forEach((targetArea: TargetArea) => {
-      //checkboxesFormGroup.addControl(targetArea.name, new UntypedFormControl(_.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id)));
-
       const thisTargetAreaIsSelected: boolean = _.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id);
       this.exerciseForm.controls.targetAreas.addControl(
         targetArea.name, 

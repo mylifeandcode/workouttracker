@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../core/auth.service';
+
+interface ILoginForm {
+  username: FormControl<string>;
+  password: FormControl<string>;
+}
 
 @Component({
   selector: 'wt-login',
@@ -11,12 +16,12 @@ import { AuthService } from '../core/auth.service';
 })
 export class LoginComponent implements OnInit {
 
-  public loginForm: UntypedFormGroup;
+  public loginForm: FormGroup<ILoginForm>;
   public loggingIn: boolean = false;
   public showLoginFailed: boolean = false;
 
   constructor(
-    private _formBuilder: UntypedFormBuilder, 
+    private _formBuilder: FormBuilder, 
     private _authService: AuthService, 
     private _router: Router) { 
 
@@ -45,9 +50,9 @@ export class LoginComponent implements OnInit {
   }
 
   private createForm(): void {
-    this.loginForm = this._formBuilder.group({
-      username: [null, Validators.required],
-      password: [null, Validators.required]
+    this.loginForm = this._formBuilder.group<ILoginForm>({
+      username: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+      password: new FormControl<string>('', { nonNullable: true, validators: Validators.required })
     });
   }
 

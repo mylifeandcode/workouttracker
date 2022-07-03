@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../core/user.service';
 import { User } from 'app/core/models/user';
-import { UntypedFormBuilder, UntypedFormGroup, FormControl, FormArray, Validators, AbstractControl, FormGroup, FormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';

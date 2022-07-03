@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { CustomValidators } from 'app/validators/custom-validators';
@@ -7,6 +7,12 @@ import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
+
+interface ILogPastWorkoutForm {
+  workoutId: FormControl<number | null>; 
+  startDateTime: FormControl<Date | null>; 
+  endDateTime: FormControl<Date | null>; 
+}
 
 @Component({
   selector: 'wt-workout-log-past-start',
@@ -21,20 +27,20 @@ export class WorkoutLogPastStartComponent implements OnInit {
   some strong-typing). This surprises me, as properties are essentially functions, and we should 
   avoid embedding function calls within templates.
   */
-  get startDateTime(): AbstractControl | null {
-    return this.formGroup.get('startDateTime');
+  get startDateTime(): FormControl<Date | null> {
+    return this.formGroup.controls.startDateTime;
   } 
 
-  get endDateTime(): AbstractControl | null {
-    return this.formGroup.get('endDateTime');
+  get endDateTime(): FormControl<Date | null> {
+    return this.formGroup.controls.endDateTime;
   } 
 
-  public formGroup: UntypedFormGroup;
+  public formGroup: FormGroup<ILogPastWorkoutForm>;
   public workouts: WorkoutDTO[];
   public gettingData: boolean = true;
 
   constructor(
-    private _formBuilder: UntypedFormBuilder, 
+    private _formBuilder: FormBuilder, 
     private _workoutService: WorkoutService, 
     private _router: Router) { 
 
@@ -47,15 +53,15 @@ export class WorkoutLogPastStartComponent implements OnInit {
 
   public proceedToWorkoutEntry(): void {
     this._router.navigate(
-      [`/workouts/plan-for-past/${this.formGroup.get('workoutId')?.value.toString()}/${this.formGroup.get('startDateTime')?.value.toISOString()}/${this.formGroup.get('endDateTime')?.value.toISOString()}`] 
+      [`/workouts/plan-for-past/${this.formGroup.controls.workoutId}/${this.formGroup.controls.startDateTime!.value!.toISOString()}/${this.formGroup.controls.endDateTime!.value!.toISOString()}`] 
     );
   }
 
   private buildForm(): void {
-    this.formGroup = this._formBuilder.group({
-      workoutId: [null, Validators.required], 
-      startDateTime: [null, Validators.required], 
-      endDateTime: [null, Validators.required]
+    this.formGroup = this._formBuilder.group<ILogPastWorkoutForm>({
+      workoutId: new FormControl<number | null>(null, { validators: Validators.required}), 
+      startDateTime: new FormControl<Date | null>(null, { validators: Validators.required}), 
+      endDateTime: new FormControl<Date | null>(null, { validators: Validators.required})
     }, { validators: CustomValidators.startDateTimeVsEndDateTime });
   }
 

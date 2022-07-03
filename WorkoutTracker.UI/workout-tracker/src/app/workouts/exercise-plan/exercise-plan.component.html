@@ -21,10 +21,10 @@
         <span *ngIf="!formGroup.controls['involvesReps'].value" class="pre-pop-value">N/A</span>
       </div>
       <div class="col-3 form-group">
-        Avg Range of Motion: <span class="pre-pop-value">{{formGroup.controls['avgRangeOfMotionLastTime'].value | rating}}</span>
+        Avg Range of Motion: <span class="pre-pop-value">{{formGroup.controls.avgRangeOfMotionLastTime.value | rating}}</span>
       </div>
       <div class="col-2 form-group">
-        Avg Form: <span class="pre-pop-value">{{formGroup.controls['avgFormLastTime'].value | rating}}</span>
+        Avg Form: <span class="pre-pop-value">{{formGroup.controls.avgFormLastTime.value | rating}}</span>
       </div>
       <div class="col-3 form-group">
         Resistance: <span class="pre-pop-value">{{formGroup.controls['resistanceType'].value==3 ? 'Body Weight' : formGroup.controls['resistanceAmountLastTime'].value}}</span>
@@ -78,7 +78,7 @@
           <span *ngIf="formGroup.controls['resistanceType'].value==2" class="no-input-value">
             <ng-container *ngIf="formGroup.controls['resistanceAmount'].value">
               {{formGroup.controls['resistanceAmount'].value}}
-              <span>(<span [innerHTML]="formGroup.controls['resistanceMakeup'].value | resistanceBandColor"></span>)</span>
+              <span>(<span [innerHTML]="formGroup.controls.resistanceMakeup.value | resistanceBandColor"></span>)</span>
             </ng-container>
             <button class="lead-space btn btn-choose-resistance btn-sm" (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
           </span>

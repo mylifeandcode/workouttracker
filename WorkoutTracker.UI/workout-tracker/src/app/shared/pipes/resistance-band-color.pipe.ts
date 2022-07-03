@@ -8,7 +8,9 @@ export class ResistanceBandColorPipe implements PipeTransform {
 
   constructor(private _sanitizer: DomSanitizer) {}
 
-  public transform(value: string): SafeHtml {
+  public transform(value: string | null): SafeHtml {
+    if (!value) return '';
+    
     const bands = value.split(',');
     let output: string = '';
 

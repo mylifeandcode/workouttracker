@@ -1,5 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+
+interface IDurationForm {
+  hours: FormControl<number>;
+  minutes: FormControl<number>;
+  seconds: FormControl<number>;
+}
 
 @Component({
   selector: 'wt-duration',
@@ -16,9 +22,9 @@ export class DurationComponent implements OnInit, OnChanges {;
   @Output()
   cancelClicked: EventEmitter<void> = new EventEmitter<void>();
 
-  public form: UntypedFormGroup;
+  public form: FormGroup;
 
-  constructor(private _formBuilder: UntypedFormBuilder) { }
+  constructor(private _formBuilder: FormBuilder) { }
 
   public ngOnInit(): void {
     this.setupFormGroup();
@@ -39,10 +45,10 @@ export class DurationComponent implements OnInit, OnChanges {;
   private setupFormGroup(): void {
     if(!this.form) {
 
-      this.form = this._formBuilder.group({
-        hours: [0, Validators.required],
-        minutes: [0, Validators.required],
-        seconds: [0, Validators.required]
+      this.form = this._formBuilder.group<IDurationForm>({
+        hours: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+        minutes: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+        seconds: new FormControl<number>(0, { nonNullable: true, validators: Validators.required })
       });
 
     }

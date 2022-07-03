@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { UntypedFormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
+import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 
 @Component({
   selector: 'wt-exercise-plan',
@@ -9,28 +10,27 @@ import { UntypedFormGroup } from '@angular/forms';
 export class ExercisePlanComponent {
 
   @Input()
-  formGroup: UntypedFormGroup; //TODO: Use a strong-typed structure
+  formGroup: FormGroup<IExercisePlanFormGroup>;
 
   @Input()
   workoutHasBeenExecutedBefore: boolean;
 
   @Output()
-  resistanceBandsModalRequested: EventEmitter<UntypedFormGroup>;
+  resistanceBandsModalRequested: EventEmitter<FormGroup<IExercisePlanFormGroup>>;
 
   constructor() { 
-    this.resistanceBandsModalRequested = new EventEmitter<UntypedFormGroup>();
+    this.resistanceBandsModalRequested = new EventEmitter<FormGroup<IExercisePlanFormGroup>>();
   }
 
-  public selectResistanceBands(formGroup: UntypedFormGroup): void {
+  public selectResistanceBands(formGroup: FormGroup<IExercisePlanFormGroup>): void {
     this.resistanceBandsModalRequested.emit(formGroup);
   }
 
   public useSameResistanceAsLastTime(): void {
     
-    //A strong-typed FormGroup would be great for this
     this.formGroup.patchValue({
-      resistanceAmount: this.formGroup.controls['resistanceAmountLastTime'].value, 
-      resistanceMakeup: this.formGroup.controls['resistanceMakeupLastTime'].value
+      resistanceAmount: this.formGroup.controls.resistanceAmountLastTime.value ?? 0, 
+      resistanceMakeup: this.formGroup.controls.resistanceMakeupLastTime.value
     }); 
 
   }
