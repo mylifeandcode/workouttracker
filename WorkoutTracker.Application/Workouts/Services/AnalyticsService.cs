@@ -24,11 +24,11 @@ namespace WorkoutTracker.Application.Workouts.Services
         public List<ExecutedWorkoutMetrics> GetExecutedWorkoutMetrics(int workoutId, int count = 5)
         {
             var executedWorkouts = GetRecentExecutedWorkouts(workoutId, count).ToList();
-            var output = new List<ExecutedWorkoutMetrics>(executedWorkouts.Count).OrderBy(x => x.EndDateTime).ToList();
+            var output = new List<ExecutedWorkoutMetrics>(executedWorkouts.Count);
 
             executedWorkouts.ForEach(x => output.Add(new ExecutedWorkoutMetrics(x)));
             
-            return output;
+            return output.OrderBy(x => x.EndDateTime).ToList();
         }
 
         public ExecutedWorkoutsSummary GetExecutedWorkoutsSummary(int userId)
