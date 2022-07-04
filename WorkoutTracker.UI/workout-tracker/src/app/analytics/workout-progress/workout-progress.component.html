@@ -11,13 +11,13 @@
         </option>          
       </select>
     </div>
-    <div class="col-6">
-      <label>Metric Type</label>&nbsp;
-      <select (change)="metricChange($event)">
-        <option value="0">Form</option>
-        <option value="1">Range of Motion</option>
-        <option value="2">Reps</option>
-        <option value="3">Resistance</option>
+    <div *ngIf="metrics && metrics.length > 0" class="col-6">
+      <label>Exercise</label>&nbsp;
+      <select (change)="exerciseChange($event)">
+        <option value="" selected disabled>Choose an Exercise</option>
+        <option *ngFor="let exercise of metrics[0].exerciseMetrics; let i = index" [value]="exercise.exerciseId">
+          {{exercise.name}}
+        </option>          
       </select>
     </div>
   </div>

@@ -1,6 +1,7 @@
 import { SetType } from "app/core/enums/set-type";
 
 export class ExecutedExerciseMetrics {
+  public exerciseId: number;
   public name: string;
   public sequence: number;
   public setType: SetType;

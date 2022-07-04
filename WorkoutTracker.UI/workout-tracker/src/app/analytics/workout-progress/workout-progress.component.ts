@@ -46,14 +46,15 @@ export class WorkoutProgressComponent implements OnInit {
       });
   }
 
-  public metricChange(event: Event): void {
-    let metricType: number = Number((event.target as HTMLSelectElement).value);
-    if (metricType == NaN) return;
-    this.setupChartData(metricType);
+  public exerciseChange(event: Event): void {
+    let exerciseId: number = Number((event.target as HTMLSelectElement).value);
+    if (exerciseId == NaN) return;
+    this.setupChartData(exerciseId);
   }
 
-  private setupChartData(chartDataType: number): void {
-    this.chartData = this._analyticsService.getChartData(this.metrics, chartDataType);
+  private setupChartData(exerciseId: number): void {
+    //this.chartData = this._analyticsService.getWorkoutChartData(this.metrics, chartDataType);
+    this.chartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId);
   }
 
   private getUserWorkouts(): void {
