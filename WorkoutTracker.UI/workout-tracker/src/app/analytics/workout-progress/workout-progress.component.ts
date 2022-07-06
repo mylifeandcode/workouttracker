@@ -5,6 +5,7 @@ import { WorkoutService } from 'app/workouts/workout.service';
 import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
 import { AnalyticsService } from '../analytics.service';
+import { AnalyticsChartData } from '../models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
 
 @Component({
@@ -16,7 +17,7 @@ export class WorkoutProgressComponent implements OnInit {
 
   public loadingData: boolean = true;
   public metrics: ExecutedWorkoutMetrics[];
-  public chartData: any;
+  public chartData: AnalyticsChartData;
   public workouts: WorkoutDTO[];
 
   constructor(

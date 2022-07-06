@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class RatingPipe implements PipeTransform {
 
   public transform(value: number | null): string {
-    if (!value) return '';
+    if (value == null) return '';
     
     if(this.isWholeNumber(value))
       return this.getAbsoluteRating(value);

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from 'app/core/auth.service';
 
@@ -19,7 +19,7 @@ describe('LoginComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ LoginComponent ], 
       providers: [ 
-        UntypedFormBuilder,
+        FormBuilder,
         {
           provide: AuthService, 
           useClass: AuthServiceMock

@@ -10,7 +10,7 @@ export class ResistanceTypePipe implements PipeTransform {
     //Maybe a generic enum pipe would be better here, but it wouldn't add spaces 
     //between the words. Can I use 2 pipes at once, and make use of InserSpaceBeforeCapitalPipe?
   
-    if(!value)
+    if(value === undefined)
       return '';
 
     switch(+value) { //Plus added because of error that was occurring after Angular compiler options were added to tsconfig.json. See https://stackoverflow.com/questions/45197320/why-does-a-switch-statement-on-an-enum-throw-not-comparable-to-type-error. I also found that the error went away if I started the enum at 1, but that would cause a mismatch between it and the .NET enum.

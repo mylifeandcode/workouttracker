@@ -160,20 +160,29 @@ describe('ExerciseEditComponent', () => {
   //TODO: Complete
   xit('should save exercise', waitForAsync(() => {
 
+    type TargetArea = {
+      [index: string]: boolean;
+    };
+
+    const chestTargetArea: TargetArea = { Chest: true };
+
     const exerciseService = TestBed.inject(ExerciseService);
     fixture.whenStable().then(() => {
 
+      //TODO: Revisit. Need to figure out "targetAreas" below.
+      /*
       component.exerciseForm.setValue({
         id: 10,
         name: 'Standing Press w/Resistance Bands',
         description: 'something',
-        resistanceTypes: '[1]',
-        oneSided: [false],
-        targetAreas: ['Chest', 'Triceps'],
+        resistanceTypes: 1,
+        oneSided: false,
+        targetAreas: [{}],
         setup: 'Ready',
         movement: 'Set',
         pointsToRemember: 'Go'
       });
+      */
 
       const button = fixture.debugElement.query(By.css("button[type = 'submit']"));
 
