@@ -4,7 +4,7 @@ import { UserEditComponent } from './user-edit.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { UserService } from '../../core/user.service';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { User } from 'app/core/models/user';
 import { ActivatedRoute } from '@angular/router';
 import { Component } from '@angular/core';
@@ -98,6 +98,36 @@ describe('UserEditComponent', () => {
 
     //ASSERT
     expect(userService.update).toHaveBeenCalledWith(expectedUser);
+  });
+
+  it('should populate error message when error occurs while saving user info', () => {
+    //ARRANGE
+    const userService = TestBed.inject(UserService);
+    userService.update = jasmine.createSpy('update').and.returnValue(throwError(new Error("Something bad happened.")));
+    component.userEditForm.controls.id.setValue(100);
+    component.userEditForm.controls.name.setValue('Doug');
+
+    //ACT
+    component.saveUser();
+
+    //ASSERT
+    expect(userService.update).toHaveBeenCalled();
+    expect(component.errorMsg).toBe("An error has occurred. Please contact an administrator.");
+  });
+
+  it('should populate error message when user does not have permissions to save user info', () => {
+    //ARRANGE
+    const userService = TestBed.inject(UserService);
+    userService.update = jasmine.createSpy('update').and.returnValue(throwError({ status: 403 }));
+    component.userEditForm.controls.id.setValue(100);
+    component.userEditForm.controls.name.setValue('Doug');
+
+    //ACT
+    component.saveUser();
+
+    //ASSERT
+    expect(userService.update).toHaveBeenCalled();
+    expect(component.errorMsg).toBe("You do not have permission to add or edit users.");
   });
 
 });
