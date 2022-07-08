@@ -13,7 +13,7 @@
     </div>
     <div *ngIf="metrics && metrics.length > 0" class="col-6">
       <label>Exercise</label>&nbsp;
-      <select (change)="exerciseChange($event)">
+      <select id="exercises" (change)="exerciseChange($event)">
         <option value="" selected disabled>Choose an Exercise</option>
         <option *ngFor="let exercise of metrics[0].exerciseMetrics; let i = index" [value]="exercise.exerciseId">
           {{exercise.name}}
