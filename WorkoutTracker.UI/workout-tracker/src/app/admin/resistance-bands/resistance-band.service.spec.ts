@@ -29,6 +29,11 @@ describe('ResistanceBandServiceService', () => {
     expect(service).toBeTruthy();
   });
 
+  it('should get configuration when constructing', () => {
+    const configService = TestBed.inject(ConfigService);
+    expect(configService.get).toHaveBeenCalledWith('apiRoot');
+  });
+
   it('should get all individual bands', () => {
 
     //ARRANGE

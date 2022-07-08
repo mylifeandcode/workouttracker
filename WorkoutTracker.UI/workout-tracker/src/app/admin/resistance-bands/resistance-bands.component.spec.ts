@@ -6,7 +6,7 @@ import { ConfirmDialogComponentMock } from 'app/testing/component-mocks/primeNg/
 import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
 import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { ResistanceBandService } from './resistance-band.service';
 
 import { ResistanceBandsComponent } from './resistance-bands.component';
@@ -198,6 +198,95 @@ describe('ResistanceBandsComponent', () => {
     //ASSERT
     expect(component.showAddDialog).toBeFalse();
     expect(component.modalSubmitted).toBeFalse();
+
+  });
+
+  it('should initialize row editing', () => {
+    //Because all this method does is set a private value, we just want to make sure 
+    //it doesn't throw an exception
+
+    try {
+      const band = new ResistanceBand();
+      component.onRowEditInit(band);
+      expect(true).toBeTrue(); //Here only to let Karma know we have an expectation
+    }
+    catch {
+      fail();
+    }
+
+  });
+
+  it('should cancel row editing', () => {
+
+    //ARRANGE
+    const band = new ResistanceBand();
+    band.color = 'Red';
+    band.maxResistanceAmount = 16;
+    band.id = 1;
+    band.numberAvailable = 1;
+
+    //We need to start editing a row to set this test up
+    component.onRowEditInit(band);
+
+    //ACT
+    component.onRowEditCancel(band, 0);
+
+    //ASSERT
+    //Why the wacky comparison logic below? Because the clone bands are not an array, but 
+    //an object with an indexer and ResistanceBand-type property. This code should be revisited.
+    expect(component.resistanceBands[0].color).toEqual(band.color);
+    expect(component.resistanceBands[0].maxResistanceAmount).toEqual(band.maxResistanceAmount);
+    expect(component.resistanceBands[0].id).toEqual(band.id);
+    expect(component.resistanceBands[0].numberAvailable).toEqual(band.numberAvailable);
+
+  });
+
+  /*
+  it('should cancel row editing when no resistance bands exist', () => {
+
+    //ARRANGE
+    //component.resistanceBands = null;
+    const band = new ResistanceBand();
+    band.color = 'Blue';
+
+    //ACT
+    component.onRowEditCancel(band, 0);
+
+    //ASSERT
+    expect(component.resistanceBands.length).toBe(0);
+
+  });
+  */
+
+  it('should add message to MessageService when error occurs when adding a resistance band', () => {
+    
+    //ARRANGE
+    const resistanceBandService = TestBed.inject(ResistanceBandService);
+    resistanceBandService.add = jasmine.createSpy('add').and.returnValue(throwError(new Error("Something went wrong!")));
+
+    const messageService = TestBed.inject(MessageService);
+
+    //ACT
+    component.saveNewBand();
+
+    //ASSERT
+    expect(messageService.add).toHaveBeenCalledWith({severity:'error', summary: 'Error', detail: 'Failed to add Resistance Band', sticky: true});
+
+  });
+
+  it('should add message to MessageService when error occurs when updating a resistance band', () => {
+    
+    //ARRANGE
+    const resistanceBandService = TestBed.inject(ResistanceBandService);
+    resistanceBandService.update = jasmine.createSpy('update').and.returnValue(throwError(new Error("Something went wrong!")));
+
+    const messageService = TestBed.inject(MessageService);
+
+    //ACT
+    component.onRowEditSave(new ResistanceBand());
+
+    //ASSERT
+    expect(messageService.add).toHaveBeenCalledWith({severity:'error', summary: 'Error', detail: 'Failed to update Resistance Band', sticky: true});
 
   });
 

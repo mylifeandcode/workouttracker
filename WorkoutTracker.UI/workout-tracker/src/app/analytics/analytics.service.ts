@@ -55,6 +55,8 @@ export class AnalyticsService {
     return this._http.get<ExecutedWorkoutMetrics[]>(`${this.API_ROOT}/workout-metrics/${workoutId}/${count}`);
   }
 
+  //TODO: Re-evaluate and remove if unneeded. This was replaced in favor of getExerciseChartData().
+  /*
   public getWorkoutChartData(metrics: ExecutedWorkoutMetrics[], chartDataType: CHART_DATA_TYPE = CHART_DATA_TYPE.Resistance): AnalyticsChartData {
     let chartData = new AnalyticsChartData();
 
@@ -92,6 +94,7 @@ export class AnalyticsService {
 
     return chartData;
   }
+  */
 
   public getExerciseChartData(metrics: ExecutedWorkoutMetrics[], exerciseId: number): AnalyticsChartData {
     let chartData = new AnalyticsChartData();
@@ -138,6 +141,7 @@ export class AnalyticsService {
   }
 
   private getFlattenedExerciseMetrices(metrics: ExecutedWorkoutMetrics[], exerciseId: number, chartDataType: CHART_DATA_TYPE = CHART_DATA_TYPE.Resistance): number[] {
+    console.log(`Getting flattened metrics for exercise ${exerciseId}, chartDataType ${chartDataType}: metrics: `, metrics);
     return metrics.flatMap((metric: ExecutedWorkoutMetrics) => metric.exerciseMetrics.filter((executedExerciseMetrics: ExecutedExerciseMetrics) => executedExerciseMetrics.exerciseId == exerciseId).map((executedExerciseMetrics: ExecutedExerciseMetrics) => {
       switch(chartDataType) {
         case CHART_DATA_TYPE.Form:

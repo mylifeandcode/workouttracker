@@ -23,7 +23,7 @@ export class ResistanceBandsComponent implements OnInit {
   public modalSubmitted: boolean;
 
   //This is used to store the original row when we go into edit mode
-  private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {};
+  private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {}; //TODO: Revisit. This isn't an array of ResistanceBands, but rather an object with an indexer and ResistanceBand-type property.
 
   constructor(
     private _resistanceBandService: ResistanceBandService,
@@ -48,7 +48,7 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   public onRowEditCancel(band: ResistanceBand, index: number): void {
-    if (!this.resistanceBands) return;
+    //if (!this.resistanceBands) return;
 
     //Replace the row we were editing with the clone, so in case we made any changes we'll get the original
     //version back.
