@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
@@ -6,7 +7,6 @@ import { of } from 'rxjs';
 import { AnalyticsService } from '../analytics.service';
 import { AnalyticsChartData } from '../models/analytics-chart-data';
 import { ExecutedExerciseMetrics } from '../models/executed-exercise-metrics';
-import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
 
 import { WorkoutProgressComponent } from './workout-progress.component';
 
@@ -16,7 +16,7 @@ class AnalyticsServiceMock {
 
   getExecutedWorkoutMetrics = jasmine.createSpy('getExecutedWorkoutMetrics')
     .and.callFake(() => {
-      const metrics = new ExecutedWorkoutMetrics();
+      const metrics = new Array<ExecutedExerciseMetrics>;
       const exercise1Metrics = new ExecutedExerciseMetrics();
       exercise1Metrics.name = "Exercise 1";
       exercise1Metrics.exerciseId = 1;
@@ -26,8 +26,7 @@ class AnalyticsServiceMock {
       const exercise3Metrics = new ExecutedExerciseMetrics();
       exercise3Metrics.name = "Exercise 3";
       exercise3Metrics.exerciseId = 3;
-      metrics.exerciseMetrics = [];
-      metrics.exerciseMetrics.push(exercise1Metrics, exercise2Metrics, exercise3Metrics);
+      metrics.push(exercise1Metrics, exercise2Metrics, exercise3Metrics);
       return of(metrics);
     });
 }
@@ -75,6 +74,9 @@ describe('WorkoutProgressComponent', () => {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
         }
+      ],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA //Needed for p-chart element (ChartJS)
       ]
     })
     .compileComponents();
@@ -105,10 +107,11 @@ describe('WorkoutProgressComponent', () => {
     workoutDefinitionsSelect.selectedIndex = 0;
     workoutDefinitionsSelect.dispatchEvent(new Event('change'));
 
+    fixture.detectChanges(); //This is needed so the changes in the template which should occur once the workout definition selection occurs
+
     const exercisesSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#exercises');
     exercisesSelect.selectedIndex = 0;
     exercisesSelect.dispatchEvent(new Event('change'));
-
   });
 
 });

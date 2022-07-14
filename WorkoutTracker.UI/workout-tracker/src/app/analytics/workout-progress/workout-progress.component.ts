@@ -43,7 +43,8 @@ export class WorkoutProgressComponent implements OnInit {
       )
       .subscribe((results: ExecutedWorkoutMetrics[]) => {
         this.metrics = results;
-        this.setupChartData(1);
+        console.log("METRICS: ", this.metrics);
+        //this.setupChartData(1);
       });
   }
 
