@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   //PUBLIC FIELDS
-  public token: string | null;
+  public token: string | null = null; //TODO: Refactor. This should be a read-only property exposing a private field.
   public decodedTokenPayload: JwtPayload;
 
   //PRIVATE FIELDS
@@ -90,14 +90,16 @@ export class AuthService {
       .pipe(
         map((token: string) => {
           //Using map() here so I can act on the result and then return a boolean.
-          //TODO: Revisit the approach I'm using here. Probably a better way of doing this.
           this.token = token;
           this._userSubject$.next(username);
           this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, token);
           this.decodedTokenPayload = jwtDecode<JwtPayload>(this.token);
           return true;
         }), 
-        catchError((err: any, caught: Observable<boolean>) => of(false))
+        catchError((err: any, caught: Observable<boolean>) => {
+          console.log("Error logging in user: ", err);
+          return of(false);
+        })
       );
   }
 

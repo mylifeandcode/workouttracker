@@ -34,17 +34,6 @@ export class UserService extends ApiBaseService<User> {
     this._apiRoot = this._configService.get("apiRoot") + "Users";
   }
 
-  /*
-  public getAll() : Observable<Array<User>> {
-    return this._http.get<Array<User>>(this._apiRoot);
-  }
-  */
-
-  //TODO: Move to AuthService
-  public isUserLoggedIn(): boolean {
-    return (this._userSubject$.value != null);
-  }
-
   public getOverview(): Observable<UserOverview> {
     return this._http.get<UserOverview>(`${this._apiRoot}/overview`);
   }

@@ -4,12 +4,15 @@ import { UserService } from './user.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { User } from 'app/core/models/user';
 import { ConfigService } from './config.service';
+import { UserOverview } from './models/user-overview';
 
 const TEST_USER_ID: string = "1";
 
 class ConfigServiceMock {
   get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
 }
+
+//TODO: Refactor this spec to use service values initialized before each test rather than injection everywhere
 
 describe('UserService', () => {
   beforeEach(() => {
@@ -122,5 +125,24 @@ describe('UserService', () => {
     request.flush(null)
 
   }));
+
+  it('should get user overview', () => {
+
+    const userOverview = new UserOverview();
+    const service = TestBed.inject(UserService);
+    
+    service.getOverview().subscribe((overview: UserOverview) => {
+      expect(overview).toBe(userOverview);
+    });
+
+    const httpMock = TestBed.inject(HttpTestingController);
+    const request = httpMock.expectOne(`http://localhost:5600/api/Users/overview`);
+    expect(request.request.method).toEqual('GET');
+
+    // Respond with the mock results
+    //TODO: Revisit/complete
+    request.flush(userOverview);
+
+  });
 
 });
