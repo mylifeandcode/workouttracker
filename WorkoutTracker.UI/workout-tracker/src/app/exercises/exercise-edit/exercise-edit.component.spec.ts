@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Pipe, PipeTransform } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute, ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
 
 import { of } from 'rxjs';
 
@@ -9,18 +10,23 @@ import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../exercise.service';
 import { TargetArea } from 'app/workouts/models/target-area';
 import { Exercise } from 'app/workouts/models/exercise';
-import { ActivatedRoute, ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
-import { By } from '@angular/platform-browser';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
+import { ExerciseTargetAreaLink } from 'app/workouts/models/exercise-target-area-link';
 
-const USER_ID: number = 5;
 const EXERCISE: Exercise = <Exercise> {
   id: 2, 
   name: 'Some Exercise', 
   description: 'This is a nice exercise. Blah, blah, blah.', 
   setup: 'Get ready', 
   movement: 'Whatever', 
-  pointsToRemember: 'Be careful'
+  pointsToRemember: 'Be careful',
+  resistanceType: 1,
+  exerciseTargetAreaLinks: [
+    <ExerciseTargetAreaLink>{
+      exerciseId: 2,
+      targetAreaId: 1
+    }
+  ]
 }
 
 class ExerciseServiceMock {
@@ -31,11 +37,22 @@ class ExerciseServiceMock {
     this.resistanceTypes.set(1, 'Resistance Band');
   }
 
-  getTargetAreas = jasmine.createSpy('getTargetAreas').and.returnValue(of(new Array<TargetArea>()));
+  getTargetAreas = jasmine.createSpy('getTargetAreas')
+    .and.callFake(() => {
+      const targetAreas = new Array<TargetArea>();
+      targetAreas.push(new TargetArea(1, "Chest", 1, new Date(), null, null, false));
+      targetAreas.push(new TargetArea(2, "Biceps", 1, new Date(), null, null, false));
+      targetAreas.push(new TargetArea(3, "Triceps", 1, new Date(), null, null, false));
+      return of(targetAreas);
+    });
+
   getById = jasmine.createSpy('getById').and.returnValue(of(EXERCISE));
   getResistanceTypes =
     jasmine.createSpy('getResistanceTypes')
       .and.returnValue(of(this.resistanceTypes));
+
+  add = jasmine.createSpy('add').and.callFake((exercise: Exercise) => { return of(exercise); });
+  update = jasmine.createSpy('update').and.callFake((exercise: Exercise) => { return of(exercise); });
 }
 
 @Pipe({
@@ -157,37 +174,78 @@ describe('ExerciseEditComponent', () => {
     expect(exerciseService.getResistanceTypes).toHaveBeenCalledTimes(1);
   });
 
-  //TODO: Complete
-  xit('should save exercise', waitForAsync(() => {
+  it('should return exercise ID via exerciseId property', () => {
+    expect(component.exerciseId).toBe(EXERCISE.id);
+  });
 
-    type TargetArea = {
-      [index: string]: boolean;
-    };
+  it('should enable edit mode', () => {
+    component.editModeToggled({checked: false});
+    expect(component.readOnlyMode).toBeTrue();
+  });
 
-    const chestTargetArea: TargetArea = { Chest: true };
+  it('should disable edit mode', () => {
+    component.editModeToggled({checked: true});
+    expect(component.readOnlyMode).toBeFalse();
+  });
+
+  it('should add exercise', () => {
+
+    //ARRANGE
+    //Override default mock behavior
+    const exercise = new Exercise();
+    exercise.id = 0;
+    exercise.name = 'Some New Exercise';
+    exercise.description = 'Ultra Mega Super Press'; 
+    exercise.setup = 'Focus!'; 
+    exercise.movement = 'Forward!'; 
+    exercise.oneSided = false;
+    exercise.involvesReps = true;
+    exercise.pointsToRemember = 'Form!';
+    exercise.resistanceType = 1;
+    exercise.exerciseTargetAreaLinks = [];
+    exercise.exerciseTargetAreaLinks.push(new ExerciseTargetAreaLink(0, 1));
 
     const exerciseService = TestBed.inject(ExerciseService);
-    fixture.whenStable().then(() => {
+    //exerciseService.getById = jasmine.createSpy('getById').and.returnValue(of(exercise));
+    exerciseService.add = jasmine.createSpy('add').and.returnValue(of(exercise));
 
-      //TODO: Revisit. Need to figure out "targetAreas" below.
-      /*
-      component.exerciseForm.setValue({
-        id: 10,
-        name: 'Standing Press w/Resistance Bands',
-        description: 'something',
-        resistanceTypes: 1,
-        oneSided: false,
-        targetAreas: [{}],
-        setup: 'Ready',
-        movement: 'Set',
-        pointsToRemember: 'Go'
-      });
-      */
+    const route = TestBed.inject(ActivatedRoute);
+    route.snapshot.params['id'] = 0;
 
-      const button = fixture.debugElement.query(By.css("button[type = 'submit']"));
+    //Need to re-init because service mock has changed
+    component.ngOnInit();
 
-    });
+    //TODO: Revisit and confirm. The default values of the FormControls didn't seem to take in this test.
+    component.exerciseForm.controls.id.setValue(0);
+    component.exerciseForm.controls.name.setValue(exercise.name);
+    component.exerciseForm.controls.description.setValue(exercise.description);
+    component.exerciseForm.controls.setup.setValue(exercise.setup);
+    component.exerciseForm.controls.movement.setValue(exercise.movement);
+    component.exerciseForm.controls.involvesReps.setValue(exercise.involvesReps);
+    component.exerciseForm.controls.oneSided.setValue(exercise.oneSided);
+    component.exerciseForm.controls.pointsToRemember.setValue(exercise.pointsToRemember);
+    component.exerciseForm.controls.resistanceTypes.setValue(exercise.resistanceType);
+    component.exerciseForm.controls.targetAreas.setValue({'Chest': true, 'Biceps': false, 'Triceps': false});
 
-  }));
+    //ACT
+    component.saveExercise();
+
+    //ASSERT
+    expect(exerciseService.add).toHaveBeenCalledWith(exercise);
+    expect(component.saving).toBeFalse();
+    expect(component.infoMsg).toContain("Exercise created at ");
+
+  });
+
+  it('should update exercise', () => {
+
+    console.log("component.exerciseForm: ", component.exerciseForm);
+    const exerciseService = TestBed.inject(ExerciseService);
+    component.saveExercise();
+    expect(exerciseService.update).toHaveBeenCalledWith(EXERCISE);
+    expect(component.saving).toBeFalse();
+    expect(component.infoMsg).toContain("Exercise updated at ");
+
+  });
 
 });

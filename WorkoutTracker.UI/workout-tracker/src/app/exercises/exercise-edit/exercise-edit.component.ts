@@ -14,7 +14,7 @@ interface IExerciseEditForm {
   id: FormControl<number>;
   name: FormControl<string>;
   description: FormControl<string>;
-  resistanceTypes: FormControl<number>; 
+  resistanceTypes: FormControl<number>; //TODO: Rename to singular
   oneSided: FormControl<boolean>;
   endToEnd: FormControl<boolean | null>;
   involvesReps: FormControl<boolean>;
@@ -74,7 +74,7 @@ export class ExerciseEditComponent implements OnInit {
     this.readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
     this.createForm();
 
-    //TODO: Rethink the following. This can probably be done a much better way.
+    //TODO: Rethink the following. This can probably be done a much better way. Thinking "forkJoin()".
     this._exerciseSvc.getTargetAreas().subscribe((targetAreas: TargetArea[]) => { 
       this.allTargetAreas = targetAreas; 
       this._exerciseSvc.getResistanceTypes().subscribe((resistanceTypes: Map<number, string>) => {
@@ -89,6 +89,8 @@ export class ExerciseEditComponent implements OnInit {
   }
 
   public saveExercise(): void {
+    if(!this.exerciseForm.valid) return;
+
     //Called by Save button
     this.saving = true;
     this.infoMsg = "Saving...";
@@ -163,6 +165,7 @@ export class ExerciseEditComponent implements OnInit {
         this.exerciseForm.controls["involvesReps"].setValue(true);
 
         this._exercise = new Exercise();
+        this._exercise.id = 0;
         this.loading = false;
       }
     //}

@@ -10,6 +10,8 @@ class ConfigServiceMock {
   get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
 }
 
+//TODO: Refactor this spec to use service vars initialized before each test
+
 describe('ExerciseService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -51,6 +53,48 @@ describe('ExerciseService', () => {
     req.flush(expectedResults);
 
   }));
+
+  it('should retrieve exercises with the nameContains param', () => {
+
+    const http = TestBed.inject(HttpTestingController);
+    const service = TestBed.inject(ExerciseService);
+
+    const expectedResults = new PaginatedResults<ExerciseDTO>();
+
+    service.getAll(0, 10, 'Press').subscribe(
+      exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
+      fail
+    );
+
+    // ExerciseService should have made one request to GET exercises from expected URL
+    const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&nameContains=Press");
+    expect(req.request.method).toEqual('GET');
+
+    // Respond with the mock results
+    req.flush(expectedResults);
+
+  });
+
+  it('should retrieve exercises with the targetAreaContains param', () => {
+
+    const http = TestBed.inject(HttpTestingController);
+    const service = TestBed.inject(ExerciseService);
+
+    const expectedResults = new PaginatedResults<ExerciseDTO>();
+
+    service.getAll(0, 10, null, 'Chest').subscribe(
+      exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
+      fail
+    );
+
+    // ExerciseService should have made one request to GET exercises from expected URL
+    const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&hasTargetAreas=Chest");
+    expect(req.request.method).toEqual('GET');
+
+    // Respond with the mock results
+    req.flush(expectedResults);
+
+  });  
 
   it('should retrieve exercise by ID', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
 
