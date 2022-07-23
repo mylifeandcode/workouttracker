@@ -23,7 +23,7 @@ export class ExerciseListMiniComponent extends ExerciseListBase {
     //TODO: Revisit. Similar code exists in ExerciseListComponent.
 
     let nameContains: string | null = null;
-    let targetAreaContains: string | null = null;
+    let targetAreaContains: string[] | null = null;
 
     if (event.filters["name"])
         nameContains = event.filters["name"].value;

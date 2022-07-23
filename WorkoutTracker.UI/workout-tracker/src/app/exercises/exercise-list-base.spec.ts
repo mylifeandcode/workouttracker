@@ -75,10 +75,10 @@ describe('ExerciseListMiniComponent', () => {
     //ARRANGE
 
     //ACT
-    component.getExercises(10, "blah", "Chest");
+    component.getExercises(10, "blah", ["Chest"]);
 
     //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(10, component.pageSize, "blah", "Chest");
+    expect(exerciseService.getAll).toHaveBeenCalledWith(10, component.pageSize, "blah", ["Chest"]);
 
   });
 });

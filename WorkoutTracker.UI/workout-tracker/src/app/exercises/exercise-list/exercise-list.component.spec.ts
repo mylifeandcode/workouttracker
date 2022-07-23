@@ -19,6 +19,7 @@ class ExerciseServiceMock {
 describe('ExerciseListComponent', () => {
   let component: ExerciseListComponent;
   let fixture: ComponentFixture<ExerciseListComponent>;
+  let exerciseService: ExerciseService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -44,9 +45,40 @@ describe('ExerciseListComponent', () => {
     fixture = TestBed.createComponent(ExerciseListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    exerciseService = TestBed.inject(ExerciseService);
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should get exercises lazily', () => {
+    //ARRANGE
+    const lazyLoadEvent: any = { //Unfortunately, the parameter of the onLazyLoad event of PrimeNg's table is declared as type "any"
+      "first": 0,
+      "rows": 10,
+      "sortOrder": 1,
+      "filters": {
+          "targetAreas": {
+              "value": [
+                  "Chest"
+              ],
+              "matchMode": "in"
+          },
+          "name": {
+              "value": "Pre",
+              "matchMode": "in"
+          }
+      },
+      "globalFilter": null
+    };
+
+    const expectedParams: any[] =[0, 10, 'Pre', ['Chest']];
+
+    //ACT
+    component.getExercisesLazy(lazyLoadEvent);
+
+    //ASSERT
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, 'Pre', ['Chest']);
   });
 });

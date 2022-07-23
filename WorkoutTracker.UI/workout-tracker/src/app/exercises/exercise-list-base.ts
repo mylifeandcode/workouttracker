@@ -29,7 +29,7 @@ export abstract class ExerciseListBase {
         );
     }
 
-    public getExercises(first: number, nameContains: string | null, targetAreaContains: string | null): void {
+    public getExercises(first: number, nameContains: string | null, targetAreaContains: string[] | null): void {
         this.loading = true;
         this._exerciseSvc
             .getAll(first, this.pageSize, nameContains, targetAreaContains)

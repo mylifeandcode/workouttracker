@@ -82,7 +82,7 @@ describe('ExerciseService', () => {
 
     const expectedResults = new PaginatedResults<ExerciseDTO>();
 
-    service.getAll(0, 10, null, 'Chest').subscribe(
+    service.getAll(0, 10, null, ['Chest']).subscribe(
       exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
       fail
     );
