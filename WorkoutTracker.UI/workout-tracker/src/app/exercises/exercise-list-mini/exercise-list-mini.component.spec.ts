@@ -18,6 +18,7 @@ class ExerciseServiceMock {
 describe('ExerciseListMiniComponent', () => {
   let component: ExerciseListMiniComponent;
   let fixture: ComponentFixture<ExerciseListMiniComponent>;
+  let exerciseService: ExerciseService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -41,10 +42,56 @@ describe('ExerciseListMiniComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ExerciseListMiniComponent);
     component = fixture.componentInstance;
+    exerciseService = TestBed.inject(ExerciseService);
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should get exercises lazily', () => {
+    //TODO: Consolidate the method we're testing: it exists in 2 different classes.
+
+    //ARRANGE
+    const lazyLoadEvent: any = { //Unfortunately, the parameter of the onLazyLoad event of PrimeNg's table is declared as type "any"
+      "first": 0,
+      "rows": 10,
+      "sortOrder": 1,
+      "filters": {
+          "targetAreas": {
+              "value": [
+                  "Chest"
+              ],
+              "matchMode": "in"
+          },
+          "name": {
+              "value": "Pre",
+              "matchMode": "in"
+          }
+      },
+      "globalFilter": null
+    };
+
+    const expectedParams: any[] =[0, 10, 'Pre', ['Chest']];
+
+    //ACT
+    component.getExercisesLazy(lazyLoadEvent);
+
+    //ASSERT
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, 'Pre', ['Chest']);
+  });
+
+  it('should emit event when exercise is selected', () => {
+    //ARRANGE
+    const exerciseDTO = new ExerciseDTO();
+    spyOn(component.exerciseSelected, 'emit');
+
+    //ACT
+    component.selectExercise(exerciseDTO);
+
+    //ASSERT
+    expect(component.exerciseSelected.emit).toHaveBeenCalledWith(exerciseDTO);
+  });
+
 });
