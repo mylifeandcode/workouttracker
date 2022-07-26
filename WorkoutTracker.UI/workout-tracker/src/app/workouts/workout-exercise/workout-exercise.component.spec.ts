@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WorkoutExerciseComponent } from './workout-exercise.component';
-import { UntypedFormArray, UntypedFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, ReactiveFormsModule, Validators, FormGroup } from '@angular/forms';
 import { ExecutedExercise } from '../models/executed-exercise';
 import { Exercise } from '../models/exercise';
 import * as _ from 'lodash';
 import { Pipe } from '@angular/core';
 import { ResistanceType } from '../enums/resistance-type';
+import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
 
 @Pipe({
   name: 'resistanceType'
@@ -57,6 +58,30 @@ describe('WorkoutExerciseComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should emit event when selecting resistance bands', () => {
+    spyOn(component.resistanceBandsSelect, 'emit');
+    component.selectResistanceBands(component.setsArray.controls[0]);
+    expect(component.resistanceBandsSelect.emit).toHaveBeenCalledWith(component.setsArray.controls[0]);
+  });
+
+  it('should emit event to show timer', () => {
+    spyOn(component.showTimerRequest, 'emit');
+    component.showTimer(component.setsArray.controls[0]);
+    expect(component.showTimerRequest.emit).toHaveBeenCalledWith(component.setsArray.controls[0]);
+  });
+
+  it('should emit event when range of motion is changed', () => {
+    spyOn(component.rangeOfMotionEntered, 'emit');
+    component.rangeOfMotionChanged();
+    expect(component.rangeOfMotionEntered.emit).toHaveBeenCalled();
+  });
+
+  it('should emit an event to edit duration', () => {
+    spyOn(component.durationEdit, 'emit');
+    component.editDuration(component.setsArray.controls[0].controls.duration);
+    expect(component.durationEdit.emit).toHaveBeenCalledWith(component.setsArray.controls[0].controls.duration);
   });
 
   function setupExercisesFormGroup(): void {
