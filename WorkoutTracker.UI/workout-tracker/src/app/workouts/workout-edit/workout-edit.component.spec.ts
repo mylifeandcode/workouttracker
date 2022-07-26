@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Component } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -11,6 +11,7 @@ import { WorkoutService } from '../workout.service';
 import { Workout } from 'app/workouts/models/workout';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
+import { ExerciseDTO } from '../models/exercise-dto';
 
 @Component({
   selector: 'wt-exercise-list-mini',
@@ -40,6 +41,8 @@ class WorkoutServiceMock {
     return workout;
   }
   getById = jasmine.createSpy('getById').and.returnValue(of(this.getTestWorkout()));
+  add = jasmine.createSpy('add').and.returnValue(of(new Workout()));
+  update = jasmine.createSpy('update').and.returnValue(of(new Workout()));
 }
 
 class BsModalServiceMock {
@@ -59,6 +62,7 @@ function getActivatedRouteSnapshot() {
 describe('WorkoutEditComponent', () => {
   let component: WorkoutEditComponent;
   let fixture: ComponentFixture<WorkoutEditComponent>;
+  let workoutService: WorkoutService;
 
   //Thanks to Mike Gallagher for the link: https://www.joshuacolvin.net/mocking-activated-route-data-in-angular/
 
@@ -96,6 +100,7 @@ describe('WorkoutEditComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutEditComponent);
     component = fixture.componentInstance;
+    workoutService = TestBed.inject(WorkoutService);
     fixture.detectChanges();
   });
 
@@ -119,7 +124,6 @@ describe('WorkoutEditComponent', () => {
   });
 
   it('should load workout based on route param ID during init', () => {
-    const workoutService = TestBed.inject(WorkoutService);
     expect(workoutService.getById).toHaveBeenCalledOnceWith(WORKOUT_ID);
     expect(component.workoutForm.controls.id.value).toBe(WORKOUT_ID);
     expect(component.workoutForm.controls.active.value).toBeTrue();
@@ -135,4 +139,99 @@ describe('WorkoutEditComponent', () => {
     expect(component.workoutForm.controls.exercises.value[1].numberOfSets).toBe(4);
     expect(component.workoutForm.controls.exercises.value[1].setType).toBe(2);
   });
+
+  it('should toggle read-only mode to false', () => {
+    component.editModeToggled({checked: true});
+    expect(component.readOnlyMode).toBeFalse();
+  });
+
+  it('should toggle read-only mode to true', () => {
+    component.editModeToggled({checked: false});
+    expect(component.readOnlyMode).toBeTrue();
+  });
+  
+  it('should not load workout when creating a new one', () => {
+    //TODO: Improve this test if possible
+
+    const activatedRoute = TestBed.inject(ActivatedRoute);
+    activatedRoute.snapshot.params['id'] = 0;
+
+    component.ngOnInit();
+
+    expect(component.workoutId).toBe(0);
+    expect(workoutService.getById).not.toHaveBeenCalledWith(0); //The original ngOnInit() call would've called it with WORKOUT_ID
+  });
+
+  it('should open modal', () => {
+    expect(component.showExerciseSelectModal).toBeFalse();
+    component.openModal();
+    expect(component.showExerciseSelectModal).toBeTrue();
+  });
+
+  it('should add an exerise', () => {
+    const startingNumberOfExercises = component.exercisesArray.length;
+    component.addExercise(new ExerciseDTO());
+    expect(component.exercisesArray.length).toBe(startingNumberOfExercises + 1);
+  });
+
+  it('should remove an exercise', () => {
+    const startingNumberOfExercises = component.exercisesArray.length;
+    const firstExercise = component.exercisesArray.at(0);
+    component.removeExercise(1);
+    expect(component.exercisesArray.length).toBe(startingNumberOfExercises - 1);
+    expect(firstExercise).toBe(component.exercisesArray.at(0));
+  });
+
+  it('should move an exercise up', () => {
+    const secondExercise = component.exercisesArray.at(1);
+    component.moveExerciseUp(1);
+    expect(component.exercisesArray.at(0)).toBe(secondExercise);
+  });
+
+  it('should move an exercise down', () => {
+    const firstExercise = component.exercisesArray.at(0);
+    component.moveExerciseDown(0);
+    expect(component.exercisesArray.at(1)).toBe(firstExercise);
+  });
+
+  it('should add a new workout', () => {
+    //TODO: Improve this test if possible
+
+    const activatedRoute = TestBed.inject(ActivatedRoute);
+    activatedRoute.snapshot.params['id'] = 0;
+
+    component.ngOnInit();
+    component.workoutForm.controls.name.setValue('My New Workout');
+    component.workoutForm.controls.active.setValue(true);
+    const exercise = new ExerciseDTO();
+    exercise.id = 101;
+    exercise.name = "Weighted Push Ups";
+    component.addExercise(exercise);
+    component.workoutForm.controls.exercises.controls[0].controls.setType.setValue(1);
+    component.workoutForm.controls.exercises.controls[0].controls.numberOfSets.setValue(3);
+    component.saveWorkout();
+
+    expect(component.workoutForm.invalid).toBeFalse();
+    expect(workoutService.add).toHaveBeenCalled();
+  });
+  
+  it('should update an existing workout', () => {
+    component.saveWorkout();
+    expect(workoutService.update).toHaveBeenCalled();
+  });
+
+  it('should not save a workout if the form is invalid', () => {
+    //TODO: Improve this test if possible
+
+    const activatedRoute = TestBed.inject(ActivatedRoute);
+    activatedRoute.snapshot.params['id'] = 0;
+
+    component.ngOnInit();
+
+    component.saveWorkout();
+
+    expect(workoutService.add).not.toHaveBeenCalled();
+    expect(component.workoutForm.invalid).toBeTrue();
+  });
+
 });
