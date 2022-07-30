@@ -34,10 +34,23 @@
 </div>
 
 <div *ngIf="!loadingData" class="container-fluid">
+  <br />
   <!--TODO: Ditch the container and use a style to give us some margins-->
-  <div class="row">
+  <div class="row" *ngIf="formAndRangeOfMotionChartData">
     <div class="col-12">
-      <p-chart type="line" [data]="chartData"></p-chart>
+      <p-chart type="line" height="300px" [options]="formAndRangeOfMotionChartOptions" [data]="formAndRangeOfMotionChartData"></p-chart>
+    </div>
+  </div>
+  <br />
+  <div class="row" *ngIf="repsChartData">
+    <div class="col-12">
+      <p-chart type="line" height="300px" [data]="repsChartData"></p-chart>
+    </div>
+  </div>
+  <br />
+  <div class="row" *ngIf="resistanceChartData">
+    <div class="col-12">
+      <p-chart type="line" height="300px" [data]="resistanceChartData"></p-chart>
     </div>
   </div>
 </div>
