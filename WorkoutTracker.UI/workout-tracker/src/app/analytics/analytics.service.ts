@@ -23,6 +23,12 @@ enum CHART_DATA_TYPE {
   Resistance
 }
 
+export enum METRICS_TYPE {
+  FormAndRangeOfMotion,
+  Reps,
+  Resistance
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -96,40 +102,52 @@ export class AnalyticsService {
   }
   */
 
-  public getExerciseChartData(metrics: ExecutedWorkoutMetrics[], exerciseId: number): AnalyticsChartData {
+  public getExerciseChartData(metrics: ExecutedWorkoutMetrics[], exerciseId: number, metricsType: METRICS_TYPE): AnalyticsChartData {
     let chartData = new AnalyticsChartData();
 
     if(metrics) {
       //Set up the labels
       this.setupAnalyticsChartDataLabels(metrics, chartData);
-      
+
       //Set up the datasets
-      chartData.datasets.push({
-        label: 'Form',
-        data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.Form),
-        borderColor: this.BORDERCOLORS[0] //Blue
-      });
 
-      chartData.datasets.push({
-        label: 'Range of Motion',
-        data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.RangeOfMotion),
-        borderColor: this.BORDERCOLORS[6] //Goldenrod
-      });
+      switch(metricsType) {
+        case METRICS_TYPE.FormAndRangeOfMotion:
+          chartData.datasets.push({
+            label: 'Form',
+            data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.Form),
+            borderColor: this.BORDERCOLORS[0] //Blue
+          });
+  
+          chartData.datasets.push({
+            label: 'Range of Motion',
+            data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.RangeOfMotion),
+            borderColor: this.BORDERCOLORS[6] //Goldenrod
+          });
+          
+          break;
 
-      chartData.datasets.push({
-        label: 'Reps',
-        data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.Reps),
-        borderColor: this.BORDERCOLORS[7] //Lawn Green
-      });
+        case METRICS_TYPE.Reps:
+          chartData.datasets.push({
+            label: 'Reps',
+            data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.Reps),
+            borderColor: this.BORDERCOLORS[7] //Lawn Green
+          });
+    
+          break;
 
-      chartData.datasets.push({
-        label: 'Resistance',
-        data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.Resistance),
-        borderColor: this.BORDERCOLORS[9] //Red
-      });
-
+        case METRICS_TYPE.Resistance:
+          chartData.datasets.push({
+            label: 'Resistance',
+            data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.Resistance),
+            borderColor: this.BORDERCOLORS[9] //Red
+          });
+    
+          break;
+      }
     }
     
+    console.log("RETURNING CHART DATA: ", chartData);
     return chartData;
 
   }

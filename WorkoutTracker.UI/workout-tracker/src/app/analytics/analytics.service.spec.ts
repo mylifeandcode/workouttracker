@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ConfigService } from 'app/core/config.service';
 import { SetType } from 'app/core/enums/set-type';
 
-import { AnalyticsService } from './analytics.service';
+import { AnalyticsService, METRICS_TYPE } from './analytics.service';
 import { AnalyticsChartData } from './models/analytics-chart-data';
 import { ExecutedExerciseMetrics } from './models/executed-exercise-metrics';
 import { ExecutedWorkoutMetrics } from './models/executed-workout-metrics';
@@ -145,7 +145,7 @@ describe('AnalyticsService', () => {
     expectedResults.datasets.push({ label: 'Resistance', data: [ 120, 140 ], borderColor: '#FF0000' });
 
     //ACT
-    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7);
+    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.FormAndRangeOfMotion);
 
     console.log("RESULTS: ", results);
 

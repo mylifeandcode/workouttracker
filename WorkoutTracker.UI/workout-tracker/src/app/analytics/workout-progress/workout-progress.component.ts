@@ -4,7 +4,7 @@ import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { WorkoutService } from 'app/workouts/workout.service';
 import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
-import { AnalyticsService } from '../analytics.service';
+import { AnalyticsService, METRICS_TYPE } from '../analytics.service';
 import { AnalyticsChartData } from '../models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
 
@@ -17,8 +17,37 @@ export class WorkoutProgressComponent implements OnInit {
 
   public loadingData: boolean = true;
   public metrics: ExecutedWorkoutMetrics[];
-  public chartData: AnalyticsChartData;
+  public formAndRangeOfMotionChartData: AnalyticsChartData;
+  public repsChartData: AnalyticsChartData;
+  public resistanceChartData: AnalyticsChartData;
   public workouts: WorkoutDTO[];
+  public formAndRangeOfMotionChartOptions = { //Type "any" because of ChartJS
+    scales: {
+        y: {
+            ticks: {
+                callback: (value: number, index: number, ticks: number) => {
+                  //TODO: Leverage RatingPipe for this
+                  switch(value) {
+                    case 0:
+                      return 'N/A';
+                    case 1:
+                      return 'Bad';
+                    case 2:
+                      return 'Poor';
+                    case 3:
+                      return 'OK';
+                    case 4:
+                      return 'Good';
+                    case 5:
+                      return 'Excellent';
+                    default:
+                      return '';
+                  }
+                }
+            }
+        }
+    }
+}
 
   constructor(
     private _analyticsService: AnalyticsService, 
@@ -55,8 +84,9 @@ export class WorkoutProgressComponent implements OnInit {
   }
 
   private setupChartData(exerciseId: number): void {
-    //this.chartData = this._analyticsService.getWorkoutChartData(this.metrics, chartDataType);
-    this.chartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId);
+    this.formAndRangeOfMotionChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.FormAndRangeOfMotion);
+    this.repsChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Reps);
+    this.resistanceChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Resistance);
   }
 
   private getUserWorkouts(): void {
