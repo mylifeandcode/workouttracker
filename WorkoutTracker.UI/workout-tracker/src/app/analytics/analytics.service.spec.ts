@@ -74,9 +74,74 @@ describe('AnalyticsService', () => {
 
   });
 
-  it('should get exercise chart data', () => {
+  it('should get exercise chart data for form and range of motion', () => {
     
     //ARRANGE
+    const metrics = getMetricsForTest();
+
+    const expectedResults = new AnalyticsChartData();
+    expectedResults.labels = [];
+    expectedResults.labels[0] = "Mon Apr 04 2022";
+    expectedResults.labels[1] = "Mon Apr 11 2022";
+    expectedResults.datasets = [];
+    expectedResults.datasets.push({ label: 'Form', data: [ 5, 4 ], borderColor: '#0000FF' });
+    expectedResults.datasets.push({ label: 'Range of Motion', data: [ 5, 3 ], borderColor: '#DAA520' });
+
+    //ACT
+    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.FormAndRangeOfMotion);
+
+    console.log("RESULTS: ", results);
+
+    //ASSERT
+    expect(results).toEqual(expectedResults);
+
+  });
+
+  it('should get exercise chart data for reps', () => {
+    
+    //ARRANGE
+    const metrics = getMetricsForTest();
+
+    const expectedResults = new AnalyticsChartData();
+    expectedResults.labels = [];
+    expectedResults.labels[0] = "Mon Apr 04 2022";
+    expectedResults.labels[1] = "Mon Apr 11 2022";
+    expectedResults.datasets = [];
+    expectedResults.datasets.push({ label: 'Reps', data: [ 8, 6 ], borderColor: '#7CFC00' });
+
+    //ACT
+    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.Reps);
+
+    console.log("RESULTS: ", results);
+
+    //ASSERT
+    expect(results).toEqual(expectedResults);
+
+  });
+
+  it('should get exercise chart data for resistance', () => {
+    
+    //ARRANGE
+    const metrics = getMetricsForTest();
+
+    const expectedResults = new AnalyticsChartData();
+    expectedResults.labels = [];
+    expectedResults.labels[0] = "Mon Apr 04 2022";
+    expectedResults.labels[1] = "Mon Apr 11 2022";
+    expectedResults.datasets = [];
+    expectedResults.datasets.push({ label: 'Resistance', data: [ 120, 140 ], borderColor: '#FF0000' });
+
+    //ACT
+    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.Resistance);
+
+    console.log("RESULTS: ", results);
+
+    //ASSERT
+    expect(results).toEqual(expectedResults);
+
+  });
+
+  function getMetricsForTest(): ExecutedWorkoutMetrics[] {
     //TODO: Create builders for these
     const metrics: ExecutedWorkoutMetrics[] = [];
 
@@ -134,24 +199,7 @@ describe('AnalyticsService', () => {
 
     metrics.push(workout1, workout2);
 
-    const expectedResults = new AnalyticsChartData();
-    expectedResults.labels = [];
-    expectedResults.labels[0] = "Mon Apr 04 2022";
-    expectedResults.labels[1] = "Mon Apr 11 2022";
-    expectedResults.datasets = [];
-    expectedResults.datasets.push({ label: 'Form', data: [ 5, 4 ], borderColor: '#0000FF' });
-    expectedResults.datasets.push({ label: 'Range of Motion', data: [ 5, 3 ], borderColor: '#DAA520' });
-    expectedResults.datasets.push({ label: 'Reps', data: [ 8, 6 ], borderColor: '#7CFC00' });
-    expectedResults.datasets.push({ label: 'Resistance', data: [ 120, 140 ], borderColor: '#FF0000' });
-
-    //ACT
-    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.FormAndRangeOfMotion);
-
-    console.log("RESULTS: ", results);
-
-    //ASSERT
-    expect(results).toEqual(expectedResults);
-
-  });
+    return metrics;
+  }
 
 });
