@@ -17,9 +17,9 @@ export class WorkoutProgressComponent implements OnInit {
 
   public loadingData: boolean = true;
   public metrics: ExecutedWorkoutMetrics[];
-  public formAndRangeOfMotionChartData: AnalyticsChartData;
-  public repsChartData: AnalyticsChartData;
-  public resistanceChartData: AnalyticsChartData;
+  public formAndRangeOfMotionChartData: AnalyticsChartData | null = null;
+  public repsChartData: AnalyticsChartData | null = null;
+  public resistanceChartData: AnalyticsChartData | null = null;
   public workouts: WorkoutDTO[];
   public formAndRangeOfMotionChartOptions = { //Type "any" because of ChartJS
     scales: {
@@ -47,7 +47,7 @@ export class WorkoutProgressComponent implements OnInit {
             }
         }
     }
-}
+  }
 
   constructor(
     private _analyticsService: AnalyticsService, 
@@ -59,8 +59,10 @@ export class WorkoutProgressComponent implements OnInit {
 
   public workoutSelected(event: Event): void {
     this.loadingData = true;
+    this.metrics = [];
+    this.clearAnalyticsData();
 
-    let workoutId = Number((event.target as HTMLSelectElement).value);
+    let workoutId = parseInt((event.target as HTMLSelectElement).value);
     if(workoutId == NaN)
       return
 
@@ -73,12 +75,13 @@ export class WorkoutProgressComponent implements OnInit {
       .subscribe((results: ExecutedWorkoutMetrics[]) => {
         this.metrics = results;
         console.log("METRICS: ", this.metrics);
-        //this.setupChartData(1);
       });
   }
 
   public exerciseChange(event: Event): void {
-    let exerciseId: number = Number((event.target as HTMLSelectElement).value);
+    console.log("EXERCISE CHANGE: ", event);
+    let exerciseId: number = parseInt((event.target as HTMLSelectElement).value);
+    console.log("EXERCISE ID: ", exerciseId);
     if (exerciseId == NaN) return;
     this.setupChartData(exerciseId);
   }
@@ -95,5 +98,11 @@ export class WorkoutProgressComponent implements OnInit {
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
         this.workouts = _.sortBy(result.results, 'name');
       });
-  }  
+  }
+  
+  private clearAnalyticsData(): void {
+    this.formAndRangeOfMotionChartData = null;
+    this.repsChartData = null;
+    this.resistanceChartData = null;
+  }
 }

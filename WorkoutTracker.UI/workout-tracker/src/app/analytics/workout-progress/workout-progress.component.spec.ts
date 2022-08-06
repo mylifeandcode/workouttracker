@@ -4,9 +4,10 @@ import { PaginatedResults } from 'app/core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { WorkoutService } from 'app/workouts/workout.service';
 import { of } from 'rxjs';
-import { AnalyticsService } from '../analytics.service';
+import { AnalyticsService, METRICS_TYPE } from '../analytics.service';
 import { AnalyticsChartData } from '../models/analytics-chart-data';
 import { ExecutedExerciseMetrics } from '../models/executed-exercise-metrics';
+import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
 
 import { WorkoutProgressComponent } from './workout-progress.component';
 
@@ -16,7 +17,7 @@ class AnalyticsServiceMock {
 
   getExecutedWorkoutMetrics = jasmine.createSpy('getExecutedWorkoutMetrics')
     .and.callFake(() => {
-      const metrics = new Array<ExecutedExerciseMetrics>;
+      const metrics = new Array<ExecutedWorkoutMetrics>;
       const exercise1Metrics = new ExecutedExerciseMetrics();
       exercise1Metrics.name = "Exercise 1";
       exercise1Metrics.exerciseId = 1;
@@ -26,7 +27,10 @@ class AnalyticsServiceMock {
       const exercise3Metrics = new ExecutedExerciseMetrics();
       exercise3Metrics.name = "Exercise 3";
       exercise3Metrics.exerciseId = 3;
-      metrics.push(exercise1Metrics, exercise2Metrics, exercise3Metrics);
+      const metric1 = new ExecutedWorkoutMetrics();
+      metric1.exerciseMetrics = [];
+      metric1.exerciseMetrics.push(exercise1Metrics, exercise2Metrics, exercise3Metrics);
+      metrics.push(metric1);
       return of(metrics);
     });
 }
@@ -103,15 +107,59 @@ describe('WorkoutProgressComponent', () => {
   });
 
   it('should select workout', () => {
+    //ARRANGE
+    const workoutDefinitionsSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#workoutDefinitions');
+    workoutDefinitionsSelect.selectedIndex = 2;
+
+    //ACT
+    workoutDefinitionsSelect.dispatchEvent(new Event('change'));
+    fixture.detectChanges(); //Not really needed for this test, but a good practice
+
+    //ASSERT
+    expect(analyticsService.getExecutedWorkoutMetrics).toHaveBeenCalledWith(20);
+  });
+
+  it('should select exercise from workout', () => {
+    //ARRANGE
+    const workoutDefinitionsSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#workoutDefinitions');
+    workoutDefinitionsSelect.selectedIndex = 2;
+    workoutDefinitionsSelect.dispatchEvent(new Event('change'));
+    expect(analyticsService.getExecutedWorkoutMetrics).toHaveBeenCalledWith(20);
+
+    fixture.detectChanges(); //This is needed so the changes in the template which should occur once the workout definition selection occurs
+
+    //ACT
+    const exercisesSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#exercises');
+    exercisesSelect.selectedIndex = 1;
+    exercisesSelect.dispatchEvent(new Event('change'));
+    fixture.detectChanges(); //Not really needed for this test, but a good practice
+
+    //ASSERT
+    expect(analyticsService.getExerciseChartData).toHaveBeenCalledTimes(3);
+    expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(component.metrics, 1, METRICS_TYPE.FormAndRangeOfMotion);
+  });
+
+  it('should clear analytics data when selected workout changes', () => {
+    //ARRANGE
+    component.formAndRangeOfMotionChartData = new AnalyticsChartData();
+    component.repsChartData = new AnalyticsChartData();
+    component.resistanceChartData = new AnalyticsChartData();
+    fixture.detectChanges();
+
+    //Let's just be sure that those analytics values aren't null
+    expect(component.formAndRangeOfMotionChartData).not.toBeNull();
+    expect(component.repsChartData).not.toBeNull();
+    expect(component.resistanceChartData).not.toBeNull();
+
+    //ACT
     const workoutDefinitionsSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#workoutDefinitions');
     workoutDefinitionsSelect.selectedIndex = 0;
     workoutDefinitionsSelect.dispatchEvent(new Event('change'));
 
-    fixture.detectChanges(); //This is needed so the changes in the template which should occur once the workout definition selection occurs
-
-    const exercisesSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#exercises');
-    exercisesSelect.selectedIndex = 0;
-    exercisesSelect.dispatchEvent(new Event('change'));
+    //ASSERT
+    expect(component.formAndRangeOfMotionChartData).toBeNull();
+    expect(component.repsChartData).toBeNull();
+    expect(component.resistanceChartData).toBeNull();
   });
 
 });
