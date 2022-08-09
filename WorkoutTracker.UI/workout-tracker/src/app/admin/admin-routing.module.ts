@@ -5,6 +5,7 @@ import { UserSelectedGuard } from 'app/core/guards/user-selected.guard';
 
 import { AdminHomeComponent } from './admin-home/admin-home.component';
 import { ResistanceBandsComponent } from './resistance-bands/resistance-bands.component';
+import { SystemComponent } from './system/system.component';
 import { UserEditComponent } from './user-edit/user-edit.component';
 import { UserListComponent } from './user-list/user-list.component';
 
@@ -30,6 +31,10 @@ const routes: Routes = [
   {
     path: 'users/add',
     component: UserEditComponent
+  },
+  {
+    path: 'system',
+    component: SystemComponent
   },
   {
     path: '**',
