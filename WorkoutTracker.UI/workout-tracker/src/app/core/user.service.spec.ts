@@ -40,7 +40,7 @@ describe('UserService', () => {
   it('should get all users',  inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
     const expectedResults = new Array<User>();
 
-    service.all.subscribe(
+    service.all$.subscribe(
       (users: Array<User>) => expect(users).toEqual(expectedResults),
       fail
     );

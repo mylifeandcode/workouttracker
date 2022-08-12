@@ -1,14 +1,14 @@
-<span *ngIf="busy">{{busyMsg}}</span>
-<div *ngIf="!busy" class="container-fluid">
+<span>{{busyMsg}}</span>
+<div class="container-fluid">
   <h3 class="headroom">Users</h3>
-  <table *ngIf="users" class="table table-striped">
+  <table class="table table-striped">
     <thead>
       <tr>
         <th scope="col">Username</th>
         <th scope="col" class="text-end">Actions</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="users$ | async as users">
       <tr *ngFor="let user of users">
         <td>{{user.name}}</td>
         <td class="text-end">

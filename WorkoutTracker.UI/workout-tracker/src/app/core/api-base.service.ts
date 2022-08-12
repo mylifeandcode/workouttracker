@@ -17,7 +17,7 @@ export abstract class ApiBaseService<T extends Entity> {
   get all of the objects from the API for the specifed type. We'll do this if the user changes 
   any of the objects (add, update, delete) so that we can invalidate the cached Observable.
   */
-  protected _refreshGetAll = new BehaviorSubject<void>(undefined);
+  protected _refreshGetAll$ = new BehaviorSubject<void>(undefined);
 
   constructor(protected _apiRoot: string, protected _http: HttpClient) {}
 
@@ -32,7 +32,7 @@ export abstract class ApiBaseService<T extends Entity> {
    * which case the cache is refreshed. This Observable doesn't complete so you'll need to 
    * unsubscribe from it.
   */
-  public all: Observable<T[]> = this._refreshGetAll
+  public all$: Observable<T[]> = this._refreshGetAll$
     .pipe(
       tap(() => { console.log("GOT ALL DATA")}),
       mergeMap(() => this.getAllFromAPI()),
@@ -54,7 +54,7 @@ export abstract class ApiBaseService<T extends Entity> {
   public getAll(fromCache: boolean = true): Observable<T[]> {
     if (fromCache) {
       console.log("GETTING ALL FROM CACHE");
-      return this.all.pipe(take(1)); //Originally was using from() here, but despite that, the output Observable would not complete.
+      return this.all$.pipe(take(1)); //Originally was using from() here, but despite that, the output Observable would not complete.
     }
     else {
       console.log("GETTING ALL FROM API");
@@ -80,7 +80,7 @@ export abstract class ApiBaseService<T extends Entity> {
   public add(value: T): Observable<T> {
     return this._http.post<T>(this._apiRoot, value, HTTP_OPTIONS)
       .pipe(
-        tap(() => this._refreshGetAll.next()) //Because we've added an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+        tap(() => this._refreshGetAll$.next()) //Because we've added an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
   }
 
@@ -92,7 +92,7 @@ export abstract class ApiBaseService<T extends Entity> {
    public update(value: T): Observable<T> {
     return this._http.put<T>(`${this._apiRoot}/${value.id}`, value, HTTP_OPTIONS)
       .pipe(
-        tap(() => this._refreshGetAll.next()) //Because we've updated an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+        tap(() => this._refreshGetAll$.next()) //Because we've updated an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
   }
 
@@ -105,7 +105,7 @@ export abstract class ApiBaseService<T extends Entity> {
     console.log("DELETING");
     return this._http.delete(`${this._apiRoot}/${id}`)
       .pipe(
-        tap(() => this._refreshGetAll.next()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+        tap(() => this._refreshGetAll$.next()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
   }
 
@@ -113,7 +113,7 @@ export abstract class ApiBaseService<T extends Entity> {
    * Invalidates cached data
    */
   public invalidateCache(): void {
-    this._refreshGetAll.next();
+    this._refreshGetAll$.next();
   }
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
 

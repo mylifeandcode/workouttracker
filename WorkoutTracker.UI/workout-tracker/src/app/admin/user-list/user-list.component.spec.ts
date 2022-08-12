@@ -17,6 +17,7 @@ class UserServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(this.fakeUsers));
   getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
   delete = jasmine.createSpy('delete').and.returnValue(of(null)); //TOOD: Revisit
+  all$ = of(this.fakeUsers);
 }
 
 describe('UserListComponent', () => {
@@ -49,10 +50,13 @@ describe('UserListComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  //Removed. Using async pipe with Observable on service now.
+  /*
   it('should load users on init', () => {
     expect(userService.getAll).toHaveBeenCalledTimes(1);
     expect(component?.users?.length).toBeGreaterThan(0);
   });
+  */
 
   it('should prevent deleting user if user confirm dialog returns false', () => {
     //ARRANGE
@@ -76,6 +80,8 @@ describe('UserListComponent', () => {
     expect(userService.delete).toHaveBeenCalledWith(2);
   });
 
+  //Removed. Using async pipe with Observable on service now.
+  /*
   it('should remove deleted user from users array when user is deleted', () => {
     //ARRANGE
     spyOn(window, 'confirm').and.returnValue(true);
@@ -92,4 +98,5 @@ describe('UserListComponent', () => {
     else
       fail("component or component.users is null.");
   });
+  */
 });

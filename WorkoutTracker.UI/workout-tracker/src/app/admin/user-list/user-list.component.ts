@@ -1,26 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, OnInit } from '@angular/core';
 import { UserService } from '../../core/user.service';
 import { User } from '../../core/models/user';
 import * as _ from 'lodash';
-import { catchError, finalize } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { finalize, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'wt-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css']
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, AfterViewInit, AfterContentInit {
 
-  public busy: boolean;
-  public busyMsg: string;
-  public users: User[] | null = null;
+  public busy: boolean = true;
+  public busyMsg: string = '';
+  //public users: User[] | null = null;
+  public users$: Observable<User[]> = this._userSvc.all$;
   public errorMsg: string;
 
   constructor(private _userSvc: UserService) { } //TODO: We have a caching issue! Fix it!
+  ngAfterContentInit(): void {
+    //this.loadUsers();
+  }
+  
+  public ngAfterViewInit(): void {
+  }
 
   public ngOnInit(): void {
-    this.loadUsers();
   }
 
   public deleteUser(userId: number): void {
@@ -31,8 +37,8 @@ export class UserListComponent implements OnInit {
     this.busyMsg = "Deleting...";
     this._userSvc.delete(userId).subscribe(
       () => {
-          const index = _.findIndex(this.users, (user: User) => user.id == userId);
-          this.users?.splice(index, 1);
+          //const index = _.findIndex(this.users, (user: User) => user.id == userId);
+          //this.users?.splice(index, 1);
       },
       (error: any) => this.errorMsg = error,
       () => {
@@ -42,17 +48,24 @@ export class UserListComponent implements OnInit {
     );
   }
 
+  /*
   private loadUsers(): void {
-    this._userSvc.getAll()
+    //this._userSvc.getAll()
+    this.users$ = this._userSvc.all$
       .pipe(
+        tap(() => {
+          this.busy = true;
+          this.busyMsg = "Getting data...";
+        }),
         finalize(() => {
           this.busy = false;
           this.busyMsg = "";            
         })
-      )
+      );
       .subscribe((users: User[]) => {
         this.users = users;
       });
   }
+  */
 
 }

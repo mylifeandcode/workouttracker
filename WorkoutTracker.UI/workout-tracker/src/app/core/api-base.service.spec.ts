@@ -52,7 +52,7 @@ describe('ApiBaseService', () => {
     const widgets = new Array<Widget>();
 
     //ACT
-    const result = service.all;
+    const result = service.all$;
     result.subscribe((widgetResults: Widget[]) => {
       expect(widgetResults).toBe(widgets, fail);
     });
