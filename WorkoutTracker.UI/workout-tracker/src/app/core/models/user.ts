@@ -4,6 +4,7 @@ import { UserSettings } from './user-settings';
 export class User extends NamedEntity {
   public profilePic: string;
   public settings: UserSettings;
+  public role: number;
 
   public constructor(init?: Partial<User>) {
     super();

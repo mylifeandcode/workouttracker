@@ -6,12 +6,14 @@ import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+import { CustomValidators } from 'app/validators/custom-validators';
 
 interface IUserEditForm {
   id: FormControl<number>;
   name: FormControl<string>;
   password: FormControl<string | null>; //Password is only shown for new users
   confirmPassword: FormControl<string | null>; //Confirm password is only shown for new users
+  role: FormControl<number>;
 }
 
 @Component({
@@ -80,7 +82,8 @@ export class UserEditComponent implements OnInit {
       id: new FormControl<number>(0, { nonNullable: true }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       password: new FormControl<string | null>(null),
-      confirmPassword: new FormControl<string | null>(null)
+      confirmPassword: new FormControl<string | null>(null),
+      role: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)]})
     });
 
   }
@@ -91,16 +94,17 @@ export class UserEditComponent implements OnInit {
       const userId = params['id'];
       if (userId && userId > 0) {
         this.getUserInfoFromService(userId);
-        this.userEditForm.controls.password.addValidators(Validators.required);
-        this.userEditForm.controls.confirmPassword.addValidators([ Validators.required ]);
+        this.addingNewUser = false;
       }
       else {
         this._user = new User();
         this._user.id = 0;
+        this.userEditForm.controls.password.addValidators(Validators.required);
+        this.userEditForm.controls.confirmPassword.addValidators([ Validators.required ]);
+        this.userEditForm.addValidators(CustomValidators.passwordsMatch);
         this.loadingUserInfo = false;
+        this.addingNewUser = true;
       }
-
-      this.addingNewUser = this._user.id == 0;
     });
 
   }
@@ -111,7 +115,7 @@ export class UserEditComponent implements OnInit {
       .subscribe(
       (user: User) => {
         this._user = user;
-        this.userEditForm.patchValue({ id: this._user.id, name: this._user.name });
+        this.userEditForm.patchValue({ id: this._user.id, name: this._user.name, role: this._user.role });
       },
       (error: any) => this.errorMsg = error,
       () => this.loadingUserInfo = false);
@@ -123,6 +127,7 @@ export class UserEditComponent implements OnInit {
 
     user.id = this.userEditForm.controls.id.value;
     user.name = this.userEditForm.controls.name.value;
+    user.role = this.userEditForm.controls.role.value;
 
     return user;
   }

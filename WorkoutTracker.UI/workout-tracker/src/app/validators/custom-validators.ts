@@ -1,5 +1,5 @@
 ﻿//From https://stackoverflow.com/questions/42038099/validation-on-a-list-of-checkboxes-angular-2
-import { AbstractControl, FormArray, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export class CustomValidators {
     /*
@@ -30,6 +30,7 @@ export class CustomValidators {
       (control: AbstractControl): ValidationErrors | null => {
         let valid = true;
 
+        //TODO: Revisit. Code smell here. Control names must match the ones used here in the validator.
         const startDateTime = control.get('startDateTime');
         const endDateTime = control.get('endDateTime');
 
@@ -40,5 +41,23 @@ export class CustomValidators {
         return valid ? null : {
           startDateTimeVsEndDateTime: true
         }
+      }
+
+    static passwordsMatch: ValidatorFn = 
+      (control: AbstractControl): ValidationErrors | null => {
+        let valid = true;
+
+        //TODO: Revisit. Code smell here. Control names must match the ones used here in the validator.
+        const password = control.get('password');
+        const confirmPassword = control.get('confirmPassword');
+        
+        if(password && confirmPassword) {
+          valid = (password.value == confirmPassword.value);
+        }
+
+        return valid ? null : {
+          passwordsMatch: true
+        }
+
       }
 }

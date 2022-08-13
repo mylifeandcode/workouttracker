@@ -13,14 +13,35 @@
             <span class="text-danger headroom" *ngIf="userEditForm.controls.name.touched && userEditForm.controls.name.errors?.required"> Required</span>
           </div>
 
-          <div class="form-group">
-            <label *ngIf="userEditForm.controls.password.validator" class="center-block headroom">
+          <div *ngIf="userEditForm.controls.password.validator" class="form-group">
+            <label class="center-block headroom">
               Password:
               <input class="form-control" formControlName="password" placeholder="Password (required)" />
             </label>
             <span class="text-danger headroom" *ngIf="userEditForm.controls.password.touched && userEditForm.controls.password.errors?.required"> Required</span>
           </div>
-      
+          
+          <div *ngIf="userEditForm.controls.password.validator" class="form-group">
+            <label class="center-block headroom">
+              Confirm Password:
+              <input class="form-control" formControlName="confirmPassword" placeholder="Confirm Password (required)" />
+            </label>
+            <span class="text-danger headroom" *ngIf="userEditForm.controls.confirmPassword.touched && userEditForm.controls.confirmPassword.errors?.required"> Required</span>
+            <span class="text-danger headroom" *ngIf="userEditForm.controls.confirmPassword.touched && userEditForm.errors?.passwordsMatch"> Passwords must match</span>
+          </div>
+
+          <div class="form-group">
+            <label class="center-block headroom">
+              Role:
+              <select class="form-control" formControlName="role" placeholder="User Role (required)">
+                <option value="0" selected disabled>Choose a User Role</option>
+                <option value="1">Standard</option>
+                <option value="2">Administrator</option>
+              </select>
+            </label>
+            <span class="text-danger headroom" *ngIf="userEditForm.controls.name.touched && userEditForm.controls.name.errors?.required"> Required</span>
+          </div>
+
           <div class="headroom">
             <button type="submit" [disabled]="userEditForm.invalid" (click)="saveUser()" class="btn btn-success">Save</button>
             &nbsp;
@@ -28,7 +49,9 @@
             <span *ngIf="savingUserInfo">Saving...</span> <span *ngIf="errorMsg" class="errorText">{{errorMsg}}</span>
           </div>
         </form>
-
+        <div class="headroom">
+          <a routerLink="/admin/users">Users List</a>
+        </div>
       </div>
     </div>
   </div>

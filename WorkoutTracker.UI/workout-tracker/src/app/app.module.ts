@@ -43,16 +43,17 @@ function initializeApp(
   userService: UserService, 
   authService: AuthService, 
   http: HttpClient): () => Observable<any> {
-  return () => http.get("config.json")
-    .pipe(
-      tap((config: Object) => {
-        console.log("Loaded config: ", config);
-        configService.init(config);
-        authService.init();
-        authService.restoreUserSessionIfApplicable(); 
-        userService.init();
-      })
-    );
+    console.log("APP IS INITIALIZING...");
+    return () => http.get("config.json")
+      .pipe(
+        tap((config: Object) => {
+          console.log("Loaded config: ", config);
+          configService.init(config);
+          authService.init();
+          authService.restoreUserSessionIfApplicable(); 
+          userService.init();
+        })
+      );
 }
 
 @NgModule({
