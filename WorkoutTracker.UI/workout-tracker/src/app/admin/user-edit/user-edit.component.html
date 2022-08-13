@@ -1,29 +1,35 @@
-<div class="container">
-  <form *ngIf="!loadingUserInfo" [formGroup]="userEditForm" novalidate>
+  <div class="container">
     <div class="row">
+      <div *ngIf="!loadingUserInfo" class="headroom offset-4 col-8">
+        <h3>{{addingNewUser ? 'Add User' : 'Edit User'}}</h3>
+        <form [formGroup]="userEditForm" novalidate>
+          <div class="form-group">
+            <input type="hidden" formControlName="id" />
+      
+            <label class="center-block headroom">
+              Name:
+              <input class="form-control" formControlName="name" placeholder="User Name (required)" />
+            </label>
+            <span class="text-danger headroom" *ngIf="userEditForm.controls.name.touched && userEditForm.controls.name.errors?.required"> Required</span>
+          </div>
 
-      <div class="col-md-offset-4 col-md-4 form-group">
-        <input type="hidden" formControlName="id" />
+          <div class="form-group">
+            <label *ngIf="userEditForm.controls.password.validator" class="center-block headroom">
+              Password:
+              <input class="form-control" formControlName="password" placeholder="Password (required)" />
+            </label>
+            <span class="text-danger headroom" *ngIf="userEditForm.controls.password.touched && userEditForm.controls.password.errors?.required"> Required</span>
+          </div>
+      
+          <div class="headroom">
+            <button type="submit" [disabled]="userEditForm.invalid" (click)="saveUser()" class="btn btn-success">Save</button>
+            &nbsp;
+            <button type="button" [disabled]="savingUserInfo || loadingUserInfo" (click)="cancel()" class="btn btn-warning">Cancel</button>
+            <span *ngIf="savingUserInfo">Saving...</span> <span *ngIf="errorMsg" class="errorText">{{errorMsg}}</span>
+          </div>
+        </form>
 
-        <label class="center-block">
-          Name:
-          <input class="form-control" formControlName="name" placeholder="User Name (required)" />
-          <span *ngIf="userEditForm.controls.name.errors">REQUIRED</span>
-        </label>
-
-        <!--TODO: Add ability to set password, upload profile pic-->
       </div>
-
     </div>
-
-    <div class="row">
-      <div class="col-md-offset-4 col-md-6">
-        <button type="submit" [disabled]="userEditForm.invalid" (click)="saveUser()" class="btn btn-success">Save</button>
-        &nbsp;
-        <button type="button" [disabled]="savingUserInfo || loadingUserInfo" (click)="cancel()" class="btn btn-warning">Cancel</button>
-        <span *ngIf="savingUserInfo">Saving...</span> <span *ngIf="errorMsg" class="errorText">{{errorMsg}}</span>
-      </div>
-    </div>
-  </form>
-</div>
+  </div>
 

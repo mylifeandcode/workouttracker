@@ -37,7 +37,7 @@ export abstract class ApiBaseService<T extends Entity> {
       tap(() => { console.log("GOT ALL DATA")}),
       mergeMap(() => this.getAllFromAPI()),
       shareReplay(1) //Without this, the call was getting made each time
-      //TODO: Read this to hopefully correct the issue with this code: https://dev.to/this-is-angular/how-caching-data-in-angular-with-rxjs-27mj
+      //This approach was described here: https://dev.to/this-is-angular/how-caching-data-in-angular-with-rxjs-27mj
     );
   //END PUBLIC FIELDS /////////////////////////////////////////////////////////
 

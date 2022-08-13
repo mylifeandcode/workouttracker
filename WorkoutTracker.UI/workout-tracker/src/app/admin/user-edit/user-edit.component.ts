@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../core/user.service';
 import { User } from 'app/core/models/user';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
@@ -10,6 +10,8 @@ import { finalize } from 'rxjs/operators';
 interface IUserEditForm {
   id: FormControl<number>;
   name: FormControl<string>;
+  password: FormControl<string | null>; //Password is only shown for new users
+  confirmPassword: FormControl<string | null>; //Confirm password is only shown for new users
 }
 
 @Component({
@@ -21,6 +23,7 @@ export class UserEditComponent implements OnInit {
 
   public loadingUserInfo: boolean = true;
   public savingUserInfo: boolean = false;
+  public addingNewUser: boolean = false;
   public errorMsg: string;
   public userEditForm: FormGroup<IUserEditForm>;
 
@@ -64,24 +67,40 @@ export class UserEditComponent implements OnInit {
     if (this.userEditForm.dirty && !window.confirm("Cancel without saving changes?"))
         return;
 
-    this._router.navigate(['']);
+    this._router.navigate(['/admin/users']);
   }
 
   //END PUBLIC METHODS
 
   //PRIVATE METHODS
 
+  private createForm(): void {
+
+    this.userEditForm = this._formBuilder.group<IUserEditForm>({
+      id: new FormControl<number>(0, { nonNullable: true }),
+      name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+      password: new FormControl<string | null>(null),
+      confirmPassword: new FormControl<string | null>(null)
+    });
+
+  }
+
   private getUserInfo(): void {
 
     this._route.params.subscribe(params => {
       const userId = params['id'];
-      if (userId && userId > 0)
+      if (userId && userId > 0) {
         this.getUserInfoFromService(userId);
+        this.userEditForm.controls.password.addValidators(Validators.required);
+        this.userEditForm.controls.confirmPassword.addValidators([ Validators.required ]);
+      }
       else {
         this._user = new User();
         this._user.id = 0;
         this.loadingUserInfo = false;
       }
+
+      this.addingNewUser = this._user.id == 0;
     });
 
   }
@@ -96,16 +115,6 @@ export class UserEditComponent implements OnInit {
       },
       (error: any) => this.errorMsg = error,
       () => this.loadingUserInfo = false);
-
-  }
-
-  private createForm(): void {
-
-    //Use FormBuilder to create our root FormGroup
-    this.userEditForm = this._formBuilder.group<IUserEditForm>({
-      id: new FormControl<number>(0, { nonNullable: true}),
-      name: new FormControl<string>('', { nonNullable: true})
-    });
 
   }
 
