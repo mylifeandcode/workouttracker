@@ -68,7 +68,7 @@ namespace WorkoutTracker.UI.Controllers
                     return NotFound();
                 else
                 {
-                    entity.HashedPassword = null;
+                    entity.HashedPassword = null; //TODO: Check if we need this. We already have an attribute in the class to not serialize this field.
                     return Ok(entity);
                 }
             }
@@ -81,13 +81,22 @@ namespace WorkoutTracker.UI.Controllers
         [AllowAnonymous]
         public override ActionResult<IEnumerable<User>> Get()
         {
-            return base.Get();
+            return base.Get(); //TODO: Remember why I overrode this rather than just deferring to the base class!
         }
 
         [Authorize(Roles = "Administrator")]
         public override ActionResult<User> Post([FromBody] User value)
         {
-            return base.Post(value);
+            throw new NotImplementedException();
+            //return base.Post(value); //TODO: Remember why I overrode this rather than just deferring to the base class!
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [Route("/new")]
+        public ActionResult<User> Post([FromBody] UserAuthDTO value)
+        {
+            throw new NotImplementedException();
+            //return base.Post(value); //TODO: Remember why I overrode this rather than just deferring to the base class!
         }
 
         [HttpGet("overview")]

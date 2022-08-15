@@ -80,7 +80,7 @@ export abstract class ApiBaseService<T extends Entity> {
   public add(value: T): Observable<T> {
     return this._http.post<T>(this._apiRoot, value, HTTP_OPTIONS)
       .pipe(
-        tap(() => this._refreshGetAll$.next()) //Because we've added an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+        tap(() => this.invalidateCache()) //Because we've added an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
   }
 
@@ -92,7 +92,7 @@ export abstract class ApiBaseService<T extends Entity> {
    public update(value: T): Observable<T> {
     return this._http.put<T>(`${this._apiRoot}/${value.id}`, value, HTTP_OPTIONS)
       .pipe(
-        tap(() => this._refreshGetAll$.next()) //Because we've updated an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+        tap(() => this.invalidateCache()) //Because we've updated an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
   }
 
@@ -105,7 +105,7 @@ export abstract class ApiBaseService<T extends Entity> {
     console.log("DELETING");
     return this._http.delete(`${this._apiRoot}/${id}`)
       .pipe(
-        tap(() => this._refreshGetAll$.next()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+        tap(() => this.invalidateCache()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
   }
 

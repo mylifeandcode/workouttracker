@@ -16,7 +16,7 @@
           <div *ngIf="userEditForm.controls.password.validator" class="form-group">
             <label class="center-block headroom">
               Password:
-              <input class="form-control" formControlName="password" placeholder="Password (required)" />
+              <input type="password" class="form-control" formControlName="password" placeholder="Password (required)" />
             </label>
             <span class="text-danger headroom" *ngIf="userEditForm.controls.password.touched && userEditForm.controls.password.errors?.required"> Required</span>
           </div>
@@ -24,7 +24,7 @@
           <div *ngIf="userEditForm.controls.password.validator" class="form-group">
             <label class="center-block headroom">
               Confirm Password:
-              <input class="form-control" formControlName="confirmPassword" placeholder="Confirm Password (required)" />
+              <input type="password" class="form-control" formControlName="confirmPassword" placeholder="Confirm Password (required)" />
             </label>
             <span class="text-danger headroom" *ngIf="userEditForm.controls.confirmPassword.touched && userEditForm.controls.confirmPassword.errors?.required"> Required</span>
             <span class="text-danger headroom" *ngIf="userEditForm.controls.confirmPassword.touched && userEditForm.errors?.passwordsMatch"> Passwords must match</span>

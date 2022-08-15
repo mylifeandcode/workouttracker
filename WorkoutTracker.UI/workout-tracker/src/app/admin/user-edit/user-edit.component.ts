@@ -129,6 +129,9 @@ export class UserEditComponent implements OnInit {
     user.name = this.userEditForm.controls.name.value;
     user.role = this.userEditForm.controls.role.value;
 
+    //if(this.userEditForm.controls.password.value)
+      //user.password = this.userEditForm.controls.password.value;
+
     return user;
   }
 
