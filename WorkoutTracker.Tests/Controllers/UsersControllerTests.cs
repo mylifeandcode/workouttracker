@@ -6,6 +6,7 @@ using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.UI.Controllers;
 using WorkoutTracker.Application.Workouts.Interfaces;
+using WorkoutTracker.UI.Auth;
 
 namespace WorkoutTracker.Tests.Controllers
 {
@@ -20,7 +21,9 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.GetAll()).Returns(users);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
+            var cryptoService = new Mock<ICryptoService>(MockBehavior.Strict);
+            cryptoService.Setup(mock => mock.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHashedValue");
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, cryptoService.Object);
 
             //ACT
             var result = sut.Get();
@@ -41,7 +44,9 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.GetById(It.IsAny<int>())).Returns(user);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
+            var cryptoService = new Mock<ICryptoService>(MockBehavior.Strict);
+            cryptoService.Setup(mock => mock.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHashedValue");
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, cryptoService.Object);
 
             //ACT
             var result = sut.Get(1);
@@ -61,7 +66,9 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.GetById(It.IsAny<int>())).Returns(user);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
+            var cryptoService = new Mock<ICryptoService>(MockBehavior.Strict);
+            cryptoService.Setup(mock => mock.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHashedValue");
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, cryptoService.Object);
 
             //ACT
             var result = sut.Get(2);
@@ -80,7 +87,9 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.Add(user)).Returns(user);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
+            var cryptoService = new Mock<ICryptoService>(MockBehavior.Strict);
+            cryptoService.Setup(mock => mock.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHashedValue");
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, cryptoService.Object);
             SetupUser(sut);
 
             //ACT
@@ -101,7 +110,9 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.Update(user)).Returns(user);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
+            var cryptoService = new Mock<ICryptoService>(MockBehavior.Strict);
+            cryptoService.Setup(mock => mock.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHashedValue");
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, cryptoService.Object);
             SetupUser(sut);
 
             //ACT
@@ -121,7 +132,9 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.Delete(It.IsAny<int>()));
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object);
+            var cryptoService = new Mock<ICryptoService>(MockBehavior.Strict);
+            cryptoService.Setup(mock => mock.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHashedValue");
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, cryptoService.Object);
 
             //ACT
             var result = sut.Delete(1);

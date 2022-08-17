@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { User } from './models/user';
-import { map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { LocalStorageService } from './local-storage.service';
 import { ConfigService } from './config.service';
 import { UserOverview } from './models/user-overview';
 import { ApiBaseService } from './api-base.service';
+import { UserNewDTO } from './models/user-new-dto';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -38,8 +39,12 @@ export class UserService extends ApiBaseService<User> {
     return this._http.get<UserOverview>(`${this._apiRoot}/overview`);
   }
 
-  public addNew(user: User): Observable<User> {
-    return this._http.post<User>(`${this._apiRoot}/new`, user);
+  public addNew(user: UserNewDTO): Observable<User> {
+    return this._http.post<User>(`${this._apiRoot}/new`, user).pipe(tap((user: User) => { this.invalidateCache(); }));
+  }
+
+  public override add(user: User): Observable<never> {
+    return throwError("To add new users, use the addNew() method. UserService doesn't support the base add() method.");
   }
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////

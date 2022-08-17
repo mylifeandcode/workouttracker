@@ -25,6 +25,7 @@ import { ResistanceBandsComponent } from './resistance-bands/resistance-bands.co
 import { UserEditComponent } from './user-edit/user-edit.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { SystemComponent } from './system/system.component';
+import { UserAddComponent } from './user-add/user-add.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { SystemComponent } from './system/system.component';
     ResistanceBandsComponent,
     UserEditComponent,
     UserListComponent,
-    SystemComponent
+    SystemComponent,
+    UserAddComponent
   ],
   imports: [
     AdminRoutingModule,

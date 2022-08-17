@@ -1,4 +1,4 @@
 {
   "apiRoot": "http://localhost:5600/api/",
-  "loginWithUserSelect": true
+  "loginWithUserSelect": false
 }

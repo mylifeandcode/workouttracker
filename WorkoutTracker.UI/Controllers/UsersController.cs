@@ -9,6 +9,7 @@ using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.UI.Models;
 using WorkoutTracker.Application.Workouts.Interfaces;
+using WorkoutTracker.UI.Auth;
 
 namespace WorkoutTracker.UI.Controllers
 {
@@ -20,12 +21,15 @@ namespace WorkoutTracker.UI.Controllers
     public class UsersController : SimpleAPIControllerBase<User>
     {
         private readonly IExecutedWorkoutService _executedWorkoutService;
+        private readonly ICryptoService _cryptoService;
 
         public UsersController(
             IUserService userService, 
-            IExecutedWorkoutService executedWorkoutService) : base(userService)
+            IExecutedWorkoutService executedWorkoutService, 
+            ICryptoService cryptoService) : base(userService)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
+            _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
         }
 
         //TODO: Revisit. The below was causing a 500 response.
@@ -92,11 +96,11 @@ namespace WorkoutTracker.UI.Controllers
         }
 
         [Authorize(Roles = "Administrator")]
-        [Route("/new")]
-        public ActionResult<User> Post([FromBody] UserAuthDTO value)
+        [HttpPost("new")]
+        public ActionResult<User> Post([FromBody] UserNewDTO value)
         {
-            throw new NotImplementedException();
-            //return base.Post(value); //TODO: Remember why I overrode this rather than just deferring to the base class!
+            var user = GetUserFromUserNewDTO(value);
+            return base.Post(user);
         }
 
         [HttpGet("overview")]
@@ -117,6 +121,17 @@ namespace WorkoutTracker.UI.Controllers
             overview.PlannedWorkoutCount = _executedWorkoutService.GetPlannedCount(GetUserID());
 
             return Ok(overview);
+        }
+
+        private User GetUserFromUserNewDTO(UserNewDTO userNew)
+        {
+            var user = new User();
+            SetCreatedAuditFields(user);
+            user.Name = userNew.UserName;
+            user.Role = userNew.Role;
+            var salt = "TempSalt"; //TODO: Replace with generated salt once User class has been expanded to store it
+            user.HashedPassword = _cryptoService.ComputeHash(userNew.Password, salt);
+            return user;
         }
     }
 }

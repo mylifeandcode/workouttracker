@@ -22,15 +22,18 @@ namespace WorkoutTracker.UI.Controllers
         private IUserService _userService;
         private ITokenService _tokenService;
         private IConfiguration _config;
+        private ICryptoService _cryptoService;
 
         public AuthController(
             IUserService userService, 
             ITokenService tokenService, 
-            IConfiguration config)
+            IConfiguration config, 
+            ICryptoService cryptoService)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
             _config = config ?? throw new ArgumentNullException(nameof(config));
+            _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
         }
 
         [AllowAnonymous]
@@ -46,9 +49,10 @@ namespace WorkoutTracker.UI.Controllers
             if (user == null)
                 return new NotFoundResult();
 
-            if (!string.IsNullOrWhiteSpace(user.HashedPassword))
+            if (!string.IsNullOrWhiteSpace(user.HashedPassword)) //When the client is set up to use the simple, User Select mode, HashedPassword could be null...until v1.0
             {
-                //TODO: Hash the supplied password and compared it hashed password on the user object
+                if (!VerifyPasswordMatches(credentials.Password, user.HashedPassword))
+                    return new UnauthorizedResult();
             }
 
             var token = 
@@ -65,6 +69,12 @@ namespace WorkoutTracker.UI.Controllers
             return credentials != null
                 && !string.IsNullOrWhiteSpace(credentials.Username);
                 //&& !string.IsNullOrWhiteSpace(credentials.Password);
+        }
+
+        private bool VerifyPasswordMatches(string clearTextPassword, string hashedPassword)
+        {
+            string passwordHashedFromClearText = _cryptoService.ComputeHash(clearTextPassword, "TempSalt");
+            return passwordHashedFromClearText == hashedPassword;
         }
     }
 }
