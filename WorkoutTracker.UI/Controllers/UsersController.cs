@@ -129,8 +129,8 @@ namespace WorkoutTracker.UI.Controllers
             SetCreatedAuditFields(user);
             user.Name = userNew.UserName;
             user.Role = userNew.Role;
-            var salt = "TempSalt"; //TODO: Replace with generated salt once User class has been expanded to store it
-            user.HashedPassword = _cryptoService.ComputeHash(userNew.Password, salt);
+            user.Salt = _cryptoService.GenerateSalt();
+            user.HashedPassword = _cryptoService.ComputeHash(userNew.Password, user.Salt);
             return user;
         }
     }

@@ -51,7 +51,7 @@ namespace WorkoutTracker.UI.Controllers
 
             if (!string.IsNullOrWhiteSpace(user.HashedPassword)) //When the client is set up to use the simple, User Select mode, HashedPassword could be null...until v1.0
             {
-                if (!VerifyPasswordMatches(credentials.Password, user.HashedPassword))
+                if (!VerifyPasswordMatches(credentials.Password, user.HashedPassword, user.Salt))
                     return new UnauthorizedResult();
             }
 
@@ -71,9 +71,9 @@ namespace WorkoutTracker.UI.Controllers
                 //&& !string.IsNullOrWhiteSpace(credentials.Password);
         }
 
-        private bool VerifyPasswordMatches(string clearTextPassword, string hashedPassword)
+        private bool VerifyPasswordMatches(string clearTextPassword, string hashedPassword, string salt)
         {
-            string passwordHashedFromClearText = _cryptoService.ComputeHash(clearTextPassword, "TempSalt");
+            string passwordHashedFromClearText = _cryptoService.ComputeHash(clearTextPassword, salt);
             return passwordHashedFromClearText == hashedPassword;
         }
     }
