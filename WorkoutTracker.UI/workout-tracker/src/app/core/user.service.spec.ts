@@ -5,6 +5,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { User } from 'app/core/models/user';
 import { ConfigService } from './config.service';
 import { UserOverview } from './models/user-overview';
+import { UserNewDTO } from './models/user-new-dto';
 
 const TEST_USER_ID: string = "1";
 
@@ -72,20 +73,21 @@ describe('UserService', () => {
   }));
 
   it('should add user', inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
-    const user = new User();
+    const userNew = new UserNewDTO();
+    const userSaved = new User();
 
-    service.add(user)
+    service.addNew(userNew)
       .subscribe(
-        (result: User) => expect(result).toEqual(user),
+        (result: User) => expect(result).toEqual(userSaved),
         fail
       );
 
-    const request = httpMock.expectOne('http://localhost:5600/api/Users');
+    const request = httpMock.expectOne('http://localhost:5600/api/Users/new');
     expect(request.request.method).toEqual('POST');
-    expect(request.request.body).toEqual(user);
+    expect(request.request.body).toEqual(userNew);
 
     // Respond with the mock results
-    request.flush(user);
+    request.flush(userSaved);
 
   }));
 

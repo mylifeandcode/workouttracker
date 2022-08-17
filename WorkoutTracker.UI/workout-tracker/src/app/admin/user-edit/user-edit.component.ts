@@ -11,8 +11,6 @@ import { CustomValidators } from 'app/validators/custom-validators';
 interface IUserEditForm {
   id: FormControl<number>;
   name: FormControl<string>;
-  password: FormControl<string | null>; //Password is only shown for new users
-  confirmPassword: FormControl<string | null>; //Confirm password is only shown for new users
   role: FormControl<number>;
 }
 
@@ -25,7 +23,6 @@ export class UserEditComponent implements OnInit {
 
   public loadingUserInfo: boolean = true;
   public savingUserInfo: boolean = false;
-  public addingNewUser: boolean = false;
   public errorMsg: string;
   public userEditForm: FormGroup<IUserEditForm>;
 
@@ -81,8 +78,6 @@ export class UserEditComponent implements OnInit {
     this.userEditForm = this._formBuilder.group<IUserEditForm>({
       id: new FormControl<number>(0, { nonNullable: true }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-      password: new FormControl<string | null>(null),
-      confirmPassword: new FormControl<string | null>(null),
       role: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)]})
     });
 
@@ -92,19 +87,7 @@ export class UserEditComponent implements OnInit {
 
     this._route.params.subscribe(params => {
       const userId = params['id'];
-      if (userId && userId > 0) {
-        this.getUserInfoFromService(userId);
-        this.addingNewUser = false;
-      }
-      else {
-        this._user = new User();
-        this._user.id = 0;
-        this.userEditForm.controls.password.addValidators(Validators.required);
-        this.userEditForm.controls.confirmPassword.addValidators([ Validators.required ]);
-        this.userEditForm.addValidators(CustomValidators.passwordsMatch);
-        this.loadingUserInfo = false;
-        this.addingNewUser = true;
-      }
+      this.getUserInfoFromService(userId);
     });
 
   }
@@ -128,9 +111,6 @@ export class UserEditComponent implements OnInit {
     user.id = this.userEditForm.controls.id.value;
     user.name = this.userEditForm.controls.name.value;
     user.role = this.userEditForm.controls.role.value;
-
-    //if(this.userEditForm.controls.password.value)
-      //user.password = this.userEditForm.controls.password.value;
 
     return user;
   }

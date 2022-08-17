@@ -72,26 +72,13 @@ describe('UserEditComponent', () => {
     expect(userService.getById).toHaveBeenCalledTimes(1);
   });
 
-  it('should add new user', () => {
-    //ARRANGE
-    const userService = TestBed.inject(UserService);
-    const expectedUser = new User({id: 0, name: 'Dr. Klahn'});
-    component.userEditForm.controls.id.setValue(expectedUser.id);
-    component.userEditForm.controls.name.setValue(expectedUser.name);
-
-    //ACT
-    component.saveUser();
-
-    //ASSERT
-    expect(userService.add).toHaveBeenCalledWith(expectedUser);
-  });
-
   it('should update existing user', () => {
     //ARRANGE
     const userService = TestBed.inject(UserService);
-    const expectedUser = new User({id: 100, name: 'Big Jim Slade'});
+    const expectedUser = new User({id: 100, name: 'Big Jim Slade', role: 2});
     component.userEditForm.controls.id.setValue(expectedUser.id);
     component.userEditForm.controls.name.setValue(expectedUser.name);
+    component.userEditForm.controls.role.setValue(2);
 
     //ACT
     component.saveUser();

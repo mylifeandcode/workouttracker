@@ -1,7 +1,7 @@
   <div class="container">
     <div class="row">
       <div *ngIf="!loadingUserInfo" class="headroom offset-4 col-8">
-        <h3>{{addingNewUser ? 'Add User' : 'Edit User'}}</h3>
+        <h3>Edit User</h3>
         <form [formGroup]="userEditForm" novalidate>
           <div class="form-group">
             <input type="hidden" formControlName="id" />
@@ -11,23 +11,6 @@
               <input class="form-control" formControlName="name" placeholder="User Name (required)" />
             </label>
             <span class="text-danger headroom" *ngIf="userEditForm.controls.name.touched && userEditForm.controls.name.errors?.required"> Required</span>
-          </div>
-
-          <div *ngIf="userEditForm.controls.password.validator" class="form-group">
-            <label class="center-block headroom">
-              Password:
-              <input type="password" class="form-control" formControlName="password" placeholder="Password (required)" />
-            </label>
-            <span class="text-danger headroom" *ngIf="userEditForm.controls.password.touched && userEditForm.controls.password.errors?.required"> Required</span>
-          </div>
-          
-          <div *ngIf="userEditForm.controls.password.validator" class="form-group">
-            <label class="center-block headroom">
-              Confirm Password:
-              <input type="password" class="form-control" formControlName="confirmPassword" placeholder="Confirm Password (required)" />
-            </label>
-            <span class="text-danger headroom" *ngIf="userEditForm.controls.confirmPassword.touched && userEditForm.controls.confirmPassword.errors?.required"> Required</span>
-            <span class="text-danger headroom" *ngIf="userEditForm.controls.confirmPassword.touched && userEditForm.errors?.passwordsMatch"> Passwords must match</span>
           </div>
 
           <div class="form-group">
