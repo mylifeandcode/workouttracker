@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 
 interface IUserAddForm {
   name: FormControl<string>;
+  emailAddress: FormControl<string>;
   password: FormControl<string>; 
   confirmPassword: FormControl<string>; 
   role: FormControl<number>;
@@ -62,6 +63,7 @@ export class UserAddComponent implements OnInit {
 
     this.userAddForm = this._formBuilder.group<IUserAddForm>({
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+      emailAddress: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.email ]}),
       password: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),
       confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),
       role: new FormControl<number>(0, { nonNullable: true, validators: [ Validators.required, Validators.min(1), Validators.max(2) ]})
@@ -73,6 +75,7 @@ export class UserAddComponent implements OnInit {
     const user = new UserNewDTO();
 
     user.userName = this.userAddForm.controls.name.value;
+    user.emailAddress = this.userAddForm.controls.emailAddress.value;
     user.password = this.userAddForm.controls.password.value;
     user.role = this.userAddForm.controls.role.value;
 

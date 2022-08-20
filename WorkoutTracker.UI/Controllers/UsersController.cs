@@ -128,6 +128,7 @@ namespace WorkoutTracker.UI.Controllers
             var user = new User();
             SetCreatedAuditFields(user);
             user.Name = userNew.UserName;
+            user.EmailAddress = userNew.EmailAddress;
             user.Role = userNew.Role;
             user.Salt = _cryptoService.GenerateSalt();
             user.HashedPassword = _cryptoService.ComputeHash(userNew.Password, user.Salt);

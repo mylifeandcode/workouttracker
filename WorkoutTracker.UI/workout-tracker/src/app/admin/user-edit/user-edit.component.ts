@@ -11,6 +11,7 @@ import { CustomValidators } from 'app/validators/custom-validators';
 interface IUserEditForm {
   id: FormControl<number>;
   name: FormControl<string>;
+  emailAddress: FormControl<string>;
   role: FormControl<number>;
 }
 
@@ -78,6 +79,7 @@ export class UserEditComponent implements OnInit {
     this.userEditForm = this._formBuilder.group<IUserEditForm>({
       id: new FormControl<number>(0, { nonNullable: true }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+      emailAddress: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email]}),
       role: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)]})
     });
 
@@ -98,7 +100,13 @@ export class UserEditComponent implements OnInit {
       .subscribe(
       (user: User) => {
         this._user = user;
-        this.userEditForm.patchValue({ id: this._user.id, name: this._user.name, role: this._user.role });
+        this.userEditForm.patchValue(
+          { 
+            id: this._user.id, 
+            name: this._user.name, 
+            emailAddress: this._user.emailAddress, 
+            role: this._user.role 
+          });
       },
       (error: any) => this.errorMsg = error,
       () => this.loadingUserInfo = false);

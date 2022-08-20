@@ -49,7 +49,7 @@ namespace WorkoutTracker.UI.Controllers
             if (user == null)
                 return new NotFoundResult();
 
-            if (!string.IsNullOrWhiteSpace(user.HashedPassword)) //When the client is set up to use the simple, User Select mode, HashedPassword could be null...until v1.0
+            if (!Convert.ToBoolean(_config["SimpleLogin"])) 
             {
                 if (!VerifyPasswordMatches(credentials.Password, user.HashedPassword, user.Salt))
                     return new UnauthorizedResult();

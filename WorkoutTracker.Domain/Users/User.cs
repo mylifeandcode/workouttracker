@@ -5,6 +5,8 @@ namespace WorkoutTracker.Domain.Users
 {
     public class User : NamedEntity
     {
+        public string EmailAddress { get; set; }
+
         [Newtonsoft.Json.JsonIgnore]
         public string HashedPassword { get; set; }
 

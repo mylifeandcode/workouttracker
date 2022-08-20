@@ -8,7 +8,16 @@
             Name:
             <input class="form-control" formControlName="name" placeholder="User Name (required)" />
           </label>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.name.touched && userAddForm.controls.name.errors?.required"> Required</span>
+          <span class="text-danger headroom" *ngIf="userAddForm.controls.name.touched && userAddForm.controls.name.errors?.required"> Required.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="center-block headroom">
+            Email Address:
+            <input class="form-control" formControlName="emailAddress" placeholder="Email Address (required)" />
+          </label>
+          <span class="text-danger headroom" *ngIf="userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.required"> Required.</span>
+          <span class="text-danger headroom" *ngIf="userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.email"> Must be a valid email address.</span>
         </div>
 
         <div class="form-group">
@@ -16,7 +25,8 @@
             Password:
             <input type="password" class="form-control" formControlName="password" placeholder="Password (required)" />
           </label>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.password.touched && userAddForm.controls.password.errors?.required"> Required</span>
+          <span class="text-danger headroom" *ngIf="userAddForm.controls.password.touched && userAddForm.controls.password.errors?.required"> Required.</span>
+          <span class="text-danger headroom" *ngIf="userAddForm.controls.password.touched && userAddForm.controls.password.errors?.minlength"> Must be at least 7 characters.</span>
         </div>
         
         <div class="form-group">
@@ -24,8 +34,9 @@
             Confirm Password:
             <input type="password" class="form-control" formControlName="confirmPassword" placeholder="Confirm Password (required)" />
           </label>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.required"> Required</span>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.errors?.passwordsMatch"> Passwords must match</span>
+          <span class="text-danger headroom" *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.required"> Required.</span>
+          <span class="text-danger headroom" *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.minlength"> Must be at least 7 characters.</span>
+          <span class="text-danger headroom" *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.errors?.passwordsMatch"> Passwords must match.</span>
         </div>
 
         <div class="form-group">
@@ -37,7 +48,7 @@
               <option value="2">Administrator</option>
             </select>
           </label>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.name.touched && userAddForm.controls.name.errors?.required"> Required</span>
+          <span class="text-danger headroom" *ngIf="userAddForm.controls.role.touched && userAddForm.controls.role.errors?.required"> Required.</span>
         </div>
 
         <div class="headroom">
