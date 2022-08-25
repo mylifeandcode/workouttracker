@@ -5,14 +5,25 @@ using Moq;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Repository;
 using Shouldly;
-using WorkoutTracker.Application.Users;
 using WorkoutTracker.Application.Users.Services;
+using WorkoutTracker.Application.Security.Interfaces;
 
 namespace WorkoutTracker.Tests.Services
 {
     [TestClass]
     public class UserServiceTests
     {
+        private Mock<ICryptoService> _cryptoServiceMock;
+
+        [TestInitialize]
+        public void Init()
+        {
+            _cryptoServiceMock = new Mock<ICryptoService>(MockBehavior.Strict);
+            _cryptoServiceMock.Setup(x => x.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHash");
+            _cryptoServiceMock.Setup(x => x.GenerateSalt()).Returns("someSalt");
+            _cryptoServiceMock.Setup(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+        }
+
         [TestMethod]
         public void Should_Add_User()
         {
@@ -20,7 +31,7 @@ namespace WorkoutTracker.Tests.Services
             var repoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
             repoMock.Setup(mock => mock.Add(It.IsAny<User>(), true)).Returns((User user, bool save) => user);
 
-            var sut = new UserService(repoMock.Object);
+            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object);
             var user = new User();
 
             //ACT
@@ -38,7 +49,7 @@ namespace WorkoutTracker.Tests.Services
             var repoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
             repoMock.Setup(mock => mock.Delete(It.IsAny<int>()));
 
-            var sut = new UserService(repoMock.Object);
+            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object);
             int userId = 100;
 
             //ACT
@@ -55,7 +66,7 @@ namespace WorkoutTracker.Tests.Services
             var repoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
             repoMock.Setup(mock => mock.Update(It.IsAny<User>(), true)).Returns((User user, bool save) => user);
 
-            var sut = new UserService(repoMock.Object);
+            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object);
             var user = new User();
 
             //ACT
@@ -78,7 +89,7 @@ namespace WorkoutTracker.Tests.Services
             var repoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
             repoMock.Setup(mock => mock.Get()).Returns(users.AsQueryable());
 
-            var sut = new UserService(repoMock.Object);
+            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object);
 
             //ACT
             var results = sut.GetAll().ToList();

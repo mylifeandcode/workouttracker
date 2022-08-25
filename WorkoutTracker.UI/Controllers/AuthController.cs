@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.UI.Auth;
 using WorkoutTracker.UI.Models;
@@ -17,7 +16,7 @@ namespace WorkoutTracker.UI.Controllers
     [Route("api/[controller]")]
     [EnableCors("SiteCorsPolicy")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : UserAwareController
     {
         private IUserService _userService;
         private ITokenService _tokenService;
@@ -51,7 +50,7 @@ namespace WorkoutTracker.UI.Controllers
 
             if (!Convert.ToBoolean(_config["SimpleLogin"])) 
             {
-                if (!VerifyPasswordMatches(credentials.Password, user.HashedPassword, user.Salt))
+                if (!_cryptoService.VerifyValuesMatch(credentials.Password, user.HashedPassword, user.Salt))
                     return new UnauthorizedResult();
             }
 
@@ -64,17 +63,31 @@ namespace WorkoutTracker.UI.Controllers
             return new ContentResult { Content = token, StatusCode = 200 };
         }
 
+        [Route("login")]
+        [HttpPost]
+        public IActionResult ChangePassword(PasswordChangeRequest passwordChangeRequest)
+        {
+            if(passwordChangeRequest == null) return BadRequest();
+
+            try
+            {
+                int userId = GetUserID();
+
+                _userService.ChangePassword(userId, passwordChangeRequest.CurrentPassword, passwordChangeRequest.NewPassword);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         private bool IsCredentialsObjectValid(UserCredentialsDTO credentials)
         {
             return credentials != null
                 && !string.IsNullOrWhiteSpace(credentials.Username);
                 //&& !string.IsNullOrWhiteSpace(credentials.Password);
-        }
-
-        private bool VerifyPasswordMatches(string clearTextPassword, string hashedPassword, string salt)
-        {
-            string passwordHashedFromClearText = _cryptoService.ComputeHash(clearTextPassword, salt);
-            return passwordHashedFromClearText == hashedPassword;
         }
     }
 }

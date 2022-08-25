@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
+using WorkoutTracker.Application.Security.Interfaces;
 
-namespace WorkoutTracker.UI.Auth
+namespace WorkoutTracker.Application.Security.Services
 {
+    //TODO: Consider moving to application layer. Not sure this is the right place.
     public class CryptoService : ICryptoService
     {
         //This class uses a lot of help from https://www.automationmission.com/2020/09/17/hashing-and-salting-passwords-in-c/
@@ -23,5 +25,12 @@ namespace WorkoutTracker.UI.Auth
             var byteResult = new Rfc2898DeriveBytes(bytesToHash, saltBytes, 10000);
             return Convert.ToBase64String(byteResult.GetBytes(24));
         }
+
+        public bool VerifyValuesMatch(string clearTextValue, string hashedValue, string salt)
+        {
+            string valueHashedFromClearText = ComputeHash(clearTextValue, salt);
+            return valueHashedFromClearText == hashedValue;
+        }
+
     }
 }

@@ -7,6 +7,7 @@ using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.UI.Controllers;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.UI.Auth;
+using WorkoutTracker.Application.Security.Interfaces;
 
 namespace WorkoutTracker.Tests.Controllers
 {

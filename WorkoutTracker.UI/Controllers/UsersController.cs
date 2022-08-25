@@ -10,6 +10,7 @@ using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.UI.Models;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.UI.Auth;
+using WorkoutTracker.Application.Security.Interfaces;
 
 namespace WorkoutTracker.UI.Controllers
 {

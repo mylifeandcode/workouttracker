@@ -6,12 +6,18 @@ using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Repository;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Users.Interfaces;
+using WorkoutTracker.Application.Security.Interfaces;
 
 namespace WorkoutTracker.Application.Users.Services
 {
     public class UserService : ServiceBase<User>, IUserService
     {
-        public UserService(IRepository<User> repo) : base(repo) { }
+        private ICryptoService _cryptoService;
+
+        public UserService(IRepository<User> repo, ICryptoService cryptoService) : base(repo) 
+        {
+            _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
+        }
 
         public User Add(User user)
         {
@@ -42,6 +48,26 @@ namespace WorkoutTracker.Application.Users.Services
             ToList(), or ToListAsync(). See https://go.microsoft.com/fwlink/?linkid=2101038 for more information."
             */
             return _repo.Get().Where(x => x.Name.ToUpper() != "SYSTEM");
+        }
+
+        public void ChangePassword(int userId, string currentPassword, string newPassword)
+        {
+            try
+            {
+                var user = _repo.Get(userId);
+                
+                if (user == null) throw new ApplicationException("User not found.");
+                if (!_cryptoService.VerifyValuesMatch(currentPassword, user.HashedPassword, user.Salt))
+                    throw new ApplicationException("Current password is not correct.");
+                
+                user.HashedPassword = _cryptoService.ComputeHash(newPassword, user.Salt);
+                _repo.Update(user, true);
+            }
+            catch (Exception ex)
+            {
+                //TODO: Log
+                throw;
+            }
         }
     }
 }
