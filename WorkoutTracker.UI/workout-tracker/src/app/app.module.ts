@@ -37,6 +37,8 @@ import { Config } from './core/models/config';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LoginComponent } from './login/login.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+
 
 function initializeApp(
   configService: ConfigService, 
@@ -67,7 +69,8 @@ function initializeApp(
     WelcomeComponent,
     QuickActionsComponent,
     UserOverviewComponent,
-    LoginComponent
+    LoginComponent,
+    ChangePasswordComponent
   ],
   imports: [
     AppRoutingModule,

@@ -1,0 +1,14 @@
+h3 {
+  padding: 6px;
+  background-image: linear-gradient(to right, grey, darkgrey);
+  font-style: italic;
+  color: white;
+}
+
+.row {
+  padding: 4px;
+}
+
+.btn {
+  width: 100%;
+}

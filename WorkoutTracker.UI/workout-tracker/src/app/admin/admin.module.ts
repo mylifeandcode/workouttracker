@@ -26,7 +26,6 @@ import { UserEditComponent } from './user-edit/user-edit.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { SystemComponent } from './system/system.component';
 import { UserAddComponent } from './user-add/user-add.component';
-import { ChangePasswordComponent } from './change-password/change-password.component';
 
 
 @NgModule({
@@ -36,8 +35,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     UserEditComponent,
     UserListComponent,
     SystemComponent,
-    UserAddComponent,
-    ChangePasswordComponent
+    UserAddComponent
   ],
   imports: [
     AdminRoutingModule,

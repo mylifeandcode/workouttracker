@@ -8,6 +8,8 @@ import { UserIsAdminGuard } from './admin/guards/user-is-admin.guard';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { LoginComponent } from './login/login.component';
+import { UserSettingsComponent } from './user-settings/user-settings.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 const routes: Routes = [
   {
@@ -38,6 +40,16 @@ const routes: Routes = [
   {
     path: 'denied',
     component: AccessDeniedComponent
+  },
+  {
+    path: 'user-settings',
+    component: UserSettingsComponent,
+    canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'change-password',
+    component: ChangePasswordComponent,
+    canActivate: [UserSelectedGuard]
   },
   {
     path: 'admin', 

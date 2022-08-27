@@ -63,7 +63,7 @@ namespace WorkoutTracker.UI.Controllers
             return new ContentResult { Content = token, StatusCode = 200 };
         }
 
-        [Route("login")]
+        [Route("change-password")]
         [HttpPost]
         public IActionResult ChangePassword(PasswordChangeRequest passwordChangeRequest)
         {

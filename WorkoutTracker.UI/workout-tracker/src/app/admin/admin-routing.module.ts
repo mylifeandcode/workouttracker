@@ -4,7 +4,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { UserSelectedGuard } from 'app/core/guards/user-selected.guard';
 
 import { AdminHomeComponent } from './admin-home/admin-home.component';
-import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ResistanceBandsComponent } from './resistance-bands/resistance-bands.component';
 import { SystemComponent } from './system/system.component';
 import { UserAddComponent } from './user-add/user-add.component';
@@ -33,10 +32,6 @@ const routes: Routes = [
   {
     path: 'users/add',
     component: UserAddComponent
-  },
-  {
-    path: 'users/change-password/:id',
-    component: ChangePasswordComponent
   },
   {
     path: 'system',

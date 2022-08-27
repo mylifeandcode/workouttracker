@@ -1,10 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { User } from 'app/core/models/user';
-import { UserService } from 'app/core/user.service';
+import { Router } from '@angular/router';
+import { AuthService } from 'app/core/auth.service';
 import { CustomValidators } from 'app/validators/custom-validators';
-import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 interface IChangePasswordForm {
   currentPassword: FormControl<string>;
@@ -17,39 +16,40 @@ interface IChangePasswordForm {
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.css']
 })
-export class ChangePasswordComponent implements OnInit, OnDestroy {
+export class ChangePasswordComponent implements OnInit {
 
   public loading: boolean = true;
-  public userName: string | undefined = undefined;
   public changePasswordForm: FormGroup<IChangePasswordForm>;
-  public errorMsg: string | null = null;
+  public errorMessage: string | null = null;
   public changingPassword: boolean = false;
-  private _users$: Subscription | null = null;
-  private _userId: number = 0;
-  private _user: User | undefined = undefined;
-
+  public passwordChanged: boolean = false;
+  
   constructor(
-    private _activatedRoute: ActivatedRoute, 
     private _router: Router,
-    private _userService: UserService,
+    private _authService: AuthService,
     private _formBuilder: FormBuilder) { }
 
   public ngOnInit(): void {
-    this._userId = this._activatedRoute.snapshot.params['id'];
-    this._users$ = this._userService.all$.subscribe((users: User[]) => {
-      this._user = users.find((value: User) => value.id == this._userId);
-      this.userName = this._user?.name;
-      this.createForm();
-      this.loading = false;
-    });
+    this.createForm();
   }
 
-  public ngOnDestroy(): void {
-    if(this._users$)
-      this._users$.unsubscribe();
+  public changePassword(): void {
+    if (this.changePasswordForm.valid) {
+      this.changingPassword = true;
+      this.errorMessage = null;
+      this.passwordChanged = false;
+      this._authService.changePassword(
+        this.changePasswordForm.controls.currentPassword.value, 
+        this.changePasswordForm.controls.password.value)
+          .pipe(finalize(() => { this.changingPassword = false; }))
+          .subscribe(
+            () => { this.passwordChanged = true; }, 
+            (error: any) => { 
+              this.errorMessage = "Couldn't change password: " + (error?.error ?? "An error occurred.");
+            }
+          );
+    }
   }
-
-  public changePassword(): void {}
 
   public cancel(): void {
 

@@ -51,9 +51,16 @@
 
   
   <ul class="nav navbar-nav pull-right">
-    <li *ngIf="userName" class="nav-item">
-      <a class="nav-link" routerLink="/home">Welcome {{userName}}!</a> 
+
+    <li class="nav-item dropdown">
+      <a id="userDropdown" class="nav-link" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Welcome {{userName}}!
+      </a> 
+      <ul class="dropdown-menu" aria-labelledby="userDropdown">
+        <li><a class="dropdown-item" routerLink="/user-settings">Settings</a></li>
+      </ul>
     </li>
+
     <li *ngIf="userIsLoggedIn" class="nav-item">
       <a class="nav-link" (click)="logOff()">Log off</a> 
     </li>    
