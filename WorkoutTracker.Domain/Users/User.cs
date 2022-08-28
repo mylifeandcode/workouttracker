@@ -19,6 +19,9 @@ namespace WorkoutTracker.Domain.Users
         [Newtonsoft.Json.JsonIgnore]
         public string Salt { get; set; }
 
+        [Newtonsoft.Json.JsonIgnore]
+        public string PasswordResetCode { get; set; }
+
         [NotMapped]
         public bool PasswordProtected
         {

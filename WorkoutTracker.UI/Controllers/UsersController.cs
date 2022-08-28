@@ -11,6 +11,8 @@ using WorkoutTracker.UI.Models;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.UI.Auth;
 using WorkoutTracker.Application.Security.Interfaces;
+using WorkoutTracker.Application.Shared.Services;
+using WorkoutTracker.Application.Shared.Interfaces;
 
 namespace WorkoutTracker.UI.Controllers
 {
@@ -122,6 +124,13 @@ namespace WorkoutTracker.UI.Controllers
             overview.PlannedWorkoutCount = _executedWorkoutService.GetPlannedCount(GetUserID());
 
             return Ok(overview);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("reset-password/{emailAddress}")]
+        public void ResetPassword(string emailAddress)
+        {
+            (_service as IUserService).ResetPassword(emailAddress);
         }
 
         private User GetUserFromUserNewDTO(UserNewDTO userNew)

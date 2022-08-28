@@ -7,16 +7,29 @@ using WorkoutTracker.Repository;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.Application.Security.Interfaces;
+using WorkoutTracker.Application.Shared.Interfaces;
 
 namespace WorkoutTracker.Application.Users.Services
 {
-    public class UserService : ServiceBase<User>, IUserService
+    public class UserService : ServiceBase<User>, IUserService, IDisposable
     {
         private ICryptoService _cryptoService;
+        private IEmailService _emailService;
+        private string _frontEndResetPasswordUrl;
+        private bool _disposedValue;
 
-        public UserService(IRepository<User> repo, ICryptoService cryptoService) : base(repo) 
+        public UserService(
+            IRepository<User> repo, 
+            ICryptoService cryptoService, 
+            IEmailService emailService, 
+            string frontEndResetPasswordUrl) : base(repo) 
         {
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
+            _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+            if(!string.IsNullOrWhiteSpace(frontEndResetPasswordUrl))
+                _frontEndResetPasswordUrl = frontEndResetPasswordUrl;
+            else
+                throw new ArgumentNullException(nameof(frontEndResetPasswordUrl));
         }
 
         public User Add(User user)
@@ -68,6 +81,55 @@ namespace WorkoutTracker.Application.Users.Services
                 //TODO: Log
                 throw;
             }
+        }
+
+        public void ResetPassword(string emailAddress)
+        {
+            var user = _repo.Get().FirstOrDefault(x => x.EmailAddress == emailAddress);
+            if (user == null)
+                return; //No user found. Don't throw an exception. If this was a malicious attempt, we don't want to provide useful information.
+
+            user.PasswordResetCode = _cryptoService.GeneratePasswordResetCode();
+            _repo.Update(user, true);
+
+            _emailService.SendEmail(
+                emailAddress,
+                "noreply@workouttracker.com", //TODO: Make configurable
+                "Password Reset",
+                $"A password reset request was received. If you made this request, please go to {_frontEndResetPasswordUrl}/{user.PasswordResetCode}"
+                );
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: Dispose managed state (managed objects)
+                }
+
+                // Free unmanaged resources (unmanaged objects) and override finalizer
+                if (_emailService != null)
+                    _emailService.Dispose();
+
+                // TODO: set large fields to null
+                _disposedValue = true;
+            }
+        }
+
+        // override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        ~UserService()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

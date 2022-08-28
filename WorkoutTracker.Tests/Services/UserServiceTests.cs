@@ -7,6 +7,7 @@ using WorkoutTracker.Repository;
 using Shouldly;
 using WorkoutTracker.Application.Users.Services;
 using WorkoutTracker.Application.Security.Interfaces;
+using WorkoutTracker.Application.Shared.Interfaces;
 
 namespace WorkoutTracker.Tests.Services
 {
@@ -14,6 +15,8 @@ namespace WorkoutTracker.Tests.Services
     public class UserServiceTests
     {
         private Mock<ICryptoService> _cryptoServiceMock;
+        private Mock<IEmailService> _emailServiceMock;
+        private const string FRONT_END_PASSWORD_RESET_URL = "https://workouttracker.com/reset-password";
 
         [TestInitialize]
         public void Init()
@@ -22,6 +25,9 @@ namespace WorkoutTracker.Tests.Services
             _cryptoServiceMock.Setup(x => x.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHash");
             _cryptoServiceMock.Setup(x => x.GenerateSalt()).Returns("someSalt");
             _cryptoServiceMock.Setup(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+
+            _emailServiceMock = new Mock<IEmailService>(MockBehavior.Strict);
+            _emailServiceMock.Setup(x => x.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
         }
 
         [TestMethod]
@@ -31,7 +37,7 @@ namespace WorkoutTracker.Tests.Services
             var repoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
             repoMock.Setup(mock => mock.Add(It.IsAny<User>(), true)).Returns((User user, bool save) => user);
 
-            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object);
+            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object, _emailServiceMock.Object, FRONT_END_PASSWORD_RESET_URL);
             var user = new User();
 
             //ACT
@@ -49,7 +55,7 @@ namespace WorkoutTracker.Tests.Services
             var repoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
             repoMock.Setup(mock => mock.Delete(It.IsAny<int>()));
 
-            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object);
+            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object, _emailServiceMock.Object, FRONT_END_PASSWORD_RESET_URL);
             int userId = 100;
 
             //ACT
@@ -66,7 +72,7 @@ namespace WorkoutTracker.Tests.Services
             var repoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
             repoMock.Setup(mock => mock.Update(It.IsAny<User>(), true)).Returns((User user, bool save) => user);
 
-            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object);
+            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object, _emailServiceMock.Object, FRONT_END_PASSWORD_RESET_URL);
             var user = new User();
 
             //ACT
@@ -89,7 +95,7 @@ namespace WorkoutTracker.Tests.Services
             var repoMock = new Mock<IRepository<User>>(MockBehavior.Strict);
             repoMock.Setup(mock => mock.Get()).Returns(users.AsQueryable());
 
-            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object);
+            var sut = new UserService(repoMock.Object, _cryptoServiceMock.Object, _emailServiceMock.Object, FRONT_END_PASSWORD_RESET_URL);
 
             //ACT
             var results = sut.GetAll().ToList();

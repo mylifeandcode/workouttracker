@@ -23,6 +23,10 @@ using System.Linq;
 using WorkoutTracker.Application.Users;
 using System.Reflection;
 using WorkoutTracker.UI.Auth;
+using WorkoutTracker.Application.Shared.Services;
+using WorkoutTracker.Application.Shared.Interfaces;
+using WorkoutTracker.Application.Users.Services;
+using WorkoutTracker.Application.Users.Interfaces;
 
 namespace WorkoutTracker
 {
@@ -136,6 +140,14 @@ namespace WorkoutTracker
             builder.RegisterType<Repository<Workout>>().As<IRepository<Workout>>();
             builder.RegisterType<Repository<ExecutedWorkout>>().As<IRepository<ExecutedWorkout>>();
             builder.RegisterType<Repository<ResistanceBand>>().As<IRepository<ResistanceBand>>();
+            builder.RegisterType<EmailService>().As<IEmailService>()
+                .WithParameter("host", Configuration["SMTP:Host"])
+                .WithParameter("port", Configuration["SMTP:Port"])
+                .WithParameter("username", Configuration["SMTP:Username"])
+                .WithParameter("password", Configuration["SMTP:Password"]);
+
+            builder.RegisterType<UserService>().As<IUserService>()
+                .WithParameter("frontEndResetPasswordUrl", Configuration["FrontEndResetPasswordURL"]);
             //builder.RegisterType<Serilog.Log>().As<Microsoft.Extensions.Logging.ILogger>();
         }
 
