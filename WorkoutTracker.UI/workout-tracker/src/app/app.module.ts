@@ -38,6 +38,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LoginComponent } from './login/login.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 
 function initializeApp(
@@ -70,7 +71,8 @@ function initializeApp(
     QuickActionsComponent,
     UserOverviewComponent,
     LoginComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    ForgotPasswordComponent
   ],
   imports: [
     AppRoutingModule,

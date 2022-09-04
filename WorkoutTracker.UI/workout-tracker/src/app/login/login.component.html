@@ -18,6 +18,8 @@
           <label for="password">Password</label>
           <input type="password" id="password" class="form-control" formControlName="password" placeholder="Password (required)">
           <span *ngIf="loginForm.controls['password'].dirty && loginForm.controls['password']?.errors" class="form-error">Password required</span>
+          <br />
+          <a routerLink="/forgot-password">Forgot password?</a>
         </div>
       </div>
       <div class="row bump-it-down">

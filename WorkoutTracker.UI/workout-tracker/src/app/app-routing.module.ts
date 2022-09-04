@@ -10,6 +10,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { LoginComponent } from './login/login.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 const routes: Routes = [
   {
@@ -50,6 +51,10 @@ const routes: Routes = [
     path: 'change-password',
     component: ChangePasswordComponent,
     canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent
   },
   {
     path: 'admin', 

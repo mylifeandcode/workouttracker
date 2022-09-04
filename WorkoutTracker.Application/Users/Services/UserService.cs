@@ -83,7 +83,7 @@ namespace WorkoutTracker.Application.Users.Services
             }
         }
 
-        public void ResetPassword(string emailAddress)
+        public void RequestPasswordReset(string emailAddress)
         {
             var user = _repo.Get().FirstOrDefault(x => x.EmailAddress == emailAddress);
             if (user == null)

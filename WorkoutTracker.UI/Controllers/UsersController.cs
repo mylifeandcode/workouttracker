@@ -130,7 +130,7 @@ namespace WorkoutTracker.UI.Controllers
         [HttpPost("reset-password/{emailAddress}")]
         public void ResetPassword(string emailAddress)
         {
-            (_service as IUserService).ResetPassword(emailAddress);
+            throw new NotImplementedException();
         }
 
         private User GetUserFromUserNewDTO(UserNewDTO userNew)

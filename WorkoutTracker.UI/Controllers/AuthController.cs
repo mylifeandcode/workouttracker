@@ -83,6 +83,22 @@ namespace WorkoutTracker.UI.Controllers
             }
         }
 
+        [Route("request-password-reset")]
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult RequestPasswordReset(PasswordResetRequest passwordResetRequest)
+        {
+            try
+            {
+                _userService.RequestPasswordReset(passwordResetRequest.EmailAddress);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         private bool IsCredentialsObjectValid(UserCredentialsDTO credentials)
         {
             return credentials != null
