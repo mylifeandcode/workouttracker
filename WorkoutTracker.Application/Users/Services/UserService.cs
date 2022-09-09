@@ -105,6 +105,24 @@ namespace WorkoutTracker.Application.Users.Services
             return user.PasswordResetCode;
         }
 
+        public void ResetPassword(string resetCode, string newPassword)
+        {
+            var user = _repo.Get().FirstOrDefault(user => user.PasswordResetCode == resetCode);
+            
+            if (user == null)
+                throw new ApplicationException($"No user found with password reset code {resetCode}.");
+
+            user.HashedPassword = _cryptoService.ComputeHash(newPassword, user.Salt);
+            user.PasswordResetCode = null;
+
+            _repo.Update(user, true);
+        }
+
+        public bool ValidatePasswordResetCode(string resetCode)
+        {
+            return _repo.Get().Any(user => user.PasswordResetCode == resetCode);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)

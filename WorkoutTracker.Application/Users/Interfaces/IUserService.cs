@@ -7,5 +7,7 @@ namespace WorkoutTracker.Application.Users.Interfaces
     {
         void ChangePassword(int userId, string currentPassword, string newPassword);
         string RequestPasswordReset(string emailAddress);
+        void ResetPassword(string resetCode, string newPassword);
+        bool ValidatePasswordResetCode(string resetCode);
     }
 }

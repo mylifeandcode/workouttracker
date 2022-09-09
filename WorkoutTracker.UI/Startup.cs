@@ -141,6 +141,7 @@ namespace WorkoutTracker
             builder.RegisterType<Repository<ExecutedWorkout>>().As<IRepository<ExecutedWorkout>>();
             builder.RegisterType<Repository<ResistanceBand>>().As<IRepository<ResistanceBand>>();
             builder.RegisterType<EmailService>().As<IEmailService>()
+                .WithParameter("enabled", Configuration["SMTP:Enabled"])
                 .WithParameter("host", Configuration["SMTP:Host"])
                 .WithParameter("port", Configuration["SMTP:Port"])
                 .WithParameter("username", Configuration["SMTP:Username"])

@@ -8,10 +8,6 @@ import { UserIsAdminGuard } from './admin/guards/user-is-admin.guard';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { LoginComponent } from './login/login.component';
-import { UserSettingsComponent } from './user-settings/user-settings.component';
-import { ChangePasswordComponent } from './change-password/change-password.component';
-import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
-import { UserAddComponent } from './admin/user-add/user-add.component';
 
 const routes: Routes = [
   {
@@ -44,24 +40,6 @@ const routes: Routes = [
     component: AccessDeniedComponent
   },
   {
-    path: 'user-settings',
-    component: UserSettingsComponent,
-    canActivate: [UserSelectedGuard]
-  },
-  {
-    path: 'change-password',
-    component: ChangePasswordComponent,
-    canActivate: [UserSelectedGuard]
-  },
-  {
-    path: 'forgot-password',
-    component: ForgotPasswordComponent
-  },
-  {
-    path: 'register',
-    component: UserAddComponent
-  },
-  {
     path: 'admin', 
     canLoad: [ UserIsAdminGuard ], 
     canActivate: [ UserIsAdminGuard ], //Yes, we need this too, in case an admin user logs out and a non-admin then logs in after the admin module has already been loaded
@@ -78,6 +56,10 @@ const routes: Routes = [
   {
     path: 'analytics',
     loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsModule)
+  },
+  {
+    path: 'user',
+    loadChildren: () => import('./user/user.module').then(m => m.UserModule)
   },
   {
     path: '**',

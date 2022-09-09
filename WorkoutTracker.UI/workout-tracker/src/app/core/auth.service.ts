@@ -141,6 +141,14 @@ export class AuthService {
     return this._http.post<string>(`${this._apiRoot}/request-password-reset`, { emailAddress });
   }
 
+  public resetPassword(resetCode: string, newPassword: string): Observable<void> {
+    return this._http.post<void>(`${this._apiRoot}/reset-password`, { resetCode, newPassword });
+  }
+
+  public validatePasswordResetCode(resetCode: string): Observable<boolean> {
+    return this._http.get<boolean>(`${this._apiRoot}/validate-reset-code/${resetCode}`);
+  }
+
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
 
   private isExpired(expirationSecondsSinceEpoch: number | undefined): boolean {

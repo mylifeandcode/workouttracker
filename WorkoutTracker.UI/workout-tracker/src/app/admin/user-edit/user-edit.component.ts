@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 import { UserService } from '../../core/user.service';
 import { User } from 'app/core/models/user';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
-import { CustomValidators } from 'app/validators/custom-validators';
 import { ConfigService } from 'app/core/config.service';
 import { AuthService } from 'app/core/auth.service';
+
 
 interface IUserEditForm {
   id: FormControl<number>;
@@ -31,6 +32,7 @@ export class UserEditComponent implements OnInit {
   public showPasswordResetButton: boolean = false;
 
   private _user: User;
+  private _resetPasswordUrlRoot: string;
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -38,12 +40,14 @@ export class UserEditComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _router: Router,
     private _configService: ConfigService,
-    private _authService: AuthService) { }
+    private _authService: AuthService,
+    private _location: Location) { }
 
   //PUBLIC METHODS
 
   public ngOnInit(): void {
     this.showPasswordResetButton = !this._configService.get("smtpEnabled");
+    this._resetPasswordUrlRoot = `${window.location.protocol}//${window.location.host}/user/reset-password/`;
     this.loadingUserInfo = true;
     this.createForm();
     this.getUserInfo();
@@ -78,8 +82,11 @@ export class UserEditComponent implements OnInit {
 
   public resetPassword(): void {
     if(window.confirm("This will reset the user's password. You will need to provide them with the URL to create their new password. Do you want to proceed?")) {
-      //this._authService.requestPasswordReset(this.userEditForm.controls.emailAddress.value)
-        //.subscribe
+      this._authService.requestPasswordReset(this.userEditForm.controls.emailAddress.value)
+        .subscribe((resetCode: string) => {
+          window.alert(`Password has been reset. Instruct user to go to ${this._resetPasswordUrlRoot}${resetCode}.`);
+          console.log("ROUTER: ", this._router);
+        });
     }
   }
 

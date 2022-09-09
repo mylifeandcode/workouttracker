@@ -25,20 +25,16 @@ import { NavComponent } from './nav/nav.component';
 import { UserSelectComponent } from './user-select/user-select.component';
 
 //Other
-import { environment } from 'environments/environment';
-import { UserSettingsComponent } from './user-settings/user-settings.component';
+import { UserSettingsComponent } from './user/user-settings/user-settings.component';
 import { AuthService } from './core/auth.service';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { QuickActionsComponent } from './quick-actions/quick-actions.component';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { Config } from './core/models/config';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LoginComponent } from './login/login.component';
-import { ChangePasswordComponent } from './change-password/change-password.component';
-import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 
 function initializeApp(
@@ -65,14 +61,11 @@ function initializeApp(
     NavComponent,
     HomeComponent,
     UserSelectComponent,
-    UserSettingsComponent,
     AccessDeniedComponent,
     WelcomeComponent,
     QuickActionsComponent,
     UserOverviewComponent,
-    LoginComponent,
-    ChangePasswordComponent,
-    ForgotPasswordComponent
+    LoginComponent
   ],
   imports: [
     AppRoutingModule,
