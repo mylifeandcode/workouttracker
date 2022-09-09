@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { CustomValidators } from 'app/validators/custom-validators';
+import { ConfigService } from 'app/core/config.service';
+import { AuthService } from 'app/core/auth.service';
 
 interface IUserEditForm {
   id: FormControl<number>;
@@ -26,18 +28,22 @@ export class UserEditComponent implements OnInit {
   public savingUserInfo: boolean = false;
   public errorMsg: string;
   public userEditForm: FormGroup<IUserEditForm>;
+  public showPasswordResetButton: boolean = false;
 
   private _user: User;
 
   constructor(
-    private _route: ActivatedRoute,
+    private _activatedRoute: ActivatedRoute,
     private _userSvc: UserService,
     private _formBuilder: FormBuilder,
-    private _router: Router) { }
+    private _router: Router,
+    private _configService: ConfigService,
+    private _authService: AuthService) { }
 
   //PUBLIC METHODS
 
   public ngOnInit(): void {
+    this.showPasswordResetButton = !this._configService.get("smtpEnabled");
     this.loadingUserInfo = true;
     this.createForm();
     this.getUserInfo();
@@ -70,6 +76,13 @@ export class UserEditComponent implements OnInit {
     this._router.navigate(['/admin/users']);
   }
 
+  public resetPassword(): void {
+    if(window.confirm("This will reset the user's password. You will need to provide them with the URL to create their new password. Do you want to proceed?")) {
+      //this._authService.requestPasswordReset(this.userEditForm.controls.emailAddress.value)
+        //.subscribe
+    }
+  }
+
   //END PUBLIC METHODS
 
   //PRIVATE METHODS
@@ -87,7 +100,7 @@ export class UserEditComponent implements OnInit {
 
   private getUserInfo(): void {
 
-    this._route.params.subscribe(params => {
+    this._activatedRoute.params.subscribe(params => {
       const userId = params['id'];
       this.getUserInfoFromService(userId);
     });

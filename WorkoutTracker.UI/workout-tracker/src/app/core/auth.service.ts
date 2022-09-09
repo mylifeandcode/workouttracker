@@ -137,8 +137,8 @@ export class AuthService {
     return this._http.post<void>(`${this._apiRoot}/change-password`, { currentPassword, newPassword });
   }
 
-  public requestPasswordReset(emailAddress: string): Observable<void> {
-    return this._http.post<void>(`${this._apiRoot}/request-password-reset`, { emailAddress });
+  public requestPasswordReset(emailAddress: string): Observable<string> {
+    return this._http.post<string>(`${this._apiRoot}/request-password-reset`, { emailAddress });
   }
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////

@@ -1,7 +1,8 @@
 <div class="container">
   <div class="row">
     <div class="headroom offset-4 col-8">
-      <h3>Add User</h3>
+      <h3 *ngIf="showAdminControls">Add User</h3>
+      <h3 *ngIf="!showAdminControls">Register</h3>
       <form [formGroup]="userAddForm" novalidate>
         <div class="form-group">
           <label class="center-block headroom">
@@ -39,7 +40,7 @@
           <span class="text-danger headroom" *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.errors?.passwordsMatch"> Passwords must match.</span>
         </div>
 
-        <div class="form-group">
+        <div *ngIf="showAdminControls" class="form-group">
           <label class="center-block headroom">
             Role:
             <select class="form-control" formControlName="role" placeholder="User Role (required)">
@@ -58,7 +59,7 @@
           <span *ngIf="savingUserInfo">Saving...</span> <span *ngIf="errorMsg" class="errorText">{{errorMsg}}</span>
         </div>
       </form>
-      <div class="headroom">
+      <div *ngIf="showAdminControls" class="headroom">
         <a routerLink="/admin/users">Users List</a>
       </div>
     </div>

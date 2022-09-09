@@ -11,6 +11,7 @@ import { LoginComponent } from './login/login.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { UserAddComponent } from './admin/user-add/user-add.component';
 
 const routes: Routes = [
   {
@@ -55,6 +56,10 @@ const routes: Routes = [
   {
     path: 'forgot-password',
     component: ForgotPasswordComponent
+  },
+  {
+    path: 'register',
+    component: UserAddComponent
   },
   {
     path: 'admin', 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { User } from 'app/core/models/user';
 import { UserNewDTO } from 'app/core/models/user-new-dto';
 import { UserService } from 'app/core/user.service';
@@ -25,13 +25,16 @@ export class UserAddComponent implements OnInit {
   public errorMsg: string;
   public userAddForm: FormGroup<IUserAddForm>;
   public savingUserInfo: boolean = false;
+  public showAdminControls: boolean = false;
 
   constructor(
     private _userSvc: UserService, 
     private _formBuilder: FormBuilder, 
-    private _router: Router) { }
+    private _router: Router, 
+    private _activatedRoute: ActivatedRoute) { }
 
   public ngOnInit(): void {
+    this.showAdminControls = (this._activatedRoute.routeConfig?.path == 'users/add');
     this.createForm();
   }
 
@@ -56,7 +59,10 @@ export class UserAddComponent implements OnInit {
     if (this.userAddForm.dirty && !window.confirm("Cancel without saving changes?"))
         return;
 
-    this._router.navigate(['/admin/users']);
+    if (this.showAdminControls)
+      this._router.navigate(['/admin/users']);
+    else
+    this._router.navigate(['/']);
   }
 
   private createForm(): void {
@@ -66,7 +72,7 @@ export class UserAddComponent implements OnInit {
       emailAddress: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.email ]}),
       password: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),
       confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),
-      role: new FormControl<number>(0, { nonNullable: true, validators: [ Validators.required, Validators.min(1), Validators.max(2) ]})
+      role: new FormControl<number>((this.showAdminControls ? 0 : 1), { nonNullable: true, validators: [ Validators.required, Validators.min(1), Validators.max(2) ]})
     }, { validators: CustomValidators.passwordsMatch });
 
   }

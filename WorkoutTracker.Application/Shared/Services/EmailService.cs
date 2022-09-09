@@ -7,14 +7,21 @@ namespace WorkoutTracker.Application.Shared.Services
     public class EmailService : IEmailService, IDisposable
     {
         private SmtpClient _smtpClient;
+        private readonly bool _enabled;
         private bool disposedValue;
 
-        public EmailService(string host, int port, string username, string password)
+        public bool IsEnabled { get { return _enabled; } }
+
+        public EmailService(bool enabled, string host, int port, string username, string password)
         {
-            _smtpClient = new SmtpClient(host, port);
-            _smtpClient.UseDefaultCredentials = false;
-            _smtpClient.Credentials = new System.Net.NetworkCredential(username, password);
-            _smtpClient.EnableSsl = true;
+            _enabled = enabled;
+            if (enabled)
+            { 
+                _smtpClient = new SmtpClient(host, port);
+                _smtpClient.UseDefaultCredentials = false;
+                _smtpClient.Credentials = new System.Net.NetworkCredential(username, password);
+                _smtpClient.EnableSsl = true;
+            }
         }
 
         public void SendEmail(string to, string from, string subject, string body)

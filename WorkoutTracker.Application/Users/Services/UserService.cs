@@ -83,21 +83,26 @@ namespace WorkoutTracker.Application.Users.Services
             }
         }
 
-        public void RequestPasswordReset(string emailAddress)
+        public string RequestPasswordReset(string emailAddress)
         {
             var user = _repo.Get().FirstOrDefault(x => x.EmailAddress == emailAddress);
             if (user == null)
-                return; //No user found. Don't throw an exception. If this was a malicious attempt, we don't want to provide useful information.
+                return null; //No user found. Don't throw an exception. If this was a malicious attempt, we don't want to provide useful information.
 
             user.PasswordResetCode = _cryptoService.GeneratePasswordResetCode();
             _repo.Update(user, true);
 
-            _emailService.SendEmail(
-                emailAddress,
-                "noreply@workouttracker.com", //TODO: Make configurable
-                "Password Reset",
-                $"A password reset request was received. If you made this request, please go to {_frontEndResetPasswordUrl}/{user.PasswordResetCode}"
-                );
+            if (_emailService.IsEnabled)
+            { 
+                _emailService.SendEmail(
+                    emailAddress,
+                    "noreply@workouttracker.com", //TODO: Make configurable
+                    "Password Reset",
+                    $"A password reset request was received. If you made this request, please go to {_frontEndResetPasswordUrl}/{user.PasswordResetCode}"
+                    );
+            }
+
+            return user.PasswordResetCode;
         }
 
         protected virtual void Dispose(bool disposing)

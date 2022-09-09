@@ -90,8 +90,8 @@ namespace WorkoutTracker.UI.Controllers
         {
             try
             {
-                _userService.RequestPasswordReset(passwordResetRequest.EmailAddress);
-                return Ok();
+                string resetCode = _userService.RequestPasswordReset(passwordResetRequest.EmailAddress);
+                return Ok(resetCode);
             }
             catch (Exception ex)
             {

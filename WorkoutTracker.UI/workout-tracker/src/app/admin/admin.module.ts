@@ -53,6 +53,9 @@ import { UserAddComponent } from './user-add/user-add.component';
   providers: [
     ConfirmationService,
     MessageService
+  ],
+  exports: [
+    UserAddComponent
   ]
 })
 export class AdminModule {}
