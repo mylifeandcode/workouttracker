@@ -12,7 +12,11 @@ export class NavComponent implements OnInit {
   public userName: string | null;
 
   get userIsLoggedIn(): boolean {
-   return this.userName != null;
+   return this.userName != null; //TODO: Refactor! This is getting called multiple times by change detection!
+  }
+
+  get userIsAdmin(): boolean {
+    return this._authService.isUserAdmin; //TODO: Refactor! This is getting called multiple times by change detection!
   }
 
   constructor(private _authService: AuthService, private _router: Router) { }
@@ -22,6 +26,7 @@ export class NavComponent implements OnInit {
       (username: string | null) => {
         this.userName = username;
       });
+    
   }
 
   public logOff(): void {

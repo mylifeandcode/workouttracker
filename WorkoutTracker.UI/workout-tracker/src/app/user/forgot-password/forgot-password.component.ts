@@ -4,7 +4,7 @@ import { AuthService } from 'app/core/auth.service';
 import { ConfigService } from 'app/core/config.service';
 import { finalize } from 'rxjs/operators';
 
-interface IResetPasswordForm {
+interface IForgotPasswordForm {
   emailAddress: FormControl<string>;
 }
 
@@ -16,7 +16,7 @@ interface IResetPasswordForm {
 export class ForgotPasswordComponent implements OnInit {
 
   public smtpEnabled: boolean;
-  public resetPasswordForm: FormGroup<IResetPasswordForm>;
+  public forgotPasswordForm: FormGroup<IForgotPasswordForm>;
   public errorMessage: string | null = null;
   public requestSuccessful: boolean = false;
   public requestInProgress: boolean = false;
@@ -37,7 +37,7 @@ export class ForgotPasswordComponent implements OnInit {
     this.requestSuccessful = false;
     this.errorMessage = null;
     this._authService
-      .requestPasswordReset(this.resetPasswordForm.controls.emailAddress.value)
+      .requestPasswordReset(this.forgotPasswordForm.controls.emailAddress.value)
       .pipe(finalize(() => { this.requestInProgress = false; }))
       .subscribe(
         () => { this.requestSuccessful = true; },
@@ -46,7 +46,7 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   private buildForm(): void {
-    this.resetPasswordForm = this._formBuilder.group<IResetPasswordForm>({
+    this.forgotPasswordForm = this._formBuilder.group<IForgotPasswordForm>({
       emailAddress: new FormControl('', { nonNullable: true, validators: [ Validators.required, Validators.email ] })
     });
   }
