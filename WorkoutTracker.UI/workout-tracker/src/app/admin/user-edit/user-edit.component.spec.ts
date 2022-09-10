@@ -8,6 +8,7 @@ import { of, throwError } from 'rxjs';
 import { User } from 'app/core/models/user';
 import { ActivatedRoute } from '@angular/router';
 import { Component } from '@angular/core';
+import { AuthService } from 'app/core/auth.service';
 
 const CURRENT_USER_ID = 5150;
 
@@ -16,6 +17,10 @@ class UserServiceMock {
   getById = jasmine.createSpy('getById').and.returnValue(of(new User()));
   add = jasmine.createSpy('add').and.returnValue(of(new User()));
   update = jasmine.createSpy('update').and.returnValue(of(new User()));
+}
+
+class AuthServiceMock {
+
 }
 
 @Component({})
@@ -45,6 +50,10 @@ describe('UserEditComponent', () => {
               id: 5
             })
           }
+        },
+        {
+          provide: AuthService,
+          useClass: AuthServiceMock
         }
       ]
     })

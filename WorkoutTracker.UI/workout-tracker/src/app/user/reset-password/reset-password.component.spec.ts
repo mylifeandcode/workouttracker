@@ -1,6 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { AuthService } from 'app/core/auth.service';
+import { of } from 'rxjs';
 
 import { ResetPasswordComponent } from './reset-password.component';
+
+class AuthServiceMock {
+  validatePasswordResetCode = 
+    jasmine.createSpy('validatePasswordResetCode ').and.returnValue(of(true));
+}
 
 describe('ResetPasswordComponent', () => {
   let component: ResetPasswordComponent;
@@ -8,7 +18,25 @@ describe('ResetPasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ResetPasswordComponent ]
+      imports: [ RouterTestingModule ],
+      declarations: [ ResetPasswordComponent ],
+      providers: [
+        FormBuilder,
+        {
+          provide: AuthService,
+          useClass: AuthServiceMock
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+                params: of({
+                resetCode: 'gar145'
+              })
+            }
+          }
+        }
+      ]
     })
     .compileComponents();
 
