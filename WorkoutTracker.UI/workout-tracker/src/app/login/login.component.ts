@@ -45,10 +45,6 @@ export class LoginComponent implements OnInit {
       });
   }
 
-  public registerNewUser(): void {
-    window.alert("Coming soon for this version of login!");
-  }
-
   private createForm(): void {
     this.loginForm = this._formBuilder.group<ILoginForm>({
       username: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
