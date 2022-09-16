@@ -115,7 +115,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Returns(exercises);
 
             exerciseSvc
-                .Setup(x => x.GetTotalCount())
+                .Setup(x => x.GetTotalCount(It.IsAny<ExerciseFilter>()))
                 .Returns(100);
 
             var sut = new ExerciseController(exerciseSvc.Object);
