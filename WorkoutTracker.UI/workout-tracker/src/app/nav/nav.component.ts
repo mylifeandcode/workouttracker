@@ -10,14 +10,8 @@ import { AuthService } from 'app/core/auth.service';
 export class NavComponent implements OnInit {
 
   public userName: string | null;
-
-  get userIsLoggedIn(): boolean {
-   return this.userName != null; //TODO: Refactor! This is getting called multiple times by change detection!
-  }
-
-  get userIsAdmin(): boolean {
-    return this._authService.isUserAdmin; //TODO: Refactor! This is getting called multiple times by change detection!
-  }
+  public userIsLoggedIn: boolean;
+  public userIsAdmin: boolean;
 
   constructor(private _authService: AuthService, private _router: Router) { }
 
@@ -25,8 +19,10 @@ export class NavComponent implements OnInit {
     this._authService.currentUserName.subscribe(
       (username: string | null) => {
         this.userName = username;
+        this.userIsLoggedIn = (username != null);
+        this.userIsAdmin = this._authService.isUserAdmin;
       });
-    
+
   }
 
   public logOff(): void {

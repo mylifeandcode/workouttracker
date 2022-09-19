@@ -18,7 +18,7 @@ const HTTP_OPTIONS_FOR_TEXT_RESPONSE = {
   headers: new HttpHeaders({
     'Accept': 'text/html, application/xhtml+xml, */*',
     'Content-Type':  'application/json'
-  }), 
+  }),
   responseType: 'text' as 'json'
 };
 
@@ -27,7 +27,7 @@ const HTTP_OPTIONS_FOR_TEXT_RESPONSE = {
   providedIn: 'root'
 })
 export class AuthService {
-  
+
   //READ-ONLY FIELDS
   private readonly LOCAL_STORAGE_TOKEN_KEY = "WorkoutTrackerToken";
 
@@ -38,7 +38,7 @@ export class AuthService {
 
   //PUBLIC FIELDS
   public token: string | null = null; //TODO: Refactor. This should be a read-only property exposing a private field.
-  public decodedTokenPayload: JwtPayload;
+  public decodedTokenPayload: JwtPayload; //This is an interface, not a concrete type
 
   //PRIVATE FIELDS
   private _apiRoot: string;
@@ -49,18 +49,19 @@ export class AuthService {
 
   //PRIVATE READ-ONLY FIELDS
   private readonly ROLE_CLAIM_TYPE: string = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
- 
+
   constructor(
-    private _http: HttpClient, 
-    private _configService: ConfigService, 
-    private _localStorageService: LocalStorageService, 
-    private _router: Router) { 
+    private _http: HttpClient,
+    private _configService: ConfigService,
+    private _localStorageService: LocalStorageService,
+    private _router: Router) {
 
   }
 
   //PROPERTIES ////////////////////////////////////////////////////////////////
-  
+
   public get currentUserName(): Observable<string | null> {
+    console.log("CURRENT USERNAME CHANGED");
     return this._userObservable$;
   }
 
@@ -90,12 +91,12 @@ export class AuthService {
       .pipe(
         map((token: string) => {
           //Using map() here so I can act on the result and then return a boolean.
+          this.decodedTokenPayload = jwtDecode<JwtPayload>(token); //Do this first, before setting token which states "user is logged in"
           this.token = token;
           this._userSubject$.next(username);
           this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, token);
-          this.decodedTokenPayload = jwtDecode<JwtPayload>(this.token);
           return true;
-        }), 
+        }),
         catchError((err: any, caught: Observable<boolean>) => {
           console.log("Error logging in user: ", err);
           return of(false);
@@ -109,7 +110,7 @@ export class AuthService {
     this._userSubject$.next(null);
     this._router.navigate([this._loginRoute]);
   }
-  
+
   public restoreUserSessionIfApplicable(): void {
     const token: string = this._localStorageService.get(this.LOCAL_STORAGE_TOKEN_KEY);
 
@@ -125,7 +126,7 @@ export class AuthService {
           const username = <string | null>this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name' as keyof JwtPayload];
           if(username)
             this._userSubject$.next(username);
-      
+
         }
         else
           console.log("EXPIRED!");
