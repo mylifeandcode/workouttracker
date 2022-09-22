@@ -11,6 +11,8 @@ using WorkoutTracker.Application.Resistances.Interfaces;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
+    //TODO: Create two versions of this: One for Repetition Sets, one for Timed Sets
+    
     /// <summary>
     /// A service to provide an adjustment recommendation for an exercise.
     /// This adjustment is not an *increase*, but rather an adjustment, in reps, resistance, or both.
@@ -18,10 +20,12 @@ namespace WorkoutTracker.Application.Exercises.Services
     public class AdjustmentRecommendationService : RecommendationService, IAdjustmentRecommendationService
     {
         private IResistanceBandService _resistanceBandService;
+        private IResistanceService _resistanceService;
 
-        public AdjustmentRecommendationService(IResistanceBandService resistanceBandService)
+        public AdjustmentRecommendationService(IResistanceBandService resistanceBandService, IResistanceService resistanceService)
         {
             _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
+            _resistanceService = resistanceService ?? throw new ArgumentNullException(nameof(resistanceService));
         }
 
         /// <summary>
@@ -97,12 +101,13 @@ namespace WorkoutTracker.Application.Exercises.Services
             If reps were less than target, decrease target.
             */
 
-            string resistanceMakeup;
             bool recommendingDecreasedResistance = false;
 
             var recommendation = new ExerciseAmountRecommendation(executedExercise);
             if (inadequateForm || inadequateRangeOfMotion) //Because we have both, we can make this more granular later if need be
             {
+                //Their form or range of motion wasn't so great, so let's bump down the resistance
+
                 recommendingDecreasedResistance = true;
                 recommendation.ResistanceAmount =
                     GetDecreasedResistanceAmount(
@@ -111,16 +116,30 @@ namespace WorkoutTracker.Application.Exercises.Services
                         executedExercise.ActualRepCount,
                         executedExercise.ResistanceAmount,
                         executedExercise.Exercise,
-                        out resistanceMakeup);
+                        out var resistanceMakeup);
                 recommendation.ResistanceMakeup = resistanceMakeup;
             }
 
             if (ShouldRepCountBeLowered(actualRepsLessThanTarget, recommendingDecreasedResistance, actualRepsSignificantlyLessThanTarget))
-                recommendation.Reps = GetDecreasedRepCount(executedExercise.SetType, userSettings, executedExercise.TargetRepCount, executedExercise.ActualRepCount);
+                recommendation.Reps = 
+                    GetDecreasedRepCount(
+                        executedExercise.SetType, 
+                        userSettings, 
+                        executedExercise.TargetRepCount, 
+                        executedExercise.ActualRepCount, 
+                        actualRepsSignificantlyLessThanTarget);
+
+            recommendation.Reason = 
+                GetRecommendationReason(
+                    inadequateForm, 
+                    inadequateRangeOfMotion,
+                    actualRepsSignificantlyLessThanTarget, 
+                    actualRepsLessThanTarget);
 
             return recommendation;
         }
 
+        #region Remove...maybe
         /*
         /// <summary>
         /// Gets a recommendation to decrease something about an exercise performed during a timed set
@@ -175,7 +194,8 @@ namespace WorkoutTracker.Application.Exercises.Services
             throw new NotImplementedException();
         }
         */
-
+        #endregion Remove...maybe
+        
         private decimal GetDecreasedResistanceAmount(
             SetType setType,
             byte targetRepsLastTime,
@@ -186,58 +206,20 @@ namespace WorkoutTracker.Application.Exercises.Services
         {
             resistanceMakeup = null; //Only needed for resistance bands.
 
-            if (exercise.ResistanceType == ResistanceType.BodyWeight || exercise.ResistanceType == ResistanceType.Other)
-                return previousResistanceAmount;
-
-            byte multiplier = GetRepCountMultiplier(setType, targetRepsLastTime, actualRepsLastTime);
+            sbyte multiplier = GetRepCountMultiplier(setType, targetRepsLastTime, actualRepsLastTime);
             decimal resistanceAmount = 0;
 
-            switch (exercise.ResistanceType)
-            {
-                case ResistanceType.BodyWeight:
-                    //TODO: Modify resistance amount to be nullable
-                    break;
-
-                case ResistanceType.FreeWeight:
-                    break;
-
-                case ResistanceType.MachineWeight:
-                    //TODO: Get the appropriate lower weight in 10lb increments below that last time
-                    break;
-
-                case ResistanceType.Other:
-                    //TODO: Figure out what to do here!
-                    break;
-
-                case ResistanceType.ResistanceBand:
-                    resistanceAmount =
-                        GetDecreasedResistanceBandResistanceAmount(
-                            previousResistanceAmount, multiplier, !exercise.OneSided, out resistanceMakeup);
-                    break;
-            }
+            resistanceAmount = 
+                _resistanceService.GetNewResistanceAmount(
+                    exercise.ResistanceType,
+                    previousResistanceAmount, 
+                    multiplier, 
+                    !exercise.OneSided, 
+                    out resistanceMakeup);
 
             return resistanceAmount;
         }
 
-        private decimal GetDecreasedResistanceBandResistanceAmount(
-            decimal previousResistanceAmount,
-            short multiplier,
-            bool doubleBandResistanceAmounts,
-            out string resistanceMakeup)
-        {
-            decimal lowestResistanceBandAmount = _resistanceBandService.GetLowestResistanceBand()?.MaxResistanceAmount ?? 0;
-            decimal minIncrease = lowestResistanceBandAmount * multiplier;
-            decimal maxIncrease = minIncrease + 10;
-            var recommendedBands =
-                _resistanceBandService.CalculateNextAvailableResistanceAmount(
-                    previousResistanceAmount, minIncrease, maxIncrease, doubleBandResistanceAmounts);
-            if (recommendedBands.Any())
-                resistanceMakeup = string.Join(',', recommendedBands.Select(band => band.Color));
-            else
-                resistanceMakeup = null;
-
-            return recommendedBands.Sum(band => band.MaxResistanceAmount);
-        }
 
         #endregion Private Non-Static Methods
 
@@ -248,8 +230,10 @@ namespace WorkoutTracker.Application.Exercises.Services
             byte actualReps)
         {
             //TODO: Allow this to be configurable
-            //TODO: Modify for different set types
-            return targetReps - actualReps >= 10;
+            if (setType == SetType.Repetition)
+                return (targetReps - actualReps) >= 10;
+            else
+                return (targetReps - actualReps) >= 5;
         }
 
         private static bool ActualRepsLessThanTarget(
@@ -258,24 +242,31 @@ namespace WorkoutTracker.Application.Exercises.Services
             byte actualReps)
         {
             //TODO: Allow this to be configurable
-            //TODO: Modify for different set types
             byte difference = (byte)(targetReps - actualReps);
-            return difference < 10 && difference >= 6;
-        }
 
-        private static byte GetRepCountMultiplier(SetType setType, byte targetRepsLastTime, byte actualRepsLastTime)
-        {
-            if (ActualRepsSignificantlyLessThanTarget(setType, targetRepsLastTime, actualRepsLastTime))
+            if (setType == SetType.Repetition)
             {
-                return 3;
-            }
-            else if (ActualRepsLessThanTarget(setType, targetRepsLastTime, actualRepsLastTime))
-            {
-                return 2;
+                return difference < 10 && difference >= 1;
             }
             else
             {
-                return 1;
+                return difference < 5 && difference >= 1;
+            }
+        }
+
+        private static sbyte GetRepCountMultiplier(SetType setType, byte targetRepsLastTime, byte actualRepsLastTime)
+        {
+            if (ActualRepsSignificantlyLessThanTarget(setType, targetRepsLastTime, actualRepsLastTime))
+            {
+                return -3;
+            }
+            else if (ActualRepsLessThanTarget(setType, targetRepsLastTime, actualRepsLastTime))
+            {
+                return -2;
+            }
+            else
+            {
+                return -1;
             }
         }
 
@@ -288,7 +279,7 @@ namespace WorkoutTracker.Application.Exercises.Services
                 return false;
 
             //This could be consolidated to a single line, but this way is more readable :)
-            if (!recommendingResistanceBeLowered || recommendingResistanceBeLowered && lastRepCountSignificantlyLessThanTarget)
+            if (!recommendingResistanceBeLowered || (recommendingResistanceBeLowered && lastRepCountSignificantlyLessThanTarget))
                 return true;
             else
                 return false;
@@ -298,10 +289,55 @@ namespace WorkoutTracker.Application.Exercises.Services
             SetType setType,
             UserSettings userSettings,
             byte targetRepsLastTime,
-            byte actualRepsLastTime)
+            byte actualRepsLastTime, 
+            bool significantlyLessLastTime)
         {
-            throw new NotImplementedException();
+            //TODO: Use UserSettings to adjust by goal type
+            
+            if (setType == SetType.Repetition)
+            {
+                if (significantlyLessLastTime)
+                    return (byte)(targetRepsLastTime - 10);
+                else
+                    return (byte)(actualRepsLastTime + 5);
+            }
+            else
+            {
+                if (significantlyLessLastTime)
+                    return (byte)(targetRepsLastTime - 5);
+                else
+                    return (byte)(actualRepsLastTime + 2);
+            }
         }
+
+        private static string GetRecommendationReason(
+            bool inadequateForm,
+            bool inadequateRangeOfMotion,
+            bool actualRepsSignificantlyLessThanTarget,
+            bool actualRepsLessThanTarget)
+        {
+            string formAndRangeOfMotion;
+            string reps;
+
+            if (inadequateForm && inadequateRangeOfMotion)
+                formAndRangeOfMotion = "Form and Range of Motion need improvement. ";
+            else if (inadequateForm)
+                formAndRangeOfMotion = "Form needs improvement. ";
+            else if (inadequateRangeOfMotion)
+                formAndRangeOfMotion = "Range of Motion needs improvement. ";
+            else
+                formAndRangeOfMotion = "";
+
+            if (actualRepsSignificantlyLessThanTarget)
+                reps = "Actual reps last time significantly less than target.";
+            else if (actualRepsLessThanTarget)
+                reps = "Actual reps last time less than target.";
+            else
+                reps = "";
+            
+            return $"{formAndRangeOfMotion}{reps}".TrimEnd();
+        }
+
         #endregion Private Static Methods
     }
 }

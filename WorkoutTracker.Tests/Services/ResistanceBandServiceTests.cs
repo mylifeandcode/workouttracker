@@ -146,7 +146,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(30, 3, 5, false);
+            var result = sut.GetResistanceBandsForResistanceAmountRange(30, 3, 5, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -165,7 +165,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(30, 20, 25, false);
+            var result = sut.GetResistanceBandsForResistanceAmountRange(30, 20, 25, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -184,7 +184,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(40, 20, 30, false);
+            var result = sut.GetResistanceBandsForResistanceAmountRange(40, 20, 30, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -203,7 +203,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(40, 20, 25, false);
+            var result = sut.GetResistanceBandsForResistanceAmountRange(40, 20, 25, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -222,7 +222,7 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(120, 10, 15, true);
+            var result = sut.GetResistanceBandsForResistanceAmountRange(120, 10, 15, true);
 
             //ASSERT
             Assert.AreEqual(3, result.Count);
@@ -242,7 +242,8 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(30, 5, 10, false);
+            //var result = sut.CalculatePreviousAvailableResistanceAmount(30, 5, 10, false);
+            var result = sut.GetResistanceBandsForResistanceAmountRange(10, -5, -10, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -261,7 +262,8 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(35, 5, 10, false);
+            //var result = sut.CalculatePreviousAvailableResistanceAmount(35, 5, 10, false);
+            var result = sut.GetResistanceBandsForResistanceAmountRange(35, -5, -10, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -278,16 +280,15 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(80, 20, 25, false);
+            //var result = sut.CalculatePreviousAvailableResistanceAmount(80, 20, 25, false);
+            var result = sut.GetResistanceBandsForResistanceAmountRange(80, -20, -25, false);
 
             //ASSERT
-            Assert.AreEqual(4, result.Count);
-            Assert.AreEqual(56, result.Sum(band => band.MaxResistanceAmount));
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(59, result.Sum(band => band.MaxResistanceAmount));
             Assert.IsTrue(
                 result.Count(band => band.Color == "Onyx") == 1
-                && result.Count(band => band.Color == "Yellow") == 1
-                && result.Count(band => band.Color == "Green") == 1
-                && result.Count(band => band.Color == "Red") == 1);
+                && result.Count(band => band.Color == "Black") == 1);
         }
 
         [TestMethod]
@@ -299,15 +300,15 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(120, 20, 25, true);
+            //var result = sut.CalculatePreviousAvailableResistanceAmount(120, 20, 25, true);
+            var result = sut.GetResistanceBandsForResistanceAmountRange(120, -20, -25, true);
 
             //ASSERT
-            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(2, result.Count);
             Assert.AreEqual(96, result.Sum(band => band.MaxResistanceAmount) * 2);
             Assert.IsTrue(
                 result.Count(band => band.Color == "Onyx") == 1
-                && result.Count(band => band.Color == "Green") == 1
-                && result.Count(band => band.Color == "Yellow") == 1);
+                && result.Count(band => band.Color == "Red") == 1);
         }
 
         [TestMethod]
@@ -347,9 +348,9 @@ namespace WorkoutTracker.Tests.Services
         {
             _repo = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);
             _bands = new List<ResistanceBand>(8);
-            _bands.Add(new ResistanceBand { Color = "Onyx", MaxResistanceAmount = 40, NumberAvailable = 2 });
+            _bands.Add(new ResistanceBand { Color = "Onyx", MaxResistanceAmount = 40, NumberAvailable = 3 });
             _bands.Add(new ResistanceBand { Color = "Orange", MaxResistanceAmount = 30, NumberAvailable = 4 });
-            _bands.Add(new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23, NumberAvailable = 1 });
+            _bands.Add(new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23, NumberAvailable = 2 });
             _bands.Add(new ResistanceBand { Color = "Black", MaxResistanceAmount = 19, NumberAvailable = 1 });
             _bands.Add(new ResistanceBand { Color = "Blue", MaxResistanceAmount = 13, NumberAvailable = 1 });
             _bands.Add(new ResistanceBand { Color = "Red", MaxResistanceAmount = 8, NumberAvailable = 1 });

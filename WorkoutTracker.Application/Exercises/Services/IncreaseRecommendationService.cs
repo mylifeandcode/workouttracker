@@ -14,15 +14,17 @@ namespace WorkoutTracker.Application.Exercises.Services
     public class IncreaseRecommendationService : IIncreaseRecommendationService
     {
         private IResistanceBandService _resistanceBandService;
+        private IResistanceService _resistanceService;
 
         #region Constants
         private const decimal LOWEST_FREEWEIGHT_RESISTANCE = 5;
         private const decimal LOWEST_MACHINE_RESISTANCE = 10;
         #endregion Constants
 
-        public IncreaseRecommendationService(IResistanceBandService resistanceBandService)
+        public IncreaseRecommendationService(IResistanceBandService resistanceBandService, IResistanceService resistanceService)
         {
             _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
+            _resistanceService = resistanceService ?? throw new ArgumentNullException(nameof(resistanceService));
         }
 
         #region Public Methods
@@ -149,7 +151,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             decimal minIncrease = _resistanceBandService.GetLowestResistanceBand().MaxResistanceAmount * multiplier;
             decimal maxIncrease = minIncrease + 10;
             var recommendedBands =
-                _resistanceBandService.CalculateNextAvailableResistanceAmount(
+                _resistanceBandService.GetResistanceBandsForResistanceAmountRange(
                     previousResistanceAmount, minIncrease, maxIncrease, doubleBandResistanceAmounts);
             if (recommendedBands.Any())
                 resistanceMakeup = string.Join(',', recommendedBands.Select(band => band.Color));

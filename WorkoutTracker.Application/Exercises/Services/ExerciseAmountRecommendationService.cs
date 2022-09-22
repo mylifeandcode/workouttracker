@@ -68,7 +68,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             if (userSettings == null)
                 userSettings = UserSettings.GetDefault(); //TODO: Remove stopgap.
 
-            if (UserHasPerformedExeriseBefore(lastWorkoutWithThisExercise))
+            if (UserHasPerformedExerciseBefore(lastWorkoutWithThisExercise))
             {
                 if (UserHasPerformedExerciseRecently(lastSetsOfThisExercise))
                 {
@@ -195,7 +195,7 @@ namespace WorkoutTracker.Application.Exercises.Services
                     .ToList();
         }
 
-        private static bool UserHasPerformedExeriseBefore(ExecutedWorkout workout)
+        private static bool UserHasPerformedExerciseBefore(ExecutedWorkout workout)
         {
             return workout != null;
         }
