@@ -123,43 +123,16 @@ namespace WorkoutTracker.Application.Exercises.Services
             if (exercise.ResistanceType == ResistanceType.BodyWeight || exercise.ResistanceType == ResistanceType.Other)
                 return previousResistanceAmount;
 
-            byte multiplier = GetRepCountMultiplier(targetRepsLastTime, actualRepsLastTime);
+            sbyte multiplier = GetRepCountMultiplier(targetRepsLastTime, actualRepsLastTime);
 
-            switch (exercise.ResistanceType)
-            {
-                case ResistanceType.FreeWeight:
-                    return GetIncreasedFreeWeightResistanceAmount(previousResistanceAmount, multiplier);
-                case ResistanceType.MachineWeight:
-                    return GetIncreasedMachineResistanceAmount(previousResistanceAmount, multiplier);
-                case ResistanceType.ResistanceBand:
-                    return GetIncreasedResistanceBandResistanceAmount(
-                        previousResistanceAmount,
-                        multiplier,
-                        !exercise.BandsEndToEnd.Value, //Resistance Band exercises always have a value for this 
-                        out resistanceMakeup);
-                default:
-                    throw new ApplicationException($"Unhandled ResistanceType in switch statement in ExerciseAmountRecommendationService: {exercise.ResistanceType}.");
-            }
+            return _resistanceService.GetNewResistanceAmount(
+                exercise.ResistanceType, 
+                previousResistanceAmount, 
+                multiplier, 
+                !exercise.OneSided, 
+                out resistanceMakeup);
         }
 
-        private decimal GetIncreasedResistanceBandResistanceAmount(
-            decimal previousResistanceAmount,
-            short multiplier,
-            bool doubleBandResistanceAmounts,
-            out string resistanceMakeup)
-        {
-            decimal minIncrease = _resistanceBandService.GetLowestResistanceBand().MaxResistanceAmount * multiplier;
-            decimal maxIncrease = minIncrease + 10;
-            var recommendedBands =
-                _resistanceBandService.GetResistanceBandsForResistanceAmountRange(
-                    previousResistanceAmount, minIncrease, maxIncrease, doubleBandResistanceAmounts);
-            if (recommendedBands.Any())
-                resistanceMakeup = string.Join(',', recommendedBands.Select(band => band.Color));
-            else
-                resistanceMakeup = null;
-
-            return recommendedBands.Sum(band => band.MaxResistanceAmount);
-        }
         #endregion Private Non-Static Methods
 
         #region Private Static Methods
@@ -173,7 +146,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             return settings ?? new UserMinMaxReps { Duration = duration, MinReps = 15, MaxReps = 30 };
         }
 
-        private static byte GetRepCountMultiplier(byte targetRepsLastTime, byte actualRepsLastTime)
+        private static sbyte GetRepCountMultiplier(byte targetRepsLastTime, byte actualRepsLastTime)
         {
             if (UserGreatlyExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
             {

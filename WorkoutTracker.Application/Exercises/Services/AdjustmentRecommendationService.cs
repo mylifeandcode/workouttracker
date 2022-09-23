@@ -22,6 +22,12 @@ namespace WorkoutTracker.Application.Exercises.Services
         private IResistanceBandService _resistanceBandService;
         private IResistanceService _resistanceService;
 
+        private const string REASON_FORM = "Form needs improvement. ";
+        private const string REASON_RANGE_OF_MOTION = "Range of Motion needs improvement. ";
+        private const string REASON_FORM_AND_RANGE_OF_MOTION = "Form and Range of Motion need improvement. ";
+        private const string REASON_REPS_LESS_THAN_TARGET = "Actual reps last time less than target";
+        private const string REASON_REPS_MUCH_LESS_THAN_TARGET = "Actual reps last time significantly less than target.";
+
         public AdjustmentRecommendationService(IResistanceBandService resistanceBandService, IResistanceService resistanceService)
         {
             _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
@@ -320,18 +326,18 @@ namespace WorkoutTracker.Application.Exercises.Services
             string reps;
 
             if (inadequateForm && inadequateRangeOfMotion)
-                formAndRangeOfMotion = "Form and Range of Motion need improvement. ";
+                formAndRangeOfMotion = REASON_FORM_AND_RANGE_OF_MOTION;
             else if (inadequateForm)
-                formAndRangeOfMotion = "Form needs improvement. ";
+                formAndRangeOfMotion = REASON_FORM;
             else if (inadequateRangeOfMotion)
-                formAndRangeOfMotion = "Range of Motion needs improvement. ";
+                formAndRangeOfMotion = REASON_RANGE_OF_MOTION;
             else
                 formAndRangeOfMotion = "";
 
             if (actualRepsSignificantlyLessThanTarget)
-                reps = "Actual reps last time significantly less than target.";
+                reps = REASON_REPS_MUCH_LESS_THAN_TARGET;
             else if (actualRepsLessThanTarget)
-                reps = "Actual reps last time less than target.";
+                reps = REASON_REPS_LESS_THAN_TARGET;
             else
                 reps = "";
             

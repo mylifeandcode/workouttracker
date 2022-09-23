@@ -12,7 +12,10 @@ using WorkoutTracker.Application.Resistances.Interfaces;
 namespace WorkoutTracker.Application.Exercises.Services
 {
     /// <summary>
-    /// A service for producing ExerciseAmountRecommendations
+    /// A service for producing ExerciseAmountRecommendations.
+    /// This is the entry point for recommendations. 
+    /// The IIncreaseRecommendationService and IAdjustmentRecommendationService are then used 
+    /// depending on whether an increase or adjustment is needed.
     /// </summary>
     public class ExerciseAmountRecommendationService : RecommendationService, IExerciseAmountRecommendationService
     {
@@ -25,12 +28,6 @@ namespace WorkoutTracker.Application.Exercises.Services
         private static TimeSpan RECENTLY_PERFORMED_EXERCISE_THRESHOLD = new TimeSpan(14, 0, 0, 0);
 
         #region Constants
-        private const string REASON_FORM_NEEDS_IMPROVEMENT = "Form needs improvement.";
-        private const string REASON_RANGE_OF_MOTION_NEEDS_IMPROVEMENT = "Range of Motion needs improvement.";
-        private const string REASON_ACTUAL_REPS_SIGNIFICANTLY_LOWER_THAN_TARGET = "Actual reps last time were significantly lower than target.";
-        private const string REASON_ACTUAL_REPS_LOWER_THAN_TARGET = "Actual reps last time lower than target.";
-        private const string REASON_GOALS_NOT_MET_BUT_CLOSE = "Goals not met, but close enough to remain the same.";
-
         private const byte RATING_BAD = 1;
         private const byte RATING_POOR = 2;
         private const byte RATING_OK = 3;
@@ -217,38 +214,6 @@ namespace WorkoutTracker.Application.Exercises.Services
         private static ExecutedExercise GetFirstExerciseBySequence(List<ExecutedExercise> executedExercises)
         {
             return executedExercises.OrderBy(exercise => exercise.Sequence).First();
-        }
-
-        private static bool UserMetTargetRepCount(byte targetRepCount, byte actualRepCount)
-        {
-            //TODO: Re-evaluate. Probably not necessary -- would be the default
-            //condition.
-            return targetRepCount == actualRepCount;
-        }
-
-        private static string GetBadRatingReason(bool inadequateForm, bool inadequateRangeOfMotion)
-        {
-            if (inadequateForm && inadequateRangeOfMotion)
-                return REASON_FORM_NEEDS_IMPROVEMENT + " " + REASON_RANGE_OF_MOTION_NEEDS_IMPROVEMENT;
-            else if (inadequateForm)
-                return REASON_FORM_NEEDS_IMPROVEMENT;
-            else
-                return REASON_RANGE_OF_MOTION_NEEDS_IMPROVEMENT;
-        }
-
-        private static byte GetResistanceDecreaseMultiplier(byte formRating, byte rangeOfMotionRating)
-        {
-            if (UserHadFormOrRangeOfMotionRating(RATING_BAD, formRating, rangeOfMotionRating))
-                return 3;
-            else if (UserHadFormOrRangeOfMotionRating(RATING_POOR, formRating, rangeOfMotionRating))
-                return 2;
-            else
-                return 1;
-        }
-
-        private static bool UserHadFormOrRangeOfMotionRating(byte ratingLevel, byte formRating, byte rangeOfMotionRating)
-        {
-            return formRating == ratingLevel || rangeOfMotionRating == ratingLevel;
         }
 
         #endregion Private Static Methods

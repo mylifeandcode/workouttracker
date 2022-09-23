@@ -90,7 +90,7 @@ namespace WorkoutTracker.Application.Resistances.Services
             //We'll select these in descending order by resistance amount.
             List<ResistanceBand> availableBands = 
                 GetIndividualBands()
-                    .Where(x => (x.MaxResistanceAmount * multiplierForDoubledOverBands) < preferredMax)
+                    .Where(x => (x.MaxResistanceAmount * multiplierForDoubledOverBands) <= preferredMax)
                     .OrderByDescending(x => x.MaxResistanceAmount).ToList();
             
             selectedBands.Add(availableBands[0]); //Start by selecting the one with the most resistance
