@@ -1,13 +1,25 @@
 <h3 class="headroom">User Settings</h3>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-4">
-      <button class="btn btn-primary" routerLink="/user/change-password">Change Password</button>
+    <div class="offset-4 col-4">
+      <label>What is your goal?</label>&nbsp;
+      <select>
+        <option value="" selected disabled>Choose a Goal</option>
+        <option *ngFor="let goal of goals | keyvalue" [value]="goal.value">
+          {{goal.key}} - {{goal.value}}
+        </option>
+      </select>
     </div>
   </div>
   <div class="row">
-    <div class="col-4">
-      <button class="btn btn-primary" disabled="true">View/Edit Settings (Coming Soon)</button>
+    <div class="offset-4 col-4">
+      <button class="btn btn-primary" disabled="true">Save Settings (Coming Soon)</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="offset-4 col-4">
+      <button class="btn btn-primary" routerLink="/user/change-password">Change Password</button>
     </div>
   </div>
 </div>

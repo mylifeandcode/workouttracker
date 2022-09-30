@@ -25,7 +25,6 @@ import { NavComponent } from './nav/nav.component';
 import { UserSelectComponent } from './user-select/user-select.component';
 
 //Other
-import { UserSettingsComponent } from './user/user-settings/user-settings.component';
 import { AuthService } from './core/auth.service';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { WelcomeComponent } from './welcome/welcome.component';

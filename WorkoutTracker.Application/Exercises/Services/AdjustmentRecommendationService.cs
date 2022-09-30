@@ -57,7 +57,6 @@ namespace WorkoutTracker.Application.Exercises.Services
             bool actualRepsSignificantlyLessThanTarget = ActualRepsSignificantlyLessThanTarget(executedExercise.SetType, executedExercise.TargetRepCount, executedExercise.ActualRepCount);
             bool actualRepsLessThanTarget = ActualRepsLessThanTarget(executedExercise.SetType, executedExercise.TargetRepCount, executedExercise.ActualRepCount);
 
-            //If form or range of motion was lacking, reduce resistance.
             if (inadequateForm || inadequateRangeOfMotion || actualRepsSignificantlyLessThanTarget || actualRepsLessThanTarget)
             {
                 recommendation =
@@ -69,7 +68,6 @@ namespace WorkoutTracker.Application.Exercises.Services
                         actualRepsSignificantlyLessThanTarget,
                         actualRepsLessThanTarget);
             }
-            //Otherwise, they didn't meet their goals last time, but they should remain the same.
             else
             {
                 recommendation = new ExerciseAmountRecommendation(executedExercise);
