@@ -1,19 +1,29 @@
 <h3 class="headroom">User Settings</h3>
 <div class="container-fluid">
+  <h4>Settings</h4>
   <div class="row">
-    <div class="offset-4 col-4">
+    <div class="col-4">
+      Use Recommendation Engine
+    </div>
+    <div class="col-4">
+      <p-inputSwitch id="useRecommendationEngine" styleClass="align-middle" (onChange)="recommendationEngineToggled($event)"></p-inputSwitch>
     </div>
   </div>
   <div class="row">
     <div class="offset-4 col-4">
-      <button class="btn btn-primary" disabled="true">Save Settings (Coming Soon)</button>
+      <button class="btn btn-primary" disabled="true">Save Settings</button>
     </div>
   </div>
 
+  <h4 class="headroom">Security</h4>
   <div class="row">
-    <div class="offset-4 col-4">
-      <button class="btn btn-primary" routerLink="/user/change-password">Change Password</button>
+    <div class="col-4">
+      Change Password
+    </div>
+    <div class="col-4">
+      <button class="btn btn-sm btn-primary" routerLink="/user/change-password">Change Password</button>
     </div>
   </div>
+
 </div>
 

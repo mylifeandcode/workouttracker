@@ -18,4 +18,8 @@ export class UserSettingsComponent implements OnInit {
     //this._userService.getById(this._authService.)
   }
 
+  public recommendationEngineToggled(event: any): void { //TODO: Get or specify a concrete type for the event param
+
+  }
+
 }
