@@ -17,13 +17,18 @@ export class UserNotSelectedGuard implements CanActivate {
       let returnValue: boolean = true;
 
       if(this._authService.isUserLoggedIn) {
+        console.log("User is already logged in");
         returnValue = false;
         this._router.navigate(['home']);
       }
 
-      if(state.url.indexOf(this._authService.loginRoute) < 0)
+      /*
+      if(state.url.indexOf(this._authService.loginRoute) < 0) {
+        console.log("Going to login route");
         this._router.navigate([this._authService.loginRoute]);
-
+      }
+      */
+      console.log(`No user selected (${this._authService.isUserLoggedIn}). Continuing to route.`);
       return returnValue;
 
   }

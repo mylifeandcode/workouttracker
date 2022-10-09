@@ -2,13 +2,6 @@
 <div class="container-fluid">
   <div class="row">
     <div class="offset-4 col-4">
-      <label>What is your goal?</label>&nbsp;
-      <select>
-        <option value="" selected disabled>Choose a Goal</option>
-        <option *ngFor="let goal of goals | keyvalue" [value]="goal.value">
-          {{goal.key}} - {{goal.value}}
-        </option>
-      </select>
     </div>
   </div>
   <div class="row">

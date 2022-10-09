@@ -48,11 +48,11 @@ namespace WorkoutTracker.UI.Controllers
         }
 
         [HttpPost]
-        public virtual ActionResult<T> Post([FromBody] T value)
+        public virtual ActionResult<T> Post([FromBody] T value, bool setAuditFields = true)
         {
             try
             {
-                SetCreatedAuditFields(value);
+                if (setAuditFields) SetCreatedAuditFields(value);
                 return Ok(_service.Add(value));
             }
             catch (BadHttpRequestException ex)

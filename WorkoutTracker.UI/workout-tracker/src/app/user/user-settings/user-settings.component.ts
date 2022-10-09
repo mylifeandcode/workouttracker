@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { UserGoal } from 'app/core/enums/user-goal';
+import { AuthService } from 'app/core/auth.service';
+import { UserSettings } from 'app/core/models/user-settings';
+import { UserService } from 'app/core/user.service';
 
 @Component({
   selector: 'wt-user-settings',
@@ -8,11 +10,12 @@ import { UserGoal } from 'app/core/enums/user-goal';
 })
 export class UserSettingsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private _authService: AuthService, private _userService: UserService) { }
+  public loading: boolean = true;
+  public userSettings: UserSettings;
 
-  goals = Object.keys(UserGoal); //Needed so we can loop through enum items
-  
-  ngOnInit(): void {
+  public ngOnInit(): void {
+    //this._userService.getById(this._authService.)
   }
 
 }
