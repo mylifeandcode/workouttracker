@@ -1,19 +1,22 @@
 <h3 class="headroom">User Settings</h3>
 <div class="container-fluid">
   <h4>Settings</h4>
-  <div class="row">
-    <div class="col-4">
-      Use Recommendation Engine
+  <form *ngIf="userSettingsForm" [formGroup]="userSettingsForm" novalidate>
+    <div class="row">
+      <div class="col-4">
+        Use Recommendation Engine<br />
+        <small><strong>IMPORTANT: </strong>By enabling recommendations, you acknowledge recommendations are followed at your own risk.</small>
+      </div>
+      <div class="col-4">
+        <p-inputSwitch id="useRecommendationEngine" formControlName="recommendationsEnabled" styleClass="align-middle" (onChange)="recommendationEngineToggled($event)"></p-inputSwitch>
+      </div>
     </div>
-    <div class="col-4">
-      <p-inputSwitch id="useRecommendationEngine" styleClass="align-middle" (onChange)="recommendationEngineToggled($event)"></p-inputSwitch>
+    <div class="row">
+      <div class="offset-4 col-4">
+        <button class="btn btn-primary" [disabled]="userSettingsForm.pristine || userSettingsForm.invalid" (click)="saveSettings()">Save Settings</button>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="offset-4 col-4">
-      <button class="btn btn-primary" disabled="true">Save Settings</button>
-    </div>
-  </div>
+  </form>
 
   <h4 class="headroom">Security</h4>
   <div class="row">
@@ -24,6 +27,4 @@
       <button class="btn btn-sm btn-primary" routerLink="/user/change-password">Change Password</button>
     </div>
   </div>
-
 </div>
-
