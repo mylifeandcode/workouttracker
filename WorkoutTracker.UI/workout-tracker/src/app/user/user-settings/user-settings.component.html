@@ -4,11 +4,18 @@
   <form *ngIf="userSettingsForm" [formGroup]="userSettingsForm" novalidate>
     <div class="row">
       <div class="col-4">
-        Use Recommendation Engine<br />
-        <small><strong>IMPORTANT: </strong>By enabling recommendations, you acknowledge recommendations are followed at your own risk.</small>
+        Use Suggestion Engine<br />
+        <span class="description headroom">This feature provides suggestions for repetition and resistance amounts based on your previous performance of an exercise.</span><br />
+        <span class="headroom"><small><strong>IMPORTANT: </strong>By enabling suggestions, you acknowledge suggestions are followed at your own risk.</small></span>
       </div>
       <div class="col-4">
         <p-inputSwitch id="useRecommendationEngine" formControlName="recommendationsEnabled" styleClass="align-middle" (onChange)="recommendationEngineToggled($event)"></p-inputSwitch>
+      </div>
+    </div>
+    <div *ngIf="recommendationsEnabled" class="row">
+      <div class="col-12">
+        <h5 class="headroom">Suggestion Settings</h5>
+        <wt-user-rep-settings *ngFor="let settings of userSettingsForm.controls.repSettings.controls; let i = index" [repSettingsFormGroup]="settings"></wt-user-rep-settings>
       </div>
     </div>
     <div class="row">

@@ -24,7 +24,7 @@
           <button type="submit" [disabled]="newUserForm.invalid" (click)="addUser()" class="btn btn-success">Add</button>
           &nbsp;
           <button type="button" [disabled]="addingUser" routerLink="/user-select" class="btn btn-warning">Cancel</button>
-          <span *ngIf="addingUser"> Saving...</span> <span *ngIf="errorMsg" class="errorText">{{errorMsg}}</span>
+          <span *ngIf="addingUser"> Saving...</span> <span *ngIf="errorMsg" class="error-text">{{errorMsg}}</span>
         </div>
       </form>
 

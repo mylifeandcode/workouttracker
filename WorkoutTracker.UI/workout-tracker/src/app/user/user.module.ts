@@ -9,6 +9,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     ChangePasswordComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    UserSettingsComponent
+    UserSettingsComponent,
+    UserRepSettingsComponent
   ],
   imports: [
     CommonModule,

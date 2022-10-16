@@ -43,7 +43,7 @@
             <button type="submit" [disabled]="userEditForm.invalid" (click)="saveUser()" class="btn btn-success">Save</button>
             &nbsp;
             <button type="button" [disabled]="savingUserInfo || loadingUserInfo" (click)="cancel()" class="btn btn-warning">Cancel</button>
-            <span *ngIf="savingUserInfo">Saving...</span> <span *ngIf="errorMsg" class="errorText">{{errorMsg}}</span>
+            <span *ngIf="savingUserInfo">Saving...</span> <span *ngIf="errorMsg" class="error-text">{{errorMsg}}</span>
           </div>
         </form>
         <div class="headroom">
