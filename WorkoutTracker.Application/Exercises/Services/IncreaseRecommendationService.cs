@@ -73,6 +73,7 @@ namespace WorkoutTracker.Application.Exercises.Services
                         executedExerciseAverages.Exercise,
                         out resistanceMakeup);
                 recommendation.ResistanceMakeup = resistanceMakeup;
+                recommendation.Reason = "Met max rep count.";
             }
             else
             {
@@ -85,6 +86,7 @@ namespace WorkoutTracker.Application.Exercises.Services
 
                 recommendation.ResistanceAmount = executedExerciseAverages.LastExecutedSet.ResistanceAmount;
                 recommendation.ResistanceMakeup = executedExerciseAverages.LastExecutedSet.ResistanceMakeup; //TODO: Add constructor to recommendation to default this stuff from an ExecutedExercise
+                recommendation.Reason = "Good rep count.";
             }
 
             return recommendation;

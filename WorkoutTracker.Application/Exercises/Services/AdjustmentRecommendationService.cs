@@ -155,63 +155,6 @@ namespace WorkoutTracker.Application.Exercises.Services
             return recommendation;
         }
 
-        #region Remove...maybe
-        /*
-        /// <summary>
-        /// Gets a recommendation to decrease something about an exercise performed during a timed set
-        /// </summary>
-        /// <param name="executedExercise">The exercise which was executed and needs a decrease in reps or resistance</param>
-        /// <param name="userSettings">The user's settings</param>
-        /// <param name="inadequateForm">Indicates whether or not the exercise was last performed with inadequate form</param>
-        /// <param name="inadequateRangeOfMotion">Indicates whether or not the exercise was last performed with inadequate range of motion</param>
-        /// <param name="actualRepsSignificantlyLessThanTarget">Indicates whether or not the exercise was last performed with significantly less reps that targeted</param>
-        /// <param name="actualRepsLessThanTarget">Indicates whether or not the exercise was last performed with less reps that targeted</param>
-        /// <returns>An ExerciseAmountRecommendation with recommendations regarding reps and resistance for an exercise performed in a timed set</returns>
-        private ExerciseAmountRecommendation GetTimedSetDecreaseRecommendation(
-            ExecutedExercise executedExercise,
-            UserSettings userSettings,
-            bool inadequateForm,
-            bool inadequateRangeOfMotion,
-            bool actualRepsSignificantlyLessThanTarget,
-            bool actualRepsLessThanTarget)
-        {
-            string resistanceMakeup;
-            bool recommendingDecreasedResistance = false;
-
-            var recommendation = new ExerciseAmountRecommendation(executedExercise);
-            if (inadequateForm || inadequateRangeOfMotion) //Because we have both, we can make this more granular later if need be
-            {
-                recommendingDecreasedResistance = true;
-                recommendation.ResistanceAmount =
-                    GetDecreasedResistanceAmount(
-                        SetType.Timed, 
-                        executedExercise.TargetRepCount, 
-                        executedExercise.ActualRepCount, 
-                        executedExercise.ResistanceAmount, 
-                        executedExercise.Exercise, 
-                        out resistanceMakeup);
-                recommendation.ResistanceMakeup = resistanceMakeup;
-            }
-
-            if (ShouldRepCountBeLowered(actualRepsLessThanTarget, recommendingDecreasedResistance, actualRepsSignificantlyLessThanTarget))
-                recommendation.Reps = GetDecreasedRepCount(SetType.Timed, userSettings, executedExercise.TargetRepCount, executedExercise.ActualRepCount);
-
-            return recommendation;
-        }
-
-        private ExerciseAmountRecommendation GetRepititionSetDecreaseRecommendation(
-            ExecutedExercise executedExercise,
-            UserSettings userSettings,
-            bool inadequateForm,
-            bool inadequateRangeOfMotion,
-            bool actualRepsSignificantlyLessThanTarget,
-            bool actualRepsLessThanTarget)
-        {
-            throw new NotImplementedException();
-        }
-        */
-        #endregion Remove...maybe
-        
         private decimal GetDecreasedResistanceAmount(
             SetType setType,
             double targetRepsLastTime,
