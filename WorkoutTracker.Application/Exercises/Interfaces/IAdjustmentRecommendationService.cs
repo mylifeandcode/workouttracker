@@ -12,7 +12,7 @@ namespace WorkoutTracker.Application.Exercises.Interfaces
     public interface IAdjustmentRecommendationService
     {
         ExerciseAmountRecommendation GetAdjustmentRecommendation(
-                    ExecutedExercise executedExercise,
+                    ExecutedExerciseAverages executedExerciseAverages,
                     UserSettings userSettings);
     }
 }

@@ -60,7 +60,7 @@ public class ResistanceService : IResistanceService
 
     private static decimal GetCalculatedResistance(decimal previousResistance, byte increment, sbyte multiplier)
     {
-        return previousResistance * (increment * multiplier);
+        return previousResistance + (increment * multiplier);
     }
     
     private decimal GetIncreasedResistanceBandResistanceAmount(

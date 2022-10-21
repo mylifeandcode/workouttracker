@@ -55,10 +55,13 @@ namespace WorkoutTracker.Application.Exercises.Services
         public ExerciseAmountRecommendation GetRecommendation(
             Exercise exercise,
             ExecutedWorkout lastWorkoutWithThisExercise,
-            UserSettings userSettings = null)
+            UserSettings userSettings)
         {
             if (exercise == null)
                 throw new ArgumentNullException(nameof(exercise));
+
+            if (userSettings == null)
+                throw new ArgumentNullException(nameof(userSettings));
 
             var lastSetsOfThisExercise = GetLastSetsOfExercise(exercise.Id, lastWorkoutWithThisExercise);
 
@@ -130,23 +133,24 @@ namespace WorkoutTracker.Application.Exercises.Services
             List<ExecutedExercise> executedExercises,
             UserSettings userSettings)
         {
-            //TODO: Allow for profile-based thresholds
-            var firstExerciseSet = GetFirstExerciseBySequence(executedExercises);
-            if (firstExerciseSet.ActualRepCount >= firstExerciseSet.TargetRepCount)
+            var averages = new ExecutedExerciseAverages(executedExercises);
+
+            //if (firstExerciseSet.ActualRepCount >= firstExerciseSet.TargetRepCount)
+            if (averages.AverageActualRepCount >= averages.AverageTargetRepCount)
             {
-                if (HadAdequateRating(firstExerciseSet.FormRating)
-                    && HadAdequateRating(firstExerciseSet.RangeOfMotionRating))
+                if (HadAdequateRating(averages.AverageFormRating, userSettings)
+                    && HadAdequateRating(averages.AverageRangeOfMotionRating, userSettings))
                 {
-                    return _increaseRecommendationService.GetIncreaseRecommendation(firstExerciseSet, userSettings);
+                    return _increaseRecommendationService.GetIncreaseRecommendation(averages, userSettings);
                 }
                 else
                 {
-                    return _adjustmentRecommendationService.GetAdjustmentRecommendation(firstExerciseSet, userSettings);
+                    return _adjustmentRecommendationService.GetAdjustmentRecommendation(averages, userSettings);
                 }
             }
             else
             {
-                return _adjustmentRecommendationService.GetAdjustmentRecommendation(firstExerciseSet, userSettings);
+                return _adjustmentRecommendationService.GetAdjustmentRecommendation(averages, userSettings);
             }
         }
 
@@ -154,27 +158,29 @@ namespace WorkoutTracker.Application.Exercises.Services
             List<ExecutedExercise> executedExercises,
             UserSettings userSettings)
         {
-            var firstExerciseOfSet = GetFirstExerciseBySequence(executedExercises);
+            var averages = new ExecutedExerciseAverages(executedExercises);
 
             //How did they do last time?
-            if (HadAdequateRating(firstExerciseOfSet.FormRating)
-                && HadAdequateRating(firstExerciseOfSet.RangeOfMotionRating)
-                && firstExerciseOfSet.ActualRepCount >= firstExerciseOfSet.TargetRepCount)
+            if (HadAdequateRating(averages.AverageFormRating)
+                && HadAdequateRating(averages.AverageRangeOfMotionRating)
+                && averages.AverageActualRepCount >= averages.AverageTargetRepCount)
             {
                 //They did well enough last time, but since they haven't done this one
                 //recently, have them do what they did last time.
                 var recommendation = new ExerciseAmountRecommendation();
 
-                recommendation.ExerciseId = firstExerciseOfSet.ExerciseId;
-                recommendation.Reps = firstExerciseOfSet.TargetRepCount;
-                recommendation.ResistanceAmount = firstExerciseOfSet.ResistanceAmount;
-                recommendation.ResistanceMakeup = firstExerciseOfSet.ResistanceMakeup;
+                recommendation.ExerciseId = averages.Exercise.Id;
+                recommendation.Reps = averages.LastExecutedSet.ActualRepCount;
+                recommendation.ResistanceAmount = averages.LastExecutedSet.ResistanceAmount;
+                recommendation.ResistanceMakeup = averages.LastExecutedSet.ResistanceMakeup;
+
+                recommendation.Reason = "Last time for this workout was not recent.";
 
                 return recommendation;
             }
             else
             {
-                return _adjustmentRecommendationService.GetAdjustmentRecommendation(firstExerciseOfSet, userSettings);
+                return _adjustmentRecommendationService.GetAdjustmentRecommendation(averages, userSettings);
             }
         }
         #endregion Private Non-Static Methods

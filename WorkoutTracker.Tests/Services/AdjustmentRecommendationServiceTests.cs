@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using WorkoutTracker.Application.Exercises.Interfaces;
+using WorkoutTracker.Application.Exercises.Models;
 using WorkoutTracker.Application.Exercises.Services;
 using WorkoutTracker.Application.Resistances.Interfaces;
 using WorkoutTracker.Domain.Exercises;
@@ -19,6 +21,7 @@ namespace WorkoutTracker.Tests.Services
     {
         private Mock<IResistanceBandService> _resistanceBandServiceMock;
         private Mock<IResistanceService> _resistanceServiceMock;
+        private Mock<ILogger<AdjustmentRecommendationService>> _loggerMock;
         private UserSettings _userSettings;
         private AdjustmentRecommendationService _sut;
 
@@ -42,7 +45,10 @@ namespace WorkoutTracker.Tests.Services
 
             _resistanceServiceMock = new Mock<IResistanceService>(MockBehavior.Strict);
 
-            _sut = new AdjustmentRecommendationService(_resistanceBandServiceMock.Object, _resistanceServiceMock.Object);
+            _loggerMock = new Mock<ILogger<AdjustmentRecommendationService>>(MockBehavior.Strict);
+            _loggerMock.Setup(x => x.LogInformation(It.IsAny<string>()));
+
+            _sut = new AdjustmentRecommendationService(_resistanceBandServiceMock.Object, _resistanceServiceMock.Object, _loggerMock.Object);
         }
 
         [TestMethod]
@@ -61,8 +67,10 @@ namespace WorkoutTracker.Tests.Services
                     Exercise = new Exercise { ResistanceType = ResistanceType.ResistanceBand }
                 };
 
+            var averages = new ExecutedExerciseAverages(new List<ExecutedExercise> { executedExercise });
+
             //ACT
-            var recommendation = _sut.GetAdjustmentRecommendation(executedExercise, _userSettings);
+            var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
@@ -87,8 +95,10 @@ namespace WorkoutTracker.Tests.Services
                     Exercise = new Exercise { ResistanceType = ResistanceType.ResistanceBand }
                 };
 
+            var averages = new ExecutedExerciseAverages(new List<ExecutedExercise> { executedExercise });
+
             //ACT
-            var recommendation = _sut.GetAdjustmentRecommendation(executedExercise, _userSettings);
+            var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
