@@ -15,6 +15,19 @@ namespace WorkoutTracker.Application.Exercises.Models
 
         public ExerciseAmountRecommendation() { }
 
+        public ExerciseAmountRecommendation(ExecutedExerciseAverages averages, string reason)
+        {
+            if (averages == null) throw new ArgumentNullException(nameof(averages));
+            if (string.IsNullOrEmpty(reason)) throw new ArgumentNullException(nameof(reason));
+
+            ExerciseId = averages.Exercise.Id;
+            Reps = averages.LastExecutedSet.ActualRepCount;
+            ResistanceAmount = averages.LastExecutedSet.ResistanceAmount;
+            ResistanceMakeup = averages.LastExecutedSet.ResistanceMakeup;
+
+            Reason = reason;
+        }
+
         public ExerciseAmountRecommendation(ExecutedExercise executedExercise)
         {
             if (executedExercise == null)

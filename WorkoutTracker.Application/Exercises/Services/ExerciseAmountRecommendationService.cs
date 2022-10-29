@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using WorkoutTracker.Domain.Exercises;
-using WorkoutTracker.Domain.Resistances;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
 using WorkoutTracker.Application.Resistances.Interfaces;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
@@ -24,6 +25,7 @@ namespace WorkoutTracker.Application.Exercises.Services
         private IResistanceBandService _resistanceBandService;
         private IIncreaseRecommendationService _increaseRecommendationService;
         private IAdjustmentRecommendationService _adjustmentRecommendationService;
+        private ILogger<ExerciseAmountRecommendationService> _logger;
 
         private static TimeSpan RECENTLY_PERFORMED_EXERCISE_THRESHOLD = new TimeSpan(14, 0, 0, 0);
 
@@ -36,11 +38,13 @@ namespace WorkoutTracker.Application.Exercises.Services
         public ExerciseAmountRecommendationService(
             IResistanceBandService resistanceBandService,
             IIncreaseRecommendationService increaseRecommendationService,
-            IAdjustmentRecommendationService adjustmentRecommendationService)
+            IAdjustmentRecommendationService adjustmentRecommendationService, 
+            ILogger<ExerciseAmountRecommendationService> logger)
         {
             _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
             _increaseRecommendationService = increaseRecommendationService ?? throw new ArgumentNullException(nameof(increaseRecommendationService));
             _adjustmentRecommendationService = adjustmentRecommendationService ?? throw new ArgumentNullException(nameof(adjustmentRecommendationService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #region Public Methods
@@ -65,26 +69,26 @@ namespace WorkoutTracker.Application.Exercises.Services
 
             var lastSetsOfThisExercise = GetLastSetsOfExercise(exercise.Id, lastWorkoutWithThisExercise);
 
-            if (userSettings == null)
-                userSettings = UserSettings.GetDefault(); //TODO: Remove stopgap.
-
             if (UserHasPerformedExerciseBefore(lastWorkoutWithThisExercise))
             {
                 if (UserHasPerformedExerciseRecently(lastSetsOfThisExercise))
                 {
                     //Adjust weights or reps accordingly
+                    _logger.LogInformation($"Getting performance-based recommendation for {exercise.Name}.");
                     return GetPerformanceBasedRecommendation(lastSetsOfThisExercise, userSettings);
                 }
                 else
                 {
                     //Recommend same as last time, or lower weights or rep if they 
                     //did poorly
+                    _logger.LogInformation($"Getting not-performed-recently recommendation for {exercise.Name}.");
                     return GetRecommendationForExerciseNotPerformedRecently(lastSetsOfThisExercise, userSettings);
                 }
             }
             else
             {
                 //Exercise never performed. Start with the default recommendation values.
+                _logger.LogInformation($"Getting default recommendation for {exercise.Name} because it has never been performed.");
                 return GetDefaultRecommendation(exercise);
             }
         }
@@ -126,6 +130,7 @@ namespace WorkoutTracker.Application.Exercises.Services
                     throw new ApplicationException($"Unhandled ResistanceType: {exercise.ResistanceType.ToString()}.");
             }
 
+            _logger.LogInformation($"Default recommendation for {exercise.Name} is {recommendation.ResistanceAmount}.");
             return recommendation;
         }
 
@@ -135,22 +140,13 @@ namespace WorkoutTracker.Application.Exercises.Services
         {
             var averages = new ExecutedExerciseAverages(executedExercises);
 
-            //if (firstExerciseSet.ActualRepCount >= firstExerciseSet.TargetRepCount)
-            if (averages.AverageActualRepCount >= averages.AverageTargetRepCount)
+            if (ExercisePerformanceNeedsImprovement(averages, userSettings.LowestAcceptableRating))
             {
-                if (HadAdequateRating(averages.AverageFormRating, userSettings)
-                    && HadAdequateRating(averages.AverageRangeOfMotionRating, userSettings))
-                {
-                    return _increaseRecommendationService.GetIncreaseRecommendation(averages, userSettings);
-                }
-                else
-                {
-                    return _adjustmentRecommendationService.GetAdjustmentRecommendation(averages, userSettings);
-                }
+                return _adjustmentRecommendationService.GetAdjustmentRecommendation(averages, userSettings);
             }
             else
             {
-                return _adjustmentRecommendationService.GetAdjustmentRecommendation(averages, userSettings);
+                return _increaseRecommendationService.GetIncreaseRecommendation(averages, userSettings);
             }
         }
 
@@ -161,31 +157,31 @@ namespace WorkoutTracker.Application.Exercises.Services
             var averages = new ExecutedExerciseAverages(executedExercises);
 
             //How did they do last time?
-            if (HadAdequateRating(averages.AverageFormRating)
-                && HadAdequateRating(averages.AverageRangeOfMotionRating)
-                && averages.AverageActualRepCount >= averages.AverageTargetRepCount)
+            if (ExercisePerformanceNeedsImprovement(averages, userSettings.LowestAcceptableRating))
             {
-                //They did well enough last time, but since they haven't done this one
-                //recently, have them do what they did last time.
-                var recommendation = new ExerciseAmountRecommendation();
-
-                recommendation.ExerciseId = averages.Exercise.Id;
-                recommendation.Reps = averages.LastExecutedSet.ActualRepCount;
-                recommendation.ResistanceAmount = averages.LastExecutedSet.ResistanceAmount;
-                recommendation.ResistanceMakeup = averages.LastExecutedSet.ResistanceMakeup;
-
-                recommendation.Reason = "Last time for this workout was not recent.";
-
-                return recommendation;
+                //They didn't do well enough last time. Suggest an adjustment.
+                _logger.LogInformation($"{averages.Exercise.Name} needs improvement.");
+                return _adjustmentRecommendationService.GetAdjustmentRecommendation(averages, userSettings);
             }
             else
             {
-                return _adjustmentRecommendationService.GetAdjustmentRecommendation(averages, userSettings);
+                //They did well enough last time, but since they haven't done this one
+                //recently, have them do what they did last time.
+                _logger.LogInformation($"{averages.Exercise.Name} performed okay last time, but it's been a while, so suggesting same resistance and reps.");
+                return new ExerciseAmountRecommendation(averages, "Last time for this workout was not recent.");
             }
         }
         #endregion Private Non-Static Methods
 
         #region Private Static Methods
+        private static bool ExercisePerformanceNeedsImprovement(
+            ExecutedExerciseAverages averages, 
+            byte lowestAcceptableRating)
+        {
+            return (!HadAdequateRating(averages.AverageFormRating, lowestAcceptableRating)
+                || !HadAdequateRating(averages.AverageRangeOfMotionRating, lowestAcceptableRating)
+                || averages.AverageActualRepCount < averages.AverageTargetRepCount);
+        }
 
         private static List<ExecutedExercise> GetLastSetsOfExercise(int exerciseId, ExecutedWorkout workout)
         {

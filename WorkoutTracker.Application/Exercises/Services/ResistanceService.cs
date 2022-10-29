@@ -40,7 +40,7 @@ public class ResistanceService : IResistanceService
                 return GetCalculatedResistance(previousResistance, MACHINEWEIGHT_INCREMENT, multiplier);
             
             case ResistanceType.ResistanceBand:
-                return GetIncreasedResistanceBandResistanceAmount(previousResistance, multiplier, isDoubledBands, out makeup);
+                return GetCalculatedResistanceBandResistance(previousResistance, multiplier, isDoubledBands, out makeup);
             
             case ResistanceType.Other:
                 makeup = null;
@@ -53,17 +53,12 @@ public class ResistanceService : IResistanceService
 
     #region Private Methods
 
-    private decimal CalculateDecreasedResistanceBandResistance(decimal previousResistance, byte multiplier, out string makeup)
-    {
-        throw new NotImplementedException();
-    }
-
     private static decimal GetCalculatedResistance(decimal previousResistance, byte increment, sbyte multiplier)
     {
         return previousResistance + (increment * multiplier);
     }
     
-    private decimal GetIncreasedResistanceBandResistanceAmount(
+    private decimal GetCalculatedResistanceBandResistance(
         decimal previousResistanceAmount,
         sbyte multiplier,
         bool doubleBandResistanceAmounts,

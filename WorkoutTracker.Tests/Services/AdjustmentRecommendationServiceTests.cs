@@ -28,27 +28,12 @@ namespace WorkoutTracker.Tests.Services
         [TestInitialize]
         public void Initialize()
         {
-            _resistanceBandServiceMock = new Mock<IResistanceBandService>(MockBehavior.Strict);
-            
-            _resistanceBandServiceMock
-                .Setup(x => x.GetLowestResistanceBand())
-                .Returns(new ResistanceBand{ Color = "Yellow", MaxResistanceAmount = 6 });
-            
-            _resistanceBandServiceMock
-                .Setup(x => x.GetResistanceBandsForResistanceAmountRange(It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<bool>()))
-                .Returns(new List<ResistanceBand>(1) 
-                    {
-                        new ResistanceBand{ Color = "Blue", MaxResistanceAmount = 13 } 
-                    });
-
             _userSettings = new UserSettings();
-
-            _resistanceServiceMock = new Mock<IResistanceService>(MockBehavior.Strict);
 
             _loggerMock = new Mock<ILogger<AdjustmentRecommendationService>>(MockBehavior.Strict);
             _loggerMock.Setup(x => x.LogInformation(It.IsAny<string>()));
 
-            _sut = new AdjustmentRecommendationService(_resistanceBandServiceMock.Object, _resistanceServiceMock.Object, _loggerMock.Object);
+            _sut = new AdjustmentRecommendationService(_resistanceServiceMock.Object, _loggerMock.Object);
         }
 
         [TestMethod]

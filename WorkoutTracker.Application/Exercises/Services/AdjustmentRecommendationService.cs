@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
-using WorkoutTracker.Application.Resistances.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Exercises.Services
@@ -20,22 +15,23 @@ namespace WorkoutTracker.Application.Exercises.Services
     /// </summary>
     public class AdjustmentRecommendationService : RecommendationService, IAdjustmentRecommendationService
     {
-        private IResistanceBandService _resistanceBandService;
         private IResistanceService _resistanceService;
-        private ILogger _logger;
+        private ILogger<AdjustmentRecommendationService> _logger;
 
         private const string REASON_FORM = "Form needs improvement. ";
+        //TODO: Consider this.
+        //private const string REASON_FORM_AWFUL = "Form needs a lot of improvement. ";
         private const string REASON_RANGE_OF_MOTION = "Range of Motion needs improvement. ";
+        //TODO: Consider this.
+        //private const string REASON_RANGE_OF_MOTION_AWFUL = "Range of motion needs a lot of improvement. ";
         private const string REASON_FORM_AND_RANGE_OF_MOTION = "Form and Range of Motion need improvement. ";
         private const string REASON_REPS_LESS_THAN_TARGET = "Actual reps last time less than target";
         private const string REASON_REPS_MUCH_LESS_THAN_TARGET = "Actual reps last time significantly less than target.";
 
-        public AdjustmentRecommendationService(IResistanceBandService resistanceBandService, IResistanceService resistanceService, ILogger<AdjustmentRecommendationService> logger)
+        public AdjustmentRecommendationService(IResistanceService resistanceService, ILogger<AdjustmentRecommendationService> logger)
         {
-            _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
             _resistanceService = resistanceService ?? throw new ArgumentNullException(nameof(resistanceService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _logger.LogInformation("AdjustmentRecommendationService constructed");
         }
 
         /// <summary>
@@ -56,28 +52,24 @@ namespace WorkoutTracker.Application.Exercises.Services
 
             ExerciseAmountRecommendation recommendation;
 
+            //We already know they need improvement, but find out exactly why so we can report that
+            //to the user with the recommendation.
             bool inadequateForm = !HadAdequateRating(executedExerciseAverages.AverageFormRating);
             bool inadequateRangeOfMotion = !HadAdequateRating(executedExerciseAverages.AverageRangeOfMotionRating);
+            bool awfulForm = HadAwfulRating(executedExerciseAverages.AverageFormRating);
+            bool awfulRangeOfMotion = HadAwfulRating(executedExerciseAverages.AverageRangeOfMotionRating);
             bool actualRepsSignificantlyLessThanTarget = ActualRepsSignificantlyLessThanTarget(executedExerciseAverages.SetType, executedExerciseAverages.AverageTargetRepCount, executedExerciseAverages.AverageActualRepCount);
             bool actualRepsLessThanTarget = ActualRepsLessThanTarget(executedExerciseAverages.SetType, executedExerciseAverages.AverageTargetRepCount, executedExerciseAverages.AverageActualRepCount);
-
-            if (inadequateForm || inadequateRangeOfMotion || actualRepsSignificantlyLessThanTarget || actualRepsLessThanTarget)
-            {
-                recommendation =
-                    GetDecreaseRecommendation(
-                        executedExerciseAverages,
-                        userSettings,
-                        inadequateForm,
-                        inadequateRangeOfMotion,
-                        actualRepsSignificantlyLessThanTarget,
-                        actualRepsLessThanTarget);
-            }
-            else
-            {
-                //TODO: Fix! We did okay, so....what now?
-                recommendation = new ExerciseAmountRecommendation();
-                recommendation.Reason = "UNKNOWN";
-            }
+            
+            recommendation =
+                GetDecreaseRecommendation(
+                    executedExerciseAverages,
+                    inadequateForm,
+                    awfulForm,
+                    inadequateRangeOfMotion,
+                    awfulRangeOfMotion,
+                    actualRepsSignificantlyLessThanTarget,
+                    actualRepsLessThanTarget);
 
             return recommendation;
         }
@@ -99,9 +91,10 @@ namespace WorkoutTracker.Application.Exercises.Services
         /// </remarks>
         private ExerciseAmountRecommendation GetDecreaseRecommendation(
             ExecutedExerciseAverages executedExerciseAverages,
-            UserSettings userSettings,
             bool inadequateForm,
+            bool awfulForm,
             bool inadequateRangeOfMotion,
+            bool awfulRangeOfMotion,
             bool actualRepsSignificantlyLessThanTarget,
             bool actualRepsLessThanTarget)
         {

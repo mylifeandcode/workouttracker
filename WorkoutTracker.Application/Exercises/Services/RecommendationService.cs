@@ -11,6 +11,7 @@ namespace WorkoutTracker.Application.Exercises.Services
     {
         #region Constants
         protected const byte LOWEST_ACCEPTABLE_RATING = 4;
+        protected const byte HIGHEST_AWFUL_RATING = 2;
         #endregion Constants
 
         protected static bool HadAdequateRating(byte rating)
@@ -33,6 +34,16 @@ namespace WorkoutTracker.Application.Exercises.Services
         {
             if (userSettings == null) throw new ArgumentNullException(nameof(userSettings));
             return rating >= userSettings.LowestAcceptableRating;
+        }
+
+        protected static bool HadAdequateRating(double rating, byte lowestAcceptableRating)
+        {
+            return rating >= lowestAcceptableRating;
+        }
+
+        protected static bool HadAwfulRating(double rating)
+        {
+            return rating <= HIGHEST_AWFUL_RATING;
         }
     }
 }
