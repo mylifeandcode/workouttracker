@@ -4,6 +4,7 @@ using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
@@ -54,22 +55,21 @@ namespace WorkoutTracker.Application.Exercises.Services
 
             //We already know they need improvement, but find out exactly why so we can report that
             //to the user with the recommendation.
-            bool inadequateForm = !HadAdequateRating(executedExerciseAverages.AverageFormRating);
-            bool inadequateRangeOfMotion = !HadAdequateRating(executedExerciseAverages.AverageRangeOfMotionRating);
-            bool awfulForm = HadAwfulRating(executedExerciseAverages.AverageFormRating);
-            bool awfulRangeOfMotion = HadAwfulRating(executedExerciseAverages.AverageRangeOfMotionRating);
-            bool actualRepsSignificantlyLessThanTarget = ActualRepsSignificantlyLessThanTarget(executedExerciseAverages.SetType, executedExerciseAverages.AverageTargetRepCount, executedExerciseAverages.AverageActualRepCount);
-            bool actualRepsLessThanTarget = ActualRepsLessThanTarget(executedExerciseAverages.SetType, executedExerciseAverages.AverageTargetRepCount, executedExerciseAverages.AverageActualRepCount);
-            
+            Performance formPerformance = GetRatingPerformance(executedExerciseAverages.AverageFormRating);
+            Performance rangeOfMotionPerformance = GetRatingPerformance(executedExerciseAverages.AverageRangeOfMotionRating);
+            Performance repPerformance = 
+                GetRepPerformance(
+                    executedExerciseAverages.AverageTargetRepCount,
+                    executedExerciseAverages.AverageActualRepCount,
+                    REP_DIFFERENCE_CONSIDERED_AWFUL);
+
             recommendation =
                 GetDecreaseRecommendation(
                     executedExerciseAverages,
-                    inadequateForm,
-                    awfulForm,
-                    inadequateRangeOfMotion,
-                    awfulRangeOfMotion,
-                    actualRepsSignificantlyLessThanTarget,
-                    actualRepsLessThanTarget);
+                    formPerformance, 
+                    rangeOfMotionPerformance, 
+                    repPerformance, 
+                    userSettings);
 
             return recommendation;
         }
@@ -91,27 +91,32 @@ namespace WorkoutTracker.Application.Exercises.Services
         /// </remarks>
         private ExerciseAmountRecommendation GetDecreaseRecommendation(
             ExecutedExerciseAverages executedExerciseAverages,
-            bool inadequateForm,
-            bool awfulForm,
-            bool inadequateRangeOfMotion,
-            bool awfulRangeOfMotion,
-            bool actualRepsSignificantlyLessThanTarget,
-            bool actualRepsLessThanTarget)
+            Performance formPerformance,
+            Performance rangeOfMotionPerformance, 
+            Performance repPerformance, 
+            UserSettings userSettings)
         {
             /*
-            If form and/or range of motion were inadequate, lower resistance.
-            If reps were less than target, decrease target.
+            If form and/or range of motion were inadequate, or rep count less than minimum, 
+            lower resistance.
+            If reps were less than target, decrease target rep count.
             */
 
-            bool recommendingDecreasedResistance = false;
+            bool recommendingDecreasedResistance = 
+                formPerformance != Performance.Adequate 
+                || rangeOfMotionPerformance != Performance.Adequate
+                || AverageActualRepCountLessThanMinimum(
+                    executedExerciseAverages.AverageActualRepCount, 
+                    executedExerciseAverages.SetType, 
+                    userSettings);
 
-            //var recommendation = new ExerciseAmountRecommendation(executedExerciseAverages);
+            bool recommendingDecreasedTargetRepCount = repPerformance != Performance.Adequate;
+
             var recommendation = new ExerciseAmountRecommendation();
-            if (inadequateForm || inadequateRangeOfMotion) //Because we have both, we can make this more granular later if need be
+
+            if (recommendingDecreasedResistance)
             {
                 //Their form or range of motion wasn't so great, so let's bump down the resistance
-
-                recommendingDecreasedResistance = true;
                 recommendation.ResistanceAmount =
                     GetDecreasedResistanceAmount(
                         executedExerciseAverages.SetType,
@@ -128,22 +133,21 @@ namespace WorkoutTracker.Application.Exercises.Services
                 recommendation.ResistanceMakeup = executedExerciseAverages.LastExecutedSet.ResistanceMakeup;
             }
 
-            if (ShouldRepCountBeLowered(actualRepsLessThanTarget, recommendingDecreasedResistance, actualRepsSignificantlyLessThanTarget))
+            if (recommendingDecreasedTargetRepCount)
                 recommendation.Reps =
                     GetDecreasedRepCount(
                         executedExerciseAverages.SetType,
                         executedExerciseAverages.AverageTargetRepCount,
-                        executedExerciseAverages.AverageActualRepCount,
-                        actualRepsSignificantlyLessThanTarget);
+                        repPerformance, 
+                        userSettings);
             else
                 recommendation.Reps = executedExerciseAverages.LastExecutedSet.TargetRepCount;
 
             recommendation.Reason = 
                 GetRecommendationReason(
-                    inadequateForm, 
-                    inadequateRangeOfMotion,
-                    actualRepsSignificantlyLessThanTarget, 
-                    actualRepsLessThanTarget);
+                    formPerformance, 
+                    rangeOfMotionPerformance,
+                    repPerformance);
 
             return recommendation;
         }
@@ -180,6 +184,13 @@ namespace WorkoutTracker.Application.Exercises.Services
         #endregion Private Non-Static Methods
 
         #region Private Static Methods
+        private static bool AverageActualRepCountLessThanMinimum(
+            double averageActualRepCount, SetType setType, UserSettings userSettings)
+        {
+            return averageActualRepCount < userSettings.RepSettings.First(x => x.SetType == setType).MinReps;
+        }
+
+
         private static bool ActualRepsSignificantlyLessThanTarget(
             SetType setType,
             double targetReps,
@@ -244,51 +255,54 @@ namespace WorkoutTracker.Application.Exercises.Services
         private static byte GetDecreasedRepCount(
             SetType setType,
             double targetRepsLastTime,
-            double actualRepsLastTime, 
-            bool significantlyLessLastTime)
+            Performance repPerformance, 
+            UserSettings userSettings)
         {
-            if (setType == SetType.Repetition)
+            var repSettings = userSettings.RepSettings.First(x => x.SetType == SetType.Repetition);
+
+            if (repPerformance == Performance.Awful)
+                return repSettings.MinReps;
+            else 
             {
-                if (significantlyLessLastTime)
-                    return (byte)(targetRepsLastTime - 10);
-                else
-                    return (byte)(actualRepsLastTime + 5);
-            }
-            else
-            {
-                if (significantlyLessLastTime)
-                    return (byte)(targetRepsLastTime - 5);
-                else
-                    return (byte)(actualRepsLastTime + 2);
+                switch (setType)
+                {
+                    case SetType.Repetition:
+                        return (byte)Math.Max(repSettings.MinReps, Math.Ceiling(targetRepsLastTime - 1));
+
+                    case SetType.Timed:
+                        return (byte)Math.Max(repSettings.MinReps, Math.Ceiling(targetRepsLastTime - 5)); //TODO: Make configurable
+
+                    default:
+                        throw new Exception($"Unknown SetType: {setType}.");
+                }
             }
         }
 
         private static string GetRecommendationReason(
-            bool inadequateForm,
-            bool inadequateRangeOfMotion,
-            bool actualRepsSignificantlyLessThanTarget,
-            bool actualRepsLessThanTarget)
+            Performance formPerformance, 
+            Performance rangeOfMotionPerformance, 
+            Performance repPerformance)
         {
-            string formAndRangeOfMotion;
-            string reps;
+            string formReason;
+            string rangeOfMotionReason;
+            string repReason;
 
-            if (inadequateForm && inadequateRangeOfMotion)
-                formAndRangeOfMotion = REASON_FORM_AND_RANGE_OF_MOTION;
-            else if (inadequateForm)
-                formAndRangeOfMotion = REASON_FORM;
-            else if (inadequateRangeOfMotion)
-                formAndRangeOfMotion = REASON_RANGE_OF_MOTION;
+            if (formPerformance == Performance.Adequate)
+                formReason = "";
             else
-                formAndRangeOfMotion = "";
+                formReason = (formPerformance == Performance.Awful ? "Form needs much improvement. " : "Form needs improvement. ");
 
-            if (actualRepsSignificantlyLessThanTarget)
-                reps = REASON_REPS_MUCH_LESS_THAN_TARGET;
-            else if (actualRepsLessThanTarget)
-                reps = REASON_REPS_LESS_THAN_TARGET;
+            if (rangeOfMotionPerformance == Performance.Adequate)
+                rangeOfMotionReason = "";
             else
-                reps = "";
-            
-            return $"{formAndRangeOfMotion}{reps}".TrimEnd();
+                rangeOfMotionReason = (rangeOfMotionPerformance == Performance.Awful ? "Range of motion needs much improvement. " : "Range of motion needs improvement. ");
+
+            if (repPerformance == Performance.Adequate)
+                repReason = "";
+            else
+                repReason = (repPerformance == Performance.Awful ? "Average rep count much less than target." : "Average rep count less than target.");
+
+            return $"{formReason}{rangeOfMotionReason}{repReason}".TrimEnd();
         }
 
         #endregion Private Static Methods
