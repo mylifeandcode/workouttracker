@@ -5,6 +5,7 @@ using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
@@ -106,13 +107,24 @@ namespace WorkoutTracker.Application.Exercises.Services
 
             if (recommendingDecreasedResistance)
             {
-                //Their form or range of motion wasn't so great, so let's bump down the resistance
+                //Their form, range of motion, or rep count wasn't so great, so let's bump down the resistance
+                var lowestPerformance = new List<Performance>() { formPerformance, rangeOfMotionPerformance, repPerformance }.Max();
+
+                /*
                 recommendation.ResistanceAmount =
                     GetDecreasedResistanceAmount(
                         executedExerciseAverages.SetType,
                         executedExerciseAverages.AverageTargetRepCount,
                         executedExerciseAverages.AverageActualRepCount,
                         executedExerciseAverages.AverageResistanceAmount,
+                        executedExerciseAverages.Exercise,
+                        out var resistanceMakeup);
+                recommendation.ResistanceMakeup = resistanceMakeup;
+                */
+                recommendation.ResistanceAmount =
+                    GetDecreasedResistanceAmount(
+                        executedExerciseAverages.AverageResistanceAmount, 
+                        lowestPerformance, 
                         executedExerciseAverages.Exercise,
                         out var resistanceMakeup);
                 recommendation.ResistanceMakeup = resistanceMakeup;
@@ -142,6 +154,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             return recommendation;
         }
 
+        /*
         private decimal GetDecreasedResistanceAmount(
             SetType setType,
             double targetRepsLastTime,
@@ -169,7 +182,33 @@ namespace WorkoutTracker.Application.Exercises.Services
 
             return resistanceAmount;
         }
+        */
 
+        private decimal GetDecreasedResistanceAmount(
+            decimal previousResistanceAmount,
+            Performance lowestPreviousPerformance, 
+            Exercise exercise,
+            out string resistanceMakeup)
+        {
+            resistanceMakeup = null; //Only needed for resistance bands.
+
+            sbyte multiplier = GetRepCountMultiplier(lowestPreviousPerformance);
+            decimal resistanceAmount = 0;
+
+            _logger.LogInformation($"Getting decreased resistance amount for exercise {exercise.Name} (resistance type {exercise.ResistanceType}) using multiplier {multiplier}. Previous resistance: {previousResistanceAmount}.");
+
+            resistanceAmount =
+                _resistanceService.GetNewResistanceAmount(
+                    exercise.ResistanceType,
+                    previousResistanceAmount,
+                    multiplier,
+                    !exercise.OneSided,
+                    out resistanceMakeup);
+
+            _logger.LogInformation($"Decreased resistance amount for exercise {exercise.Name} is {resistanceAmount}.");
+
+            return resistanceAmount;
+        }
 
         #endregion Private Non-Static Methods
 
@@ -180,7 +219,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             return averageActualRepCount < userSettings.RepSettings.First(x => x.SetType == setType).MinReps;
         }
 
-
+        /*
         private static bool ActualRepsSignificantlyLessThanTarget(
             SetType setType,
             double targetReps,
@@ -210,7 +249,9 @@ namespace WorkoutTracker.Application.Exercises.Services
                 return difference < 5 && difference >= 1;
             }
         }
+        */
 
+        /*
         private static sbyte GetRepCountMultiplier(SetType setType, double targetRepsLastTime, double actualRepsLastTime)
         {
             if (ActualRepsSignificantlyLessThanTarget(setType, targetRepsLastTime, actualRepsLastTime))
@@ -226,7 +267,22 @@ namespace WorkoutTracker.Application.Exercises.Services
                 return -1;
             }
         }
+        */
 
+        private static sbyte GetRepCountMultiplier(Performance previousPerformance)
+        {
+            switch (previousPerformance)
+            {
+                case Performance.Awful:
+                    return -2;
+                case Performance.Bad:
+                    return -1;
+                default:
+                    return 1;
+            }
+        }
+
+        /*
         private static bool ShouldRepCountBeLowered(
             bool lastRepCountLessThanTarget,
             bool recommendingResistanceBeLowered,
@@ -241,6 +297,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             else
                 return false;
         }
+        */
 
         private static byte GetDecreasedRepCount(
             SetType setType,
