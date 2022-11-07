@@ -127,7 +127,7 @@ namespace WorkoutTracker.Application.Exercises.Services
                     break;
 
                 default:
-                    throw new ApplicationException($"Unhandled ResistanceType: {exercise.ResistanceType.ToString()}.");
+                    throw new ApplicationException($"Unhandled ResistanceType: {exercise.ResistanceType}.");
             }
 
             _logger.LogInformation($"Default recommendation for {exercise.Name} is {recommendation.ResistanceAmount}.");

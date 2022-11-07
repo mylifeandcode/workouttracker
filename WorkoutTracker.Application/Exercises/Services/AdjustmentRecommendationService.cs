@@ -19,16 +19,6 @@ namespace WorkoutTracker.Application.Exercises.Services
         private IResistanceService _resistanceService;
         private ILogger<AdjustmentRecommendationService> _logger;
 
-        private const string REASON_FORM = "Form needs improvement. ";
-        //TODO: Consider this.
-        //private const string REASON_FORM_AWFUL = "Form needs a lot of improvement. ";
-        private const string REASON_RANGE_OF_MOTION = "Range of Motion needs improvement. ";
-        //TODO: Consider this.
-        //private const string REASON_RANGE_OF_MOTION_AWFUL = "Range of motion needs a lot of improvement. ";
-        private const string REASON_FORM_AND_RANGE_OF_MOTION = "Form and Range of Motion need improvement. ";
-        private const string REASON_REPS_LESS_THAN_TARGET = "Actual reps last time less than target";
-        private const string REASON_REPS_MUCH_LESS_THAN_TARGET = "Actual reps last time significantly less than target.";
-
         public AdjustmentRecommendationService(IResistanceService resistanceService, ILogger<AdjustmentRecommendationService> logger)
         {
             _resistanceService = resistanceService ?? throw new ArgumentNullException(nameof(resistanceService));
