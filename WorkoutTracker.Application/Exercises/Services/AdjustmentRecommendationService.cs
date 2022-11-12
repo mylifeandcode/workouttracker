@@ -71,10 +71,9 @@ namespace WorkoutTracker.Application.Exercises.Services
         /// </summary>
         /// <param name="executedExerciseAverages">The exercise which was executed and needs a decrease in reps or resistance</param>
         /// <param name="userSettings">The user's settings</param>
-        /// <param name="inadequateForm">Indicates whether or not the exercise was last performed with inadequate form</param>
-        /// <param name="inadequateRangeOfMotion">Indicates whether or not the exercise was last performed with inadequate range of motion</param>
-        /// <param name="actualRepsSignificantlyLessThanTarget">Indicates whether or not the exercise was last performed with significantly less reps that targeted</param>
-        /// <param name="actualRepsLessThanTarget">Indicates whether or not the exercise was last performed with less reps that targeted</param>
+        /// <param name="formPerformance">A rating of the user's form performance last time</param>
+        /// <param name="rangeOfMotionPerformance">A rating of the user's range of motion performance last time</param>
+        /// <param name="repPerformance">A rating of the user's repetition performance last time</param>
         /// <returns>An ExerciseAmountRecommendation with recommendations regarding reps and resistance</returns>
         /// <remarks>
         /// This abstracts the differences between getting a decrease recommendation for an exercise for a
@@ -110,23 +109,13 @@ namespace WorkoutTracker.Application.Exercises.Services
                 //Their form, range of motion, or rep count wasn't so great, so let's bump down the resistance
                 var lowestPerformance = new List<Performance>() { formPerformance, rangeOfMotionPerformance, repPerformance }.Max();
 
-                /*
-                recommendation.ResistanceAmount =
-                    GetDecreasedResistanceAmount(
-                        executedExerciseAverages.SetType,
-                        executedExerciseAverages.AverageTargetRepCount,
-                        executedExerciseAverages.AverageActualRepCount,
-                        executedExerciseAverages.AverageResistanceAmount,
-                        executedExerciseAverages.Exercise,
-                        out var resistanceMakeup);
-                recommendation.ResistanceMakeup = resistanceMakeup;
-                */
                 recommendation.ResistanceAmount =
                     GetDecreasedResistanceAmount(
                         executedExerciseAverages.AverageResistanceAmount, 
                         lowestPerformance, 
                         executedExerciseAverages.Exercise,
                         out var resistanceMakeup);
+
                 recommendation.ResistanceMakeup = resistanceMakeup;
             }
             else

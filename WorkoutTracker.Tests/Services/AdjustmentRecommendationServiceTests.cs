@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
 using WorkoutTracker.Application.Exercises.Services;
-using WorkoutTracker.Application.Resistances.Interfaces;
 using WorkoutTracker.Domain.Exercises;
-using WorkoutTracker.Domain.Resistances;
 using WorkoutTracker.Domain.Users;
 
 namespace WorkoutTracker.Tests.Services
@@ -54,7 +49,7 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Resistance_Band_Repetition_Set_Where_Form_Was_Bad()
+        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Form_Was_Bad()
         {
             //ARRANGE
             var executedExercise =
@@ -62,7 +57,7 @@ namespace WorkoutTracker.Tests.Services
                 {
                     TargetRepCount = 10,
                     ActualRepCount = 10,
-                    SetType = SetType.Timed,
+                    SetType = SetType.Repetition,
                     FormRating = 3,
                     RangeOfMotionRating = 4,
                     ResistanceAmount = 19,
@@ -70,19 +65,28 @@ namespace WorkoutTracker.Tests.Services
                 };
 
             var averages = new ExecutedExerciseAverages(new List<ExecutedExercise> { executedExercise });
+            const sbyte EXPECTED_MODIFIER = -1;
 
             //ACT
             var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
-            Assert.AreEqual("Form needs improvement.", recommendation.Reason);
-            Assert.AreEqual(13, recommendation.ResistanceAmount); //Pre-set fake value
-            Assert.AreEqual("Blue", recommendation.ResistanceMakeup); //Pre-set fake value
+            Assert.AreEqual("Form needs improvement.", recommendation.Reason, "Recommendation Reason isn't as expected.");
+            Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected."); //Pre-set fake value
+            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected."); //Pre-set fake value
+            Assert.AreEqual(executedExercise.TargetRepCount, recommendation.Reps, "Recommendation Reps isn't as expected.");
+            _resistanceServiceMock.Verify(x => 
+                x.GetNewResistanceAmount(
+                    executedExercise.Exercise.ResistanceType, 
+                    executedExercise.ResistanceAmount, 
+                    EXPECTED_MODIFIER, 
+                    !executedExercise.Exercise.OneSided, 
+                    out _makeup), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Resistance_Band_Repetition_Set_Where_Form_Was_Awful()
+        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Form_Was_Awful()
         {
             //ARRANGE
             var executedExercise =
@@ -90,7 +94,7 @@ namespace WorkoutTracker.Tests.Services
                 {
                     TargetRepCount = 10,
                     ActualRepCount = 10,
-                    SetType = SetType.Timed,
+                    SetType = SetType.Repetition,
                     FormRating = 2,
                     RangeOfMotionRating = 4,
                     ResistanceAmount = 19,
@@ -98,19 +102,27 @@ namespace WorkoutTracker.Tests.Services
                 };
 
             var averages = new ExecutedExerciseAverages(new List<ExecutedExercise> { executedExercise });
+            const sbyte EXPECTED_MODIFIER = -2;
 
             //ACT
             var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
-            Assert.AreEqual("Form needs much improvement.", recommendation.Reason);
-            Assert.AreEqual(13, recommendation.ResistanceAmount); //Pre-set fake value
-            Assert.AreEqual("Blue", recommendation.ResistanceMakeup); //Pre-set fake value
+            Assert.AreEqual("Form needs much improvement.", recommendation.Reason, "Recommendation Reason isn't as expected.");
+            Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected."); //Pre-set fake value
+            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected."); //Pre-set fake value
+            _resistanceServiceMock.Verify(x =>
+                x.GetNewResistanceAmount(
+                    executedExercise.Exercise.ResistanceType,
+                    executedExercise.ResistanceAmount,
+                    EXPECTED_MODIFIER,
+                    !executedExercise.Exercise.OneSided,
+                    out _makeup), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Resistance_Band_Repetition_Set_Where_Range_of_Motion_Was_Bad()
+        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Range_of_Motion_Was_Bad()
         {
             //ARRANGE
             var executedExercise =
@@ -118,7 +130,7 @@ namespace WorkoutTracker.Tests.Services
                 {
                     TargetRepCount = 10,
                     ActualRepCount = 10,
-                    SetType = SetType.Timed,
+                    SetType = SetType.Repetition,
                     FormRating = 5,
                     RangeOfMotionRating = 3,
                     ResistanceAmount = 19,
@@ -126,19 +138,27 @@ namespace WorkoutTracker.Tests.Services
                 };
 
             var averages = new ExecutedExerciseAverages(new List<ExecutedExercise> { executedExercise });
+            const sbyte EXPECTED_MODIFIER = -1;
 
             //ACT
             var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
-            Assert.AreEqual("Range of motion needs improvement.", recommendation.Reason);
-            Assert.AreEqual(13, recommendation.ResistanceAmount);
-            Assert.AreEqual("Blue", recommendation.ResistanceMakeup);
+            Assert.AreEqual("Range of motion needs improvement.", recommendation.Reason, "Recommendation Reason isn't as expected.");
+            Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
+            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
+            _resistanceServiceMock.Verify(x =>
+                x.GetNewResistanceAmount(
+                    executedExercise.Exercise.ResistanceType,
+                    executedExercise.ResistanceAmount,
+                    EXPECTED_MODIFIER,
+                    !executedExercise.Exercise.OneSided,
+                    out _makeup), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Resistance_Band_Repetition_Set_Where_Range_of_Motion_Was_Awful()
+        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Range_of_Motion_Was_Awful()
         {
             //ARRANGE
             var executedExercise =
@@ -146,7 +166,7 @@ namespace WorkoutTracker.Tests.Services
                 {
                     TargetRepCount = 10,
                     ActualRepCount = 10,
-                    SetType = SetType.Timed,
+                    SetType = SetType.Repetition,
                     FormRating = 5,
                     RangeOfMotionRating = 2,
                     ResistanceAmount = 19,
@@ -154,30 +174,39 @@ namespace WorkoutTracker.Tests.Services
                 };
 
             var averages = new ExecutedExerciseAverages(new List<ExecutedExercise> { executedExercise });
+            const sbyte EXPECTED_MODIFIER = -2;
 
             //ACT
             var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
-            Assert.AreEqual("Range of motion needs much improvement.", recommendation.Reason);
-            Assert.AreEqual(13, recommendation.ResistanceAmount);
-            Assert.AreEqual("Blue", recommendation.ResistanceMakeup);
+            Assert.AreEqual("Range of motion needs much improvement.", recommendation.Reason, "Recommendation Reason isn't as expected.");
+            Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
+            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
+            _resistanceServiceMock.Verify(x =>
+                x.GetNewResistanceAmount(
+                    executedExercise.Exercise.ResistanceType,
+                    executedExercise.ResistanceAmount,
+                    EXPECTED_MODIFIER,
+                    !executedExercise.Exercise.OneSided,
+                    out _makeup), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Resistance_Band_Repetition_Set_Where_Actual_Rep_Count_Was_Bad()
+        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Actual_Rep_Count_Was_Bad_But_Not_Less_Than_Minimum()
         {
             //ARRANGE
             var executedExercise =
                 new ExecutedExercise
                 {
-                    TargetRepCount = 10,
-                    ActualRepCount = 8,
-                    SetType = SetType.Timed,
+                    TargetRepCount = 12,
+                    ActualRepCount = 10,
+                    SetType = SetType.Repetition,
                     FormRating = 5,
                     RangeOfMotionRating = 5,
                     ResistanceAmount = 19,
+                    ResistanceMakeup = "Blue", 
                     Exercise = new Exercise { ResistanceType = ResistanceType.ResistanceBand }
                 };
 
@@ -188,13 +217,20 @@ namespace WorkoutTracker.Tests.Services
 
             //ASSERT
             Assert.IsNotNull(recommendation);
-            Assert.AreEqual("Average rep count less than target.", recommendation.Reason);
-            Assert.AreEqual(13, recommendation.ResistanceAmount);
-            Assert.AreEqual("Blue", recommendation.ResistanceMakeup);
+            Assert.AreEqual("Average rep count less than target.", recommendation.Reason, "Recommendation Reason isn't as expected.");
+            Assert.AreEqual(19, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
+            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
+            _resistanceServiceMock.Verify(x =>
+                x.GetNewResistanceAmount(
+                    executedExercise.Exercise.ResistanceType,
+                    executedExercise.ResistanceAmount,
+                    It.IsAny<sbyte>(),
+                    !executedExercise.Exercise.OneSided,
+                    out _makeup), Times.Never);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Resistance_Band_Repetition_Set_Where_Actual_Rep_Count_Was_Awful()
+        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Actual_Rep_Count_Was_Awful()
         {
             //ARRANGE
             var executedExercise =
@@ -202,7 +238,7 @@ namespace WorkoutTracker.Tests.Services
                 {
                     TargetRepCount = 10,
                     ActualRepCount = 6,
-                    SetType = SetType.Timed,
+                    SetType = SetType.Repetition,
                     FormRating = 5,
                     RangeOfMotionRating = 5,
                     ResistanceAmount = 19,
@@ -213,16 +249,24 @@ namespace WorkoutTracker.Tests.Services
 
             //ACT
             var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
+            const sbyte EXPECTED_MODIFIER = -2;
 
             //ASSERT
             Assert.IsNotNull(recommendation);
-            Assert.AreEqual("Average rep count much less than target.", recommendation.Reason);
-            Assert.AreEqual(13, recommendation.ResistanceAmount);
-            Assert.AreEqual("Blue", recommendation.ResistanceMakeup);
+            Assert.AreEqual("Average rep count much less than target.", recommendation.Reason, "Recommendation Reason isn't as expected.");
+            Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
+            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
+            _resistanceServiceMock.Verify(x =>
+                x.GetNewResistanceAmount(
+                    executedExercise.Exercise.ResistanceType,
+                    executedExercise.ResistanceAmount,
+                    EXPECTED_MODIFIER,
+                    !executedExercise.Exercise.OneSided,
+                    out _makeup), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Resistance_Band_Repetition_Set_With_Multiple_Areas_For_Improvement()
+        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_With_Multiple_Areas_For_Improvement()
         {
             //ARRANGE
             var executedExercise =
@@ -230,7 +274,7 @@ namespace WorkoutTracker.Tests.Services
                 {
                     TargetRepCount = 10,
                     ActualRepCount = 6,
-                    SetType = SetType.Timed,
+                    SetType = SetType.Repetition,
                     FormRating = 2,
                     RangeOfMotionRating = 2,
                     ResistanceAmount = 19,
@@ -238,15 +282,23 @@ namespace WorkoutTracker.Tests.Services
                 };
 
             var averages = new ExecutedExerciseAverages(new List<ExecutedExercise> { executedExercise });
+            const sbyte EXPECTED_MODIFIER = -2;
 
             //ACT
             var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
-            Assert.AreEqual("Form needs much improvement. Range of motion needs much improvement. Average rep count much less than target.", recommendation.Reason);
-            Assert.AreEqual(13, recommendation.ResistanceAmount);
-            Assert.AreEqual("Blue", recommendation.ResistanceMakeup);
+            Assert.AreEqual("Form needs much improvement. Range of motion needs much improvement. Average rep count much less than target.", recommendation.Reason, "Recommendation Reason isn't as expected.");
+            Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
+            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
+            _resistanceServiceMock.Verify(x =>
+                x.GetNewResistanceAmount(
+                    executedExercise.Exercise.ResistanceType,
+                    executedExercise.ResistanceAmount,
+                    EXPECTED_MODIFIER,
+                    !executedExercise.Exercise.OneSided,
+                    out _makeup), Times.Once);
         }
     }
 }
