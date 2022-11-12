@@ -65,11 +65,14 @@ public class ResistanceService : IResistanceService
         out string resistanceMakeup)
     {
         decimal lowestResistanceBandAmount = _resistanceBandService.GetLowestResistanceBand()?.MaxResistanceAmount ?? 0;
-        decimal minIncrease = lowestResistanceBandAmount * multiplier;
-        decimal maxIncrease = minIncrease + 10;
+        
+        //We can be increasing or decreasing, so we'll use the term "adjustment"
+        decimal minAdjustment = lowestResistanceBandAmount * multiplier;
+        decimal maxAdjustment = minAdjustment + (multiplier > 0 ? 10 : -10);
+        
         var recommendedBands =
             _resistanceBandService.GetResistanceBandsForResistanceAmountRange(
-                previousResistanceAmount, minIncrease, maxIncrease, doubleBandResistanceAmounts);
+                previousResistanceAmount, minAdjustment, maxAdjustment, doubleBandResistanceAmounts);
         if (recommendedBands.Any())
             resistanceMakeup = string.Join(',', recommendedBands.Select(band => band.Color));
         else

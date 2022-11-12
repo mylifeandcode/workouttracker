@@ -51,8 +51,8 @@ namespace WorkoutTracker.Application.Resistances.Services
         /// resistance requirements to increase resistance
         /// </summary>
         /// <param name="currentAmount">The current resistance amount</param>
-        /// <param name="minimalIncrease">The minimal amount to increase resistance by. Can be a negative number for decreasing.</param>
-        /// <param name="preferredMaxIncrease">The preferred maximum amount to increase resistance by. Can be a negative number for decreasing.</param>
+        /// <param name="minimalAdjustment">The minimal amount to increase resistance by. Can be a negative number for decreasing.</param>
+        /// <param name="preferredMaxAdjustment">The preferred maximum amount to increase resistance by. Can be a negative number for decreasing.</param>
         /// <param name="doubleBandResistanceAmounts">Specifies whether or not resistance amounts should be doubled, as is the case where bands are
         /// doubled over</param>
         /// <returns>
@@ -61,8 +61,8 @@ namespace WorkoutTracker.Application.Resistances.Services
         /// </returns>
         public List<ResistanceBand> GetResistanceBandsForResistanceAmountRange(
             decimal currentAmount,
-            decimal minimalIncrease,
-            decimal preferredMaxIncrease,
+            decimal minimalAdjustment,
+            decimal preferredMaxAdjustment,
             bool doubleBandResistanceAmounts)
         {
             //Based on the current resistance amount, assemble a list of bands which exceeds the amount 
@@ -72,15 +72,15 @@ namespace WorkoutTracker.Application.Resistances.Services
             decimal minimum;
             decimal preferredMax;
 
-            if (minimalIncrease > 0)
+            if (minimalAdjustment > 0)
             {
-                minimum = currentAmount + minimalIncrease;
-                preferredMax = currentAmount + preferredMaxIncrease;
+                minimum = currentAmount + minimalAdjustment;
+                preferredMax = currentAmount + preferredMaxAdjustment;
             }
             else
             {
-                minimum = currentAmount + preferredMaxIncrease;
-                preferredMax = currentAmount + minimalIncrease;
+                minimum = currentAmount + preferredMaxAdjustment;
+                preferredMax = currentAmount + minimalAdjustment;
             }
 
             List<ResistanceBand> selectedBands = new List<ResistanceBand>(5); //Set capacity to 5, just to be a little more optimal than default
