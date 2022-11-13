@@ -78,7 +78,7 @@ public class ResistanceService : IResistanceService
         else
             resistanceMakeup = null;
 
-        return recommendedBands.Sum(band => band.MaxResistanceAmount);
+        return recommendedBands.Sum(band => band.MaxResistanceAmount) * (doubleBandResistanceAmounts ? 2 : 1);
     }
     
 

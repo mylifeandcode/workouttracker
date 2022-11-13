@@ -124,5 +124,47 @@ namespace WorkoutTracker.Tests.Services
                     isDoubledBands),
                     Times.Once);
         }
+
+        [TestMethod]
+        public void Should_Get_Decreased_Resistance_Amount_For_ResistanceBand_Exercise_With_Bands_Doubled_Over()
+        {
+            _resistanceBandServiceMock
+                .Setup(x => x.GetLowestResistanceBand())
+                .Returns(new ResistanceBand { Color = "Yellow", MaxResistanceAmount = 3 });
+
+            _resistanceBandServiceMock
+                .Setup(x =>
+                    x.GetResistanceBandsForResistanceAmountRange(
+                        It.IsAny<decimal>(),
+                        It.IsAny<decimal>(),
+                        It.IsAny<decimal>(),
+                        It.IsAny<bool>()))
+                .Returns(new List<ResistanceBand> { new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 } });
+
+            decimal currentResistanceAmount = 30;
+            sbyte multiplier = -2;
+            bool isDoubledBands = true;
+            decimal expectedMinimalAdjustment = -6;
+            decimal expectedMaximumAdjustment = -16;
+
+            string makeup = null;
+
+            var result = _sut.GetNewResistanceAmount(
+                ResistanceType.ResistanceBand,
+                currentResistanceAmount,
+                multiplier,
+                isDoubledBands,
+                out makeup);
+
+            Assert.AreEqual(46, result);
+            _resistanceBandServiceMock.Verify(x => x.GetLowestResistanceBand(), Times.Once);
+            _resistanceBandServiceMock.Verify(x =>
+                x.GetResistanceBandsForResistanceAmountRange(
+                    currentResistanceAmount,
+                    expectedMinimalAdjustment,
+                    expectedMaximumAdjustment,
+                    isDoubledBands),
+                    Times.Once);
+        }
     }
 }

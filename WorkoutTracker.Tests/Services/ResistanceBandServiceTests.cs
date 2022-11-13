@@ -259,6 +259,24 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
+        public void Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Not_Simple2()
+        {
+            //TODO: Refine/base expectations dynamically not statically
+
+            //ARRANGE
+
+            //ACT
+            //106 = Purple and Orange bands
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(106, -6, -16, true);
+
+            //ASSERT
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(96, (result.Sum(band => band.MaxResistanceAmount) * 2)); //Multiply by 2 for bands doubled over (true param above)
+            Assert.IsTrue(result.Count(band => band.Color == "Onyx") == 1);
+            Assert.IsTrue(result.Count(band => band.Color == "Red") == 1);
+        }
+
+        [TestMethod]
         public void Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Complex()
         {
             //TODO: Refine/base expectations dynamically not statically
