@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Exercises.Interfaces;
@@ -35,34 +32,12 @@ namespace WorkoutTracker.Application.Exercises.Services
             if (executedExerciseAverages == null) throw new ArgumentNullException(nameof(executedExerciseAverages));
             if (userSettings == null) throw new ArgumentNullException(nameof(userSettings));
 
-            if (executedExerciseAverages.SetType == SetType.Timed)
-            {
-                return GetTimedSetIncreaseRecommendation(executedExerciseAverages, userSettings);
-            }
-            else //Repititon set
-            {
-                return GetRepititionSetIncreaseRecommendation(executedExerciseAverages);
-            }
-        }
-        #endregion Public Methods
-
-        #region Private Non-Static Methods
-
-        private ExerciseAmountRecommendation GetTimedSetIncreaseRecommendation(
-            ExecutedExerciseAverages executedExerciseAverages,
-            UserSettings userSettings)
-        {
+            var repSettings = userSettings.RepSettings.First(x => x.SetType == executedExerciseAverages.SetType);
             var recommendation = new ExerciseAmountRecommendation();
-            var repSettings =
-                GetRepSettings(
-                    userSettings.RepSettings,
-                    executedExerciseAverages.SetType,
-                    executedExerciseAverages.AverageDuration);
 
-            //Increase reps or resistance?
             if (executedExerciseAverages.AverageActualRepCount >= repSettings.MaxReps)
             {
-                //User met or exceeded max reps. Let's bump up the resistance and set reps to min.
+                //Increase resistance
                 string resistanceMakeup;
                 recommendation.Reps = repSettings.MinReps;
                 recommendation.ResistanceAmount =
@@ -77,7 +52,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             }
             else
             {
-                //Increase reps, but keep resistance amounts the same.
+                //Increase reps
                 recommendation.Reps =
                     GetIncreasedTargetRepCount(
                         executedExerciseAverages.AverageTargetRepCount,
@@ -91,27 +66,9 @@ namespace WorkoutTracker.Application.Exercises.Services
 
             return recommendation;
         }
+        #endregion Public Methods
 
-        private ExerciseAmountRecommendation GetRepititionSetIncreaseRecommendation(
-            ExecutedExerciseAverages executedExerciseAverages)
-        {
-            var recommendation = new ExerciseAmountRecommendation();
-
-            //For repitition sets, we'll increase the resistance amount
-
-            string resistanceMakeup;
-            recommendation.Reps = (byte)executedExerciseAverages.AverageTargetRepCount;
-            recommendation.ResistanceAmount =
-                GetIncreasedResistanceAmount(
-                    executedExerciseAverages.AverageTargetRepCount,
-                    executedExerciseAverages.AverageActualRepCount,
-                    executedExerciseAverages.AverageResistanceAmount,
-                    executedExerciseAverages.Exercise,
-                    out resistanceMakeup);
-            recommendation.ResistanceMakeup = resistanceMakeup;
-
-            return recommendation;
-        }
+        #region Private Non-Static Methods
 
         private decimal GetIncreasedResistanceAmount(
             double targetRepsLastTime,
@@ -138,6 +95,7 @@ namespace WorkoutTracker.Application.Exercises.Services
         #endregion Private Non-Static Methods
 
         #region Private Static Methods
+        /*
         private static UserMinMaxReps GetRepSettings(List<UserMinMaxReps> repSettings, SetType setType, double? averageDuration)
         {
             var settings =
@@ -147,6 +105,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             //If not found, return an attempt at some defaults. Wild guess really.
             return settings ?? new UserMinMaxReps { Duration = 240, MinReps = 15, MaxReps = 30 };
         }
+        */
 
         private static sbyte GetRepCountMultiplier(double targetRepsLastTime, double actualRepsLastTime)
         {
