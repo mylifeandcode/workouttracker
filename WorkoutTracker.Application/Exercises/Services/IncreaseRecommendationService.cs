@@ -4,23 +4,19 @@ using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
-using WorkoutTracker.Application.Resistances.Interfaces;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
+    /// <summary>
+    /// A service to provide an increase recommendation for an exercise.
+    /// The increase can be in reps, resistance, or both.
+    /// </summary>
     public class IncreaseRecommendationService : IIncreaseRecommendationService
     {
-        private IResistanceBandService _resistanceBandService;
         private IResistanceService _resistanceService;
 
-        #region Constants
-        private const decimal LOWEST_FREEWEIGHT_RESISTANCE = 5;
-        private const decimal LOWEST_MACHINE_RESISTANCE = 10;
-        #endregion Constants
-
-        public IncreaseRecommendationService(IResistanceBandService resistanceBandService, IResistanceService resistanceService)
+        public IncreaseRecommendationService(IResistanceService resistanceService)
         {
-            _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
             _resistanceService = resistanceService ?? throw new ArgumentNullException(nameof(resistanceService));
         }
 
@@ -82,7 +78,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             if (exercise.ResistanceType == ResistanceType.BodyWeight || exercise.ResistanceType == ResistanceType.Other)
                 return previousResistanceAmount;
 
-            sbyte multiplier = GetRepCountMultiplier(targetRepsLastTime, actualRepsLastTime);
+            sbyte multiplier = GetResistanceMultiplier(targetRepsLastTime, actualRepsLastTime);
 
             return _resistanceService.GetNewResistanceAmount(
                 exercise.ResistanceType, 
@@ -95,19 +91,7 @@ namespace WorkoutTracker.Application.Exercises.Services
         #endregion Private Non-Static Methods
 
         #region Private Static Methods
-        /*
-        private static UserMinMaxReps GetRepSettings(List<UserMinMaxReps> repSettings, SetType setType, double? averageDuration)
-        {
-            var settings =
-                repSettings
-                    .FirstOrDefault(reps => reps.SetType == setType && reps.Duration == averageDuration);
-
-            //If not found, return an attempt at some defaults. Wild guess really.
-            return settings ?? new UserMinMaxReps { Duration = 240, MinReps = 15, MaxReps = 30 };
-        }
-        */
-
-        private static sbyte GetRepCountMultiplier(double targetRepsLastTime, double actualRepsLastTime)
+        private static sbyte GetResistanceMultiplier(double targetRepsLastTime, double actualRepsLastTime)
         {
             if (UserGreatlyExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
             {
@@ -130,44 +114,27 @@ namespace WorkoutTracker.Application.Exercises.Services
         {
             double increasedRepCount = actualRepsLastTime;
 
-            //This is intended for timed sets. Target rep count for repetition sets
-            //would remain the same, and we'd increase or decrease the resistance amount.
             if (UserGreatlyExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
             {
-                increasedRepCount += 15;
-            }
-            else if (UserExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
-            {
-                increasedRepCount += 10;
+                increasedRepCount += 4;
             }
             else
             {
-                //User met rep count
-                increasedRepCount += 5;
+                increasedRepCount += 1;
             }
 
-            return (byte)Math.Min(increasedRepCount, maxRepCount); //TODO: Refactor higher up the chain so that if we're only bumping up by a small amount, increase resistance instead and use smaller rep count
+            //Return whichever is lower -- increasedRepCount or maxRepCount -- to ensure we don't surpass the max
+            return (byte)Math.Min(increasedRepCount, maxRepCount); 
         }
 
         private static bool UserGreatlyExceededTargetRepCount(double targetRepCount, double actualRepCount)
         {
-            return actualRepCount - targetRepCount >= 15;
+            return actualRepCount - targetRepCount >= 3;
         }
 
         private static bool UserExceededTargetRepCount(double targetRepCount, double actualRepCount)
         {
-            double difference = actualRepCount - targetRepCount;
-            return difference <= 14 && difference >= 1;
-        }
-
-        private static decimal GetIncreasedFreeWeightResistanceAmount(decimal previousResistanceAmount, byte multiplier)
-        {
-            return previousResistanceAmount + LOWEST_FREEWEIGHT_RESISTANCE * multiplier;
-        }
-
-        private static decimal GetIncreasedMachineResistanceAmount(decimal previousResistanceAmount, byte multiplier)
-        {
-            return previousResistanceAmount + LOWEST_MACHINE_RESISTANCE * multiplier;
+            return actualRepCount - targetRepCount >= 1;
         }
         #endregion Private Static Methods
     }

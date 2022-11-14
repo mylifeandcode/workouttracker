@@ -143,36 +143,6 @@ namespace WorkoutTracker.Application.Exercises.Services
             return recommendation;
         }
 
-        /*
-        private decimal GetDecreasedResistanceAmount(
-            SetType setType,
-            double targetRepsLastTime,
-            double actualRepsLastTime,
-            decimal previousResistanceAmount,
-            Exercise exercise,
-            out string resistanceMakeup)
-        {
-            resistanceMakeup = null; //Only needed for resistance bands.
-
-            sbyte multiplier = GetRepCountMultiplier(setType, targetRepsLastTime, actualRepsLastTime);
-            decimal resistanceAmount = 0;
-
-            _logger.LogInformation($"Getting decreased resistance amount for exercise {exercise.Name} (resistance type {exercise.ResistanceType}) using multiplier {multiplier}. Previous resistance: {previousResistanceAmount}.");
-
-            resistanceAmount = 
-                _resistanceService.GetNewResistanceAmount(
-                    exercise.ResistanceType,
-                    previousResistanceAmount, 
-                    multiplier, 
-                    !exercise.OneSided, 
-                    out resistanceMakeup);
-
-            _logger.LogInformation($"Decreased resistance amount for exercise {exercise.Name} is {resistanceAmount}.");
-
-            return resistanceAmount;
-        }
-        */
-
         private decimal GetDecreasedResistanceAmount(
             decimal previousResistanceAmount,
             Performance lowestPreviousPerformance, 
@@ -181,7 +151,7 @@ namespace WorkoutTracker.Application.Exercises.Services
         {
             resistanceMakeup = null; //Only needed for resistance bands.
 
-            sbyte multiplier = GetRepCountMultiplier(lowestPreviousPerformance);
+            sbyte multiplier = GetResistanceMultiplier(lowestPreviousPerformance);
             decimal resistanceAmount = 0;
 
             _logger.LogInformation($"Getting decreased resistance amount for exercise {exercise.Name} (resistance type {exercise.ResistanceType}) using multiplier {multiplier}. Previous resistance: {previousResistanceAmount}.");
@@ -207,58 +177,7 @@ namespace WorkoutTracker.Application.Exercises.Services
         {
             return averageActualRepCount < userSettings.RepSettings.First(x => x.SetType == setType).MinReps;
         }
-
-        /*
-        private static bool ActualRepsSignificantlyLessThanTarget(
-            SetType setType,
-            double targetReps,
-            double actualReps)
-        {
-            //TODO: Allow this to be configurable
-            if (setType == SetType.Repetition)
-                return (targetReps - actualReps) >= 10;
-            else
-                return (targetReps - actualReps) >= 5;
-        }
-
-        private static bool ActualRepsLessThanTarget(
-            SetType setType,
-            double targetReps,
-            double actualReps)
-        {
-            //TODO: Allow this to be configurable
-            double difference = targetReps - actualReps;
-
-            if (setType == SetType.Repetition)
-            {
-                return difference < 10 && difference >= 1;
-            }
-            else
-            {
-                return difference < 5 && difference >= 1;
-            }
-        }
-        */
-
-        /*
-        private static sbyte GetRepCountMultiplier(SetType setType, double targetRepsLastTime, double actualRepsLastTime)
-        {
-            if (ActualRepsSignificantlyLessThanTarget(setType, targetRepsLastTime, actualRepsLastTime))
-            {
-                return -3;
-            }
-            else if (ActualRepsLessThanTarget(setType, targetRepsLastTime, actualRepsLastTime))
-            {
-                return -2;
-            }
-            else
-            {
-                return -1;
-            }
-        }
-        */
-
-        private static sbyte GetRepCountMultiplier(Performance previousPerformance)
+        private static sbyte GetResistanceMultiplier(Performance previousPerformance)
         {
             switch (previousPerformance)
             {
@@ -270,23 +189,6 @@ namespace WorkoutTracker.Application.Exercises.Services
                     return 1;
             }
         }
-
-        /*
-        private static bool ShouldRepCountBeLowered(
-            bool lastRepCountLessThanTarget,
-            bool recommendingResistanceBeLowered,
-            bool lastRepCountSignificantlyLessThanTarget)
-        {
-            if (!lastRepCountLessThanTarget)
-                return false;
-
-            //This could be consolidated to a single line, but this way is more readable :)
-            if (!recommendingResistanceBeLowered || (recommendingResistanceBeLowered && lastRepCountSignificantlyLessThanTarget))
-                return true;
-            else
-                return false;
-        }
-        */
 
         private static byte GetDecreasedRepCount(
             SetType setType,
