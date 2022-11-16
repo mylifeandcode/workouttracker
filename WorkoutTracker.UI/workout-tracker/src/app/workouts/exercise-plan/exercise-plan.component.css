@@ -54,6 +54,11 @@ label {
   background-color: darkgreen;
 }
 
+.btn-use-suggestions {
+  color: black;
+  background-color: orange;
+}
+
 .end-padding {
   padding-bottom: 10px;
 }

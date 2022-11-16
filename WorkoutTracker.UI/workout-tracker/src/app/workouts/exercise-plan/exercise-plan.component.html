@@ -2,7 +2,7 @@
   <div class="col-12">
 
     <div class="row exercise-name">
-      <div class="col-12"><h5 class="exercise-header-row">{{formGroup.controls['exerciseName'].value}}</h5></div>
+      <div class="col-12"><h5 class="exercise-header-row">{{formGroup.controls.exerciseName.value}}</h5></div>
     </div>
 
     <!--LAST TIME-->
@@ -13,12 +13,12 @@
     </div>
     <div *ngIf="workoutHasBeenExecutedBefore" class="row last-time end-padding">
       <div class="col-2 form-group">
-        Target Rep Count: <span *ngIf="formGroup.controls['involvesReps'].value" class="pre-pop-value">{{formGroup.controls['targetRepCountLastTime'].value}}</span>
-        <span *ngIf="!formGroup.controls['involvesReps'].value" class="pre-pop-value">N/A</span>
+        Target Rep Count: <span *ngIf="formGroup.controls.involvesReps.value" class="pre-pop-value">{{formGroup.controls.targetRepCountLastTime.value}}</span>
+        <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
       </div>
       <div class="col-2 form-group">
-        Avg Actual Rep Count: <span *ngIf="formGroup.controls['involvesReps'].value" class="pre-pop-value">{{formGroup.controls['avgActualRepCountLastTime'].value}}</span>
-        <span *ngIf="!formGroup.controls['involvesReps'].value" class="pre-pop-value">N/A</span>
+        Avg Actual Rep Count: <span *ngIf="formGroup.controls.involvesReps.value" class="pre-pop-value">{{formGroup.controls.avgActualRepCountLastTime.value}}</span>
+        <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
       </div>
       <div class="col-3 form-group">
         Avg Range of Motion: <span class="pre-pop-value">{{formGroup.controls.avgRangeOfMotionLastTime.value | rating}}</span>
@@ -27,32 +27,32 @@
         Avg Form: <span class="pre-pop-value">{{formGroup.controls.avgFormLastTime.value | rating}}</span>
       </div>
       <div class="col-3 form-group">
-        Resistance: <span class="pre-pop-value">{{formGroup.controls['resistanceType'].value==3 ? 'Body Weight' : formGroup.controls['resistanceAmountLastTime'].value}}</span>
-        <span *ngIf="formGroup.controls['resistanceMakeupLastTime'].value">
-          (<span [innerHTML]="formGroup.controls['resistanceMakeupLastTime'].value | resistanceBandColor"></span>)
+        Resistance: <span class="pre-pop-value">{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' : formGroup.controls.resistanceAmountLastTime.value}}</span>
+        <span *ngIf="formGroup.controls.resistanceMakeupLastTime.value">
+          (<span [innerHTML]="formGroup.controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
         </span>
       </div>
     </div>
 
-    <!--RECOMMENDATIONS-->
-    <div *ngIf="formGroup.controls['recommendationReason'].value" class="row recommendations headroom">
+    <!--SUGGESTIONS-->
+    <div *ngIf="formGroup.controls.recommendationReason.value" class="row recommendations headroom">
       <div class="col-12">
         <strong>Suggestions</strong>
       </div>
     </div>
-    <div *ngIf="formGroup.controls['recommendationReason'].value" class="row recommendations">
+    <div *ngIf="formGroup.controls.recommendationReason.value" class="row recommendations">
       <div class="col-4 form-group">
-        Suggested Resistance Amount: <span class="pre-pop-value">{{formGroup.controls['resistanceType'].value==3 ? 'Body Weight' : formGroup.controls['recommendedResistanceAmount'].value}}</span>
-        <span *ngIf="formGroup.controls['recommendedResistanceMakeup'].value">
-          (<span [innerHTML]="formGroup.controls['recommendedResistanceMakeup'].value | resistanceBandColor"></span>)
+        Suggested Resistance Amount: <span class="pre-pop-value">{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' : formGroup.controls.recommendedResistanceAmount.value}}</span>
+        <span *ngIf="formGroup.controls.recommendedResistanceMakeup.value">
+          (<span [innerHTML]="formGroup.controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
         </span>
       </div>
       <div class="col-3 form-group">
-        Suggested Target Rep Count: <span *ngIf="formGroup.controls['involvesReps'].value" class="pre-pop-value">{{formGroup.controls['recommendedTargetRepCount'].value}}</span>
-        <span *ngIf="!formGroup.controls['involvesReps'].value" class="pre-pop-value">N/A</span>
+        Suggested Target Rep Count: <span *ngIf="formGroup.controls.involvesReps.value" class="pre-pop-value">{{formGroup.controls.recommendedTargetRepCount.value}}</span>
+        <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
       </div>
       <div class="col-5 form-group">
-        Suggestion Reason(s): <span class="pre-pop-value">{{formGroup.controls['recommendationReason'].value}}</span>
+        Suggestion Reason(s): <span class="pre-pop-value">{{formGroup.controls.recommendationReason.value}}</span>
       </div>
     </div>
 
@@ -66,26 +66,27 @@
       <div class="col-2 form-group">
         <label>
           Target Rep Count
-          <input *ngIf="formGroup.controls['involvesReps'].value" type="number" class="amount" formControlName="targetRepCount" required />
-          <span *ngIf="!formGroup.controls['involvesReps'].value" class="pre-pop-value">N/A</span>
+          <input *ngIf="formGroup.controls.involvesReps.value" type="number" class="amount" formControlName="targetRepCount" required />
+          <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
         </label>
       </div>
       <div class="col-10 form-group">
         <label>
           Resistance Amount
           <!--TODO: Get these *ngIfs to work with the enum type instead-->
-          <input *ngIf="formGroup.controls['resistanceType'].value!=2 && formGroup.controls['resistanceType'].value!=3" type="number" class="amount" formControlName="resistanceAmount" required />
-          <span *ngIf="formGroup.controls['resistanceType'].value==2" class="no-input-value">
-            <ng-container *ngIf="formGroup.controls['resistanceAmount'].value">
-              {{formGroup.controls['resistanceAmount'].value}}
+          <input *ngIf="formGroup.controls.resistanceType.value!=2 && formGroup.controls.resistanceType.value!=3" type="number" class="amount" formControlName="resistanceAmount" required />
+          <span *ngIf="formGroup.controls.resistanceType.value==2" class="no-input-value">
+            <ng-container *ngIf="formGroup.controls.resistanceAmount.value">
+              {{formGroup.controls.resistanceAmount.value}}
               <span>(<span [innerHTML]="formGroup.controls.resistanceMakeup.value | resistanceBandColor"></span>)</span>
             </ng-container>
             <button class="lead-space btn btn-choose-resistance btn-sm" (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
           </span>
-          <button *ngIf="workoutHasBeenExecutedBefore && formGroup.controls['resistanceType'].value!=3" class="lead-space btn btn-same-as-last-time btn-sm" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last Time</button>
-          <span *ngIf="formGroup.controls['resistanceType'].value==3" class="no-input-value">
+          <button *ngIf="workoutHasBeenExecutedBefore && formGroup.controls.resistanceType.value!=3" class="lead-space btn btn-same-as-last-time btn-sm" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last Time</button>
+          <span *ngIf="formGroup.controls.resistanceType.value==3" class="no-input-value">
             Body Weight
           </span>
+          <button *ngIf="formGroup.controls.recommendationReason.value" class="lead-space btn btn-sm btn-use-suggestions" (click)="useSuggestions()">Use Suggestions</button>
         </label>
       </div>
     </div>
