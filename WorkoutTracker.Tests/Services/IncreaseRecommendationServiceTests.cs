@@ -20,6 +20,7 @@ namespace WorkoutTracker.Tests.Services
         private Mock<IResistanceService> _resistanceServiceMock;
         private string _makeup;
         private UserSettings _userSettings;
+        private const decimal EXPECTED_NEW_RESISTANCE_AMOUNT = 100;
 
         [TestInitialize]
         public void Init()
@@ -33,7 +34,7 @@ namespace WorkoutTracker.Tests.Services
                         It.IsAny<sbyte>(), 
                         It.IsAny<bool>(), 
                         out _makeup))
-                .Returns(100);
+                .Returns(EXPECTED_NEW_RESISTANCE_AMOUNT);
 
             _userSettings = UserSettings.GetDefault();
 
@@ -41,10 +42,10 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Get_Increase_Recommendation_When_ActualReps_Exceeded_TargetReps()
+        public void Should_Get_Increase_Recommendation_When_ActualReps_Exceeded_TargetReps_But_Less_Than_Max()
         {
             //ARRANGE
-            var executedExerciseAverages = GetExecutedExerciseAverages(6, 8, 19);
+            var executedExerciseAverages = GetExecutedExerciseAverages(10, 11, 19);
 
             //ACT
             var result = _sut.GetIncreaseRecommendation(executedExerciseAverages, _userSettings);
@@ -53,6 +54,22 @@ namespace WorkoutTracker.Tests.Services
             Assert.IsNotNull(result, "Result is null.");
             Assert.AreEqual(executedExerciseAverages.AverageActualRepCount + 1, result.Reps, "Result Reps not as expected.");
             Assert.AreEqual(executedExerciseAverages.AverageResistanceAmount, result.ResistanceAmount, "Result ResistanceAmount not as expected.");
+        }
+
+        [TestMethod]
+        public void Should_Get_Increase_Recommendation_When_ActualReps_Exceeded_TargetReps_And_Greater_Than_Max()
+        {
+            //ARRANGE
+            var executedExerciseAverages = GetExecutedExerciseAverages(10, 15, 19);
+
+            //ACT
+            var result = _sut.GetIncreaseRecommendation(executedExerciseAverages, _userSettings);
+
+            //ASSERT
+            var repSettings = _userSettings.RepSettings.First(x => x.SetType == SetType.Repetition);
+            Assert.IsNotNull(result, "Result is null.");
+            Assert.AreEqual(repSettings.MinReps, result.Reps, "Result Reps not as expected.");
+            Assert.AreEqual(EXPECTED_NEW_RESISTANCE_AMOUNT, result.ResistanceAmount, "Result ResistanceAmount not as expected.");
         }
 
         private ExecutedExerciseAverages GetExecutedExerciseAverages(byte targetReps, byte actualReps, decimal resistanceAmount)
