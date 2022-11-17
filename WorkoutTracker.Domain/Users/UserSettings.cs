@@ -13,22 +13,32 @@ namespace WorkoutTracker.Domain.Users
         //save all settings as strings
 
         public int UserId { get; set; }
-        public UserGoal Goal { get; set; }
-        public virtual List<UserMinMaxReps> RepSettings { get; set; } //TODO: Replace with a read-only collection?
-        public bool RecommendationsEnabled { get; set; }
+        //public UserGoal Goal { get; set; }
+        public virtual List<UserMinMaxReps> RepSettings { get; set; }
+        public bool RecommendationsEnabled { get; set; } = false;
+        public byte LowestAcceptableRating { get; set; }
 
+        //TODO: Deprecate
         public static UserSettings GetDefault()
         {
             var settings = new UserSettings();
-            settings.Goal = UserGoal.Toning;
+            //settings.Goal = UserGoal.Toning;
             settings.RepSettings = new List<UserMinMaxReps>();
 
-            settings.RepSettings.Add(new UserMinMaxReps { Goal = UserGoal.Toning, SetType = SetType.Repetition, MinReps = 10, MaxReps = 12 });
-            settings.RepSettings.Add(new UserMinMaxReps { Goal = UserGoal.Toning, SetType = SetType.Timed, Duration = 240, MinReps = 50, MaxReps = 70 });
+            settings.RepSettings.Add(new UserMinMaxReps { /*Goal = UserGoal.Toning,*/ SetType = SetType.Repetition, MinReps = 10, MaxReps = 12 });
+            settings.RepSettings.Add(new UserMinMaxReps { /*Goal = UserGoal.Toning,*/ SetType = SetType.Timed, Duration = 240, MinReps = 50, MaxReps = 70 });
 
             settings.RecommendationsEnabled = false;
 
             return settings;
+        }
+
+        public static List<UserMinMaxReps> GetDefaultMinMaxRepsSettings()
+        {
+            var repSettings = new List<UserMinMaxReps>();
+            repSettings.Add(new UserMinMaxReps { SetType = SetType.Repetition, MinReps = 10, MaxReps = 12 });
+            repSettings.Add(new UserMinMaxReps { SetType = SetType.Timed, Duration = 240, MinReps = 50, MaxReps = 70 });
+            return repSettings;
         }
     }
 }

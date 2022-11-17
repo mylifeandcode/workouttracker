@@ -1,11 +1,10 @@
+import { Entity } from "app/shared/models/entity";
 import { SetType } from "../enums/set-type";
-import { UserGoal } from "../enums/user-goal";
 
-export class UserMinMaxReps {
+export class UserMinMaxReps extends Entity {
   public userSettingsId: number;
-  public goal: UserGoal;
   public setType: SetType;
-  public duration: number;
+  public duration: number | null;
   public minReps: number;
   public maxReps: number;
 }

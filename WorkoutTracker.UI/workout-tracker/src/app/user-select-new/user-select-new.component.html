@@ -1,0 +1,34 @@
+<div class="container">
+  <div class="row">
+    <div class="headroom offset-4 col-8">
+      <h3>New User</h3>
+      <form [formGroup]="newUserForm" novalidate>
+        <div class="form-group">
+          <label class="center-block headroom">
+            Name:
+            <input class="form-control" formControlName="name" placeholder="User Name (required)" />
+          </label>
+          <span class="text-danger headroom" *ngIf="newUserForm.controls.name.touched && newUserForm.controls.name.errors?.required"> Required.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="center-block headroom">
+            Email Address:
+            <input class="form-control" formControlName="emailAddress" placeholder="Email Address (required)" />
+          </label>
+          <span class="text-danger headroom" *ngIf="newUserForm.controls.emailAddress.touched && newUserForm.controls.emailAddress.errors?.required"> Required.</span>
+          <span class="text-danger headroom" *ngIf="newUserForm.controls.emailAddress.touched && newUserForm.controls.emailAddress.errors?.email"> Must be a valid email address.</span>
+        </div>
+
+        <div class="headroom">
+          <button type="submit" [disabled]="newUserForm.invalid" (click)="addUser()" class="btn btn-success">Add</button>
+          &nbsp;
+          <button type="button" [disabled]="addingUser" routerLink="/user-select" class="btn btn-warning">Cancel</button>
+          <span *ngIf="addingUser"> Saving...</span> <span *ngIf="errorMsg" class="error-text">{{errorMsg}}</span>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+

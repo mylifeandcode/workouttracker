@@ -9,15 +9,10 @@ namespace WorkoutTracker.Application.Resistances.Interfaces
     public interface IResistanceBandService : ISimpleService<ResistanceBand>
     {
         List<ResistanceBand> GetIndividualBands();
-        List<ResistanceBand> CalculateNextAvailableResistanceAmount(
+        List<ResistanceBand> GetResistanceBandsForResistanceAmountRange(
             decimal currentAmount,
             decimal minimalIncrease,
             decimal preferredMaxIncrease,
-            bool doubleBandResistanceAmounts);
-        List<ResistanceBand> CalculatePreviousAvailableResistanceAmount(
-            decimal currentAmount,
-            decimal minimalDecrease,
-            decimal preferredMaxDecrease,
             bool doubleBandResistanceAmounts);
         ResistanceBand GetLowestResistanceBand();
     }

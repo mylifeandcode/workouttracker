@@ -49,6 +49,7 @@ export class AuthService {
 
   //PRIVATE READ-ONLY FIELDS
   private readonly ROLE_CLAIM_TYPE: string = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+  private readonly USER_ID_CLAIM_TYPE: string = "UserID";
 
   constructor(
     private _http: HttpClient,
@@ -73,6 +74,10 @@ export class AuthService {
   public get isUserAdmin(): boolean {
     return this.isUserLoggedIn
       && this.decodedTokenPayload[this.ROLE_CLAIM_TYPE as keyof JwtPayload] == "Administrator";
+  }
+
+  public get userId(): number {
+    return this.decodedTokenPayload[this.USER_ID_CLAIM_TYPE as keyof JwtPayload] as number;
   }
 
   //END PROPERTIES ////////////////////////////////////////////////////////////

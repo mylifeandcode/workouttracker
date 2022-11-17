@@ -1,117 +1,74 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
-using WorkoutTracker.Application.Resistances.Interfaces;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
+    /// <summary>
+    /// A service to provide an increase recommendation for an exercise.
+    /// The increase can be in reps, resistance, or both.
+    /// </summary>
     public class IncreaseRecommendationService : IIncreaseRecommendationService
     {
-        private IResistanceBandService _resistanceBandService;
+        private IResistanceService _resistanceService;
 
-        #region Constants
-        private const decimal LOWEST_FREEWEIGHT_RESISTANCE = 5;
-        private const decimal LOWEST_MACHINE_RESISTANCE = 10;
-        #endregion Constants
-
-        public IncreaseRecommendationService(IResistanceBandService resistanceBandService)
+        public IncreaseRecommendationService(IResistanceService resistanceService)
         {
-            _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
+            _resistanceService = resistanceService ?? throw new ArgumentNullException(nameof(resistanceService));
         }
 
         #region Public Methods
         public ExerciseAmountRecommendation GetIncreaseRecommendation(
-            ExecutedExercise executedExercise,
+            ExecutedExerciseAverages executedExerciseAverages,
             UserSettings userSettings)
         {
-            if (executedExercise == null) throw new ArgumentNullException(nameof(executedExercise));
+            if (executedExerciseAverages == null) throw new ArgumentNullException(nameof(executedExerciseAverages));
             if (userSettings == null) throw new ArgumentNullException(nameof(userSettings));
 
-            if (executedExercise.SetType == SetType.Timed)
+            var repSettings = userSettings.RepSettings.First(x => x.SetType == executedExerciseAverages.SetType);
+            var recommendation = new ExerciseAmountRecommendation();
+
+            if (executedExerciseAverages.AverageActualRepCount >= repSettings.MaxReps)
             {
-                return GetTimedSetIncreaseRecommendation(executedExercise, userSettings);
+                //Increase resistance
+                string resistanceMakeup;
+                recommendation.Reps = repSettings.MinReps;
+                recommendation.ResistanceAmount =
+                    GetIncreasedResistanceAmount(
+                        executedExerciseAverages.AverageTargetRepCount,
+                        executedExerciseAverages.AverageActualRepCount,
+                        executedExerciseAverages.AverageResistanceAmount,
+                        executedExerciseAverages.Exercise,
+                        out resistanceMakeup);
+                recommendation.ResistanceMakeup = resistanceMakeup;
+                recommendation.Reason = "Met max rep count.";
             }
-            else //Repititon set
+            else
             {
-                return GetRepititionSetIncreaseRecommendation(executedExercise);
+                //Increase reps
+                recommendation.Reps =
+                    GetIncreasedTargetRepCount(
+                        executedExerciseAverages.AverageTargetRepCount,
+                        executedExerciseAverages.AverageActualRepCount,
+                        repSettings.MaxReps);
+
+                recommendation.ResistanceAmount = executedExerciseAverages.LastExecutedSet.ResistanceAmount;
+                recommendation.ResistanceMakeup = executedExerciseAverages.LastExecutedSet.ResistanceMakeup; //TODO: Add constructor to recommendation to default this stuff from an ExecutedExercise
+                recommendation.Reason = "Good rep count.";
             }
+
+            return recommendation;
         }
         #endregion Public Methods
 
         #region Private Non-Static Methods
 
-        private ExerciseAmountRecommendation GetTimedSetIncreaseRecommendation(
-            ExecutedExercise executedExercise,
-            UserSettings userSettings)
-        {
-            var recommendation = new ExerciseAmountRecommendation();
-            var repSettings =
-                GetRepSettings(
-                    userSettings.RepSettings,
-                    executedExercise.SetType,
-                    executedExercise.Duration);
-
-            //Increase reps or resistance?
-            if (executedExercise.ActualRepCount >= repSettings.MaxReps)
-            {
-                //User met or exceeded max reps. Let's bump up the resistance and set reps to min.
-                string resistanceMakeup;
-                recommendation.Reps = repSettings.MinReps;
-                recommendation.ResistanceAmount =
-                    GetIncreasedResistanceAmount(
-                        executedExercise.TargetRepCount,
-                        executedExercise.ActualRepCount,
-                        executedExercise.ResistanceAmount,
-                        executedExercise.Exercise,
-                        out resistanceMakeup);
-                recommendation.ResistanceMakeup = resistanceMakeup;
-            }
-            else
-            {
-                //Increase reps, but keep resistance amounts the same.
-                recommendation.Reps =
-                    GetIncreasedTargetRepCount(
-                        executedExercise.TargetRepCount,
-                        executedExercise.ActualRepCount,
-                        repSettings.MaxReps);
-
-                recommendation.ResistanceAmount = executedExercise.ResistanceAmount;
-                recommendation.ResistanceMakeup = executedExercise.ResistanceMakeup; //TODO: Add constructor to recommendation to default this stuff from an ExecutedExercise
-            }
-
-            return recommendation;
-        }
-
-        private ExerciseAmountRecommendation GetRepititionSetIncreaseRecommendation(
-            ExecutedExercise executedExercise)
-        {
-            var recommendation = new ExerciseAmountRecommendation();
-
-            //For repitition sets, we'll increase the resistance amount
-
-            string resistanceMakeup;
-            recommendation.Reps = executedExercise.TargetRepCount;
-            recommendation.ResistanceAmount =
-                GetIncreasedResistanceAmount(
-                    executedExercise.TargetRepCount,
-                    executedExercise.ActualRepCount,
-                    executedExercise.ResistanceAmount,
-                    executedExercise.Exercise,
-                    out resistanceMakeup);
-            recommendation.ResistanceMakeup = resistanceMakeup;
-
-            return recommendation;
-        }
-
         private decimal GetIncreasedResistanceAmount(
-            byte targetRepsLastTime,
-            byte actualRepsLastTime,
+            double targetRepsLastTime,
+            double actualRepsLastTime,
             decimal previousResistanceAmount,
             Exercise exercise,
             out string resistanceMakeup)
@@ -121,57 +78,20 @@ namespace WorkoutTracker.Application.Exercises.Services
             if (exercise.ResistanceType == ResistanceType.BodyWeight || exercise.ResistanceType == ResistanceType.Other)
                 return previousResistanceAmount;
 
-            byte multiplier = GetRepCountMultiplier(targetRepsLastTime, actualRepsLastTime);
+            sbyte multiplier = GetResistanceMultiplier(targetRepsLastTime, actualRepsLastTime);
 
-            switch (exercise.ResistanceType)
-            {
-                case ResistanceType.FreeWeight:
-                    return GetIncreasedFreeWeightResistanceAmount(previousResistanceAmount, multiplier);
-                case ResistanceType.MachineWeight:
-                    return GetIncreasedMachineResistanceAmount(previousResistanceAmount, multiplier);
-                case ResistanceType.ResistanceBand:
-                    return GetIncreasedResistanceBandResistanceAmount(
-                        previousResistanceAmount,
-                        multiplier,
-                        !exercise.BandsEndToEnd.Value, //Resistance Band exercises always have a value for this 
-                        out resistanceMakeup);
-                default:
-                    throw new ApplicationException($"Unhandled ResistanceType in switch statement in ExerciseAmountRecommendationService: {exercise.ResistanceType}.");
-            }
+            return _resistanceService.GetNewResistanceAmount(
+                exercise.ResistanceType, 
+                previousResistanceAmount, 
+                multiplier, 
+                !exercise.OneSided, 
+                out resistanceMakeup);
         }
 
-        private decimal GetIncreasedResistanceBandResistanceAmount(
-            decimal previousResistanceAmount,
-            short multiplier,
-            bool doubleBandResistanceAmounts,
-            out string resistanceMakeup)
-        {
-            decimal minIncrease = _resistanceBandService.GetLowestResistanceBand().MaxResistanceAmount * multiplier;
-            decimal maxIncrease = minIncrease + 10;
-            var recommendedBands =
-                _resistanceBandService.CalculateNextAvailableResistanceAmount(
-                    previousResistanceAmount, minIncrease, maxIncrease, doubleBandResistanceAmounts);
-            if (recommendedBands.Any())
-                resistanceMakeup = string.Join(',', recommendedBands.Select(band => band.Color));
-            else
-                resistanceMakeup = null;
-
-            return recommendedBands.Sum(band => band.MaxResistanceAmount);
-        }
         #endregion Private Non-Static Methods
 
         #region Private Static Methods
-        private static UserMinMaxReps GetRepSettings(List<UserMinMaxReps> repSettings, SetType setType, ushort? duration)
-        {
-            var settings =
-                repSettings
-                    .FirstOrDefault(reps => reps.SetType == setType && reps.Duration == duration);
-
-            //If not found, return an attempt at some defaults. Wild guess really.
-            return settings ?? new UserMinMaxReps { Duration = duration, MinReps = 15, MaxReps = 30 };
-        }
-
-        private static byte GetRepCountMultiplier(byte targetRepsLastTime, byte actualRepsLastTime)
+        private static sbyte GetResistanceMultiplier(double targetRepsLastTime, double actualRepsLastTime)
         {
             if (UserGreatlyExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
             {
@@ -188,50 +108,33 @@ namespace WorkoutTracker.Application.Exercises.Services
         }
 
         private static byte GetIncreasedTargetRepCount(
-            byte targetRepsLastTime,
-            byte actualRepsLastTime,
+            double targetRepsLastTime,
+            double actualRepsLastTime,
             byte maxRepCount)
         {
-            byte increasedRepCount = actualRepsLastTime;
+            double increasedRepCount = actualRepsLastTime;
 
-            //This is intended for timed sets. Target rep count for repetition sets
-            //would remain the same, and we'd increase or decrease the resistance amount.
             if (UserGreatlyExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
             {
-                increasedRepCount += 15;
-            }
-            else if (UserExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
-            {
-                increasedRepCount += 10;
+                increasedRepCount += 4;
             }
             else
             {
-                //User met rep count
-                increasedRepCount += 5;
+                increasedRepCount += 1;
             }
 
-            return Math.Min(increasedRepCount, maxRepCount); //TODO: Refactor higher up the chain so that if we're only bumping up by a small amount, increase resistance instead and use smaller rep count
+            //Return whichever is lower -- increasedRepCount or maxRepCount -- to ensure we don't surpass the max
+            return (byte)Math.Min(increasedRepCount, maxRepCount); 
         }
 
-        private static bool UserGreatlyExceededTargetRepCount(byte targetRepCount, byte actualRepCount)
+        private static bool UserGreatlyExceededTargetRepCount(double targetRepCount, double actualRepCount)
         {
-            return actualRepCount - targetRepCount >= 15;
+            return actualRepCount - targetRepCount >= 3;
         }
 
-        private static bool UserExceededTargetRepCount(byte targetRepCount, byte actualRepCount)
+        private static bool UserExceededTargetRepCount(double targetRepCount, double actualRepCount)
         {
-            decimal difference = actualRepCount - targetRepCount;
-            return difference <= 14 && difference >= 1;
-        }
-
-        private static decimal GetIncreasedFreeWeightResistanceAmount(decimal previousResistanceAmount, byte multiplier)
-        {
-            return previousResistanceAmount + LOWEST_FREEWEIGHT_RESISTANCE * multiplier;
-        }
-
-        private static decimal GetIncreasedMachineResistanceAmount(decimal previousResistanceAmount, byte multiplier)
-        {
-            return previousResistanceAmount + LOWEST_MACHINE_RESISTANCE * multiplier;
+            return actualRepCount - targetRepCount >= 1;
         }
         #endregion Private Static Methods
     }

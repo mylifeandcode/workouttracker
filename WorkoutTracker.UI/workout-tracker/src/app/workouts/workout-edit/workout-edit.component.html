@@ -21,7 +21,7 @@
           </label>
           <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
           <span *ngIf="workoutForm.controls['name'].touched && workoutForm.controls['name']?.errors"
-            class="errorText">Required</span>
+            class="error-text">Required</span>
         </div>
       </div>
 
@@ -51,14 +51,14 @@
         </div>
         <div class="col-2">
           # of sets: <input type="number" formControlName="numberOfSets" class="number-of-sets" />
-          <span *ngIf="exercise.controls['numberOfSets'].invalid" class="errorText"><br />Must be > 0</span>
+          <span *ngIf="exercise.controls['numberOfSets'].invalid" class="error-text"><br />Must be > 0</span>
         </div>
         <div class="col-2">
           <select formControlName="setType">
             <option value="0">Repetition</option>
             <option value="1">Timed</option>
           </select>
-          <span *ngIf="exercise.controls['setType'].invalid" class="errorText"><br />Required</span>
+          <span *ngIf="exercise.controls['setType'].invalid" class="error-text"><br />Required</span>
         </div>
         <div *ngIf="!readOnlyMode" class="col-2">
           <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp(i)" [disabled]="i == 0">
@@ -89,11 +89,11 @@
         <div *ngIf="!readOnlyMode" class="col-8">
           <button type="submit" [disabled]="workoutForm.invalid || saving" (click)="saveWorkout()"
             class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
-          <span *ngIf="workoutForm.touched && workoutForm.invalid" class="errorText">Please enter required
+          <span *ngIf="workoutForm.touched && workoutForm.invalid" class="error-text">Please enter required
             information</span>
         </div>
       </div>
-      <div *ngIf="errorMsg" class="offset-2 col-4 errorText">
+      <div *ngIf="errorMsg" class="offset-2 col-4 error-text">
         {{errorMsg}}
       </div>
 

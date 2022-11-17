@@ -25,6 +25,6 @@ namespace WorkoutTracker.Application.Exercises.Interfaces
         ExerciseAmountRecommendation GetRecommendation(
             Exercise exercise,
             ExecutedWorkout lastWorkoutWithThisExercise,
-            UserSettings userSettings = null);
+            UserSettings userSettings);
     }
 }

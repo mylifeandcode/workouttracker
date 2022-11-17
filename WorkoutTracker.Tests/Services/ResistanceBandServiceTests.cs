@@ -15,30 +15,26 @@ namespace WorkoutTracker.Tests.Services
     {
         private Mock<IRepository<ResistanceBand>> _repo;
         private List<ResistanceBand> _bands;
+        private ResistanceBandService _sut;
 
         [TestInitialize]
         public void Init()
         {
             SetupRepoMock();
+            _sut = new ResistanceBandService(_repo.Object);
         }
 
         [TestMethod]
         public void Should_Add()
         {
             //ARRANGE
-            var repoMock = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);
-            repoMock
-                .Setup(mock => mock.Add(It.IsAny<ResistanceBand>(), true))
-                .Returns((ResistanceBand resistanceBand, bool save) => resistanceBand);
-
-            var sut = new ResistanceBandService(repoMock.Object);
             var resistanceBand = new ResistanceBand();
 
             //ACT
-            var result = sut.Add(resistanceBand);
+            var result = _sut.Add(resistanceBand);
 
             //ASSERT
-            repoMock.Verify(mock => mock.Add(resistanceBand, true), Times.Once);
+            _repo.Verify(mock => mock.Add(resistanceBand, true), Times.Once);
             result.ShouldBeSameAs(resistanceBand);
         }
 
@@ -46,36 +42,26 @@ namespace WorkoutTracker.Tests.Services
         public void Should_Delete()
         {
             //ARRANGE
-            var repoMock = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);
-            repoMock.Setup(mock => mock.Delete(It.IsAny<int>()));
-
-            var sut = new ResistanceBandService(repoMock.Object);
             int resistanceBandId = 5;
 
             //ACT
-            sut.Delete(resistanceBandId);
+            _sut.Delete(resistanceBandId);
 
             //ASSERT
-            repoMock.Verify(mock => mock.Delete(resistanceBandId), Times.Once);
+            _repo.Verify(mock => mock.Delete(resistanceBandId), Times.Once);
         }
 
         [TestMethod]
         public void Should_Update()
         {
             //ARRANGE
-            var repoMock = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);
-            repoMock
-                .Setup(mock => mock.Update(It.IsAny<ResistanceBand>(), true))
-                .Returns((ResistanceBand resistanceBand, bool save) => resistanceBand);
-
-            var sut = new ResistanceBandService(repoMock.Object);
             var resistanceBand = new ResistanceBand();
 
             //ACT
-            var result = sut.Update(resistanceBand);
+            var result = _sut.Update(resistanceBand);
 
             //ASSERT
-            repoMock.Verify(mock => mock.Update(resistanceBand, true), Times.Once);
+            _repo.Verify(mock => mock.Update(resistanceBand, true), Times.Once);
             result.ShouldBeSameAs(resistanceBand);
         }
 
@@ -88,17 +74,14 @@ namespace WorkoutTracker.Tests.Services
             resistanceBands.Add(new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 });
             resistanceBands.Add(new ResistanceBand { Color = "Black", MaxResistanceAmount = 19 });
 
-            var repoMock = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);
-            repoMock.Setup(mock => mock.Get()).Returns(resistanceBands.AsQueryable());
-
-            var sut = new ResistanceBandService(repoMock.Object);
+            _repo.Setup(mock => mock.Get()).Returns(resistanceBands.AsQueryable());
 
             //ACT
-            var results = sut.GetAll().ToList();
+            var results = _sut.GetAll().ToList();
 
             //ASSERT
             results.ShouldBe(resistanceBands);
-            repoMock.Verify(mock => mock.Get(), Times.Once);
+            _repo.Verify(mock => mock.Get(), Times.Once);
         }
 
         [TestMethod]
@@ -106,17 +89,14 @@ namespace WorkoutTracker.Tests.Services
         {
             //ARRANGE
             var resistanceBand = new ResistanceBand { Color = "Blue", MaxResistanceAmount = 13 };
-            var repoMock = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);
-            repoMock.Setup(mock => mock.Get(It.IsAny<int>())).Returns(resistanceBand);
-
-            var sut = new ResistanceBandService(repoMock.Object);
+            _repo.Setup(mock => mock.Get(It.IsAny<int>())).Returns(resistanceBand);
 
             //ACT
-            var result = sut.GetById(1);
+            var result = _sut.GetById(1);
 
             //ASSERT
             result.ShouldBe(resistanceBand);
-            repoMock.Verify(mock => mock.Get(It.IsAny<int>()), Times.Once);
+            _repo.Verify(mock => mock.Get(It.IsAny<int>()), Times.Once);
         }
 
         [TestMethod]
@@ -124,10 +104,9 @@ namespace WorkoutTracker.Tests.Services
         {
             //ARRANGE
             int expectedCount = _bands.Sum(band => band.NumberAvailable);
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.GetIndividualBands();
+            var result = _sut.GetIndividualBands();
 
             //ASSERT
             Assert.AreEqual(expectedCount, result.Count);
@@ -143,10 +122,9 @@ namespace WorkoutTracker.Tests.Services
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(30, 3, 5, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, 3, 5, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -162,10 +140,9 @@ namespace WorkoutTracker.Tests.Services
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(30, 20, 25, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, 20, 25, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -181,10 +158,9 @@ namespace WorkoutTracker.Tests.Services
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(40, 20, 30, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(40, 20, 30, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -200,10 +176,9 @@ namespace WorkoutTracker.Tests.Services
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(40, 20, 25, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(40, 20, 25, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -219,10 +194,9 @@ namespace WorkoutTracker.Tests.Services
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculateNextAvailableResistanceAmount(120, 10, 15, true);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(120, 10, 15, true);
 
             //ASSERT
             Assert.AreEqual(3, result.Count);
@@ -239,17 +213,32 @@ namespace WorkoutTracker.Tests.Services
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(30, 5, 10, false);
+            //var result = sut.CalculatePreviousAvailableResistanceAmount(30, 5, 10, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(10, -5, -10, false);
 
             //ASSERT
-            Assert.AreEqual(2, result.Count);
-            Assert.AreEqual(22, result.Sum(band => band.MaxResistanceAmount));
-            Assert.IsTrue(
-                result.Count(band => band.Color == "Black") == 1
-                && result.Count(band => band.Color == "Yellow") == 1);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(5, result.Sum(band => band.MaxResistanceAmount));
+            Assert.IsTrue(result.Count(band => band.Color == "Green") == 1);
+        }
+
+        [TestMethod]
+        public void Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Simple2()
+        {
+            //TODO: Refine/base expectations dynamically not statically
+
+            //ARRANGE
+
+            //ACT
+            //var result = sut.CalculatePreviousAvailableResistanceAmount(30, 5, 10, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, -3, -13, false);
+
+            //ASSERT
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(23, result.Sum(band => band.MaxResistanceAmount));
+            Assert.IsTrue(result.Count(band => band.Color == "Purple") == 1);
         }
 
         [TestMethod]
@@ -258,15 +247,33 @@ namespace WorkoutTracker.Tests.Services
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(35, 5, 10, false);
+            //var result = sut.CalculatePreviousAvailableResistanceAmount(35, 5, 10, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(35, -5, -10, false);
+
+            //ASSERT
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(30, result.Sum(band => band.MaxResistanceAmount));
+            Assert.IsTrue(result.Count(band => band.Color == "Orange") == 1);
+        }
+
+        [TestMethod]
+        public void Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Not_Simple2()
+        {
+            //TODO: Refine/base expectations dynamically not statically
+
+            //ARRANGE
+
+            //ACT
+            //106 = Purple and Orange bands
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(106, -6, -16, true);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
-            Assert.AreEqual(26, result.Sum(band => band.MaxResistanceAmount));
-            Assert.IsTrue(result.Count(band => band.Color == "Purple") == 1);
+            Assert.AreEqual(96, (result.Sum(band => band.MaxResistanceAmount) * 2)); //Multiply by 2 for bands doubled over (true param above)
+            Assert.IsTrue(result.Count(band => band.Color == "Onyx") == 1);
+            Assert.IsTrue(result.Count(band => band.Color == "Red") == 1);
         }
 
         [TestMethod]
@@ -275,19 +282,17 @@ namespace WorkoutTracker.Tests.Services
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(80, 20, 25, false);
+            //var result = sut.CalculatePreviousAvailableResistanceAmount(80, 20, 25, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(80, -20, -25, false);
 
             //ASSERT
-            Assert.AreEqual(4, result.Count);
-            Assert.AreEqual(56, result.Sum(band => band.MaxResistanceAmount));
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(59, result.Sum(band => band.MaxResistanceAmount));
             Assert.IsTrue(
                 result.Count(band => band.Color == "Onyx") == 1
-                && result.Count(band => band.Color == "Yellow") == 1
-                && result.Count(band => band.Color == "Green") == 1
-                && result.Count(band => band.Color == "Red") == 1);
+                && result.Count(band => band.Color == "Black") == 1);
         }
 
         [TestMethod]
@@ -296,18 +301,17 @@ namespace WorkoutTracker.Tests.Services
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.CalculatePreviousAvailableResistanceAmount(120, 20, 25, true);
+            //var result = sut.CalculatePreviousAvailableResistanceAmount(120, 20, 25, true);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(120, -20, -25, true);
 
             //ASSERT
-            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(2, result.Count);
             Assert.AreEqual(96, result.Sum(band => band.MaxResistanceAmount) * 2);
             Assert.IsTrue(
                 result.Count(band => band.Color == "Onyx") == 1
-                && result.Count(band => band.Color == "Green") == 1
-                && result.Count(band => band.Color == "Yellow") == 1);
+                && result.Count(band => band.Color == "Red") == 1);
         }
 
         [TestMethod]
@@ -315,10 +319,9 @@ namespace WorkoutTracker.Tests.Services
         {
             //ARRANGE
             var lowestBand = _bands.MinBy(x => x.MaxResistanceAmount);
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.GetLowestResistanceBand();
+            var result = _sut.GetLowestResistanceBand();
 
             //ASSERT
             Assert.IsNotNull(result);
@@ -331,11 +334,10 @@ namespace WorkoutTracker.Tests.Services
         {
             //ARRANGE
             var lowestBand = _bands.MinBy(x => x.MaxResistanceAmount);
-            var sut = new ResistanceBandService(_repo.Object);
 
             //ACT
-            var result = sut.GetLowestResistanceBand();
-            var resultAgain = sut.GetLowestResistanceBand();
+            var result = _sut.GetLowestResistanceBand();
+            var resultAgain = _sut.GetLowestResistanceBand();
 
             //ASSERT
             Assert.IsNotNull(resultAgain);
@@ -347,9 +349,9 @@ namespace WorkoutTracker.Tests.Services
         {
             _repo = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);
             _bands = new List<ResistanceBand>(8);
-            _bands.Add(new ResistanceBand { Color = "Onyx", MaxResistanceAmount = 40, NumberAvailable = 2 });
+            _bands.Add(new ResistanceBand { Color = "Onyx", MaxResistanceAmount = 40, NumberAvailable = 3 });
             _bands.Add(new ResistanceBand { Color = "Orange", MaxResistanceAmount = 30, NumberAvailable = 4 });
-            _bands.Add(new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23, NumberAvailable = 1 });
+            _bands.Add(new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23, NumberAvailable = 2 });
             _bands.Add(new ResistanceBand { Color = "Black", MaxResistanceAmount = 19, NumberAvailable = 1 });
             _bands.Add(new ResistanceBand { Color = "Blue", MaxResistanceAmount = 13, NumberAvailable = 1 });
             _bands.Add(new ResistanceBand { Color = "Red", MaxResistanceAmount = 8, NumberAvailable = 1 });
@@ -359,6 +361,17 @@ namespace WorkoutTracker.Tests.Services
             _repo
                 .Setup(mock => mock.Get())
                 .Returns(_bands.AsQueryable());
+
+            _repo
+                .Setup(mock => mock.Add(It.IsAny<ResistanceBand>(), true))
+                .Returns((ResistanceBand resistanceBand, bool save) => resistanceBand);
+
+            _repo
+                .Setup(mock => mock.Delete(It.IsAny<int>()));
+
+            _repo
+                .Setup(mock => mock.Update(It.IsAny<ResistanceBand>(), true))
+                .Returns((ResistanceBand resistanceBand, bool save) => resistanceBand);
         }
 
     }

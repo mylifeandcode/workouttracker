@@ -28,9 +28,9 @@ namespace WorkoutTracker.UI.Controllers
             return userId;
         }
 
-        protected void SetCreatedAuditFields(Entity entity)
+        protected void SetCreatedAuditFields(Entity entity, int? createdByUserId = null)
         {
-            var userId = GetUserID();
+            int userId = createdByUserId ?? GetUserID();
             entity.CreatedByUserId = userId;
             entity.CreatedDateTime = DateTime.Now;
         }

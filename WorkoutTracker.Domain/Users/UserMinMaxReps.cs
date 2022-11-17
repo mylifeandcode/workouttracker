@@ -10,7 +10,7 @@ namespace WorkoutTracker.Domain.Users
     public class UserMinMaxReps : Entity
     {
         public int UserSettingsId { get; set; }
-        public UserGoal Goal { get; set; }
+        //public UserGoal Goal { get; set; }
         public SetType SetType { get; set; }
         public ushort? Duration { get; set; }
         public byte MinReps { get; set; }

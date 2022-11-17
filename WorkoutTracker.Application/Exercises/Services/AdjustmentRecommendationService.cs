@@ -1,27 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
-using WorkoutTracker.Application.Resistances.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
+    //TODO: Create two versions of this: One for Repetition Sets, one for Timed Sets
+    
     /// <summary>
     /// A service to provide an adjustment recommendation for an exercise.
     /// This adjustment is not an *increase*, but rather an adjustment, in reps, resistance, or both.
     /// </summary>
     public class AdjustmentRecommendationService : RecommendationService, IAdjustmentRecommendationService
     {
-        private IResistanceBandService _resistanceBandService;
+        private IResistanceService _resistanceService;
+        private ILogger<AdjustmentRecommendationService> _logger;
 
-        public AdjustmentRecommendationService(IResistanceBandService resistanceBandService)
+        public AdjustmentRecommendationService(IResistanceService resistanceService, ILogger<AdjustmentRecommendationService> logger)
         {
-            _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
+            _resistanceService = resistanceService ?? throw new ArgumentNullException(nameof(resistanceService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -32,39 +34,33 @@ namespace WorkoutTracker.Application.Exercises.Services
         /// <param name="userSettings">The user's settings</param>
         /// <returns>An ExerciseAmountRecommendation with recommendations regarding reps and resistance</returns>
         public ExerciseAmountRecommendation GetAdjustmentRecommendation(
-            ExecutedExercise executedExercise,
+            ExecutedExerciseAverages executedExerciseAverages,
             UserSettings userSettings)
         {
             //Adjust target reps, resistance, or both.
 
-            if (executedExercise == null) throw new ArgumentNullException(nameof(executedExercise));
+            if (executedExerciseAverages == null) throw new ArgumentNullException(nameof(executedExerciseAverages));
             if (userSettings == null) throw new ArgumentNullException(nameof(userSettings));
 
             ExerciseAmountRecommendation recommendation;
 
-            bool inadequateForm = !HadAdequateRating(executedExercise.FormRating);
-            bool inadequateRangeOfMotion = !HadAdequateRating(executedExercise.RangeOfMotionRating);
-            bool actualRepsSignificantlyLessThanTarget = ActualRepsSignificantlyLessThanTarget(executedExercise.SetType, executedExercise.TargetRepCount, executedExercise.ActualRepCount);
-            bool actualRepsLessThanTarget = ActualRepsLessThanTarget(executedExercise.SetType, executedExercise.TargetRepCount, executedExercise.ActualRepCount);
+            //We already know they need improvement, but find out exactly why so we can report that
+            //to the user with the recommendation.
+            Performance formPerformance = GetRatingPerformance(executedExerciseAverages.AverageFormRating);
+            Performance rangeOfMotionPerformance = GetRatingPerformance(executedExerciseAverages.AverageRangeOfMotionRating);
+            Performance repPerformance = 
+                GetRepPerformance(
+                    executedExerciseAverages.AverageTargetRepCount,
+                    executedExerciseAverages.AverageActualRepCount,
+                    REP_DIFFERENCE_CONSIDERED_AWFUL);
 
-            //If form or range of motion was lacking, reduce resistance.
-            if (inadequateForm || inadequateRangeOfMotion || actualRepsSignificantlyLessThanTarget || actualRepsLessThanTarget)
-            {
-                recommendation =
-                    GetDecreaseRecommendation(
-                        executedExercise,
-                        userSettings,
-                        inadequateForm,
-                        inadequateRangeOfMotion,
-                        actualRepsSignificantlyLessThanTarget,
-                        actualRepsLessThanTarget);
-            }
-            //Otherwise, they didn't meet their goals last time, but they should remain the same.
-            else
-            {
-                recommendation = new ExerciseAmountRecommendation(executedExercise);
-                recommendation.Reason = "";
-            }
+            recommendation =
+                GetDecreaseRecommendation(
+                    executedExerciseAverages,
+                    formPerformance, 
+                    rangeOfMotionPerformance, 
+                    repPerformance, 
+                    userSettings);
 
             return recommendation;
         }
@@ -73,235 +69,180 @@ namespace WorkoutTracker.Application.Exercises.Services
         /// <summary>
         /// Gets a recommendation to decrease something about an exercise.
         /// </summary>
-        /// <param name="executedExercise">The exercise which was executed and needs a decrease in reps or resistance</param>
+        /// <param name="executedExerciseAverages">The exercise which was executed and needs a decrease in reps or resistance</param>
         /// <param name="userSettings">The user's settings</param>
-        /// <param name="inadequateForm">Indicates whether or not the exercise was last performed with inadequate form</param>
-        /// <param name="inadequateRangeOfMotion">Indicates whether or not the exercise was last performed with inadequate range of motion</param>
-        /// <param name="actualRepsSignificantlyLessThanTarget">Indicates whether or not the exercise was last performed with significantly less reps that targeted</param>
-        /// <param name="actualRepsLessThanTarget">Indicates whether or not the exercise was last performed with less reps that targeted</param>
+        /// <param name="formPerformance">A rating of the user's form performance last time</param>
+        /// <param name="rangeOfMotionPerformance">A rating of the user's range of motion performance last time</param>
+        /// <param name="repPerformance">A rating of the user's repetition performance last time</param>
         /// <returns>An ExerciseAmountRecommendation with recommendations regarding reps and resistance</returns>
         /// <remarks>
         /// This abstracts the differences between getting a decrease recommendation for an exercise for a
         /// timed set versus a repetition set.
         /// </remarks>
         private ExerciseAmountRecommendation GetDecreaseRecommendation(
-            ExecutedExercise executedExercise,
-            UserSettings userSettings,
-            bool inadequateForm,
-            bool inadequateRangeOfMotion,
-            bool actualRepsSignificantlyLessThanTarget,
-            bool actualRepsLessThanTarget)
+            ExecutedExerciseAverages executedExerciseAverages,
+            Performance formPerformance,
+            Performance rangeOfMotionPerformance, 
+            Performance repPerformance, 
+            UserSettings userSettings)
         {
             /*
-            If form and/or range of motion were inadequate, lower resistance.
-            If reps were less than target, decrease target.
+            If form and/or range of motion were inadequate, or rep count less than minimum, 
+            lower resistance.
+            If reps were less than target, decrease target rep count.
             */
 
-            string resistanceMakeup;
-            bool recommendingDecreasedResistance = false;
+            bool recommendingDecreasedResistance = 
+                formPerformance != Performance.Adequate 
+                || rangeOfMotionPerformance != Performance.Adequate
+                || AverageActualRepCountLessThanMinimum(
+                    executedExerciseAverages.AverageActualRepCount, 
+                    executedExerciseAverages.SetType, 
+                    userSettings);
 
-            var recommendation = new ExerciseAmountRecommendation(executedExercise);
-            if (inadequateForm || inadequateRangeOfMotion) //Because we have both, we can make this more granular later if need be
+            bool recommendingDecreasedTargetRepCount = repPerformance != Performance.Adequate;
+
+            var recommendation = new ExerciseAmountRecommendation();
+
+            if (recommendingDecreasedResistance)
             {
-                recommendingDecreasedResistance = true;
+                //Their form, range of motion, or rep count wasn't so great, so let's bump down the resistance
+                var lowestPerformance = new List<Performance>() { formPerformance, rangeOfMotionPerformance, repPerformance }.Max();
+
                 recommendation.ResistanceAmount =
                     GetDecreasedResistanceAmount(
-                        executedExercise.SetType,
-                        executedExercise.TargetRepCount,
-                        executedExercise.ActualRepCount,
-                        executedExercise.ResistanceAmount,
-                        executedExercise.Exercise,
-                        out resistanceMakeup);
+                        executedExerciseAverages.AverageResistanceAmount, 
+                        lowestPerformance, 
+                        executedExerciseAverages.Exercise,
+                        out var resistanceMakeup);
+
                 recommendation.ResistanceMakeup = resistanceMakeup;
             }
+            else
+            { 
+                recommendation.ResistanceAmount = executedExerciseAverages.LastExecutedSet.ResistanceAmount;
+                recommendation.ResistanceMakeup = executedExerciseAverages.LastExecutedSet.ResistanceMakeup;
+            }
 
-            if (ShouldRepCountBeLowered(actualRepsLessThanTarget, recommendingDecreasedResistance, actualRepsSignificantlyLessThanTarget))
-                recommendation.Reps = GetDecreasedRepCount(executedExercise.SetType, userSettings, executedExercise.TargetRepCount, executedExercise.ActualRepCount);
+            if (recommendingDecreasedTargetRepCount)
+                recommendation.Reps =
+                    GetDecreasedRepCount(
+                        executedExerciseAverages.SetType,
+                        executedExerciseAverages.AverageTargetRepCount,
+                        repPerformance, 
+                        userSettings);
+            else
+                recommendation.Reps = executedExerciseAverages.LastExecutedSet.TargetRepCount;
+
+            recommendation.Reason = 
+                GetRecommendationReason(
+                    formPerformance, 
+                    rangeOfMotionPerformance,
+                    repPerformance);
 
             return recommendation;
         }
-
-        /*
-        /// <summary>
-        /// Gets a recommendation to decrease something about an exercise performed during a timed set
-        /// </summary>
-        /// <param name="executedExercise">The exercise which was executed and needs a decrease in reps or resistance</param>
-        /// <param name="userSettings">The user's settings</param>
-        /// <param name="inadequateForm">Indicates whether or not the exercise was last performed with inadequate form</param>
-        /// <param name="inadequateRangeOfMotion">Indicates whether or not the exercise was last performed with inadequate range of motion</param>
-        /// <param name="actualRepsSignificantlyLessThanTarget">Indicates whether or not the exercise was last performed with significantly less reps that targeted</param>
-        /// <param name="actualRepsLessThanTarget">Indicates whether or not the exercise was last performed with less reps that targeted</param>
-        /// <returns>An ExerciseAmountRecommendation with recommendations regarding reps and resistance for an exercise performed in a timed set</returns>
-        private ExerciseAmountRecommendation GetTimedSetDecreaseRecommendation(
-            ExecutedExercise executedExercise,
-            UserSettings userSettings,
-            bool inadequateForm,
-            bool inadequateRangeOfMotion,
-            bool actualRepsSignificantlyLessThanTarget,
-            bool actualRepsLessThanTarget)
-        {
-            string resistanceMakeup;
-            bool recommendingDecreasedResistance = false;
-
-            var recommendation = new ExerciseAmountRecommendation(executedExercise);
-            if (inadequateForm || inadequateRangeOfMotion) //Because we have both, we can make this more granular later if need be
-            {
-                recommendingDecreasedResistance = true;
-                recommendation.ResistanceAmount =
-                    GetDecreasedResistanceAmount(
-                        SetType.Timed, 
-                        executedExercise.TargetRepCount, 
-                        executedExercise.ActualRepCount, 
-                        executedExercise.ResistanceAmount, 
-                        executedExercise.Exercise, 
-                        out resistanceMakeup);
-                recommendation.ResistanceMakeup = resistanceMakeup;
-            }
-
-            if (ShouldRepCountBeLowered(actualRepsLessThanTarget, recommendingDecreasedResistance, actualRepsSignificantlyLessThanTarget))
-                recommendation.Reps = GetDecreasedRepCount(SetType.Timed, userSettings, executedExercise.TargetRepCount, executedExercise.ActualRepCount);
-
-            return recommendation;
-        }
-
-        private ExerciseAmountRecommendation GetRepititionSetDecreaseRecommendation(
-            ExecutedExercise executedExercise,
-            UserSettings userSettings,
-            bool inadequateForm,
-            bool inadequateRangeOfMotion,
-            bool actualRepsSignificantlyLessThanTarget,
-            bool actualRepsLessThanTarget)
-        {
-            throw new NotImplementedException();
-        }
-        */
 
         private decimal GetDecreasedResistanceAmount(
-            SetType setType,
-            byte targetRepsLastTime,
-            byte actualRepsLastTime,
             decimal previousResistanceAmount,
+            Performance lowestPreviousPerformance, 
             Exercise exercise,
             out string resistanceMakeup)
         {
             resistanceMakeup = null; //Only needed for resistance bands.
 
-            if (exercise.ResistanceType == ResistanceType.BodyWeight || exercise.ResistanceType == ResistanceType.Other)
-                return previousResistanceAmount;
-
-            byte multiplier = GetRepCountMultiplier(setType, targetRepsLastTime, actualRepsLastTime);
+            sbyte multiplier = GetResistanceMultiplier(lowestPreviousPerformance);
             decimal resistanceAmount = 0;
 
-            switch (exercise.ResistanceType)
-            {
-                case ResistanceType.BodyWeight:
-                    //TODO: Modify resistance amount to be nullable
-                    break;
+            _logger.LogInformation($"Getting decreased resistance amount for exercise {exercise.Name} (resistance type {exercise.ResistanceType}) using multiplier {multiplier}. Previous resistance: {previousResistanceAmount}.");
 
-                case ResistanceType.FreeWeight:
-                    break;
+            resistanceAmount =
+                _resistanceService.GetNewResistanceAmount(
+                    exercise.ResistanceType,
+                    previousResistanceAmount,
+                    multiplier,
+                    !exercise.OneSided,
+                    out resistanceMakeup);
 
-                case ResistanceType.MachineWeight:
-                    //TODO: Get the appropriate lower weight in 10lb increments below that last time
-                    break;
-
-                case ResistanceType.Other:
-                    //TODO: Figure out what to do here!
-                    break;
-
-                case ResistanceType.ResistanceBand:
-                    resistanceAmount =
-                        GetDecreasedResistanceBandResistanceAmount(
-                            previousResistanceAmount, multiplier, !exercise.OneSided, out resistanceMakeup);
-                    break;
-            }
+            _logger.LogInformation($"Decreased resistance amount for exercise {exercise.Name} is {resistanceAmount}.");
 
             return resistanceAmount;
-        }
-
-        private decimal GetDecreasedResistanceBandResistanceAmount(
-            decimal previousResistanceAmount,
-            short multiplier,
-            bool doubleBandResistanceAmounts,
-            out string resistanceMakeup)
-        {
-            decimal lowestResistanceBandAmount = _resistanceBandService.GetLowestResistanceBand()?.MaxResistanceAmount ?? 0;
-            decimal minIncrease = lowestResistanceBandAmount * multiplier;
-            decimal maxIncrease = minIncrease + 10;
-            var recommendedBands =
-                _resistanceBandService.CalculateNextAvailableResistanceAmount(
-                    previousResistanceAmount, minIncrease, maxIncrease, doubleBandResistanceAmounts);
-            if (recommendedBands.Any())
-                resistanceMakeup = string.Join(',', recommendedBands.Select(band => band.Color));
-            else
-                resistanceMakeup = null;
-
-            return recommendedBands.Sum(band => band.MaxResistanceAmount);
         }
 
         #endregion Private Non-Static Methods
 
         #region Private Static Methods
-        private static bool ActualRepsSignificantlyLessThanTarget(
-            SetType setType,
-            byte targetReps,
-            byte actualReps)
+        private static bool AverageActualRepCountLessThanMinimum(
+            double averageActualRepCount, SetType setType, UserSettings userSettings)
         {
-            //TODO: Allow this to be configurable
-            //TODO: Modify for different set types
-            return targetReps - actualReps >= 10;
+            return averageActualRepCount < userSettings.RepSettings.First(x => x.SetType == setType).MinReps;
         }
-
-        private static bool ActualRepsLessThanTarget(
-            SetType setType,
-            byte targetReps,
-            byte actualReps)
+        private static sbyte GetResistanceMultiplier(Performance previousPerformance)
         {
-            //TODO: Allow this to be configurable
-            //TODO: Modify for different set types
-            byte difference = (byte)(targetReps - actualReps);
-            return difference < 10 && difference >= 6;
-        }
-
-        private static byte GetRepCountMultiplier(SetType setType, byte targetRepsLastTime, byte actualRepsLastTime)
-        {
-            if (ActualRepsSignificantlyLessThanTarget(setType, targetRepsLastTime, actualRepsLastTime))
+            switch (previousPerformance)
             {
-                return 3;
+                case Performance.Awful:
+                    return -2;
+                case Performance.Bad:
+                    return -1;
+                default:
+                    return 1;
             }
-            else if (ActualRepsLessThanTarget(setType, targetRepsLastTime, actualRepsLastTime))
-            {
-                return 2;
-            }
-            else
-            {
-                return 1;
-            }
-        }
-
-        private static bool ShouldRepCountBeLowered(
-            bool lastRepCountLessThanTarget,
-            bool recommendingResistanceBeLowered,
-            bool lastRepCountSignificantlyLessThanTarget)
-        {
-            if (!lastRepCountLessThanTarget)
-                return false;
-
-            //This could be consolidated to a single line, but this way is more readable :)
-            if (!recommendingResistanceBeLowered || recommendingResistanceBeLowered && lastRepCountSignificantlyLessThanTarget)
-                return true;
-            else
-                return false;
         }
 
         private static byte GetDecreasedRepCount(
             SetType setType,
-            UserSettings userSettings,
-            byte targetRepsLastTime,
-            byte actualRepsLastTime)
+            double targetRepsLastTime,
+            Performance repPerformance, 
+            UserSettings userSettings)
         {
-            throw new NotImplementedException();
+            var repSettings = userSettings.RepSettings.First(x => x.SetType == SetType.Repetition);
+
+            if (repPerformance == Performance.Awful)
+                return repSettings.MinReps;
+            else 
+            {
+                switch (setType)
+                {
+                    case SetType.Repetition:
+                        return (byte)Math.Max(repSettings.MinReps, Math.Ceiling(targetRepsLastTime - 1));
+
+                    case SetType.Timed:
+                        return (byte)Math.Max(repSettings.MinReps, Math.Ceiling(targetRepsLastTime - 5)); //TODO: Make configurable
+
+                    default:
+                        throw new Exception($"Unknown SetType: {setType}.");
+                }
+            }
         }
+
+        private static string GetRecommendationReason(
+            Performance formPerformance, 
+            Performance rangeOfMotionPerformance, 
+            Performance repPerformance)
+        {
+            string formReason;
+            string rangeOfMotionReason;
+            string repReason;
+
+            if (formPerformance == Performance.Adequate)
+                formReason = "";
+            else
+                formReason = (formPerformance == Performance.Awful ? "Form needs much improvement. " : "Form needs improvement. ");
+
+            if (rangeOfMotionPerformance == Performance.Adequate)
+                rangeOfMotionReason = "";
+            else
+                rangeOfMotionReason = (rangeOfMotionPerformance == Performance.Awful ? "Range of motion needs much improvement. " : "Range of motion needs improvement. ");
+
+            if (repPerformance == Performance.Adequate)
+                repReason = "";
+            else
+                repReason = (repPerformance == Performance.Awful ? "Average rep count much less than target." : "Average rep count less than target.");
+
+            return $"{formReason}{rangeOfMotionReason}{repReason}".TrimEnd();
+        }
+
         #endregion Private Static Methods
     }
 }

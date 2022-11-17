@@ -1,8 +1,7 @@
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Entity } from 'app/shared/models/entity';
-import { concat } from 'lodash';
-import { BehaviorSubject, from, Observable, throwError } from 'rxjs';
-import { concatMap, exhaustMap, mergeMap, mergeMapTo, shareReplay, switchMap, switchMapTo, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { mergeMap, shareReplay, take, tap } from 'rxjs/operators';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -113,6 +112,7 @@ export abstract class ApiBaseService<T extends Entity> {
    * Invalidates cached data
    */
   public invalidateCache(): void {
+    console.log("Invalidating cache");
     this._refreshGetAll$.next();
   }
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ export abstract class ApiBaseService<T extends Entity> {
    */
   private getAllFromAPI(): Observable<T[]> {
     return this._http.get<T[]>(this._apiRoot)
-      .pipe(tap(item => console.log(`Got data from ${this._apiRoot}: `, item)));
+      .pipe(tap(item => console.log(`Got data from API: ${this._apiRoot}: `, item)));
   }
 
   /**

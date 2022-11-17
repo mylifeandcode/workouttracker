@@ -8,6 +8,7 @@ import { UserIsAdminGuard } from './admin/guards/user-is-admin.guard';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { LoginComponent } from './login/login.component';
+import { UserSelectNewComponent } from './user-select-new/user-select-new.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,11 @@ const routes: Routes = [
   {
     path: 'user-select',
     component: UserSelectComponent,
+    canActivate: [UserNotSelectedGuard]
+  },
+  {
+    path: 'new-user',
+    component: UserSelectNewComponent,
     canActivate: [UserNotSelectedGuard]
   },
   {

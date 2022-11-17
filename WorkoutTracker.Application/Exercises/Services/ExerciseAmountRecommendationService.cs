@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using WorkoutTracker.Domain.Exercises;
-using WorkoutTracker.Domain.Resistances;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
 using WorkoutTracker.Application.Resistances.Interfaces;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
     /// <summary>
-    /// A service for producing ExerciseAmountRecommendations
+    /// A service for producing ExerciseAmountRecommendations.
+    /// This is the entry point for recommendations. 
+    /// The IIncreaseRecommendationService and IAdjustmentRecommendationService are then used 
+    /// depending on whether an increase or adjustment is needed.
     /// </summary>
     public class ExerciseAmountRecommendationService : RecommendationService, IExerciseAmountRecommendationService
     {
@@ -21,16 +25,11 @@ namespace WorkoutTracker.Application.Exercises.Services
         private IResistanceBandService _resistanceBandService;
         private IIncreaseRecommendationService _increaseRecommendationService;
         private IAdjustmentRecommendationService _adjustmentRecommendationService;
+        private ILogger<ExerciseAmountRecommendationService> _logger;
 
         private static TimeSpan RECENTLY_PERFORMED_EXERCISE_THRESHOLD = new TimeSpan(14, 0, 0, 0);
 
         #region Constants
-        private const string REASON_FORM_NEEDS_IMPROVEMENT = "Form needs improvement.";
-        private const string REASON_RANGE_OF_MOTION_NEEDS_IMPROVEMENT = "Range of Motion needs improvement.";
-        private const string REASON_ACTUAL_REPS_SIGNIFICANTLY_LOWER_THAN_TARGET = "Actual reps last time were significantly lower than target.";
-        private const string REASON_ACTUAL_REPS_LOWER_THAN_TARGET = "Actual reps last time lower than target.";
-        private const string REASON_GOALS_NOT_MET_BUT_CLOSE = "Goals not met, but close enough to remain the same.";
-
         private const byte RATING_BAD = 1;
         private const byte RATING_POOR = 2;
         private const byte RATING_OK = 3;
@@ -39,11 +38,13 @@ namespace WorkoutTracker.Application.Exercises.Services
         public ExerciseAmountRecommendationService(
             IResistanceBandService resistanceBandService,
             IIncreaseRecommendationService increaseRecommendationService,
-            IAdjustmentRecommendationService adjustmentRecommendationService)
+            IAdjustmentRecommendationService adjustmentRecommendationService, 
+            ILogger<ExerciseAmountRecommendationService> logger)
         {
             _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
             _increaseRecommendationService = increaseRecommendationService ?? throw new ArgumentNullException(nameof(increaseRecommendationService));
             _adjustmentRecommendationService = adjustmentRecommendationService ?? throw new ArgumentNullException(nameof(adjustmentRecommendationService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #region Public Methods
@@ -58,33 +59,36 @@ namespace WorkoutTracker.Application.Exercises.Services
         public ExerciseAmountRecommendation GetRecommendation(
             Exercise exercise,
             ExecutedWorkout lastWorkoutWithThisExercise,
-            UserSettings userSettings = null)
+            UserSettings userSettings)
         {
             if (exercise == null)
                 throw new ArgumentNullException(nameof(exercise));
 
+            if (userSettings == null)
+                throw new ArgumentNullException(nameof(userSettings));
+
             var lastSetsOfThisExercise = GetLastSetsOfExercise(exercise.Id, lastWorkoutWithThisExercise);
 
-            if (userSettings == null)
-                userSettings = UserSettings.GetDefault(); //TODO: Remove stopgap.
-
-            if (UserHasPerformedExeriseBefore(lastWorkoutWithThisExercise))
+            if (UserHasPerformedExerciseBefore(lastWorkoutWithThisExercise))
             {
                 if (UserHasPerformedExerciseRecently(lastSetsOfThisExercise))
                 {
                     //Adjust weights or reps accordingly
+                    _logger.LogInformation($"Getting performance-based recommendation for {exercise.Name}.");
                     return GetPerformanceBasedRecommendation(lastSetsOfThisExercise, userSettings);
                 }
                 else
                 {
                     //Recommend same as last time, or lower weights or rep if they 
                     //did poorly
+                    _logger.LogInformation($"Getting not-performed-recently recommendation for {exercise.Name}.");
                     return GetRecommendationForExerciseNotPerformedRecently(lastSetsOfThisExercise, userSettings);
                 }
             }
             else
             {
                 //Exercise never performed. Start with the default recommendation values.
+                _logger.LogInformation($"Getting default recommendation for {exercise.Name} because it has never been performed.");
                 return GetDefaultRecommendation(exercise);
             }
         }
@@ -123,9 +127,10 @@ namespace WorkoutTracker.Application.Exercises.Services
                     break;
 
                 default:
-                    throw new ApplicationException($"Unhandled ResistanceType: {exercise.ResistanceType.ToString()}.");
+                    throw new ApplicationException($"Unhandled ResistanceType: {exercise.ResistanceType}.");
             }
 
+            _logger.LogInformation($"Default recommendation for {exercise.Name} is {recommendation.ResistanceAmount}.");
             return recommendation;
         }
 
@@ -133,23 +138,15 @@ namespace WorkoutTracker.Application.Exercises.Services
             List<ExecutedExercise> executedExercises,
             UserSettings userSettings)
         {
-            //TODO: Allow for profile-based thresholds
-            var firstExerciseSet = GetFirstExerciseBySequence(executedExercises);
-            if (firstExerciseSet.ActualRepCount >= firstExerciseSet.TargetRepCount)
+            var averages = new ExecutedExerciseAverages(executedExercises);
+
+            if (ExercisePerformanceNeedsImprovement(averages, userSettings.LowestAcceptableRating))
             {
-                if (HadAdequateRating(firstExerciseSet.FormRating)
-                    && HadAdequateRating(firstExerciseSet.RangeOfMotionRating))
-                {
-                    return _increaseRecommendationService.GetIncreaseRecommendation(firstExerciseSet, userSettings);
-                }
-                else
-                {
-                    return _adjustmentRecommendationService.GetAdjustmentRecommendation(firstExerciseSet, userSettings);
-                }
+                return _adjustmentRecommendationService.GetAdjustmentRecommendation(averages, userSettings);
             }
             else
             {
-                return _adjustmentRecommendationService.GetAdjustmentRecommendation(firstExerciseSet, userSettings);
+                return _increaseRecommendationService.GetIncreaseRecommendation(averages, userSettings);
             }
         }
 
@@ -157,32 +154,34 @@ namespace WorkoutTracker.Application.Exercises.Services
             List<ExecutedExercise> executedExercises,
             UserSettings userSettings)
         {
-            var firstExerciseOfSet = GetFirstExerciseBySequence(executedExercises);
+            var averages = new ExecutedExerciseAverages(executedExercises);
 
             //How did they do last time?
-            if (HadAdequateRating(firstExerciseOfSet.FormRating)
-                && HadAdequateRating(firstExerciseOfSet.RangeOfMotionRating)
-                && firstExerciseOfSet.ActualRepCount >= firstExerciseOfSet.TargetRepCount)
+            if (ExercisePerformanceNeedsImprovement(averages, userSettings.LowestAcceptableRating))
             {
-                //They did well enough last time, but since they haven't done this one
-                //recently, have them do what they did last time.
-                var recommendation = new ExerciseAmountRecommendation();
-
-                recommendation.ExerciseId = firstExerciseOfSet.ExerciseId;
-                recommendation.Reps = firstExerciseOfSet.TargetRepCount;
-                recommendation.ResistanceAmount = firstExerciseOfSet.ResistanceAmount;
-                recommendation.ResistanceMakeup = firstExerciseOfSet.ResistanceMakeup;
-
-                return recommendation;
+                //They didn't do well enough last time. Suggest an adjustment.
+                _logger.LogInformation($"{averages.Exercise.Name} needs improvement.");
+                return _adjustmentRecommendationService.GetAdjustmentRecommendation(averages, userSettings);
             }
             else
             {
-                return _adjustmentRecommendationService.GetAdjustmentRecommendation(firstExerciseOfSet, userSettings);
+                //They did well enough last time, but since they haven't done this one
+                //recently, have them do what they did last time.
+                _logger.LogInformation($"{averages.Exercise.Name} performed okay last time, but it's been a while, so suggesting same resistance and reps.");
+                return new ExerciseAmountRecommendation(averages, "Last time for this workout was not recent.");
             }
         }
         #endregion Private Non-Static Methods
 
         #region Private Static Methods
+        private static bool ExercisePerformanceNeedsImprovement(
+            ExecutedExerciseAverages averages, 
+            byte lowestAcceptableRating)
+        {
+            return (!HadAdequateRating(averages.AverageFormRating, lowestAcceptableRating)
+                || !HadAdequateRating(averages.AverageRangeOfMotionRating, lowestAcceptableRating)
+                || averages.AverageActualRepCount < averages.AverageTargetRepCount);
+        }
 
         private static List<ExecutedExercise> GetLastSetsOfExercise(int exerciseId, ExecutedWorkout workout)
         {
@@ -195,7 +194,7 @@ namespace WorkoutTracker.Application.Exercises.Services
                     .ToList();
         }
 
-        private static bool UserHasPerformedExeriseBefore(ExecutedWorkout workout)
+        private static bool UserHasPerformedExerciseBefore(ExecutedWorkout workout)
         {
             return workout != null;
         }
@@ -217,38 +216,6 @@ namespace WorkoutTracker.Application.Exercises.Services
         private static ExecutedExercise GetFirstExerciseBySequence(List<ExecutedExercise> executedExercises)
         {
             return executedExercises.OrderBy(exercise => exercise.Sequence).First();
-        }
-
-        private static bool UserMetTargetRepCount(byte targetRepCount, byte actualRepCount)
-        {
-            //TODO: Re-evaluate. Probably not necessary -- would be the default
-            //condition.
-            return targetRepCount == actualRepCount;
-        }
-
-        private static string GetBadRatingReason(bool inadequateForm, bool inadequateRangeOfMotion)
-        {
-            if (inadequateForm && inadequateRangeOfMotion)
-                return REASON_FORM_NEEDS_IMPROVEMENT + " " + REASON_RANGE_OF_MOTION_NEEDS_IMPROVEMENT;
-            else if (inadequateForm)
-                return REASON_FORM_NEEDS_IMPROVEMENT;
-            else
-                return REASON_RANGE_OF_MOTION_NEEDS_IMPROVEMENT;
-        }
-
-        private static byte GetResistanceDecreaseMultiplier(byte formRating, byte rangeOfMotionRating)
-        {
-            if (UserHadFormOrRangeOfMotionRating(RATING_BAD, formRating, rangeOfMotionRating))
-                return 3;
-            else if (UserHadFormOrRangeOfMotionRating(RATING_POOR, formRating, rangeOfMotionRating))
-                return 2;
-            else
-                return 1;
-        }
-
-        private static bool UserHadFormOrRangeOfMotionRating(byte ratingLevel, byte formRating, byte rangeOfMotionRating)
-        {
-            return formRating == ratingLevel || rangeOfMotionRating == ratingLevel;
         }
 
         #endregion Private Static Methods

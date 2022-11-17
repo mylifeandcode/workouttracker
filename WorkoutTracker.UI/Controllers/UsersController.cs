@@ -92,18 +92,26 @@ namespace WorkoutTracker.UI.Controllers
         }
 
         [Authorize(Roles = "Administrator")]
-        public override ActionResult<User> Post([FromBody] User value)
+        public override ActionResult<User> Post([FromBody] User value, bool setAuditFields = true)
         {
-            throw new NotImplementedException();
-            //return base.Post(value); //TODO: Remember why I overrode this rather than just deferring to the base class!
+            int userId = this.GetUserID();
+            value.Settings.ModifiedByUserId = userId;
+            value.Settings.ModifiedDateTime = DateTime.Now;
+            foreach (var repSetting in value.Settings.RepSettings)
+            {
+                repSetting.ModifiedByUserId = userId;
+                repSetting.ModifiedDateTime = value.Settings.ModifiedDateTime = DateTime.Now;
+            }
+            return base.Post(value, setAuditFields);
         }
 
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")] NOPE -- Because anyone can create/register a new user
         [HttpPost("new")]
+        [AllowAnonymous]
         public ActionResult<User> Post([FromBody] UserNewDTO value)
         {
             var user = GetUserFromUserNewDTO(value);
-            return base.Post(user);
+            return base.Post(user, false);
         }
 
         [HttpGet("overview")]
@@ -138,7 +146,23 @@ namespace WorkoutTracker.UI.Controllers
         private User GetUserFromUserNewDTO(UserNewDTO userNew)
         {
             var user = new User();
-            SetCreatedAuditFields(user);
+
+            if (!User.Claims.Any()) //This could be a request to add a new user from a...new user. Nobody logged in!
+                SetCreatedAuditFields(user, 0);
+            else
+                SetCreatedAuditFields(user);
+
+            user.Settings.CreatedDateTime = user.CreatedDateTime;
+            user.Settings.CreatedByUserId = user.CreatedByUserId;
+
+            user.Settings.RepSettings = UserSettings.GetDefaultMinMaxRepsSettings();
+
+            foreach (var repSetting in user.Settings.RepSettings)
+            {
+                repSetting.CreatedDateTime = user.CreatedDateTime;
+                repSetting.CreatedByUserId = user.CreatedByUserId;
+            }
+
             user.Name = userNew.UserName;
             user.EmailAddress = userNew.EmailAddress;
             user.Role = userNew.Role;

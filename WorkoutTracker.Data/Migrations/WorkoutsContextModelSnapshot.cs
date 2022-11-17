@@ -464,9 +464,6 @@ namespace WorkoutTracker.Data.Migrations
                     b.Property<int?>("Duration")
                         .HasColumnType("int");
 
-                    b.Property<int>("Goal")
-                        .HasColumnType("int");
-
                     b.Property<byte>("MaxReps")
                         .HasColumnType("tinyint");
 
@@ -506,8 +503,8 @@ namespace WorkoutTracker.Data.Migrations
                     b.Property<DateTime>("CreatedDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Goal")
-                        .HasColumnType("int");
+                    b.Property<byte>("LowestAcceptableRating")
+                        .HasColumnType("tinyint");
 
                     b.Property<int?>("ModifiedByUserId")
                         .HasColumnType("int");
