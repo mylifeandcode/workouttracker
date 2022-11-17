@@ -11,7 +11,8 @@ import { AuthService } from 'app/core/auth.service';
 
 
 class UserServiceMock {
-  getAll = jasmine.createSpy('getAll').and.returnValue(of(new Array<User>()));
+  //all$ = jasmine.createSpy('all$').and.returnValue(of(new Array<User>()));
+  all$ = of(new Array<User>());
 }
 
 class AuthServiceMock {
@@ -57,19 +58,6 @@ describe('UserSelectComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should get all users', () => {
-
-    //ARRANGE
-    const userService = TestBed.inject(UserService);
-
-    //ACT
-    //Nothing else to do here
-
-    //ASSERT
-    expect(userService.getAll).toHaveBeenCalledTimes(1);
-
   });
 
   it('should select user', () => {
