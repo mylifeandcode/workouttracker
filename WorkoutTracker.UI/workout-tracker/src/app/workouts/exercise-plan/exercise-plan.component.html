@@ -55,6 +55,11 @@
         Suggestion Reason(s): <span class="pre-pop-value">{{formGroup.controls.recommendationReason.value}}</span>
       </div>
     </div>
+    <div *ngIf="formGroup.controls.recommendationReason.value" class="row recommendations">
+      <div class="col-12 text-center">
+        <button class="lead-space btn btn-sm btn-use-suggestions" (click)="useSuggestions()">Use Suggestions</button>
+      </div>
+    </div>
 
     <!--THIS TIME-->
     <div *ngIf="workoutHasBeenExecutedBefore" class="row this-time">
@@ -86,7 +91,6 @@
           <span *ngIf="formGroup.controls.resistanceType.value==3" class="no-input-value">
             Body Weight
           </span>
-          <button *ngIf="formGroup.controls.recommendationReason.value" class="lead-space btn btn-sm btn-use-suggestions" (click)="useSuggestions()">Use Suggestions</button>
         </label>
       </div>
     </div>

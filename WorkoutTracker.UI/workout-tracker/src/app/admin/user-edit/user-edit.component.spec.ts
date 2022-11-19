@@ -29,6 +29,7 @@ class FakeComponent{};
 describe('UserEditComponent', () => {
   let component: UserEditComponent;
   let fixture: ComponentFixture<UserEditComponent>;
+  let userService: UserService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -63,6 +64,7 @@ describe('UserEditComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UserEditComponent);
     component = fixture.componentInstance;
+    userService = TestBed.inject(UserService);
     fixture.detectChanges();
   });
 
@@ -77,13 +79,11 @@ describe('UserEditComponent', () => {
   });
 
   it('should get user info when route specifies a user ID', () => {
-    const userService = TestBed.inject(UserService);
     expect(userService.getById).toHaveBeenCalledTimes(1);
   });
 
   it('should update existing user', () => {
     //ARRANGE
-    const userService = TestBed.inject(UserService);
     const expectedUser = new User({id: 100, name: 'Big Jim Slade', role: 2});
     component.userEditForm.controls.id.setValue(expectedUser.id);
     component.userEditForm.controls.name.setValue(expectedUser.name);
@@ -98,7 +98,6 @@ describe('UserEditComponent', () => {
 
   it('should populate error message when error occurs while saving user info', () => {
     //ARRANGE
-    const userService = TestBed.inject(UserService);
     userService.update = jasmine.createSpy('update').and.returnValue(throwError(new Error("Something bad happened.")));
     component.userEditForm.controls.id.setValue(100);
     component.userEditForm.controls.name.setValue('Doug');
@@ -113,7 +112,6 @@ describe('UserEditComponent', () => {
 
   it('should populate error message when user does not have permissions to save user info', () => {
     //ARRANGE
-    const userService = TestBed.inject(UserService);
     userService.update = jasmine.createSpy('update').and.returnValue(throwError({ status: 403 }));
     component.userEditForm.controls.id.setValue(100);
     component.userEditForm.controls.name.setValue('Doug');

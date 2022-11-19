@@ -73,6 +73,7 @@ function getActivatedRouteSnapshot() {
 describe('ExerciseEditComponent', () => {
   let component: ExerciseEditComponent;
   let fixture: ComponentFixture<ExerciseEditComponent>;
+  let exerciseService: ExerciseService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -107,6 +108,7 @@ describe('ExerciseEditComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ExerciseEditComponent);
     component = fixture.componentInstance;
+    exerciseService = TestBed.inject(ExerciseService);
     fixture.detectChanges();
   });
 
@@ -147,14 +149,12 @@ describe('ExerciseEditComponent', () => {
   });
 
   it('should get all target areas', () => {
-    const exerciseService = TestBed.inject(ExerciseService);
     expect(component.allTargetAreas).toBeTruthy();
     expect(exerciseService.getTargetAreas).toHaveBeenCalledTimes(1);
   });
 
   it('should load exercise when editing', () => {
     //Our default route mock includes a value for exercise ID
-    const exerciseService = TestBed.inject(ExerciseService);
     expect(exerciseService.getById).toHaveBeenCalledWith(2);
     //expect(component._exercise).toEqual(EXERCISE);
     expect(component.exerciseForm).not.toBeNull();
@@ -169,7 +169,6 @@ describe('ExerciseEditComponent', () => {
   });
 
   it('should get resistance types', () => {
-    const exerciseService = TestBed.inject(ExerciseService);
     expect(component.resistanceTypes).toBeTruthy();
     expect(exerciseService.getResistanceTypes).toHaveBeenCalledTimes(1);
   });
@@ -205,7 +204,6 @@ describe('ExerciseEditComponent', () => {
     exercise.exerciseTargetAreaLinks = [];
     exercise.exerciseTargetAreaLinks.push(new ExerciseTargetAreaLink(0, 1));
 
-    const exerciseService = TestBed.inject(ExerciseService);
     //exerciseService.getById = jasmine.createSpy('getById').and.returnValue(of(exercise));
     exerciseService.add = jasmine.createSpy('add').and.returnValue(of(exercise));
 
@@ -240,7 +238,6 @@ describe('ExerciseEditComponent', () => {
   it('should update exercise', () => {
 
     console.log("component.exerciseForm: ", component.exerciseForm);
-    const exerciseService = TestBed.inject(ExerciseService);
     component.saveExercise();
     expect(exerciseService.update).toHaveBeenCalledWith(EXERCISE);
     expect(component.saving).toBeFalse();

@@ -16,6 +16,9 @@ class ConfigServiceMock {
 //TODO: Refactor this spec to use service values initialized before each test rather than injection everywhere
 
 describe('UserService', () => {
+  let service: UserService;
+  let http: HttpTestingController;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -30,15 +33,16 @@ describe('UserService', () => {
       ]
     });
 
-    const service = TestBed.inject(UserService);
+    service = TestBed.inject(UserService);
+    http = TestBed.inject(HttpTestingController);
     service.init();
   });
 
-  it('should be creatable', inject([UserService], (service: UserService) => {
+  it('should be creatable', () => {
     expect(service).toBeTruthy();
-  }));
+  });
 
-  it('should get all users',  inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
+  it('should get all users', () => {
     const expectedResults = new Array<User>();
 
     service.all$.subscribe(
@@ -46,15 +50,15 @@ describe('UserService', () => {
       fail
     );
 
-    const req = httpMock.expectOne("http://localhost:5600/api/Users");
+    const req = http.expectOne("http://localhost:5600/api/Users");
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
     req.flush(expectedResults);
 
-  }));
+  });
 
-  it('should get user info by user ID',  inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
+  it('should get user info by user ID',  () => {
     const expectedResults = new User();
     const userId: number = parseInt(TEST_USER_ID);
     expectedResults.id = userId;
@@ -64,15 +68,15 @@ describe('UserService', () => {
       fail
     );
 
-    const req = httpMock.expectOne(`http://localhost:5600/api/Users/${TEST_USER_ID}`);
+    const req = http.expectOne(`http://localhost:5600/api/Users/${TEST_USER_ID}`);
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
     req.flush(expectedResults);
 
-  }));
+  });
 
-  it('should add user', inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
+  it('should add user', () => {
     const userNew = new UserNewDTO();
     const userSaved = new User();
 
@@ -82,16 +86,16 @@ describe('UserService', () => {
         fail
       );
 
-    const request = httpMock.expectOne('http://localhost:5600/api/Users/new');
+    const request = http.expectOne('http://localhost:5600/api/Users/new');
     expect(request.request.method).toEqual('POST');
     expect(request.request.body).toEqual(userNew);
 
     // Respond with the mock results
     request.flush(userSaved);
 
-  }));
+  });
 
-  it('should update user', inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
+  it('should update user', () => {
     const user = new User();
     user.id = parseInt(TEST_USER_ID);
 
@@ -101,16 +105,16 @@ describe('UserService', () => {
         fail
       );
 
-    const request = httpMock.expectOne(`http://localhost:5600/api/Users/${user.id}`);
+    const request = http.expectOne(`http://localhost:5600/api/Users/${user.id}`);
     expect(request.request.method).toEqual('PUT');
     expect(request.request.body).toEqual(user);
 
     // Respond with the mock results
     request.flush(user);
 
-  }));
+  });
 
-  it('should delete user', inject([HttpTestingController, UserService], (httpMock: HttpTestingController, service: UserService) => {
+  it('should delete user', () => {
     const userId = 7;
 
     service.delete(7)
@@ -119,26 +123,24 @@ describe('UserService', () => {
         fail
       );
 
-    const request = httpMock.expectOne(`http://localhost:5600/api/Users/${userId}`);
+    const request = http.expectOne(`http://localhost:5600/api/Users/${userId}`);
     expect(request.request.method).toEqual('DELETE');
 
     // Respond with the mock results
     //TODO: Revisit/complete
     request.flush(null)
 
-  }));
+  });
 
   it('should get user overview', () => {
 
     const userOverview = new UserOverview();
-    const service = TestBed.inject(UserService);
     
     service.getOverview().subscribe((overview: UserOverview) => {
       expect(overview).toBe(userOverview);
     });
 
-    const httpMock = TestBed.inject(HttpTestingController);
-    const request = httpMock.expectOne(`http://localhost:5600/api/Users/overview`);
+    const request = http.expectOne(`http://localhost:5600/api/Users/overview`);
     expect(request.request.method).toEqual('GET');
 
     // Respond with the mock results
