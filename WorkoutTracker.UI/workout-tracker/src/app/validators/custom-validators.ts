@@ -33,6 +33,7 @@ static startDateTimeVsEndDateTime: ValidatorFn =
     let valid = true;
 
     //TODO: Revisit. Code smell here. Control names must match the ones used here in the validator.
+    //More info: https://angular.io/guide/form-validation#cross-field-validation
     const startDateTime = control.get('startDateTime');
     const endDateTime = control.get('endDateTime');
 
@@ -50,6 +51,7 @@ static startDateTimeVsEndDateTime: ValidatorFn =
       let valid = true;
 
       //TODO: Revisit. Code smell here. Control names must match the ones used here in the validator.
+      //More info: https://angular.io/guide/form-validation#cross-field-validation
       const password = control.get('password');
       const confirmPassword = control.get('confirmPassword');
       
