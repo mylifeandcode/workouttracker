@@ -20,22 +20,12 @@ export class CountdownTimerComponent implements OnInit {
   private _preCountdownHasBegun: boolean = false;
 
   @Input()
-  public set secondsToCountdown(value: number) {
-    this._secondsToCountdown = value;
-    //this.reset();
-  }
-  public get secondsToCountdown(): number {
-    return this._secondsToCountdown;
-  }
+  secondsToCountdown: number;
 
   @Input()
-  public set secondsLeadInTime(value: number) {
-    this._secondsLeadInTime = value;
-  }
-  public get secondsLeadInTime(): number {
-    return this._secondsLeadInTime;
-  }
+  secondsLeadInTime: number;
 
+  //TODO: Revisit. Not sure I like this approach.
   @Input()
   public set activatedDateTime(value: Date) {
     this.reset();
@@ -43,9 +33,6 @@ export class CountdownTimerComponent implements OnInit {
 
   @Input()
   public targetReps: number | null;
-
-  private _secondsToCountdown: number;
-  private _secondsLeadInTime: number;
 
   constructor(private _soundService: SoundService) { 
   }
@@ -79,11 +66,11 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   private setPreCountdownConfig(): void {
-    this.preCountdownConfig = this.getCountdownConfig(this._secondsLeadInTime);
+    this.preCountdownConfig = this.getCountdownConfig(this.secondsLeadInTime);
   }
 
   private setCountdownConfig(): void {
-    this.countdownConfig = this.getCountdownConfig(this._secondsToCountdown);
+    this.countdownConfig = this.getCountdownConfig(this.secondsToCountdown);
   }
 
   private getCountdownConfig(leftTime: number): CountdownConfig {
