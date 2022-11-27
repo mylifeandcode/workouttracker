@@ -31,7 +31,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             var repSettings = userSettings.RepSettings.First(x => x.SetType == executedExerciseAverages.SetType);
             var recommendation = new ExerciseAmountRecommendation();
 
-            if (executedExerciseAverages.AverageActualRepCount >= repSettings.MaxReps)
+            if (executedExerciseAverages.Exercise.ResistanceType != ResistanceType.BodyWeight && executedExerciseAverages.AverageActualRepCount >= repSettings.MaxReps)
             {
                 //Increase resistance
                 string resistanceMakeup;
@@ -53,7 +53,8 @@ namespace WorkoutTracker.Application.Exercises.Services
                     GetIncreasedTargetRepCount(
                         executedExerciseAverages.AverageTargetRepCount,
                         executedExerciseAverages.AverageActualRepCount,
-                        repSettings.MaxReps);
+                        repSettings.MaxReps, 
+                        executedExerciseAverages.Exercise.ResistanceType != ResistanceType.BodyWeight);
 
                 recommendation.ResistanceAmount = executedExerciseAverages.LastExecutedSet.ResistanceAmount;
                 recommendation.ResistanceMakeup = executedExerciseAverages.LastExecutedSet.ResistanceMakeup; //TODO: Add constructor to recommendation to default this stuff from an ExecutedExercise
@@ -110,10 +111,12 @@ namespace WorkoutTracker.Application.Exercises.Services
         private static byte GetIncreasedTargetRepCount(
             double targetRepsLastTime,
             double actualRepsLastTime,
-            byte maxRepCount)
+            byte maxRepCount, 
+            bool considerMaxRepsLimit)
         {
             double increasedRepCount = actualRepsLastTime;
 
+            /*
             if (UserGreatlyExceededTargetRepCount(targetRepsLastTime, actualRepsLastTime))
             {
                 increasedRepCount += 4;
@@ -122,8 +125,14 @@ namespace WorkoutTracker.Application.Exercises.Services
             {
                 increasedRepCount += 1;
             }
+            */
+
+            increasedRepCount += 1;
 
             //Return whichever is lower -- increasedRepCount or maxRepCount -- to ensure we don't surpass the max
+            if (!considerMaxRepsLimit)
+                return (byte)increasedRepCount;
+
             return (byte)Math.Min(increasedRepCount, maxRepCount); 
         }
 

@@ -13,7 +13,7 @@
 }
 
 .exercise-name {
-  background-image: linear-gradient(to right, black , green);
+  background-image: linear-gradient(to right, green , darkgreen);
   padding-top: 10px;
 }
 
@@ -35,8 +35,25 @@ label {
 }
 
 .recommendations {
-  background-color: lightgreen;
   padding-bottom: 10px;
+  border-left-width: normal;
+  border-left-color: green;
+  border-left-style: dashed;
+  border-right-width: normal;
+  border-right-color: green;
+  border-right-style: dashed;
+}
+
+.recommendations-top {
+  border-top-width: normal;
+  border-top-color: green;
+  border-top-style: dashed;
+}
+
+.recommendations-bottom {
+  border-bottom-width: normal;
+  border-bottom-color: green;
+  border-bottom-style: dashed;
 }
 
 .this-time {
@@ -55,8 +72,8 @@ label {
 }
 
 .btn-use-suggestions {
-  color: black;
-  background-color: orange;
+  color: white;
+  background-color: rgb(3, 171, 3)
 }
 
 .end-padding {

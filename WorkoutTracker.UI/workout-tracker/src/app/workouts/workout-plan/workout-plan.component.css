@@ -5,6 +5,9 @@
 .submit-row {
   padding-top: 10px;
   padding-bottom: 10px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: green;
 }
 
 h3 {

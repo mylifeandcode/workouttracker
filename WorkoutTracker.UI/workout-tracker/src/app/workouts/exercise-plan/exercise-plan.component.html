@@ -35,7 +35,7 @@
     </div>
 
     <!--SUGGESTIONS-->
-    <div *ngIf="formGroup.controls.recommendationReason.value" class="row recommendations headroom">
+    <div *ngIf="formGroup.controls.recommendationReason.value" class="row recommendations recommendations-top headroom">
       <div class="col-12">
         <strong>Suggestions</strong>
       </div>
@@ -55,8 +55,8 @@
         Suggestion Reason(s): <span class="pre-pop-value">{{formGroup.controls.recommendationReason.value}}</span>
       </div>
     </div>
-    <div *ngIf="formGroup.controls.recommendationReason.value" class="row recommendations">
-      <div class="col-12 text-center">
+    <div *ngIf="formGroup.controls.recommendationReason.value" class="row recommendations recommendations-bottom">
+      <div class="d-grid col-3 mx-auto">
         <button class="lead-space btn btn-sm btn-use-suggestions" (click)="useSuggestions()">Use Suggestions</button>
       </div>
     </div>

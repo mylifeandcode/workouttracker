@@ -57,6 +57,21 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
+        public void Should_Get_Increase_Recommendation_For_BodyWeight_Exercise_When_ActualReps_Exceeded_TargetReps()
+        {
+            //ARRANGE
+            var executedExerciseAverages = GetExecutedExerciseAverages(30, 30, 0, ResistanceType.BodyWeight);
+
+            //ACT
+            var result = _sut.GetIncreaseRecommendation(executedExerciseAverages, _userSettings);
+
+            //ASSERT
+            Assert.IsNotNull(result, "Result is null.");
+            Assert.AreEqual(executedExerciseAverages.AverageActualRepCount + 1, result.Reps, "Result Reps not as expected.");
+            Assert.AreEqual(executedExerciseAverages.AverageResistanceAmount, result.ResistanceAmount, "Result ResistanceAmount not as expected.");
+        }
+
+        [TestMethod]
         public void Should_Get_Increase_Recommendation_When_ActualReps_Exceeded_TargetReps_And_Greater_Than_Max()
         {
             //ARRANGE
@@ -72,7 +87,27 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(EXPECTED_NEW_RESISTANCE_AMOUNT, result.ResistanceAmount, "Result ResistanceAmount not as expected.");
         }
 
-        private ExecutedExerciseAverages GetExecutedExerciseAverages(byte targetReps, byte actualReps, decimal resistanceAmount)
+        [TestMethod]
+        public void Should_Get_Increase_Recommendation_For_BodyWeigh_Exercise_When_ActualReps_Greatly_Exceeded_TargetReps()
+        {
+            //ARRANGE
+            var executedExerciseAverages = GetExecutedExerciseAverages(30, 40, 0, ResistanceType.BodyWeight);
+
+            //ACT
+            var result = _sut.GetIncreaseRecommendation(executedExerciseAverages, _userSettings);
+
+            //ASSERT
+            var repSettings = _userSettings.RepSettings.First(x => x.SetType == SetType.Repetition);
+            Assert.IsNotNull(result, "Result is null.");
+            Assert.AreEqual(41, result.Reps, "Result Reps not as expected.");
+            Assert.AreEqual(0, result.ResistanceAmount, "Result ResistanceAmount not as expected.");
+        }
+
+        private ExecutedExerciseAverages GetExecutedExerciseAverages(
+            byte targetReps, 
+            byte actualReps, 
+            decimal resistanceAmount, 
+            ResistanceType resistanceType = ResistanceType.ResistanceBand)
         {
             var executedExercise =
                 new ExecutedExercise
@@ -84,7 +119,7 @@ namespace WorkoutTracker.Tests.Services
                     RangeOfMotionRating = 4,
                     ResistanceAmount = resistanceAmount,
                     ResistanceMakeup = "Some Value",
-                    Exercise = new Exercise { ResistanceType = ResistanceType.ResistanceBand }, 
+                    Exercise = new Exercise { ResistanceType = resistanceType }, 
                     ExerciseId = 1
                 };
 
