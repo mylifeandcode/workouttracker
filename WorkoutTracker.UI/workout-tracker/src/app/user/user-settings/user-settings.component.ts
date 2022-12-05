@@ -7,7 +7,7 @@ import { UserService } from 'app/core/user.service';
 import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from 'app/validators/custom-validators';
 import { catchError, finalize } from 'rxjs/operators';
 import { IRepSettingsForm } from '../user-rep-settings/user-rep-settings.component';
-import { find } from 'lodash';
+import { find } from 'lodash-es';
 
 interface IUserSettingsForm {
   recommendationsEnabled: FormControl<boolean>;

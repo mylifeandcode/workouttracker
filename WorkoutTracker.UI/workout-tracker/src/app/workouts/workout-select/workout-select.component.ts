@@ -6,7 +6,7 @@ import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
 import { AuthService } from 'app/core/auth.service';
-import * as _ from 'lodash';
+import { sortBy } from 'lodash-es';
 
 @Component({
   selector: 'wt-workout-select',
@@ -93,7 +93,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
     this._userSusbscription = this._workoutService.getFilteredSubset(0, 500, true) //TODO: Page size...come up with a better solution
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
-        this.workouts = _.sortBy(result.results, 'name');
+        this.workouts = sortBy(result.results, 'name');
         this.workoutsLoaded.emit();
       });
   }

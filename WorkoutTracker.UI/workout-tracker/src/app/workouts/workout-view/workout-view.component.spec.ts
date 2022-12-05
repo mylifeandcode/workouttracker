@@ -6,11 +6,12 @@ import { ExecutedExercise } from '../models/executed-exercise';
 import { ExecutedWorkout } from '../models/executed-workout';
 import { Exercise } from '../models/exercise';
 import { Workout } from '../models/workout';
+import { groupBy } from 'lodash-es';
+import { Dictionary } from 'lodash';
 
 import { WorkoutViewComponent } from './workout-view.component';
 import { Component, Input } from '@angular/core';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
-import * as _ from 'lodash';
 
 const EXECUTED_WORKOUT_ID = 5;
 
@@ -52,10 +53,10 @@ class ExecutedWorkoutServiceMock {
 
   }
 
-  public groupExecutedExercises(exercises: ExecutedExercise[]): _.Dictionary<ExecutedExercise[]> {
+  public groupExecutedExercises(exercises: ExecutedExercise[]): Dictionary<ExecutedExercise[]> {
     const sortedExercises: ExecutedExercise[] = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
     
-    let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { 
+    let groupedExercises = groupBy(exercises, (exercise: ExecutedExercise) => { 
       return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
     });
     return groupedExercises;

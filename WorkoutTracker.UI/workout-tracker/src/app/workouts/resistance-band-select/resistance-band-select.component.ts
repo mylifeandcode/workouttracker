@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
-import * as _ from "lodash";
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
+import { sumBy } from 'lodash-es';
 
 @Component({
   selector: 'wt-resistance-band-select',
@@ -24,11 +23,11 @@ export class ResistanceBandSelectComponent implements OnInit {
   public availableBands: ResistanceBandIndividual[] = [];
 
   public get maxAvailableResistance(): number {
-    return _.sumBy(this.availableBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
+    return sumBy(this.availableBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
   }
 
   public get maxSelectedResistance(): number {
-    return _.sumBy(this.selectedBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
+    return sumBy(this.selectedBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
   }
 
   private _doubleMaxResistanceAmounts: boolean;

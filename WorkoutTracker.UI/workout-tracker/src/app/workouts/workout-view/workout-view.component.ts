@@ -4,7 +4,7 @@ import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedExercise } from '../models/executed-exercise';
 import { ExecutedWorkout } from '../models/executed-workout';
-import * as _ from 'lodash';
+import { forEach } from 'lodash-es';
 
 @Component({
   selector: 'wt-workout-view',
@@ -58,7 +58,7 @@ export class WorkoutViewComponent implements OnInit {
         const groupsMap = new Map<string, ExecutedExercise[]>();
 
         let x: number = 0;
-        _.forEach(groups, (exerciseArray: ExecutedExercise[]) => {
+        forEach(groups, (exerciseArray: ExecutedExercise[]) => {
           groupsMap.set(
             x.toString(), exerciseArray);
           console.log("Added ", exerciseArray[0].exercise.id.toString() + "-" + exerciseArray[0].setType.toString());

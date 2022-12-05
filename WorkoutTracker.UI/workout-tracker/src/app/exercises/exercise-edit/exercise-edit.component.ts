@@ -6,9 +6,8 @@ import { Exercise } from '../../workouts/models/exercise';
 import { TargetArea } from '../../workouts/models/target-area';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ExerciseTargetAreaLink } from '../../workouts/models/exercise-target-area-link';
-import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
-
+import { some, find } from 'lodash-es';
 
 interface IExerciseEditForm {
   id: FormControl<number>;
@@ -137,7 +136,7 @@ export class ExerciseEditComponent implements OnInit {
     //initially, but on toggling Angular set the value to a boolean.
 
     this.allTargetAreas.forEach((targetArea: TargetArea) => {
-      const thisTargetAreaIsSelected: boolean = _.some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id);
+      const thisTargetAreaIsSelected: boolean = some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id);
       this.exerciseForm.controls.targetAreas.addControl(
         targetArea.name, 
         new FormControl<boolean>(thisTargetAreaIsSelected, { nonNullable: true }));
@@ -230,7 +229,7 @@ export class ExerciseEditComponent implements OnInit {
 
     for(var key in this.exerciseForm.value.targetAreas) {
       if (this.exerciseForm.value.targetAreas[key]) {
-        let selectedTargetArea = _.find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key); 
+        let selectedTargetArea = find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key); 
         if (selectedTargetArea) {
           output.push(new ExerciseTargetAreaLink(
             this._exerciseId, 

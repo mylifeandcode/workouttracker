@@ -2,14 +2,14 @@
     <div class="col-md-12">
         <!--TODO: Re-evaluate this approach. A FormGroup is used as an @Input on this component to allow for a structured, easy way to pass in the info...but the end result may be overkill.-->
         <!--<textarea formControlName="exerciseName" [readonly]="true" class="form-control-plaintext exerciseName" required></textarea>-->
-        <strong>{{formGroup?.controls?.exerciseName?.value}}</strong>
+        <strong>{{formGroup.controls.exerciseName.value}}</strong>
     </div>
 </div>
 
 <div [formGroup]="formGroup" class="row">
     <input type="hidden" formControlName="exerciseId" />
     <div class="col-md-12">
-        {{formGroup?.controls?.setType?.value == 0 ? "Repetition" : "Timed"}} Set(s) using <strong>{{formGroup?.controls?.resistanceType?.value | resistanceType:false}}</strong> resistance:
+        {{formGroup.controls.setType.value == 0 ? "Repetition" : "Timed"}} Set(s) using <strong>{{formGroup.controls.resistanceType.value | resistanceType:false}}</strong> resistance:
     </div>
 </div>
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as _ from 'lodash';
+import { toPairs, forEach } from 'lodash-es';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +13,9 @@ export class ConfigService {
   public init(configValues: any): void { //TODO: Strong type
 
       //Split config values up into array of objects containing key as first element and value as second
-      let pairs: [string, unknown][] = _.toPairs(configValues);
+      let pairs: [string, unknown][] = toPairs(configValues);
 
-      _.forEach(pairs, (pair) => {
+      forEach(pairs, (pair) => {
         ConfigService._configValues.set(pair[0], pair[1]);
       });
   }

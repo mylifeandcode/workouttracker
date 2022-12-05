@@ -5,7 +5,7 @@
     "outDir": "./dist/out-tsc",
     "downlevelIteration": true,
     "strict": true,
-    "strictPropertyInitialization": false, //TODO: Remove!
+    "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "sourceMap": true,
@@ -13,7 +13,7 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2020",
+    "target": "ES2022",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -21,7 +21,8 @@
       "es2020",
       "dom"
     ],
-    "module": "es2020"
+    "module": "es2020",
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": { //https://angular.io/guide/angular-compiler-options
     "enableI18nLegacyMessageIdFormat": false,

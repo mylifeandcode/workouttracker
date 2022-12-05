@@ -3,10 +3,10 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { CustomValidators } from 'app/validators/custom-validators';
-import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
+import { sortBy } from 'lodash-es';
 
 interface ILogPastWorkoutForm {
   workoutId: FormControl<number | null>; 
@@ -69,7 +69,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
     this._workoutService.getFilteredSubset(0, 500, true)
       .pipe(finalize(() => { this.gettingData = false; }))
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
-        this.workouts = _.sortBy(result.results, 'name');
+        this.workouts = sortBy(result.results, 'name');
       });
   }
 

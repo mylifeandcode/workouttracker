@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { ApiBaseService } from 'app/core/api-base.service';
 import { ConfigService } from 'app/core/config.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
-import * as _ from 'lodash';
-import { Observable, pipe } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { ExecutedExercise } from './models/executed-exercise';
 import { ExecutedWorkout } from './models/executed-workout';
 import { ExecutedWorkoutDTO } from './models/executed-workout-dto';
+import { groupBy } from 'lodash-es';
+import { Dictionary } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -59,10 +60,10 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
       .pipe(map((response: PaginatedResults<ExecutedWorkoutDTO>) => response.results));
   }
 
-  public groupExecutedExercises(exercises: ExecutedExercise[]): _.Dictionary<ExecutedExercise[]> {
+  public groupExecutedExercises(exercises: ExecutedExercise[]): Dictionary<ExecutedExercise[]> {
     const sortedExercises: ExecutedExercise[] = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
     
-    let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { 
+    let groupedExercises = groupBy(exercises, (exercise: ExecutedExercise) => { 
       return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
     });
     return groupedExercises;

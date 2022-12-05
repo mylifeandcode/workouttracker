@@ -4,8 +4,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../models/workout-plan';
 import { WorkoutService } from '../workout.service';
 import { ExercisePlan } from '../models/exercise-plan';
-
-import * as _ from 'lodash';
+import { forEach } from 'lodash-es';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
@@ -178,7 +177,7 @@ export class WorkoutPlanComponent implements OnInit {
   
   private setupExercisesFormGroup(exercises: ExercisePlan[]): void {
     this.exercisesArray.clear();
-    _.forEach(exercises, (exercise: ExercisePlan) => {
+    forEach(exercises, (exercise: ExercisePlan) => {
 
       this.exercisesArray.push(
         this._formBuilder.group<IExercisePlanFormGroup>({

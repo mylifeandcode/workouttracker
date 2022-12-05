@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { WorkoutService } from 'app/workouts/workout.service';
-import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
 import { AnalyticsService, METRICS_TYPE } from '../analytics.service';
 import { AnalyticsChartData } from '../models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
+import { sortBy } from 'lodash-es';
 
 @Component({
   selector: 'wt-workout-progress',
@@ -96,7 +96,7 @@ export class WorkoutProgressComponent implements OnInit {
     this._workoutService.getFilteredSubset(0, 500, true) //TODO: Page size...come up with a better solution
       .pipe(finalize(() => { this.loadingData = false; }))
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
-        this.workouts = _.sortBy(result.results, 'name');
+        this.workouts = sortBy(result.results, 'name');
       });
   }
   

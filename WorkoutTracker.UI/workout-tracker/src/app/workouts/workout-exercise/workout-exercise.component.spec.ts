@@ -1,12 +1,10 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WorkoutExerciseComponent } from './workout-exercise.component';
-import { UntypedFormArray, UntypedFormBuilder, ReactiveFormsModule, Validators, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ExecutedExercise } from '../models/executed-exercise';
 import { Exercise } from '../models/exercise';
-import * as _ from 'lodash';
 import { Pipe } from '@angular/core';
 import { ResistanceType } from '../enums/resistance-type';
-import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
 
 @Pipe({
   name: 'resistanceType'

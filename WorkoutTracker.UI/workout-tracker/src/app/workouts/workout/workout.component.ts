@@ -8,12 +8,11 @@ import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-indi
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkout } from '../models/executed-workout';
 import { ExecutedExercise } from '../models/executed-exercise';
-import * as _ from 'lodash';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ActivatedRoute, Params } from '@angular/router';
 import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
-
+import { forEach } from 'lodash-es';
 
 interface IWorkoutForm {
   id: FormControl<number | null>;
@@ -233,7 +232,7 @@ export class WorkoutComponent implements OnInit {
 
     let groupedExercises = this._executedWorkoutService.groupExecutedExercises(exercises);
 
-    _.forEach(groupedExercises, (exerciseArray: ExecutedExercise[]) => {
+    forEach(groupedExercises, (exerciseArray: ExecutedExercise[]) => {
 
       this.exercisesArray.push(
         this._formBuilder.group<IWorkoutFormExercise>({

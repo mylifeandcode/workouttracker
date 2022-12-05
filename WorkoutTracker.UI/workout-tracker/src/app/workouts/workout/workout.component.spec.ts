@@ -20,8 +20,8 @@ import { Workout } from '../models/workout';
 import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { MessageService } from 'primeng/api';
-import * as _ from 'lodash';
-import * as exp from 'constants';
+import { groupBy } from 'lodash-es';
+import { Dictionary } from 'lodash';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -116,10 +116,10 @@ class ExecutedWorkoutServiceMock {
   add = jasmine.createSpy('add').and.callFake((workout: ExecutedWorkout) => of(workout));
   getById = jasmine.createSpy('getById ').and.returnValue(of(getFakeExecutedWorkout()));
 
-  public groupExecutedExercises(exercises: ExecutedExercise[]): _.Dictionary<ExecutedExercise[]> {
+  public groupExecutedExercises(exercises: ExecutedExercise[]): Dictionary<ExecutedExercise[]> {
     const sortedExercises: ExecutedExercise[] = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
     
-    let groupedExercises = _.groupBy(exercises, (exercise: ExecutedExercise) => { 
+    let groupedExercises = groupBy(exercises, (exercise: ExecutedExercise) => { 
       return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
     });
     return groupedExercises;
