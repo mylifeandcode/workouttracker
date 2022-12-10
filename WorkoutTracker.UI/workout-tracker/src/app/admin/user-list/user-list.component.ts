@@ -1,7 +1,6 @@
 import { AfterContentInit, AfterViewInit, Component, OnInit } from '@angular/core';
 import { UserService } from '../../core/user.service';
 import { User } from '../../core/models/user';
-import * as _ from 'lodash';
 import { finalize, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
