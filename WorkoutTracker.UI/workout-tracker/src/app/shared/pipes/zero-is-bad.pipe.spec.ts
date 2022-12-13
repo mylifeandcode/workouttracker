@@ -6,7 +6,15 @@ describe('ZeroIsBadPipe', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [ ZeroIsBadPipe, DomSanitizer ] //NOTE: Using *real* DomSanitizer
+      providers: [ 
+        ZeroIsBadPipe, 
+        {
+          provide: DomSanitizer, 
+          useValue: {
+            bypassSecurityTrustHtml: (value: string) => value //Thanks to Zakary Keck for the solution for this
+          }
+        }
+      ]
     });
   });
 
@@ -15,8 +23,7 @@ describe('ZeroIsBadPipe', () => {
     expect(pipe).toBeTruthy();
   });
 
-  //TODO: Revisit. Getting "bypassSecurityTrustHtml is not a function" error.
-  xit('should transform input value of 0 correctly', () => {
+  it('should transform input value of 0 correctly', () => {
 
     //ARRANGE
     const input = 0;
@@ -26,7 +33,7 @@ describe('ZeroIsBadPipe', () => {
     const output = pipe.transform(input);
 
     //ASSERT
-    expect(output).toEqual("<span style='color: red;'>0</span>");
+    expect(output).toEqual("<span style='color: red'>0</span>");
 
   });
 
