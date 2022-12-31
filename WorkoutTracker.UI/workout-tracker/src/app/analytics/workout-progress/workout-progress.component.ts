@@ -11,7 +11,7 @@ import { sortBy } from 'lodash-es';
 @Component({
   selector: 'wt-workout-progress',
   templateUrl: './workout-progress.component.html',
-  styleUrls: ['./workout-progress.component.css']
+  styleUrls: ['./workout-progress.component.scss']
 })
 export class WorkoutProgressComponent implements OnInit {
 

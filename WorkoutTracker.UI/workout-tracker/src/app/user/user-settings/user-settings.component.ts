@@ -22,7 +22,7 @@ interface IToggleEvent { //TODO: Determine if PrimeNg has a type for this (proba
 @Component({
   selector: 'wt-user-settings',
   templateUrl: './user-settings.component.html',
-  styleUrls: ['./user-settings.component.css']
+  styleUrls: ['./user-settings.component.scss']
 })
 export class UserSettingsComponent implements OnInit {
 

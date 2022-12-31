@@ -25,7 +25,7 @@ interface IWorkoutEditForm {
 @Component({
   selector: 'app-workout-edit',
   templateUrl: './workout-edit.component.html',
-  styleUrls: ['./workout-edit.component.css']
+  styleUrls: ['./workout-edit.component.scss']
 })
 export class WorkoutEditComponent implements OnInit {
 

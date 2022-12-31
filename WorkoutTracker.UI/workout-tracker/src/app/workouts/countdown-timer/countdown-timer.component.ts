@@ -5,7 +5,7 @@ import { SoundService } from 'app/core/sound.service';
 @Component({
   selector: 'wt-countdown-timer',
   templateUrl: './countdown-timer.component.html',
-  styleUrls: ['./countdown-timer.component.css']
+  styleUrls: ['./countdown-timer.component.scss']
 })
 export class CountdownTimerComponent implements OnInit {
 

@@ -9,7 +9,7 @@ import { ExerciseListBase } from '../exercise-list-base';
 @Component({
   selector: 'wt-exercise-list',
   templateUrl: './exercise-list.component.html',
-  styleUrls: ['./exercise-list.component.css']
+  styleUrls: ['./exercise-list.component.scss']
 })
 export class ExerciseListComponent extends ExerciseListBase {
 

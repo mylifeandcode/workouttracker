@@ -11,7 +11,7 @@ import { sortBy } from 'lodash-es';
 @Component({
   selector: 'wt-workout-select',
   templateUrl: './workout-select.component.html',
-  styleUrls: ['./workout-select.component.css']
+  styleUrls: ['./workout-select.component.scss']
 })
 export class WorkoutSelectComponent implements OnInit, OnDestroy {
 

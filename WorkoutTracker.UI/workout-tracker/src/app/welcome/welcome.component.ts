@@ -6,7 +6,7 @@ import { finalize } from 'rxjs/operators';
 @Component({
   selector: 'wt-welcome',
   templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.css']
+  styleUrls: ['./welcome.component.scss']
 })
 export class WelcomeComponent implements OnInit {
 

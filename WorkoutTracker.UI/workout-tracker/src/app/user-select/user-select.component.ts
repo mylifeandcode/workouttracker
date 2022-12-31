@@ -9,7 +9,7 @@ import { Observable, of } from 'rxjs';
 @Component({
   selector: 'wt-user-select',
   templateUrl: './user-select.component.html',
-  styleUrls: ['./user-select.component.css']
+  styleUrls: ['./user-select.component.scss']
 })
 export class UserSelectComponent {
   public errorMsg: string | null = null;

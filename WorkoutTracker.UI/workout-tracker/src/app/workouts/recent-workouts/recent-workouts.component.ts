@@ -8,7 +8,7 @@ import { WorkoutService } from '../workout.service';
 @Component({
   selector: 'wt-recent-workouts',
   templateUrl: './recent-workouts.component.html',
-  styleUrls: ['./recent-workouts.component.css']
+  styleUrls: ['./recent-workouts.component.scss']
 })
 export class RecentWorkoutsComponent implements OnInit {
 

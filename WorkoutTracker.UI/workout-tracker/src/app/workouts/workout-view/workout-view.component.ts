@@ -9,7 +9,7 @@ import { forEach } from 'lodash-es';
 @Component({
   selector: 'wt-workout-view',
   templateUrl: './workout-view.component.html',
-  styleUrls: ['./workout-view.component.css']
+  styleUrls: ['./workout-view.component.scss']
 })
 export class WorkoutViewComponent implements OnInit {
 

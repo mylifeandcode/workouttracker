@@ -7,7 +7,7 @@ import { Table } from 'primeng/table';
 @Component({
   selector: 'wt-exercise-list-mini',
   templateUrl: './exercise-list-mini.component.html', //TODO: Fix alternating row colors not working
-  styleUrls: ['./exercise-list-mini.component.css']
+  styleUrls: ['./exercise-list-mini.component.scss']
 })
 export class ExerciseListMiniComponent extends ExerciseListBase {
 

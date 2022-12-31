@@ -4,7 +4,7 @@ import { UserOverview } from 'app/core/models/user-overview';
 @Component({
   selector: 'wt-user-overview',
   templateUrl: './user-overview.component.html',
-  styleUrls: ['./user-overview.component.css']
+  styleUrls: ['./user-overview.component.scss']
 })
 export class UserOverviewComponent implements OnInit {
 

@@ -10,7 +10,7 @@ interface IDurationForm {
 @Component({
   selector: 'wt-duration',
   templateUrl: './duration.component.html',
-  styleUrls: ['./duration.component.css']
+  styleUrls: ['./duration.component.scss']
 })
 export class DurationComponent implements OnInit, OnChanges {;
   @Input()

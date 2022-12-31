@@ -6,7 +6,7 @@ import { ExecutedWorkoutsSummary } from '../models/executed-workouts-summary';
 @Component({
   selector: 'wt-analytics-dashboard',
   templateUrl: './analytics-dashboard.component.html',
-  styleUrls: ['./analytics-dashboard.component.css']
+  styleUrls: ['./analytics-dashboard.component.scss']
 })
 export class AnalyticsDashboardComponent implements OnInit {
 

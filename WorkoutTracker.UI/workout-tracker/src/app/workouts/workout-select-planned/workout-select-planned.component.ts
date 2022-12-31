@@ -9,7 +9,7 @@ import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 @Component({
   selector: 'wt-workout-select-planned',
   templateUrl: './workout-select-planned.component.html',
-  styleUrls: ['./workout-select-planned.component.css']
+  styleUrls: ['./workout-select-planned.component.scss']
 })
 export class WorkoutSelectPlannedComponent implements OnInit {
 

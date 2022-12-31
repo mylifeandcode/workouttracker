@@ -4,7 +4,7 @@ import { Workout } from '../models/workout';
 @Component({
   selector: 'wt-workout-info',
   templateUrl: './workout-info.component.html',
-  styleUrls: ['./workout-info.component.css']
+  styleUrls: ['./workout-info.component.scss']
 })
 export class WorkoutInfoComponent implements OnInit {
 

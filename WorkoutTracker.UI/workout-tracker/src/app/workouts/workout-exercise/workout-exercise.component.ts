@@ -11,7 +11,7 @@ import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-s
 @Component({
   selector: 'wt-workout-exercise',
   templateUrl: './workout-exercise.component.html',
-  styleUrls: ['./workout-exercise.component.css']
+  styleUrls: ['./workout-exercise.component.scss']
 })
 export class WorkoutExerciseComponent implements OnInit {
 

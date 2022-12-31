@@ -4,7 +4,7 @@ import { SoundService } from 'app/core/sound.service';
 @Component({
   selector: 'wt-system',
   templateUrl: './system.component.html',
-  styleUrls: ['./system.component.css']
+  styleUrls: ['./system.component.scss']
 })
 export class SystemComponent {
 

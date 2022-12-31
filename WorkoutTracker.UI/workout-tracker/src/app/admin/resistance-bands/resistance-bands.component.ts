@@ -8,7 +8,7 @@ import { ResistanceBandService } from './resistance-band.service';
 @Component({
   selector: 'wt-resistance-bands',
   templateUrl: './resistance-bands.component.html',
-  styleUrls: ['./resistance-bands.component.css']
+  styleUrls: ['./resistance-bands.component.scss']
 })
 export class ResistanceBandsComponent implements OnInit {
 

@@ -17,7 +17,7 @@ interface INewUserForm {
 @Component({
   selector: 'wt-user-select-new',
   templateUrl: './user-select-new.component.html',
-  styleUrls: ['./user-select-new.component.css']
+  styleUrls: ['./user-select-new.component.scss']
 })
 export class UserSelectNewComponent implements OnInit {
 

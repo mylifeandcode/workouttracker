@@ -9,7 +9,7 @@ import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 @Component({
   selector: 'wt-workout-history',
   templateUrl: './workout-history.component.html',
-  styleUrls: ['./workout-history.component.css']
+  styleUrls: ['./workout-history.component.scss']
 })
 export class WorkoutHistoryComponent implements OnInit {
 

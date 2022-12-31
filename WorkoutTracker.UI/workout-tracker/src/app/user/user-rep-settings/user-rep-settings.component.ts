@@ -12,7 +12,7 @@ export interface IRepSettingsForm {
 @Component({
   selector: 'wt-user-rep-settings',
   templateUrl: './user-rep-settings.component.html',
-  styleUrls: ['./user-rep-settings.component.css']
+  styleUrls: ['./user-rep-settings.component.scss']
 })
 export class UserRepSettingsComponent implements OnInit {
 

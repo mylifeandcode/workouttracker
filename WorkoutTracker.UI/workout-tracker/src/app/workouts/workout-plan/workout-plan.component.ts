@@ -17,7 +17,7 @@ import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group
 @Component({
   selector: 'wt-workout-plan',
   templateUrl: './workout-plan.component.html',
-  styleUrls: ['./workout-plan.component.css']
+  styleUrls: ['./workout-plan.component.scss']
 })
 export class WorkoutPlanComponent implements OnInit {
 

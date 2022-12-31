@@ -17,7 +17,7 @@ interface ILogPastWorkoutForm {
 @Component({
   selector: 'wt-workout-log-past-start',
   templateUrl: './workout-log-past-start.component.html',
-  styleUrls: ['./workout-log-past-start.component.css']
+  styleUrls: ['./workout-log-past-start.component.scss']
 })
 export class WorkoutLogPastStartComponent implements OnInit {
   

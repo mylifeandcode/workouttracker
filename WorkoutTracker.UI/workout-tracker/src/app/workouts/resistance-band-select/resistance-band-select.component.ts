@@ -6,7 +6,7 @@ import { sumBy } from 'lodash-es';
 @Component({
   selector: 'wt-resistance-band-select',
   templateUrl: './resistance-band-select.component.html',
-  styleUrls: ['./resistance-band-select.component.css']
+  styleUrls: ['./resistance-band-select.component.scss']
 })
 export class ResistanceBandSelectComponent implements OnInit {
 

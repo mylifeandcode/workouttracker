@@ -32,7 +32,7 @@ interface IExerciseEditForm {
 @Component({
   selector: 'wt-exercise-edit',
   templateUrl: './exercise-edit.component.html',
-  styleUrls: ['./exercise-edit.component.css']
+  styleUrls: ['./exercise-edit.component.scss']
 })
 export class ExerciseEditComponent implements OnInit {
 

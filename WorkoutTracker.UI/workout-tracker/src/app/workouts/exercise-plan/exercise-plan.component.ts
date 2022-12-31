@@ -5,7 +5,7 @@ import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group
 @Component({
   selector: 'wt-exercise-plan',
   templateUrl: './exercise-plan.component.html',
-  styleUrls: ['./exercise-plan.component.css']
+  styleUrls: ['./exercise-plan.component.scss']
 })
 export class ExercisePlanComponent {
 

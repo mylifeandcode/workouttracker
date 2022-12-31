@@ -1,3 +1,5 @@
+@import '/src/variables.scss';
+
 .quick-actions {
   color: white;
   border-radius: 25px;
@@ -13,23 +15,23 @@
 
 .start-workout {
   color: white;
-  background-color: blue;
+  background-color: $workout-primary;
   opacity: 1;
 }
 
 .plan-workout {
   color: white;
-  background-color: cornflowerblue;
+  background-color: $workout-secondary;
 }
 
 .start-planned-workout {
   color: white;
-  background-color: orange;
+  background-color: $workout-tertiary;
 }
 
 .view-workout-history {
   color: white;
-  background-color: green;
+  background-color: $history-primary;
 }
 
 .manage-workouts {

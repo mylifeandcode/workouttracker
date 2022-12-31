@@ -9,7 +9,7 @@ import { Table } from 'primeng/table';
 @Component({
   selector: 'wt-workout-list',
   templateUrl: './workout-list.component.html',
-  styleUrls: ['./workout-list.component.css']
+  styleUrls: ['./workout-list.component.scss']
 })
 export class WorkoutListComponent implements OnInit {
 
