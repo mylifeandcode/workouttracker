@@ -1,8 +1,10 @@
+@import '/src/variables.scss';
+
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, grey, darkgrey);
+  background-image: linear-gradient(to right, $user-settings-color-primary, $user-settings-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-primary;
 }
 
 .row {
@@ -11,4 +13,14 @@ h3 {
 
 .description {
   font-style: italic;
+}
+
+.btn-save-settings {
+  color: $button-text-color-primary;
+  background-color: $user-settings-color-secondary;
+}
+
+.btn-change-password {
+  color: $button-text-color-primary;
+  background-color: $user-settings-color-secondary;  
 }

@@ -20,7 +20,7 @@
     </div>
     <div class="row">
       <div class="offset-4 col-4">
-        <button class="btn btn-primary" [disabled]="userSettingsForm.pristine || userSettingsForm.invalid" (click)="saveSettings()">Save Settings</button>
+        <button class="btn btn-save-settings" [disabled]="userSettingsForm.pristine || userSettingsForm.invalid" (click)="saveSettings()">Save Settings</button>
       </div>
     </div>
   </form>
@@ -31,7 +31,7 @@
       Change Password
     </div>
     <div class="col-4">
-      <button class="btn btn-sm btn-primary" routerLink="/user/change-password">Change Password</button>
+      <button class="btn btn-sm btn-change-password" routerLink="/user/change-password">Change Password</button>
     </div>
   </div>
 </div>
