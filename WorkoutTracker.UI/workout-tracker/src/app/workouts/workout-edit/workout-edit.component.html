@@ -76,7 +76,7 @@
       </div>
 
       <p *ngIf="!readOnlyMode">
-        <button class="btn btn-primary btn-sm" (click)="openModal()">
+        <button class="btn btn-add-exercise btn-sm" (click)="openModal()">
           <i class="fa fa-plus"></i> Add Exercise to Workout
         </button>
       </p>
@@ -88,7 +88,7 @@
         </div>       
         <div *ngIf="!readOnlyMode" class="col-8">
           <button type="submit" [disabled]="workoutForm.invalid || saving" (click)="saveWorkout()"
-            class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
+            class="btn btn-save-workout">Save</button>&nbsp;<span>{{infoMsg}}</span>
           <span *ngIf="workoutForm.touched && workoutForm.invalid" class="error-text">Please enter required
             information</span>
         </div>

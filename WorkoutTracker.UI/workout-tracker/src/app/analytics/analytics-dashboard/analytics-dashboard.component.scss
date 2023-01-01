@@ -1,3 +1,5 @@
+@import '/src/variables.scss';
+
 table, th, td {
   border: 1px solid;
   padding-top: 2px;
@@ -8,7 +10,7 @@ table, th, td {
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, grey, darkblue);
+  background-image: linear-gradient(to right, $analytics-color-primary, $analytics-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-primary;
 }

@@ -1,6 +1,13 @@
+@import '/src/variables.scss';
+
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, darkgreen, grey);
+  background-image: linear-gradient(to right, $workout-color-tertiary, $workout-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-primary;
+}
+
+.btn-plan {
+  color: $button-text-color-primary;
+  background-color: $workout-color-tertiary;
 }

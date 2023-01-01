@@ -1,3 +1,5 @@
+@import '/src/variables.scss';
+
 label {
     padding-top: 18px;
 }
@@ -16,7 +18,11 @@ td {
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, purple, lightgrey);
+  background-image: linear-gradient(to right, $admin-color-primary, $admin-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-primary;
+}
+
+.p-button-success {
+  background-color: $admin-color-primary;
 }

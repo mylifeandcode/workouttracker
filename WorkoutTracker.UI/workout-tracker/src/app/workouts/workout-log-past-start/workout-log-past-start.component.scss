@@ -1,14 +1,21 @@
+@import '/src/variables.scss';
+
 .a-little-space {
   padding-top: 12px;
 }
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, limegreen, seagreen);
+  background-image: linear-gradient(to right, $workout-color-secondary, $workout-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-primary;
 }
 
 select {
   height: 30px;
+}
+
+.btn-enter-info {
+  color: $button-text-color-primary;
+  background-color: $workout-color-secondary;
 }

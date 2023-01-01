@@ -15,31 +15,31 @@
 
 .start-workout {
   color: white;
-  background-color: $workout-primary;
+  background-color: $workout-color-primary;
   opacity: 1;
 }
 
 .plan-workout {
   color: white;
-  background-color: $workout-secondary;
+  background-color: $workout-color-secondary;
 }
 
 .start-planned-workout {
   color: white;
-  background-color: $workout-tertiary;
+  background-color: $workout-color-tertiary;
 }
 
 .view-workout-history {
   color: white;
-  background-color: $history-primary;
+  background-color: $history-color-primary;
 }
 
 .manage-workouts {
   color: white;
-  background-color: crimson;
+  background-color: $workout-color-quaternary;
 }
 
 .manage-exercises {
   color: white;
-  background-color: goldenrod;
+  background-color: $exercise-color-primary;
 }

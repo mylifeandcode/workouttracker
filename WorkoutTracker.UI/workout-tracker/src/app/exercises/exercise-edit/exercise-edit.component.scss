@@ -1,3 +1,5 @@
+@import '/src/variables.scss';
+
 .end-to-end-selection {
   padding-top: 38px;
 }
@@ -7,7 +9,12 @@
   padding-right: 6px;
   padding-bottom: 6px;
   padding-left: 14px;
-  background-image: linear-gradient(to right, steelblue, black);
+  background-image: linear-gradient(to right, $exercise-color-tertiary, $exercise-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-primary;
+}
+
+.btn-save-exercise {
+  color: $button-text-color-primary;
+  background-color: $exercise-color-tertiary;
 }

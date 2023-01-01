@@ -1,3 +1,5 @@
+@import '/src/variables.scss';
+
 .number-of-sets {
     width: 50px;
 }
@@ -28,7 +30,17 @@ button.exerciseButton {
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, darkgreen, limegreen);
+  background-image: linear-gradient(to right, $workout-color-quinary, $workout-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-primary;
+}
+
+.btn-add-exercise {
+  color: $button-text-color-primary;
+  background-color: $workout-color-secondary;
+}
+
+.btn-save-workout {
+  color: $button-text-color-primary;
+  background-color: $workout-color-quinary;
 }

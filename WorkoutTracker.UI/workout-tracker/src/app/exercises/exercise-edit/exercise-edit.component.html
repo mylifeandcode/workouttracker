@@ -141,7 +141,7 @@
         </div>       
         <div *ngIf="!readOnlyMode" class="col-4">
           <button type="submit" [disabled]="exerciseForm.invalid || saving" (click)="saveExercise()"
-            class="btn btn-success">Save</button>&nbsp;<span>{{infoMsg}}</span>
+            class="btn btn-save-exercise">Save</button>&nbsp;<span>{{infoMsg}}</span>
         </div>
       </div>
       <div class="row">

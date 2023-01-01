@@ -52,7 +52,7 @@
     </div>
     <div class="row a-little-space">
       <div class="offset-1 col-3">
-        <button [disabled]="!formGroup.valid" type="submit" (click)="proceedToWorkoutEntry()" class="btn btn-success">Enter Workout Information</button>
+        <button [disabled]="!formGroup.valid" type="submit" (click)="proceedToWorkoutEntry()" class="btn btn-enter-info">Enter Workout Information</button>
       </div>
       <div class="col-8">
         <span *ngIf="formGroup?.invalid && (endDateTime?.touched || endDateTime?.dirty)" class="text-danger">

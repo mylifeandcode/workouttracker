@@ -1,3 +1,5 @@
+@import '/src/variables.scss';
+
 .ui-table table {
     width: 100%;
 }
@@ -12,7 +14,12 @@ th, td {
 
 h3 {
     padding: 6px;
-    background-image: linear-gradient(to right, blue, lightblue);
+    background-image: linear-gradient(to right, $exercise-color-primary, $exercise-color-gradient-end);
     font-style: italic;
-    color: white;
+    color: $header-text-color-primary;
+}
+
+.btn-add-exercise {
+  color: $button-text-color-primary;
+  background-color: $exercise-color-secondary;
 }

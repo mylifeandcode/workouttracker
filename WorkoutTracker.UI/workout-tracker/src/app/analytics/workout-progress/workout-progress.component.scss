@@ -1,8 +1,10 @@
+@import '/src/variables.scss';
+
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, slategrey, darkcyan);
+  background-image: linear-gradient(to right, $analytics-color-secondary, $analytics-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-primary;
 }
 
 .chart {

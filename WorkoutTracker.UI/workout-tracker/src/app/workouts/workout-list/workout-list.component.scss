@@ -1,10 +1,17 @@
+@import '/src/variables.scss';
+
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, forestgreen, springgreen);
+  background-image: linear-gradient(to right, $workout-color-quaternary, $workout-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-primary;
 }
 
 .p-datatable.p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
   background: grey !important;
+}
+
+.btn-new-workout {
+  color: $button-text-color-primary;
+  background-color: $workout-color-quaternary;
 }
