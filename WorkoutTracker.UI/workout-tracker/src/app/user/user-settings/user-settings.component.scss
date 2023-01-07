@@ -2,9 +2,9 @@
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $user-settings-color-primary, $user-settings-color-gradient-end);
+  background-image: linear-gradient(to right, $user-settings-color-one, $user-settings-color-gradient-end);
   font-style: italic;
-  color: $header-text-color-primary;
+  color: $header-text-color-two;
 }
 
 .row {
@@ -16,11 +16,11 @@ h3 {
 }
 
 .btn-save-settings {
-  color: $button-text-color-primary;
-  background-color: $user-settings-color-secondary;
+  color: $button-text-color-two;
+  background-color: $user-settings-color-two;
 }
 
 .btn-change-password {
-  color: $button-text-color-primary;
-  background-color: $user-settings-color-secondary;  
+  color: $button-text-color-two;
+  background-color: $user-settings-color-two;  
 }

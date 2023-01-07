@@ -12,9 +12,9 @@ tr:nth-child(even) {
 
 h3 {
     padding: 6px;
-    background-image: linear-gradient(to right, $history-color-primary, $history-color-gradient-end);
+    background-image: linear-gradient(to right, $history-color-one, $history-color-gradient-end);
     font-style: italic;
-    color: $header-text-color-primary;
+    color: $header-text-color-one;
 }
 
 span {
@@ -22,6 +22,6 @@ span {
 }
 
 .btn-start-workout {
-  color: $button-text-color-primary;
-  background-color: $workout-color-primary;
+  color: $button-text-color-one;
+  background-color: $workout-color-one;
 }

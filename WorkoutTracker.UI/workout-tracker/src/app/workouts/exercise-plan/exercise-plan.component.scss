@@ -1,10 +1,12 @@
+@import '/src/variables.scss';
+
 .amount {
   width: 40px;
   margin-left: 4px;
 }
 
 .pre-pop-value {
-  color: darkgreen;
+  color: $workout-color-five;
   font-weight: bold;
 }
 
@@ -13,7 +15,7 @@
 }
 
 .exercise-name {
-  background-image: linear-gradient(to right, green , darkgreen);
+  background-image: linear-gradient(to right, $workout-color-four , $workout-color-gradient-end);
   padding-top: 10px;
 }
 
@@ -37,22 +39,22 @@ label {
 .recommendations {
   padding-bottom: 10px;
   border-left-width: normal;
-  border-left-color: green;
+  border-left-color: $workout-color-one;
   border-left-style: dashed;
   border-right-width: normal;
-  border-right-color: green;
+  border-right-color: $workout-color-one;
   border-right-style: dashed;
 }
 
 .recommendations-top {
   border-top-width: normal;
-  border-top-color: green;
+  border-top-color: $workout-color-one;
   border-top-style: dashed;
 }
 
 .recommendations-bottom {
   border-bottom-width: normal;
-  border-bottom-color: green;
+  border-bottom-color: $workout-color-one;
   border-bottom-style: dashed;
 }
 
@@ -63,17 +65,17 @@ label {
 
 .btn-choose-resistance {
   color: white;
-  background-color: darkgreen;
+  background-color: $workout-color-two;
 }
 
 .btn-same-as-last-time {
   color: white;
-  background-color: darkgreen;
+  background-color: $workout-color-three;
 }
 
 .btn-use-suggestions {
   color: white;
-  background-color: rgb(3, 171, 3)
+  background-color: $workout-color-four
 }
 
 .end-padding {

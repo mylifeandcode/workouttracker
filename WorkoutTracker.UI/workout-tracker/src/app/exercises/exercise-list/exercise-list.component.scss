@@ -14,12 +14,12 @@ th, td {
 
 h3 {
     padding: 6px;
-    background-image: linear-gradient(to right, $exercise-color-primary, $exercise-color-gradient-end);
+    background-image: linear-gradient(to right, $exercise-color-one, $exercise-color-gradient-end);
     font-style: italic;
-    color: $header-text-color-primary;
+    color: $header-text-color-one;
 }
 
 .btn-add-exercise {
-  color: $button-text-color-primary;
-  background-color: $exercise-color-secondary;
+  color: $button-text-color-one;
+  background-color: $exercise-color-two;
 }

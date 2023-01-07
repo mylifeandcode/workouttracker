@@ -6,9 +6,9 @@
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $workout-color-secondary, $workout-color-gradient-end);
+  background-image: linear-gradient(to right, $workout-color-two, $workout-color-gradient-end);
   font-style: italic;
-  color: $header-text-color-primary;
+  color: $header-text-color-one;
 }
 
 select {
@@ -16,6 +16,6 @@ select {
 }
 
 .btn-enter-info {
-  color: $button-text-color-primary;
-  background-color: $workout-color-secondary;
+  color: $button-text-color-one;
+  background-color: $workout-color-two;
 }

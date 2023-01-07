@@ -9,12 +9,12 @@
   padding-right: 6px;
   padding-bottom: 6px;
   padding-left: 14px;
-  background-image: linear-gradient(to right, $exercise-color-tertiary, $exercise-color-gradient-end);
+  background-image: linear-gradient(to right, $exercise-color-three, $exercise-color-gradient-end);
   font-style: italic;
-  color: $header-text-color-primary;
+  color: $header-text-color-one;
 }
 
 .btn-save-exercise {
-  color: $button-text-color-primary;
-  background-color: $exercise-color-tertiary;
+  color: $button-text-color-one;
+  background-color: $exercise-color-three;
 }

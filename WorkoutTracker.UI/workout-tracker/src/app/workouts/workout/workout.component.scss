@@ -1,3 +1,5 @@
+@import '/src/variables.scss';
+
 .bigger {
   width: 80%;
 }
@@ -7,9 +9,9 @@ h3 {
   padding-right: 6px;
   padding-bottom: 6px;
   padding-left: 14px;
-  background-image: linear-gradient(to right, rgb(235, 5, 5), black);
+  background-image: linear-gradient(to right, $workout-color-two, $workout-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-one;
 }
 
 h4 {

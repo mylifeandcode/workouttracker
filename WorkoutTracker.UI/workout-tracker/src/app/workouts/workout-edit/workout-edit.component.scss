@@ -30,17 +30,17 @@ button.exerciseButton {
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $workout-color-quinary, $workout-color-gradient-end);
+  background-image: linear-gradient(to right, $workout-color-five, $workout-color-gradient-end);
   font-style: italic;
-  color: $header-text-color-primary;
+  color: $header-text-color-one;
 }
 
 .btn-add-exercise {
-  color: $button-text-color-primary;
-  background-color: $workout-color-secondary;
+  color: $button-text-color-one;
+  background-color: $workout-color-two;
 }
 
 .btn-save-workout {
-  color: $button-text-color-primary;
-  background-color: $workout-color-quinary;
+  color: $button-text-color-one;
+  background-color: $workout-color-five;
 }

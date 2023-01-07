@@ -1,29 +1,56 @@
+/* Main and universal colors */
 $title-color: greenyellow;
-$header-text-color-primary: white;
-$button-text-color-primary: white;
+$header-text-color-one: white;
+$header-text-color-two: black;
+$button-text-color-one: white;
+$button-text-color-two: black;
 
-$workout-color-primary: blue;
-$workout-color-secondary: royalblue;
-$workout-color-tertiary: darkblue;
-$workout-color-quaternary: darkslateblue;
-$workout-color-quinary: midnightblue;
+/*
+Workout colors
+The workout theme is shades of blue
+*/
+$workout-color-one: blue;
+$workout-color-two: royalblue;
+$workout-color-three: darkblue;
+$workout-color-four: darkslateblue;
+$workout-color-five: midnightblue;
 $workout-color-gradient-end: grey;
 
-$history-color-primary: green;
+/*
+History colors
+The history theme is shades of green
+*/
+$history-color-one: green;
 $history-color-gradient-end: yellowgreen;
 
-$exercise-color-primary: red;
-$exercise-color-secondary: crimson;
-$exercise-color-tertiary: firebrick;
+/*
+Exercise colors
+The exercise theme is shades of red
+*/
+$exercise-color-one: red;
+$exercise-color-two: crimson;
+$exercise-color-three: firebrick;
 $exercise-color-gradient-end: darkred;
 
-$analytics-color-primary: grey;
-$analytics-color-secondary: slategrey;
+/*
+Analytics colors
+The analytics theme is shades of grey
+*/
+$analytics-color-one: grey;
+$analytics-color-two: slategrey;
 $analytics-color-gradient-end: darkblue;
 
-$admin-color-primary: purple;
+/*
+Admin colors
+The admin theme is shades of purple
+*/
+$admin-color-one: purple;
 $admin-color-gradient-end: lightgrey;
 
-$user-settings-color-primary: grey;
-$user-settings-color-secondary: darkslategrey;
+/*
+User colors
+The user them is shades of gold
+*/
+$user-settings-color-one: gold;
+$user-settings-color-two: goldenrod;
 $user-settings-color-gradient-end: darkgrey;

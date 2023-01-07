@@ -1,3 +1,5 @@
+@import '/src/variables.scss';
+
 .no-last-time {
   color:red;
 }
@@ -7,16 +9,16 @@
   padding-bottom: 10px;
   border-top-style: solid;
   border-top-width: 2px;
-  border-top-color: green;
+  border-top-color: $workout-color-five;
 }
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, green, lightgrey);
+  background-image: linear-gradient(to right, $workout-color-three, $workout-color-gradient-end);
   font-style: italic;
-  color: white;
+  color: $header-text-color-one;
 }
 
 h4 {
-  color: darkgreen;
+  color: $workout-color-one;
 }

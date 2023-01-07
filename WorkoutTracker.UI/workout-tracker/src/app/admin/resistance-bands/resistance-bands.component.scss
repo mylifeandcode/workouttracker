@@ -18,11 +18,11 @@ td {
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $admin-color-primary, $admin-color-gradient-end);
+  background-image: linear-gradient(to right, $admin-color-one, $admin-color-gradient-end);
   font-style: italic;
-  color: $header-text-color-primary;
+  color: $header-text-color-one;
 }
 
 .p-button-success {
-  background-color: $admin-color-primary;
+  background-color: $admin-color-one;
 }
