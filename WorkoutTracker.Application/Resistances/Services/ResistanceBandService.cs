@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using WorkoutTracker.Domain.Resistances;
-using WorkoutTracker.Repository;
 using WorkoutTracker.Application.Resistances.Interfaces;
 using WorkoutTracker.Application.Shared.BaseClasses;
+using WorkoutTracker.Domain.Resistances;
+using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Application.Resistances.Services
 {
@@ -13,7 +12,7 @@ namespace WorkoutTracker.Application.Resistances.Services
     {
         private ResistanceBand _lowestResistanceBand;
 
-        public ResistanceBandService(IRepository<ResistanceBand> repository) : base(repository) { }
+        public ResistanceBandService(IRepository<ResistanceBand> repository, ILogger<ResistanceBandService> logger) : base(repository, logger) { }
 
         public ResistanceBand Add(ResistanceBand resistanceBand)
         {

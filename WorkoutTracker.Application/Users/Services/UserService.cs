@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using WorkoutTracker.Application.Security.Interfaces;
+using WorkoutTracker.Application.Shared.BaseClasses;
+using WorkoutTracker.Application.Shared.Interfaces;
+using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Repository;
-using WorkoutTracker.Application.Shared.BaseClasses;
-using WorkoutTracker.Application.Users.Interfaces;
-using WorkoutTracker.Application.Security.Interfaces;
-using WorkoutTracker.Application.Shared.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Users.Services
 {
@@ -18,14 +17,13 @@ namespace WorkoutTracker.Application.Users.Services
         private IEmailService _emailService;
         private string _frontEndResetPasswordUrl;
         private bool _disposedValue;
-        private ILogger<UserService> _logger;
 
         public UserService(
             IRepository<User> repo, 
             ICryptoService cryptoService, 
             IEmailService emailService, 
             ILogger<UserService> logger,
-            string frontEndResetPasswordUrl) : base(repo) 
+            string frontEndResetPasswordUrl) : base(repo, logger) 
         {
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));

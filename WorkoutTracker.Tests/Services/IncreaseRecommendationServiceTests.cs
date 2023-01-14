@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,7 @@ namespace WorkoutTracker.Tests.Services
     {
         private IncreaseRecommendationService _sut;
         private Mock<IResistanceService> _resistanceServiceMock;
+        private Mock<ILogger<IncreaseRecommendationService>> _loggerMock;
         private string _makeup;
         private UserSettings _userSettings;
         private const decimal EXPECTED_NEW_RESISTANCE_AMOUNT = 100;
@@ -37,8 +40,15 @@ namespace WorkoutTracker.Tests.Services
                 .Returns(EXPECTED_NEW_RESISTANCE_AMOUNT);
 
             _userSettings = UserSettings.GetDefault();
+            _loggerMock = new Mock<ILogger<IncreaseRecommendationService>>(MockBehavior.Strict);
+            _loggerMock.Setup(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
 
-            _sut = new IncreaseRecommendationService(_resistanceServiceMock.Object);
+            _sut = new IncreaseRecommendationService(_resistanceServiceMock.Object, _loggerMock.Object);
         }
 
         [TestMethod]

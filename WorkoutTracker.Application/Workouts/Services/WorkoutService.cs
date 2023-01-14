@@ -1,20 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using WorkoutTracker.Application.Workouts.Models;
-using WorkoutTracker.Domain.Exercises;
-using WorkoutTracker.Domain.Workouts;
-using WorkoutTracker.Repository;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Workouts.Interfaces;
+using WorkoutTracker.Application.Workouts.Models;
+using WorkoutTracker.Domain.Workouts;
+using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Application.Workouts.Services
 {
     public class WorkoutService : ServiceBase<Workout>, IWorkoutService
     {
-        public WorkoutService(IRepository<Workout> repo) : base(repo) { }
+        public WorkoutService(IRepository<Workout> repo, ILogger<WorkoutService> logger) : base(repo, logger) { }
 
         public IEnumerable<Workout> Get(int firstRecord, short pageSize, WorkoutFilter filter)
         {

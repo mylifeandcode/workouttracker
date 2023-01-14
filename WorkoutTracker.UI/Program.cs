@@ -30,17 +30,5 @@ namespace WorkoutTracker
                         .UseStartup<Startup>();
                 });
 
-        /*
-        public static IWebHost BuildWebHost(string[] args) =>
-                    WebHost.CreateDefaultBuilder(args)
-                        .ConfigureServices(services => services.AddAutofac())
-                        .UseSerilog((hostingContext, loggerConfiguration) => {
-                            loggerConfiguration
-                                .ReadFrom.Configuration(hostingContext.Configuration)
-                                .Enrich.FromLogContext();
-                        })
-                        .UseStartup<Startup>()
-                        .Build();
-        */
     }
 }

@@ -7,12 +7,29 @@ using WorkoutTracker.Repository;
 using Shouldly;
 using System;
 using WorkoutTracker.Application.Exercises.Services;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Tests.Services
 {
     [TestClass]
     public class ExerciseServiceTests
     {
+        private Mock<ILogger<ExerciseService>> _logger;
+
+        [TestInitialize] 
+        public void Initialize() 
+        {
+            _logger = new Mock<ILogger<ExerciseService>>(MockBehavior.Strict);
+            _logger.Setup(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+
+        }
+
         //TODO: Fix! The 'Like' method is the issue here.
         /*
         [TestMethod]
@@ -102,7 +119,7 @@ namespace WorkoutTracker.Tests.Services
                 .Setup(mock => mock.Add(It.IsAny<Exercise>(), true))
                 .Returns(exercise);
 
-            var sut = new ExerciseService(repoMock.Object);
+            var sut = new ExerciseService(repoMock.Object, _logger.Object);
 
             //ACT
             var result = sut.Add(exercise, true);
@@ -166,7 +183,7 @@ namespace WorkoutTracker.Tests.Services
             repoMock
                 .Setup(mock => mock.SetValues(existingExercise, modifiedExercise));
 
-            var sut = new ExerciseService(repoMock.Object);
+            var sut = new ExerciseService(repoMock.Object, _logger.Object);
 
             //ACT
             var result = sut.Update(modifiedExercise, true);
@@ -193,7 +210,7 @@ namespace WorkoutTracker.Tests.Services
         {
             //ARRANGE
             var repoMock = new Mock<IRepository<Exercise>>(MockBehavior.Strict);
-            var sut = new ExerciseService(repoMock.Object);
+            var sut = new ExerciseService(repoMock.Object, _logger.Object);
 
             //ACT
             var results = sut.GetResistanceTypes();

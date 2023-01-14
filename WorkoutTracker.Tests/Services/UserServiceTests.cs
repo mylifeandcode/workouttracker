@@ -1,16 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using WorkoutTracker.Domain.Users;
-using WorkoutTracker.Repository;
 using Shouldly;
-using WorkoutTracker.Application.Users.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Shared.Interfaces;
-using System;
-using Castle.Core.Logging;
-using Microsoft.Extensions.Logging;
+using WorkoutTracker.Application.Users.Services;
+using WorkoutTracker.Domain.Users;
+using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Tests.Services
 {
@@ -54,7 +53,12 @@ namespace WorkoutTracker.Tests.Services
             _emailServiceMock.SetupGet(x => x.IsEnabled).Returns(true);
 
             _loggerMock = new Mock<ILogger<UserService>>(MockBehavior.Strict);
-            _loggerMock.Setup(x => x.LogInformation(It.IsAny<string>()));
+            _loggerMock.Setup(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
 
             _sut = new UserService(_userRepositoryMock.Object, _cryptoServiceMock.Object, _emailServiceMock.Object, _loggerMock.Object, FRONT_END_PASSWORD_RESET_URL);
         }

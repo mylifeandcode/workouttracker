@@ -5,19 +5,19 @@ using System.Text;
 using WorkoutTracker.Repository;
 using WorkoutTracker.Application.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Shared.BaseClasses
 {
     public abstract class ServiceBase<T> : IServiceBase<T>
     {
         protected IRepository<T> _repo;
+        protected ILogger _logger;
 
-        public ServiceBase(IRepository<T> repo)
+        public ServiceBase(IRepository<T> repo, ILogger logger)
         {
-            if (repo == null)
-                throw new ArgumentNullException(nameof(repo));
-
-            _repo = repo;
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public virtual IEnumerable<T> GetAll()

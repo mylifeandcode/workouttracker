@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using WorkoutTracker.Application.Workouts.Models;
-using WorkoutTracker.Domain.Exercises;
-using WorkoutTracker.Domain.Workouts;
-using WorkoutTracker.Repository;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.Application.Workouts.Interfaces;
+using WorkoutTracker.Application.Workouts.Models;
+using WorkoutTracker.Domain.Exercises;
+using WorkoutTracker.Domain.Workouts;
+using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Application.Workouts.Services
 {
@@ -22,7 +23,8 @@ namespace WorkoutTracker.Application.Workouts.Services
             IRepository<ExecutedWorkout> executedWorkoutRepo,
             IRepository<Workout> workoutRepo,
             IExerciseAmountRecommendationService exerciseAmountRecommendationService,
-            IUserService userService) : base(executedWorkoutRepo)
+            IUserService userService, 
+            ILogger<ExecutedWorkoutService> logger) : base(executedWorkoutRepo, logger)
         {
             _workoutRepo = workoutRepo ?? throw new ArgumentNullException(nameof(workoutRepo));
             _exerciseRecommendationService = exerciseAmountRecommendationService ?? throw new ArgumentNullException(nameof(exerciseAmountRecommendationService));

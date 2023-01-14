@@ -1,22 +1,35 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using WorkoutTracker.Domain.Workouts;
-using WorkoutTracker.Repository;
-using WorkoutTracker.Application.Workouts;
 using Shouldly;
-using WorkoutTracker.Domain.Exercises;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Workouts.Services;
+using WorkoutTracker.Domain.Exercises;
+using WorkoutTracker.Domain.Workouts;
+using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Tests.Services
 {
     [TestClass]
     public class WorkoutServiceTests
     {
+        private Mock<ILogger<WorkoutService>> _logger;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            _logger = new Mock<ILogger<WorkoutService>>(MockBehavior.Strict);
+            _logger.Setup(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+        }
+
         //TODO: Fix! The 'Like' method is the issue here.
         /*
         [TestMethod]
@@ -83,7 +96,7 @@ namespace WorkoutTracker.Tests.Services
                 .Setup(mock => mock.Add(It.IsAny<Workout>(), true))
                 .Returns(workout);
 
-            var sut = new WorkoutService(repoMock.Object);
+            var sut = new WorkoutService(repoMock.Object, _logger.Object);
 
             //ACT
             var result = sut.Add(workout, true);
@@ -143,7 +156,7 @@ namespace WorkoutTracker.Tests.Services
             repoMock
                 .Setup(mock => mock.SetValues(existingWorkout, modifiedWorkout));
 
-            var sut = new WorkoutService(repoMock.Object);
+            var sut = new WorkoutService(repoMock.Object, _logger.Object);
 
             //ACT
             var result = sut.Update(modifiedWorkout, true);

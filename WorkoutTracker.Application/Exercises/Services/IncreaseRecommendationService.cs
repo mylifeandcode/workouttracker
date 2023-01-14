@@ -4,6 +4,8 @@ using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
@@ -14,10 +16,12 @@ namespace WorkoutTracker.Application.Exercises.Services
     public class IncreaseRecommendationService : IIncreaseRecommendationService
     {
         private IResistanceService _resistanceService;
+        private readonly ILogger<IncreaseRecommendationService> _logger;
 
-        public IncreaseRecommendationService(IResistanceService resistanceService)
+        public IncreaseRecommendationService(IResistanceService resistanceService, ILogger<IncreaseRecommendationService> logger)
         {
             _resistanceService = resistanceService ?? throw new ArgumentNullException(nameof(resistanceService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #region Public Methods

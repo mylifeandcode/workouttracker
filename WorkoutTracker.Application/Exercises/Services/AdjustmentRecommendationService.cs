@@ -18,7 +18,7 @@ namespace WorkoutTracker.Application.Exercises.Services
     public class AdjustmentRecommendationService : RecommendationService, IAdjustmentRecommendationService
     {
         private IResistanceService _resistanceService;
-        private ILogger<AdjustmentRecommendationService> _logger;
+        private readonly ILogger<AdjustmentRecommendationService> _logger;
 
         public AdjustmentRecommendationService(IResistanceService resistanceService, ILogger<AdjustmentRecommendationService> logger)
         {

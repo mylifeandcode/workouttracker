@@ -7,6 +7,9 @@ using Shouldly;
 using WorkoutTracker.Domain.Resistances;
 using WorkoutTracker.Application.Resistances;
 using WorkoutTracker.Application.Resistances.Services;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace WorkoutTracker.Tests.Services
 {
@@ -14,6 +17,7 @@ namespace WorkoutTracker.Tests.Services
     public class ResistanceBandServiceTests
     {
         private Mock<IRepository<ResistanceBand>> _repo;
+        private Mock<ILogger<ResistanceBandService>> _logger;
         private List<ResistanceBand> _bands;
         private ResistanceBandService _sut;
 
@@ -21,7 +25,15 @@ namespace WorkoutTracker.Tests.Services
         public void Init()
         {
             SetupRepoMock();
-            _sut = new ResistanceBandService(_repo.Object);
+            _logger = new Mock<ILogger<ResistanceBandService>>(MockBehavior.Strict);
+            _logger.Setup(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+
+            _sut = new ResistanceBandService(_repo.Object, _logger.Object);
         }
 
         [TestMethod]

@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
@@ -21,6 +21,20 @@ namespace WorkoutTracker.Tests.Services
     [TestClass]
     public class ExecutedWorkoutServiceTests
     {
+        private Mock<ILogger<ExecutedWorkoutService>> _logger;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            _logger = new Mock<ILogger<ExecutedWorkoutService>>(MockBehavior.Strict);
+            _logger.Setup(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+        }
+
         [TestMethod]
         public void Should_Create_ExecutedWorkout_From_ExercisePlan()
         {
@@ -111,7 +125,8 @@ namespace WorkoutTracker.Tests.Services
                     executedWorkoutRepo.Object,
                     workoutRepo.Object,
                     recommendationService.Object,
-                    userService.Object);
+                    userService.Object, 
+                    _logger.Object);
 
             //ACT
             var result = sut.Create(workoutPlan, true);
@@ -187,7 +202,8 @@ namespace WorkoutTracker.Tests.Services
                     executedWorkoutRepo.Object,
                     workoutRepo.Object,
                     recommendationService.Object,
-                    userService.Object);
+                    userService.Object, 
+                    _logger.Object);
 
             //ACT
             var result = sut.Update(modifiedExecutedWorkout);
