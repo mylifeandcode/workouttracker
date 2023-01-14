@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
-import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
+import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { ExecutedWorkout } from '../models/executed-workout';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedExercise } from '../models/executed-exercise';

@@ -8,7 +8,7 @@ import { forEach } from 'lodash-es';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
-import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
+import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { finalize } from 'rxjs/operators';
 import { IWorkoutPlanForm } from '../interfaces/i-workout-plan-form';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';

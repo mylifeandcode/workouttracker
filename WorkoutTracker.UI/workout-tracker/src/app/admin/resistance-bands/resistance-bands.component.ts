@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { ResistanceBand } from 'app/shared/models/resistance-band';
-import { ResistanceBandService } from './resistance-band.service';
+import { ResistanceBandService } from '../../shared/resistance-band.service';
 
 @Component({
   selector: 'wt-resistance-bands',

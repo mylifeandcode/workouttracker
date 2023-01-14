@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
+import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';

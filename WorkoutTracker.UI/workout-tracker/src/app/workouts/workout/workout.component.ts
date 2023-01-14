@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Validators, FormGroup, FormArray, FormControl, FormBuilder } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
-import { ResistanceBandService } from 'app/admin/resistance-bands/resistance-band.service';
+import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ExecutedWorkoutService } from '../executed-workout.service';

@@ -8,6 +8,7 @@ using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Shared.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Users.Services
 {
@@ -17,19 +18,23 @@ namespace WorkoutTracker.Application.Users.Services
         private IEmailService _emailService;
         private string _frontEndResetPasswordUrl;
         private bool _disposedValue;
+        private ILogger<UserService> _logger;
 
         public UserService(
             IRepository<User> repo, 
             ICryptoService cryptoService, 
             IEmailService emailService, 
+            ILogger<UserService> logger,
             string frontEndResetPasswordUrl) : base(repo) 
         {
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             if(!string.IsNullOrWhiteSpace(frontEndResetPasswordUrl))
                 _frontEndResetPasswordUrl = frontEndResetPasswordUrl;
             else
                 throw new ArgumentNullException(nameof(frontEndResetPasswordUrl));
+            _logger.LogInformation("UserService constructed");
         }
 
         public User Add(User user)

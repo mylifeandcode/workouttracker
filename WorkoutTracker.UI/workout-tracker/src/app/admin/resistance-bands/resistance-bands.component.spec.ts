@@ -7,7 +7,7 @@ import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialo
 import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
-import { ResistanceBandService } from './resistance-band.service';
+import { ResistanceBandService } from '../../shared/resistance-band.service';
 
 import { ResistanceBandsComponent } from './resistance-bands.component';
 

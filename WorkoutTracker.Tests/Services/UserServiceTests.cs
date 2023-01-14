@@ -9,6 +9,8 @@ using WorkoutTracker.Application.Users.Services;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Shared.Interfaces;
 using System;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Tests.Services
 {
@@ -21,6 +23,7 @@ namespace WorkoutTracker.Tests.Services
         private const string FRONT_END_PASSWORD_RESET_URL = "https://workouttracker.com/reset-password";
         private List<User> _users;
         private UserService _sut;
+        private Mock<ILogger<UserService>> _loggerMock;
 
         public UserServiceTests()
         {
@@ -50,7 +53,10 @@ namespace WorkoutTracker.Tests.Services
             _emailServiceMock.Setup(x => x.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
             _emailServiceMock.SetupGet(x => x.IsEnabled).Returns(true);
 
-            _sut = new UserService(_userRepositoryMock.Object, _cryptoServiceMock.Object, _emailServiceMock.Object, FRONT_END_PASSWORD_RESET_URL);
+            _loggerMock = new Mock<ILogger<UserService>>(MockBehavior.Strict);
+            _loggerMock.Setup(x => x.LogInformation(It.IsAny<string>()));
+
+            _sut = new UserService(_userRepositoryMock.Object, _cryptoServiceMock.Object, _emailServiceMock.Object, _loggerMock.Object, FRONT_END_PASSWORD_RESET_URL);
         }
 
         [TestMethod]
