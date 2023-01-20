@@ -44,6 +44,9 @@ namespace WorkoutTracker.Application.Exercises.Services
 
             ExerciseAmountRecommendation recommendation;
 
+            //TODO: Refine - https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.loggerextensions.loginformation?view=dotnet-plat-ext-7.0
+            _logger.LogInformation("Getting adjustment recommendation for {Exercise}", executedExerciseAverages.Exercise.Name);
+
             //We already know they need improvement, but find out exactly why so we can report that
             //to the user with the recommendation.
             Performance formPerformance = GetRatingPerformance(executedExerciseAverages.AverageFormRating);
@@ -61,6 +64,8 @@ namespace WorkoutTracker.Application.Exercises.Services
                     rangeOfMotionPerformance, 
                     repPerformance, 
                     userSettings);
+
+            _logger.LogInformation("Returning adjustment recommendation: Resistance = {ResistanceAmount}, Reps = {Reps}, Reason = {Reason}", recommendation.ResistanceAmount, recommendation.Reps, recommendation.Reason);
 
             return recommendation;
         }

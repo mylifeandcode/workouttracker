@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Workouts.Models;
@@ -14,11 +13,16 @@ namespace WorkoutTracker.Application.Workouts.Services
     {
         private IExecutedWorkoutService _executedWorkoutService;
         private ITargetAreaService _targetAreaService;
+        private ILogger<AnalyticsService> _logger;
 
-        public AnalyticsService(IExecutedWorkoutService executedWorkoutService, ITargetAreaService targetAreaService)
+        public AnalyticsService(
+            IExecutedWorkoutService executedWorkoutService, 
+            ITargetAreaService targetAreaService,
+            ILogger<AnalyticsService> logger)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _targetAreaService = targetAreaService ?? throw new ArgumentNullException(nameof(targetAreaService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public List<ExecutedWorkoutMetrics> GetExecutedWorkoutMetrics(int workoutId, int count = 5)
@@ -74,7 +78,7 @@ namespace WorkoutTracker.Application.Workouts.Services
             less-than-ideal approach below.
             */
 
-            //TODO: Find a better way to do this.
+            //TODO: Convert back to SQL. This is one of those cases where it's better to make a SQL call than use an O/RM.
 
             var executedWorkoutIdsWithTargetAreas =
                 _executedWorkoutService

@@ -15,6 +15,7 @@ using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Workouts.Services;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Tests.Services
 {
@@ -40,6 +41,8 @@ namespace WorkoutTracker.Tests.Services
 
         private Mock<IExerciseAmountRecommendationService> _recommendationServiceMock = 
             new Mock<IExerciseAmountRecommendationService>(MockBehavior.Strict);
+
+        private Mock<ILogger<WorkoutPlanService>> _loggerMock = new Mock<ILogger<WorkoutPlanService>>(MockBehavior.Strict);
 
         private WorkoutPlanService _sut;
 
@@ -117,11 +120,19 @@ namespace WorkoutTracker.Tests.Services
                 .Setup(x => x.GetById(It.IsAny<int>()))
                 .Returns(user);
 
+            _loggerMock.Setup(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+
             _sut = new WorkoutPlanService(
                 _workoutServiceMock.Object, 
                 _executedWorkoutServiceMock.Object, 
                 _userServiceMock.Object,
-                _recommendationServiceMock.Object);
+                _recommendationServiceMock.Object, 
+                _loggerMock.Object);
         }
 
         [TestMethod]
