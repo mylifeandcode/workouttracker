@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -17,12 +18,21 @@ namespace WorkoutTracker.Tests.Services
     {
         private ResistanceService _sut;
         private Mock<IResistanceBandService> _resistanceBandServiceMock;
+        private Mock<ILogger<ResistanceService>> _loggerMock;
 
         [TestInitialize]
         public void Init()
         {
             _resistanceBandServiceMock = new Mock<IResistanceBandService>(MockBehavior.Strict);
-            _sut = new ResistanceService(_resistanceBandServiceMock.Object);
+            _loggerMock = new Mock<ILogger<ResistanceService>>(MockBehavior.Strict);
+            _loggerMock.Setup(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+
+            _sut = new ResistanceService(_resistanceBandServiceMock.Object, _loggerMock.Object);
         }
 
         [TestMethod]

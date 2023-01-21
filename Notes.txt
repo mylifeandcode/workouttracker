@@ -1,0 +1,5 @@
+When hosting under IIS: 
+- App Pool should be setup using No Managed Code and Classic pipeline.
+- App Pool Identity should be ApplicationPoolIdentity.
+- Helpful links.
+-- https://learn.microsoft.com/en-us/iis/manage/configuring-security/application-pool-identities-and-sql-server-express

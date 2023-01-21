@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,20 @@ namespace WorkoutTracker.Tests.Services
     [TestClass]
     public class TargetAreaServiceTests
     {
+        private Mock<ILogger<TargetAreaService>> _loggerMock;
+
+        [TestInitialize] 
+        public void Setup() 
+        {
+            _loggerMock = new Mock<ILogger<TargetAreaService>>(MockBehavior.Strict);
+            _loggerMock.Setup(x => x.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => true),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
+        }
+
         [TestMethod]
         public void Should_Get_TargetArea_By_ID()
         {
@@ -22,7 +37,7 @@ namespace WorkoutTracker.Tests.Services
             int targetAreaId = 5;
             var repo = new Mock<IRepository<TargetArea>>(MockBehavior.Strict);
             repo.Setup(x => x.Get(targetAreaId)).Returns(targetArea);
-            var sut = new TargetAreaService(repo.Object);
+            var sut = new TargetAreaService(repo.Object, _loggerMock.Object);
 
             //ACT
             var result = sut.Get(targetAreaId);
@@ -45,7 +60,7 @@ namespace WorkoutTracker.Tests.Services
                 }.AsQueryable();            
             var repo = new Mock<IRepository<TargetArea>>(MockBehavior.Strict);
             repo.Setup(x => x.Get()).Returns(allTargetAreas);
-            var sut = new TargetAreaService(repo.Object);
+            var sut = new TargetAreaService(repo.Object, _loggerMock.Object);
 
             //ACT
             var results = sut.GetAll();
@@ -70,7 +85,7 @@ namespace WorkoutTracker.Tests.Services
                 }.AsQueryable();
             var repo = new Mock<IRepository<TargetArea>>(MockBehavior.Strict);
             repo.Setup(x => x.Get()).Returns(allTargetAreas);
-            var sut = new TargetAreaService(repo.Object);
+            var sut = new TargetAreaService(repo.Object, _loggerMock.Object);
             var idsToGet = new int[] { 2, 3, 5 };
 
             //ACT
