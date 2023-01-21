@@ -25,7 +25,6 @@ namespace WorkoutTracker.Application.Exercises.Services
         private IResistanceBandService _resistanceBandService;
         private IIncreaseRecommendationService _increaseRecommendationService;
         private IAdjustmentRecommendationService _adjustmentRecommendationService;
-        private ILogger<ExerciseAmountRecommendationService> _logger;
 
         private static TimeSpan RECENTLY_PERFORMED_EXERCISE_THRESHOLD = new TimeSpan(14, 0, 0, 0);
 
@@ -39,12 +38,11 @@ namespace WorkoutTracker.Application.Exercises.Services
             IResistanceBandService resistanceBandService,
             IIncreaseRecommendationService increaseRecommendationService,
             IAdjustmentRecommendationService adjustmentRecommendationService, 
-            ILogger<ExerciseAmountRecommendationService> logger)
+            ILogger<ExerciseAmountRecommendationService> logger) : base(logger)
         {
             _resistanceBandService = resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
             _increaseRecommendationService = increaseRecommendationService ?? throw new ArgumentNullException(nameof(increaseRecommendationService));
             _adjustmentRecommendationService = adjustmentRecommendationService ?? throw new ArgumentNullException(nameof(adjustmentRecommendationService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #region Public Methods

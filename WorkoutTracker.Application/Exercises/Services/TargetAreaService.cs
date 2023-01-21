@@ -4,16 +4,19 @@ using System.Linq;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Repository;
 using WorkoutTracker.Application.Exercises.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
     public class TargetAreaService : ITargetAreaService
     {
         protected readonly IRepository<TargetArea> _repo;
+        protected readonly ILogger<TargetAreaService> _logger;
 
-        public TargetAreaService(IRepository<TargetArea> repo)
+        public TargetAreaService(IRepository<TargetArea> repo, ILogger<TargetAreaService> logger)
         {
-            _repo = repo;
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public TargetArea Get(int id)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Linq;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Resistances.Interfaces;
@@ -13,14 +14,18 @@ public class ResistanceService : IResistanceService
     private const byte FREEWEIGHT_INCREMENT = 5;
     private const byte MACHINEWEIGHT_INCREMENT = 10;
     
+    private ILogger<ResistanceService> _logger;
+
     //Bodylastics resistances:
     //Standard:     3, 5, 8, 13, 19, 23, 30, 40
     //Doubled-over  6, 10, 16, 26, 38, 46, 60, 80
     
-    public ResistanceService(IResistanceBandService resistanceBandService)
+    public ResistanceService(IResistanceBandService resistanceBandService, ILogger<ResistanceService> logger)
     {
         _resistanceBandService =
             resistanceBandService ?? throw new ArgumentNullException(nameof(resistanceBandService));
+
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public decimal GetNewResistanceAmount(ResistanceType resistanceType, decimal previousResistance, sbyte multiplier, bool isDoubledBands, out string makeup)

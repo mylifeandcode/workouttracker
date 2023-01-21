@@ -1,10 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkoutTracker.Domain.Users;
 
 namespace WorkoutTracker.Application.Exercises.Services
 {
@@ -26,18 +21,12 @@ namespace WorkoutTracker.Application.Exercises.Services
         protected const double REP_DIFFERENCE_CONSIDERED_AWFUL = 4;
         #endregion Constants
 
-        /*
-        protected static bool HadAdequateRating(byte rating)
-        {
-            return rating >= LOWEST_ACCEPTABLE_RATING;
-        }
+        protected ILogger<RecommendationService> _logger;
 
-        protected static bool HadAdequateRating(byte rating, UserSettings userSettings)
+        public RecommendationService(ILogger<RecommendationService> logger)
         {
-            if(userSettings == null) throw new ArgumentNullException(nameof(userSettings));
-            return rating >= userSettings.LowestAcceptableRating;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        */
 
         protected static bool HadAdequateRating(double rating, out Performance performance)
         {
@@ -56,25 +45,10 @@ namespace WorkoutTracker.Application.Exercises.Services
             return rating >= LOWEST_ACCEPTABLE_RATING;
         }
 
-        /*
-        protected static bool HadAdequateRating(double rating, UserSettings userSettings)
-        {
-            if (userSettings == null) throw new ArgumentNullException(nameof(userSettings));
-            return rating >= userSettings.LowestAcceptableRating;
-        }
-        */
-
         protected static bool HadAdequateRating(double rating, byte lowestAcceptableRating)
         {
             return rating >= lowestAcceptableRating;
         }
-
-        /*
-        protected static bool HadAwfulRating(double rating)
-        {
-            return rating <= HIGHEST_AWFUL_RATING;
-        }
-        */
 
         protected static bool HadAdequateReps(
             double targetReps,

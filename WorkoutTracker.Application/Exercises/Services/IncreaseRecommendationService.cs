@@ -16,7 +16,7 @@ namespace WorkoutTracker.Application.Exercises.Services
     public class IncreaseRecommendationService : IIncreaseRecommendationService
     {
         private IResistanceService _resistanceService;
-        private readonly ILogger<IncreaseRecommendationService> _logger;
+        private ILogger<IncreaseRecommendationService> _logger;
 
         public IncreaseRecommendationService(IResistanceService resistanceService, ILogger<IncreaseRecommendationService> logger)
         {
