@@ -6,6 +6,7 @@ using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.Application.Workouts.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Workouts.Services
 {
@@ -15,18 +16,20 @@ namespace WorkoutTracker.Application.Workouts.Services
         private IExecutedWorkoutService _executedWorkoutService;
         private IUserService _userService;
         private IExerciseAmountRecommendationService _recommendationService;
-
+        private ILogger<WorkoutPlanService> _logger;
 
         public WorkoutPlanService(
             IWorkoutService workoutService,
             IExecutedWorkoutService executedWorkoutService,
             IUserService userService,
-            IExerciseAmountRecommendationService recommendationService)
+            IExerciseAmountRecommendationService recommendationService, 
+            ILogger<WorkoutPlanService> logger)
         {
             _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _recommendationService = recommendationService ?? throw new ArgumentNullException(nameof(recommendationService));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public WorkoutPlan Create(int workoutId, int userId)

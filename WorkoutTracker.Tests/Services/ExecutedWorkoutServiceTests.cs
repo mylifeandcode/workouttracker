@@ -117,15 +117,10 @@ namespace WorkoutTracker.Tests.Services
                 .Setup(x => x.Add(It.IsAny<ExecutedWorkout>(), true))
                 .Returns((ExecutedWorkout executedWorkout, bool saveChanges) => executedWorkout);
 
-            var recommendationService = new Mock<IExerciseAmountRecommendationService>(MockBehavior.Strict);
-            var userService = new Mock<IUserService>(MockBehavior.Strict);
-            
             var sut =
                 new ExecutedWorkoutService(
                     executedWorkoutRepo.Object,
                     workoutRepo.Object,
-                    recommendationService.Object,
-                    userService.Object, 
                     _logger.Object);
 
             //ACT
@@ -201,8 +196,6 @@ namespace WorkoutTracker.Tests.Services
                 new ExecutedWorkoutService(
                     executedWorkoutRepo.Object,
                     workoutRepo.Object,
-                    recommendationService.Object,
-                    userService.Object, 
                     _logger.Object);
 
             //ACT

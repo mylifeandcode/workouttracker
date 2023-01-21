@@ -16,19 +16,13 @@ namespace WorkoutTracker.Application.Workouts.Services
     public class ExecutedWorkoutService : ServiceBase<ExecutedWorkout>, IExecutedWorkoutService
     {
         private IRepository<Workout> _workoutRepo;
-        private IExerciseAmountRecommendationService _exerciseRecommendationService;
-        private IUserService _userService;
 
         public ExecutedWorkoutService(
             IRepository<ExecutedWorkout> executedWorkoutRepo,
             IRepository<Workout> workoutRepo,
-            IExerciseAmountRecommendationService exerciseAmountRecommendationService,
-            IUserService userService, 
             ILogger<ExecutedWorkoutService> logger) : base(executedWorkoutRepo, logger)
         {
             _workoutRepo = workoutRepo ?? throw new ArgumentNullException(nameof(workoutRepo));
-            _exerciseRecommendationService = exerciseAmountRecommendationService ?? throw new ArgumentNullException(nameof(exerciseAmountRecommendationService));
-            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         public ExecutedWorkout Create(WorkoutPlan plan, bool startWorkout)
