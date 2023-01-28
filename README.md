@@ -26,3 +26,5 @@ A website for creating and tracking workouts. I wrote this to replicate and expa
 ![Analytics Dashboard](PreviewImages/analytics.png)<br /><br />
 
 ![Workout Progress](PreviewImages/workout-progress.png)<br /><br />
+
+![User Settings](PreviewImages/user-settings.png)<br /><br />
