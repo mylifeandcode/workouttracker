@@ -22,3 +22,7 @@ A website for creating and tracking workouts. I wrote this to replicate and expa
 ![Exercise Edit](PreviewImages/exercise-edit.png)<br /><br />
 
 ![Resistance Band Management](PreviewImages/resistance-band-inventory.png)<br /><br />
+
+![Analytics Dashboard](PreviewImages/analytics.png)<br /><br />
+
+![Workout Progress](PreviewImages/workout-progress.png)<br /><br />

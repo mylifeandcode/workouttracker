@@ -22,7 +22,7 @@ class MockResistanceBandService {
 
 }
 
-fdescribe('ResistanceBandAmountPipe', () => {
+describe('ResistanceBandAmountPipe', () => {
 
   let pipe: ResistanceBandAmountPipe;
 

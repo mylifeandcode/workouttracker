@@ -30,7 +30,7 @@
     <div *ngIf="executedWorkout.startDateTime != null" class="row headroom">
       <div class="col-12">
         <strong>Notes/Journal</strong><br />
-        {{executedWorkout.journal}}
+        {{executedWorkout.journal ? executedWorkout.journal : 'None'}}
       </div>
     </div>
 

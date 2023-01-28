@@ -46,7 +46,10 @@
         <!--TODO: Create a pipe for this-->
       <span *ngIf="exercise.exercise.resistanceType < 2"><strong>{{exercise.resistanceAmount}}</strong></span>
       <span *ngIf="exercise.exercise.resistanceType == 3"><strong>Body Weight</strong></span>
-      <span *ngIf="exercise.exercise.resistanceType == 2 && exercise.resistanceMakeup != null" [innerHTML]="exercise.resistanceMakeup | resistanceBandColor"></span>
+      <span *ngIf="exercise.exercise.resistanceType == 2 && exercise.resistanceMakeup != null">
+        <span [innerHTML]="exercise.resistanceMakeup | resistanceBandColor"></span>
+        <span> ({{exercise.resistanceMakeup | resistanceBandAmount}})</span>
+      </span>
       <span *ngIf="exercise.exercise.resistanceType == 4"><strong>Other - {{exercise.resistanceAmount}}</strong></span>
     </div>
 

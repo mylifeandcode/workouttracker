@@ -1,7 +1,5 @@
 <div [formGroup]="formGroup" class="row">
     <div class="col-md-12">
-        <!--TODO: Re-evaluate this approach. A FormGroup is used as an @Input on this component to allow for a structured, easy way to pass in the info...but the end result may be overkill.-->
-        <!--<textarea formControlName="exerciseName" [readonly]="true" class="form-control-plaintext exerciseName" required></textarea>-->
         <strong>{{formGroup.controls.exerciseName.value}}</strong>
     </div>
 </div>
@@ -57,8 +55,11 @@
                         <input *ngIf="formGroup.controls.resistanceType.value < 2 || formGroup.controls.resistanceType.value==4" type="number" class="form-control resistance-amount" formControlName="resistance" required />
                         <span *ngIf="formGroup?.controls?.resistanceType?.value==3"><strong>Body Weight</strong></span>
                         <span *ngIf="formGroup?.controls?.resistanceType?.value==2">
-                            <button class="btn btn-sm btn-primary mild-margins" (click)="selectResistanceBands(setsArray!.controls[i])">Set</button>                            
-                            <span *ngIf="exerciseSet.controls.resistanceMakeup.value" [innerHTML]="exerciseSet.controls.resistanceMakeup.value | resistanceBandColor"> (Max {{exerciseSet.controls.resistance.value}})</span>
+                            <button class="btn btn-sm btn-primary mild-margins" (click)="selectResistanceBands(setsArray!.controls[i])">Edit</button>                            
+                            <span *ngIf="exerciseSet.controls.resistanceMakeup.value">
+                              <span [innerHTML]="exerciseSet.controls.resistanceMakeup.value | resistanceBandColor"></span>
+                              <span> ({{exerciseSet.controls.resistanceMakeup.value | resistanceBandAmount}})</span>
+                            </span> 
                             <span *ngIf="!exerciseSet.controls.resistanceMakeup.value">Not set</span>
                         </span>
                     </div>
@@ -69,7 +70,6 @@
                         <button class="btn btn-sm btn-primary duration-button" *ngIf="formGroup.controls.setType.value==1" (click)="editDuration(exerciseSet.controls.duration)">
                           {{exerciseSet.controls.duration.value | duration:true}}
                         </button>
-                        <!--<input *ngIf="formGroup?.controls?.setType?.value==1" type="text" class="form-control" formControlName="duration" required />-->
                     </div>
                     
                     <!--Target Reps-->
