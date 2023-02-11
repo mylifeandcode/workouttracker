@@ -48,7 +48,7 @@
       <span *ngIf="exercise.exercise.resistanceType == 3"><strong>Body Weight</strong></span>
       <span *ngIf="exercise.exercise.resistanceType == 2 && exercise.resistanceMakeup != null">
         <span [innerHTML]="exercise.resistanceMakeup | resistanceBandColor"></span>
-        <span> ({{exercise.resistanceMakeup | resistanceBandAmount}})</span>
+        <span> ({{exercise.resistanceAmount}} Max)</span>
       </span>
       <span *ngIf="exercise.exercise.resistanceType == 4"><strong>Other - {{exercise.resistanceAmount}}</strong></span>
     </div>
