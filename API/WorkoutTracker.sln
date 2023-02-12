@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{0DC2AB55-A448-442E-A210-3822D82F550C}"
+	ProjectSection(SolutionItems) = preProject
+		Notes.txt = Notes.txt
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.API", "WorkoutTracker.API\WorkoutTracker.API.csproj", "{E61FF7FD-66C0-466A-A6B1-487F3FE2B122}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.Domain", "WorkoutTracker.Domain\WorkoutTracker.Domain.csproj", "{0811D4C8-D94C-4CD8-8095-C047DD6E795F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.Application", "WorkoutTracker.Application\WorkoutTracker.Application.csproj", "{107C7A4E-14C6-4897-B6A6-EC207CFAF7A9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.Repository", "WorkoutTracker.Repository\WorkoutTracker.Repository.csproj", "{BD5870C5-4D6B-4DEA-8F18-C7207B66006F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.Data", "WorkoutTracker.Data\WorkoutTracker.Data.csproj", "{BC739F85-C099-499A-8CBE-1609C347E777}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkoutTracker.Tests", "WorkoutTracker.Tests\WorkoutTracker.Tests.csproj", "{94E879AA-FDFC-4D6A-8AEF-716ED2EA2390}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E61FF7FD-66C0-466A-A6B1-487F3FE2B122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E61FF7FD-66C0-466A-A6B1-487F3FE2B122}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E61FF7FD-66C0-466A-A6B1-487F3FE2B122}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E61FF7FD-66C0-466A-A6B1-487F3FE2B122}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0811D4C8-D94C-4CD8-8095-C047DD6E795F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0811D4C8-D94C-4CD8-8095-C047DD6E795F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0811D4C8-D94C-4CD8-8095-C047DD6E795F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0811D4C8-D94C-4CD8-8095-C047DD6E795F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{107C7A4E-14C6-4897-B6A6-EC207CFAF7A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{107C7A4E-14C6-4897-B6A6-EC207CFAF7A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{107C7A4E-14C6-4897-B6A6-EC207CFAF7A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{107C7A4E-14C6-4897-B6A6-EC207CFAF7A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD5870C5-4D6B-4DEA-8F18-C7207B66006F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD5870C5-4D6B-4DEA-8F18-C7207B66006F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD5870C5-4D6B-4DEA-8F18-C7207B66006F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD5870C5-4D6B-4DEA-8F18-C7207B66006F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC739F85-C099-499A-8CBE-1609C347E777}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC739F85-C099-499A-8CBE-1609C347E777}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC739F85-C099-499A-8CBE-1609C347E777}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC739F85-C099-499A-8CBE-1609C347E777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94E879AA-FDFC-4D6A-8AEF-716ED2EA2390}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94E879AA-FDFC-4D6A-8AEF-716ED2EA2390}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94E879AA-FDFC-4D6A-8AEF-716ED2EA2390}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94E879AA-FDFC-4D6A-8AEF-716ED2EA2390}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C55F84C5-F5F3-46E3-8B7A-2DC65437B47B}
+	EndGlobalSection
+EndGlobal

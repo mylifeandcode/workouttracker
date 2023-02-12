@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Exercises\**" />
+    <Compile Remove="Resistances\**" />
+    <Compile Remove="Security\**" />
+    <Compile Remove="Shared\**" />
+    <Compile Remove="Users\**" />
+    <Compile Remove="Workouts\**" />
+    <EmbeddedResource Remove="Exercises\**" />
+    <EmbeddedResource Remove="Resistances\**" />
+    <EmbeddedResource Remove="Security\**" />
+    <EmbeddedResource Remove="Shared\**" />
+    <EmbeddedResource Remove="Users\**" />
+    <EmbeddedResource Remove="Workouts\**" />
+    <None Remove="Exercises\**" />
+    <None Remove="Resistances\**" />
+    <None Remove="Security\**" />
+    <None Remove="Shared\**" />
+    <None Remove="Users\**" />
+    <None Remove="Workouts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WorkoutTracker.Domain\WorkoutTracker.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
