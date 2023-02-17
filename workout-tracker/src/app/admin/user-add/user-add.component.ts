@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { User } from 'app/core/models/user';
 import { UserNewDTO } from 'app/core/models/user-new-dto';
 import { UserService } from 'app/core/user.service';

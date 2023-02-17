@@ -11,8 +11,6 @@ import { ResistanceBandService } from '../../shared/resistance-band.service';
 
 import { ResistanceBandsComponent } from './resistance-bands.component';
 
-const TEST_USER_ID: number = 1;
-
 class ResistanceBandServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new Array<ResistanceBand>()));
   add = jasmine.createSpy('add').and.returnValue(of(new ResistanceBand()));
@@ -139,7 +137,6 @@ describe('ResistanceBandsComponent', () => {
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
     const messageService = TestBed.inject(MessageService);
-    const confirmationService = TestBed.inject(ConfirmationService);
     const band = new ResistanceBand();
     band.id = 5;
 
