@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-dto';
 
 //TODO: This is similar to WorkoutsListComponent. Find a way to consolidate/reuse code.
 
@@ -19,7 +19,7 @@ export class WorkoutHistoryComponent implements OnInit {
   public totalRecords: number = 0;
   public loading: boolean = true;
   public pageSize: number = 10;
-  public executedWorkouts: ExecutedWorkoutDTO[];
+  public executedWorkouts: ExecutedWorkoutSummaryDTO[];
   public showNotesModal: boolean = false;
   public notes: string = '';
   public cols: any = [
@@ -42,7 +42,7 @@ export class WorkoutHistoryComponent implements OnInit {
     this._executedWorkoutService.getFilteredSubset(first, this.pageSize)
       .pipe(finalize(() => { this.loading = false; }))
       .subscribe(
-          (results: PaginatedResults<ExecutedWorkoutDTO>) => {
+          (results: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
               this.executedWorkouts = results.results;
               console.log('executedWorkouts: ', this.executedWorkouts);
               this.totalRecords = results.totalCount;

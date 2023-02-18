@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-dto';
 
 //TODO: This component shares similarities with WorkoutListComponent. Consolidate code.
 
@@ -13,7 +13,7 @@ import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 })
 export class WorkoutSelectPlannedComponent implements OnInit {
 
-  public plannedWorkouts: ExecutedWorkoutDTO[];
+  public plannedWorkouts: ExecutedWorkoutSummaryDTO[];
   public totalCount: number = 0;
   public loading: boolean = true;
   public pageSize: number = 10;
@@ -35,7 +35,7 @@ export class WorkoutSelectPlannedComponent implements OnInit {
     this._executedWorkoutService
       .getPlanned(first, this.pageSize)
       .pipe(finalize(() => { this.loading = false; }))      
-      .subscribe((plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutDTO>) => {
+      .subscribe((plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
         this.plannedWorkouts = plannedWorkoutInfo.results;
         this.totalCount = plannedWorkoutInfo.totalCount;
       });

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { ExecutedExercise } from './models/executed-exercise';
 import { ExecutedWorkout } from './models/executed-workout';
-import { ExecutedWorkoutDTO } from './models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from './models/executed-workout-dto';
 import { groupBy } from 'lodash-es';
 import { Dictionary } from 'lodash';
 
@@ -27,10 +27,10 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
    * @param pageSize The number of records to return. Could be less if on the final page.
    * @returns An Observable<PaginatedResults<ExecutedWorkoutDTO>> containing information about ExecutedWorkouts
    */
-  public getFilteredSubset(startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutDTO>> {
+  public getFilteredSubset(startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> {
     //TODO: Add parameters for filtering
-    const result: Observable<PaginatedResults<ExecutedWorkoutDTO>> =
-      this._http.get<PaginatedResults<ExecutedWorkoutDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}`)
+    const result: Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> =
+      this._http.get<PaginatedResults<ExecutedWorkoutSummaryDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}`)
         .pipe(
           tap(() => { console.log("Got executed workouts"); }), 
           shareReplay(1) //I need to read this for a better understanding: https://dev.to/this-is-angular/how-caching-data-in-angular-with-rxjs-27mj
@@ -46,18 +46,18 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
    * @param pageSize The number of records to return. Could be less if on the final page.
    * @returns An Observable<PaginatedResults<ExecutedWorkoutDTO>> containing information about planned ExecutedWorkouts
    */
-  public getPlanned(startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutDTO>> {
-    return this._http.get<PaginatedResults<ExecutedWorkoutDTO>>(`${this._apiRoot}/planned?firstRecord=${startingIndex}&pageSize=${pageSize}`);
+  public getPlanned(startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> {
+    return this._http.get<PaginatedResults<ExecutedWorkoutSummaryDTO>>(`${this._apiRoot}/planned?firstRecord=${startingIndex}&pageSize=${pageSize}`);
   }
 
   /**
    * Gets recently executed workouts
    * @returns an array of recently executed workouts
    */
-  public getRecent(): Observable<ExecutedWorkoutDTO[]> {
+  public getRecent(): Observable<ExecutedWorkoutSummaryDTO[]> {
     //TODO: Add parameter so we're not locked into getting 5 -- maybe users could increase this?
     return this.getFilteredSubset(0, 5)
-      .pipe(map((response: PaginatedResults<ExecutedWorkoutDTO>) => response.results));
+      .pipe(map((response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => response.results));
   }
 
   public groupExecutedExercises(exercises: ExecutedExercise[]): Dictionary<ExecutedExercise[]> {

@@ -4,7 +4,7 @@ import { ConfigService } from 'app/core/config.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 
 import { ExecutedWorkoutService } from './executed-workout.service';
-import { ExecutedWorkoutDTO } from './models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from './models/executed-workout-dto';
 
 const API_ROOT_URL: string = "http://localhost:5600/api/";
 
@@ -39,14 +39,14 @@ describe('ExecutedWorkoutService', () => {
 
   it('should get filtered subset', (done: DoneFn) => {
     //ARRANGE
-    const expectedResults = new PaginatedResults<ExecutedWorkoutDTO>();
-    expectedResults.results = new Array<ExecutedWorkoutDTO>(1);
-    expectedResults.results.push(new ExecutedWorkoutDTO());
+    const expectedResults = new PaginatedResults<ExecutedWorkoutSummaryDTO>();
+    expectedResults.results = new Array<ExecutedWorkoutSummaryDTO>(1);
+    expectedResults.results.push(new ExecutedWorkoutSummaryDTO());
     expectedResults.totalCount = 1;
 
     //ACT
     service.getFilteredSubset(10, 50)
-      .subscribe((response: PaginatedResults<ExecutedWorkoutDTO>) => {
+      .subscribe((response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
         //ASSERT
         expect(response).toEqual(expectedResults);
         done();
@@ -64,16 +64,16 @@ describe('ExecutedWorkoutService', () => {
 
   it('should get planned workouts', (done: DoneFn) => {
     //ARRANGE
-    const expectedResults = new PaginatedResults<ExecutedWorkoutDTO>();
-    expectedResults.results = new Array<ExecutedWorkoutDTO>(3);
-    expectedResults.results.push(new ExecutedWorkoutDTO());
-    expectedResults.results.push(new ExecutedWorkoutDTO());
-    expectedResults.results.push(new ExecutedWorkoutDTO());
+    const expectedResults = new PaginatedResults<ExecutedWorkoutSummaryDTO>();
+    expectedResults.results = new Array<ExecutedWorkoutSummaryDTO>(3);
+    expectedResults.results.push(new ExecutedWorkoutSummaryDTO());
+    expectedResults.results.push(new ExecutedWorkoutSummaryDTO());
+    expectedResults.results.push(new ExecutedWorkoutSummaryDTO());
     expectedResults.totalCount = 3;
 
     //ACT
     service.getPlanned(20, 10)
-      .subscribe((response: PaginatedResults<ExecutedWorkoutDTO>) => {
+      .subscribe((response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
         //ASSERT
         expect(response).toEqual(expectedResults);
         done();
@@ -91,14 +91,14 @@ describe('ExecutedWorkoutService', () => {
 
   it('should get recent executed workouts', (done: DoneFn) => {
     //ARRANGE
-    const expectedResults = new PaginatedResults<ExecutedWorkoutDTO>();
-    expectedResults.results = new Array<ExecutedWorkoutDTO>(1);
-    expectedResults.results.push(new ExecutedWorkoutDTO());
+    const expectedResults = new PaginatedResults<ExecutedWorkoutSummaryDTO>();
+    expectedResults.results = new Array<ExecutedWorkoutSummaryDTO>(1);
+    expectedResults.results.push(new ExecutedWorkoutSummaryDTO());
     expectedResults.totalCount = 1;
 
     //ACT
     service.getRecent().subscribe(
-      (recentWorkouts: ExecutedWorkoutDTO[]) => {
+      (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
         //ASSERT
         expect(recentWorkouts).toEqual(expectedResults.results);
         done();

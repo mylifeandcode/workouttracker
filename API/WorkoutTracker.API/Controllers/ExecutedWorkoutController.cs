@@ -44,7 +44,7 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<PaginatedResults<ExecutedWorkoutDTO>> Get(int firstRecord, short pageSize, DateTime? startDateTime = null, DateTime? endDateTime = null, bool newestFirst = true)
+        public ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>> Get(int firstRecord, short pageSize, DateTime? startDateTime = null, DateTime? endDateTime = null, bool newestFirst = true)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace WorkoutTracker.API.Controllers
 
                 var results = executedWorkouts.Select((executedWorkout) =>
                 {
-                    return new ExecutedWorkoutDTO(
+                    return new ExecutedWorkoutSummaryDTO(
                         executedWorkout.Id,
                         executedWorkout.Workout.Name,
                         executedWorkout.WorkoutId,
@@ -73,7 +73,7 @@ namespace WorkoutTracker.API.Controllers
                         executedWorkout.Journal);
                 });
 
-                var result = new PaginatedResults<ExecutedWorkoutDTO>(results, totalCount);
+                var result = new PaginatedResults<ExecutedWorkoutSummaryDTO>(results, totalCount);
 
                 return Ok(result);
             }
@@ -89,7 +89,7 @@ namespace WorkoutTracker.API.Controllers
 
 
         [HttpGet("planned")]
-        public ActionResult<PaginatedResults<ExecutedWorkoutDTO>> GetPlanned(int firstRecord, short pageSize, bool newestFirst = true)
+        public ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>> GetPlanned(int firstRecord, short pageSize, bool newestFirst = true)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace WorkoutTracker.API.Controllers
 
                 var results = executedWorkouts.Select((executedWorkout) =>
                 {
-                    return new ExecutedWorkoutDTO(
+                    return new ExecutedWorkoutSummaryDTO(
                         executedWorkout.Id,
                         executedWorkout.Workout.Name,
                         executedWorkout.WorkoutId,
@@ -118,7 +118,7 @@ namespace WorkoutTracker.API.Controllers
                         executedWorkout.Journal);
                 });
 
-                var result = new PaginatedResults<ExecutedWorkoutDTO>(results, totalCount);
+                var result = new PaginatedResults<ExecutedWorkoutSummaryDTO>(results, totalCount);
 
                 return Ok(result);
             }

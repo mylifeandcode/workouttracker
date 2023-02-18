@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-dto';
 import { Workout } from '../models/workout';
 import { WorkoutService } from '../workout.service';
 
@@ -12,7 +12,7 @@ import { WorkoutService } from '../workout.service';
 })
 export class RecentWorkoutsComponent implements OnInit {
 
-  public recentWorkouts: ExecutedWorkoutDTO[];
+  public recentWorkouts: ExecutedWorkoutSummaryDTO[];
   public showExercises: boolean = false;
   public selectedWorkout: Workout;
   public loading: boolean = true;
@@ -29,7 +29,7 @@ export class RecentWorkoutsComponent implements OnInit {
   public ngOnInit(): void {
     this._executedWorkoutService
       .getRecent()
-      .subscribe((workouts: ExecutedWorkoutDTO[]) => {
+      .subscribe((workouts: ExecutedWorkoutSummaryDTO[]) => {
         this.recentWorkouts = workouts;
         this.loading = false; //TODO: Use finalize and set this there instead.
       });

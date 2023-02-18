@@ -4,14 +4,14 @@ import { Router } from '@angular/router';
 import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-dto';
 import { Workout } from '../models/workout';
 import { WorkoutService } from '../workout.service';
 
 import { RecentWorkoutsComponent } from './recent-workouts.component';
 
 class ExecutedWorkoutServiceMock {
-  getRecent = jasmine.createSpy('getRecent ').and.returnValue(of(new Array<ExecutedWorkoutDTO>()));
+  getRecent = jasmine.createSpy('getRecent ').and.returnValue(of(new Array<ExecutedWorkoutSummaryDTO>()));
 }
 
 class WorkoutServiceMock {}

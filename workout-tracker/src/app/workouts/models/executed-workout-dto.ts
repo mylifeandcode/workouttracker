@@ -1,6 +1,6 @@
 import { NamedEntityDTO } from "./named-entity-dto";
 
-export class ExecutedWorkoutDTO extends NamedEntityDTO {
+export class ExecutedWorkoutSummaryDTO extends NamedEntityDTO {
   public workoutId: number;
   public startDateTime: Date;
   public endDateTime: Date;
