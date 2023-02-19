@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.API.Models;
 
-namespace WorkoutTracker.API.Adapters
+namespace WorkoutTracker.API.Mappers
 {
-    public class WorkoutDTOAdapter : IWorkoutDTOAdapter
+    public class WorkoutDTOMapper : IWorkoutDTOMapper
     {
-        public WorkoutDTO AdaptFromWorkout(Workout workout)
+        public WorkoutDTO MapFromWorkout(Workout workout)
         {
             if (workout == null) throw new ArgumentNullException(nameof(workout));
 

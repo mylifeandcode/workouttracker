@@ -82,6 +82,6 @@ namespace WorkoutTracker.Domain.Exercises
         /// <summary>
         /// The individual resistances which were used for this exercise.
         /// </summary>
-        public virtual ICollection<Resistance> Resistances { get; set; }
+        public virtual ICollection<Resistance> Resistances { get; set; } //TODO: Remove! Unused.
     }
 }

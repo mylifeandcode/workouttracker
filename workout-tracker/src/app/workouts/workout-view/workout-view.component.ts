@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedExercise } from '../models/executed-exercise';
-import { ExecutedWorkout } from '../models/executed-workout';
+import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
+import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { forEach } from 'lodash-es';
 
 @Component({
@@ -14,7 +14,7 @@ import { forEach } from 'lodash-es';
 export class WorkoutViewComponent implements OnInit {
 
   public loading: boolean;
-  public executedWorkout: ExecutedWorkout;
+  public executedWorkout: ExecutedWorkoutDTO;
   
   /*
   Before setting TypeScript compiler to strict, the below variable was of type Map<string, ExecutedExercise[]>.
@@ -22,7 +22,7 @@ export class WorkoutViewComponent implements OnInit {
   the _.groupBy() function as _.Dictionary. And this caused other problems, particularly with the unit test.
   */
   //public groupedExercises: _.Dictionary<ExecutedExercise[]>;
-  public groupedExercises: Map<string, ExecutedExercise[]>;
+  public groupedExercises: Map<string, ExecutedExerciseDTO[]>;
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -43,7 +43,7 @@ export class WorkoutViewComponent implements OnInit {
     this.loading = true;
     this._executedWorkoutService.getById(id)
       .pipe(finalize(() => { this.loading = false; }))
-      .subscribe((executedWorkout: ExecutedWorkout) => {
+      .subscribe((executedWorkout: ExecutedWorkoutDTO) => {
         
         this.executedWorkout = executedWorkout;
         
@@ -55,13 +55,13 @@ export class WorkoutViewComponent implements OnInit {
         console.log("EXERCISES: ", this.executedWorkout.exercises);
         const groups = this._executedWorkoutService.groupExecutedExercises(this.executedWorkout.exercises);
         
-        const groupsMap = new Map<string, ExecutedExercise[]>();
+        const groupsMap = new Map<string, ExecutedExerciseDTO[]>();
 
         let x: number = 0;
-        forEach(groups, (exerciseArray: ExecutedExercise[]) => {
+        forEach(groups, (exerciseArray: ExecutedExerciseDTO[]) => {
           groupsMap.set(
             x.toString(), exerciseArray);
-          console.log("Added ", exerciseArray[0].exercise.id.toString() + "-" + exerciseArray[0].setType.toString());
+          console.log("Added ", exerciseArray[0].exerciseId.toString() + "-" + exerciseArray[0].setType.toString());
           x++;
         });
 

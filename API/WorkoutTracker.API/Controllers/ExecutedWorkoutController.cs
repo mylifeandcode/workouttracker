@@ -8,6 +8,7 @@ using WorkoutTracker.Application.Workouts.Models;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.API.Models;
+using WorkoutTracker.API.Mappers;
 
 namespace WorkoutTracker.API.Controllers
 {
@@ -19,15 +20,19 @@ namespace WorkoutTracker.API.Controllers
     public class ExecutedWorkoutController : UserAwareController
     {
         private IExecutedWorkoutService _executedWorkoutService;
+        private IExecutedWorkoutDTOMapper _dtoMapper;
 
-        public ExecutedWorkoutController(IExecutedWorkoutService executedWorkoutService)
+        public ExecutedWorkoutController(
+            IExecutedWorkoutService executedWorkoutService, 
+            IExecutedWorkoutDTOMapper dtoMapper)
         {
-            _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException("executedWorkoutService");
+            _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
+            _dtoMapper = dtoMapper ?? throw new ArgumentNullException(nameof(dtoMapper));
         }
 
         // GET api/ExecutedWorkout/5
         [HttpGet("{id}")]
-        public ActionResult<ExecutedWorkout> Get(int id)
+        public ActionResult<ExecutedWorkoutDTO> Get(int id)
         {
             try
             {
@@ -35,7 +40,7 @@ namespace WorkoutTracker.API.Controllers
                 if (executedWorkout == null)
                     return NotFound();
                 else
-                    return executedWorkout;
+                    return _dtoMapper.MapFromExecutedWorkout(executedWorkout);
             }
             catch (Exception ex)
             {

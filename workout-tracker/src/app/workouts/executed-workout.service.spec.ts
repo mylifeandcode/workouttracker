@@ -4,7 +4,7 @@ import { ConfigService } from 'app/core/config.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 
 import { ExecutedWorkoutService } from './executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from './models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from './models/executed-workout-summary-dto';
 
 const API_ROOT_URL: string = "http://localhost:5600/api/";
 

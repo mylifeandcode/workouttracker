@@ -1,5 +1,5 @@
 <ng-container *ngIf="!loading">
-  <h3 class="headroom">{{workout.workout.name}}</h3>
+  <h3 class="headroom">{{workoutName}}</h3>
   <h4 *ngIf="isLoggingPastWorkout">PLEASE ENTER INFORMATION FOR THIS PREVIOUSLY COMPLETED WORKOUT BELOW</h4>
 </ng-container>
 <div class="container-fluid">
@@ -11,10 +11,10 @@
   <p-toast position="center"></p-toast>
   <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
     <fieldset [disabled]="saving || (workoutCompleted && !isLoggingPastWorkout)">
-      <ng-container *ngIf="workout != null">
+      <ng-container *ngIf="workoutLoaded">
         <p>
-          <span *ngIf="workoutStarted">Workout started {{workout.startDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
-          <span *ngIf="workoutCompleted">, completed {{workout.endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
+          <span *ngIf="workoutStarted">Workout started {{startDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
+          <span *ngIf="workoutCompleted">, completed {{endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
         </p>
         <wt-workout-exercise 
           *ngFor="let exercise of exercisesArray.controls; let i = index" 

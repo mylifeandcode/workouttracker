@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ExecutedExercise } from '../models/executed-exercise';
+import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 
 @Component({
   selector: 'wt-executed-exercises',
@@ -9,7 +9,7 @@ import { ExecutedExercise } from '../models/executed-exercise';
 export class ExecutedExercisesComponent implements OnInit {
 
   @Input()
-  executedExercises: ExecutedExercise[];
+  executedExercises: ExecutedExerciseDTO[];
 
   @Input()
   showResults: boolean;

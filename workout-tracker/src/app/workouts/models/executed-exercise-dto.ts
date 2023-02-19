@@ -1,9 +1,9 @@
-import { Entity } from "app/shared/models/entity";
-import { Exercise } from "./exercise";
+import { NamedEntity } from "app/shared/models/named-entity";
 
-export class ExecutedExercise extends Entity {
+export class ExecutedExerciseDTO extends NamedEntity {
+  public exerciseId: number;
+  public resistanceType: number;
   public sequence: number;
-  public exercise: Exercise;
   public targetRepCount: number;
   public actualRepCount: number;
   public notes: string;
@@ -13,4 +13,6 @@ export class ExecutedExercise extends Entity {
   public duration: number | null;
   public formRating: number;
   public rangeOfMotionRating: number;
+  public bandsEndToEnd: boolean | null;
+  public involvesReps: boolean;
 }

@@ -8,9 +8,9 @@ import { PaginatedResults } from '../../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ResistanceBandService } from 'app/shared/resistance-band.service';
-import { ExecutedWorkout } from '../models/executed-workout';
+import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedExercise } from '../models/executed-exercise';
+import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { Exercise } from '../models/exercise';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '@angular/core';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
@@ -45,13 +45,13 @@ function getResistanceBands(): ResistanceBandIndividual[] {
   return bands;
 }
 
-function getFakeExecutedWorkout(): ExecutedWorkout {
-  const executedWorkout = new ExecutedWorkout();
+function getFakeExecutedWorkout(): ExecutedWorkoutDTO {
+  const executedWorkout = new ExecutedWorkoutDTO();
   executedWorkout.workout = new Workout();
   executedWorkout.workout.name = "Fake Workout";
   executedWorkout.exercises = [];
   for(let x = 0; x < NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT; x++) {
-    const exercise = new ExecutedExercise();
+    const exercise = new ExecutedExerciseDTO();
     exercise.exercise = new Exercise(); //So...yeah. Mistakes were made with the naming. :/
     exercise.exercise.bandsEndToEnd = (x % 2 > 0);
     exercise.exercise.id = x + 1;
@@ -71,7 +71,7 @@ function getFakeExecutedWorkout(): ExecutedWorkout {
   In this case, there are 2 DISTINCT exercises in the workout (and 3 executed exercises).
   */
   const lastExercise = executedWorkout.exercises[executedWorkout.exercises.length - 1];
-  const oneMoreExercise = new ExecutedExercise();
+  const oneMoreExercise = new ExecutedExerciseDTO();
   oneMoreExercise.exercise = new Exercise();
   oneMoreExercise.exercise.bandsEndToEnd = lastExercise.exercise.bandsEndToEnd;
   oneMoreExercise.exercise.id = lastExercise.exercise.id;
@@ -113,19 +113,19 @@ class ResistanceBandServiceMock {
 
 class ExecutedWorkoutServiceMock {
   //getNew = jasmine.createSpy('getNew').and.returnValue(of(getFakeExecutedWorkout()));
-  add = jasmine.createSpy('add').and.callFake((workout: ExecutedWorkout) => of(workout));
+  add = jasmine.createSpy('add').and.callFake((workout: ExecutedWorkoutDTO) => of(workout));
   getById = jasmine.createSpy('getById ').and.returnValue(of(getFakeExecutedWorkout()));
 
-  public groupExecutedExercises(exercises: ExecutedExercise[]): Dictionary<ExecutedExercise[]> {
-    const sortedExercises: ExecutedExercise[] = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
+  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
+    const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
     
-    let groupedExercises = groupBy(exercises, (exercise: ExecutedExercise) => { 
+    let groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) => { 
       return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
     });
     return groupedExercises;
   }
 
-  update = jasmine.createSpy('update').and.callFake((workout: ExecutedWorkout) => { return of(workout);});
+  update = jasmine.createSpy('update').and.callFake((workout: ExecutedWorkoutDTO) => { return of(workout);});
 }
 
 class ActivatedRouteMock {
@@ -276,7 +276,7 @@ describe('WorkoutComponent', () => {
 
     //ASSERT
     //expect(executedWorkoutService.getNew).toHaveBeenCalledTimes(1);
-    expect(component.workout).toEqual(expectedExecutedWorkout);
+    expect(component._executedWorkout).toEqual(expectedExecutedWorkout);
     expect(component.workoutForm.controls.id.value).toBe(12);
 
     expect(component.exercisesArray.controls.length).toBe(NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT);
@@ -301,7 +301,7 @@ describe('WorkoutComponent', () => {
       expect(exerciseSets).toBeDefined();
       expect(exerciseSets.length).toBeGreaterThan(0);
 
-      const executedExercises = component.workout.exercises.filter((executedExercise: ExecutedExercise) => executedExercise.exercise.id == formGroup.controls.exerciseId.value);
+      const executedExercises = component._executedWorkout.exercises.filter((executedExercise: ExecutedExerciseDTO) => executedExercise.exercise.id == formGroup.controls.exerciseId.value);
 
       expect(executedExercises.length).toEqual(exerciseSets.length, "exerciseSets.length not as expected.");
 
@@ -407,8 +407,8 @@ describe('WorkoutComponent', () => {
     component.startWorkout();
 
     //ASSERT
-    expect(component.workout).toBeDefined();
-    expect(component.workout.startDateTime).not.toBeNull();
+    expect(component._executedWorkout).toBeDefined();
+    expect(component._executedWorkout.startDateTime).not.toBeNull();
     expect(component.workoutForm.controls.journal.enabled).toBeTrue();
     expect(component.workoutForm.controls.exercises.enabled).toBeTrue();
   });
@@ -422,9 +422,9 @@ describe('WorkoutComponent', () => {
 
     component.workoutForm.patchValue({journal: '38 degrees, sunny. ST: TOS - \"The Omega Glory\" and YouTube'});
 
-    const expectedExecutedWorkout = new ExecutedWorkout();
+    const expectedExecutedWorkout = new ExecutedWorkoutDTO();
     expectedExecutedWorkout.createdByUserId = MOCK_USER_ID;
-    expectedExecutedWorkout.startDateTime = component.workout.startDateTime;
+    expectedExecutedWorkout.startDateTime = component._executedWorkout.startDateTime;
     expectedExecutedWorkout.journal = component.workoutForm.controls.journal.value;
     expectedExecutedWorkout.exercises = [];
 
@@ -450,7 +450,7 @@ describe('WorkoutComponent', () => {
           sequence: x
         });
 
-        const executedExercise = new ExecutedExercise();
+        const executedExercise = new ExecutedExerciseDTO();
         executedExercise.actualRepCount = setGroup.controls.actualReps.value;
         executedExercise.targetRepCount = setGroup.controls.targetReps.value;
         executedExercise.exercise = new Exercise();
@@ -473,7 +473,7 @@ describe('WorkoutComponent', () => {
 
     //ACT
     component.completeWorkout();
-    expectedExecutedWorkout.endDateTime = component.workout.endDateTime;
+    expectedExecutedWorkout.endDateTime = component._executedWorkout.endDateTime;
 
     //ASSERT
     expect(executedWorkoutService.add).toHaveBeenCalledWith(expectedExecutedWorkout);
@@ -530,12 +530,12 @@ describe('WorkoutComponent', () => {
 
     //ARRANGE
     const expectedEndDateTime = new Date(2022, 1, 2, 13, 45, 0);
-    const workout = new ExecutedWorkout();
+    const workout = new ExecutedWorkoutDTO();
     workout.exercises = [];
     workout.startDateTime = new Date(2022, 1, 2, 12, 30, 0);
     workout.endDateTime = expectedEndDateTime;
 
-    component.workout = workout;
+    component._executedWorkout = workout;
 
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
     
@@ -543,7 +543,7 @@ describe('WorkoutComponent', () => {
     component.completeWorkout();
 
     //ASSERT
-    expect(component.workout.endDateTime).toBe(expectedEndDateTime); //Service mock returns the same object
+    expect(component._executedWorkout.endDateTime).toBe(expectedEndDateTime); //Service mock returns the same object
     expect(executedWorkoutService.update).toHaveBeenCalledWith(workout);
 
   });

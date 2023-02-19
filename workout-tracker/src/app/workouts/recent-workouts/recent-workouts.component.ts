@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
 import { Workout } from '../models/workout';
 import { WorkoutService } from '../workout.service';
 

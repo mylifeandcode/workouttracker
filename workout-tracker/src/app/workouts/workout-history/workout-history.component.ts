@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
 
 //TODO: This is similar to WorkoutsListComponent. Find a way to consolidate/reuse code.
 

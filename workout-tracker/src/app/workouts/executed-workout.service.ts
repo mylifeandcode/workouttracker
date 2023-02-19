@@ -5,16 +5,16 @@ import { ConfigService } from 'app/core/config.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { Observable } from 'rxjs';
 import { map, shareReplay, tap } from 'rxjs/operators';
-import { ExecutedExercise } from './models/executed-exercise';
-import { ExecutedWorkout } from './models/executed-workout';
-import { ExecutedWorkoutSummaryDTO } from './models/executed-workout-dto';
+import { ExecutedExerciseDTO } from './models/executed-exercise-dto';
+import { ExecutedWorkoutDTO } from './models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from './models/executed-workout-summary-dto';
 import { groupBy } from 'lodash-es';
 import { Dictionary } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
+export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
 
   constructor(private _configService: ConfigService, _http: HttpClient) {
     super(_configService.get('apiRoot') + "executedworkout", _http);
@@ -60,11 +60,11 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkout> {
       .pipe(map((response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => response.results));
   }
 
-  public groupExecutedExercises(exercises: ExecutedExercise[]): Dictionary<ExecutedExercise[]> {
-    const sortedExercises: ExecutedExercise[] = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
+  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
+    const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
     
-    let groupedExercises = groupBy(exercises, (exercise: ExecutedExercise) => { 
-      return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
+    let groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) => { 
+      return exercise.exerciseId.toString() + '-' + exercise.setType.toString(); 
     });
     return groupedExercises;
   }

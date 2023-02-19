@@ -2,13 +2,13 @@
 
   <div class="row headroom">
     <div class="col-12">
-      <h5>{{executedExercises[0].exercise.name}}</h5>
+      <h5>{{executedExercises[0].name}}</h5>
     </div>
   </div>
 
   <div class="row">
     <div class="col-12 setType">
-      <strong>{{executedExercises[0].setType == 0 ? "Repetition" : "Timed"}} Set(s) using <em>{{executedExercises[0].exercise.resistanceType | resistanceType:false}}</em> resistance:</strong>
+      <strong>{{executedExercises[0].setType == 0 ? "Repetition" : "Timed"}} Set(s) using <em>{{executedExercises[0].resistanceType | resistanceType:false}}</em> resistance:</strong>
     </div>
   </div>
 
@@ -44,13 +44,13 @@
   
     <div class="col-4 exercise-info-div">
         <!--TODO: Create a pipe for this-->
-      <span *ngIf="exercise.exercise.resistanceType < 2"><strong>{{exercise.resistanceAmount}}</strong></span>
-      <span *ngIf="exercise.exercise.resistanceType == 3"><strong>Body Weight</strong></span>
-      <span *ngIf="exercise.exercise.resistanceType == 2 && exercise.resistanceMakeup != null">
+      <span *ngIf="exercise.resistanceType < 2"><strong>{{exercise.resistanceAmount}}</strong></span>
+      <span *ngIf="exercise.resistanceType == 3"><strong>Body Weight</strong></span>
+      <span *ngIf="exercise.resistanceType == 2 && exercise.resistanceMakeup != null">
         <span [innerHTML]="exercise.resistanceMakeup | resistanceBandColor"></span>
         <span> ({{exercise.resistanceAmount}} Max)</span>
       </span>
-      <span *ngIf="exercise.exercise.resistanceType == 4"><strong>Other - {{exercise.resistanceAmount}}</strong></span>
+      <span *ngIf="exercise.resistanceType == 4"><strong>Other - {{exercise.resistanceAmount}}</strong></span>
     </div>
 
     <div class="col-1">
@@ -59,12 +59,12 @@
     </div>
 
     <div class="col-1">
-        <span *ngIf="exercise.exercise.involvesReps">{{exercise.targetRepCount}}</span>
-        <span *ngIf="!exercise.exercise.involvesReps">N/A</span>
+        <span *ngIf="exercise.involvesReps">{{exercise.targetRepCount}}</span>
+        <span *ngIf="!exercise.involvesReps">N/A</span>
     </div>
     <div *ngIf="showResults" class="col-1">
-      <span *ngIf="exercise.exercise.involvesReps">{{exercise.actualRepCount}}</span>
-      <span *ngIf="!exercise.exercise.involvesReps">N/A</span>
+      <span *ngIf="exercise.involvesReps">{{exercise.actualRepCount}}</span>
+      <span *ngIf="!exercise.involvesReps">N/A</span>
     </div>
 
     <div *ngIf="showResults" class="col-2">

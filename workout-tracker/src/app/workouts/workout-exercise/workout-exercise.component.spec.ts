@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WorkoutExerciseComponent } from './workout-exercise.component';
 import { UntypedFormArray, UntypedFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ExecutedExercise } from '../models/executed-exercise';
+import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { Exercise } from '../models/exercise';
 import { Pipe } from '@angular/core';
 import { ResistanceType } from '../enums/resistance-type';
@@ -84,12 +84,12 @@ describe('WorkoutExerciseComponent', () => {
 
   function setupExercisesFormGroup(): void {
 
-    let exercises = new Array<ExecutedExercise>();
+    let exercises = new Array<ExecutedExerciseDTO>();
     const formBuilder = new UntypedFormBuilder();
     component.formGroup.addControl('exerciseSets', formBuilder.array([]));
 
     //TODO: Create a builder for this
-    exercises.push(<ExecutedExercise>{ 
+    exercises.push(<ExecutedExerciseDTO>{ 
       sequence: 0, 
       setType: 1, 
       exercise: <Exercise>{ id: 1 } 
@@ -108,7 +108,7 @@ describe('WorkoutExerciseComponent', () => {
   }
 
   function getExerciseSetsFormArray(
-    exercises: ExecutedExercise[], 
+    exercises: ExecutedExerciseDTO[], 
     formBuilder: UntypedFormBuilder): UntypedFormArray {
 
     let formArray = formBuilder.array([]);

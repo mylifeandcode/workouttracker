@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Application.Workouts.Models;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Workouts.Interfaces;
-using WorkoutTracker.API.Adapters;
+using WorkoutTracker.API.Mappers;
 using WorkoutTracker.API.Models;
 
 namespace WorkoutTracker.API.Controllers
@@ -21,13 +21,13 @@ namespace WorkoutTracker.API.Controllers
         private IWorkoutService _workoutService;
         private IWorkoutPlanService _workoutPlanService;
         private IExecutedWorkoutService _executedWorkoutService;
-        private IWorkoutDTOAdapter _workoutDTOAdapter;
+        private IWorkoutDTOMapper _workoutDTOAdapter;
 
         public WorkoutController(
             IWorkoutService workoutService, 
             IWorkoutPlanService workoutPlanService, 
             IExecutedWorkoutService executedWorkoutService, 
-            IWorkoutDTOAdapter workoutDTOAdapter)
+            IWorkoutDTOMapper workoutDTOAdapter)
         {
             _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));
             _workoutPlanService = workoutPlanService ?? throw new ArgumentNullException(nameof(workoutPlanService));
@@ -58,7 +58,7 @@ namespace WorkoutTracker.API.Controllers
 
                 var results = workouts.Select((workout) =>
                 {
-                    return _workoutDTOAdapter.AdaptFromWorkout(workout);
+                    return _workoutDTOAdapter.MapFromWorkout(workout);
                 });
 
                 var result = new PaginatedResults<WorkoutDTO>(results, totalCount);
@@ -100,7 +100,7 @@ namespace WorkoutTracker.API.Controllers
                 if (workout == null)
                     return NotFound(id);
 
-                var dto = _workoutDTOAdapter.AdaptFromWorkout(workout);
+                var dto = _workoutDTOAdapter.MapFromWorkout(workout);
 
                 return Ok(dto);
             }

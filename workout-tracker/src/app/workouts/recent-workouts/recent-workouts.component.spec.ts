@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
 import { Workout } from '../models/workout';
 import { WorkoutService } from '../workout.service';
 

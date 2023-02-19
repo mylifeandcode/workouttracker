@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedExercise } from '../models/executed-exercise';
-import { ExecutedWorkout } from '../models/executed-workout';
+import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
+import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { Exercise } from '../models/exercise';
 import { Workout } from '../models/workout';
 import { groupBy } from 'lodash-es';
@@ -20,12 +20,12 @@ class ExecutedWorkoutServiceMock {
     jasmine.createSpy('getById')
       .and.returnValue(of(this.getFakeExecutedWorkout()));
 
-  private getFakeExecutedWorkout(): ExecutedWorkout {
+  private getFakeExecutedWorkout(): ExecutedWorkoutDTO {
 
-    const executedWorkout = new ExecutedWorkout();
-    const executedExercise1 = new ExecutedExercise();
-    const executedExercise2 = new ExecutedExercise();
-    const executedExercise3 = new ExecutedExercise();
+    const executedWorkout = new ExecutedWorkoutDTO();
+    const executedExercise1 = new ExecutedExerciseDTO();
+    const executedExercise2 = new ExecutedExerciseDTO();
+    const executedExercise3 = new ExecutedExerciseDTO();
     const exercise1 = new Exercise();
     const exercise2 = new Exercise();
 
@@ -53,10 +53,10 @@ class ExecutedWorkoutServiceMock {
 
   }
 
-  public groupExecutedExercises(exercises: ExecutedExercise[]): Dictionary<ExecutedExercise[]> {
-    const sortedExercises: ExecutedExercise[] = exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
+  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
+    const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
     
-    let groupedExercises = groupBy(exercises, (exercise: ExecutedExercise) => { 
+    let groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) => { 
       return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
     });
     return groupedExercises;
@@ -71,7 +71,7 @@ class ExecutedWorkoutServiceMock {
 export class ExecutedExercisesComponentMock {
 
   @Input()
-  executedExercises: ExecutedExercise[];
+  executedExercises: ExecutedExerciseDTO[];
 
 }
 
@@ -129,7 +129,7 @@ describe('WorkoutViewComponent', () => {
     //TODO: CLEAN THIS UP
 
     console.log("component.groupedExercises: ", component.groupedExercises);
-    const entries: IterableIterator<[string, ExecutedExercise[]]> = component.groupedExercises.entries();
+    const entries: IterableIterator<[string, ExecutedExerciseDTO[]]> = component.groupedExercises.entries();
 
     console.log("ENTRIES: ", entries);
 
