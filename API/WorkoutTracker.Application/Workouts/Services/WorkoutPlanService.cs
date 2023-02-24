@@ -45,7 +45,7 @@ namespace WorkoutTracker.Application.Workouts.Services
             }
             catch (Exception ex)
             {
-                //TODO: Log
+                _logger.LogError(ex, "Error in WorkoutPlanService.Create()");
                 throw;
             }
         }

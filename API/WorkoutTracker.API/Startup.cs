@@ -126,7 +126,7 @@ namespace WorkoutTracker
                 .AsImplementedInterfaces();
 
             builder.RegisterAssemblyTypes(assemblies)
-                .Where(t => t.Name.EndsWith("Adapter"))
+                .Where(t => t.Name.EndsWith("Mapper"))
                 .AsImplementedInterfaces()
                 .SingleInstance();
 
