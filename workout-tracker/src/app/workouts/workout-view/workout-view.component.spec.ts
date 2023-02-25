@@ -26,38 +26,29 @@ class ExecutedWorkoutServiceMock {
     const executedExercise1 = new ExecutedExerciseDTO();
     const executedExercise2 = new ExecutedExerciseDTO();
     const executedExercise3 = new ExecutedExerciseDTO();
-    const exercise1 = new Exercise();
-    const exercise2 = new Exercise();
 
-    exercise1.id = 1;
-    exercise2.id = 2;
-
-    executedExercise1.exercise = exercise1;
+    executedExercise1.exerciseId = 1;
     executedExercise1.setType = 0;
 
-    executedExercise2.exercise = exercise1;
+    executedExercise2.exerciseId = 1;
     executedExercise2.setType = 0;
 
-    executedExercise3.exercise = exercise2;
+    executedExercise3.exerciseId = 2;
     executedExercise3.setType = 1;
 
     executedWorkout.exercises = [];
     executedWorkout.exercises.push(...[executedExercise1, executedExercise2, executedExercise3]);
 
-    const workout = new Workout();
-    workout.name = "Some Workout";
-
-    executedWorkout.workout = workout;
+    executedWorkout.name = "Some Workout";
 
     return executedWorkout;
-
   }
 
   public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
     const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
     
     let groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) => { 
-      return exercise.exercise.id.toString() + '-' + exercise.setType.toString(); 
+      return exercise.exerciseId.toString() + '-' + exercise.setType.toString(); 
     });
     return groupedExercises;
   }

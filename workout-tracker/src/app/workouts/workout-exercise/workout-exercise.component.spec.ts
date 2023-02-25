@@ -92,17 +92,17 @@ describe('WorkoutExerciseComponent', () => {
     exercises.push(<ExecutedExerciseDTO>{ 
       sequence: 0, 
       setType: 1, 
-      exercise: <Exercise>{ id: 1 } 
+      exerciseId: 1 
     });
 
     component.formGroup = 
       formBuilder.group({
         id: exercises[0].id, //WARN: Pretty sure this will still just be 0 at this point
-        exerciseId: exercises[0].exercise.id, 
-        exerciseName: [exercises[0].exercise.name, Validators.compose([Validators.required])],
+        exerciseId: exercises[0].exerciseId, 
+        exerciseName: [exercises[0].name, Validators.compose([Validators.required])],
         exerciseSets: getExerciseSetsFormArray(exercises, formBuilder), 
         setType: [exercises[0].setType, Validators.compose([Validators.required])], 
-        resistanceType: [exercises[0].exercise.resistanceType, Validators.compose([Validators.required])]
+        resistanceType: [exercises[0].resistanceType, Validators.compose([Validators.required])]
       });
 
   }
@@ -123,7 +123,7 @@ describe('WorkoutExerciseComponent', () => {
         formRating: [null, Validators.required], 
         rangeOfMotionRating: [null, Validators.required], 
         resistanceMakeup: [exercises[i].resistanceMakeup], 
-        bandsEndToEnd: [exercises[i].exercise.bandsEndToEnd], //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
+        bandsEndToEnd: [exercises[i].bandsEndToEnd], //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
         duration: [120] //TODO: Get/set value from API
       });
 
