@@ -16,5 +16,6 @@ namespace WorkoutTracker.Application.Workouts.Interfaces
         ExecutedWorkout GetLatest(int workoutId);
         int GetTotalCount(ExecutedWorkoutFilter filter);
         int GetPlannedCount(int userId);
+        IEnumerable<ExecutedWorkout> GetInProgress(int userId);
     }
 }

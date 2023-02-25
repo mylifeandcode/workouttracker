@@ -1,0 +1,28 @@
+<h3 class="headroom">In-Progress Workouts</h3>
+<h5>This is where you can find any workouts you've started but haven't yet finished (such as when you've accidentally
+  closed your browser during a workout).</h5>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <p-table #dt styleClass="p-datatable-striped" [value]="inProgressWorkouts" [paginator]="false" [loading]="loading">
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th>Workout Name</th>
+            <th>Start Date/Time</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-executedWorkout>
+          <tr class="workout-history">
+            <td><a routerLink="/workouts/start/{{executedWorkout.id}}">{{executedWorkout.name}}</a></td>
+            <td>{{executedWorkout.startDateTime | date:'M/d/yyyy, h:mm a'}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <div *ngIf="!loading && inProgressWorkouts.length == 0" class="row">
+    <div class="col-12">
+      There are no in-progress workouts.
+    </div>
+  </div>
+</div>
