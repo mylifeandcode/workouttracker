@@ -208,5 +208,41 @@ namespace WorkoutTracker.Tests.Services
                 Times.Once);
         }
 
+        [TestMethod]
+        public void Should_Get_In_Progress_Workouts() 
+        {
+            //ARRANGE
+            int userId = 10;
+            ushort numberOfWorkouts = 6;
+            var executedWorkouts = new List<ExecutedWorkout>(numberOfWorkouts);
+            for (ushort x = 0; x < numberOfWorkouts; x++)
+            {
+                var workout = new ExecutedWorkout();
+                workout.CreatedByUserId = userId;
+                if (x % 2 == 0) workout.StartDateTime = new DateTime();
+                executedWorkouts.Add(workout);
+            }
+
+            var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
+            executedWorkoutRepo
+                .Setup(x => x.Get())
+                .Returns(executedWorkouts.AsQueryable());
+
+            var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
+
+            var sut =
+                new ExecutedWorkoutService(
+                    executedWorkoutRepo.Object,
+                    workoutRepo.Object,
+                    _logger.Object);
+
+            //ACT
+            var results = sut.GetInProgress(userId).ToList();
+
+            //ASSERT
+            var expectedResults = executedWorkouts.Where(x => x.StartDateTime.HasValue).ToList();
+            CollectionAssert.AreEquivalent(expectedResults, results);
+        }
+
     }
 }

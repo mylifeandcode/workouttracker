@@ -21,18 +21,18 @@ namespace WorkoutTracker.API.Controllers
         private IWorkoutService _workoutService;
         private IWorkoutPlanService _workoutPlanService;
         private IExecutedWorkoutService _executedWorkoutService;
-        private IWorkoutDTOMapper _workoutDTOAdapter;
+        private IWorkoutDTOMapper _workoutDTOMapper;
 
         public WorkoutController(
             IWorkoutService workoutService, 
             IWorkoutPlanService workoutPlanService, 
             IExecutedWorkoutService executedWorkoutService, 
-            IWorkoutDTOMapper workoutDTOAdapter)
+            IWorkoutDTOMapper workoutDTOMapper)
         {
             _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));
             _workoutPlanService = workoutPlanService ?? throw new ArgumentNullException(nameof(workoutPlanService));
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
-            _workoutDTOAdapter = workoutDTOAdapter ?? throw new ArgumentNullException(nameof(workoutDTOAdapter));
+            _workoutDTOMapper = workoutDTOMapper ?? throw new ArgumentNullException(nameof(workoutDTOMapper));
         }
 
         // GET: api/Workouts
@@ -58,7 +58,7 @@ namespace WorkoutTracker.API.Controllers
 
                 var results = workouts.Select((workout) =>
                 {
-                    return _workoutDTOAdapter.MapFromWorkout(workout);
+                    return _workoutDTOMapper.MapFromWorkout(workout);
                 });
 
                 var result = new PaginatedResults<WorkoutDTO>(results, totalCount);
@@ -100,7 +100,7 @@ namespace WorkoutTracker.API.Controllers
                 if (workout == null)
                     return NotFound(id);
 
-                var dto = _workoutDTOAdapter.MapFromWorkout(workout);
+                var dto = _workoutDTOMapper.MapFromWorkout(workout);
 
                 return Ok(dto);
             }
