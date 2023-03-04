@@ -7,13 +7,15 @@ namespace WorkoutTracker.Tests.Controllers
 {
     public class UserAwareControllerTestsBase
     {
+        public const string USER_ID = "1";
+
         protected void SetupUser(UserAwareController controller)
         {
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Name, "Alan"),
                 new Claim(ClaimTypes.Role, "Administrator"),
-                new Claim("UserID", "1")
+                new Claim("UserID", USER_ID)
             }));
 
             controller.ControllerContext = new ControllerContext()
