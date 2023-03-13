@@ -150,7 +150,7 @@ namespace WorkoutTracker.API.Controllers
                 if (!inProgressWorkouts.Any())
                     return Ok(new List<ExecutedWorkoutSummaryDTO>(0));
 
-                var summary = inProgressWorkouts.Select(x => _summaryDtoMapper.MapFromExecutedWorkout(x));
+                var summary = inProgressWorkouts.Select(x => _summaryDtoMapper.MapFromExecutedWorkout(x)).ToArray();
                 return Ok(summary);
             }
             catch (Exception ex)

@@ -43,12 +43,13 @@ namespace WorkoutTracker.Tests.Controllers
             //ARRANGE
 
             //ACT
-            var result = _sut.GetInProgress();
+            ActionResult<ExecutedWorkoutSummaryDTO[]> response = _sut.GetInProgress();
 
             //ASSERT
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-            Assert.AreEqual(_inProgressWorkouts.Count, (result as ActionResult<WorkoutTracker.API.Models.ExecutedWorkoutSummaryDTO[]>).Value.Length);
+            Assert.IsNotNull(response);
+            Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
+            var results = (response.Result as OkObjectResult).Value as ExecutedWorkoutSummaryDTO[];
+            Assert.AreEqual(_inProgressWorkouts.Count, results.Length);
             _executedWorkoutService.Verify(x => x.GetInProgress(Convert.ToInt32(USER_ID)), Times.Once);
         }
 
