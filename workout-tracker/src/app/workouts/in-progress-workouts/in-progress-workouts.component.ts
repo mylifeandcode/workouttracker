@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
+import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
 
 @Component({
   selector: 'wt-in-progress-workouts',
@@ -11,7 +12,7 @@ import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 })
 export class InProgressWorkoutsComponent implements OnInit {
 
-  public inProgressWorkouts: ExecutedWorkoutDTO[] = [];
+  public inProgressWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public loading: boolean = true;
   public errorMessage: string | null = null;
 
@@ -21,12 +22,12 @@ export class InProgressWorkoutsComponent implements OnInit {
     this._executedWorkoutService.getInProgress()
       .pipe(
         finalize(() => { this.loading = false; }),
-        catchError((err: any, caught: Observable<ExecutedWorkoutDTO[]>) => {
+        catchError((err: any, caught: Observable<ExecutedWorkoutSummaryDTO[]>) => {
           this.errorMessage = (err.error ? err.error : "An error has occurred. Please contact an administrator.");
-          return of(new Array<ExecutedWorkoutDTO>());
+          return of(new Array<ExecutedWorkoutSummaryDTO>());
         })
       )
-      .subscribe((workouts: ExecutedWorkoutDTO[]) => {
+      .subscribe((workouts: ExecutedWorkoutSummaryDTO[]) => {
         this.inProgressWorkouts = workouts;
       });
   }

@@ -114,4 +114,27 @@ describe('ExecutedWorkoutService', () => {
     req.flush(expectedResults);
   });
 
+  it('should get in-progress workouts', (done: DoneFn) => {
+    //ARRANGE
+    const expectedResults: ExecutedWorkoutSummaryDTO[] = [];
+    expectedResults.push(...[new ExecutedWorkoutSummaryDTO(), new ExecutedWorkoutSummaryDTO()]);
+
+    //ACT
+    service.getInProgress().subscribe(
+      (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
+        //ASSERT
+        expect(recentWorkouts).toEqual(expectedResults);
+        done();
+      },
+      fail
+    );
+
+    //ASSERT
+    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout/in-progress`);
+    expect(req.request.method).toEqual('GET');
+
+    //Respond with the mock results
+    req.flush(expectedResults);
+  });
+
 });
