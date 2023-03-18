@@ -6,7 +6,6 @@ using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.API.Controllers;
 using WorkoutTracker.Application.Workouts.Interfaces;
-using WorkoutTracker.API.Auth;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.API.Models;
 

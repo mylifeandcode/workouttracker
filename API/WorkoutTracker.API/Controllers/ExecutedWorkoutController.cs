@@ -9,6 +9,7 @@ using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.API.Models;
 using WorkoutTracker.API.Mappers;
+using System.Collections.Generic;
 
 namespace WorkoutTracker.API.Controllers
 {
@@ -21,13 +22,16 @@ namespace WorkoutTracker.API.Controllers
     {
         private IExecutedWorkoutService _executedWorkoutService;
         private IExecutedWorkoutDTOMapper _dtoMapper;
+        private IExecutedWorkoutSummaryDTOMapper _summaryDtoMapper;
 
         public ExecutedWorkoutController(
             IExecutedWorkoutService executedWorkoutService, 
-            IExecutedWorkoutDTOMapper dtoMapper)
+            IExecutedWorkoutDTOMapper dtoMapper, 
+            IExecutedWorkoutSummaryDTOMapper summaryDtoMapper)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _dtoMapper = dtoMapper ?? throw new ArgumentNullException(nameof(dtoMapper));
+            _summaryDtoMapper = summaryDtoMapper ?? throw new ArgumentNullException(nameof(summaryDtoMapper));
         }
 
         // GET api/ExecutedWorkout/5
@@ -130,6 +134,24 @@ namespace WorkoutTracker.API.Controllers
             catch (BadHttpRequestException ex)
             {
                 return BadRequest(ex);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("in-progress")]
+        public ActionResult<ExecutedWorkoutSummaryDTO[]> GetInProgress()
+        {
+            try 
+            {
+                var inProgressWorkouts = _executedWorkoutService.GetInProgress(GetUserID()).ToList(); //Enumerate!
+                if (!inProgressWorkouts.Any())
+                    return Ok(new List<ExecutedWorkoutSummaryDTO>(0));
+
+                var summary = inProgressWorkouts.Select(x => _summaryDtoMapper.MapFromExecutedWorkout(x)).ToArray();
+                return Ok(summary);
             }
             catch (Exception ex)
             {

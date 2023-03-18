@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Shared.BaseClasses;
-using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Workouts.Models;
 using WorkoutTracker.Domain.Exercises;
@@ -139,6 +137,16 @@ namespace WorkoutTracker.Application.Workouts.Services
                     .Where(x => x.CreatedByUserId == userId 
                         && !x.StartDateTime.HasValue 
                         && !x.EndDateTime.HasValue).Count();
+        }
+
+        public IEnumerable<ExecutedWorkout> GetInProgress(int userId)
+        {
+            return
+                _repo.Get()
+                    .Where(x => x.CreatedByUserId == userId
+                        && x.StartDateTime.HasValue
+                        && !x.EndDateTime.HasValue)
+                    .OrderByDescending(x => x.StartDateTime);
         }
 
         #region Private Methods

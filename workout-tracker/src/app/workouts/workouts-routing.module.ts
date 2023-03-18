@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { UserSelectedGuard } from 'app/core/guards/user-selected.guard'; //TODO: Correct path/method of import?
+import { InProgressWorkoutsComponent } from './in-progress-workouts/in-progress-workouts.component';
 import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
 import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
 import { WorkoutListComponent } from './workout-list/workout-list.component';
@@ -72,6 +73,10 @@ const routes: Routes = [
     path: 'log-past-start',
     component: WorkoutLogPastStartComponent, 
     canActivate: [UserSelectedGuard]
+  },
+  {
+    path: 'in-progress',
+    component: InProgressWorkoutsComponent
   },
   {
     path: '**',

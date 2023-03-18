@@ -68,4 +68,8 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
     });
     return groupedExercises;
   }
+
+  public getInProgress(): Observable<ExecutedWorkoutSummaryDTO[]> {
+    return this._http.get<ExecutedWorkoutSummaryDTO[]>(`${this._apiRoot}/in-progress`);
+  }
 }

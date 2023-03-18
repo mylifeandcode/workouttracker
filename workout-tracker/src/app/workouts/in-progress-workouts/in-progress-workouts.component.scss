@@ -1,0 +1,12 @@
+@import '/src/variables.scss';
+
+h3 {
+  padding: 6px;
+  background-image: linear-gradient(to right, $workout-color-six, $workout-color-gradient-end);
+  font-style: italic;
+  color: $header-text-color-one;
+}
+
+h5 {
+  padding: 6px;
+}
