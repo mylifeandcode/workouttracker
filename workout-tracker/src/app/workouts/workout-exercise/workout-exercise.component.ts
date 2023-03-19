@@ -22,11 +22,6 @@ export class WorkoutExerciseComponent implements OnInit {
   @Input()
   formGroup: FormGroup<IWorkoutFormExercise>;
 
-  /*
-  @Input()
-  exerciseSetsFormArray: FormArray;
-  */
-
   @Output()
   resistanceBandsSelect = new EventEmitter<FormGroup<IWorkoutFormExerciseSet>>();
 
@@ -48,7 +43,7 @@ export class WorkoutExerciseComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
 
   public selectResistanceBands(formGroup: FormGroup<IWorkoutFormExerciseSet>): void {
@@ -76,5 +71,18 @@ export class WorkoutExerciseComponent implements OnInit {
     if (!focusEvent.target) return;
     const target = <HTMLInputElement>focusEvent.target;
     target.select();
+  }
+
+  public applySetChangesToAll(): void {
+    if (this.formGroup.controls.exerciseSets.length > 1) {
+      const source = this.formGroup.controls.exerciseSets.controls[0];
+
+      for(let x = 1; x < this.formGroup.controls.exerciseSets.length; x++) {
+        this.formGroup.controls.exerciseSets.controls[x].controls.resistance.setValue(source.controls.resistance.value);
+        this.formGroup.controls.exerciseSets.controls[x].controls.resistanceMakeup.setValue(source.controls.resistanceMakeup.value);
+        this.formGroup.controls.exerciseSets.controls[x].controls.duration.setValue(source.controls.duration.value);
+        this.formGroup.controls.exerciseSets.controls[x].controls.targetReps.setValue(source.controls.targetReps.value);
+      }
+    }
   }
 }

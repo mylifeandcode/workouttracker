@@ -12,7 +12,7 @@
         <p-inputSwitch id="useRecommendationEngine" formControlName="recommendationsEnabled" styleClass="align-middle" (onChange)="recommendationEngineToggled($event)"></p-inputSwitch>
       </div>
     </div>
-    <div *ngIf="recommendationsEnabled" class="row">
+    <div *ngIf="recommendationEngineEnabled" class="row">
       <div class="col-12">
         <h5 class="headroom">Suggestion Settings</h5>
         <wt-user-rep-settings *ngFor="let settings of userSettingsForm.controls.repSettings.controls; let i = index" [repSettingsFormGroup]="settings"></wt-user-rep-settings>
