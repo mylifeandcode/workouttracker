@@ -19,11 +19,11 @@ export class AuthInterceptor implements HttpInterceptor {
       const authRequest = request.clone({
         headers: request.headers.set('Authorization', 'Bearer ' + this._authService.token)
       });
-      console.log("passing token!");
+      //console.log("passing token!");
       return next.handle(authRequest);
     }
     else {
-      console.log("not passing token!");
+      //console.log("not passing token!");
       return next.handle(request);
     }
   }

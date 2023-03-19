@@ -1,17 +1,14 @@
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
+import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
+import { Dictionary } from 'lodash';
+import { groupBy } from 'lodash-es';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
-import { Exercise } from '../models/exercise';
-import { Workout } from '../models/workout';
-import { groupBy } from 'lodash-es';
-import { Dictionary } from 'lodash';
-
 import { WorkoutViewComponent } from './workout-view.component';
-import { Component, Input } from '@angular/core';
-import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 
 const EXECUTED_WORKOUT_ID = 5;
 
@@ -63,6 +60,9 @@ export class ExecutedExercisesComponentMock {
 
   @Input()
   executedExercises: ExecutedExerciseDTO[];
+
+  @Input()
+  showResults: boolean;
 
 }
 
@@ -119,20 +119,20 @@ describe('WorkoutViewComponent', () => {
 
     //TODO: CLEAN THIS UP
 
-    console.log("component.groupedExercises: ", component.groupedExercises);
+    //console.log("component.groupedExercises: ", component.groupedExercises);
     const entries: IterableIterator<[string, ExecutedExerciseDTO[]]> = component.groupedExercises.entries();
 
-    console.log("ENTRIES: ", entries);
+    //console.log("ENTRIES: ", entries);
 
     const first = entries.next();
-    console.log("FIRST: ", first);
+    //console.log("FIRST: ", first);
     expect(first.value[1].length).toBe(2);
 
     const second = entries.next();
-    console.log("SECOND: ", second);
+    //console.log("SECOND: ", second);
     expect(second.value[1].length).toBe(1);
 
     entries.next();
-    console.log("ENTRIES: ", entries);
+    //console.log("ENTRIES: ", entries);
   });
 });

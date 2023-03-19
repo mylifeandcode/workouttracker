@@ -23,7 +23,7 @@ export class WorkoutHistoryComponent implements OnInit {
   public showNotesModal: boolean = false;
   public notes: string = '';
   public cols: any = [
-      { field: 'name', header: 'Name' }
+    { field: 'name', header: 'Name' }
   ]; //TODO: Create specific type
 
 
@@ -42,12 +42,12 @@ export class WorkoutHistoryComponent implements OnInit {
     this._executedWorkoutService.getFilteredSubset(first, this.pageSize)
       .pipe(finalize(() => { this.loading = false; }))
       .subscribe(
-          (results: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-              this.executedWorkouts = results.results;
-              console.log('executedWorkouts: ', this.executedWorkouts);
-              this.totalRecords = results.totalCount;
-          },
-          (error: any) => window.alert("An error occurred getting executed workouts: " + error)
+        (results: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
+          this.executedWorkouts = results.results;
+          //console.log('executedWorkouts: ', this.executedWorkouts);
+          this.totalRecords = results.totalCount;
+        },
+        (error: any) => window.alert("An error occurred getting executed workouts: " + error)
       );
   }
 

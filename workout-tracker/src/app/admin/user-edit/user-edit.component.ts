@@ -85,7 +85,7 @@ export class UserEditComponent implements OnInit {
       this._authService.requestPasswordReset(this.userEditForm.controls.emailAddress.value)
         .subscribe((resetCode: string) => {
           window.alert(`Password has been reset. Instruct user to go to ${this._resetPasswordUrlRoot}${resetCode}.`);
-          console.log("ROUTER: ", this._router);
+          //console.log("ROUTER: ", this._router);
         });
     }
   }

@@ -82,6 +82,19 @@ describe('WorkoutExerciseComponent', () => {
     expect(component.durationEdit.emit).toHaveBeenCalledWith(component.setsArray.controls[0].controls.duration);
   });
 
+  it('should select the contents of an input when an input gets focus', () => {
+    //ARRANGE
+    //const element = new HTMLInputElement();
+    const element = fixture.nativeElement.querySelector("input[type=number]");
+    spyOn(element, 'select');
+    
+    //ACT
+    element.dispatchEvent(new Event('focus'));
+
+    //ASSERT
+    expect(element.select).toHaveBeenCalled();
+  });
+
   function setupExercisesFormGroup(): void {
 
     let exercises = new Array<ExecutedExerciseDTO>();

@@ -17,7 +17,7 @@ export class UserNotSelectedGuard implements CanActivate {
       let returnValue: boolean = true;
 
       if(this._authService.isUserLoggedIn) {
-        console.log("User is already logged in");
+        //console.log("User is already logged in");
         returnValue = false;
         this._router.navigate(['home']);
       }
@@ -28,7 +28,7 @@ export class UserNotSelectedGuard implements CanActivate {
         this._router.navigate([this._authService.loginRoute]);
       }
       */
-      console.log(`No user selected (${this._authService.isUserLoggedIn}). Continuing to route.`);
+      //console.log(`No user selected (${this._authService.isUserLoggedIn}). Continuing to route.`);
       return returnValue;
 
   }

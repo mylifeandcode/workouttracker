@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
@@ -50,7 +50,8 @@ describe('RecentWorkoutsComponent', () => {
           provide: Router, 
           useClass: RouterMock
         }
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   });

@@ -51,7 +51,7 @@ export class WorkoutListComponent implements OnInit {
   }
 
   public getWorkoutsLazy(event: any): void {
-    console.log("GETTING WORKOUTS: ", event);
+    //console.log("GETTING WORKOUTS: ", event);
     if (event?.filters["name"])
       this._filterByNameContains = event.filters["name"].value;
     else
@@ -96,12 +96,12 @@ export class WorkoutListComponent implements OnInit {
   //TODO: Find out if I can consolidate these 2 methods into a generic one and call it from HTML (those brackets may cause problems)
   //TODO: Consolidate these into a service. These are copied from another component. :(
   public filterTableByInput(table: Table, event: Event, filterOn: string, filterType: string = 'in'): void {
-    console.log("EVENT: ", event);
+    //console.log("EVENT: ", event);
     table.filter((event.target as HTMLInputElement).value, filterOn, filterType);
   }
 
   public filterTableByActive(table: Table, event: Event): void {
-    console.log("CHECKBOX EVENT: ", event);
+    //console.log("CHECKBOX EVENT: ", event);
     table.filter((event.target as HTMLInputElement).checked, 'activeOnly', 'equals');
   }
 

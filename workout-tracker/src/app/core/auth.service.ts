@@ -62,7 +62,7 @@ export class AuthService {
   //PROPERTIES ////////////////////////////////////////////////////////////////
 
   public get currentUserName(): Observable<string | null> {
-    console.log("CURRENT USERNAME CHANGED");
+    //console.log("CURRENT USERNAME CHANGED");
     return this._userObservable$;
   }
 
@@ -103,7 +103,7 @@ export class AuthService {
           return true;
         }),
         catchError((err: any, caught: Observable<boolean>) => {
-          console.log("Error logging in user: ", err);
+          //console.log("Error logging in user: ", err);
           return of(false);
         })
       );
@@ -124,7 +124,7 @@ export class AuthService {
       if(decodedToken) {
 
         if(!this.isExpired(decodedToken?.exp)) {
-          console.log("NOT EXPIRED");
+          //console.log("NOT EXPIRED");
           this.decodedTokenPayload = decodedToken;
           this.token = token;
 
@@ -133,8 +133,11 @@ export class AuthService {
             this._userSubject$.next(username);
 
         }
-        else
+        /*
+        else {
           console.log("EXPIRED!");
+        }
+        */
       }
     }
   }
@@ -158,7 +161,7 @@ export class AuthService {
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
 
   private isExpired(expirationSecondsSinceEpoch: number | undefined): boolean {
-    console.log("expirationSecondsSinceEpoch: ", expirationSecondsSinceEpoch);
+    //console.log("expirationSecondsSinceEpoch: ", expirationSecondsSinceEpoch);
     if(!expirationSecondsSinceEpoch) return true;
     return expirationSecondsSinceEpoch < this.getSecondsSinceEpoch();
   }
@@ -168,7 +171,7 @@ export class AuthService {
     const now = new Date();
     const utcMilllisecondsSinceEpoch = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
     const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
-    console.log("utcSecondsSinceEpoch: ", utcSecondsSinceEpoch);
+    //console.log("utcSecondsSinceEpoch: ", utcSecondsSinceEpoch);
     return utcSecondsSinceEpoch;
   }
 

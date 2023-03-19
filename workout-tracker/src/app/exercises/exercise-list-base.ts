@@ -40,7 +40,7 @@ export abstract class ExerciseListBase {
                     (exercises: PaginatedResults<ExerciseDTO>) => {
                         this.exercises = exercises.results;
                         this.totalRecords = exercises.totalCount;
-                        console.log("TOTAL: ", exercises.totalCount);
+                        //console.log("TOTAL: ", exercises.totalCount);
                     },
                     (error: any) => window.alert("An error occurred getting exercises: " + error)
                 );

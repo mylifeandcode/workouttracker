@@ -26,7 +26,7 @@ export class WorkoutExerciseComponent implements OnInit {
   @Input()
   exerciseSetsFormArray: FormArray;
   */
- 
+
   @Output()
   resistanceBandsSelect = new EventEmitter<FormGroup<IWorkoutFormExerciseSet>>();
 
@@ -65,5 +65,16 @@ export class WorkoutExerciseComponent implements OnInit {
 
   public editDuration(formControl: FormControl<number | null>): void {
     this.durationEdit.emit(formControl);
+  }
+
+  public inputFocused(event: Event): void {
+    if (event.type != 'focus') {
+      return;
+    }
+
+    const focusEvent = <FocusEvent>event;
+    if (!focusEvent.target) return;
+    const target = <HTMLInputElement>focusEvent.target;
+    target.select();
   }
 }

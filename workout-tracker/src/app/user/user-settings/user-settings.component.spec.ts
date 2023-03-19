@@ -1,11 +1,13 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'app/core/auth.service';
 import { SetType } from 'app/core/enums/set-type';
 import { User } from 'app/core/models/user';
 import { UserMinMaxReps } from 'app/core/models/user-min-max-reps';
 import { UserSettings } from 'app/core/models/user-settings';
 import { UserService } from 'app/core/user.service';
+import { InputSwitchModule } from 'primeng/inputswitch';
 import { of } from 'rxjs';
 
 import { UserSettingsComponent } from './user-settings.component';
@@ -47,6 +49,10 @@ describe('UserSettingsComponent', () => {
           provide: UserService, 
           useClass: MockUserService
         }
+      ],
+      imports: [ 
+        ReactiveFormsModule, 
+        InputSwitchModule //Importing this module because using CUSTOM_ELEMENTS_SCHEMA wasn't working due to the input switch's formControlName assignment
       ]
     })
     .compileComponents();

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { IRepSettingsForm, UserRepSettingsComponent } from './user-rep-settings.component';
 
@@ -9,7 +9,8 @@ describe('UserRepSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserRepSettingsComponent ]
+      declarations: [ UserRepSettingsComponent ],
+      imports: [ ReactiveFormsModule ]
     })
     .compileComponents();
 

@@ -90,7 +90,7 @@ describe('AnalyticsService', () => {
     //ACT
     const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.FormAndRangeOfMotion);
 
-    console.log("RESULTS: ", results);
+    //console.log("RESULTS: ", results);
 
     //ASSERT
     expect(results).toEqual(expectedResults);
@@ -112,7 +112,7 @@ describe('AnalyticsService', () => {
     //ACT
     const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.Reps);
 
-    console.log("RESULTS: ", results);
+    //console.log("RESULTS: ", results);
 
     //ASSERT
     expect(results).toEqual(expectedResults);
@@ -134,7 +134,7 @@ describe('AnalyticsService', () => {
     //ACT
     const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.Resistance);
 
-    console.log("RESULTS: ", results);
+    //console.log("RESULTS: ", results);
 
     //ASSERT
     expect(results).toEqual(expectedResults);

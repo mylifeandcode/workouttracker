@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserOverview } from 'app/core/models/user-overview';
 import { UserService } from 'app/core/user.service';
@@ -28,7 +29,8 @@ describe('WelcomeComponent', () => {
           provide: UserService, 
           useClass: UserServiceMock
         }
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   });

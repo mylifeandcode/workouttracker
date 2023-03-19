@@ -237,7 +237,7 @@ describe('ExerciseEditComponent', () => {
 
   it('should update exercise', () => {
 
-    console.log("component.exerciseForm: ", component.exerciseForm);
+    //console.log("component.exerciseForm: ", component.exerciseForm);
     component.saveExercise();
     expect(exerciseService.update).toHaveBeenCalledWith(EXERCISE);
     expect(component.saving).toBeFalse();

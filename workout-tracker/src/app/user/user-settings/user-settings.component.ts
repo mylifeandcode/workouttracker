@@ -30,7 +30,7 @@ export class UserSettingsComponent implements OnInit {
   public user: User;
   public userSettingsForm: FormGroup<IUserSettingsForm>;
   public saving: boolean = false;
-  public recommendationsEnabled: boolean = false;
+  public recommendationEngineEnabled: boolean = false;
 
   constructor(
     private _authService: AuthService, 
@@ -48,15 +48,15 @@ export class UserSettingsComponent implements OnInit {
       )
       .subscribe((user: User) => {
         this.user = user;
-        console.log("USER: ", user);
-        this.recommendationsEnabled = user.settings.recommendationsEnabled;
+        //console.log("USER: ", user);
+        this.recommendationEngineEnabled = user.settings.recommendationsEnabled;
         this.createForm();
       });
   }
 
   public recommendationEngineToggled(event: IToggleEvent): void { //TODO: Get or specify a concrete type for the event param
     this.userSettingsForm.controls.recommendationsEnabled.setValue(event.checked);
-    this.recommendationsEnabled = event.checked;
+    this.recommendationEngineEnabled = event.checked;
   }
 
   public saveSettings(): void {

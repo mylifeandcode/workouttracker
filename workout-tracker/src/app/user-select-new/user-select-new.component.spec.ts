@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { User } from 'app/core/models/user';
@@ -38,7 +38,10 @@ describe('UserSelectNewComponent', () => {
           useClass: MockUserService
         }
       ], 
-      imports: [ RouterTestingModule.withRoutes([ { path: 'user-select', component: BlankComponent } ]) ]
+      imports: [ 
+        RouterTestingModule.withRoutes([ { path: 'user-select', component: BlankComponent } ]),
+        ReactiveFormsModule
+      ]
     })
     .compileComponents();
 

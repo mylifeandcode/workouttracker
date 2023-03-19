@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -43,10 +43,6 @@ class WorkoutServiceMock {
   getById = jasmine.createSpy('getById').and.returnValue(of(this.getTestWorkout()));
   add = jasmine.createSpy('add').and.returnValue(of(new Workout()));
   update = jasmine.createSpy('update').and.returnValue(of(new Workout()));
-}
-
-class BsModalServiceMock {
-
 }
 
 const WORKOUT_ID: number = 5;
@@ -92,7 +88,8 @@ describe('WorkoutEditComponent', () => {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
         }
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));

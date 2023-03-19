@@ -33,7 +33,7 @@ export abstract class ApiBaseService<T extends Entity> {
   */
   public all$: Observable<T[]> = this._refreshGetAll$
     .pipe(
-      tap(() => { console.log("GOT ALL DATA")}),
+      //tap(() => { console.log("GOT ALL DATA")}),
       mergeMap(() => this.getAllFromAPI()),
       shareReplay(1) //Without this, the call was getting made each time
       //This approach was described here: https://dev.to/this-is-angular/how-caching-data-in-angular-with-rxjs-27mj
@@ -52,11 +52,11 @@ export abstract class ApiBaseService<T extends Entity> {
    */
   public getAll(fromCache: boolean = true): Observable<T[]> {
     if (fromCache) {
-      console.log("GETTING ALL FROM CACHE");
+      //console.log("GETTING ALL FROM CACHE");
       return this.all$.pipe(take(1)); //Originally was using from() here, but despite that, the output Observable would not complete.
     }
     else {
-      console.log("GETTING ALL FROM API");
+      //console.log("GETTING ALL FROM API");
       return this.getAllFromAPI();
     }
   }
@@ -101,7 +101,7 @@ export abstract class ApiBaseService<T extends Entity> {
    * @returns The response from the API to the DELETE request.
    */
   public delete(id: number): Observable<any> { //TODO: Re-evaluate use of "any" type here, should probably be HttpResponse.
-    console.log("DELETING");
+    //console.log("DELETING");
     return this._http.delete(`${this._apiRoot}/${id}`)
       .pipe(
         tap(() => this.invalidateCache()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
@@ -112,7 +112,7 @@ export abstract class ApiBaseService<T extends Entity> {
    * Invalidates cached data
    */
   public invalidateCache(): void {
-    console.log("Invalidating cache");
+    //console.log("Invalidating cache");
     this._refreshGetAll$.next();
   }
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
@@ -124,7 +124,8 @@ export abstract class ApiBaseService<T extends Entity> {
    */
   private getAllFromAPI(): Observable<T[]> {
     return this._http.get<T[]>(this._apiRoot)
-      .pipe(tap(item => console.log(`Got data from API: ${this._apiRoot}: `, item)));
+      //.pipe(tap(item => console.log(`Got data from API: ${this._apiRoot}: `, item)))
+      ;
   }
 
   /**
@@ -134,7 +135,7 @@ export abstract class ApiBaseService<T extends Entity> {
    */
   private handleError(err: any): Observable<never> {
     //TODO: Implement this to do something meaningful/useful
-    console.log("Error in ApiBaseService: ", err);
+    //console.log("Error in ApiBaseService: ", err);
     return throwError(err);
   }
   //END PRIVATE METHODS ///////////////////////////////////////////////////////

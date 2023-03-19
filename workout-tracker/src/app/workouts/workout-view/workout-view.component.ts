@@ -52,7 +52,7 @@ export class WorkoutViewComponent implements OnInit {
           //this.executedWorkout.exercises.sort((a: ExecutedExercise, b: ExecutedExercise) => a.sequence - b.sequence);
 
         //Group the exercises
-        console.log("EXERCISES: ", this.executedWorkout.exercises);
+        //console.log("EXERCISES: ", this.executedWorkout.exercises);
         const groups = this._executedWorkoutService.groupExecutedExercises(this.executedWorkout.exercises);
         
         const groupsMap = new Map<string, ExecutedExerciseDTO[]>();
@@ -61,7 +61,7 @@ export class WorkoutViewComponent implements OnInit {
         forEach(groups, (exerciseArray: ExecutedExerciseDTO[]) => {
           groupsMap.set(
             x.toString(), exerciseArray);
-          console.log("Added ", exerciseArray[0].exerciseId.toString() + "-" + exerciseArray[0].setType.toString());
+          //console.log("Added ", exerciseArray[0].exerciseId.toString() + "-" + exerciseArray[0].setType.toString());
           x++;
         });
 
@@ -69,7 +69,7 @@ export class WorkoutViewComponent implements OnInit {
 
         //console.log("BLAH: ", Object.values(groupsMap));
 
-        console.log("GROUPED EXERCISES: ", this.groupedExercises);
+        //console.log("GROUPED EXERCISES: ", this.groupedExercises);
 
       });
   }

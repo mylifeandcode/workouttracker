@@ -1,7 +1,9 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/models/paginated-results';
+import { CalendarModule } from 'primeng/calendar';
 import { of } from 'rxjs';
 import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
@@ -49,6 +51,10 @@ describe('WorkoutLogPastStartComponent', () => {
           useClass: RouterMock
         },
         FormBuilder //TODO: Find out what the proper ettiquite is for components which use a FormBuilder -- should we mock it like other dependencies?
+      ],
+      imports: [ 
+        ReactiveFormsModule, 
+        CalendarModule //Importing this because I couldn't use CUSTOM_ELEMENTS_SCHEMA due to formControlName being used with the calendar component
       ]
     })
     .compileComponents();

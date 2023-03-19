@@ -74,14 +74,14 @@ export class WorkoutProgressComponent implements OnInit {
       )
       .subscribe((results: ExecutedWorkoutMetrics[]) => {
         this.metrics = results;
-        console.log("METRICS: ", this.metrics);
+        //console.log("METRICS: ", this.metrics);
       });
   }
 
   public exerciseChange(event: Event): void {
-    console.log("EXERCISE CHANGE: ", event);
+    //console.log("EXERCISE CHANGE: ", event);
     let exerciseId: number = parseInt((event.target as HTMLSelectElement).value);
-    console.log("EXERCISE ID: ", exerciseId);
+    //console.log("EXERCISE ID: ", exerciseId);
     if (exerciseId == NaN) return;
     this.setupChartData(exerciseId);
   }

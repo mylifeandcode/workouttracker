@@ -162,7 +162,7 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private addWorkout(): void {
-    console.log("ADDING WORKOUT: ", this._workout);
+    //console.log("ADDING WORKOUT: ", this._workout);
     this._workoutService.add(this._workout)
       .pipe(finalize(() => {
           this.saving = false;
@@ -181,7 +181,7 @@ export class WorkoutEditComponent implements OnInit {
   }
 
   private updateWorkout(): void {
-    console.log("UPDATING WORKOUT: ", this._workout);
+    //console.log("UPDATING WORKOUT: ", this._workout);
     this._workoutService.update(this._workout)
       .pipe(finalize(() => {
           this.saving = false;
@@ -191,7 +191,7 @@ export class WorkoutEditComponent implements OnInit {
           this.infoMsg = "Workout updated at " + new Date().toLocaleTimeString();
       }, 
       (error: any) => {
-          console.log("ERROR: ", error);
+          //console.log("ERROR: ", error);
           this.errorMsg = error.message;
           this.infoMsg = null;
       }
@@ -218,7 +218,7 @@ export class WorkoutEditComponent implements OnInit {
 
   private updateWorkoutFromFormValues(): void {
     if (this.workoutForm) {
-      console.log("this._workout: ", this._workout);
+      //console.log("this._workout: ", this._workout);
       this._workout.name = this.workoutForm.controls.name.value;
       this._workout.exercises = this.getExercisesFromForm();
     }

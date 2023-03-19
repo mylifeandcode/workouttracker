@@ -32,7 +32,7 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
     const result: Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> =
       this._http.get<PaginatedResults<ExecutedWorkoutSummaryDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}`)
         .pipe(
-          tap(() => { console.log("Got executed workouts"); }), 
+          //tap(() => { console.log("Got executed workouts"); }), 
           shareReplay(1) //I need to read this for a better understanding: https://dev.to/this-is-angular/how-caching-data-in-angular-with-rxjs-27mj
         );
         

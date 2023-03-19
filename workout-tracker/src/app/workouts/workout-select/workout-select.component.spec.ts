@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from 'app/core/auth.service';
@@ -26,7 +26,10 @@ class WorkoutServiceMock {
   selector: 'wt-recent-workouts', 
   template: ''
 })
-class RecentWorkoutsComponentMock {}
+class RecentWorkoutsComponentMock {
+  @Input()
+  planningForLater: boolean;
+}
 
 describe('WorkoutSelectComponent', () => {
   let component: WorkoutSelectComponent;

@@ -26,7 +26,7 @@ export class ResistanceBandService extends ApiBaseService<ResistanceBand> {
   public getAllIndividualBands(): Observable<ResistanceBandIndividual[]> {
     return this.getAll()
       .pipe(
-        tap(() =>console.log("GOT THE BANDS")),
+        //tap(() =>console.log("GOT THE BANDS")),
         map((bands: ResistanceBand[]) => {
           const individualBands: ResistanceBandIndividual[] = [];
           bands.map((band: ResistanceBand) => {
