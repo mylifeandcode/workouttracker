@@ -8,6 +8,7 @@ import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from 'app/
 import { catchError, finalize } from 'rxjs/operators';
 import { IRepSettingsForm } from '../user-rep-settings/user-rep-settings.component';
 import { find } from 'lodash-es';
+import { CheckForUnsavedData } from 'app/core/check-for-unsaved-data';
 
 interface IUserSettingsForm {
   recommendationsEnabled: FormControl<boolean>;
@@ -24,7 +25,7 @@ interface IToggleEvent { //TODO: Determine if PrimeNg has a type for this (proba
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.scss']
 })
-export class UserSettingsComponent implements OnInit {
+export class UserSettingsComponent extends CheckForUnsavedData implements OnInit {
 
   public loading: boolean = true;
   public user: User;
@@ -35,7 +36,11 @@ export class UserSettingsComponent implements OnInit {
   constructor(
     private _authService: AuthService, 
     private _userService: UserService, 
-    private _formBuilder: FormBuilder) { }
+    private _formBuilder: FormBuilder) { 
+      
+      super();
+
+  }
 
   public ngOnInit(): void {
     this._userService.getById(this._authService.userId)
@@ -64,7 +69,10 @@ export class UserSettingsComponent implements OnInit {
     this.saving = true;
     this._userService.update(this.user)
       .pipe(
-        finalize(() => { this.saving = false; }),
+        finalize(() => { 
+          this.saving = false; 
+          this.userSettingsForm.markAsPristine();
+        }),
         catchError((err) => {
           window.alert("ERROR: " + err.message ?? "Unknown error");
           throw err.message;
@@ -73,6 +81,10 @@ export class UserSettingsComponent implements OnInit {
       .subscribe((user: User) => {
         window.alert("Settings saved.");
       });
+  }
+
+  public hasUnsavedData(): boolean {
+    return this.userSettingsForm.dirty;
   }
 
   private createForm(): void {

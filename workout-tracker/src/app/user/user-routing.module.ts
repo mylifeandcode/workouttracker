@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { UserAddComponent } from 'app/admin/user-add/user-add.component';
+import { UnsavedChangesGuard } from 'app/core/guards/unsaved-changes.guard';
 import { UserSelectedGuard } from 'app/core/guards/user-selected.guard';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
@@ -11,7 +12,8 @@ const routes: Routes = [
   {
     path: 'user-settings',
     component: UserSettingsComponent,
-    canActivate: [UserSelectedGuard]
+    canActivate: [UserSelectedGuard],
+    canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'change-password',
