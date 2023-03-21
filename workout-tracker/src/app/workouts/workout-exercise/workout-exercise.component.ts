@@ -35,7 +35,7 @@ export class WorkoutExerciseComponent implements OnInit {
   durationEdit = new EventEmitter<FormControl<number | null>>();
 
   //Properties
-  get setsArray(): FormArray<FormGroup<IWorkoutFormExerciseSet>> {
+  get setsArray(): FormArray<FormGroup<IWorkoutFormExerciseSet>> { //TODO: Consider refactoring. This is a property, but functionally the same as a method -- not good for using in template expressions!
     //This property provides an easier way for the template to access this information,
     //and is used by the component code as a short-hand reference to the form array.
     return this.formGroup.controls.exerciseSets;

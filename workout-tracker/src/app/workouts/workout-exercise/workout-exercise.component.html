@@ -49,7 +49,8 @@
                     <div class="col-1 exercise-info-div">
                       {{i + 1}} <button class="btn btn-sm btn-success" *ngIf="formGroup?.controls?.setType?.value==1" (click)="showTimer(setsArray!.controls[i])">Start</button>
                       &nbsp;
-                      <button *ngIf="i == 0 && setsArray.length > 0 && exerciseSet.controls.duration.dirty  || exerciseSet.controls.resistance.dirty || exerciseSet.controls.resistanceMakeup.dirty || exerciseSet.controls.targetReps.dirty" 
+                      <button 
+                        *ngIf="i == 0 && setsArray.controls.length > 1 && (exerciseSet.controls.duration.dirty  || exerciseSet.controls.resistance.dirty || exerciseSet.controls.resistanceMakeup.dirty || exerciseSet.controls.targetReps.dirty)" 
                         class="btn btn-sm btn-primary" 
                         title="Apply these settings to the other sets for this exercise"
                         (click)="applySetChangesToAll()">

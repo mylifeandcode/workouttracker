@@ -120,6 +120,8 @@ export class WorkoutComponent implements OnInit {
       resistanceMakeup: selectedBands.makeup, 
       resistance: selectedBands.maxResistanceAmount 
     });
+    this.formGroupForResistanceSelection.controls.resistanceMakeup.markAsDirty();
+    this.formGroupForResistanceSelection.controls.resistance.markAsDirty();
     this.showResistanceBandsSelectModal = false;
   }
 
