@@ -1,10 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WorkoutExerciseComponent } from './workout-exercise.component';
-import { UntypedFormArray, UntypedFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule, Validators, FormBuilder, FormControl, FormArray, FormGroup } from '@angular/forms';
 import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
-import { Exercise } from '../models/exercise';
 import { Pipe } from '@angular/core';
 import { ResistanceType } from '../enums/resistance-type';
+import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
+import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
+import { SafeHtml } from '@angular/platform-browser';
 
 @Pipe({
   name: 'resistanceType'
@@ -24,10 +26,19 @@ class DurationPipeMock {
   }
 }
 
+@Pipe({
+  name: 'resistanceBandColor'
+})
+class ResistanceBandColorMock {
+  transform(value: string | null): SafeHtml {
+    return "<span style='color: red'>Red</span>"
+  }
+}
+
 describe('WorkoutExerciseComponent', () => {
   let component: WorkoutExerciseComponent;
   let fixture: ComponentFixture<WorkoutExerciseComponent>;
-  let formBuilder: UntypedFormBuilder;
+  let formBuilder: FormBuilder;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -35,7 +46,8 @@ describe('WorkoutExerciseComponent', () => {
       declarations: [ 
         WorkoutExerciseComponent, 
         ResistanceTypePipeMock,
-        DurationPipeMock 
+        DurationPipeMock,
+        ResistanceBandColorMock 
       ]
     })
     .compileComponents();
@@ -44,13 +56,19 @@ describe('WorkoutExerciseComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutExerciseComponent);
     component = fixture.componentInstance;
-    formBuilder = new UntypedFormBuilder();
-    component.formGroup = formBuilder.group({
-      id: [0, Validators.required ],
-      workoutDefinitions: [''], //https://coryrylan.com/blog/creating-a-dynamic-select-with-angular-forms
-      exercises: formBuilder.array([])
+
+    const exerciseArray: ExecutedExerciseDTO[] = getExercises();
+
+    formBuilder = new FormBuilder();
+    component.formGroup = formBuilder.group<IWorkoutFormExercise>({
+      id: new FormControl<number>(10, { nonNullable: true }),
+      exerciseId: new FormControl<number>(25, { nonNullable: true }), 
+      exerciseName: new FormControl<string>('Chest Press with Bands', { nonNullable: true }),
+      exerciseSets: getExerciseSetsFormArray(exerciseArray, formBuilder), 
+      setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }), 
+      resistanceType: new FormControl<number>(exerciseArray[0].resistanceType, { nonNullable: true })
     });
-    setupExercisesFormGroup();
+    //setupExercisesFormGroup();
     fixture.detectChanges();
   });
 
@@ -95,54 +113,86 @@ describe('WorkoutExerciseComponent', () => {
     expect(element.select).toHaveBeenCalled();
   });
 
-  function setupExercisesFormGroup(): void {
+  it('should apply changes made to first set to remaining sets when user chooses to do so', () => {
+    //ARRANGE
+    const changedDuration = 999;
+    const changedResistance = 1000;
+    const changedResistanceMakeup = "Silver";
+    const changedTargetReps = 500;
 
-    let exercises = new Array<ExecutedExerciseDTO>();
-    const formBuilder = new UntypedFormBuilder();
-    component.formGroup.addControl('exerciseSets', formBuilder.array([]));
+    //ACT
+    component.formGroup.controls.exerciseSets.controls[0].patchValue(
+      {
+        duration: changedDuration,
+        resistance: changedResistance,
+        resistanceMakeup: changedResistanceMakeup,
+        targetReps: changedTargetReps
+      }
+    );
 
-    //TODO: Create a builder for this
-    exercises.push(<ExecutedExerciseDTO>{ 
-      sequence: 0, 
-      setType: 1, 
-      exerciseId: 1 
-    });
+    component.applySetChangesToAll();
 
-    component.formGroup = 
-      formBuilder.group({
-        id: exercises[0].id, //WARN: Pretty sure this will still just be 0 at this point
-        exerciseId: exercises[0].exerciseId, 
-        exerciseName: [exercises[0].name, Validators.compose([Validators.required])],
-        exerciseSets: getExerciseSetsFormArray(exercises, formBuilder), 
-        setType: [exercises[0].setType, Validators.compose([Validators.required])], 
-        resistanceType: [exercises[0].resistanceType, Validators.compose([Validators.required])]
-      });
-
-  }
+    //ASSERT
+    const arrayCount = component.formGroup.controls.exerciseSets.controls.length;
+    for(let x = 1; x < arrayCount; x++) { //Start at index 1, not 0
+      expect(component.formGroup.controls.exerciseSets.controls[x].controls.duration.value).toBe(changedDuration);
+      expect(component.formGroup.controls.exerciseSets.controls[x].controls.resistance.value).toBe(changedResistance);
+      expect(component.formGroup.controls.exerciseSets.controls[x].controls.resistanceMakeup.value).toBe(changedResistanceMakeup);
+      expect(component.formGroup.controls.exerciseSets.controls[x].controls.targetReps.value).toBe(changedTargetReps);
+    }
+  });
 
   function getExerciseSetsFormArray(
     exercises: ExecutedExerciseDTO[], 
-    formBuilder: UntypedFormBuilder): UntypedFormArray {
+    formBuilder: FormBuilder): FormArray<FormGroup<IWorkoutFormExerciseSet>> {
 
-    let formArray = formBuilder.array([]);
+    let formArray = new FormArray<FormGroup<IWorkoutFormExerciseSet>>([]);
 
     //Each member of the array is a FormGroup
     for(let i = 0; i < exercises.length; i++) {
-      let formGroup = formBuilder.group({
-        sequence: [exercises[i].sequence], 
-        resistance: [exercises[i].resistanceAmount, Validators.required], 
-        targetReps: [exercises[i].targetRepCount, Validators.required], //TODO: Populate with data from API once refactored to provide it!
-        actualReps: [0, Validators.required], 
-        formRating: [null, Validators.required], 
-        rangeOfMotionRating: [null, Validators.required], 
-        resistanceMakeup: [exercises[i].resistanceMakeup], 
-        bandsEndToEnd: [exercises[i].bandsEndToEnd], //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
-        duration: [120] //TODO: Get/set value from API
+      let formGroup = formBuilder.group<IWorkoutFormExerciseSet>({
+        sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }), 
+        resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
+        targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }), 
+        actualReps: new FormControl<number>(exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, { nonNullable: true, validators: Validators.required }),
+        formRating: new FormControl<number | null>(exercises[i].formRating ? exercises[i].formRating : null, { validators: Validators.required }),
+        rangeOfMotionRating: new FormControl<number | null>(exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, { validators: Validators.required }),
+        resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup), 
+        bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd), 
+        duration: new FormControl<number | null>(120), 
+        involvesReps: new FormControl<boolean>(exercises[i].involvesReps, { nonNullable: true })
       });
 
       formArray.push(formGroup);
     }
 
     return formArray;
+  }
+
+  function getExercises(): ExecutedExerciseDTO[] {
+    const exercises: ExecutedExerciseDTO[] = [];
+
+    for(let i = 0; i < 4; i++) {
+      const exercise = new ExecutedExerciseDTO();
+      exercise.actualRepCount = 0;
+      exercise.bandsEndToEnd = false;
+      exercise.duration = 60;
+      exercise.exerciseId = 100;
+      exercise.formRating = 0;
+      exercise.id = 5;
+      exercise.involvesReps = true;
+      exercise.name = 'Chest Press w/Bands';
+      exercise.rangeOfMotionRating = 0;
+      exercise.resistanceAmount = 160;
+      exercise.resistanceMakeup = 'Onyx,Onyx';
+      exercise.resistanceType = 2;
+      exercise.sequence = i;
+      exercise.targetRepCount = 30;
+      exercise.setType = 0;
+
+      exercises.push(exercise);
+    }
+
+    return exercises;
   }
 });

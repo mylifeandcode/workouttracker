@@ -25,7 +25,20 @@
         <label for="startDateTime">Start Date/Time</label>
       </div>
       <div class="col-2">
-        <p-calendar formControlName="startDateTime" [showTime]="true" hourFormat="12" inputId="startDateTime"></p-calendar>      
+        <p-calendar 
+          formControlName="startDateTime" 
+          [showTime]="true" 
+          hourFormat="12" 
+          inputId="startDateTime" 
+          [showIcon]="true"
+          [hideOnDateTimeSelect]="false"
+        > <!--https://github.com/primefaces/primeng/blob/f5129d8cc90475b239ae5e3412dbe9ed23de31f8/src/app/components/calendar/calendar.ts-->
+          <ng-template pTemplate="footer">
+            <div class="text-center">
+              Click/Touch outside the calendar to close it
+            </div>
+          </ng-template>
+        </p-calendar>      
       </div>
       <div class="col-8">
         <span *ngIf="startDateTime?.invalid && (startDateTime?.touched || startDateTime?.dirty)" class="text-danger">
@@ -40,7 +53,22 @@
         <label for="endDateTime">End Date/Time</label>
       </div>
       <div class="col-2">
-        <p-calendar id="endDateTime" name="endDateTime" formControlName="endDateTime" [showTime]="true" hourFormat="12" inputId="endDateTime"></p-calendar>      
+        <p-calendar 
+          id="endDateTime" 
+          name="endDateTime" 
+          formControlName="endDateTime" 
+          [showTime]="true" 
+          hourFormat="12" 
+          inputId="endDateTime"
+          [showIcon]="true"
+          [hideOnDateTimeSelect]="false"
+        >
+          <ng-template pTemplate="footer">
+            <div class="text-center">
+              Click/Touch outside the calendar to close it
+            </div>
+          </ng-template>
+        </p-calendar>      
       </div>
       <div class="col-8">
         <span *ngIf="endDateTime?.invalid && (endDateTime?.touched || endDateTime?.dirty)" class="text-danger">

@@ -53,7 +53,8 @@ describe('UserSettingsComponent', () => {
       imports: [ 
         ReactiveFormsModule, 
         InputSwitchModule //Importing this module because using CUSTOM_ELEMENTS_SCHEMA wasn't working due to the input switch's formControlName assignment
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   });
