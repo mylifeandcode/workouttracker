@@ -1,6 +1,6 @@
 <div *ngIf="loading" class="row">
   <div class="offset-md-5 col-md-1">
-      <p-progressSpinner></p-progressSpinner>
+    <p-progressSpinner></p-progressSpinner>
   </div>
 </div>
 
@@ -13,8 +13,8 @@
       <fieldset [disabled]="isProcessing">
         <div class="row">
           <div class="col-12">
-              <input type="hidden" formControlName="workoutId" />
-              <h4>{{workoutPlanForm.controls['workoutName'].value}}</h4>
+            <input type="hidden" formControlName="workoutId" />
+            <h4>{{workoutPlanForm.controls['workoutName'].value}}</h4>
           </div>
         </div>
 
@@ -24,18 +24,19 @@
           </div>
         </div>
 
-        <wt-exercise-plan 
-          *ngFor="let exercise of exercisesArray.controls; let i=index"
-          [formGroup]="exercise"
+        <wt-exercise-plan *ngFor="let exercise of exercisesArray.controls; let i=index" [formGroup]="exercise"
           [workoutHasBeenExecutedBefore]="workoutPlan.hasBeenExecutedBefore"
           (resistanceBandsModalRequested)="resistanceBandsModalEnabled($event)">
         </wt-exercise-plan>
 
         <div class="row submit-row">
           <div class="col-12 bottom-padded">
-            <button *ngIf="!planningForLater && !isForPastWorkout" type="submit" class="btn btn-primary" (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
-            <button *ngIf="planningForLater" type="submit" class="btn btn-primary" (click)="submitPlanForLater()" [disabled]="workoutPlanForm.invalid || isProcessing">Save Workout Plan</button>
-            <button *ngIf="isForPastWorkout" type="submit" class="btn btn-primary" (click)="submitPlanForPast()" [disabled]="workoutPlanForm.invalid || isProcessing">Log Past Workout</button>
+            <button *ngIf="!planningForLater && !isForPastWorkout" type="submit" class="btn btn-primary"
+              (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
+            <button *ngIf="planningForLater" type="submit" class="btn btn-primary" (click)="submitPlanForLater()"
+              [disabled]="workoutPlanForm.invalid || isProcessing">Save Workout Plan</button>
+            <button *ngIf="isForPastWorkout" type="submit" class="btn btn-primary" (click)="submitPlanForPast()"
+              [disabled]="workoutPlanForm.invalid || isProcessing">Log Past Workout</button>
             &nbsp;<span *ngIf="isProcessing">Processing...</span>
           </div>
         </div>
@@ -43,12 +44,9 @@
     </form>
 
     <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal">
-      <wt-resistance-band-select
-        [resistanceBandInventory]="allResistanceBands"
-        (okClicked)="resistanceBandsModalAccepted($event)"
-        (cancelClicked)="resistanceBandsModalCancelled()">
+      <wt-resistance-band-select [resistanceBandInventory]="allResistanceBands"
+        (okClicked)="resistanceBandsModalAccepted($event)" (cancelClicked)="resistanceBandsModalCancelled()">
       </wt-resistance-band-select>
     </p-dialog>
   </div>
 </ng-container>
-

@@ -8,6 +8,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ExerciseTargetAreaLink } from '../../workouts/models/exercise-target-area-link';
 import { finalize } from 'rxjs/operators';
 import { some, find } from 'lodash-es';
+import { CheckForUnsavedDataComponent } from 'app/core/check-for-unsaved-data.component';
 
 interface IExerciseEditForm {
   id: FormControl<number>;
@@ -34,7 +35,7 @@ interface IExerciseEditForm {
   templateUrl: './exercise-edit.component.html',
   styleUrls: ['./exercise-edit.component.scss']
 })
-export class ExerciseEditComponent implements OnInit {
+export class ExerciseEditComponent extends CheckForUnsavedDataComponent implements OnInit {
 
   //PUBLIC FIELDS
   public exerciseForm: FormGroup<IExerciseEditForm>;
@@ -66,6 +67,7 @@ export class ExerciseEditComponent implements OnInit {
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
     private _exerciseSvc: ExerciseService) {
+      super();
   }
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
@@ -95,10 +97,12 @@ export class ExerciseEditComponent implements OnInit {
     this.infoMsg = "Saving...";
     this.updateExerciseForPersisting();
 
+    //TODO: Refactor to use a pointer to the service method, as both signatures and return types are the same
     if (this._exerciseId == 0)
       this._exerciseSvc.add(this._exercise)
         .pipe(finalize(() => {
           this.saving = false;
+          this.exerciseForm.markAsPristine();
         }))
         .subscribe((addedExercise: Exercise) => {
           this._exercise = addedExercise;
@@ -113,6 +117,7 @@ export class ExerciseEditComponent implements OnInit {
       this._exerciseSvc.update(this._exercise)
         .pipe(finalize(() => {
           this.saving = false;
+          this.exerciseForm.markAsPristine();          
         }))
         .subscribe((updatedExercise: Exercise) => {
           this._exercise = updatedExercise;
@@ -123,6 +128,10 @@ export class ExerciseEditComponent implements OnInit {
           this.errorMsg = error.message;
         }
       );
+  }
+
+  public hasUnsavedData(): boolean {
+    return this.exerciseForm.dirty;
   }
 
   //PRIVATE METHODS ///////////////////////////////////////////////////////////

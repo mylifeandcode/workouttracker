@@ -6,10 +6,11 @@ import { Workout } from 'app/workouts/models/workout';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
+import { CheckForUnsavedDataComponent } from 'app/core/check-for-unsaved-data.component';
 
 interface IExerciseInWorkout {
   id: FormControl<number>;
-  exerciseId: FormControl<number>; 
+  exerciseId: FormControl<number>;
   exerciseName: FormControl<string>;
   numberOfSets: FormControl<number>;
   setType: FormControl<number>;
@@ -27,7 +28,7 @@ interface IWorkoutEditForm {
   templateUrl: './workout-edit.component.html',
   styleUrls: ['./workout-edit.component.scss']
 })
-export class WorkoutEditComponent implements OnInit {
+export class WorkoutEditComponent extends CheckForUnsavedDataComponent implements OnInit {
 
   //A helfpul link for dynamic form arrays: https://codinglatte.com/posts/angular/angular-dynamic-form-fields-using-formarray/
 
@@ -54,6 +55,7 @@ export class WorkoutEditComponent implements OnInit {
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
     private _workoutService: WorkoutService) {
+    super();
   }
 
   public ngOnInit(): void {
@@ -67,57 +69,12 @@ export class WorkoutEditComponent implements OnInit {
     this.readOnlyMode = !event.checked;
   }
 
-  private setupForm(): void {
-    if (this.workoutId != 0) 
-      this.loadWorkout(); 
-    else {
-      this._workout = new Workout();
-      this.loading = false;
-    }
-  }  
-
   public openModal(): void {
     this.showExerciseSelectModal = true;
   }
 
-  private getWorkoutIdFromRouteParams(): void {
-    this.workoutId = this._route.snapshot.params['id'];
-  }
-
-  private createForm(): void {
-
-    this.workoutForm = this._formBuilder.group<IWorkoutEditForm>({
-        id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
-        active: new FormControl<boolean>(true, { nonNullable: true, validators: Validators.required }), 
-        name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }), 
-        exercises: new FormArray<FormGroup<IExerciseInWorkout>>([])
-    });
-
-  }
-
-  private loadWorkout(): void {
-    this.loading = true;
-    this._workoutService.getById(this.workoutId).subscribe((workout: Workout) => {
-        this.updateFormWithWorkoutValues(workout);
-        this.loading = false;
-        this._workout = workout;
-    }); //TODO: Handle errors
-  }
-
-  private updateFormWithWorkoutValues(workout: Workout): void {
-    this.workoutForm.patchValue({
-      id: workout.id, 
-      active: workout.active, 
-      name: workout.name
-    });
-
-    workout.exercises.forEach(exerciseInWorkout => {
-      if(exerciseInWorkout && exerciseInWorkout?.exercise?.name) {
-        this.exercisesArray.push(
-          this.createExerciseFormGroup(
-            exerciseInWorkout.id, exerciseInWorkout.exerciseId, exerciseInWorkout?.exercise?.name, exerciseInWorkout.setType, exerciseInWorkout.numberOfSets));
-      }
-    });
+  public hasUnsavedData(): boolean {
+    return this.workoutForm.dirty;
   }
 
   public addExercise(exercise: ExerciseDTO): void {
@@ -146,7 +103,7 @@ export class WorkoutEditComponent implements OnInit {
 
   public saveWorkout(): void {
     //Called by Save button
-    
+
     if (!this.workoutForm.invalid) {
       this.updateWorkoutFromFormValues();
 
@@ -161,58 +118,110 @@ export class WorkoutEditComponent implements OnInit {
     }
   }
 
+  //PRIVATE METHODS ///////////////////////////////////////////////////////////////////////////////
+
+  private setupForm(): void {
+    if (this.workoutId != 0)
+      this.loadWorkout();
+    else {
+      this._workout = new Workout();
+      this.loading = false;
+    }
+  }
+
+  private getWorkoutIdFromRouteParams(): void {
+    this.workoutId = this._route.snapshot.params['id'];
+  }
+
+  private createForm(): void {
+
+    this.workoutForm = this._formBuilder.group<IWorkoutEditForm>({
+      id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+      active: new FormControl<boolean>(true, { nonNullable: true, validators: Validators.required }),
+      name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+      exercises: new FormArray<FormGroup<IExerciseInWorkout>>([])
+    });
+
+  }
+
+  private loadWorkout(): void {
+    this.loading = true;
+    this._workoutService.getById(this.workoutId).subscribe((workout: Workout) => {
+      this.updateFormWithWorkoutValues(workout);
+      this.loading = false;
+      this._workout = workout;
+    }); //TODO: Handle errors
+  }
+
+  private updateFormWithWorkoutValues(workout: Workout): void {
+    this.workoutForm.patchValue({
+      id: workout.id,
+      active: workout.active,
+      name: workout.name
+    });
+
+    workout.exercises.forEach(exerciseInWorkout => {
+      if (exerciseInWorkout && exerciseInWorkout?.exercise?.name) {
+        this.exercisesArray.push(
+          this.createExerciseFormGroup(
+            exerciseInWorkout.id, exerciseInWorkout.exerciseId, exerciseInWorkout?.exercise?.name, exerciseInWorkout.setType, exerciseInWorkout.numberOfSets));
+      }
+    });
+  }
+
   private addWorkout(): void {
     //console.log("ADDING WORKOUT: ", this._workout);
     this._workoutService.add(this._workout)
       .pipe(finalize(() => {
-          this.saving = false;
+        this.saving = false;
+        this.workoutForm.markAsPristine();
       }))
       .subscribe((addedWorkout: Workout) => {
-          //this.workout = value;
-          this.workoutId = addedWorkout.id;
-          this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
+        //this.workout = value;
+        this.workoutId = addedWorkout.id;
+        this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
       },
-      (error: any) => {
+        (error: any) => {
           this.errorMsg = error.message;
           this.infoMsg = null;
-      }
-    );
-  
+        }
+      );
   }
 
   private updateWorkout(): void {
     //console.log("UPDATING WORKOUT: ", this._workout);
     this._workoutService.update(this._workout)
       .pipe(finalize(() => {
-          this.saving = false;
+        this.saving = false;
+        this.workoutForm.markAsPristine();
       }))
       .subscribe((updatedWorkout: Workout) => {
-          this.saving = false;
-          this.infoMsg = "Workout updated at " + new Date().toLocaleTimeString();
-      }, 
-      (error: any) => {
+        this.saving = false;
+        this.infoMsg = "Workout updated at " + new Date().toLocaleTimeString();
+      },
+        (error: any) => {
           //console.log("ERROR: ", error);
           this.errorMsg = error.message;
           this.infoMsg = null;
-      }
-    );
+        }
+      );
 
   }
 
   private createExerciseFormGroup(
-    exerciseInWorkoutId: number, 
-    exerciseId: number, 
-    exerciseName: string, 
-    setType: number = 0, 
+    exerciseInWorkoutId: number,
+    exerciseId: number,
+    exerciseName: string,
+    setType: number = 0,
     numberOfSets: number = 0): FormGroup<IExerciseInWorkout> {
-      
+
     //console.log("getExerciseFormGroup: exerciseInWorkoutId = " + exerciseInWorkoutId + ", exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
     return this._formBuilder.group<IExerciseInWorkout>({
-      id: new FormControl<number>(exerciseInWorkoutId, { nonNullable: true }), 
-      exerciseId: new FormControl<number>(exerciseId, { nonNullable: true }),  
-      exerciseName: new FormControl<string>(exerciseName, { nonNullable: true, validators: Validators.compose([Validators.required])}),
-      numberOfSets: new FormControl<number>(numberOfSets, { nonNullable: true, validators: Validators.compose([Validators.required, Validators.min(1)])}), 
-      setType: new FormControl<number>(setType, { nonNullable: true, validators: Validators.compose([Validators.required])})
+      id: new FormControl<number>(exerciseInWorkoutId, { nonNullable: true }),
+      exerciseId: new FormControl<number>(exerciseId, { nonNullable: true }),
+      exerciseName: new FormControl<string>(exerciseName, { nonNullable: true, validators: Validators.compose([Validators.required]) }),
+      numberOfSets: new FormControl<number>(numberOfSets, { nonNullable: true, validators: Validators.compose([Validators.required, Validators.min(1)]) }),
+      setType: new FormControl<number>(setType, { nonNullable: true, validators: Validators.compose([Validators.required]) })
     });
   }
 
@@ -232,11 +241,11 @@ export class WorkoutEditComponent implements OnInit {
       output.push(
         new ExerciseInWorkout(
           exerciseFormGroup.controls.id.value,
-          exerciseFormGroup.controls.exerciseId.value, 
-          exerciseFormGroup.controls.exerciseName.value, 
-          exerciseFormGroup.controls.numberOfSets.value, 
+          exerciseFormGroup.controls.exerciseId.value,
+          exerciseFormGroup.controls.exerciseName.value,
+          exerciseFormGroup.controls.numberOfSets.value,
           exerciseFormGroup.controls.setType.value,
-          index) 
+          index)
       );
       index++;
     }

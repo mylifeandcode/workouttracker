@@ -12,6 +12,7 @@ import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { finalize } from 'rxjs/operators';
 import { IWorkoutPlanForm } from '../interfaces/i-workout-plan-form';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
+import { CheckForUnsavedDataComponent } from 'app/core/check-for-unsaved-data.component';
 
 
 @Component({
@@ -19,7 +20,7 @@ import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group
   templateUrl: './workout-plan.component.html',
   styleUrls: ['./workout-plan.component.scss']
 })
-export class WorkoutPlanComponent implements OnInit {
+export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implements OnInit {
 
   //PUBLIC FIELDS
   public workoutPlan: WorkoutPlan | null; //Null before retrieved
@@ -74,6 +75,7 @@ export class WorkoutPlanComponent implements OnInit {
     private _activatedRoute: ActivatedRoute, 
     private _router: Router, 
     private _formBuilder: FormBuilder) { 
+      super();
   }
 
   //PUBLIC METHODS
@@ -88,7 +90,10 @@ export class WorkoutPlanComponent implements OnInit {
     if (this.workoutPlan) {
       this.setupDataForPlanSubmission();
       this._workoutService.submitPlan(this.workoutPlan)
-        .pipe(finalize(() => { this.isProcessing = false; }))
+        .pipe(finalize(() => { 
+          this.isProcessing = false; 
+          this.workoutPlanForm.markAsPristine();
+        }))
         .subscribe((executedWorkoutId: number) => {
           this._router.navigate([`workouts/start/${executedWorkoutId}`]);
         });
@@ -99,7 +104,10 @@ export class WorkoutPlanComponent implements OnInit {
     if (this.workoutPlan) {
       this.setupDataForPlanSubmission();
       this._workoutService.submitPlanForLater(this.workoutPlan)
-        .pipe(finalize(() => { this.isProcessing = false; }))
+        .pipe(finalize(() => { 
+          this.isProcessing = false; 
+          this.workoutPlanForm.markAsPristine();
+        }))
         .subscribe((executedWorkoutId: number) => {
           this._router.navigate([`workouts/select-planned`]);
         });
@@ -110,7 +118,10 @@ export class WorkoutPlanComponent implements OnInit {
     if (this.workoutPlan && this._pastWorkoutStartDateTime && this._pastWorkoutEndDateTime) {
       this.setupDataForPlanSubmission();
       this._workoutService.submitPlanForPast(this.workoutPlan, this._pastWorkoutStartDateTime, this._pastWorkoutEndDateTime)
-        .pipe(finalize(() => { this.isProcessing = false; }))
+        .pipe(finalize(() => { 
+          this.isProcessing = false; 
+          this.workoutPlanForm.markAsPristine();
+        }))
         .subscribe((executedWorkoutId: number) => {
           this._router.navigate([`workouts/start/${executedWorkoutId}`], { queryParams: { pastWorkout: true }});
         });
@@ -140,7 +151,7 @@ export class WorkoutPlanComponent implements OnInit {
   //END PUBLIC METHODS
 
   //PRIVATE METHODS
-  private subscribeToRoute(): void {
+  private subscribeToRoute(): void { //TODO: Refactor. Use snapshot instead.
     this._activatedRoute.params.subscribe((params: Params) => {
       this.workoutPlan = null;
       const workoutId = params["id"];
@@ -255,6 +266,10 @@ export class WorkoutPlanComponent implements OnInit {
       this.workoutPlan.pastWorkoutEndDateTime = this._pastWorkoutEndDateTime;
       this.isProcessing = true;
     }
+  }
+
+  public hasUnsavedData(): boolean {
+    return this.workoutPlanForm.dirty;
   }
 
   //END PRIVATE METHODS

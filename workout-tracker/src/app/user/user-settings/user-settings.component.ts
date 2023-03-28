@@ -8,7 +8,7 @@ import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from 'app/
 import { catchError, finalize } from 'rxjs/operators';
 import { IRepSettingsForm } from '../user-rep-settings/user-rep-settings.component';
 import { find } from 'lodash-es';
-import { CheckForUnsavedData } from 'app/core/check-for-unsaved-data';
+import { CheckForUnsavedDataComponent } from 'app/core/check-for-unsaved-data.component';
 
 interface IUserSettingsForm {
   recommendationsEnabled: FormControl<boolean>;
@@ -25,7 +25,7 @@ interface IToggleEvent { //TODO: Determine if PrimeNg has a type for this (proba
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.scss']
 })
-export class UserSettingsComponent extends CheckForUnsavedData implements OnInit {
+export class UserSettingsComponent extends CheckForUnsavedDataComponent implements OnInit {
 
   public loading: boolean = true;
   public user: User;

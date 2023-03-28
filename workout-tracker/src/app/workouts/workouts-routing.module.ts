@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { UnsavedChangesGuard } from 'app/core/guards/unsaved-changes.guard';
 import { UserSelectedGuard } from 'app/core/guards/user-selected.guard'; //TODO: Correct path/method of import?
 import { InProgressWorkoutsComponent } from './in-progress-workouts/in-progress-workouts.component';
 import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
@@ -17,12 +18,14 @@ const routes: Routes = [
   {
     path: 'edit/:id',
     component: WorkoutEditComponent,
-    canActivate: [UserSelectedGuard]
+    canActivate: [UserSelectedGuard],
+    canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'view/:id',
     component: WorkoutEditComponent,
-    canActivate: [UserSelectedGuard]
+    canActivate: [UserSelectedGuard],
+    canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'select', 
@@ -57,17 +60,20 @@ const routes: Routes = [
   {
     path: 'plan/:id',
     component: WorkoutPlanComponent, 
-    canActivate: [UserSelectedGuard]
+    canActivate: [UserSelectedGuard],
+    canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'plan-for-later/:id',
     component: WorkoutPlanComponent, 
-    canActivate: [UserSelectedGuard]
+    canActivate: [UserSelectedGuard],
+    canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'plan-for-past/:id/:start/:end',
     component: WorkoutPlanComponent, 
-    canActivate: [UserSelectedGuard]
+    canActivate: [UserSelectedGuard],
+    canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'log-past-start',
