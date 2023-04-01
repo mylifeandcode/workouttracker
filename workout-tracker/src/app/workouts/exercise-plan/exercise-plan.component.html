@@ -71,7 +71,7 @@
       <div class="col-2 form-group">
         <label>
           Target Rep Count
-          <input *ngIf="formGroup.controls.involvesReps.value" type="number" class="amount" formControlName="targetRepCount" required />
+          <input wtSelectOnFocus *ngIf="formGroup.controls.involvesReps.value" type="number" class="amount" formControlName="targetRepCount" required />
           <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
         </label>
       </div>
@@ -79,7 +79,7 @@
         <label>
           Resistance Amount
           <!--TODO: Get these *ngIfs to work with the enum type instead-->
-          <input *ngIf="formGroup.controls.resistanceType.value!=2 && formGroup.controls.resistanceType.value!=3" type="number" class="amount" formControlName="resistanceAmount" required />
+          <input wtSelectOnFocus *ngIf="formGroup.controls.resistanceType.value!=2 && formGroup.controls.resistanceType.value!=3" type="number" class="amount" formControlName="resistanceAmount" required />
           <span *ngIf="formGroup.controls.resistanceType.value==2" class="no-input-value">
             <ng-container *ngIf="formGroup.controls.resistanceAmount.value">
               {{formGroup.controls.resistanceAmount.value}}

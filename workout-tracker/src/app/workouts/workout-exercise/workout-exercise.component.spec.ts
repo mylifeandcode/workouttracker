@@ -100,6 +100,9 @@ describe('WorkoutExerciseComponent', () => {
     expect(component.durationEdit.emit).toHaveBeenCalledWith(component.setsArray.controls[0].controls.duration);
   });
 
+  //This functionality has been moved to the wtSelectOnFocus directive, but I'm leaving this test 
+  //here so I can remember how to do something like this in the future if I ever need to.
+  /*
   it('should select the contents of an input when an input gets focus', () => {
     //ARRANGE
     //const element = new HTMLInputElement();
@@ -112,6 +115,7 @@ describe('WorkoutExerciseComponent', () => {
     //ASSERT
     expect(element.select).toHaveBeenCalled();
   });
+  */
 
   it('should apply changes made to first set to remaining sets when user chooses to do so', () => {
     //ARRANGE

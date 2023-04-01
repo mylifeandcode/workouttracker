@@ -5,10 +5,10 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 })
 export class SelectOnFocusDirective {
 
-  constructor(private _el: ElementRef) { }
+  constructor(private _element: ElementRef) {}
 
-  @HostListener('focus') onMouseLeave() {
-    this._el.nativeElement.focus();
+  @HostListener('focus') onFocus() {
+    this._element.nativeElement.select();
   }
 
 }

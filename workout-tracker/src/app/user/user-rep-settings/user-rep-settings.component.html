@@ -4,16 +4,16 @@
     </div>
     <div class="col-1">
       <label>Duration 
-        <input *ngIf="repSettingsFormGroup.controls.setType.value == 1" formControlName="duration" type="number" />
+        <input wtSelectOnFocus *ngIf="repSettingsFormGroup.controls.setType.value == 1" formControlName="duration" type="number" />
         <span *ngIf="repSettingsFormGroup.controls.setType.value == 0">N/A</span>
       </label>
 
     </div>
     <div class="col-1">
-      <label>Min Reps <input formControlName="minReps" type="number" /></label>
+      <label>Min Reps <input wtSelectOnFocus formControlName="minReps" type="number" /></label>
     </div>
     <div class="col-1">
-      <label>Max Reps <input formControlName="maxReps" type="number" /></label>
+      <label>Max Reps <input wtSelectOnFocus formControlName="maxReps" type="number" /></label>
     </div>
     <div class="col-7">
       <br />

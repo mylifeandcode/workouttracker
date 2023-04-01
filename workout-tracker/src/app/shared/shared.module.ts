@@ -19,7 +19,8 @@ import { SelectOnFocusDirective } from './select-on-focus.directive';
   exports: [
     InsertSpaceBeforeCapitalPipe,
     ResistanceBandColorPipe,
-    ZeroIsBadPipe
+    ZeroIsBadPipe,
+    SelectOnFocusDirective
   ]
 })
 export class SharedModule { }

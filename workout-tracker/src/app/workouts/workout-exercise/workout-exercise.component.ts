@@ -62,6 +62,9 @@ export class WorkoutExerciseComponent implements OnInit {
     this.durationEdit.emit(formControl);
   }
 
+  //This functionality has been moved to the wtSelectOnFocus directive, but I'm leaving this test 
+  //here so I can remember how to do something like this in the future if I ever need to.
+  /*
   public inputFocused(event: Event): void {
     if (event.type != 'focus') {
       return;
@@ -72,6 +75,7 @@ export class WorkoutExerciseComponent implements OnInit {
     const target = <HTMLInputElement>focusEvent.target;
     target.select();
   }
+  */
 
   public applySetChangesToAll(): void {
     if (this.formGroup.controls.exerciseSets.length > 1) {

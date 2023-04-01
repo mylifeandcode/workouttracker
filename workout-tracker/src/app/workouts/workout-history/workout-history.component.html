@@ -14,8 +14,8 @@
               <ng-template pTemplate="body" let-executedWorkout>
                   <tr class="workout-history">
                       <td><a [routerLink]="['/workouts/history/view/', executedWorkout.id]">{{executedWorkout.name}}</a></td>
-                      <td>{{executedWorkout.startDateTime | date:'M/d/yyyy, h:mm a'}}</td>
-                      <td>{{executedWorkout.endDateTime | date:'M/d/yyyy, h:mm a'}}</td>
+                      <td>{{executedWorkout.startDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
+                      <td>{{executedWorkout.endDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
                       <td><span *ngIf="executedWorkout.journal" (click)="openNotesModal(executedWorkout.journal)" pTooltip="{{executedWorkout.journal}}">Notes</span></td>
                   </tr>
               </ng-template>

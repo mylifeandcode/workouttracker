@@ -10,6 +10,7 @@ import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
+import { SharedModule } from 'app/shared/shared.module';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.
     InputSwitchModule,
     ProgressSpinnerModule,
     ReactiveFormsModule,
-    UserRoutingModule
+    UserRoutingModule,
+    SharedModule
   ]
 })
 export class UserModule { }
