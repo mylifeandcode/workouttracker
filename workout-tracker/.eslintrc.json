@@ -20,6 +20,7 @@
         "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
+      "plugins": ["deprecation"],
       "rules": {
         "@angular-eslint/component-selector": [
           "error",
@@ -37,8 +38,10 @@
             "style": "camelCase"
           }
         ],
+        "@angular-eslint/use-lifecycle-interface": "error",
         "@typescript-eslint/consistent-type-definitions": "error",
         "@typescript-eslint/dot-notation": "off",
+        "@typescript-eslint/explicit-function-return-type": "error",
         "@typescript-eslint/explicit-member-accessibility": [
           "off",
           {
@@ -74,10 +77,7 @@
           "off",
           null
         ],
-        "@typescript-eslint/semi": [
-          "off",
-          null
-        ],
+        "@typescript-eslint/semi": "error",
         "brace-style": [
           "off",
           null
@@ -86,16 +86,34 @@
           "off",
           null
         ],
+        "deprecation/deprecation": "error",
         "eqeqeq": [
           "off",
           null
         ],
         "id-blacklist": "off",
         "id-match": "off",
+        "max-classes-per-file": ["error", 10], 
+        "max-len": "warn",
+        "new-parens": "error", 
+        "no-console": ["error", {}], 
+        "no-fallthrough": ["error", {}], 
         "no-redeclare": "error",
+        "no-restricted-globals": [
+          "error",
+          {
+              "name": "fit",
+              "message": "Do not commit fit(). Use it() instead."
+          },
+          {
+              "name": "fdescribe",
+              "message": "Do not commit fdescribe(). Use describe() instead."
+          }
+        ],
         "no-trailing-spaces": "off", 
         "no-underscore-dangle": "off",
-        "valid-typeof": "error"
+        "valid-typeof": "error",
+        "yoda": "error"
       }
     },
     {

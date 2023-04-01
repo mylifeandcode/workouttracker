@@ -86,7 +86,7 @@ describe('ResistanceBandsComponent', () => {
     const resistanceBandService: ResistanceBandService = TestBed.inject(ResistanceBandService);
     expect(resistanceBandService.getAll).toHaveBeenCalledTimes(1);
     expect(component.resistanceBands).not.toBeNull();
-  })
+  });
 
   it('should add resistance band', () => {
 
