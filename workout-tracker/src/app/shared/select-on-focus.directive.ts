@@ -7,7 +7,7 @@ export class SelectOnFocusDirective {
 
   constructor(private _element: ElementRef) {}
 
-  @HostListener('focus') onFocus() {
+  @HostListener('focus') onFocus(): void {
     this._element.nativeElement.select();
   }
 

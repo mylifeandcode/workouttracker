@@ -33,7 +33,7 @@ export class ResistanceBandService extends ApiBaseService<ResistanceBand> {
             for(let x = 0; x < band.numberAvailable; x++) {
               individualBands.push(new ResistanceBandIndividual(band.color, band.maxResistanceAmount));
             }
-          })
+          });
           return individualBands;
         })
       );

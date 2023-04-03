@@ -91,7 +91,7 @@ describe('UserAddComponent', () => {
 
     //ARRANGE
     //Need to override default activated route and re-init for this one
-    let activatedRoute = TestBed.inject(ActivatedRoute);
+    const activatedRoute = TestBed.inject(ActivatedRoute);
     spyOnProperty(activatedRoute, "routeConfig", "get").and.returnValue({ path: '/users/add' });
 
     //ACT

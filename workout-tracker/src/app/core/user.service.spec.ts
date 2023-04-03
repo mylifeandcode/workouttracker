@@ -128,7 +128,7 @@ describe('UserService', () => {
 
     // Respond with the mock results
     //TODO: Revisit/complete
-    request.flush(null)
+    request.flush(null);
 
   });
 

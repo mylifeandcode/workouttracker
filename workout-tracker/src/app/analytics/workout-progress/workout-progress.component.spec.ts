@@ -17,7 +17,7 @@ class AnalyticsServiceMock {
 
   getExecutedWorkoutMetrics = jasmine.createSpy('getExecutedWorkoutMetrics')
     .and.callFake(() => {
-      const metrics = new Array<ExecutedWorkoutMetrics>;
+      const metrics = new Array<ExecutedWorkoutMetrics>();
       const exercise1Metrics = new ExecutedExerciseMetrics();
       exercise1Metrics.name = "Exercise 1";
       exercise1Metrics.exerciseId = 1;

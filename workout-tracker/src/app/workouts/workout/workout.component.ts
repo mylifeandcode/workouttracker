@@ -17,7 +17,7 @@ import { forEach } from 'lodash-es';
 interface IWorkoutForm {
   id: FormControl<number | null>;
   exercises: FormArray<FormGroup<IWorkoutFormExercise>>; 
-  journal:FormControl<string | null>;
+  journal: FormControl<string | null>;
 }
 
 @Component({
@@ -241,7 +241,7 @@ export class WorkoutComponent implements OnInit {
   private setupExercisesFormGroup(exercises: ExecutedExerciseDTO[]): void {
     this.exercisesArray.clear();
 
-    let groupedExercises = this._executedWorkoutService.groupExecutedExercises(exercises);
+    const groupedExercises = this._executedWorkoutService.groupExecutedExercises(exercises);
 
     //TODO: Use the non-lodash version of forEach
     forEach(groupedExercises, (exerciseArray: ExecutedExerciseDTO[]) => {
@@ -263,11 +263,11 @@ export class WorkoutComponent implements OnInit {
 
   private getExerciseSetsFormArray(exercises: ExecutedExerciseDTO[]): FormArray<FormGroup<IWorkoutFormExerciseSet>> {
 
-    let formArray = new FormArray<FormGroup<IWorkoutFormExerciseSet>>([]);
+    const formArray = new FormArray<FormGroup<IWorkoutFormExerciseSet>>([]);
 
     //Each member of the array is a FormGroup
     for(let i = 0; i < exercises.length; i++) {
-      let formGroup = this._formBuilder.group<IWorkoutFormExerciseSet>({
+      const formGroup = this._formBuilder.group<IWorkoutFormExerciseSet>({
         sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }), 
         resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
         targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }), 
@@ -297,11 +297,11 @@ export class WorkoutComponent implements OnInit {
     this._executedWorkout.journal = this.workoutForm.controls.journal.value;
 
     this.exercisesArray.controls.forEach((exerciseFormGroup: FormGroup<IWorkoutFormExercise>) => {
-      let sets = exerciseFormGroup.controls.exerciseSets;
-      let exerciseId = exerciseFormGroup.controls.exerciseId.value;
-      let exercises = this._executedWorkout.exercises.filter((exercise: ExecutedExerciseDTO) => {
-        return exercise.exerciseId == exerciseId; 
-      });
+      const sets = exerciseFormGroup.controls.exerciseSets;
+      const exerciseId = exerciseFormGroup.controls.exerciseId.value;
+      let exercises = this._executedWorkout.exercises.filter((exercise: ExecutedExerciseDTO) => 
+        exercise.exerciseId == exerciseId 
+      );
 
       exercises = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
 
@@ -339,7 +339,7 @@ export class WorkoutComponent implements OnInit {
             this._messageService.add({severity:'success', summary: 'Success!', detail: 'Workout completed!', life: 5000});
           }
           else {
-            if (!this.startDateTime) this._executedWorkout.startDateTime;
+            if (!this.startDateTime) this.startDateTime = this._executedWorkout.startDateTime;
             this._messageService.add({severity:'success', summary: 'Success!', detail: 'Progress updated!', life: 1000});
 
           }

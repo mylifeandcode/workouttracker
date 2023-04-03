@@ -29,7 +29,7 @@ class MockUserService {
     return of(user);
   });
 
-  update = jasmine.createSpy('update').and.callFake((user: User) => { return of(user); });
+  update = jasmine.createSpy('update').and.callFake((user: User) => of(user));
 }
 
 describe('UserSettingsComponent', () => {

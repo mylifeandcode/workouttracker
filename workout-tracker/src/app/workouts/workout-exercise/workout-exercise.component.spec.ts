@@ -31,7 +31,7 @@ class DurationPipeMock {
 })
 class ResistanceBandColorMock {
   transform(value: string | null): SafeHtml {
-    return "<span style='color: red'>Red</span>"
+    return "<span style='color: red'>Red</span>";
   }
 }
 
@@ -64,7 +64,7 @@ describe('WorkoutExerciseComponent', () => {
       id: new FormControl<number>(10, { nonNullable: true }),
       exerciseId: new FormControl<number>(25, { nonNullable: true }), 
       exerciseName: new FormControl<string>('Chest Press with Bands', { nonNullable: true }),
-      exerciseSets: getExerciseSetsFormArray(exerciseArray, formBuilder), 
+      exerciseSets: getExerciseSetsFormArray(exerciseArray), 
       setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }), 
       resistanceType: new FormControl<number>(exerciseArray[0].resistanceType, { nonNullable: true })
     });
@@ -146,15 +146,13 @@ describe('WorkoutExerciseComponent', () => {
     }
   });
 
-  function getExerciseSetsFormArray(
-    exercises: ExecutedExerciseDTO[], 
-    formBuilder: FormBuilder): FormArray<FormGroup<IWorkoutFormExerciseSet>> {
+  function getExerciseSetsFormArray(exercises: ExecutedExerciseDTO[]): FormArray<FormGroup<IWorkoutFormExerciseSet>> {
 
-    let formArray = new FormArray<FormGroup<IWorkoutFormExerciseSet>>([]);
+    const formArray = new FormArray<FormGroup<IWorkoutFormExerciseSet>>([]);
 
     //Each member of the array is a FormGroup
     for(let i = 0; i < exercises.length; i++) {
-      let formGroup = formBuilder.group<IWorkoutFormExerciseSet>({
+      const formGroup = formBuilder.group<IWorkoutFormExerciseSet>({
         sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }), 
         resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
         targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }), 

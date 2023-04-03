@@ -52,6 +52,7 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
 
   /**
    * Gets recently executed workouts
+   * 
    * @returns an array of recently executed workouts
    */
   public getRecent(): Observable<ExecutedWorkoutSummaryDTO[]> {
@@ -63,9 +64,9 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
   public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
     const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
     
-    let groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) => { 
-      return exercise.exerciseId.toString() + '-' + exercise.setType.toString(); 
-    });
+    const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>  
+      exercise.exerciseId.toString() + '-' + exercise.setType.toString()
+    );
     return groupedExercises;
   }
 

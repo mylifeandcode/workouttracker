@@ -90,8 +90,8 @@ describe('WorkoutService', () => {
     //ACT
     service.add(workout)
       .subscribe(
-        (workout: Workout) => {
-          expect(workout).toEqual(workout); //ASSERT
+        (addedWorkout: Workout) => {
+          expect(addedWorkout).toEqual(workout); //ASSERT
           done();
         },
         fail
@@ -116,8 +116,8 @@ describe('WorkoutService', () => {
     //ACT
     service.update(workout)
       .subscribe(
-        (workout: Workout) => {
-          expect(workout).toEqual(workout); //ASSERT
+        (updatedWorkout: Workout) => {
+          expect(updatedWorkout).toEqual(workout); //ASSERT
           done();
         },
         fail

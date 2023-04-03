@@ -88,7 +88,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   public moveExerciseUp(index: number): void {
     //Called by button click in template
-    let exerciseControl: FormGroup<IExerciseInWorkout> = this.exercisesArray.at(index);
+    const exerciseControl: FormGroup<IExerciseInWorkout> = this.exercisesArray.at(index);
     this.exercisesArray.removeAt(index);
     this.exercisesArray.insert((index - 1), exerciseControl);
     //this.exercisesArray[index - 1].controls.sequnce
@@ -96,7 +96,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   public moveExerciseDown(index: number): void {
     //Called by button click in template
-    let exerciseControl: FormGroup<IExerciseInWorkout> = this.exercisesArray.at(index);
+    const exerciseControl: FormGroup<IExerciseInWorkout> = this.exercisesArray.at(index);
     this.exercisesArray.removeAt(index);
     this.exercisesArray.insert((index + 1), exerciseControl);
   }
@@ -234,10 +234,10 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   private getExercisesFromForm(): Array<ExerciseInWorkout> {
-    let output = new Array<ExerciseInWorkout>();
+    const output = new Array<ExerciseInWorkout>();
     let index = 0;
 
-    for (let exerciseFormGroup of this.exercisesArray.controls) {
+    for (const exerciseFormGroup of this.exercisesArray.controls) {
       output.push(
         new ExerciseInWorkout(
           exerciseFormGroup.controls.id.value,

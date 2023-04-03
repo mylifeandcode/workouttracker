@@ -103,7 +103,7 @@ export class AnalyticsService {
   */
 
   public getExerciseChartData(metrics: ExecutedWorkoutMetrics[], exerciseId: number, metricsType: METRICS_TYPE): AnalyticsChartData {
-    let chartData = new AnalyticsChartData();
+    const chartData = new AnalyticsChartData();
 
     if(metrics) {
       //Set up the labels

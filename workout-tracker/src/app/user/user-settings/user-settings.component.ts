@@ -115,9 +115,9 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
 
     //Update rep settings
     this.user.settings.repSettings.forEach((value: UserMinMaxReps) => {
-      const formGroup = find(this.userSettingsForm.controls.repSettings.controls, (group: FormGroup<IRepSettingsForm>) => {
-        return group.controls.repSettingsId.value == value.id;
-      });
+      const formGroup = find(this.userSettingsForm.controls.repSettings.controls, (group: FormGroup<IRepSettingsForm>) =>
+        group.controls.repSettingsId.value == value.id
+      );
 
       if(!formGroup) { //This should never happen
         window.alert('Error retrieving rep settings values to save. Please contact the system administrator.');

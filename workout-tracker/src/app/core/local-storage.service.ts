@@ -46,6 +46,6 @@ export class LocalStorageService {
   }
 
   public get isLocalStorageSupported(): boolean {
-    return !!this._localStorage
+    return !!this._localStorage;
   }
 }

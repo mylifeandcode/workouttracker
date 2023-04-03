@@ -234,11 +234,11 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     //My approach differs due to different control creation from approach learned at:
     //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
 
-    var output: ExerciseTargetAreaLink[] = [];
+    const output: ExerciseTargetAreaLink[] = [];
 
-    for(var key in this.exerciseForm.value.targetAreas) {
+    for(const key in this.exerciseForm.value.targetAreas) {
       if (this.exerciseForm.value.targetAreas[key]) {
-        let selectedTargetArea = find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key); 
+        const selectedTargetArea = find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key); 
         if (selectedTargetArea) {
           output.push(new ExerciseTargetAreaLink(
             this._exerciseId, 

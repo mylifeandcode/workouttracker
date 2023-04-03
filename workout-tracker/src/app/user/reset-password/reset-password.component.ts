@@ -38,35 +38,38 @@ export class ResetPasswordComponent implements OnInit {
     if(!this._resetCode) {
       this.resetCodeInvalid = true;
     }
-    
-    this._authService.validatePasswordResetCode(this._resetCode!)
-      .pipe(
-        finalize(() => { this.validatingResetCode = false; }),
-        catchError((err: any, caught: Observable<boolean>) => {
-          this.errorMessage = (err.error ? err.error : "An error has occurred. Please contact an administrator.");
-          return of(false);
-        })        
-      )
-      .subscribe((isValid: boolean) => {
-        if(isValid) this.createForm();
-        this.resetCodeInvalid = !isValid;
-      });
+    else {    
+      this._authService.validatePasswordResetCode(this._resetCode)
+        .pipe(
+          finalize(() => { this.validatingResetCode = false; }),
+          catchError((err: any, caught: Observable<boolean>) => {
+            this.errorMessage = (err.error ? err.error : "An error has occurred. Please contact an administrator.");
+            return of(false);
+          })        
+        )
+        .subscribe((isValid: boolean) => {
+          if(isValid) this.createForm();
+          this.resetCodeInvalid = !isValid;
+        });
+    }
   }
 
   public resetPassword(): void {
-    this.resettingPassword = true;
-    this._authService.resetPassword(this._resetCode!, this.resetPasswordForm.controls.password.value)
-      .pipe(
-        finalize(() => { this.resettingPassword = false; }),
-        catchError((err: any, caught: Observable<void>) => {
-          this.errorMessage = (err.error ? err.error : "An error has occurred. Please contact an administrator.");
-          return of();
-        })
-      )
-      .subscribe(() => { 
-        window.alert("Password has been reset."); 
-        this._router.navigate(['']);
-      });
+    if (this._resetCode) {
+      this.resettingPassword = true;
+      this._authService.resetPassword(this._resetCode, this.resetPasswordForm.controls.password.value)
+        .pipe(
+          finalize(() => { this.resettingPassword = false; }),
+          catchError((err: any, caught: Observable<void>) => {
+            this.errorMessage = (err.error ? err.error : "An error has occurred. Please contact an administrator.");
+            return of();
+          })
+        )
+        .subscribe(() => { 
+          window.alert("Password has been reset."); 
+          this._router.navigate(['']);
+        });
+    }
   }
 
   private createForm(): void {

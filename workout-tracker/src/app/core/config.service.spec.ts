@@ -13,7 +13,7 @@ describe('ConfigService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should convert passed-in configuration object into map', inject([ConfigService], (service: ConfigService) => {
+  it('should convert passed-in configuration object into map', () => {
     //ARRANGE
     const anyOldObject = {
       blah: "whatever",
@@ -33,9 +33,9 @@ describe('ConfigService', () => {
     expect(service.get("blah2")).toBe("whateverStill");
     expect(service.get("hello")).toBe("world");
     expect(service.get("complexObject")).toBe(anyOldObject.complexObject);
-  }));
+  });
 
-  it('should return null when requested config setting not found', inject([ConfigService], (service: ConfigService) => {
+  it('should return null when requested config setting not found', () => {
     //ARRANGE
     const anyOldObject = {
       blah: "whatever",
@@ -47,6 +47,6 @@ describe('ConfigService', () => {
 
     //ASSERT
     expect(service.get("blah3")).toBeNull();
-  }));
+  });
 
 });

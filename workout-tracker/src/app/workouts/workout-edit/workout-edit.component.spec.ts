@@ -47,8 +47,8 @@ class WorkoutServiceMock {
 
 const WORKOUT_ID: number = 5;
 
-function getActivatedRouteSnapshot() {
-  let activatedRouteSnapshot = new ActivatedRouteSnapshot();
+function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
+  const activatedRouteSnapshot = new ActivatedRouteSnapshot();
   activatedRouteSnapshot.url = [];
   activatedRouteSnapshot.url.push(new UrlSegment('edit', {}));
   activatedRouteSnapshot.params = { 'id': WORKOUT_ID };

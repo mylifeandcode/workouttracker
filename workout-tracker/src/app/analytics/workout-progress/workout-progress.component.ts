@@ -25,7 +25,7 @@ export class WorkoutProgressComponent implements OnInit {
     scales: {
         y: {
             ticks: {
-                callback: (value: number, index: number, ticks: number) => {
+                callback: (value: number, index: number, ticks: number): string => {
                   //TODO: Leverage RatingPipe for this
                   switch(value) {
                     case 0:
@@ -47,7 +47,7 @@ export class WorkoutProgressComponent implements OnInit {
             }
         }
     }
-  }
+  };
 
   constructor(
     private _analyticsService: AnalyticsService, 
@@ -62,9 +62,9 @@ export class WorkoutProgressComponent implements OnInit {
     this.metrics = [];
     this.clearAnalyticsData();
 
-    let workoutId = parseInt((event.target as HTMLSelectElement).value);
-    if(workoutId == NaN)
-      return
+    const workoutId = parseInt((event.target as HTMLSelectElement).value);
+    if(isNaN(workoutId))
+      return;
 
     this._analyticsService.getExecutedWorkoutMetrics(workoutId)
       .pipe(
@@ -80,9 +80,9 @@ export class WorkoutProgressComponent implements OnInit {
 
   public exerciseChange(event: Event): void {
     //console.log("EXERCISE CHANGE: ", event);
-    let exerciseId: number = parseInt((event.target as HTMLSelectElement).value);
+    const exerciseId: number = parseInt((event.target as HTMLSelectElement).value);
     //console.log("EXERCISE ID: ", exerciseId);
-    if (exerciseId == NaN) return;
+    if (isNaN(exerciseId)) return;
     this.setupChartData(exerciseId);
   }
 

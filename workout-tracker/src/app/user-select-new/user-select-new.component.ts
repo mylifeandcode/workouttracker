@@ -42,7 +42,7 @@ export class UserSelectNewComponent implements OnInit {
       .pipe(
         finalize(() => { this.addingUser = false; })
       )
-      .subscribe((user: User) => {
+      .subscribe((addedUser: User) => {
         this._router.navigate(['/user-select']);
       });
   }

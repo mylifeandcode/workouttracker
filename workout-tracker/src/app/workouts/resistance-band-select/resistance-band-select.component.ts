@@ -39,6 +39,7 @@ export class ResistanceBandSelectComponent implements OnInit {
   /**
    * Sets the arrays of selected and available bands based on a comma-separated string of 
    * resistance band colors
+   * 
    * @param selectedBands A string of resistance band colors currently selected
    * @param doubleMaxResistanceAmounts Specifies whether or not band resistances should be doubled. This should be true when the exercise does not use the band end-to-end without an anchor.
    */
@@ -63,16 +64,16 @@ export class ResistanceBandSelectComponent implements OnInit {
     this.selectedBands = [];
     this.availableBands = [...this.resistanceBandInventory];
 
-    let selectedBandColors: string[] = (selectedBands ? selectedBands.split(',') : []);
+    const selectedBandColors: string[] = (selectedBands ? selectedBands.split(',') : []);
     //selectedBandColors.forEach((value: string) => value.trim());
     
     selectedBandColors.forEach((bandColor: string) => {
       //Find first match in array of available bands
       bandColor = bandColor.trim();
-      let foundBand: ResistanceBandIndividual | undefined = this.availableBands.find(band => band.color == bandColor);
+      const foundBand: ResistanceBandIndividual | undefined = this.availableBands.find(band => band.color == bandColor);
       if (foundBand) {
         this.selectedBands.push(foundBand);
-        let indexInAvailableArray = this.availableBands.findIndex(band => band.color == bandColor);
+        const indexInAvailableArray = this.availableBands.findIndex(band => band.color == bandColor);
         if (indexInAvailableArray > -1)
           this.availableBands.splice(indexInAvailableArray, 1);
       }
@@ -81,7 +82,7 @@ export class ResistanceBandSelectComponent implements OnInit {
   }
 
   public ok(): void {
-    let selection = new ResistanceBandSelection();
+    const selection = new ResistanceBandSelection();
 
     selection.makeup = 
       this.selectedBands

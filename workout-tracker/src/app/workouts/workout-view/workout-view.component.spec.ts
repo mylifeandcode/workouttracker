@@ -44,9 +44,9 @@ class ExecutedWorkoutServiceMock {
   public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
     const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
     
-    let groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) => { 
-      return exercise.exerciseId.toString() + '-' + exercise.setType.toString(); 
-    });
+    const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>  
+      exercise.exerciseId.toString() + '-' + exercise.setType.toString() 
+    );
     return groupedExercises;
   }
 

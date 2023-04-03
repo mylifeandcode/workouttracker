@@ -52,9 +52,11 @@ export class WorkoutLogPastStartComponent implements OnInit {
   }
 
   public proceedToWorkoutEntry(): void {
-    this._router.navigate(
-      [`/workouts/plan-for-past/${this.formGroup.controls.workoutId.value}/${this.formGroup.controls.startDateTime.value!.toISOString()}/${this.formGroup.controls.endDateTime.value!.toISOString()}`] 
-    );
+    if (this.formGroup.controls.startDateTime.value && this.formGroup.controls.endDateTime.value) {
+      this._router.navigate(
+        [`/workouts/plan-for-past/${this.formGroup.controls.workoutId.value}/${this.formGroup.controls.startDateTime.value.toISOString()}/${this.formGroup.controls.endDateTime.value.toISOString()}`] 
+      );
+    }
   }
 
   private buildForm(): void {

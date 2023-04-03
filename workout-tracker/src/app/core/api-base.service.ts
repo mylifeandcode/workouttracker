@@ -27,10 +27,11 @@ export abstract class ApiBaseService<T extends Entity> {
   */
   /** 
    * An Observable containing all of the specified type of entity.
+   * 
    * Use this if you want live updates. The data is cached unless changes are made, in 
    * which case the cache is refreshed. This Observable doesn't complete so you'll need to 
    * unsubscribe from it.
-  */
+   */
   public all$: Observable<T[]> = this._refreshGetAll$
     .pipe(
       //tap(() => { console.log("GOT ALL DATA")}),
@@ -43,6 +44,7 @@ export abstract class ApiBaseService<T extends Entity> {
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
   /**
    * Gets all of the specified type of entity. Emits the value and completes.
+   * 
    * @returns An Observable containing an array of all of the specified type of entity which 
    * completes after the value is emitted. Value is cached, and refreshed when changes are made 
    * or a call is made to invalidate the cache. Use this instead of the all Observable when you 
@@ -63,6 +65,7 @@ export abstract class ApiBaseService<T extends Entity> {
 
   /**
    * Gets the specified entity by ID.
+   * 
    * @param id The ID of the entity to retrieve.
    * @returns An Observable containing the specified entity which completes after the value is 
    * emitted. This value is not cached.
@@ -73,6 +76,7 @@ export abstract class ApiBaseService<T extends Entity> {
 
   /**
    * Adds the provided entity and invalidates the cache.
+   * 
    * @param value The entity to add.
    * @returns An Observable containing the added entity which completes after its value is emitted.
    */
@@ -85,6 +89,7 @@ export abstract class ApiBaseService<T extends Entity> {
 
   /**
    * Updates the provided entity and invalidates the cache.
+   * 
    * @param value The entity to update.
    * @returns An Observable containing the updated entity which completes after its value is emitted.
    */
@@ -97,6 +102,7 @@ export abstract class ApiBaseService<T extends Entity> {
 
   /**
    * Deletes the specified entity and invalidates the cache.
+   * 
    * @param id The ID of the entity to delete.
    * @returns The response from the API to the DELETE request.
    */
@@ -120,6 +126,7 @@ export abstract class ApiBaseService<T extends Entity> {
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
   /**
    * Gets all of the entities from the API.
+   * 
    * @returns An Observable containing all of the entities which completes after the value is emitted.
    */
   private getAllFromAPI(): Observable<T[]> {
@@ -130,6 +137,7 @@ export abstract class ApiBaseService<T extends Entity> {
 
   /**
    * Handles an error.
+   * 
    * @param err The error.
    * @returns An Observable that emits no items to the Observer and immediately emits an error notification.
    */

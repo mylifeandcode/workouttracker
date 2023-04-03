@@ -39,6 +39,7 @@
           }
         ],
         "@angular-eslint/use-lifecycle-interface": "error",
+        "@typescript-eslint/consistent-type-assertions": "off",
         "@typescript-eslint/consistent-type-definitions": "error",
         "@typescript-eslint/dot-notation": "off",
         "@typescript-eslint/explicit-function-return-type": "error",
@@ -73,6 +74,7 @@
           "off",
           null
         ],
+        "@typescript-eslint/prefer-for-of": "off", /* Could not always be used. Weird rule. https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-for-of.md */
         "@typescript-eslint/quotes": [
           "off",
           null
@@ -87,16 +89,18 @@
           null
         ],
         "deprecation/deprecation": "error",
+        "eol-last": "off",
         "eqeqeq": [
           "off",
           null
         ],
+        "guard-for-in": "warn",
         "id-blacklist": "off",
         "id-match": "off",
         "max-classes-per-file": ["error", 10], 
         "max-len": "warn",
         "new-parens": "error", 
-        "no-console": ["error", {}], 
+        "no-console": ["warn", {}], 
         "no-fallthrough": ["error", {}], 
         "no-redeclare": "error",
         "no-restricted-globals": [
@@ -112,7 +116,11 @@
         ],
         "no-trailing-spaces": "off", 
         "no-underscore-dangle": "off",
+        "object-shorthand": "warn",
+        "prefer-arrow/prefer-arrow-functions": "off", /* For APP_INITIALIZER */
+        "quote-props": "off", /* Certain objects, such as PrimeNG lazy events, seem to disqualify the use of this rule */
         "valid-typeof": "error",
+        "radix": "warn",
         "yoda": "error"
       }
     },

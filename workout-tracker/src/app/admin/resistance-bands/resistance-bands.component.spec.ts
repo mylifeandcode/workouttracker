@@ -185,7 +185,7 @@ describe('ResistanceBandsComponent', () => {
     expect(component.modalSubmitted).toBeFalse();
     expect(component.showAddDialog).toBeTrue();
 
-  })
+  });
 
   it('should hide modal', () => {
 

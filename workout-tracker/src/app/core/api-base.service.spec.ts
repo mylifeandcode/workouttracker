@@ -1,4 +1,4 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { Entity } from 'app/shared/models/entity';
 import { ApiBaseService } from './api-base.service';
@@ -133,8 +133,8 @@ describe('ApiBaseService', () => {
 
     //ACT
     const result = service.delete(WIDGET_ID);
-    result.subscribe((result: any) => { //TODO: Re-evaluate return type to use here!
-      expect(result).toBeTruthy(fail);
+    result.subscribe((serviceEntity: any) => { //TODO: Re-evaluate return type to use here!
+      expect(serviceEntity).toBeTruthy(fail);
     });
 
     //ASSERT

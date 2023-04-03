@@ -8,7 +8,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class InsertSpaceBeforeCapitalPipe implements PipeTransform {
 
-  transform(value: string) {
+  public transform(value: string): string {
     if ((typeof value) !== 'string')
       return value;
 

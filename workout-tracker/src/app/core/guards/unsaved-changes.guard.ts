@@ -6,7 +6,7 @@ import { CheckForUnsavedDataComponent } from '../check-for-unsaved-data.componen
   providedIn: 'root'
 })
 export class UnsavedChangesGuard implements CanDeactivate<CheckForUnsavedDataComponent> {
-  canDeactivate(component: CheckForUnsavedDataComponent) {
+  canDeactivate(component: CheckForUnsavedDataComponent): boolean {
     if (component.hasUnsavedData()) {
       return window.confirm("There are unsaved changes. Do you still want to leave this page?");
     }

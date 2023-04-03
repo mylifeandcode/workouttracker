@@ -26,7 +26,7 @@ class ResistanceBandServiceMock {
   getAllIndividualBands = 
     jasmine.createSpy('getAllIndividualBands')
       .and.callFake(() => {
-        let bands: ResistanceBandIndividual[] = [];
+        const bands: ResistanceBandIndividual[] = [];
         bands.push(new ResistanceBandIndividual("Orange", 30));
         bands.push(new ResistanceBandIndividual("Purple", 23));
         return of(bands);

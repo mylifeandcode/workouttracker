@@ -11,7 +11,7 @@ describe('ResistanceBandColorPipe', () => {
         {
           provide: DomSanitizer, 
           useValue: {
-            bypassSecurityTrustHtml: (value: string) => value //Thanks to Zakary Keck for the solution for this
+            bypassSecurityTrustHtml: (value: string): string => value //Thanks to Zakary Keck for the solution for this
           }
         }
       ]

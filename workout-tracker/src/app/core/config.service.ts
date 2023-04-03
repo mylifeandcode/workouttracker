@@ -13,7 +13,7 @@ export class ConfigService {
   public init(configValues: any): void { //TODO: Strong type
 
       //Split config values up into array of objects containing key as first element and value as second
-      let pairs: [string, unknown][] = toPairs(configValues);
+      const pairs: [string, unknown][] = toPairs(configValues);
 
       forEach(pairs, (pair) => {
         ConfigService._configValues.set(pair[0], pair[1]);
@@ -22,7 +22,7 @@ export class ConfigService {
 
   public get(key: string): any {
     
-    let setting = ConfigService._configValues.get(key);
+    const setting = ConfigService._configValues.get(key);
 
     if (setting)
       return setting;

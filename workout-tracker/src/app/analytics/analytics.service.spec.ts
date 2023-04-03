@@ -141,7 +141,7 @@ describe('AnalyticsService', () => {
 
   });
 
-  function getMetricsForTest(): ExecutedWorkoutMetrics[] {
+  const getMetricsForTest = (): ExecutedWorkoutMetrics[] => {
     //TODO: Create builders for these
     const metrics: ExecutedWorkoutMetrics[] = [];
 
@@ -200,6 +200,6 @@ describe('AnalyticsService', () => {
     metrics.push(workout1, workout2);
 
     return metrics;
-  }
+  };
 
 });

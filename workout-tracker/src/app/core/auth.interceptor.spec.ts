@@ -6,7 +6,7 @@ import { AuthInterceptor } from './auth.interceptor';
 import { AuthService } from './auth.service';
 
 class AuthServiceMock {
-  token = "someAccessToken"
+  token = "someAccessToken";
 }
 
 describe('AuthInterceptor', () => {
@@ -59,7 +59,7 @@ describe('AuthInterceptor', () => {
 
     httpClient.get("api/blah").subscribe();
 
-    let testRequest: TestRequest = httpTestingController.expectOne("api/blah");
+    const testRequest: TestRequest = httpTestingController.expectOne("api/blah");
     testRequest.flush([]);
 
     expect(testRequest.request.headers.get("Authorization")).toBeDefined();    
@@ -73,7 +73,7 @@ describe('AuthInterceptor', () => {
 
     httpClient.get("api/blah").subscribe();
 
-    let testRequest: TestRequest = httpTestingController.expectOne("api/blah");
+    const testRequest: TestRequest = httpTestingController.expectOne("api/blah");
     testRequest.flush([]);
 
     expect(testRequest.request.headers.get("Authorization")).toBeNull();

@@ -40,7 +40,7 @@ export class UserService extends ApiBaseService<User> {
   }
 
   public addNew(user: UserNewDTO): Observable<User> {
-    return this._http.post<User>(`${this._apiRoot}/new`, user).pipe(tap((user: User) => { this.invalidateCache(); }));
+    return this._http.post<User>(`${this._apiRoot}/new`, user).pipe(tap((addedUser: User) => { this.invalidateCache(); }));
   }
 
   public override add(user: User): Observable<never> {

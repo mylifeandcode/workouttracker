@@ -12,7 +12,7 @@ export class DialogComponentMock {
   style: any; 
   
   @Input()
-  header:string; 
+  header: string; 
   
   @Input()
   modal: boolean; 

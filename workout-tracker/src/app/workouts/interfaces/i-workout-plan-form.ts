@@ -1,4 +1,4 @@
-import { FormArray, FormControl, FormGroup } from "@angular/forms"
+import { FormArray, FormControl, FormGroup } from "@angular/forms";
 import { IExercisePlanFormGroup } from "./i-exercise-plan-form-group";
 
 export interface IWorkoutPlanForm {

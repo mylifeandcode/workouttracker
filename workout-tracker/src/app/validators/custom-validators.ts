@@ -26,7 +26,7 @@ static formGroupOfBooleansRequireOneTrue: ValidatorFn =
     return valid ? null : {
       formGroupOfBooleansRequireOneTrue: true
     };
-  }
+  };
 
 static startDateTimeVsEndDateTime: ValidatorFn = 
   (control: AbstractControl): ValidationErrors | null => {
@@ -43,8 +43,8 @@ static startDateTimeVsEndDateTime: ValidatorFn =
 
     return valid ? null : {
       startDateTimeVsEndDateTime: true
-    }
-  }
+    };
+  };
 
   static passwordsMatch: ValidatorFn = 
     (control: AbstractControl): ValidationErrors | null => {
@@ -61,9 +61,9 @@ static startDateTimeVsEndDateTime: ValidatorFn =
 
       return valid ? null : {
         passwordsMatch: true
-      }
+      };
 
-    }
+    };
 
 }
 
@@ -86,5 +86,5 @@ export function isRequired(required: boolean): ValidatorFn {
     if(required && control.value) return null;
 
     return { isRequired: true };
-  }
+  };
 }

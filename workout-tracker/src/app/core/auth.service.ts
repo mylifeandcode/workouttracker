@@ -102,10 +102,7 @@ export class AuthService {
           this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, token);
           return true;
         }),
-        catchError((err: any, caught: Observable<boolean>) => {
-          //console.log("Error logging in user: ", err);
-          return of(false);
-        })
+        catchError((err: any, caught: Observable<boolean>) => of(false))
       );
   }
 

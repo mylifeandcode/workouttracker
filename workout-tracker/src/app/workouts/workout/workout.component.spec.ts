@@ -11,12 +11,10 @@ import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
-import { Exercise } from '../models/exercise';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '@angular/core';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import { Workout } from '../models/workout';
 import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { MessageService } from 'primeng/api';
@@ -27,15 +25,15 @@ const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
 
 //HELPER FUNCTIONS ////////////////////////////////////////////////////////////
-function getFakeUserWorkouts(): PaginatedResults<WorkoutDTO> {
+const getFakeUserWorkouts = (): PaginatedResults<WorkoutDTO> => {
   const workouts = new PaginatedResults<WorkoutDTO>();
   workouts.totalCount = 3;
   for(let x = 0; x < workouts.totalCount; x++) {
     workouts.results = new Array<WorkoutDTO>();
-    workouts.results.push(new WorkoutDTO())
+    workouts.results.push(new WorkoutDTO());
   }
   return workouts;
-}
+};
 
 function getResistanceBands(): ResistanceBandIndividual[] {
   const bands: ResistanceBandIndividual[] = [];
@@ -119,13 +117,14 @@ class ExecutedWorkoutServiceMock {
   public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
     const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
     
-    let groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) => { 
-      return exercise.exerciseId.toString() + '-' + exercise.setType.toString(); 
-    });
+    const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>  
+      exercise.exerciseId.toString() + '-' + exercise.setType.toString()
+    );
     return groupedExercises;
   }
 
-  update = jasmine.createSpy('update').and.callFake((workout: ExecutedWorkoutDTO) => { return of(workout);});
+  update = jasmine.createSpy('update')
+    .and.callFake((workout: ExecutedWorkoutDTO) => of(workout));
 }
 
 class ActivatedRouteMock {
@@ -483,7 +482,7 @@ describe('WorkoutComponent', () => {
 
     //ARRANGE
     //Override default mock behavior
-    let activatedRoute = TestBed.inject(ActivatedRoute);
+    const activatedRoute = TestBed.inject(ActivatedRoute);
     activatedRoute.queryParams = of({pastWorkout: true});
   
     //ACT
@@ -498,7 +497,7 @@ describe('WorkoutComponent', () => {
 
     //ARRANGE
     //Override default mock behavior
-    let activatedRoute = TestBed.inject(ActivatedRoute);
+    const activatedRoute = TestBed.inject(ActivatedRoute);
     activatedRoute.queryParams = of({pastWorkout: false});
   
     //ACT
@@ -513,7 +512,7 @@ describe('WorkoutComponent', () => {
 
     //ARRANGE
     //Override default mock behavior
-    let activatedRoute = TestBed.inject(ActivatedRoute);
+    const activatedRoute = TestBed.inject(ActivatedRoute);
     activatedRoute.queryParams = of({});
   
     //ACT

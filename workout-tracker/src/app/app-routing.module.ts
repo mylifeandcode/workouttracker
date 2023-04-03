@@ -9,6 +9,11 @@ import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { LoginComponent } from './login/login.component';
 import { UserSelectNewComponent } from './user-select-new/user-select-new.component';
+import { AdminModule } from './admin/admin.module';
+import { WorkoutsModule } from './workouts/workouts.module';
+import { ExercisesModule } from './exercises/exercises.module';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { UserModule } from './user/user.module';
 
 const routes: Routes = [
   {
@@ -49,23 +54,23 @@ const routes: Routes = [
     path: 'admin', 
     canLoad: [ UserIsAdminGuard ], 
     canActivate: [ UserIsAdminGuard ], //Yes, we need this too, in case an admin user logs out and a non-admin then logs in after the admin module has already been loaded
-    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
+    loadChildren: (): Promise<typeof AdminModule> => import('./admin/admin.module').then(m => m.AdminModule)
   },
   {
     path: 'workouts',
-    loadChildren: () => import('./workouts/workouts.module').then(m => m.WorkoutsModule)
+    loadChildren: (): Promise<typeof WorkoutsModule> => import('./workouts/workouts.module').then(m => m.WorkoutsModule)
   },
   {
     path: 'exercises',
-    loadChildren: () => import('./exercises/exercises.module').then(m => m.ExercisesModule)
+    loadChildren: (): Promise<typeof ExercisesModule> => import('./exercises/exercises.module').then(m => m.ExercisesModule)
   },
   {
     path: 'analytics',
-    loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsModule)
+    loadChildren: (): Promise<typeof AnalyticsModule> => import('./analytics/analytics.module').then(m => m.AnalyticsModule)
   },
   {
     path: 'user',
-    loadChildren: () => import('./user/user.module').then(m => m.UserModule)
+    loadChildren: (): Promise<typeof UserModule> => import('./user/user.module').then(m => m.UserModule)
   },
   {
     path: '**',

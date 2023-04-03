@@ -13,6 +13,7 @@ import { Exercise } from 'app/workouts/models/exercise';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { ExerciseTargetAreaLink } from 'app/workouts/models/exercise-target-area-link';
 
+//TODO: Move initialization inside beforeEach()
 const EXERCISE: Exercise = <Exercise> {
   id: 2, 
   name: 'Some Exercise', 
@@ -27,7 +28,7 @@ const EXERCISE: Exercise = <Exercise> {
       targetAreaId: 1
     }
   ]
-}
+};
 
 class ExerciseServiceMock {
   resistanceTypes: Map<number, string> = new Map<number, string>();
@@ -51,19 +52,19 @@ class ExerciseServiceMock {
     jasmine.createSpy('getResistanceTypes')
       .and.returnValue(of(this.resistanceTypes));
 
-  add = jasmine.createSpy('add').and.callFake((exercise: Exercise) => { return of(exercise); });
-  update = jasmine.createSpy('update').and.callFake((exercise: Exercise) => { return of(exercise); });
+  add = jasmine.createSpy('add').and.callFake((exercise: Exercise) => of(exercise));
+  update = jasmine.createSpy('update').and.callFake((exercise: Exercise) => of(exercise));
 }
 
 @Pipe({
   name: 'insertSpaceBeforeCapital'
 })
 class InsertSpaceBeforeCapitalPipeMock implements PipeTransform {
-  transform(value: string) { return "I'm just a mock!"; }
+  transform(value: string): string { return "I'm just a mock!"; }
 }
 
-function getActivatedRouteSnapshot() {
-  let activatedRouteSnapshot = new ActivatedRouteSnapshot();
+function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
+  const activatedRouteSnapshot = new ActivatedRouteSnapshot();
   activatedRouteSnapshot.url = [];
   activatedRouteSnapshot.url.push(new UrlSegment('edit', {}));
   activatedRouteSnapshot.params = { 'id': 2 };
@@ -137,7 +138,7 @@ describe('ExerciseEditComponent', () => {
 
   it('should have default values for form if no exercise loaded', () => {
     //ARRANGE
-    let activatedRoute = TestBed.inject(ActivatedRoute);
+    const activatedRoute = TestBed.inject(ActivatedRoute);
     activatedRoute.snapshot.params = {id: 0};
 
     //ACT
