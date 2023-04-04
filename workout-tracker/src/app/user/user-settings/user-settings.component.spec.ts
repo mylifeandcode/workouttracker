@@ -11,6 +11,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { of } from 'rxjs';
 
 import { UserSettingsComponent } from './user-settings.component';
+import { MessageService } from 'primeng/api';
 
 class MockAuthService {}
 class MockUserService {
@@ -32,6 +33,10 @@ class MockUserService {
   update = jasmine.createSpy('update').and.callFake((user: User) => of(user));
 }
 
+class MessageServiceMock {
+  add = jasmine.createSpy('add');
+}
+
 describe('UserSettingsComponent', () => {
   let component: UserSettingsComponent;
   let fixture: ComponentFixture<UserSettingsComponent>;
@@ -48,6 +53,10 @@ describe('UserSettingsComponent', () => {
         {
           provide: UserService, 
           useClass: MockUserService
+        },
+        {
+          provide: MessageService,
+          useClass: MessageServiceMock
         }
       ],
       imports: [ 
@@ -82,6 +91,8 @@ describe('UserSettingsComponent', () => {
   it('should save settings', () => {
     //ARRANGE
     const userService = TestBed.inject(UserService);
+    const messageService = TestBed.inject(MessageService);
+
     const expectedSavedUser = new User();
     const duration = 240;
     const minTimedSetReps = 40;
@@ -114,5 +125,6 @@ describe('UserSettingsComponent', () => {
 
     //ASSERT
     expect(userService.update).toHaveBeenCalledWith(expectedSavedUser);
+    expect(messageService.add).toHaveBeenCalledOnceWith({severity:'success', summary: 'Successful', detail: 'Settings saved.', life: 3000});
   });
 });

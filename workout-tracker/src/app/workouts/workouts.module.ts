@@ -46,6 +46,7 @@ import { WorkoutLogPastStartComponent } from '../workouts/workout-log-past-start
 import { DurationPipe } from './pipes/duration.pipe';
 import { DurationComponent } from '../workouts/duration/duration.component';
 import { InProgressWorkoutsComponent } from '../workouts/in-progress-workouts/in-progress-workouts.component';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
   declarations: [
@@ -77,6 +78,7 @@ import { InProgressWorkoutsComponent } from '../workouts/in-progress-workouts/in
     CalendarModule,
     CountdownModule,
     DialogModule,
+    DropdownModule,
     ReactiveFormsModule,
     InputSwitchModule,
     TableModule,

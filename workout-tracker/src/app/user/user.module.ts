@@ -11,6 +11,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
 import { SharedModule } from 'app/shared/shared.module';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 
 @NgModule({
@@ -27,7 +29,11 @@ import { SharedModule } from 'app/shared/shared.module';
     ProgressSpinnerModule,
     ReactiveFormsModule,
     UserRoutingModule,
-    SharedModule
+    SharedModule,
+    ToastModule
+  ],
+  providers: [
+    MessageService /* From PrimeNG -- maybe I should just expose this in SharedModule */
   ]
 })
 export class UserModule { }

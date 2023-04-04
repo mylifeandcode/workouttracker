@@ -9,6 +9,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import { IRepSettingsForm } from '../user-rep-settings/user-rep-settings.component';
 import { find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/core/check-for-unsaved-data.component';
+import { MessageService } from 'primeng/api';
 
 interface IUserSettingsForm {
   recommendationsEnabled: FormControl<boolean>;
@@ -36,7 +37,8 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   constructor(
     private _authService: AuthService, 
     private _userService: UserService, 
-    private _formBuilder: FormBuilder) { 
+    private _formBuilder: FormBuilder,
+    private _messageService: MessageService) { 
       
       super();
 
@@ -79,7 +81,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
         })
       )
       .subscribe((user: User) => {
-        window.alert("Settings saved.");
+        this._messageService.add({severity:'success', summary: 'Successful', detail: 'Settings saved.', life: 3000});
       });
   }
 

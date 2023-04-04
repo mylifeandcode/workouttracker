@@ -3,9 +3,20 @@
 @import 'fonts.scss';
 @import 'variables.scss';
 
-* {
-  font-family: "Pangolin", Arial, Helvetica, sans-serif;
+*, .p-dropdown-label.p-placeholder {
+  font-family: $font-one, $font-two, $font-three, $font-four;
 }
+
+/*
+.p-dropdown-label.p-placeholder {
+  font-family: $font-one, $font-two, $font-three, $font-four;
+}
+*/
+
+.p-inputtext {
+  font-family: $font-one, $font-two, $font-three, $font-four !important; //Theme CSS is getting in the way
+}
+
 
 .gimmeSomeSpace {
   padding: 6px;
@@ -66,4 +77,20 @@
 
 .bottom-padded {
   padding-bottom: 12px;
+}
+
+.widget {
+  color: white;
+  border-radius: 25px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.small-widget {
+  color: white;
+  border-radius: 25px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px;
 }

@@ -9,6 +9,7 @@ import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
 
 import { WorkoutLogPastStartComponent } from './workout-log-past-start.component';
+import { DropdownModule } from 'primeng/dropdown';
 
 class WorkoutServiceMock {
   getFilteredSubset = jasmine.createSpy('getFilteredSubset').and.returnValue(of(this.getWorkouts()));
@@ -54,7 +55,8 @@ describe('WorkoutLogPastStartComponent', () => {
       ],
       imports: [ 
         ReactiveFormsModule, 
-        CalendarModule //Importing this because I couldn't use CUSTOM_ELEMENTS_SCHEMA due to formControlName being used with the calendar component
+        CalendarModule, //Importing this because I couldn't use CUSTOM_ELEMENTS_SCHEMA due to formControlName being used with the calendar component
+        DropdownModule //Same as above
       ]
     })
     .compileComponents();

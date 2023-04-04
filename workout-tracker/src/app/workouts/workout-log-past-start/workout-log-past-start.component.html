@@ -9,12 +9,15 @@
     <div class="row a-little-space">
       <div class="col-2">Select a Workout</div>
       <div class="col-3">
+        <!--
         <select id="workoutDefinitions" formControlName="workoutId">
           <option disabled [value]="null">Choose a Workout</option>
           <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
             {{workouts[i].name}}
           </option>          
         </select>
+        -->
+        <p-dropdown [options]="workouts" formControlName="workoutId" optionLabel="name" optionValue="id" placeholder="Choose a Workout"></p-dropdown>
       </div>
       <div class="col-7">
         <span *ngIf="formGroup?.get('workoutId')?.dirty && formGroup?.get('workoutId')?.errors" class="text-danger">Required</span>

@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { Router } from '@angular/router';
-import { UserService } from '../../core/user.service';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'app/core/auth.service';
+import { ConfigService } from 'app/core/config.service';
 import { User } from 'app/core/models/user';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { ConfigService } from 'app/core/config.service';
-import { AuthService } from 'app/core/auth.service';
+import { UserService } from '../../core/user.service';
 
 
 interface IUserEditForm {
@@ -40,8 +38,7 @@ export class UserEditComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _router: Router,
     private _configService: ConfigService,
-    private _authService: AuthService,
-    private _location: Location) { }
+    private _authService: AuthService) { }
 
   //PUBLIC METHODS
 
@@ -64,7 +61,7 @@ export class UserEditComponent implements OnInit {
       result
           .pipe(finalize(() => { this.savingUserInfo = false; }))
           .subscribe(
-            (savedUser: User) => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
+            () => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
             (error: any) => { 
               if(error?.status == 403)
                 this.errorMsg = "You do not have permission to add or edit users.";
