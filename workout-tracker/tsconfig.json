@@ -5,7 +5,6 @@
     "outDir": "./dist/out-tsc",
     "downlevelIteration": true,
     "strict": true,
-    "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "sourceMap": true,

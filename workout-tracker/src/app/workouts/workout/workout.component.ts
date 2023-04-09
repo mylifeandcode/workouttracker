@@ -28,18 +28,18 @@ interface IWorkoutForm {
 export class WorkoutComponent implements OnInit {
 
   //PUBLIC FIELDS
-  public errorInfo: string;
-  public workoutForm: FormGroup<IWorkoutForm>;
+  public errorInfo: string | undefined = undefined;
+  public workoutForm: FormGroup<IWorkoutForm> | null = null;
   public workoutName: string | null = null;
   
   public showResistanceBandsSelectModal: boolean = false;
   public showCountdownModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
-  public formGroupForResistanceSelection: FormGroup<IWorkoutFormExerciseSet>;
-  public formGroupForCountdownModal: FormGroup<IWorkoutFormExerciseSet>;
-  public countdownModalActivatedDateTime: Date;
+  public formGroupForResistanceSelection: FormGroup<IWorkoutFormExerciseSet> | undefined = undefined;
+  public formGroupForCountdownModal: FormGroup<IWorkoutFormExerciseSet> | undefined = undefined;
+  public countdownModalActivatedDateTime: Date = new Date();
   public saving: boolean = false;
-  public infoMsg: string;
+  public infoMsg: string | undefined = undefined;
   public workoutCompleted: boolean = false;
   public isLoggingPastWorkout: boolean = false;
   public showDurationModal: boolean = false;
@@ -50,11 +50,11 @@ export class WorkoutComponent implements OnInit {
   //END PUBLIC FIELDS
 
   //PRIVATE FIELDS
-  private _executedWorkout: ExecutedWorkoutDTO; //TODO: Use the new DTO type instead
+  private _executedWorkout: ExecutedWorkoutDTO | undefined = undefined; 
   //END PRIVATE FIELDS
 
   //VIEWCHILD
-  @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
+  @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent | undefined = undefined;
 
   //PUBLIC PROPERTIES
   /**
@@ -67,11 +67,11 @@ export class WorkoutComponent implements OnInit {
   /**
    * A property representing all of the Exercises which are part of the Workout
    */
-  get exercisesArray(): FormArray<FormGroup<IWorkoutFormExercise>> {
+  get exercisesArray(): FormArray<FormGroup<IWorkoutFormExercise>> | undefined {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
     //return this.workoutForm.get('exercises') as FormArray;
-    return this.workoutForm.controls.exercises;
+    return this.workoutForm?.controls.exercises;
   }
 
   /**
@@ -110,18 +110,18 @@ export class WorkoutComponent implements OnInit {
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup<IWorkoutFormExerciseSet>): void {
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
-    this.bandSelect.setBandAllocation(
+    this.bandSelect?.setBandAllocation(
       exerciseFormGroup.controls.resistanceMakeup.value ?? '', //TODO: Revisit. This is a hack. Type is nullable but we know we'll have a value here.
       !exerciseFormGroup.controls.bandsEndToEnd.value);
   }
 
   public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {
-    this.formGroupForResistanceSelection.patchValue({ 
+    this.formGroupForResistanceSelection?.patchValue({ 
       resistanceMakeup: selectedBands.makeup, 
       resistance: selectedBands.maxResistanceAmount 
     });
-    this.formGroupForResistanceSelection.controls.resistanceMakeup.markAsDirty();
-    this.formGroupForResistanceSelection.controls.resistance.markAsDirty();
+    this.formGroupForResistanceSelection?.controls.resistanceMakeup.markAsDirty();
+    this.formGroupForResistanceSelection?.controls.resistance.markAsDirty();
     this.showResistanceBandsSelectModal = false;
   }
 
@@ -136,17 +136,19 @@ export class WorkoutComponent implements OnInit {
   }
 
   public startWorkout(): void {
-    this.workoutForm.controls.journal.enable();
-    this.workoutForm.controls.exercises.enable();
+    this.workoutForm?.controls.journal.enable();
+    this.workoutForm?.controls.exercises.enable();
   }
 
   public completeWorkout(): void {
     this.setWorkoutValuesFromFormGroup();
+
+    if (!this._executedWorkout) return;
     
     if(this._executedWorkout.endDateTime == null) //Because we could be entering information for a past workout
       this._executedWorkout.endDateTime = new Date();
     
-      this.save(true);
+    this.save(true);
   }
 
   public saveWorkoutInProgress(): void {
@@ -220,7 +222,7 @@ export class WorkoutComponent implements OnInit {
 
           this.startDateTime = this._executedWorkout.startDateTime;
 
-          this.workoutForm.patchValue({
+          this.workoutForm?.patchValue({
             id: id
           });
           
@@ -229,7 +231,7 @@ export class WorkoutComponent implements OnInit {
           this.workoutCompleted = (this._executedWorkout.endDateTime != null);
 
           if (executedWorkout.journal) {
-            this.workoutForm.controls.journal.setValue(executedWorkout.journal);
+            this.workoutForm?.controls.journal.setValue(executedWorkout.journal);
           }
 
           this.workoutLoaded = true;
@@ -239,14 +241,14 @@ export class WorkoutComponent implements OnInit {
   }
 
   private setupExercisesFormGroup(exercises: ExecutedExerciseDTO[]): void {
-    this.exercisesArray.clear();
+    this.exercisesArray?.clear();
 
     const groupedExercises = this._executedWorkoutService.groupExecutedExercises(exercises);
 
     //TODO: Use the non-lodash version of forEach
     forEach(groupedExercises, (exerciseArray: ExecutedExerciseDTO[]) => {
 
-      this.exercisesArray.push(
+      this.exercisesArray?.push(
         this._formBuilder.group<IWorkoutFormExercise>({
           id: new FormControl<number>(exerciseArray[0].id, { nonNullable: true }),
           exerciseId: new FormControl<number>(exerciseArray[0].exerciseId, { nonNullable: true }), 
@@ -294,18 +296,19 @@ export class WorkoutComponent implements OnInit {
   }
 
   private setWorkoutValuesFromFormGroup(): void {
+    if (!this.workoutForm || !this._executedWorkout || !this.exercisesArray) return;
     this._executedWorkout.journal = this.workoutForm.controls.journal.value;
 
     this.exercisesArray.controls.forEach((exerciseFormGroup: FormGroup<IWorkoutFormExercise>) => {
       const sets = exerciseFormGroup.controls.exerciseSets;
       const exerciseId = exerciseFormGroup.controls.exerciseId.value;
-      let exercises = this._executedWorkout.exercises.filter((exercise: ExecutedExerciseDTO) => 
+      let exercises = this._executedWorkout?.exercises.filter((exercise: ExecutedExerciseDTO) => 
         exercise.exerciseId == exerciseId 
       );
 
-      exercises = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
+      exercises = exercises?.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
 
-      if(exercises.length != sets.length) {
+      if(exercises?.length != sets.length) {
         window.alert("Exercises/FormArray length mismatch."); //TODO: Handle this a better way
         return;
       }
@@ -326,6 +329,8 @@ export class WorkoutComponent implements OnInit {
   }
 
   private save(completed: boolean): void {
+    if (!this._executedWorkout) return;
+
     this.saving = true;
     this._executedWorkoutService
       .update(this._executedWorkout)

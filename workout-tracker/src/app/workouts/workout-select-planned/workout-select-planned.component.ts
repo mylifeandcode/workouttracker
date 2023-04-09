@@ -13,7 +13,7 @@ import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dt
 })
 export class WorkoutSelectPlannedComponent implements OnInit {
 
-  public plannedWorkouts: ExecutedWorkoutSummaryDTO[];
+  public plannedWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public totalCount: number = 0;
   public loading: boolean = true;
   public pageSize: number = 10;

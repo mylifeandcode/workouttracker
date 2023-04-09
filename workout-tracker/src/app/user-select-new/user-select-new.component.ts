@@ -21,9 +21,9 @@ interface INewUserForm {
 })
 export class UserSelectNewComponent implements OnInit {
 
-  public newUserForm: FormGroup<INewUserForm>;
-  public errorMsg: string;
-  public addingUser: boolean;
+  public newUserForm: FormGroup<INewUserForm> | undefined = undefined;
+  public errorMsg: string | undefined = undefined;
+  public addingUser: boolean = false;
   
   constructor(
     private _formBuilder: FormBuilder, 

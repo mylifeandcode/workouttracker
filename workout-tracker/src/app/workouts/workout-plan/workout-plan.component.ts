@@ -23,12 +23,12 @@ import { CheckForUnsavedDataComponent } from 'app/core/check-for-unsaved-data.co
 export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implements OnInit {
 
   //PUBLIC FIELDS
-  public workoutPlan: WorkoutPlan | null; //Null before retrieved
-  public workoutPlanForm: FormGroup<IWorkoutPlanForm>;
-  public showResistanceBandsSelectModal: boolean;
+  public workoutPlan: WorkoutPlan | undefined;
+  public workoutPlanForm: FormGroup<IWorkoutPlanForm> | undefined;
+  public showResistanceBandsSelectModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
-  public formGroupForResistanceSelection: FormGroup;
-  public errorInfo: string;
+  public formGroupForResistanceSelection: FormGroup | undefined;
+  public errorInfo: string | undefined;
   public isProcessing: boolean = false;
   public planningForLater: boolean = false;
   //END PUBLIC FIELDS
@@ -38,7 +38,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   //END PUBLIC PROPERTIES
 
   //VIEWCHILD
-  @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent;
+  @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent | undefined;
 
   //PRIVATE FIELDS
   private _apiCallsInProgress: number = 0;
@@ -55,10 +55,10 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   /**
    * A property representing all of the Exercises which are part of the Workout
    */
-   get exercisesArray(): FormArray<FormGroup<IExercisePlanFormGroup>> {
+   get exercisesArray(): FormArray<FormGroup<IExercisePlanFormGroup>> | undefined {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
-    return this.workoutPlanForm.controls.exercises;
+    return this.workoutPlanForm?.controls.exercises;
   }
 
   /**
@@ -87,12 +87,14 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   public startWorkout(): void {
+    if (!this.workoutPlanForm) return;
+
     if (this.workoutPlan) {
       this.setupDataForPlanSubmission();
       this._workoutService.submitPlan(this.workoutPlan)
         .pipe(finalize(() => { 
           this.isProcessing = false; 
-          this.workoutPlanForm.markAsPristine();
+          this.workoutPlanForm!.markAsPristine();
         }))
         .subscribe((executedWorkoutId: number) => {
           this._router.navigate([`workouts/start/${executedWorkoutId}`]);
@@ -101,12 +103,14 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   public submitPlanForLater(): void {
+    if (!this.workoutPlanForm) return;
+
     if (this.workoutPlan) {
       this.setupDataForPlanSubmission();
       this._workoutService.submitPlanForLater(this.workoutPlan)
         .pipe(finalize(() => { 
           this.isProcessing = false; 
-          this.workoutPlanForm.markAsPristine();
+          this.workoutPlanForm!.markAsPristine();
         }))
         .subscribe((executedWorkoutId: number) => {
           this._router.navigate([`workouts/select-planned`]);
@@ -115,12 +119,12 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   public submitPlanForPast(): void {
-    if (this.workoutPlan && this._pastWorkoutStartDateTime && this._pastWorkoutEndDateTime) {
+    if (this.workoutPlan && this.workoutPlanForm && this._pastWorkoutStartDateTime && this._pastWorkoutEndDateTime) {
       this.setupDataForPlanSubmission();
       this._workoutService.submitPlanForPast(this.workoutPlan, this._pastWorkoutStartDateTime, this._pastWorkoutEndDateTime)
         .pipe(finalize(() => { 
           this.isProcessing = false; 
-          this.workoutPlanForm.markAsPristine();
+          this.workoutPlanForm!.markAsPristine();
         }))
         .subscribe((executedWorkoutId: number) => {
           this._router.navigate([`workouts/start/${executedWorkoutId}`], { queryParams: { pastWorkout: true }});
@@ -129,6 +133,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
+    if (!this.bandSelect) return;
+
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
     this.bandSelect.setBandAllocation(
@@ -137,6 +143,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {
+    if (!this.formGroupForResistanceSelection) return;
+
     this.formGroupForResistanceSelection.patchValue({ 
       resistanceMakeup: selectedBands.makeup, 
       resistanceAmount: selectedBands.maxResistanceAmount 
@@ -153,7 +161,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   //PRIVATE METHODS
   private subscribeToRoute(): void { //TODO: Refactor. Use snapshot instead.
     this._activatedRoute.params.subscribe((params: Params) => {
-      this.workoutPlan = null;
+      this.workoutPlan = undefined;
       const workoutId = params["id"];
 
       if (params["start"])
@@ -167,7 +175,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
         .pipe(finalize(() => { this._apiCallsInProgress--; }))
         .subscribe((result: WorkoutPlan) => {
           this.workoutPlan = result;
-          this.workoutPlanForm.patchValue({
+          this.workoutPlanForm!.patchValue({
             workoutId: workoutId, 
             workoutName: result.workoutName, 
             hasBeenExecutedBefore: result.hasBeenExecutedBefore
@@ -187,10 +195,12 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
   
   private setupExercisesFormGroup(exercises: ExercisePlan[]): void {
+    if (!this.exercisesArray) return;
+
     this.exercisesArray.clear();
     forEach(exercises, (exercise: ExercisePlan) => {
 
-      this.exercisesArray.push(
+      this.exercisesArray!.push(
         this._formBuilder.group<IExercisePlanFormGroup>({
           exerciseInWorkoutId: new FormControl<number>(exercise.exerciseInWorkoutId, { nonNullable: true, validators: Validators.required }), 
           exerciseId: new FormControl<number>(exercise.exerciseId, { nonNullable: true, validators: Validators.required }), 
@@ -222,7 +232,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   private updateWorkoutPlanFromForm(): void {
-    if (this.workoutPlan) {
+    if (this.workoutPlan && this.exercisesArray) {
       this.exercisesArray.controls.forEach((exerciseFormGroup: FormGroup<IExercisePlanFormGroup>, index: number) => {
         
         //TODO: Revisit. Maybe can be made simpler now that we have Typed Forms. :)
@@ -269,6 +279,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   public hasUnsavedData(): boolean {
+    if (!this.workoutPlanForm) return false;
     return this.workoutPlanForm.dirty;
   }
 

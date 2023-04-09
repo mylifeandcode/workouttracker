@@ -56,7 +56,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
 
   //PRIVATE FIELDS
   private _apiCallsInProgress: number = 0;
-  private _userSusbscription: Subscription;
+  private _userSusbscription: Subscription = new Subscription();
   //END PRIVATE FIELDS
 
   constructor(

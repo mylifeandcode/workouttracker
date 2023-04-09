@@ -17,7 +17,7 @@
           <span *ngIf="workoutCompleted">, completed {{endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
         </p>
         <wt-workout-exercise 
-          *ngFor="let exercise of exercisesArray.controls; let i = index" 
+          *ngFor="let exercise of exercisesArray?.controls; let i = index" 
           [formGroup]="exercise" 
           (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
           (showTimerRequest)="showTimer($event)"

@@ -13,8 +13,8 @@ import { forEach } from 'lodash-es';
 })
 export class WorkoutViewComponent implements OnInit {
 
-  public loading: boolean;
-  public executedWorkout: ExecutedWorkoutDTO;
+  public loading: boolean = true;
+  public executedWorkout: ExecutedWorkoutDTO = new ExecutedWorkoutDTO();
   
   /*
   Before setting TypeScript compiler to strict, the below variable was of type Map<string, ExecutedExercise[]>.
@@ -22,7 +22,7 @@ export class WorkoutViewComponent implements OnInit {
   the _.groupBy() function as _.Dictionary. And this caused other problems, particularly with the unit test.
   */
   //public groupedExercises: _.Dictionary<ExecutedExercise[]>;
-  public groupedExercises: Map<string, ExecutedExerciseDTO[]>;
+  public groupedExercises: Map<string, ExecutedExerciseDTO[]> | undefined;
 
   constructor(
     private _activatedRoute: ActivatedRoute,
