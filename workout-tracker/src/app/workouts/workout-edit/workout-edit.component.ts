@@ -33,7 +33,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   //A helfpul link for dynamic form arrays: https://codinglatte.com/posts/angular/angular-dynamic-form-fields-using-formarray/
 
   //Public fields
-  public workoutId: number;
+  public workoutId: number = 0;
   public workoutForm: FormGroup<IWorkoutEditForm>;
   public loading: boolean = true;
   public infoMsg: string | null = null;
@@ -44,7 +44,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   public saving: boolean = false;
 
   //Private fields
-  private _workout: Workout;
+  private _workout: Workout = new Workout();
 
   //Properties
   get exercisesArray(): FormArray<FormGroup<IExerciseInWorkout>> {
@@ -56,12 +56,12 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     private _formBuilder: FormBuilder,
     private _workoutService: WorkoutService) {
     super();
+    this.workoutForm = this.createForm();
   }
 
   public ngOnInit(): void {
     this.readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
     this.getWorkoutIdFromRouteParams();
-    this.createForm();
     this.setupForm();
   }
 
@@ -133,9 +133,9 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     this.workoutId = this._route.snapshot.params['id'];
   }
 
-  private createForm(): void {
+  private createForm(): FormGroup<IWorkoutEditForm> {
 
-    this.workoutForm = this._formBuilder.group<IWorkoutEditForm>({
+    return this._formBuilder.group<IWorkoutEditForm>({
       id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
       active: new FormControl<boolean>(true, { nonNullable: true, validators: Validators.required }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),

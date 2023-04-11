@@ -17,7 +17,7 @@ export interface IRepSettingsForm {
 export class UserRepSettingsComponent implements OnInit {
 
   @Input()
-  repSettingsFormGroup: FormGroup<IRepSettingsForm>;
+  repSettingsFormGroup!: FormGroup<IRepSettingsForm>; //WARN: use of ! -- look for a better solution
 
   constructor() { }
 

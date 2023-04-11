@@ -11,7 +11,7 @@ import { sumBy } from 'lodash-es';
 export class ResistanceBandSelectComponent implements OnInit {
 
   @Input()
-  public resistanceBandInventory: ResistanceBandIndividual[];
+  public resistanceBandInventory: ResistanceBandIndividual[] = [];
 
   @Output()
   public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
@@ -30,7 +30,7 @@ export class ResistanceBandSelectComponent implements OnInit {
     return sumBy(this.selectedBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
   }
 
-  private _doubleMaxResistanceAmounts: boolean;
+  private _doubleMaxResistanceAmounts: boolean = false;
 
   constructor() { }
 

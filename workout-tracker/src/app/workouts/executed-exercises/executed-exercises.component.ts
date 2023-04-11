@@ -9,10 +9,10 @@ import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 export class ExecutedExercisesComponent implements OnInit {
 
   @Input()
-  executedExercises: ExecutedExerciseDTO[];
+  executedExercises: ExecutedExerciseDTO[] | undefined;
 
   @Input()
-  showResults: boolean;
+  showResults: boolean = false;
 
   constructor() { }
 

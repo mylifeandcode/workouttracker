@@ -9,7 +9,7 @@ import { Workout } from '../models/workout';
 export class WorkoutInfoComponent implements OnInit {
 
   @Input()
-  workout: Workout;
+  workout: Workout | undefined;
 
   constructor() { }
 

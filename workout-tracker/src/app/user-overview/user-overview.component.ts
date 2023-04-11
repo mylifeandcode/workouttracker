@@ -9,10 +9,10 @@ import { UserOverview } from 'app/core/models/user-overview';
 export class UserOverviewComponent implements OnInit {
 
   @Input()
-  userOverview: UserOverview;
+  userOverview: UserOverview | undefined;
 
   @Input()
-  public loading: boolean;
+  public loading: boolean = true;
 
   constructor() { }
 

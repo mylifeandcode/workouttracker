@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../models/workout-plan';
 import { WorkoutService } from '../workout.service';
@@ -24,7 +24,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
 
   //PUBLIC FIELDS
   public workoutPlan: WorkoutPlan | undefined;
-  public workoutPlanForm: FormGroup<IWorkoutPlanForm> | undefined;
+  public workoutPlanForm: FormGroup<IWorkoutPlanForm>;
   public showResistanceBandsSelectModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
   public formGroupForResistanceSelection: FormGroup | undefined;
@@ -55,10 +55,10 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   /**
    * A property representing all of the Exercises which are part of the Workout
    */
-   get exercisesArray(): FormArray<FormGroup<IExercisePlanFormGroup>> | undefined {
+   get exercisesArray(): FormArray<FormGroup<IExercisePlanFormGroup>> {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
-    return this.workoutPlanForm?.controls.exercises;
+    return this.workoutPlanForm.controls.exercises;
   }
 
   /**
@@ -74,8 +74,9 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     private _resistanceBandService: ResistanceBandService, 
     private _activatedRoute: ActivatedRoute, 
     private _router: Router, 
-    private _formBuilder: FormBuilder) { 
+    private _formBuilder: FormBuilder) {
       super();
+      this.workoutPlanForm = this.createForm(); 
   }
 
   //PUBLIC METHODS
@@ -185,8 +186,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     });
   }
 
-  private createForm(): void {
-    this.workoutPlanForm = this._formBuilder.group<IWorkoutPlanForm>({
+  private createForm(): FormGroup<IWorkoutPlanForm> {
+    return this._formBuilder.group<IWorkoutPlanForm>({
         workoutId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
         workoutName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }), 
         hasBeenExecutedBefore: new FormControl<boolean>(false, { nonNullable: true }), 

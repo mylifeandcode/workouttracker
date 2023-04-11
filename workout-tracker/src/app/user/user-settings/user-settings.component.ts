@@ -29,8 +29,8 @@ interface IToggleEvent { //TODO: Determine if PrimeNg has a type for this (proba
 export class UserSettingsComponent extends CheckForUnsavedDataComponent implements OnInit {
 
   public loading: boolean = true;
-  public user: User;
-  public userSettingsForm: FormGroup<IUserSettingsForm>;
+  public user: User | undefined; //Undefined until retrieved from service
+  public userSettingsForm: FormGroup<IUserSettingsForm> | undefined; //undefined until user info is retrieved
   public saving: boolean = false;
   public recommendationEngineEnabled: boolean = false;
 
@@ -62,18 +62,20 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   }
 
   public recommendationEngineToggled(event: IToggleEvent): void { //TODO: Get or specify a concrete type for the event param
-    this.userSettingsForm.controls.recommendationsEnabled.setValue(event.checked);
+    this.userSettingsForm?.controls.recommendationsEnabled.setValue(event.checked);
     this.recommendationEngineEnabled = event.checked;
   }
 
   public saveSettings(): void {
+    if (!this.user) return;
+
     this.updateSettingsForPersist();
     this.saving = true;
     this._userService.update(this.user)
       .pipe(
         finalize(() => { 
           this.saving = false; 
-          this.userSettingsForm.markAsPristine();
+          this.userSettingsForm?.markAsPristine();
         }),
         catchError((err) => {
           window.alert("ERROR: " + err.message ?? "Unknown error");
@@ -86,10 +88,12 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   }
 
   public hasUnsavedData(): boolean {
+    if (!this.userSettingsForm) return false;
     return this.userSettingsForm.dirty;
   }
 
   private createForm(): void {
+    if (!this.user) return;
     this.userSettingsForm = this._formBuilder.group<IUserSettingsForm>({
       recommendationsEnabled: new FormControl<boolean>(this.user.settings.recommendationsEnabled, { nonNullable: true }),
       repSettings: this.getRepSettingsForm()
@@ -98,7 +102,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
 
   private getRepSettingsForm(): FormArray<FormGroup<IRepSettingsForm>> {
     const formArray = new FormArray<FormGroup<IRepSettingsForm>>([]);
-    this.user.settings.repSettings.forEach((value: UserMinMaxReps) => {
+    this.user!.settings.repSettings.forEach((value: UserMinMaxReps) => { //WARN: Use of ! -- look for a better solution
       const formGroup: FormGroup<IRepSettingsForm> = this._formBuilder.group<IRepSettingsForm>({
         repSettingsId: new FormControl<number>(value.id, { nonNullable: true}),
         setType: new FormControl<number>(value.setType, { nonNullable: true}),
@@ -113,11 +117,12 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   }
 
   private updateSettingsForPersist(): void {
+    if (!this.user || !this.userSettingsForm) return;
     this.user.settings.recommendationsEnabled = this.userSettingsForm.controls.recommendationsEnabled.value;
 
     //Update rep settings
     this.user.settings.repSettings.forEach((value: UserMinMaxReps) => {
-      const formGroup = find(this.userSettingsForm.controls.repSettings.controls, (group: FormGroup<IRepSettingsForm>) =>
+      const formGroup = find(this.userSettingsForm!.controls.repSettings.controls, (group: FormGroup<IRepSettingsForm>) => //WARN: Use of !
         group.controls.repSettingsId.value == value.id
       );
 

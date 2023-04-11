@@ -19,7 +19,7 @@ export class WorkoutHistoryComponent implements OnInit {
   public totalRecords: number = 0;
   public loading: boolean = true;
   public pageSize: number = 10;
-  public executedWorkouts: ExecutedWorkoutSummaryDTO[];
+  public executedWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public showNotesModal: boolean = false;
   public notes: string = '';
   public cols: any = [

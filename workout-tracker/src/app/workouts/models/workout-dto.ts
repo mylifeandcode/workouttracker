@@ -9,5 +9,7 @@ export class WorkoutDTO extends NamedEntity {
     constructor() {
       super();
       this.exercises = [];
+      this.targetAreas = '';
+      this.active = false;
     }
 }

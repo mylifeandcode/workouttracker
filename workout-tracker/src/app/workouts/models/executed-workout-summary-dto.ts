@@ -1,8 +1,8 @@
 import { NamedEntityDTO } from "./named-entity-dto";
 
 export class ExecutedWorkoutSummaryDTO extends NamedEntityDTO {
-  public workoutId: number;
-  public startDateTime: Date;
-  public endDateTime: Date;
-  public journal: string;
+  public workoutId: number = -1;
+  public startDateTime: Date = new Date();
+  public endDateTime: Date = new Date();
+  public journal: string | null = null;
 }

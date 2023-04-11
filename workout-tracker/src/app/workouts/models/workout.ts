@@ -11,5 +11,6 @@ export class Workout extends NamedEntity {
         this.id = 0;
         this.exercises = [];
         this.active = true;
+        this.userId = -1;
     }
 }

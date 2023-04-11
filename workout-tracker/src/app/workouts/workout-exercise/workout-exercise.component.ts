@@ -20,7 +20,7 @@ export class WorkoutExerciseComponent implements OnInit {
    * a FormArray for the Sets
    */
   @Input()
-  formGroup: FormGroup<IWorkoutFormExercise>;
+  formGroup!: FormGroup<IWorkoutFormExercise>; //TODO: Find a better way then "!". This value HAS to be here, and CAN'T be null -- but how can I make the compiler happy? This is a HACK.
 
   @Output()
   resistanceBandsSelect = new EventEmitter<FormGroup<IWorkoutFormExerciseSet>>();

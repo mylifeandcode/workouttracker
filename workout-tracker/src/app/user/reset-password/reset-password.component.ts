@@ -30,7 +30,9 @@ export class ResetPasswordComponent implements OnInit {
     private _activatedRoute: ActivatedRoute,
     private _authService: AuthService,
     private _formBuilder: FormBuilder,
-    private _router: Router) { }
+    private _router: Router) { 
+      this.resetPasswordForm = this.createForm();
+  }
 
   public ngOnInit(): void {
     this._resetCode = this._activatedRoute.snapshot.params["resetCode"];
@@ -72,9 +74,9 @@ export class ResetPasswordComponent implements OnInit {
     }
   }
 
-  private createForm(): void {
+  private createForm(): FormGroup<IResetPasswordForm> {
     //TODO: Create a component for password/confirm password
-    this.resetPasswordForm = this._formBuilder.group<IResetPasswordForm>({
+    return this._formBuilder.group<IResetPasswordForm>({
       password: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       confirmPassword: new FormControl<string>('', { nonNullable: true, validators: Validators.required })
     }, { validators: CustomValidators.passwordsMatch });

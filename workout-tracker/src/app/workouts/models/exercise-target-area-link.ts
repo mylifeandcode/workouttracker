@@ -4,7 +4,7 @@ import { TargetArea } from "./target-area";
 export class ExerciseTargetAreaLink extends Entity {
     exerciseId: number;
     targetAreaId: number;
-    targetArea: TargetArea;
+    targetArea: TargetArea | undefined;
 
     constructor(exId: number, targId: number) {
         super();

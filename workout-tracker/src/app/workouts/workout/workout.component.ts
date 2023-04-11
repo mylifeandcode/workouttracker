@@ -29,7 +29,7 @@ export class WorkoutComponent implements OnInit {
 
   //PUBLIC FIELDS
   public errorInfo: string | undefined = undefined;
-  public workoutForm: FormGroup<IWorkoutForm> | null = null;
+  public workoutForm: FormGroup<IWorkoutForm>;
   public workoutName: string | null = null;
   
   public showResistanceBandsSelectModal: boolean = false;
@@ -67,11 +67,11 @@ export class WorkoutComponent implements OnInit {
   /**
    * A property representing all of the Exercises which are part of the Workout
    */
-  get exercisesArray(): FormArray<FormGroup<IWorkoutFormExercise>> | undefined {
+  get exercisesArray(): FormArray<FormGroup<IWorkoutFormExercise>> {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
     //return this.workoutForm.get('exercises') as FormArray;
-    return this.workoutForm?.controls.exercises;
+    return this.workoutForm.controls.exercises;
   }
 
   /**
@@ -94,13 +94,13 @@ export class WorkoutComponent implements OnInit {
     private _executedWorkoutService: ExecutedWorkoutService, 
     private _resistanceBandService: ResistanceBandService, 
     private _messageService: MessageService) { 
+      this.workoutForm = this.createForm();
   }
   
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
 
   public ngOnInit(): void {
-    this.createForm();
     this.getResistanceBands();
     this.subscribeToRouteParams();
     this.subscribeToQueryParams(); //For optional parameters, such as pastWorkout
@@ -186,8 +186,8 @@ export class WorkoutComponent implements OnInit {
     });
   }
 
-  private createForm(): void {
-    this.workoutForm = this._formBuilder.group<IWorkoutForm>({
+  private createForm(): FormGroup<IWorkoutForm> {
+    return this._formBuilder.group<IWorkoutForm>({
         id: new FormControl<number | null>(0, Validators.required),
         exercises: new FormArray<FormGroup<IWorkoutFormExercise>>([]), 
         journal: new FormControl<string | null>('')

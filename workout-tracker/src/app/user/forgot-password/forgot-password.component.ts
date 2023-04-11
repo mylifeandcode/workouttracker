@@ -15,7 +15,7 @@ interface IForgotPasswordForm {
 })
 export class ForgotPasswordComponent implements OnInit {
 
-  public smtpEnabled: boolean;
+  public smtpEnabled: boolean = false;
   public forgotPasswordForm: FormGroup<IForgotPasswordForm>;
   public errorMessage: string | null = null;
   public requestSuccessful: boolean = false;
@@ -25,11 +25,11 @@ export class ForgotPasswordComponent implements OnInit {
     private _configService: ConfigService, 
     private _formBuilder: FormBuilder, 
     private _authService: AuthService) { 
+      this.forgotPasswordForm = this.buildForm();
   }
 
   public ngOnInit(): void {
     this.smtpEnabled = this._configService.get("smtpEnabled");
-    this.buildForm();
   }
 
   public submitPasswordResetRequest(): void {
@@ -45,8 +45,8 @@ export class ForgotPasswordComponent implements OnInit {
       );
   }
 
-  private buildForm(): void {
-    this.forgotPasswordForm = this._formBuilder.group<IForgotPasswordForm>({
+  private buildForm(): FormGroup<IForgotPasswordForm> {
+    return this._formBuilder.group<IForgotPasswordForm>({
       emailAddress: new FormControl('', { nonNullable: true, validators: [ Validators.required, Validators.email ] })
     });
   }

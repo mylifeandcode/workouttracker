@@ -11,7 +11,7 @@ import { finalize } from 'rxjs/operators';
 export class WelcomeComponent implements OnInit {
 
   public loading: boolean = true;
-  public userOverview: UserOverview;
+  public userOverview: UserOverview | undefined; //Undefined until retrieved from service
 
   constructor(private _userService: UserService) { }
 

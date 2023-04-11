@@ -1,126 +1,135 @@
-<div [formGroup]="formGroup" class="row">
-    <div class="col-md-12">
-        <strong>{{formGroup.controls.exerciseName.value}}</strong>
-    </div>
+<div *ngIf="formGroup" [formGroup]="formGroup" class="row">
+  <div class="col-md-12">
+    <strong>{{formGroup.controls.exerciseName.value}}</strong>
+  </div>
 </div>
 
 <div [formGroup]="formGroup" class="row">
-    <input type="hidden" formControlName="exerciseId" />
-    <div class="col-md-12">
-        {{formGroup.controls.setType.value == 0 ? "Repetition" : "Timed"}} Set(s) using <strong>{{formGroup.controls.resistanceType.value | resistanceType:false}}</strong> resistance:
-    </div>
+  <input type="hidden" formControlName="exerciseId" />
+  <div class="col-md-12">
+    {{formGroup.controls.setType.value == 0 ? "Repetition" : "Timed"}} Set(s) using
+    <strong>{{formGroup.controls.resistanceType.value | resistanceType:false}}</strong> resistance:
+  </div>
 </div>
 
 <div [formGroup]="formGroup" class="row">
-    <div class="col-md-12">
-        <!--exerciseSets is the name of the FormArray on the FormGroup representing an Exercise which is passed in via an @Input()-->
-        <div formArrayName="exerciseSets">
-            
-            <!--Set Header Row-->
-            <div class="row">
-                <div class="col-1">
-                    Set
-                </div>
-                <div class="col-4">
-                    Resistance
-                </div>
-                <div class="col-1 duration-div">
-                    Duration (click to edit)
-                </div>
-                <div class="col-1 reps-div">
-                    Target Reps
-                </div>
-                <div class="col-1 reps-div">
-                    Actual Reps
-                </div>
-                <div class="col-2">
-                    Form
-                </div>
-                <div class="col-2">
-                    Range of Motion
-                </div>
-            </div>
-            <!--End Set Header Row-->
+  <div class="col-md-12">
+    <!--exerciseSets is the name of the FormArray on the FormGroup representing an Exercise which is passed in via an @Input()-->
+    <div formArrayName="exerciseSets">
 
-            <!--Set Detail Rows Loop-->
-            <div *ngFor="let exerciseSet of setsArray?.controls; let i = index" class="col-md-12" [formGroupName]="i">
-                <div class="exercise-row row" [ngStyle]="{'backgroundColor': (i % 2 === 0)?'#d3d3d3':'#ffffff'}">
-                    
-                    <div class="col-1 exercise-info-div">
-                      {{i + 1}} <button class="btn btn-sm btn-success" *ngIf="formGroup?.controls?.setType?.value==1" (click)="showTimer(setsArray!.controls[i])">Start</button>
-                      &nbsp;
-                      <button 
-                        *ngIf="i == 0 && setsArray.controls.length > 1 && (exerciseSet.controls.duration.dirty  || exerciseSet.controls.resistance.dirty || exerciseSet.controls.resistanceMakeup.dirty || exerciseSet.controls.targetReps.dirty)" 
-                        class="btn btn-sm btn-primary" 
-                        title="Apply these settings to the other sets for this exercise"
-                        (click)="applySetChangesToAll()">
-                          <i class="fa fa-clone" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                    
-                    <!--Resistance Amount-->
-                    <div class="col-4 exercise-info-div">
-                        <input wtSelectOnFocus *ngIf="formGroup.controls.resistanceType.value < 2 || formGroup.controls.resistanceType.value==4" type="number" class="form-control resistance-amount" formControlName="resistance" required />
-                        <span *ngIf="formGroup?.controls?.resistanceType?.value==3"><strong>Body Weight</strong></span>
-                        <span *ngIf="formGroup?.controls?.resistanceType?.value==2">
-                            <button class="btn btn-sm btn-primary mild-margins" (click)="selectResistanceBands(setsArray!.controls[i])">Edit</button>                            
-                            <span *ngIf="exerciseSet.controls.resistanceMakeup.value">
-                              <span [innerHTML]="exerciseSet.controls.resistanceMakeup.value | resistanceBandColor"></span>
-                              <span> ({{exerciseSet.controls.resistance.value}} Max)</span>
-                            </span> 
-                            <span *ngIf="!exerciseSet.controls.resistanceMakeup.value">Not set</span>
-                        </span>
-                    </div>
-
-                    <!--Duration-->
-                    <div class="col-1">
-                        <span *ngIf="formGroup?.controls?.setType?.value==0" class="exercise-info-span">N/A</span>
-                        <button class="btn btn-sm btn-primary duration-button" *ngIf="formGroup.controls.setType.value==1" (click)="editDuration(exerciseSet.controls.duration)">
-                          {{exerciseSet.controls.duration.value | duration:true}}
-                        </button>
-                    </div>
-                    
-                    <!--Target Reps-->
-                    <div class="col-1">
-                        <span *ngIf="exerciseSet?.controls?.involvesReps?.value==false">N/A</span>
-                        <input wtSelectOnFocus type="number" *ngIf="exerciseSet?.controls?.involvesReps?.value==true" class="form-control reps" formControlName="targetReps" required />
-                    </div>
-
-                    <!--Actual Reps-->
-                    <div class="col-1">
-                        <span *ngIf="exerciseSet?.controls?.involvesReps?.value==false">N/A</span>
-                        <input wtSelectOnFocus type="number" *ngIf="exerciseSet?.controls?.involvesReps?.value==true" class="form-control reps" formControlName="actualReps" required /> 
-                    </div>
-
-                    <!--Form Rating-->
-                    <div class="col-2 exercise-dropdown-cell">
-                        <select class="form-select" formControlName="formRating" required> <!--TODO: Set up differenty, this is just for POC-->
-                            <option value=0>N/A</option>
-                            <option value=1>Bad</option>
-                            <option value=2>Poor</option>
-                            <option value=3>OK</option>
-                            <option value=4>Good</option>
-                            <option value=5>Excellent</option>
-                        </select>
-                    </div>
-
-                    <!--Range of Motion Rating-->
-                    <div class="col-2 exercise-dropdown-cell">
-                        <select class="form-select" formControlName="rangeOfMotionRating" (change)="rangeOfMotionChanged()" required> <!--TODO: Set up differenty, this is just for POC-->
-                            <option value=0>N/A</option>
-                            <option value=1>Bad</option>
-                            <option value=2>Poor</option>
-                            <option value=3>OK</option>
-                            <option value=4>Good</option>
-                            <option value=5>Excellent</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <!--End Set Detail Rows Loop-->
-
+      <!--Set Header Row-->
+      <div class="row">
+        <div class="col-1">
+          Set
         </div>
+        <div class="col-4">
+          Resistance
+        </div>
+        <div class="col-1 duration-div">
+          Duration (click to edit)
+        </div>
+        <div class="col-1 reps-div">
+          Target Reps
+        </div>
+        <div class="col-1 reps-div">
+          Actual Reps
+        </div>
+        <div class="col-2">
+          Form
+        </div>
+        <div class="col-2">
+          Range of Motion
+        </div>
+      </div>
+      <!--End Set Header Row-->
+
+      <!--Set Detail Rows Loop-->
+      <div *ngFor="let exerciseSet of setsArray?.controls; let i = index" class="col-md-12" [formGroupName]="i">
+        <div class="exercise-row row" [ngStyle]="{'backgroundColor': (i % 2 === 0)?'#d3d3d3':'#ffffff'}">
+
+          <div class="col-1 exercise-info-div">
+            {{i + 1}} <button class="btn btn-sm btn-success" *ngIf="formGroup?.controls?.setType?.value==1"
+              (click)="showTimer(setsArray!.controls[i])">Start</button>
+            &nbsp;
+            <button
+              *ngIf="i == 0 && setsArray.controls.length > 1 && (exerciseSet.controls.duration.dirty  || exerciseSet.controls.resistance.dirty || exerciseSet.controls.resistanceMakeup.dirty || exerciseSet.controls.targetReps.dirty)"
+              class="btn btn-sm btn-primary" title="Apply these settings to the other sets for this exercise"
+              (click)="applySetChangesToAll()">
+              <i class="fa fa-clone" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <!--Resistance Amount-->
+          <div class="col-4 exercise-info-div">
+            <input wtSelectOnFocus
+              *ngIf="formGroup.controls.resistanceType.value < 2 || formGroup.controls.resistanceType.value==4"
+              type="number" class="form-control resistance-amount" formControlName="resistance" required />
+            <span *ngIf="formGroup?.controls?.resistanceType?.value==3"><strong>Body Weight</strong></span>
+            <span *ngIf="formGroup?.controls?.resistanceType?.value==2">
+              <button class="btn btn-sm btn-primary mild-margins"
+                (click)="selectResistanceBands(setsArray!.controls[i])">Edit</button>
+              <span *ngIf="exerciseSet.controls.resistanceMakeup.value">
+                <span [innerHTML]="exerciseSet.controls.resistanceMakeup.value | resistanceBandColor"></span>
+                <span> ({{exerciseSet.controls.resistance.value}} Max)</span>
+              </span>
+              <span *ngIf="!exerciseSet.controls.resistanceMakeup.value">Not set</span>
+            </span>
+          </div>
+
+          <!--Duration-->
+          <div class="col-1">
+            <span *ngIf="formGroup?.controls?.setType?.value==0" class="exercise-info-span">N/A</span>
+            <button class="btn btn-sm btn-primary duration-button" *ngIf="formGroup.controls.setType.value==1"
+              (click)="editDuration(exerciseSet.controls.duration)">
+              {{exerciseSet.controls.duration.value | duration:true}}
+            </button>
+          </div>
+
+          <!--Target Reps-->
+          <div class="col-1">
+            <span *ngIf="exerciseSet?.controls?.involvesReps?.value==false">N/A</span>
+            <input wtSelectOnFocus type="number" *ngIf="exerciseSet?.controls?.involvesReps?.value==true"
+              class="form-control reps" formControlName="targetReps" required />
+          </div>
+
+          <!--Actual Reps-->
+          <div class="col-1">
+            <span *ngIf="exerciseSet?.controls?.involvesReps?.value==false">N/A</span>
+            <input wtSelectOnFocus type="number" *ngIf="exerciseSet?.controls?.involvesReps?.value==true"
+              class="form-control reps" formControlName="actualReps" required />
+          </div>
+
+          <!--Form Rating-->
+          <div class="col-2 exercise-dropdown-cell">
+            <select class="form-select" formControlName="formRating" required>
+              <!--TODO: Set up differenty, this is just for POC-->
+              <option value=0>N/A</option>
+              <option value=1>Bad</option>
+              <option value=2>Poor</option>
+              <option value=3>OK</option>
+              <option value=4>Good</option>
+              <option value=5>Excellent</option>
+            </select>
+          </div>
+
+          <!--Range of Motion Rating-->
+          <div class="col-2 exercise-dropdown-cell">
+            <select class="form-select" formControlName="rangeOfMotionRating" (change)="rangeOfMotionChanged()"
+              required> <!--TODO: Set up differenty, this is just for POC-->
+              <option value=0>N/A</option>
+              <option value=1>Bad</option>
+              <option value=2>Poor</option>
+              <option value=3>OK</option>
+              <option value=4>Good</option>
+              <option value=5>Excellent</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!--End Set Detail Rows Loop-->
 
     </div>
+
+  </div>
 </div>
 <div class="row">&nbsp;</div>

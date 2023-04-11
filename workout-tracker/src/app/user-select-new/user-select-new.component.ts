@@ -19,19 +19,17 @@ interface INewUserForm {
   templateUrl: './user-select-new.component.html',
   styleUrls: ['./user-select-new.component.scss']
 })
-export class UserSelectNewComponent implements OnInit {
+export class UserSelectNewComponent {
 
-  public newUserForm: FormGroup<INewUserForm> | undefined = undefined;
+  public newUserForm: FormGroup<INewUserForm>;
   public errorMsg: string | undefined = undefined;
   public addingUser: boolean = false;
   
   constructor(
     private _formBuilder: FormBuilder, 
     private _userService: UserService,
-    private _router: Router) { }
-
-  public ngOnInit(): void {
-    this.createForm();
+    private _router: Router) { 
+      this.newUserForm = this.createForm();
   }
 
   public addUser(): void {
@@ -47,8 +45,8 @@ export class UserSelectNewComponent implements OnInit {
       });
   }
 
-  private createForm(): void {
-    this.newUserForm = this._formBuilder.group<INewUserForm>({
+  private createForm(): FormGroup<INewUserForm> {
+    return this._formBuilder.group<INewUserForm>({
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       emailAddress: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.email ]}),
     });

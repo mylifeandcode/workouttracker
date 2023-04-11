@@ -10,7 +10,7 @@ export class TargetAreasPipe implements PipeTransform {
     if (!value)
       return '';
 
-    const targetAreaNames = value.map(link => link.targetArea.name);
+    const targetAreaNames = value.map(link => link.targetArea?.name);
     return targetAreaNames.join(', ');
   }
 

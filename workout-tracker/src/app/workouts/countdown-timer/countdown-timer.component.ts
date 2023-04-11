@@ -9,8 +9,8 @@ import { SoundService } from 'app/core/sound.service';
 })
 export class CountdownTimerComponent implements OnInit {
 
-  @ViewChild('preCountdown', { static: false }) private _preCountdown: CountdownComponent;
-  @ViewChild('mainCountdown', { static: false }) private _countdown: CountdownComponent;
+  @ViewChild('preCountdown', { static: false }) private _preCountdown: CountdownComponent | undefined;
+  @ViewChild('mainCountdown', { static: false }) private _countdown: CountdownComponent | undefined;
 
   public countdownConfig: CountdownConfig = this.getCountdownConfig(0);
   public preCountdownConfig: CountdownConfig = this.getCountdownConfig(0);
@@ -20,10 +20,10 @@ export class CountdownTimerComponent implements OnInit {
   private _preCountdownHasBegun: boolean = false;
 
   @Input()
-  secondsToCountdown: number;
+  secondsToCountdown: number = 0;
 
   @Input()
-  secondsLeadInTime: number;
+  secondsLeadInTime: number = 0;
 
   //TODO: Revisit. Not sure I like this approach.
   @Input()
@@ -32,7 +32,7 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   @Input()
-  public targetReps: number | null;
+  public targetReps: number | null = null;
 
   constructor(private _soundService: SoundService) { 
   }
@@ -43,7 +43,7 @@ export class CountdownTimerComponent implements OnInit {
   public startCountdown(): void {
     this.showPreCountdown = true;
     this._preCountdownHasBegun = true;
-    this._preCountdown.begin();
+    this._preCountdown?.begin();
   }
 
   //TODO: Add ability to pause
@@ -53,7 +53,7 @@ export class CountdownTimerComponent implements OnInit {
       this.showPreCountdown = false; 
       this.playSound();
       this.countdownHasBegun = true;
-      this._countdown.begin();
+      this._countdown?.begin();
     }
   }
 

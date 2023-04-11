@@ -10,10 +10,10 @@ import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group
 export class ExercisePlanComponent {
 
   @Input()
-  formGroup: FormGroup<IExercisePlanFormGroup>;
+  formGroup!: FormGroup<IExercisePlanFormGroup>; //TODO: Revisit the use of ! here. This value *should* always be present, but I feel like this is a hack. Look for a better solution.
 
   @Input()
-  workoutHasBeenExecutedBefore: boolean;
+  workoutHasBeenExecutedBefore: boolean = false;
 
   @Output()
   resistanceBandsModalRequested: EventEmitter<FormGroup<IExercisePlanFormGroup>>;

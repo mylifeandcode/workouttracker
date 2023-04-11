@@ -36,18 +36,17 @@ export class WorkoutLogPastStartComponent implements OnInit {
   } 
 
   public formGroup: FormGroup<ILogPastWorkoutForm>;
-  public workouts: WorkoutDTO[];
+  public workouts: WorkoutDTO[] = [];
   public gettingData: boolean = true;
 
   constructor(
     private _formBuilder: FormBuilder, 
     private _workoutService: WorkoutService, 
     private _router: Router) { 
-
+      this.formGroup = this.buildForm();
   }
 
   public ngOnInit(): void {
-    this.buildForm();
     this.getUserWorkouts();
   }
 
@@ -59,8 +58,8 @@ export class WorkoutLogPastStartComponent implements OnInit {
     }
   }
 
-  private buildForm(): void {
-    this.formGroup = this._formBuilder.group<ILogPastWorkoutForm>({
+  private buildForm(): FormGroup<ILogPastWorkoutForm> {
+    return this._formBuilder.group<ILogPastWorkoutForm>({
       workoutId: new FormControl<number | null>(null, { validators: Validators.required}), 
       startDateTime: new FormControl<Date | null>(null, { validators: Validators.required}), 
       endDateTime: new FormControl<Date | null>(null, { validators: Validators.required})

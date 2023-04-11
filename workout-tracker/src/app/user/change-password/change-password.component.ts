@@ -16,7 +16,7 @@ interface IChangePasswordForm {
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss']
 })
-export class ChangePasswordComponent implements OnInit {
+export class ChangePasswordComponent {
 
   public loading: boolean = true;
   public changePasswordForm: FormGroup<IChangePasswordForm>;
@@ -27,10 +27,8 @@ export class ChangePasswordComponent implements OnInit {
   constructor(
     private _router: Router,
     private _authService: AuthService,
-    private _formBuilder: FormBuilder) { }
-
-  public ngOnInit(): void {
-    this.createForm();
+    private _formBuilder: FormBuilder) { 
+      this.changePasswordForm = this.createForm();
   }
 
   public changePassword(): void {
@@ -60,9 +58,9 @@ export class ChangePasswordComponent implements OnInit {
 
   }
 
-  private createForm(): void {
+  private createForm(): FormGroup<IChangePasswordForm> {
 
-    this.changePasswordForm = this._formBuilder.group<IChangePasswordForm>({
+    return this._formBuilder.group<IChangePasswordForm>({
       currentPassword: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       password: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),
       confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),

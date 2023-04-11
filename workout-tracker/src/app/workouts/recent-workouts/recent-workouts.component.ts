@@ -12,13 +12,13 @@ import { WorkoutService } from '../workout.service';
 })
 export class RecentWorkoutsComponent implements OnInit {
 
-  public recentWorkouts: ExecutedWorkoutSummaryDTO[];
+  public recentWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public showExercises: boolean = false;
-  public selectedWorkout: Workout;
+  public selectedWorkout: Workout = new Workout();
   public loading: boolean = true;
 
   @Input()
-  planningForLater: boolean;
+  planningForLater: boolean = false;
 
   constructor(
     private _executedWorkoutService: ExecutedWorkoutService, 
