@@ -1,7 +1,7 @@
 export abstract class Entity {
-    id: number;
-    createdByUserId: number;
-    createdDateTime: Date;
-    modifiedByUserId: number | null;
-    modifiedDateTime: Date | null;
+    id: number = -1;
+    createdByUserId: number = -1;
+    createdDateTime: Date = new Date();
+    modifiedByUserId: number | null = null;
+    modifiedDateTime: Date | null = null;
 }

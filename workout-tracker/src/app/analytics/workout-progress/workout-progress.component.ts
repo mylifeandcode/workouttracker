@@ -16,11 +16,11 @@ import { sortBy } from 'lodash-es';
 export class WorkoutProgressComponent implements OnInit {
 
   public loadingData: boolean = true;
-  public metrics: ExecutedWorkoutMetrics[];
+  public metrics: ExecutedWorkoutMetrics[] = [];
   public formAndRangeOfMotionChartData: AnalyticsChartData | null = null;
   public repsChartData: AnalyticsChartData | null = null;
   public resistanceChartData: AnalyticsChartData | null = null;
-  public workouts: WorkoutDTO[];
+  public workouts: WorkoutDTO[] = [];
   public formAndRangeOfMotionChartOptions = { //Type "any" because of ChartJS
     scales: {
         y: {

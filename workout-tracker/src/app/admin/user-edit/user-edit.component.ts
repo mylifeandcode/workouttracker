@@ -25,11 +25,11 @@ export class UserEditComponent implements OnInit {
 
   public loadingUserInfo: boolean = true;
   public savingUserInfo: boolean = false;
-  public errorMsg: string;
+  public errorMsg: string | undefined;
   public userEditForm: FormGroup<IUserEditForm>;
   public showPasswordResetButton: boolean = false;
 
-  private _user: User;
+  private _user: User | undefined;
   private _resetPasswordUrlRoot: string;
 
   constructor(
@@ -38,15 +38,17 @@ export class UserEditComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _router: Router,
     private _configService: ConfigService,
-    private _authService: AuthService) { }
+    private _authService: AuthService) { 
+
+      this.showPasswordResetButton = !this._configService.get("smtpEnabled");
+      this._resetPasswordUrlRoot = `${window.location.protocol}//${window.location.host}/user/reset-password/`;
+      this.userEditForm = this.createForm();
+  }
 
   //PUBLIC METHODS
 
   public ngOnInit(): void {
-    this.showPasswordResetButton = !this._configService.get("smtpEnabled");
-    this._resetPasswordUrlRoot = `${window.location.protocol}//${window.location.host}/user/reset-password/`;
     this.loadingUserInfo = true;
-    this.createForm();
     this.getUserInfo();
   }
 
@@ -91,9 +93,9 @@ export class UserEditComponent implements OnInit {
 
   //PRIVATE METHODS
 
-  private createForm(): void {
+  private createForm(): FormGroup<IUserEditForm> {
 
-    this.userEditForm = this._formBuilder.group<IUserEditForm>({
+    return this._formBuilder.group<IUserEditForm>({
       id: new FormControl<number>(0, { nonNullable: true }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       emailAddress: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email]}),

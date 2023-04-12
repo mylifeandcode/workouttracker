@@ -38,11 +38,11 @@ export class AuthService {
 
   //PUBLIC FIELDS
   public token: string | null = null; //TODO: Refactor. This should be a read-only property exposing a private field.
-  public decodedTokenPayload: JwtPayload; //This is an interface, not a concrete type
+  public decodedTokenPayload: JwtPayload | undefined; //This is an interface, not a concrete type
 
   //PRIVATE FIELDS
-  private _apiRoot: string;
-  private _loginRoute: string;
+  private _apiRoot: string = '';
+  private _loginRoute: string = '';
 
   private _userSubject$ = new BehaviorSubject<string | null>(null);
   private _userObservable$: Observable<string | null> = this._userSubject$.asObservable();
@@ -72,11 +72,13 @@ export class AuthService {
   }
 
   public get isUserAdmin(): boolean {
+    if (!this.decodedTokenPayload) return false;
     return this.isUserLoggedIn
       && this.decodedTokenPayload[this.ROLE_CLAIM_TYPE as keyof JwtPayload] == "Administrator";
   }
 
   public get userId(): number {
+    if (!this.decodedTokenPayload) return -1;
     return this.decodedTokenPayload[this.USER_ID_CLAIM_TYPE as keyof JwtPayload] as number;
   }
 

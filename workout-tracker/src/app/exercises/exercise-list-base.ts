@@ -9,10 +9,10 @@ export abstract class ExerciseListBase {
 
     //TODO: Clean up this class (specifically the differing access modifiers below)
 
-    public totalRecords: number;
+    public totalRecords: number = 0;
     public loading: boolean = true;
     public pageSize: number = 10;
-    public exercises: ExerciseDTO[];
+    public exercises: ExerciseDTO[] = [];
     public targetAreas: SelectItem[] = [];
 
     constructor(protected _exerciseSvc: ExerciseService) {

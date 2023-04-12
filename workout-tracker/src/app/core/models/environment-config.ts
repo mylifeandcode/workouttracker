@@ -1,4 +1,4 @@
 export class EnvironmentConfig {
-    production: boolean;
+    production: boolean = false;
     //apiRoot: string;
 }

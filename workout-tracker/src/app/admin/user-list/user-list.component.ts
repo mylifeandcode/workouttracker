@@ -15,7 +15,7 @@ export class UserListComponent implements OnInit, AfterViewInit, AfterContentIni
   public busyMsg: string = '';
   //public users: User[] | null = null;
   public users$: Observable<User[]> = this._userSvc.all$;
-  public errorMsg: string;
+  public errorMsg: string | undefined;
 
   constructor(private _userSvc: UserService) { } //TODO: We have a caching issue! Fix it!
   ngAfterContentInit(): void {

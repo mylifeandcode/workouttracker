@@ -13,16 +13,16 @@ export class PickListComponentMock {
   target: any;
   
   @Input()
-  sourceHeader: string;
+  sourceHeader: string = '';
   
   @Input()
-  targetHeader: string;
+  targetHeader: string = '';
 
   @Input()
-  showSourceControls: boolean; 
+  showSourceControls: boolean = false; 
   
   @Input()
-  showTargetControls: boolean;
+  showTargetControls: boolean = false;
 
   @Input()
   sourceStyle: any; 
@@ -31,6 +31,6 @@ export class PickListComponentMock {
   targetStyle: any;
 
   @Input()
-  dragdrop: boolean;
+  dragdrop: boolean = false;
   
 }

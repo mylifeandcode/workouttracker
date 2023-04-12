@@ -14,7 +14,7 @@ interface ILoginForm {
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   public loginForm: FormGroup<ILoginForm>;
   public loggingIn: boolean = false;
@@ -24,11 +24,7 @@ export class LoginComponent implements OnInit {
     private _formBuilder: FormBuilder, 
     private _authService: AuthService, 
     private _router: Router) { 
-
-  }
-
-  public ngOnInit(): void {
-    this.createForm();
+      this.loginForm = this.createForm();
   }
 
   public login(): void {
@@ -45,8 +41,8 @@ export class LoginComponent implements OnInit {
       });
   }
 
-  private createForm(): void {
-    this.loginForm = this._formBuilder.group<ILoginForm>({
+  private createForm(): FormGroup<ILoginForm> {
+    return this._formBuilder.group<ILoginForm>({
       username: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       password: new FormControl<string>('', { nonNullable: true, validators: Validators.required })
     });

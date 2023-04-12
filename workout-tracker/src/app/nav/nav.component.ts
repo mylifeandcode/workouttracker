@@ -9,9 +9,9 @@ import { AuthService } from 'app/core/auth.service';
 })
 export class NavComponent implements OnInit {
 
-  public userName: string | null;
-  public userIsLoggedIn: boolean;
-  public userIsAdmin: boolean;
+  public userName: string | null = null;
+  public userIsLoggedIn: boolean = false;
+  public userIsAdmin: boolean = false;
 
   constructor(private _authService: AuthService, private _router: Router) { }
 

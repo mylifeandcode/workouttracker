@@ -128,7 +128,7 @@ describe('ExerciseEditComponent', () => {
     //TODO: Determine why this check fails
     //expect(component.exerciseForm.controls.description.hasValidator(Validators.compose([Validators.required, Validators.maxLength(4000)]))).toBeTrue();
     
-    expect(component.exerciseForm.controls.resistanceTypes).toBeTruthy();
+    expect(component.exerciseForm.controls.resistanceType).toBeTruthy();
     expect(component.exerciseForm.controls.oneSided).toBeTruthy();
     expect(component.exerciseForm.controls.targetAreas).toBeTruthy();
     expect(component.exerciseForm.controls.setup).toBeTruthy();
@@ -223,7 +223,7 @@ describe('ExerciseEditComponent', () => {
     component.exerciseForm.controls.involvesReps.setValue(exercise.involvesReps);
     component.exerciseForm.controls.oneSided.setValue(exercise.oneSided);
     component.exerciseForm.controls.pointsToRemember.setValue(exercise.pointsToRemember);
-    component.exerciseForm.controls.resistanceTypes.setValue(exercise.resistanceType);
+    component.exerciseForm.controls.resistanceType.setValue(exercise.resistanceType);
     component.exerciseForm.controls.targetAreas.setValue({'Chest': true, 'Biceps': false, 'Triceps': false});
 
     //ACT

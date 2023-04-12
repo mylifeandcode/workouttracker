@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SoundService } from 'app/core/sound.service';
-import { CountdownConfig, CountdownEvent, CountdownGlobalConfig, CountdownStatus } from 'ngx-countdown';
+import { CountdownConfig, CountdownEvent, CountdownStatus } from 'ngx-countdown';
 
 import { CountdownTimerComponent } from './countdown-timer.component';
 
@@ -17,7 +17,7 @@ class CountdownComponentMock {
   begin(): void {}
   
   @Input()
-  config: CountdownConfig;
+  config: CountdownConfig | undefined;
 
   @Output()
   event: EventEmitter<CountdownEvent> = new EventEmitter<CountdownEvent>();

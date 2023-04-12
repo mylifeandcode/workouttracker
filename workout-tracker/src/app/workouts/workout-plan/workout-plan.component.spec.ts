@@ -40,7 +40,7 @@ class ResistanceBandServiceMock {
 class ResistanceBandSelectComponentMock extends ResistanceBandSelectComponent {
 
   @Input()
-  public resistanceBandInventory: ResistanceBandIndividual[];
+  public resistanceBandInventory: ResistanceBandIndividual[] = [];
 
   @Output()
   public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();

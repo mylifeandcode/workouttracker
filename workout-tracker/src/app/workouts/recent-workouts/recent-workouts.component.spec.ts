@@ -23,7 +23,7 @@ class RouterMock {}
 })
 class WorkoutInfoComponentMock {
   @Input()
-  workout: Workout;
+  workout: Workout | undefined;
 }
 
 describe('RecentWorkoutsComponent', () => {

@@ -22,7 +22,7 @@ interface IUserAddForm {
 })
 export class UserAddComponent implements OnInit {
 
-  public errorMsg: string;
+  public errorMsg: string | undefined;
   public userAddForm: FormGroup<IUserAddForm>;
   public savingUserInfo: boolean = false;
   public showAdminControls: boolean = false;
@@ -31,11 +31,12 @@ export class UserAddComponent implements OnInit {
     private _userSvc: UserService, 
     private _formBuilder: FormBuilder, 
     private _router: Router, 
-    private _activatedRoute: ActivatedRoute) { }
+    private _activatedRoute: ActivatedRoute) { 
+      this.userAddForm = this.createForm();
+  }
 
   public ngOnInit(): void {
     this.showAdminControls = (this._activatedRoute.routeConfig?.path == 'users/add');
-    this.createForm();
   }
 
   public addUser(): void {
@@ -65,9 +66,9 @@ export class UserAddComponent implements OnInit {
     this._router.navigate(['/']);
   }
 
-  private createForm(): void {
+  private createForm(): FormGroup<IUserAddForm> {
 
-    this.userAddForm = this._formBuilder.group<IUserAddForm>({
+    return this._formBuilder.group<IUserAddForm>({
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       emailAddress: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.email ]}),
       password: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),

@@ -28,7 +28,7 @@ class WorkoutServiceMock {
 })
 class RecentWorkoutsComponentMock {
   @Input()
-  planningForLater: boolean;
+  planningForLater: boolean = false;
 }
 
 describe('WorkoutSelectComponent', () => {

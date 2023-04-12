@@ -6,17 +6,17 @@ import { Component, Input } from "@angular/core";
 })
 export class DialogComponentMock {
   @Input() 
-  visible: boolean;
+  visible: boolean = false;
   
   @Input()
   style: any; 
   
   @Input()
-  header: string; 
+  header: string = ''; 
   
   @Input()
-  modal: boolean; 
+  modal: boolean = false; 
   
   @Input()
-  styleClass: string;
+  styleClass: string = '';
 }

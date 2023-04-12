@@ -52,16 +52,16 @@
       </div>
       <div class="row bottom-padded">
         <div class="col-3">
-          <label class="center-block" for="resistanceTypes">
+          <label class="center-block" for="resistanceType">
             Resistance Type
           </label>
-          <select *ngIf="resistanceTypes" formControlName="resistanceTypes" id="resistanceTypes" class="form-select">
+          <select *ngIf="resistanceTypes" formControlName="resistanceType" id="resistanceType" class="form-select">
             <option *ngFor="let resistanceType of resistanceTypes | keyvalue" [value]="resistanceType.key">
               {{resistanceType.value | insertSpaceBeforeCapital}}
             </option>
           </select>
         </div>
-        <div class="col-3" *ngIf="exerciseForm.controls.resistanceTypes.value==2">
+        <div class="col-3" *ngIf="exerciseForm.controls.resistanceType.value==2">
           <!--TODO: Replace with constant or data-driven value-->
           <div class="form-check end-to-end-selection">
             <input type="checkbox" class="form-check-input" formControlName="endToEnd" id="endToEnd">

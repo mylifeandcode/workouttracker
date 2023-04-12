@@ -13,14 +13,14 @@ import { ResistanceBandService } from '../../shared/resistance-band.service';
 export class ResistanceBandsComponent implements OnInit {
 
   public resistanceBands: ResistanceBand[] = [];
-  public busy: boolean = false;
-  public busyMsg: string;
+  public busy: boolean = false; //TODO: Implement
+  public busyMsg: string | undefined; //TODO: Implement
 
   //Add modal related
-  public showAddDialog: boolean;
+  public showAddDialog: boolean = false;
   //public newResistanceBand: ResistanceBand | null = null; //TODO: Revisit. Not really a fan of this approach.
   public newResistanceBand: ResistanceBand = new ResistanceBand();
-  public modalSubmitted: boolean;
+  public modalSubmitted: boolean = false;
 
   //This is used to store the original row when we go into edit mode
   private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {}; //TODO: Revisit. This isn't an array of ResistanceBands, but rather an object with an indexer and ResistanceBand-type property.

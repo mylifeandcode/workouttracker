@@ -20,8 +20,7 @@ const HTTP_OPTIONS = {
 export class ExerciseService {
 
     private readonly API_ROOT: string;
-    private _targetAreas: Observable<Array<TargetArea>>;
-    private _resistanceTypes: Observable<Map<number, string>>;
+    private _resistanceTypes: Observable<Map<number, string>> | undefined;
     private readonly TARGET_AREAS_API_ROOT: string; //TODO: Create TargetAreaService
 
     constructor(private _http: HttpClient, private _configService: ConfigService) { 

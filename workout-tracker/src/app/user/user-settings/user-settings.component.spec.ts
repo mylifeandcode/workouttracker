@@ -80,12 +80,12 @@ describe('UserSettingsComponent', () => {
 
   it('should toggle recommendations setting on', () => {
     component.recommendationEngineToggled({ originalEvent: null, checked: true });
-    expect(component.userSettingsForm.controls.recommendationsEnabled.value).toBeTruthy();
+    expect(component.userSettingsForm?.controls.recommendationsEnabled.value).toBeTruthy();
   });
 
   it('should toggle recommendations setting off', () => {
     component.recommendationEngineToggled({ originalEvent: null, checked: false });
-    expect(component.userSettingsForm.controls.recommendationsEnabled.value).toBeFalsy();
+    expect(component.userSettingsForm?.controls.recommendationsEnabled.value).toBeFalsy();
   });
   
   it('should save settings', () => {
@@ -99,11 +99,11 @@ describe('UserSettingsComponent', () => {
     const maxTimedSetReps = 70;
     const minRepetitionSetReps = 6;
     const maxRepetitionSetReps = 10;
-    component.userSettingsForm.controls.repSettings.controls[0].controls.minReps.setValue(minRepetitionSetReps);
-    component.userSettingsForm.controls.repSettings.controls[0].controls.maxReps.setValue(maxRepetitionSetReps);
-    component.userSettingsForm.controls.repSettings.controls[1].controls.duration.setValue(duration);
-    component.userSettingsForm.controls.repSettings.controls[1].controls.minReps.setValue(minTimedSetReps);
-    component.userSettingsForm.controls.repSettings.controls[1].controls.maxReps.setValue(maxTimedSetReps);
+    component.userSettingsForm?.controls.repSettings.controls[0].controls.minReps.setValue(minRepetitionSetReps);
+    component.userSettingsForm?.controls.repSettings.controls[0].controls.maxReps.setValue(maxRepetitionSetReps);
+    component.userSettingsForm?.controls.repSettings.controls[1].controls.duration.setValue(duration);
+    component.userSettingsForm?.controls.repSettings.controls[1].controls.minReps.setValue(minTimedSetReps);
+    component.userSettingsForm?.controls.repSettings.controls[1].controls.maxReps.setValue(maxTimedSetReps);
     expectedSavedUser.settings = new UserSettings();
     expectedSavedUser.settings.repSettings = new Array<UserMinMaxReps>();
     expectedSavedUser.settings.repSettings.push(new UserMinMaxReps());

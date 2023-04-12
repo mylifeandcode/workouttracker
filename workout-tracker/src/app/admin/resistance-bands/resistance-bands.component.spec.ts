@@ -37,7 +37,7 @@ class ConfirmationServiceMock {
 })
 class ToastComponentMock {
   @Input()
-  position: string;
+  position: string = '';
 }
 
 

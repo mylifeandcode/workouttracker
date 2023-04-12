@@ -153,7 +153,7 @@ Unfortunately, for now, I've had to mock each property and method. :/
 class ResistanceBandSelectComponentMock extends ResistanceBandSelectComponent {
 
   @Input()
-  public resistanceBandInventory: ResistanceBandIndividual[];
+  public resistanceBandInventory: ResistanceBandIndividual[] = [];
 
   @Output()
   public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
@@ -340,7 +340,7 @@ describe('WorkoutComponent', () => {
     //ASSERT
     expect(component.showResistanceBandsSelectModal).toBeTrue();
     expect(component.formGroupForResistanceSelection).toBe(exerciseFormGroup);
-    expect(component.bandSelect.setBandAllocation)
+    expect(component.bandSelect?.setBandAllocation)
       .toHaveBeenCalledWith(
         exerciseFormGroup.controls.resistanceMakeup.value,
         !exerciseFormGroup.controls.bandsEndToEnd.value);
@@ -362,9 +362,9 @@ describe('WorkoutComponent', () => {
 
     //ASSERT
     expect(component.showResistanceBandsSelectModal).toBeFalse();
-    expect(component.formGroupForResistanceSelection.controls.resistanceMakeup.value)
+    expect(component.formGroupForResistanceSelection?.controls.resistanceMakeup.value)
       .toEqual(selection.makeup);
-    expect(component.formGroupForResistanceSelection.controls.resistance.value)
+    expect(component.formGroupForResistanceSelection?.controls.resistance.value)
       .toEqual(selection.maxResistanceAmount);
   });
 
@@ -379,9 +379,9 @@ describe('WorkoutComponent', () => {
 
     //ASSERT
     expect(component.showResistanceBandsSelectModal).toBeFalse();
-    expect(component.formGroupForResistanceSelection.controls.resistanceMakeup.value)
+    expect(component.formGroupForResistanceSelection?.controls.resistanceMakeup.value)
       .toBe(exerciseFormGroup.controls.resistanceMakeup.value);
-    expect(component.formGroupForResistanceSelection.controls.resistance.value)
+    expect(component.formGroupForResistanceSelection?.controls.resistance.value)
       .toBe(exerciseFormGroup.controls.resistance.value);
   });
 

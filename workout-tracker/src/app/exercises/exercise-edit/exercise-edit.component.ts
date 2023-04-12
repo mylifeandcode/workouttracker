@@ -14,7 +14,7 @@ interface IExerciseEditForm {
   id: FormControl<number>;
   name: FormControl<string>;
   description: FormControl<string>;
-  resistanceTypes: FormControl<number>; //TODO: Rename to singular
+  resistanceType: FormControl<number>; //TODO: Rename to singular
   oneSided: FormControl<boolean>;
   endToEnd: FormControl<boolean | null>;
   involvesReps: FormControl<boolean>;
@@ -40,8 +40,8 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   //PUBLIC FIELDS
   public exerciseForm: FormGroup<IExerciseEditForm>;
   public loading: boolean = true;
-  public allTargetAreas: TargetArea[];
-  public resistanceTypes: Map<number, string>;
+  public allTargetAreas: TargetArea[] = [];
+  public resistanceTypes: Map<number, string> | undefined;
   public infoMsg: string | null = null;
   public readOnlyMode: boolean = false;
   public fromViewRoute: boolean = false;
@@ -60,7 +60,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   public errorMsg: string | null = null;
 
   //PRIVATE FIELDS
-  private _exercise: Exercise; 
+  private _exercise: Exercise = new Exercise(); 
   private _exerciseId: number = 0; //TODO: Refactor. We have an exercise variable. Why have this too?
 
   constructor(
@@ -68,6 +68,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     private _formBuilder: FormBuilder,
     private _exerciseSvc: ExerciseService) {
       super();
+      this.exerciseForm = this.createForm();
   }
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
@@ -180,13 +181,13 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   }
 
-  private createForm(): void {
+  private createForm(): FormGroup<IExerciseEditForm> {
 
-    this.exerciseForm = this._formBuilder.group<IExerciseEditForm>({
+    return this._formBuilder.group<IExerciseEditForm>({
       id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }), 
       description: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}), 
-      resistanceTypes: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+      resistanceType: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
       oneSided: new FormControl<boolean>(false, { nonNullable: true }),
       endToEnd: new FormControl<boolean | null>(false),
       involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
@@ -217,7 +218,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     this._exercise.setup = this.exerciseForm.controls.setup.value;
     this._exercise.movement = this.exerciseForm.controls.movement.value;
     this._exercise.pointsToRemember = this.exerciseForm.controls.pointsToRemember.value;
-    this._exercise.resistanceType = this.exerciseForm.controls.resistanceTypes.value;
+    this._exercise.resistanceType = this.exerciseForm.controls.resistanceType!.value; //TODO: Revisit. Use of ! is sort of discouraged.
     this._exercise.oneSided = this.exerciseForm.controls.oneSided.value;
         
     if (this._exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
@@ -265,7 +266,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       this.setupTargetAreas(this._exercise.exerciseTargetAreaLinks);
     }
 
-    this.exerciseForm.controls.resistanceTypes.setValue(this._exercise.resistanceType);
+    this.exerciseForm.controls.resistanceType?.setValue(this._exercise.resistanceType);
     this.exerciseForm.controls.oneSided.setValue(this._exercise.oneSided);
     this.exerciseForm.controls.endToEnd.setValue(this._exercise.bandsEndToEnd);
     this.exerciseForm.controls.involvesReps.setValue(this._exercise.involvesReps);

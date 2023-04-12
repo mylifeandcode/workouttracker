@@ -1,4 +1,4 @@
 export class PaginatedResults<T> {
-    totalCount: number;
-    results: Array<T>;
+    totalCount: number = 0;
+    results: Array<T> = [];
 }

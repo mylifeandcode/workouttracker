@@ -7,9 +7,9 @@ import { Component, Input } from "@angular/core";
 export class ConfirmDialogComponentMock {
   
   @Input()
-  header: string;
+  header: string = '';
   
   @Input()
-  icon: string;
+  icon: string = '';
   
 }

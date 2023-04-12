@@ -6,29 +6,29 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 })
 export class TableComponentMock {
   @Input()
-  class: string;
+  class: string = '';
   
   @Input()
   value: any; 
   
   @Input()
-  paginator: boolean; 
+  paginator: boolean = false; 
   
   @Input()
-  rows: number; 
+  rows: number = 0; 
 
   @Input()
   columns: any; 
   
   @Input()
-  lazy: boolean; 
+  lazy: boolean = false; 
   
   @Output()
   onLazyLoad = new EventEmitter<any>(); 
 
   @Input()
-  totalRecords: number; 
+  totalRecords: number = 0; 
   
   @Input()
-  loading: boolean;
+  loading: boolean = false;
 }

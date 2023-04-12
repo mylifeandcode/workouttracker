@@ -59,10 +59,10 @@ class ExecutedWorkoutServiceMock {
 export class ExecutedExercisesComponentMock {
 
   @Input()
-  executedExercises: ExecutedExerciseDTO[];
+  executedExercises: ExecutedExerciseDTO[] = [];
 
   @Input()
-  showResults: boolean;
+  showResults: boolean = false;
 
 }
 
@@ -120,7 +120,7 @@ describe('WorkoutViewComponent', () => {
     //TODO: CLEAN THIS UP
 
     //console.log("component.groupedExercises: ", component.groupedExercises);
-    const entries: IterableIterator<[string, ExecutedExerciseDTO[]]> = component.groupedExercises.entries();
+    const entries: IterableIterator<[string, ExecutedExerciseDTO[]]> = component.groupedExercises!.entries();
 
     //console.log("ENTRIES: ", entries);
 

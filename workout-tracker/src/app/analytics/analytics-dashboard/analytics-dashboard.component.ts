@@ -10,7 +10,7 @@ import { ExecutedWorkoutsSummary } from '../models/executed-workouts-summary';
 })
 export class AnalyticsDashboardComponent implements OnInit {
 
-  public executedWorkoutsSummary: ExecutedWorkoutsSummary;
+  public executedWorkoutsSummary: ExecutedWorkoutsSummary | undefined;
   public gettingData: boolean = true; //Default to true -- we'll get data on init
   public errorMessage: string | null = null;
 

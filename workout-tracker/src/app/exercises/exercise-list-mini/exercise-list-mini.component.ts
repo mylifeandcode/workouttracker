@@ -12,7 +12,6 @@ import { Table } from 'primeng/table';
 export class ExerciseListMiniComponent extends ExerciseListBase {
 
   @Output() exerciseSelected = new EventEmitter<ExerciseDTO>();
-  @ViewChild('dt') exerciseTable: Table;
 
   constructor(protected _exerciseSvc: ExerciseService) { 
       super(_exerciseSvc);
