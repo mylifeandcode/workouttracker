@@ -121,8 +121,9 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   //PRIVATE METHODS ///////////////////////////////////////////////////////////////////////////////
 
   private setupForm(): void {
-    if (this.workoutId != 0)
+    if (this.workoutId != 0) {
       this.loadWorkout();
+    }
     else {
       this._workout = new Workout();
       this.loading = false;
@@ -131,6 +132,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   private getWorkoutIdFromRouteParams(): void {
     this.workoutId = this._route.snapshot.params['id'];
+    console.log("WORKOUT ID: ", this.workoutId);
   }
 
   private createForm(): FormGroup<IWorkoutEditForm> {
