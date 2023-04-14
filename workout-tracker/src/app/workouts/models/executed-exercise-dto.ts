@@ -1,9 +1,9 @@
 import { NamedEntity } from "app/shared/models/named-entity";
 
 export class ExecutedExerciseDTO extends NamedEntity {
-  public exerciseId: number = -1;
+  public exerciseId: number = 0;
   public resistanceType: number = 0;
-  public sequence: number = -1;
+  public sequence: number = 0;
   public targetRepCount: number = 0;
   public actualRepCount: number = 0;
   public notes: string = '';

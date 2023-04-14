@@ -2,18 +2,18 @@ import { ResistanceType } from "../enums/resistance-type";
 import { SetType } from "../enums/set-type";
 
 export class ExercisePlan {
-  public exerciseInWorkoutId: number = -1;
-  public exerciseId: number = -1;
+  public exerciseInWorkoutId: number = 0;
+  public exerciseId: number = 0;
   public exerciseName: string = '';
 
   public numberOfSets: number = 0;
   public setType: SetType = SetType.Repetition;
   public resistanceType: ResistanceType = ResistanceType.BodyWeight;
-  public sequence: number = -1;
+  public sequence: number = 0;
 
-  public targetRepCountLastTime: number = -1;
-  public maxActualRepCountLastTime: number = -1;
-  public avgActualRepCountLastTime: number = -1;
+  public targetRepCountLastTime: number = 0;
+  public maxActualRepCountLastTime: number = 0;
+  public avgActualRepCountLastTime: number = 0;
 
   public maxRangeOfMotionLastTime: number = 0;
   public avgRangeOfMotionLastTime: number = 0;

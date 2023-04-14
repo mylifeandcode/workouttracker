@@ -7,7 +7,7 @@ export class Exercise extends NamedEntity {
     setup: string = '';
     movement: string = '';
     pointsToRemember: string = '';
-    resistanceType: number = -1;
+    resistanceType: number = 0;
     oneSided: boolean = false;
     bandsEndToEnd: boolean | null = null;
     involvesReps: boolean = false;

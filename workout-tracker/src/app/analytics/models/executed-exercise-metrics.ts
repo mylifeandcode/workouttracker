@@ -1,7 +1,7 @@
 import { SetType } from "app/core/enums/set-type";
 
 export class ExecutedExerciseMetrics {
-  public exerciseId: number = -1;
+  public exerciseId: number = 0;
   public name: string = '';
   public sequence: number = 0;
   public setType: SetType = SetType.Repetition;

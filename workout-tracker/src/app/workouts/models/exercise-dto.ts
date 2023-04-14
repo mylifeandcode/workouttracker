@@ -1,5 +1,5 @@
 export class ExerciseDTO {
-    id: number = -1;
+    id: number = 0;
     name: string = '';
     targetAreas: string = '';
     description: string = '';

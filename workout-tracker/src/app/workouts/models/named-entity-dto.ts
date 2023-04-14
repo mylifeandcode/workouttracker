@@ -1,4 +1,4 @@
 export abstract class NamedEntityDTO {
-  public id: number = -1;
+  public id: number = 0;
   public name: string = '';
 }
