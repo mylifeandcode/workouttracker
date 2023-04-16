@@ -16,7 +16,7 @@ import { forEach } from 'lodash-es';
 
 interface IWorkoutForm {
   id: FormControl<number | null>;
-  exercises: FormArray<FormGroup<IWorkoutFormExercise>>; 
+  exercises: FormArray<FormGroup<IWorkoutFormExercise>>;
   journal: FormControl<string | null>;
 }
 
@@ -31,7 +31,7 @@ export class WorkoutComponent implements OnInit {
   public errorInfo: string | undefined = undefined;
   public workoutForm: FormGroup<IWorkoutForm>;
   public workoutName: string | null = null;
-  
+
   public showResistanceBandsSelectModal: boolean = false;
   public showCountdownModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
@@ -50,7 +50,7 @@ export class WorkoutComponent implements OnInit {
   //END PUBLIC FIELDS
 
   //PRIVATE FIELDS
-  private _executedWorkout: ExecutedWorkoutDTO | undefined = undefined; 
+  private _executedWorkout: ExecutedWorkoutDTO | undefined = undefined;
   //END PRIVATE FIELDS
 
   //VIEWCHILD
@@ -61,7 +61,7 @@ export class WorkoutComponent implements OnInit {
    * A property indicating whether or not the component is loading information it requires
    */
   public get loading(): boolean {
-     return this._apiCallsInProgress > 0; 
+    return this._apiCallsInProgress > 0;
   }
 
   /**
@@ -78,7 +78,7 @@ export class WorkoutComponent implements OnInit {
    * Specifies whether or not the workout has been started
    */
   get workoutStarted(): boolean {
-    return this._executedWorkout?.startDateTime != null 
+    return this._executedWorkout?.startDateTime != null
       && new Date(this._executedWorkout?.startDateTime).getFullYear() > 1;
   }
   //END PUBLIC PROPERTIES
@@ -91,12 +91,12 @@ export class WorkoutComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
-    private _executedWorkoutService: ExecutedWorkoutService, 
-    private _resistanceBandService: ResistanceBandService, 
-    private _messageService: MessageService) { 
-      this.workoutForm = this.createForm();
+    private _executedWorkoutService: ExecutedWorkoutService,
+    private _resistanceBandService: ResistanceBandService,
+    private _messageService: MessageService) {
+    this.workoutForm = this.createForm();
   }
-  
+
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
 
@@ -116,9 +116,9 @@ export class WorkoutComponent implements OnInit {
   }
 
   public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {
-    this.formGroupForResistanceSelection?.patchValue({ 
-      resistanceMakeup: selectedBands.makeup, 
-      resistance: selectedBands.maxResistanceAmount 
+    this.formGroupForResistanceSelection?.patchValue({
+      resistanceMakeup: selectedBands.makeup,
+      resistance: selectedBands.maxResistanceAmount
     });
     this.formGroupForResistanceSelection?.controls.resistanceMakeup.markAsDirty();
     this.formGroupForResistanceSelection?.controls.resistance.markAsDirty();
@@ -144,10 +144,10 @@ export class WorkoutComponent implements OnInit {
     this.setWorkoutValuesFromFormGroup();
 
     if (!this._executedWorkout) return;
-    
-    if(this._executedWorkout.endDateTime == null) //Because we could be entering information for a past workout
+
+    if (this._executedWorkout.endDateTime == null) //Because we could be entering information for a past workout
       this._executedWorkout.endDateTime = new Date();
-    
+
     this.save(true);
   }
 
@@ -155,7 +155,7 @@ export class WorkoutComponent implements OnInit {
     this.setWorkoutValuesFromFormGroup();
     this.save(false);
   }
-  
+
   public openDurationModal(formControl: FormControl<number | null>): void {
     this.formControlForDurationEdit = formControl;
     this.showDurationModal = true;
@@ -181,16 +181,16 @@ export class WorkoutComponent implements OnInit {
 
   private subscribeToQueryParams(): void { //TODO: Refactor to use snapshot instead
     this._route.queryParams.subscribe((queryParams: Params) => {
-      if(queryParams['pastWorkout'])
+      if (queryParams['pastWorkout'])
         this.isLoggingPastWorkout = queryParams['pastWorkout'];
     });
   }
 
   private createForm(): FormGroup<IWorkoutForm> {
     return this._formBuilder.group<IWorkoutForm>({
-        id: new FormControl<number | null>(0, Validators.required),
-        exercises: new FormArray<FormGroup<IWorkoutFormExercise>>([]), 
-        journal: new FormControl<string | null>('')
+      id: new FormControl<number | null>(0, Validators.required),
+      exercises: new FormArray<FormGroup<IWorkoutFormExercise>>([]),
+      journal: new FormControl<string | null>('')
     });
   }
 
@@ -201,13 +201,13 @@ export class WorkoutComponent implements OnInit {
       .subscribe(
         (bands: ResistanceBandIndividual[]) => {
           this.allResistanceBands = bands;
-        }, 
+        },
         (error: any) => {
           this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
         }
       );
   }
-  
+
   private setupWorkout(id: number): void {
     this._apiCallsInProgress++;
     this._executedWorkoutService.getById(id)
@@ -225,7 +225,7 @@ export class WorkoutComponent implements OnInit {
           this.workoutForm?.patchValue({
             id: id
           });
-          
+
           this.setupExercisesFormGroup(executedWorkout.exercises);
 
           this.workoutCompleted = (this._executedWorkout.endDateTime != null);
@@ -235,7 +235,7 @@ export class WorkoutComponent implements OnInit {
           }
 
           this.workoutLoaded = true;
-        }, 
+        },
         (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
       );
   }
@@ -251,10 +251,10 @@ export class WorkoutComponent implements OnInit {
       this.exercisesArray?.push(
         this._formBuilder.group<IWorkoutFormExercise>({
           id: new FormControl<number>(exerciseArray[0].id, { nonNullable: true }),
-          exerciseId: new FormControl<number>(exerciseArray[0].exerciseId, { nonNullable: true }), 
+          exerciseId: new FormControl<number>(exerciseArray[0].exerciseId, { nonNullable: true }),
           exerciseName: new FormControl<string>(exerciseArray[0].name, { nonNullable: true }),
-          exerciseSets: this.getExerciseSetsFormArray(exerciseArray), 
-          setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }), 
+          exerciseSets: this.getExerciseSetsFormArray(exerciseArray),
+          setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }),
           resistanceType: new FormControl<number>(exerciseArray[0].resistanceType, { nonNullable: true })
         })
       );
@@ -268,15 +268,15 @@ export class WorkoutComponent implements OnInit {
     const formArray = new FormArray<FormGroup<IWorkoutFormExerciseSet>>([]);
 
     //Each member of the array is a FormGroup
-    for(let i = 0; i < exercises.length; i++) {
+    for (let i = 0; i < exercises.length; i++) {
       const formGroup = this._formBuilder.group<IWorkoutFormExerciseSet>({
-        sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }), 
+        sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }),
         resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
-        targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }), 
+        targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }),
         actualReps: new FormControl<number>(exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, { nonNullable: true, validators: Validators.required }),
         formRating: new FormControl<number | null>(exercises[i].formRating ? exercises[i].formRating : null, { validators: Validators.required }),
         rangeOfMotionRating: new FormControl<number | null>(exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, { validators: Validators.required }),
-        resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup), 
+        resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup),
         bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd), //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
         duration: new FormControl<number | null>(120), //TODO: Get/set value from API
         involvesReps: new FormControl<boolean>(exercises[i].involvesReps, { nonNullable: true }), //Kind of a hack, but I need to pass this value along
@@ -302,18 +302,18 @@ export class WorkoutComponent implements OnInit {
     this.exercisesArray.controls.forEach((exerciseFormGroup: FormGroup<IWorkoutFormExercise>) => {
       const sets = exerciseFormGroup.controls.exerciseSets;
       const exerciseId = exerciseFormGroup.controls.exerciseId.value;
-      let exercises = this._executedWorkout?.exercises.filter((exercise: ExecutedExerciseDTO) => 
-        exercise.exerciseId == exerciseId 
+      let exercises = this._executedWorkout?.exercises.filter((exercise: ExecutedExerciseDTO) =>
+        exercise.exerciseId == exerciseId
       );
 
       exercises = exercises?.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
 
-      if(exercises?.length != sets.length) {
+      if (exercises?.length != sets.length) {
         window.alert("Exercises/FormArray length mismatch."); //TODO: Handle this a better way
         return;
       }
 
-      for(let x = 0; x < exercises.length; x++) {
+      for (let x = 0; x < exercises.length; x++) {
         const setControls = (sets.at(x) as FormGroup<IWorkoutFormExerciseSet>).controls; //TODO: Revisit. Can probably simplify this.
         exercises[x].actualRepCount = Number(setControls.actualReps.value);
         exercises[x].duration = setControls.duration.value;
@@ -325,32 +325,36 @@ export class WorkoutComponent implements OnInit {
       }
 
     });
-    
+
   }
 
   private save(completed: boolean): void {
     if (!this._executedWorkout) return;
 
     this.saving = true;
+    this._messageService.add({ severity: 'info', summary: 'Saving', detail: 'Saving workout...', closable: false });
     this._executedWorkoutService
       .update(this._executedWorkout)
       .pipe(finalize(() => { this.saving = false; }))
       .subscribe((workout: ExecutedWorkoutDTO) => {
-          this._executedWorkout = workout;
-          if (completed) {
-            this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
-            this.workoutCompleted = true;
-            this.endDateTime = this._executedWorkout.endDateTime;
-            this._messageService.add({severity:'success', summary: 'Success!', detail: 'Workout completed!', life: 5000});
-          }
-          else {
-            if (!this.startDateTime) this.startDateTime = this._executedWorkout.startDateTime;
-            this._messageService.add({severity:'success', summary: 'Success!', detail: 'Progress updated!', life: 1000});
-
-          }
-        }, 
-        (error: any) => { this.setErrorInfo(error, "An error occurred saving workout information. See console for details."); 
-      });
+        this._messageService.clear();
+        this._executedWorkout = workout;
+        if (completed) {
+          this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
+          this.workoutCompleted = true;
+          this.endDateTime = this._executedWorkout.endDateTime;
+          this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Workout completed!', life: 5000 });
+        }
+        else {
+          if (!this.startDateTime) this.startDateTime = this._executedWorkout.startDateTime;
+          this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Progress updated!', life: 1000 });
+        }
+      },
+        (error: any) => {
+          this.setErrorInfo(error, "An error occurred saving workout information. See console for details.");
+          this._messageService.add({ severity: 'error', summary: 'Error!', detail: 'An error occurred while trying to save: ' + error.message ?? "Unknown error", life: 5000 });
+        }
+      );
   }
 
 }

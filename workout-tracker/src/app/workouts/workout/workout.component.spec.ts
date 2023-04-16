@@ -138,6 +138,7 @@ class ActivatedRouteMock {
 
 class MessageServiceMock {
   add = jasmine.createSpy('add');
+  clear = jasmine.createSpy('clear');
 }
 //END SERVICE MOCK CLASSES ////////////////////////////////////////////////////
 
