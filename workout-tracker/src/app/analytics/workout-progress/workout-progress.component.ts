@@ -49,6 +49,8 @@ export class WorkoutProgressComponent implements OnInit {
     }
   };
 
+  public count: number = 5;
+
   constructor(
     private _analyticsService: AnalyticsService, 
     private _workoutService: WorkoutService) { }
@@ -66,7 +68,7 @@ export class WorkoutProgressComponent implements OnInit {
     if(isNaN(workoutId))
       return;
 
-    this._analyticsService.getExecutedWorkoutMetrics(workoutId)
+    this._analyticsService.getExecutedWorkoutMetrics(workoutId, this.count)
       .pipe(
         finalize(() => {
           this.loadingData = false;
@@ -74,14 +76,11 @@ export class WorkoutProgressComponent implements OnInit {
       )
       .subscribe((results: ExecutedWorkoutMetrics[]) => {
         this.metrics = results;
-        //console.log("METRICS: ", this.metrics);
       });
   }
 
   public exerciseChange(event: Event): void {
-    //console.log("EXERCISE CHANGE: ", event);
     const exerciseId: number = parseInt((event.target as HTMLSelectElement).value);
-    //console.log("EXERCISE ID: ", exerciseId);
     if (isNaN(exerciseId)) return;
     this.setupChartData(exerciseId);
   }

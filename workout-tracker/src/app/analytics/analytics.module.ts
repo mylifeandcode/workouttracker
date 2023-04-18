@@ -7,6 +7,7 @@ import { SharedModule } from 'app/shared/shared.module';
 import { WorkoutProgressComponent } from './workout-progress/workout-progress.component';
 import { WorkoutsModule } from 'app/workouts/workouts.module';
 import { ChartModule } from 'primeng/chart';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { ChartModule } from 'primeng/chart';
   imports: [
     CommonModule,
     AnalyticsRoutingModule,
+    FormsModule,
     ProgressSpinnerModule,
     SharedModule,
     WorkoutsModule,

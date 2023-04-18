@@ -2,7 +2,11 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-6">
+    <div class="col-4">
+      <label># of Most Recent Workouts to Retrieve</label>&nbsp;
+      <input wtSelectOnFocus pInputText type="number" class="count" [(ngModel)]="count" required>
+    </div>
+    <div class="col-4">
       <label>Select a Workout</label>&nbsp;
       <select id="workoutDefinitions" (change)="workoutSelected($event)">
         <option value="" selected disabled>Choose a Workout</option>
@@ -11,7 +15,7 @@
         </option>          
       </select>
     </div>
-    <div *ngIf="metrics && metrics.length > 0" class="col-6">
+    <div *ngIf="metrics && metrics.length > 0" class="col-4">
       <label>Exercise</label>&nbsp;
       <select id="exercises" (change)="exerciseChange($event)">
         <option value="" selected disabled>Choose an Exercise</option>

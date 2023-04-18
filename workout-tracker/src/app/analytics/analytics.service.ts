@@ -61,47 +61,6 @@ export class AnalyticsService {
     return this._http.get<ExecutedWorkoutMetrics[]>(`${this.API_ROOT}/workout-metrics/${workoutId}/${count}`);
   }
 
-  //TODO: Re-evaluate and remove if unneeded. This was replaced in favor of getExerciseChartData().
-  /*
-  public getWorkoutChartData(metrics: ExecutedWorkoutMetrics[], chartDataType: CHART_DATA_TYPE = CHART_DATA_TYPE.Resistance): AnalyticsChartData {
-    let chartData = new AnalyticsChartData();
-
-    if(metrics) {
-
-      //Set up the labels
-      this.setupAnalyticsChartDataLabels(metrics, chartData);
-
-      //Set up the dataSets. Loop through each exercise in the first workout metrics.
-      metrics[0].exerciseMetrics.forEach((exercise: ExecutedExerciseMetrics, index: number) => {
-        chartData.datasets.push({
-          label: exercise.name,
-
-          //Flatten the data from across all of the exercises in all of the workout metrics for the exercise this loop iteration is on, for the specified metric type
-          data: metrics.flatMap((metric: ExecutedWorkoutMetrics) => metric.exerciseMetrics.filter((executedExerciseMetrics: ExecutedExerciseMetrics) => executedExerciseMetrics.name == exercise.name).map((executedExerciseMetrics: ExecutedExerciseMetrics) => {
-            switch(chartDataType) {
-              case CHART_DATA_TYPE.Form:
-                return executedExerciseMetrics.averageForm;
-              case CHART_DATA_TYPE.RangeOfMotion:
-                return executedExerciseMetrics.averageRangeOfMotion;
-              case CHART_DATA_TYPE.Reps:
-                return executedExerciseMetrics.averageRepCount;
-              case CHART_DATA_TYPE.Resistance:
-                return executedExerciseMetrics.averageResistanceAmount;
-              default:
-                throw new Error("UNKNOWN CHART DATA TYPE");
-            }
-          })),
-
-          //Set border color based on exercise index in workout
-          borderColor: (index < 10 ? this.BORDERCOLORS[index] : this.BORDERCOLORS[index-10])
-        });
-      });
-    }
-
-    return chartData;
-  }
-  */
-
   public getExerciseChartData(metrics: ExecutedWorkoutMetrics[], exerciseId: number, metricsType: METRICS_TYPE): AnalyticsChartData {
     const chartData = new AnalyticsChartData();
 
@@ -114,13 +73,13 @@ export class AnalyticsService {
       switch(metricsType) {
         case METRICS_TYPE.FormAndRangeOfMotion:
           chartData.datasets.push({
-            label: 'Form',
+            label: 'Average Form Rating',
             data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.Form),
             borderColor: this.BORDERCOLORS[0] //Blue
           });
   
           chartData.datasets.push({
-            label: 'Range of Motion',
+            label: 'Average Range of Motion Rating',
             data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.RangeOfMotion),
             borderColor: this.BORDERCOLORS[6] //Goldenrod
           });
@@ -129,7 +88,7 @@ export class AnalyticsService {
 
         case METRICS_TYPE.Reps:
           chartData.datasets.push({
-            label: 'Reps',
+            label: 'Average Rep Count',
             data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.Reps),
             borderColor: this.BORDERCOLORS[7] //Lawn Green
           });
@@ -138,7 +97,7 @@ export class AnalyticsService {
 
         case METRICS_TYPE.Resistance:
           chartData.datasets.push({
-            label: 'Resistance',
+            label: 'Average Resistance Amount',
             data: this.getFlattenedExerciseMetrices(metrics, exerciseId, CHART_DATA_TYPE.Resistance),
             borderColor: this.BORDERCOLORS[9] //Red
           });
@@ -147,7 +106,6 @@ export class AnalyticsService {
       }
     }
     
-    //console.log("RETURNING CHART DATA: ", chartData);
     return chartData;
 
   }
@@ -159,7 +117,6 @@ export class AnalyticsService {
   }
 
   private getFlattenedExerciseMetrices(metrics: ExecutedWorkoutMetrics[], exerciseId: number, chartDataType: CHART_DATA_TYPE = CHART_DATA_TYPE.Resistance): number[] {
-    //console.log(`Getting flattened metrics for exercise ${exerciseId}, chartDataType ${chartDataType}: metrics: `, metrics);
     return metrics.flatMap((metric: ExecutedWorkoutMetrics) => metric.exerciseMetrics.filter((executedExerciseMetrics: ExecutedExerciseMetrics) => executedExerciseMetrics.exerciseId == exerciseId).map((executedExerciseMetrics: ExecutedExerciseMetrics) => {
       switch(chartDataType) {
         case CHART_DATA_TYPE.Form:

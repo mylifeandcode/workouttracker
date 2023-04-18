@@ -84,13 +84,11 @@ describe('AnalyticsService', () => {
     expectedResults.labels[0] = "Mon Apr 04 2022";
     expectedResults.labels[1] = "Mon Apr 11 2022";
     expectedResults.datasets = [];
-    expectedResults.datasets.push({ label: 'Form', data: [ 5, 4 ], borderColor: '#0000FF' });
-    expectedResults.datasets.push({ label: 'Range of Motion', data: [ 5, 3 ], borderColor: '#DAA520' });
+    expectedResults.datasets.push({ label: 'Average Form Rating', data: [ 5, 4 ], borderColor: '#0000FF' });
+    expectedResults.datasets.push({ label: 'Average Range of Motion Rating', data: [ 5, 3 ], borderColor: '#DAA520' });
 
     //ACT
     const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.FormAndRangeOfMotion);
-
-    //console.log("RESULTS: ", results);
 
     //ASSERT
     expect(results).toEqual(expectedResults);
@@ -107,12 +105,10 @@ describe('AnalyticsService', () => {
     expectedResults.labels[0] = "Mon Apr 04 2022";
     expectedResults.labels[1] = "Mon Apr 11 2022";
     expectedResults.datasets = [];
-    expectedResults.datasets.push({ label: 'Reps', data: [ 8, 6 ], borderColor: '#7CFC00' });
+    expectedResults.datasets.push({ label: 'Average Rep Count', data: [ 8, 6 ], borderColor: '#7CFC00' });
 
     //ACT
     const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.Reps);
-
-    //console.log("RESULTS: ", results);
 
     //ASSERT
     expect(results).toEqual(expectedResults);
@@ -129,7 +125,7 @@ describe('AnalyticsService', () => {
     expectedResults.labels[0] = "Mon Apr 04 2022";
     expectedResults.labels[1] = "Mon Apr 11 2022";
     expectedResults.datasets = [];
-    expectedResults.datasets.push({ label: 'Resistance', data: [ 120, 140 ], borderColor: '#FF0000' });
+    expectedResults.datasets.push({ label: 'Average Resistance Amount', data: [ 120, 140 ], borderColor: '#FF0000' });
 
     //ACT
     const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.Resistance);
