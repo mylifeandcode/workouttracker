@@ -7,7 +7,8 @@ import { SharedModule } from 'app/shared/shared.module';
 import { WorkoutProgressComponent } from './workout-progress/workout-progress.component';
 import { WorkoutsModule } from 'app/workouts/workouts.module';
 import { ChartModule } from 'primeng/chart';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
   declarations: [
@@ -17,11 +18,13 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     AnalyticsRoutingModule,
+    ChartModule,
+    DropdownModule,
     FormsModule,
     ProgressSpinnerModule,
+    ReactiveFormsModule,
     SharedModule,
-    WorkoutsModule,
-    ChartModule
+    WorkoutsModule
   ]
 })
 export class AnalyticsModule { }

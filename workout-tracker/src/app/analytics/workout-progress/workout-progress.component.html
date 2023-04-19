@@ -1,6 +1,6 @@
 <h3 class="headroom">Workout Progress</h3>
 
-<div class="container-fluid">
+<div *ngIf="false" class="container-fluid">
   <div class="row">
     <div class="col-4">
       <label># of Most Recent Workouts to Retrieve</label>&nbsp;
@@ -25,6 +25,27 @@
       </select>
     </div>
   </div>
+</div>
+
+<div class="container-fluid">
+  <form [formGroup]="form" novalidate>
+    <div class="row">
+      <div class="col-4">
+        <label># of Most Recent Workouts to Retrieve</label>&nbsp;
+        <input formControlName="workoutCount" wtSelectOnFocus pInputText type="number" class="count" required />
+      </div>
+      <div class="col-4">
+        <label>Select a Workout</label>&nbsp;
+        <p-dropdown formControlName="workoutId" placeholder="Select a Workout" [options]="workouts" optionValue="id" optionLabel="name">
+        </p-dropdown>
+      </div>
+      <div *ngIf="metrics && metrics.length > 0" class="col-4">
+        <label>Exercise</label>&nbsp;
+        <p-dropdown formControlName="exerciseId" (change)="exerciseChange($event)" placeholder="Select an Exercise" [options]="metrics[0].exerciseMetrics" optionValue="id" optionLabel="name">
+        </p-dropdown>
+      </div>
+    </div>
+  </form>
 </div>
 
 <div *ngIf="loadingData" class="container-fluid">

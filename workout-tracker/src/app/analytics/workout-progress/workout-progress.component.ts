@@ -7,6 +7,13 @@ import { AnalyticsService, METRICS_TYPE } from '../analytics.service';
 import { AnalyticsChartData } from '../models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
 import { sortBy } from 'lodash-es';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+
+interface IWorkoutProgressForm {
+  workoutId: FormControl<number | null>,
+  workoutCount: FormControl<number>,
+  exerciseId: FormControl<number | null>
+}
 
 @Component({
   selector: 'wt-workout-progress',
@@ -50,16 +57,22 @@ export class WorkoutProgressComponent implements OnInit {
   };
 
   public count: number = 5;
+  public form: FormGroup<IWorkoutProgressForm>;
+  public readonly DEFAULT_WORKOUT_COUNT: number = 5;
 
   constructor(
     private _analyticsService: AnalyticsService, 
-    private _workoutService: WorkoutService) { }
+    private _workoutService: WorkoutService,
+    formBuilder: FormBuilder) { 
+      this.form = this.buildForm(formBuilder);
+    }
 
   public ngOnInit(): void {
     this.getUserWorkouts();
   }
 
   public workoutSelected(event: Event): void {
+    console.log("EVENT: ", event);
     this.loadingData = true;
     this.metrics = [];
     this.clearAnalyticsData();
@@ -104,4 +117,34 @@ export class WorkoutProgressComponent implements OnInit {
     this.repsChartData = null;
     this.resistanceChartData = null;
   }
+
+  private buildForm(builder: FormBuilder): FormGroup<IWorkoutProgressForm> {
+    const form =  builder.group<IWorkoutProgressForm>({
+      workoutId: new FormControl<number | null>(null, Validators.required ),
+      workoutCount: new FormControl<number>(this.DEFAULT_WORKOUT_COUNT, { nonNullable: true, validators: Validators.required }),
+      exerciseId: new FormControl<number | null>(null, Validators.required )
+    });
+
+    form.controls.workoutId.valueChanges.subscribe(value => this.workoutIdChanged(value));
+    return form;
+  }
+
+  private workoutIdChanged(id: number | null): void {
+    console.log("ID: ", id);
+    if (!id) return;
+
+    this.loadingData = true;
+    this.metrics = [];
+    this.clearAnalyticsData();
+
+    this._analyticsService.getExecutedWorkoutMetrics(id, this.count)
+      .pipe(
+        finalize(() => {
+          this.loadingData = false;
+        })
+      )
+      .subscribe((results: ExecutedWorkoutMetrics[]) => {
+        this.metrics = results;
+      });
+  }  
 }
