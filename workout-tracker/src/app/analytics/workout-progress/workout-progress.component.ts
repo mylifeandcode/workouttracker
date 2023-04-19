@@ -30,29 +30,29 @@ export class WorkoutProgressComponent implements OnInit {
   public workouts: WorkoutDTO[] = [];
   public formAndRangeOfMotionChartOptions = { //Type "any" because of ChartJS
     scales: {
-        y: {
-            ticks: {
-                callback: (value: number, index: number, ticks: number): string => {
-                  //TODO: Leverage RatingPipe for this
-                  switch(value) {
-                    case 0:
-                      return 'N/A';
-                    case 1:
-                      return 'Bad';
-                    case 2:
-                      return 'Poor';
-                    case 3:
-                      return 'OK';
-                    case 4:
-                      return 'Good';
-                    case 5:
-                      return 'Excellent';
-                    default:
-                      return '';
-                  }
-                }
+      y: {
+        ticks: {
+          callback: (value: number, index: number, ticks: number): string => {
+            //TODO: Leverage RatingPipe for this
+            switch (value) {
+              case 0:
+                return 'N/A';
+              case 1:
+                return 'Bad';
+              case 2:
+                return 'Poor';
+              case 3:
+                return 'OK';
+              case 4:
+                return 'Good';
+              case 5:
+                return 'Excellent';
+              default:
+                return '';
             }
+          }
         }
+      }
     }
   };
 
@@ -61,11 +61,11 @@ export class WorkoutProgressComponent implements OnInit {
   public readonly DEFAULT_WORKOUT_COUNT: number = 5;
 
   constructor(
-    private _analyticsService: AnalyticsService, 
+    private _analyticsService: AnalyticsService,
     private _workoutService: WorkoutService,
-    formBuilder: FormBuilder) { 
-      this.form = this.buildForm(formBuilder);
-    }
+    formBuilder: FormBuilder) {
+    this.form = this.buildForm(formBuilder);
+  }
 
   public ngOnInit(): void {
     this.getUserWorkouts();
@@ -78,7 +78,7 @@ export class WorkoutProgressComponent implements OnInit {
     this.clearAnalyticsData();
 
     const workoutId = parseInt((event.target as HTMLSelectElement).value);
-    if(isNaN(workoutId))
+    if (isNaN(workoutId))
       return;
 
     this._analyticsService.getExecutedWorkoutMetrics(workoutId, this.count)
@@ -111,7 +111,7 @@ export class WorkoutProgressComponent implements OnInit {
         this.workouts = sortBy(result.results, 'name');
       });
   }
-  
+
   private clearAnalyticsData(): void {
     this.formAndRangeOfMotionChartData = null;
     this.repsChartData = null;
@@ -119,18 +119,19 @@ export class WorkoutProgressComponent implements OnInit {
   }
 
   private buildForm(builder: FormBuilder): FormGroup<IWorkoutProgressForm> {
-    const form =  builder.group<IWorkoutProgressForm>({
-      workoutId: new FormControl<number | null>(null, Validators.required ),
+    const form = builder.group<IWorkoutProgressForm>({
+      workoutId: new FormControl<number | null>(null, Validators.required),
       workoutCount: new FormControl<number>(this.DEFAULT_WORKOUT_COUNT, { nonNullable: true, validators: Validators.required }),
-      exerciseId: new FormControl<number | null>(null, Validators.required )
+      exerciseId: new FormControl<number | null>(null, Validators.required)
     });
 
     form.controls.workoutId.valueChanges.subscribe(value => this.workoutIdChanged(value));
+    form.controls.exerciseId.valueChanges.subscribe(value => this.exerciseChanged(value));
+    //TODO: Determine if I need to unsubscribe from those!
     return form;
   }
 
   private workoutIdChanged(id: number | null): void {
-    console.log("ID: ", id);
     if (!id) return;
 
     this.loadingData = true;
@@ -146,5 +147,10 @@ export class WorkoutProgressComponent implements OnInit {
       .subscribe((results: ExecutedWorkoutMetrics[]) => {
         this.metrics = results;
       });
-  }  
+  }
+
+  private exerciseChanged(id: number | null): void {
+    if (!id) return;
+    this.setupChartData(id);
+  }
 }
