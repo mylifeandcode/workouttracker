@@ -1,33 +1,5 @@
 <h3 class="headroom">Workout Progress</h3>
 
-<!--Old version, hidden for now-->
-<div *ngIf="false" class="container-fluid">
-  <div class="row">
-    <div class="col-4">
-      <label># of Most Recent Workouts to Retrieve</label>&nbsp;
-      <input wtSelectOnFocus pInputText type="number" class="count" [(ngModel)]="count" required>
-    </div>
-    <div class="col-4">
-      <label>Select a Workout</label>&nbsp;
-      <select id="workoutDefinitions" (change)="workoutSelected($event)">
-        <option value="" selected disabled>Choose a Workout</option>
-        <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
-          {{workouts[i].name}}
-        </option>          
-      </select>
-    </div>
-    <div *ngIf="metrics && metrics.length > 0" class="col-4">
-      <label>Exercise</label>&nbsp;
-      <select id="exercises" (change)="exerciseChange($event)">
-        <option value="" selected disabled>Choose an Exercise</option>
-        <option *ngFor="let exercise of metrics[0].exerciseMetrics; let i = index" [value]="exercise.exerciseId">
-          {{exercise.name}}
-        </option>          
-      </select>
-    </div>
-  </div>
-</div>
-
 <div class="container-fluid">
   <form [formGroup]="form" novalidate>
     <div class="row">
@@ -42,7 +14,7 @@
       </div>
       <div *ngIf="metrics && metrics.length > 0" class="col-4">
         <label>Exercise</label>&nbsp;
-        <p-dropdown formControlName="exerciseId" (change)="exerciseChange($event)" placeholder="Select an Exercise" [options]="metrics[0].exerciseMetrics" optionValue="exerciseId" optionLabel="name">
+        <p-dropdown formControlName="exerciseId" placeholder="Select an Exercise" [options]="metrics[0].exerciseMetrics" optionValue="exerciseId" optionLabel="name">
         </p-dropdown>
       </div>
     </div>

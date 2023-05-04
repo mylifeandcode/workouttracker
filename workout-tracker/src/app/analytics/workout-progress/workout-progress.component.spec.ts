@@ -108,33 +108,24 @@ describe('WorkoutProgressComponent', () => {
     expect(component.workouts[2].name).toBe("Workout C");
   });
 
-  it('should select workout', () => {
+  it('should get workout metrics when workout selected', () => {
     //ARRANGE
-    const workoutDefinitionsSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#workoutDefinitions');
-    workoutDefinitionsSelect.selectedIndex = 2;
 
     //ACT
-    workoutDefinitionsSelect.dispatchEvent(new Event('change'));
+    component.form.controls.workoutId.setValue(1);
     fixture.detectChanges(); //Not really needed for this test, but a good practice
 
     //ASSERT
-    expect(analyticsService.getExecutedWorkoutMetrics).toHaveBeenCalledWith(20);
+    expect(analyticsService.getExecutedWorkoutMetrics).toHaveBeenCalledWith(1, component.DEFAULT_WORKOUT_COUNT);
   });
 
   it('should select exercise from workout', () => {
     //ARRANGE
-    const workoutDefinitionsSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#workoutDefinitions');
-    workoutDefinitionsSelect.selectedIndex = 2;
-    workoutDefinitionsSelect.dispatchEvent(new Event('change'));
-    expect(analyticsService.getExecutedWorkoutMetrics).toHaveBeenCalledWith(20);
-
-    fixture.detectChanges(); //This is needed so the changes in the template which should occur once the workout definition selection occurs
+    component.form.controls.workoutId.setValue(1);
 
     //ACT
-    const exercisesSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#exercises');
-    exercisesSelect.selectedIndex = 1;
-    exercisesSelect.dispatchEvent(new Event('change'));
-    fixture.detectChanges(); //Not really needed for this test, but a good practice
+    component.form.controls.exerciseId.setValue(1);
+    fixture.detectChanges();
 
     //ASSERT
     expect(analyticsService.getExerciseChartData).toHaveBeenCalledTimes(3);
@@ -154,9 +145,8 @@ describe('WorkoutProgressComponent', () => {
     expect(component.resistanceChartData).not.toBeNull();
 
     //ACT
-    const workoutDefinitionsSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#workoutDefinitions');
-    workoutDefinitionsSelect.selectedIndex = 0;
-    workoutDefinitionsSelect.dispatchEvent(new Event('change'));
+    component.form.controls.workoutId.setValue(1);
+    fixture.detectChanges();
 
     //ASSERT
     expect(component.formAndRangeOfMotionChartData).toBeNull();

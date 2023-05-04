@@ -56,7 +56,6 @@ export class WorkoutProgressComponent implements OnInit {
     }
   };
 
-  public count: number = 5;
   public form: FormGroup<IWorkoutProgressForm>;
   public readonly DEFAULT_WORKOUT_COUNT: number = 5;
 
@@ -71,19 +70,7 @@ export class WorkoutProgressComponent implements OnInit {
     this.getUserWorkouts();
   }
 
-  public workoutSelected(event: Event): void {
-    this.loadingData = true;
-    this.metrics = [];
-    this.clearAnalyticsData();
-
-    const workoutId = parseInt((event.target as HTMLSelectElement).value);
-    if (isNaN(workoutId))
-      return;
-
-    this.getMetrics(workoutId);
-  }
-
-  public getMetrics(workoutId: number): void {
+  private getMetrics(workoutId: number): void {
     this.metrics = [];
     const count = this.form.controls.workoutCount.value;
 
@@ -96,12 +83,6 @@ export class WorkoutProgressComponent implements OnInit {
       .subscribe((results: ExecutedWorkoutMetrics[]) => {
         this.metrics = results;
       });
-  }
-
-  public exerciseChange(event: Event): void {
-    const exerciseId: number = parseInt((event.target as HTMLSelectElement).value);
-    if (isNaN(exerciseId)) return;
-    this.setupChartData(exerciseId);
   }
 
   private setupChartData(exerciseId: number): void {
@@ -145,7 +126,7 @@ export class WorkoutProgressComponent implements OnInit {
     this.metrics = [];
     this.clearAnalyticsData();
 
-    this._analyticsService.getExecutedWorkoutMetrics(id, this.count)
+    this._analyticsService.getExecutedWorkoutMetrics(id, this.form.controls.workoutCount.value)
       .pipe(
         finalize(() => {
           this.loadingData = false;
