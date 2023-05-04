@@ -72,7 +72,6 @@ export class WorkoutProgressComponent implements OnInit {
   }
 
   public workoutSelected(event: Event): void {
-    console.log("EVENT: ", event);
     this.loadingData = true;
     this.metrics = [];
     this.clearAnalyticsData();
@@ -81,7 +80,14 @@ export class WorkoutProgressComponent implements OnInit {
     if (isNaN(workoutId))
       return;
 
-    this._analyticsService.getExecutedWorkoutMetrics(workoutId, this.count)
+    this.getMetrics(workoutId);
+  }
+
+  public getMetrics(workoutId: number): void {
+    this.metrics = [];
+    const count = this.form.controls.workoutCount.value;
+
+    this._analyticsService.getExecutedWorkoutMetrics(workoutId, count)
       .pipe(
         finalize(() => {
           this.loadingData = false;
@@ -121,11 +127,12 @@ export class WorkoutProgressComponent implements OnInit {
   private buildForm(builder: FormBuilder): FormGroup<IWorkoutProgressForm> {
     const form = builder.group<IWorkoutProgressForm>({
       workoutId: new FormControl<number | null>(null, Validators.required),
-      workoutCount: new FormControl<number>(this.DEFAULT_WORKOUT_COUNT, { nonNullable: true, validators: Validators.required }),
+      workoutCount: new FormControl<number>(this.DEFAULT_WORKOUT_COUNT, { nonNullable: true, validators: [ Validators.required, Validators.min(1) ]}),
       exerciseId: new FormControl<number | null>(null, Validators.required)
     });
 
     form.controls.workoutId.valueChanges.subscribe(value => this.workoutIdChanged(value));
+    form.controls.workoutCount.valueChanges.subscribe(value => this.workoutCountChanged(value));
     form.controls.exerciseId.valueChanges.subscribe(value => this.exerciseChanged(value));
     //TODO: Determine if I need to unsubscribe from those!
     return form;
@@ -147,6 +154,15 @@ export class WorkoutProgressComponent implements OnInit {
       .subscribe((results: ExecutedWorkoutMetrics[]) => {
         this.metrics = results;
       });
+  }
+
+  private workoutCountChanged(count: number | null): void {
+    this.clearAnalyticsData();
+    this.metrics = [];
+    if (this.form.controls.workoutId.value) {
+      this.getMetrics(this.form.controls.workoutId.value);
+      this.form.controls.exerciseId.setValue(null);
+    }
   }
 
   private exerciseChanged(id: number | null): void {

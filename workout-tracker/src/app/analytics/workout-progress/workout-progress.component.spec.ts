@@ -10,6 +10,7 @@ import { ExecutedExerciseMetrics } from '../models/executed-exercise-metrics';
 import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
 
 import { WorkoutProgressComponent } from './workout-progress.component';
+import { FormBuilder } from '@angular/forms';
 
 class AnalyticsServiceMock {
   getExerciseChartData = jasmine.createSpy('getExerciseChartData')
@@ -70,6 +71,7 @@ describe('WorkoutProgressComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ WorkoutProgressComponent ],
       providers: [
+        FormBuilder,
         {
           provide: AnalyticsService,
           useClass: AnalyticsServiceMock
