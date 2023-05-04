@@ -9,8 +9,8 @@ import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group
 })
 export class ExercisePlanComponent {
 
-  @Input()
-  formGroup!: FormGroup<IExercisePlanFormGroup>; //TODO: Revisit the use of ! here. This value *should* always be present, but I feel like this is a hack. Look for a better solution.
+  @Input({ required: true }) //The "required" property has no effect on TypeScript wanting the value to be initialized.
+  formGroup: FormGroup<IExercisePlanFormGroup> = new FormGroup(<IExercisePlanFormGroup>{}); //HACK -- kind of. Initializes, but...not for real.
 
   @Input()
   workoutHasBeenExecutedBefore: boolean = false;

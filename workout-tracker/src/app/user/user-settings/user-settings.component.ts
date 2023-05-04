@@ -102,38 +102,45 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
 
   private getRepSettingsForm(): FormArray<FormGroup<IRepSettingsForm>> {
     const formArray = new FormArray<FormGroup<IRepSettingsForm>>([]);
-    this.user!.settings.repSettings.forEach((value: UserMinMaxReps) => { //WARN: Use of ! -- look for a better solution
-      const formGroup: FormGroup<IRepSettingsForm> = this._formBuilder.group<IRepSettingsForm>({
-        repSettingsId: new FormControl<number>(value.id, { nonNullable: true}),
-        setType: new FormControl<number>(value.setType, { nonNullable: true}),
-        duration: new FormControl<number | null>(value.duration, [ Validators.min((value.setType == 1 ? 1 : 0)), isRequired((value.setType == 1)) ]),
-        minReps: new FormControl<number>(value.minReps, { nonNullable: true, validators: [ Validators.min(1) ] }),
-        maxReps: new FormControl<number>(value.maxReps, { nonNullable: true, validators: [ Validators.min(1) ] })
-      }, { validators: [ firstControlValueMustBeLessThanOrEqualToSecond('minReps', 'maxReps') ] });
+    if (this.user) {
+      this.user.settings.repSettings.forEach((value: UserMinMaxReps) => { 
+        const formGroup: FormGroup<IRepSettingsForm> = this._formBuilder.group<IRepSettingsForm>({
+          repSettingsId: new FormControl<number>(value.id, { nonNullable: true}),
+          setType: new FormControl<number>(value.setType, { nonNullable: true}),
+          duration: new FormControl<number | null>(value.duration, [ Validators.min((value.setType == 1 ? 1 : 0)), isRequired((value.setType == 1)) ]),
+          minReps: new FormControl<number>(value.minReps, { nonNullable: true, validators: [ Validators.min(1) ] }),
+          maxReps: new FormControl<number>(value.maxReps, { nonNullable: true, validators: [ Validators.min(1) ] })
+        }, { validators: [ firstControlValueMustBeLessThanOrEqualToSecond('minReps', 'maxReps') ] });
 
-      formArray.push(formGroup);
-    });
+        formArray.push(formGroup);
+      });
+    }
     return formArray;
   }
 
   private updateSettingsForPersist(): void {
-    if (!this.user || !this.userSettingsForm) return;
+    if (!this.user) return;
+    if (!this.userSettingsForm) return;
+
     this.user.settings.recommendationsEnabled = this.userSettingsForm.controls.recommendationsEnabled.value;
 
     //Update rep settings
+
     this.user.settings.repSettings.forEach((value: UserMinMaxReps) => {
-      const formGroup = find(this.userSettingsForm!.controls.repSettings.controls, (group: FormGroup<IRepSettingsForm>) => //WARN: Use of !
-        group.controls.repSettingsId.value == value.id
-      );
+      if(this.userSettingsForm !== undefined) { //Needed to keep the linter happy, despite the above check
+        const formGroup = find(this.userSettingsForm.controls.repSettings.controls, (group: FormGroup<IRepSettingsForm>) => 
+          group.controls.repSettingsId.value == value.id
+        );
 
-      if(!formGroup) { //This should never happen
-        window.alert('Error retrieving rep settings values to save. Please contact the system administrator.');
-        return;
+        if(!formGroup) { //This should never happen
+          window.alert('Error retrieving rep settings values to save. Please contact the system administrator.');
+          return;
+        }
+
+        value.duration = formGroup.controls.duration.value;
+        value.minReps = formGroup.controls.minReps.value;
+        value.maxReps = formGroup.controls.maxReps.value;
       }
-
-      value.duration = formGroup.controls.duration.value;
-      value.minReps = formGroup.controls.minReps.value;
-      value.maxReps = formGroup.controls.maxReps.value;
     });
   }
 }

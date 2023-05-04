@@ -95,7 +95,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
       this._workoutService.submitPlan(this.workoutPlan)
         .pipe(finalize(() => { 
           this.isProcessing = false; 
-          this.workoutPlanForm!.markAsPristine();
+          this.workoutPlanForm.markAsPristine();
         }))
         .subscribe((executedWorkoutId: number) => {
           this._router.navigate([`workouts/start/${executedWorkoutId}`]);
@@ -111,7 +111,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
       this._workoutService.submitPlanForLater(this.workoutPlan)
         .pipe(finalize(() => { 
           this.isProcessing = false; 
-          this.workoutPlanForm!.markAsPristine();
+          this.workoutPlanForm.markAsPristine();
         }))
         .subscribe((executedWorkoutId: number) => {
           this._router.navigate([`workouts/select-planned`]);
@@ -125,7 +125,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
       this._workoutService.submitPlanForPast(this.workoutPlan, this._pastWorkoutStartDateTime, this._pastWorkoutEndDateTime)
         .pipe(finalize(() => { 
           this.isProcessing = false; 
-          this.workoutPlanForm!.markAsPristine();
+          this.workoutPlanForm.markAsPristine();
         }))
         .subscribe((executedWorkoutId: number) => {
           this._router.navigate([`workouts/start/${executedWorkoutId}`], { queryParams: { pastWorkout: true }});
@@ -176,7 +176,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
         .pipe(finalize(() => { this._apiCallsInProgress--; }))
         .subscribe((result: WorkoutPlan) => {
           this.workoutPlan = result;
-          this.workoutPlanForm!.patchValue({
+          this.workoutPlanForm.patchValue({
             workoutId: workoutId, 
             workoutName: result.workoutName, 
             hasBeenExecutedBefore: result.hasBeenExecutedBefore
@@ -201,7 +201,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     this.exercisesArray.clear();
     forEach(exercises, (exercise: ExercisePlan) => {
 
-      this.exercisesArray!.push(
+      this.exercisesArray.push(
         this._formBuilder.group<IExercisePlanFormGroup>({
           exerciseInWorkoutId: new FormControl<number>(exercise.exerciseInWorkoutId, { nonNullable: true, validators: Validators.required }), 
           exerciseId: new FormControl<number>(exercise.exerciseId, { nonNullable: true, validators: Validators.required }), 

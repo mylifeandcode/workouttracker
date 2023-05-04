@@ -74,7 +74,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
   public ngOnInit(): void {
     this.readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
-    this.createForm();
+    //this.createForm();
 
     //TODO: Rethink the following. This can probably be done a much better way. Thinking "forkJoin()".
     this._exerciseSvc.getTargetAreas().subscribe((targetAreas: TargetArea[]) => { 
@@ -168,10 +168,10 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
         //Creating a new exercise
         this.setupTargetAreas([]);
         this.exerciseForm.reset();
-        this.exerciseForm.controls["id"].setValue(0);
-        this.exerciseForm.controls["oneSided"].setValue(false);
-        this.exerciseForm.controls["endToEnd"].setValue(false);
-        this.exerciseForm.controls["involvesReps"].setValue(true);
+        this.exerciseForm.controls.id.setValue(0);
+        this.exerciseForm.controls.oneSided.setValue(false);
+        this.exerciseForm.controls.endToEnd.setValue(false);
+        this.exerciseForm.controls.involvesReps.setValue(true);
 
         this._exercise = new Exercise();
         this._exercise.id = 0;
@@ -191,7 +191,6 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       oneSided: new FormControl<boolean>(false, { nonNullable: true }),
       endToEnd: new FormControl<boolean | null>(false),
       involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
-      //targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
       targetAreas: new FormRecord<FormControl<boolean>>({}, { validators: CustomValidators.formGroupOfBooleansRequireOneTrue}),
       setup: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}),
       movement: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}),
@@ -212,13 +211,12 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   private updateExerciseForPersisting(): void {
 
-    //exercise.id = this.exerciseForm.get("id").value;
     this._exercise.name = this.exerciseForm.controls.name.value;
     this._exercise.description = this.exerciseForm.controls.description.value;
     this._exercise.setup = this.exerciseForm.controls.setup.value;
     this._exercise.movement = this.exerciseForm.controls.movement.value;
     this._exercise.pointsToRemember = this.exerciseForm.controls.pointsToRemember.value;
-    this._exercise.resistanceType = this.exerciseForm.controls.resistanceType!.value; //TODO: Revisit. Use of ! is sort of discouraged.
+    this._exercise.resistanceType = this.exerciseForm.controls.resistanceType.value;
     this._exercise.oneSided = this.exerciseForm.controls.oneSided.value;
         
     if (this._exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
@@ -266,7 +264,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       this.setupTargetAreas(this._exercise.exerciseTargetAreaLinks);
     }
 
-    this.exerciseForm.controls.resistanceType?.setValue(this._exercise.resistanceType);
+    this.exerciseForm.controls.resistanceType.setValue(this._exercise.resistanceType);
     this.exerciseForm.controls.oneSided.setValue(this._exercise.oneSided);
     this.exerciseForm.controls.endToEnd.setValue(this._exercise.bandsEndToEnd);
     this.exerciseForm.controls.involvesReps.setValue(this._exercise.involvesReps);

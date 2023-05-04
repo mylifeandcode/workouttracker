@@ -120,19 +120,18 @@ describe('WorkoutViewComponent', () => {
     //TODO: CLEAN THIS UP
 
     //console.log("component.groupedExercises: ", component.groupedExercises);
-    const entries: IterableIterator<[string, ExecutedExerciseDTO[]]> = component.groupedExercises!.entries();
+    if (component.groupedExercises === undefined)
+      fail("component.groupedExercises is undefined.");
+    else {
+      const entries: IterableIterator<[string, ExecutedExerciseDTO[]]> = component.groupedExercises.entries();
 
-    //console.log("ENTRIES: ", entries);
+      const first = entries.next();
+      expect(first.value[1].length).toBe(2);
 
-    const first = entries.next();
-    //console.log("FIRST: ", first);
-    expect(first.value[1].length).toBe(2);
+      const second = entries.next();
+      expect(second.value[1].length).toBe(1);
 
-    const second = entries.next();
-    //console.log("SECOND: ", second);
-    expect(second.value[1].length).toBe(1);
-
-    entries.next();
-    //console.log("ENTRIES: ", entries);
+      entries.next();
+    }
   });
 });

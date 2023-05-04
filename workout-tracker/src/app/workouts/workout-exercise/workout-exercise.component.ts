@@ -19,8 +19,8 @@ export class WorkoutExerciseComponent implements OnInit {
    * The FormGroup containing FormControls for the Exercise Name, Type, etc, as well as
    * a FormArray for the Sets
    */
-  @Input()
-  formGroup!: FormGroup<IWorkoutFormExercise>; //TODO: Find a better way then "!". This value HAS to be here, and CAN'T be null -- but how can I make the compiler happy? This is a HACK.
+  @Input({ required: true })
+  formGroup: FormGroup<IWorkoutFormExercise> = new FormGroup(<IWorkoutFormExercise>{}); //HACK -- kind of. Not really initialized correctly unless I'm mistaken. Value should be there though. This is just to make the compiler happy.
 
   @Output()
   resistanceBandsSelect = new EventEmitter<FormGroup<IWorkoutFormExerciseSet>>();
