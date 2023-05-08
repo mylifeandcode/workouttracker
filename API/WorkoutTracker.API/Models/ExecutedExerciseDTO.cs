@@ -8,10 +8,13 @@ namespace WorkoutTracker.API.Models
     public class ExecutedExerciseDTO : NamedEntity //Note this inherits from NamedEntity, not NamedEntityDTO
     {
         /// <summary>
-        /// The ID of the Exercise that was executed
+        /// The ID of the Exercise that was executed.
         /// </summary>
         public int ExerciseId { get; set; }
 
+        /// <summary>
+        /// The resistance type of the exercise.
+        /// </summary>
         public ResistanceType ResistanceType { get; set; }
 
         /// <summary>
@@ -72,8 +75,22 @@ namespace WorkoutTracker.API.Models
         /// How well the range of motion was for this exercise (the higher the number, the better).
         /// </summary>
         public byte RangeOfMotionRating { get; set; }
+
+        /// <summary>
+        /// For resistance band exercises, specifies that the bands should be used end-to-end, 
+        /// rather than looped through an anchor.
+        /// </summary>
         public bool? BandsEndToEnd { get; set; }
+
+        /// <summary>
+        /// Specifies whether or not the exercise involves repetitions.
+        /// </summary>
         public bool InvolvesReps { get; set; }
+
+        /// <summary>
+        /// For one-sided exercises, specifies the side of the exercise.
+        /// </summary>
+        public ExerciseSide? Side { get; set; }
 
 
         public ExecutedExerciseDTO(
@@ -82,7 +99,8 @@ namespace WorkoutTracker.API.Models
             decimal resistanceAmount, string resistanceMakeup, SetType setType,
             ushort? duration, byte formRating, byte rangeOfMotionRating,
             bool? bandsEndToEnd, bool involvesReps, 
-            int createdByUserId, DateTime createdDateTime, int? modifiedByUserId, DateTime? modifiedDateTime)
+            int createdByUserId, DateTime createdDateTime, int? modifiedByUserId, DateTime? modifiedDateTime,
+            ExerciseSide? side)
         {
             Id = id;
             Name = name;
@@ -104,6 +122,7 @@ namespace WorkoutTracker.API.Models
             CreatedDateTime = createdDateTime;
             ModifiedByUserId = modifiedByUserId;
             ModifiedDateTime = modifiedDateTime;
+            Side = side;
         }
     }
 }

@@ -167,8 +167,6 @@ namespace WorkoutTracker.Application.Workouts.Services
 
                 for (byte x = 0; x < exerciseInWorkout.NumberOfSets; x++)
                 {
-                    //TODO: Add new constructor to ExecutedExercise which takes an ExercisePlan param 
-                    //and initialize that way instead.
                     var exerciseToExecute = new ExecutedExercise();
                     exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
                     exerciseToExecute.CreatedDateTime = workoutPlan.SubmittedDateTime.Value;
@@ -181,8 +179,18 @@ namespace WorkoutTracker.Application.Workouts.Services
                     exerciseToExecute.ResistanceAmount = exercisePlan.ResistanceAmount;
                     exerciseToExecute.ResistanceMakeup = exercisePlan.ResistanceMakeup;
 
+                    if (exerciseInWorkout.Exercise.OneSided) exerciseToExecute.Side = ExerciseSide.Right;
+
                     executedWorkout.Exercises.Add(exerciseToExecute);
                     exerciseSequence++;
+
+                    if (exerciseInWorkout.Exercise.OneSided)
+                    {
+                        var anotherExerciseToExecute = exerciseToExecute.Clone();
+                        anotherExerciseToExecute.Side = ExerciseSide.Left;
+                        executedWorkout.Exercises.Add(anotherExerciseToExecute);
+                        exerciseSequence++;
+                    }
                 }
             }
 

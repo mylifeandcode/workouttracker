@@ -83,5 +83,39 @@ namespace WorkoutTracker.Domain.Exercises
         /// The individual resistances which were used for this exercise.
         /// </summary>
         public virtual ICollection<Resistance> Resistances { get; set; } //TODO: Remove! Unused.
+
+        /// <summary>
+        /// For one-sided exercises, represents the side the exercise was performed on.
+        /// </summary>
+        public ExerciseSide? Side { get; set; }
+
+        /// <summary>
+        /// Creates a clone of the object. All values are the same except for the Id, which will be 0.
+        /// </summary>
+        /// <returns>An ExecutedExercise which is a clone of the one the method is called on.</returns>
+        public ExecutedExercise Clone()
+        {
+            var clone = new ExecutedExercise();
+            clone.ActualRepCount = ActualRepCount;
+            clone.CreatedByUserId = CreatedByUserId;
+            clone.CreatedDateTime = CreatedDateTime;
+            clone.Duration = Duration;
+            clone.Exercise = Exercise;
+            clone.ExerciseId = ExerciseId;
+            clone.FormRating = FormRating;
+            clone.ModifiedDateTime = ModifiedDateTime;
+            clone.ModifiedByUserId = ModifiedByUserId;
+            clone.Notes = Notes;
+            clone.RangeOfMotionRating = RangeOfMotionRating;
+            clone.ResistanceAmount = ResistanceAmount;
+            clone.ResistanceMakeup = ResistanceMakeup;
+            clone.Resistances = Resistances;
+            clone.Sequence = Sequence;
+            clone.SetType = SetType;
+            clone.Side = Side;
+            clone.TargetRepCount = TargetRepCount;
+
+            return clone;
+        }
     }
 }

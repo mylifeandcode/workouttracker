@@ -42,7 +42,8 @@ namespace WorkoutTracker.API.Mappers
                         executedExercise.CreatedByUserId, 
                         executedExercise.CreatedDateTime, 
                         executedExercise.ModifiedByUserId, 
-                        executedExercise.ModifiedDateTime)
+                        executedExercise.ModifiedDateTime,
+                        executedExercise.Side)
                     ),
                 executedWorkout.CreatedByUserId, 
                 executedWorkout.CreatedDateTime, 
