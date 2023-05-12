@@ -1,4 +1,5 @@
 import { NamedEntity } from "app/shared/models/named-entity";
+import { ExerciseSide } from "../enums/exercise-side";
 
 export class ExecutedExerciseDTO extends NamedEntity {
   public exerciseId: number = 0;
@@ -15,4 +16,5 @@ export class ExecutedExerciseDTO extends NamedEntity {
   public rangeOfMotionRating: number = 0;
   public bandsEndToEnd: boolean | null = null;
   public involvesReps: boolean = false;
+  public side: ExerciseSide | null = null;
 }

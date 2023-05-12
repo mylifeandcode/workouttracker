@@ -11,4 +11,5 @@ export interface IWorkoutFormExerciseSet {
   bandsEndToEnd: FormControl<boolean | null>;
   duration: FormControl<number | null>;
   involvesReps: FormControl<boolean>;
+  side: FormControl<number | null>;
 }

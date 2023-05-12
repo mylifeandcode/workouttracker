@@ -47,6 +47,7 @@ import { DurationPipe } from './pipes/duration.pipe';
 import { DurationComponent } from '../workouts/duration/duration.component';
 import { InProgressWorkoutsComponent } from '../workouts/in-progress-workouts/in-progress-workouts.component';
 import { DropdownModule } from 'primeng/dropdown';
+import { ExerciseSidePipe } from './pipes/exercise-side.pipe';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { DropdownModule } from 'primeng/dropdown';
     WorkoutLogPastStartComponent,
     DurationPipe,
     DurationComponent,
-    InProgressWorkoutsComponent
+    InProgressWorkoutsComponent,
+    ExerciseSidePipe
   ],
   imports: [
     CommonModule,

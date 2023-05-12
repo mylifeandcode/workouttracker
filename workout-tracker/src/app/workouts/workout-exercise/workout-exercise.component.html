@@ -48,7 +48,7 @@
         <div class="exercise-row row" [ngStyle]="{'backgroundColor': (i % 2 === 0)?'#d3d3d3':'#ffffff'}">
 
           <div class="col-1 exercise-info-div">
-            {{i + 1}} <button class="btn btn-sm btn-success" *ngIf="formGroup?.controls?.setType?.value==1"
+            {{i + 1 }} {{exerciseSet.controls.side.value | exerciseSide}} <button class="btn btn-sm btn-success" *ngIf="formGroup?.controls?.setType?.value==1"
               (click)="showTimer(setsArray!.controls[i])">Start</button>
             &nbsp;
             <button

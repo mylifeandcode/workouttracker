@@ -280,6 +280,7 @@ export class WorkoutComponent implements OnInit {
         bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd), //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
         duration: new FormControl<number | null>(120), //TODO: Get/set value from API
         involvesReps: new FormControl<boolean>(exercises[i].involvesReps, { nonNullable: true }), //Kind of a hack, but I need to pass this value along
+        side: new FormControl<number | null>(exercises[i].side)
       });
 
       formArray.push(formGroup);
