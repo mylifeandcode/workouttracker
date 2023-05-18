@@ -35,6 +35,15 @@ class ResistanceBandColorMock {
   }
 }
 
+@Pipe({
+  name: 'exerciseSide'
+})
+class ExerciseSidePipeMock {
+  transform(value: number | null): string {
+    return "";
+  }
+}
+
 describe('WorkoutExerciseComponent', () => {
   let component: WorkoutExerciseComponent;
   let fixture: ComponentFixture<WorkoutExerciseComponent>;
@@ -47,7 +56,8 @@ describe('WorkoutExerciseComponent', () => {
         WorkoutExerciseComponent, 
         ResistanceTypePipeMock,
         DurationPipeMock,
-        ResistanceBandColorMock 
+        ResistanceBandColorMock,
+        ExerciseSidePipeMock 
       ]
     })
     .compileComponents();
@@ -162,7 +172,8 @@ describe('WorkoutExerciseComponent', () => {
         resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup), 
         bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd), 
         duration: new FormControl<number | null>(120), 
-        involvesReps: new FormControl<boolean>(exercises[i].involvesReps, { nonNullable: true })
+        involvesReps: new FormControl<boolean>(exercises[i].involvesReps, { nonNullable: true }),
+        side: new FormControl<number | null>(null)
       });
 
       formArray.push(formGroup);

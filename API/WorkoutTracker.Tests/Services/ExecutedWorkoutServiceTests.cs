@@ -102,7 +102,7 @@ namespace WorkoutTracker.Tests.Services
                 new ExerciseInWorkout()
                 {
                     ExerciseId = 103,
-                    Exercise = new Exercise() { Id = 103 },
+                    Exercise = new Exercise() { Id = 103, OneSided = true },
                     NumberOfSets = 4, 
                     SetType = SetType.Repetition,
                     Sequence = 2
@@ -129,7 +129,7 @@ namespace WorkoutTracker.Tests.Services
             //ASSERT
             Assert.IsNotNull(result, "result is null.");
             Assert.IsNotNull(result.Exercises, "result.Exercises is null.");
-            Assert.AreEqual(workout.Exercises.Sum(x => x.NumberOfSets), result.Exercises.Count, "result.Exercises.Count isn't as expected.");
+            Assert.AreEqual(workout.Exercises.Sum(x => x.NumberOfSets * (x.Exercise.OneSided ? 2 : 1)), result.Exercises.Count, "result.Exercises.Count isn't as expected.");
             Assert.AreEqual(submittedDate, result.StartDateTime, "result.StartDateTime is not as expected.");
             
             byte exerciseSequence = 0;
@@ -138,8 +138,8 @@ namespace WorkoutTracker.Tests.Services
                 //Find the ExercisePlan in the submitted WorkoutPlan for this exercise
                 var exercisePlan = workoutPlan.Exercises.First(exPlan => exPlan.ExerciseId == exerciseInWorkout.ExerciseId);
                 var executedExercisesInResult = result.Exercises.Where(x => x.ExerciseId == exerciseInWorkout.ExerciseId).OrderBy(x => x.Sequence).ToList();
-                Assert.AreEqual(exerciseInWorkout.NumberOfSets, executedExercisesInResult.Count, $"Number of exercise in result not as expected for ExerciseId {exerciseInWorkout.ExerciseId}.");
-                for (byte x = 0; x < exerciseInWorkout.NumberOfSets; x++)
+                Assert.AreEqual(exerciseInWorkout.NumberOfSets * (exerciseInWorkout.Exercise.OneSided ? 2 : 1), executedExercisesInResult.Count, $"Number of exercise in result not as expected for ExerciseId {exerciseInWorkout.ExerciseId}.");
+                for (byte x = 0; x < exerciseInWorkout.NumberOfSets * (exerciseInWorkout.Exercise.OneSided ? 2 : 1); x++)
                 {
                     //Confirm audit values
                     Assert.AreEqual(workout.CreatedByUserId, executedExercisesInResult[x].CreatedByUserId);

@@ -188,6 +188,7 @@ namespace WorkoutTracker.Application.Workouts.Services
                     {
                         var anotherExerciseToExecute = exerciseToExecute.Clone();
                         anotherExerciseToExecute.Side = ExerciseSide.Left;
+                        anotherExerciseToExecute.Sequence = exerciseSequence;
                         executedWorkout.Exercises.Add(anotherExerciseToExecute);
                         exerciseSequence++;
                     }
