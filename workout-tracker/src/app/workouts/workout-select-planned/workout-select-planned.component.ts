@@ -45,4 +45,12 @@ export class WorkoutSelectPlannedComponent implements OnInit {
     this.getPlannedWorkouts(event.first);
   }
 
+  public deletePlannedWorkout(id: number): void {
+    if (!window.confirm('Are you sure?')) {
+      return;
+    }
+
+    this._executedWorkoutService.deletePlanned(id).subscribe(() => {});
+  }
+
 }

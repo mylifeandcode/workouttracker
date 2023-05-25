@@ -196,6 +196,20 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
+        [HttpDelete("planned/{id}")]
+        public ActionResult DeletePlanned(int id)
+        {
+            try
+            { 
+                _executedWorkoutService.DeletePlanned(id);
+                return StatusCode(200);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         private ExecutedWorkoutFilter BuildExecutedWorkoutFilter(
             int userId, 
             DateTime? startDateTime, 

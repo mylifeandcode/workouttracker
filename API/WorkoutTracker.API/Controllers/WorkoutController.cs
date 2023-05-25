@@ -127,7 +127,6 @@ namespace WorkoutTracker.API.Controllers
         [HttpPost("{id}/plan")]
         public ActionResult<int> SubmitPlan([FromBody] WorkoutPlan plan)
         {
-            //TODO: Change URL -- id isn't needed
             return CreateWorkoutFromWorkoutPlan(plan, true);
         }
 

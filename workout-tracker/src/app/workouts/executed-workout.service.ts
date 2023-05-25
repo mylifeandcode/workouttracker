@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiBaseService } from 'app/core/api-base.service';
 import { ConfigService } from 'app/core/config.service';
@@ -72,5 +72,9 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
 
   public getInProgress(): Observable<ExecutedWorkoutSummaryDTO[]> {
     return this._http.get<ExecutedWorkoutSummaryDTO[]>(`${this._apiRoot}/in-progress`);
+  }
+
+  public deletePlanned(id: number): Observable<HttpResponse<any>> {
+    return this._http.delete<HttpResponse<any>>(`${this._apiRoot}/planned/${id}`);
   }
 }
