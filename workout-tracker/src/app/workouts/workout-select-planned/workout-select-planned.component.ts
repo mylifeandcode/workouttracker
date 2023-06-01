@@ -3,6 +3,7 @@ import { PaginatedResults } from 'app/core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 //TODO: This component shares similarities with WorkoutListComponent. Consolidate code.
 
@@ -22,7 +23,10 @@ export class WorkoutSelectPlannedComponent implements OnInit {
     { field: 'createdDateTime', header: 'Created' }
   ]; //TODO: Create specific type
 
-  constructor(private _executedWorkoutService: ExecutedWorkoutService) { }
+  constructor(
+    private _executedWorkoutService: ExecutedWorkoutService,
+    private _confirmationService: ConfirmationService,
+    private _messageService: MessageService) { }
 
   public ngOnInit(): void {
     this.getPlannedWorkouts(0);
@@ -46,11 +50,16 @@ export class WorkoutSelectPlannedComponent implements OnInit {
   }
 
   public deletePlannedWorkout(id: number): void {
-    if (!window.confirm('Are you sure?')) {
-      return;
-    }
-
-    this._executedWorkoutService.deletePlanned(id).subscribe(() => {});
+    window.alert("YO");
+    this._confirmationService.confirm({
+      message: 'Are you sure you want to delete this planned workout?',
+      accept: () => {
+        this._executedWorkoutService.deletePlanned(id).subscribe(() => {
+          this._messageService.add({severity:'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000});
+          this.getPlannedWorkouts(0);
+        });
+      }
+    });
   }
 
 }

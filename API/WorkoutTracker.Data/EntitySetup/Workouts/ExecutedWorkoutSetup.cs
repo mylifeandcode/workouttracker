@@ -19,18 +19,17 @@ namespace WorkoutTracker.Data.EntitySetup.Workouts
             entity.HasIndex(x => x.StartDateTime);
             entity.HasIndex(x => x.Rating);
 
-            //entity.HasOne(x => x.Workout);
-
+            //When deleting an ExecutedWorkout, don't delete the associated Workout
             entity
                 .HasOne(x => x.Workout)
                 .WithMany()
-                .HasForeignKey(x => x.WorkoutId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            entity.HasMany(x => x.Exercises)
+            //When deleting an ExecutedWorkout, delete the child ExecutedExercises
+            entity
+                .HasMany(x => x.Exercises)
                 .WithOne()
-                .HasForeignKey(x => x.ExerciseId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.ClientCascade);
 
             base.SetupAuditFields<ExecutedWorkout>(builder);
         }

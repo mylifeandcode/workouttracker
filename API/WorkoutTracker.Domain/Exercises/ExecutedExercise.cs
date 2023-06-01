@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using WorkoutTracker.Domain.BaseClasses;
 using WorkoutTracker.Domain.Resistances;
+using WorkoutTracker.Domain.Workouts;
 
 namespace WorkoutTracker.Domain.Exercises
 {
@@ -23,8 +24,11 @@ namespace WorkoutTracker.Domain.Exercises
         public virtual Exercise Exercise { get; set; }
 
         //The ID of the Exercise performed/to be performed.
-        public virtual int ExerciseId { get; set;}
-        
+        public virtual int ExerciseId { get; set; }
+
+        public virtual ExecutedWorkout ExecutedWorkout { get; set; }
+        public virtual int ExecutedWorkoutId { get; set; }
+
         /// <summary>
         /// The target number of repetitions.
         /// </summary>
@@ -102,6 +106,8 @@ namespace WorkoutTracker.Domain.Exercises
             clone.Duration = Duration;
             clone.Exercise = Exercise;
             clone.ExerciseId = ExerciseId;
+            clone.ExecutedWorkout = ExecutedWorkout;
+            clone.ExecutedWorkoutId = ExecutedWorkoutId;
             clone.FormRating = FormRating;
             clone.ModifiedDateTime = ModifiedDateTime;
             clone.ModifiedByUserId = ModifiedByUserId;

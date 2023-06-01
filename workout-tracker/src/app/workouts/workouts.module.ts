@@ -14,8 +14,9 @@ import { PickListModule } from 'primeng/picklist';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 //Other 3rd Party
 import { CountdownModule } from 'ngx-countdown';
@@ -49,6 +50,7 @@ import { InProgressWorkoutsComponent } from '../workouts/in-progress-workouts/in
 import { DropdownModule } from 'primeng/dropdown';
 import { ExerciseSidePipe } from './pipes/exercise-side.pipe';
 
+
 @NgModule({
   declarations: [
     WorkoutComponent,
@@ -79,6 +81,7 @@ import { ExerciseSidePipe } from './pipes/exercise-side.pipe';
     CommonModule,
     CalendarModule,
     CountdownModule,
+    ConfirmDialogModule,
     DialogModule,
     DropdownModule,
     ReactiveFormsModule,
@@ -96,6 +99,7 @@ import { ExerciseSidePipe } from './pipes/exercise-side.pipe';
     SharedModule
   ], 
   providers: [
+    ConfirmationService,
     MessageService
   ],
   exports: [
