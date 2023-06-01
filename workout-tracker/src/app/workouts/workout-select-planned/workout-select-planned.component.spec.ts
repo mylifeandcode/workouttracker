@@ -6,8 +6,10 @@ import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
 
 import { WorkoutSelectPlannedComponent } from './workout-select-planned.component';
+import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
+import { HttpResponse } from '@angular/common/http';
 
-class ExecutedWorkoutServiceMock {
+class MockExecutedWorkoutService {
   getPlanned = 
     jasmine.createSpy('getPlanned')
       .and.callFake(() => {
@@ -18,6 +20,23 @@ class ExecutedWorkoutServiceMock {
         response.totalCount = 2;
         return of(response);
       });
+  
+  deletePlanned = 
+      jasmine.createSpy('deletePlanned')
+        .and.returnValue(of(new HttpResponse<any>()));
+}
+
+class MockMessageService {
+  add = jasmine.createSpy('add');
+}
+
+class MockConfirmationService {
+  confirm =
+    jasmine.createSpy('confirm')
+      .and.callFake((confirmation: Confirmation) => {
+        confirmation?.accept?.(); //Because confirmation could be undefined
+      });
+      //.and.returnValue(this);
 }
 
 describe('WorkoutSelectPlannedComponent', () => {
@@ -31,7 +50,15 @@ describe('WorkoutSelectPlannedComponent', () => {
       providers: [
         {
           provide: ExecutedWorkoutService, 
-          useClass: ExecutedWorkoutServiceMock
+          useClass: MockExecutedWorkoutService
+        },
+        {
+          provide: MessageService,
+          useClass: MockMessageService
+        },
+        {
+          provide: ConfirmationService,
+          useClass: MockConfirmationService
         }
       ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
@@ -71,5 +98,19 @@ describe('WorkoutSelectPlannedComponent', () => {
     expect(component.plannedWorkouts.length).toBeGreaterThan(0);
     expect(component.totalCount).toBeGreaterThan(0);
     expect(component.loading).toBeFalse();
+  });
+
+  it('should delete planned workouts', () => {
+    //ARRANGE
+    const confirmationService = TestBed.inject(ConfirmationService);
+    const messageService = TestBed.inject(MessageService);
+
+    //ACT
+    component.deletePlannedWorkout(100);
+
+    //ASSERT
+    expect(confirmationService.confirm).toHaveBeenCalled();
+    expect(messageService.add)
+      .toHaveBeenCalledWith({severity:'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000});
   });
 });
