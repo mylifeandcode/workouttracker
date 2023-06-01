@@ -53,6 +53,22 @@ namespace WorkoutTracker.Tests.Controllers
             _executedWorkoutService.Verify(x => x.GetInProgress(Convert.ToInt32(USER_ID)), Times.Once);
         }
 
+        [TestMethod]
+        public void Should_Delete_Planned_Workouts()
+        {
+            //ARRANGE
+
+            //ACT
+            ActionResult response = _sut.DeletePlanned(100);
+
+            //ASSERT
+            Assert.IsNotNull(response);
+            Assert.IsInstanceOfType(response, typeof(StatusCodeResult));
+            Assert.AreEqual(200, (response as StatusCodeResult).StatusCode);
+            _executedWorkoutService.Verify(x => x.DeletePlanned(100), Times.Once);
+        }
+
+        #region Setup Methods
         private void SetupExecutedWorkoutServiceMock()
         {
             _executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
@@ -62,6 +78,7 @@ namespace WorkoutTracker.Tests.Controllers
                 _inProgressWorkouts.Add(new ExecutedWorkout());
             }
             _executedWorkoutService.Setup(x => x.GetInProgress(It.IsAny<int>())).Returns(_inProgressWorkouts);
+            _executedWorkoutService.Setup(x => x.DeletePlanned(It.IsAny<int>()));
         }
 
         private void SetupExecutedWorkoutDTOMapperMock()
@@ -81,5 +98,6 @@ namespace WorkoutTracker.Tests.Controllers
                     new DateTime(2023, 5, 6, 13, 0, 0), 
                     new DateTime(2023, 5, 6, 11, 58, 0), "Some notes"));
         }
+        #endregion Setup Methods
     }
 }

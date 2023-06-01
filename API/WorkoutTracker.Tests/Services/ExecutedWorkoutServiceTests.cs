@@ -244,5 +244,96 @@ namespace WorkoutTracker.Tests.Services
             CollectionAssert.AreEquivalent(expectedResults, results);
         }
 
+        [TestMethod]
+        public void Should_Delete_Planned_Workout()
+        {
+            //ARRANGE
+            var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
+            executedWorkoutRepo
+                .Setup(x => x.Delete(It.IsAny<int>()));
+
+            var executedWorkouts = new List<ExecutedWorkout>(1);
+            executedWorkouts.Add(new ExecutedWorkout { Id = 100 });
+
+            executedWorkoutRepo
+                .Setup(x => x.Get())
+                .Returns(executedWorkouts.AsQueryable());
+
+            var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
+
+            var sut =
+                new ExecutedWorkoutService(
+                    executedWorkoutRepo.Object,
+                    workoutRepo.Object,
+                    _logger.Object);
+
+
+            //ACT
+            sut.DeletePlanned(100);
+
+            //ASSERT
+            executedWorkoutRepo.Verify(x => x.Get(), Times.Exactly(2));
+            executedWorkoutRepo.Verify(x => x.Delete(100), Times.Once);
+        }
+
+        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        public void Should_Not_Delete_Planned_Workout_Which_Has_Been_Started()
+        {
+            var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
+            executedWorkoutRepo
+                .Setup(x => x.Delete(It.IsAny<int>()));
+
+            var executedWorkouts = new List<ExecutedWorkout>(1);
+            executedWorkouts.Add(new ExecutedWorkout { Id = 100, StartDateTime = new DateTime() });
+
+            executedWorkoutRepo
+                .Setup(x => x.Get())
+                .Returns(executedWorkouts.AsQueryable());
+
+            var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
+
+            var sut =
+                new ExecutedWorkoutService(
+                    executedWorkoutRepo.Object,
+                    workoutRepo.Object,
+                    _logger.Object);
+
+
+            //ACT
+            sut.DeletePlanned(100);
+
+            //ASSERT
+            //No assertions. Test will fail if ExpectedException doesn't occur.
+        }
+
+        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        public void Should_Not_Delete_Planned_Workout_When_Not_Found()
+        {
+            var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
+            executedWorkoutRepo
+                .Setup(x => x.Delete(It.IsAny<int>()));
+
+            var executedWorkouts = new List<ExecutedWorkout>(1);
+            executedWorkouts.Add(new ExecutedWorkout { Id = 200 });
+
+            executedWorkoutRepo
+                .Setup(x => x.Get())
+                .Returns(executedWorkouts.AsQueryable());
+
+            var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
+
+            var sut =
+                new ExecutedWorkoutService(
+                    executedWorkoutRepo.Object,
+                    workoutRepo.Object,
+                    _logger.Object);
+
+
+            //ACT
+            sut.DeletePlanned(100);
+
+            //ASSERT
+            //No assertions. Test will fail if ExpectedException doesn't occur.
+        }
     }
 }
