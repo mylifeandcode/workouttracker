@@ -50,10 +50,10 @@ export class WorkoutSelectPlannedComponent implements OnInit {
   }
 
   public deletePlannedWorkout(id: number): void {
-    window.alert("YO");
     this._confirmationService.confirm({
       message: 'Are you sure you want to delete this planned workout?',
       accept: () => {
+        this.loading = true;
         this._executedWorkoutService.deletePlanned(id).subscribe(() => {
           this._messageService.add({severity:'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000});
           this.getPlannedWorkouts(0);
