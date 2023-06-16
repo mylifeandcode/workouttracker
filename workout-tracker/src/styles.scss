@@ -66,6 +66,10 @@
   padding-top: 14px;
 }
 
+.little-headroom {
+  padding-top: 8px;
+}
+
 .mild-margins {
   margin-left: 6px;
   margin-right: 6px;
@@ -93,4 +97,9 @@
   border-radius: 25px;
   background: rgba(0, 0, 0, 0.6);
   padding: 20px;
+}
+
+.section-title {
+  font-weight: bolder;
+  font-style: italic;
 }
