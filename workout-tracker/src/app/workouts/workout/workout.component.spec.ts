@@ -14,7 +14,7 @@ import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '@angular/core';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, convertToParamMap } from '@angular/router';
 import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
 import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { MessageService } from 'primeng/api';
@@ -128,12 +128,13 @@ class ExecutedWorkoutServiceMock {
 }
 
 class ActivatedRouteMock {
-  public params = of(convertToParamMap({ 
-      executedWorkoutId: 12         
-  }));
+  public snapshot: ActivatedRouteSnapshot;
 
-  public queryParams = of(convertToParamMap({ 
-  }));
+  constructor() {
+    this.snapshot = new ActivatedRouteSnapshot();
+    this.snapshot.params = { executedWorkoutId: 12 };
+    this.snapshot.queryParams = {};
+  }
 }
 
 class MessageServiceMock {
@@ -250,7 +251,7 @@ describe('WorkoutComponent', () => {
 
   it('should create FormGroup on init', () => {
     expect(component.workoutForm).toBeDefined();
-    expect(component.workoutForm.controls.id.value).toBeUndefined();
+    expect(component.workoutForm.controls.id.value).toEqual(12);
     expect(component.workoutForm.controls.exercises).toBeDefined();
     expect(component.workoutForm.controls.journal.value).toBe('');
   });
@@ -484,7 +485,7 @@ describe('WorkoutComponent', () => {
     //ARRANGE
     //Override default mock behavior
     const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.queryParams = of({pastWorkout: true});
+    activatedRoute.snapshot.queryParams['pastWorkout'] = true;
   
     //ACT
     //We need to reinit because we changed the ActivatedRoute mock
@@ -499,7 +500,7 @@ describe('WorkoutComponent', () => {
     //ARRANGE
     //Override default mock behavior
     const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.queryParams = of({pastWorkout: false});
+    activatedRoute.snapshot.queryParams['pastWorkout'] = false;
   
     //ACT
     //We need to reinit because we changed the ActivatedRoute mock
@@ -514,7 +515,7 @@ describe('WorkoutComponent', () => {
     //ARRANGE
     //Override default mock behavior
     const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.queryParams = of({});
+    activatedRoute.snapshot.queryParams = {};
   
     //ACT
     //We need to reinit because we changed the ActivatedRoute mock
@@ -547,6 +548,21 @@ describe('WorkoutComponent', () => {
     expect(component.endDateTime).toBe(expectedEndDateTime); //Service mock returns the same object
     expect(executedWorkoutService.update).toHaveBeenCalledWith(workout);
 
+  });
+
+  it('should present an error if an invalid ExecutedWorkoutId is found in the route params', () => {
+    //ARRANGE
+    //Override default mock behavior
+    const activatedRoute = TestBed.inject(ActivatedRoute);
+    activatedRoute.snapshot.params['executedWorkoutId'] = 0;
+
+    const messageService = TestBed.inject(MessageService);
+
+    //ACT
+    component.ngOnInit(); //Need to reinitialize due to changed mock
+
+    //ASSERT
+    expect(messageService.add).toHaveBeenCalledOnceWith({ severity: 'error', summary: 'Error', detail: 'ExecutedWorkoutId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.', closable: true });
   });
 
 });

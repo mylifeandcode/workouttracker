@@ -102,8 +102,8 @@ export class WorkoutComponent implements OnInit {
 
   public ngOnInit(): void {
     this.getResistanceBands();
-    this.subscribeToRouteParams();
-    this.subscribeToQueryParams(); //For optional parameters, such as pastWorkout
+    this.getRouteParams();
+    this.getOptionalQueryParams(); //For optional parameters, such as pastWorkout
     this.startWorkout();
   }
 
@@ -172,18 +172,20 @@ export class WorkoutComponent implements OnInit {
   }
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
-  private subscribeToRouteParams(): void { //TODO: Refactor to use snapshot instead
-    this._route.params.subscribe((params: Params) => {
-      this._executedWorkoutId = params['executedWorkoutId'];
+  private getRouteParams(): void {
+    this._executedWorkoutId = this._route.snapshot.params['executedWorkoutId'];
+
+    if(this._executedWorkoutId <= 0) {
+      this._messageService.add({ severity: 'error', summary: 'Error', detail: 'ExecutedWorkoutId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.', closable: true });
+    }
+    else {
       this.setupWorkout(this._executedWorkoutId);
-    });
+    }
   }
 
-  private subscribeToQueryParams(): void { //TODO: Refactor to use snapshot instead
-    this._route.queryParams.subscribe((queryParams: Params) => {
-      if (queryParams['pastWorkout'])
-        this.isLoggingPastWorkout = queryParams['pastWorkout'];
-    });
+  private getOptionalQueryParams(): void {
+      if (this._route.snapshot.queryParams['pastWorkout']) //TODO: Clean up
+        this.isLoggingPastWorkout = this._route.snapshot.queryParams['pastWorkout'];
   }
 
   private createForm(): FormGroup<IWorkoutForm> {
