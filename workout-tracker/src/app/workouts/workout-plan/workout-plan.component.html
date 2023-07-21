@@ -43,7 +43,7 @@
       </fieldset>
     </form>
 
-    <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal">
+    <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal" [blockScroll]="true">
       <wt-resistance-band-select [resistanceBandInventory]="allResistanceBands"
         (okClicked)="resistanceBandsModalAccepted($event)" (cancelClicked)="resistanceBandsModalCancelled()">
       </wt-resistance-band-select>

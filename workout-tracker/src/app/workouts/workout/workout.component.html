@@ -51,7 +51,7 @@
   &nbsp;
   <button *ngIf="workoutCompleted && !isLoggingPastWorkout" class="btn btn-success" routerLink="/workouts/select-for-later">Plan Next Workout</button>
   <p></p>  
-  <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal">
+  <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal" [blockScroll]="true">
     <wt-resistance-band-select 
       [resistanceBandInventory]="allResistanceBands"
       (okClicked)="resistanceBandsModalAccepted($event)"
