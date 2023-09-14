@@ -145,4 +145,74 @@ describe('ApiBaseService', () => {
 
   });
 
+  it('should cache data', (done: DoneFn) => {
+
+    //ARRANGE
+    const widgets = new Array<Widget>();
+
+    //ACT
+    const result1 = service.all$;
+    result1.subscribe((widgetResults: Widget[]) => {
+      expect(widgetResults).toBe(widgets, fail);
+      done();
+    });
+
+    const result2 = service.all$;
+    result2.subscribe((widgetResults: Widget[]) => {
+      expect(widgetResults).toBe(widgets, fail);
+      done();
+    });
+
+    const result3 = service.all$;
+    result3.subscribe((widgetResults: Widget[]) => {
+      expect(widgetResults).toBe(widgets, fail);
+      done();
+    });
+
+    //ASSERT
+    const req = http.expectOne(API_ROOT);
+    expect(req.request.method).toEqual('GET');
+    //Respond with the mock results
+    req.flush(widgets);
+  
+  });
+
+  it('should clear cached data', (done: DoneFn) => {
+
+    //ARRANGE
+    const widgets = new Array<Widget>();
+
+    //ACT
+    const result1 = service.all$;
+    result1.subscribe((widgetResults: Widget[]) => {
+      expect(widgetResults).toBe(widgets, fail);
+      done();
+    });
+
+    const result2 = service.all$;
+    result2.subscribe((widgetResults: Widget[]) => {
+      expect(widgetResults).toBe(widgets, fail);
+      done();
+    });
+
+    service.invalidateCache();
+
+    const result3 = service.all$;
+    result3.subscribe((widgetResults: Widget[]) => {
+      expect(widgetResults).toBe(widgets, fail);
+      done();
+    });
+
+    //ASSERT
+    const requests = http.match(API_ROOT);
+    expect(requests.length).toBe(2);
+    requests.forEach(request => {
+      expect(request.request.method).toEqual('GET');
+      //Respond with the mock results
+      request.flush(widgets);
+    });
+  
+  });
+
 });
+

@@ -23,6 +23,10 @@
   margin-left: 14px;
 }
 
+.trail-space {
+  margin-right: 4px;
+}
+
 label {
   font-weight: bold;
 }
@@ -31,35 +35,32 @@ label {
   font-weight: normal;
 }
 
-.last-time {
-  background-color: lightgrey;
-  font-style: italic;
+.recommendations {
+  /*border-left-width: normal;*/
+  border-left-color: $workout-color-one;
+  /*border-left-style: ridge;
+  border-right-width: normal;*/
+  border-right-color: $workout-color-one;
+  //border-right-style: ridge;
 }
 
-.recommendations {
+.with-bottom-padding {
   padding-bottom: 10px;
-  border-left-width: normal;
-  border-left-color: $workout-color-one;
-  border-left-style: dashed;
-  border-right-width: normal;
-  border-right-color: $workout-color-one;
-  border-right-style: dashed;
 }
 
 .recommendations-top {
   border-top-width: normal;
   border-top-color: $workout-color-one;
-  border-top-style: dashed;
+  border-top-style: ridge;
 }
 
 .recommendations-bottom {
   border-bottom-width: normal;
   border-bottom-color: $workout-color-one;
-  border-bottom-style: dashed;
+  border-bottom-style: ridge;
 }
 
 .this-time {
-  padding-top: 10px;  
   background-color:white;
 }
 
