@@ -99,8 +99,20 @@
   padding: 20px;
 }
 
+.micro-widget {
+  color: white;
+  border-radius: 25px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px;
+  font-weight: normal !important;
+}
+
 .section-title {
   font-weight: bolder;
   font-size: large;
   /*font-style: italic;*/
+}
+
+.white-steel-background {
+  background-image: url('./assets/images/white-steel.png');
 }

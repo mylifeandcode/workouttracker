@@ -11,11 +11,11 @@
     <!--SUGGESTIONS-->
     <div *ngIf="formGroup.controls.recommendationReason.value" class="row recommendations recommendations-top">
       <div class="col-12 little-headroom">
-        <span class="section-title">Suggestions</span>
+        <span class="section-title micro-widget">Suggestions</span>
       </div>
     </div>
 
-    <div *ngIf="formGroup.controls.recommendationReason.value" class="row recommendations">
+    <div *ngIf="formGroup.controls.recommendationReason.value" class="row recommendations micro-w">
       <div class="col-4">
         <strong>Suggested Resistance Amount</strong>
       </div>
@@ -49,9 +49,9 @@
     </div>    
 
     <!--THIS TIME-->
-    <div *ngIf="workoutHasBeenExecutedBefore" class="row this-time">
+    <div *ngIf="workoutHasBeenExecutedBefore" class="row this-time section-header">
       <div class="col-12 little-headroom">
-        <span class="section-title">This Time</span>
+        <span class="section-title micro-widget">This Time</span>
       </div>
     </div>
     <div class="row this-time end-padding">
