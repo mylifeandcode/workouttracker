@@ -1,10 +1,10 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand nav-app-title" routerLink="/home">Workout Tracker</a>
-  <button *ngIf="userIsLoggedIn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
+  <button *ngIf="userIsLoggedIn" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div *ngIf="userIsLoggedIn" class="collapse navbar-collapse" id="mainNavigation">
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav w-100">
       <li class="nav-item">
         <a class="nav-link" routerLink="/home">Home <span class="sr-only">(current)</span></a>
       </li>
@@ -34,7 +34,7 @@
         </ul>
       </li>
 
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown {{userIsLoggedIn && !userIsAdmin ? 'me-auto' : ''}}">
         <a id="analyticsDropdown" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Analytics
         </a>
@@ -44,31 +44,27 @@
         </ul>
       </li>
 
-      <li *ngIf="userIsLoggedIn && userIsAdmin" class="nav-item">
+      <li *ngIf="userIsLoggedIn && userIsAdmin" class="nav-item me-auto">
         <a class="nav-link" routerLink="/admin">Admin</a>
       </li>
+
+      <li class="nav-item dropdown ml-auto">
+        <a id="userDropdown" class="nav-link" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Welcome {{userName}}!
+        </a> 
+        <ul class="dropdown-menu" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" routerLink="/user/user-settings">Settings</a></li>
+        </ul>
+      </li>
+  
+      <li class="navbar-nav">
+        <a class="nav-link" (click)="logOff()">Log off</a> 
+      </li>    
+      <li class="navbar-nav nav-github d-flex justify-content-end">
+        <a class="nav-link me-2" href="https://github.com/mylifeandcode"><i class="fa fa-github" aria-hidden="true"></i></a>
+      </li>
+
     </ul>
   </div>
-
-  
-  <ul *ngIf="userIsLoggedIn" class="nav navbar-nav pull-right">
-
-    <li class="nav-item dropdown">
-      <a id="userDropdown" class="nav-link" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Welcome {{userName}}!
-      </a> 
-      <ul class="dropdown-menu" aria-labelledby="userDropdown">
-        <li><a class="dropdown-item" routerLink="/user/user-settings">Settings</a></li>
-      </ul>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link" (click)="logOff()">Log off</a> 
-    </li>    
-    <li class="nav-item nav-github">
-      <a class="nav-link" href="https://github.com/mylifeandcode"><i class="fa fa-github" aria-hidden="true"></i></a>
-    </li>
-  </ul>
-
   
 </nav>
