@@ -1,0 +1,12 @@
+@import '/src/variables.scss';
+
+.suggestions {
+  /*background-color: lightgrey;*/
+  background-image: url('../../../assets/images/blue-steel.png');
+  padding-bottom: 8px;
+}
+
+.btn-use-suggestions {
+  color: white;
+  background-color: $workout-color-four
+}
