@@ -1,15 +1,5 @@
 @import '/src/variables.scss';
 
-.amount {
-  width: 40px;
-  margin-left: 4px;
-}
-
-.pre-pop-value {
-  color: $workout-color-five;
-  font-weight: bold;
-}
-
 .exercise-header-row {
   color: white;
 }
@@ -31,55 +21,13 @@ label {
   font-weight: bold;
 }
 
-.no-input-value {
-  font-weight: normal;
-}
-
-.recommendations {
-  border-left-color: $workout-color-one;
-  border-right-color: $workout-color-one;
-}
-
 .with-bottom-padding {
   padding-bottom: 10px;
-}
-
-.recommendations-top {
-  border-top-width: normal;
-  border-top-color: $workout-color-one;
-  border-top-style: ridge;
-  background-image: url('../../../assets/images/blue-steel.png');
-  padding-bottom: 8px;
-}
-
-.recommendations-bottom {
-  border-bottom-width: normal;
-  border-bottom-color: $workout-color-one;
-  border-bottom-style: ridge;
-}
-
-.this-time {
-  background-color:white;
 }
 
 .section-header {
   background-image: url('../../../assets/images/blue-steel.png');
   padding-bottom: 8px;
-}
-
-.btn-choose-resistance {
-  color: white;
-  background-color: $workout-color-two;
-}
-
-.btn-same-as-last-time {
-  color: white;
-  background-color: $workout-color-three;
-}
-
-.btn-use-suggestions {
-  color: white;
-  background-color: $workout-color-four
 }
 
 .end-padding {

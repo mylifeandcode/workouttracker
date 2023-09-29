@@ -19,13 +19,17 @@
   background-color: $workout-color-three;
 }
 
-.btn-use-suggestions {
-  color: white;
-  background-color: $workout-color-four
-}
-
 .end-padding {
   padding-bottom: 10px;
+}
+
+.amount {
+  width: 40px;
+  margin-left: 4px;
+}
+
+.no-input-value {
+  font-weight: normal;
 }
 
 /* Suppress numeric input arrows/spinners as explained at https://www.w3schools.com/howto/howto_css_hide_arrow_number.asp */

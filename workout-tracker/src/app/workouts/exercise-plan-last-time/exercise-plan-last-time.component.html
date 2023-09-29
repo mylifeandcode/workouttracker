@@ -1,52 +1,58 @@
-<div class="row last-time little-headroom">
+<div class="row last-time little-headroom bottom-padded">
   <div class="col-12">
     <span class="section-title micro-widget">Last Time</span>
   </div>
 </div>
 
-<div class="row little-headroom">
+<div class="row little-headroom bottom-padded">
   <div class="col-6 form-group">
     <strong>Target Rep Count</strong>
   </div>
   <div class="col-6 form-group">
-    <span *ngIf="formGroup.controls.involvesReps.value"
-      class="pre-pop-value">{{formGroup.controls.targetRepCountLastTime.value}}</span>
-    <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
+    <span *ngIf="formGroup.controls.involvesReps.value">
+      {{formGroup.controls.targetRepCountLastTime.value}}
+    </span>
+    <span *ngIf="!formGroup.controls.involvesReps.value">N/A</span>
   </div>
 </div>
-<div class="row">
+
+<div class="row bottom-padded">
   <div class="col-6 form-group">
     <strong>Avg Actual Rep Count</strong>
   </div>
   <div class="col-6 form-group">
-    <span *ngIf="formGroup.controls.involvesReps.value"
-      class="pre-pop-value">{{formGroup.controls.avgActualRepCountLastTime.value}}</span>
-    <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
+    <span *ngIf="formGroup.controls.involvesReps.value">
+      {{formGroup.controls.avgActualRepCountLastTime.value}}
+    </span>
+    <span *ngIf="!formGroup.controls.involvesReps.value">N/A</span>
   </div>
 </div>
-<div class="row">
+
+<div class="row bottom-padded">
   <div class="col-6 form-group">
     <strong>Avg Range of Motion</strong>
   </div>
 
   <div class="col-6 form-group">
-    <span class="pre-pop-value">{{formGroup.controls.avgRangeOfMotionLastTime.value | rating}}</span>
+    <span>{{formGroup.controls.avgRangeOfMotionLastTime.value | rating}}</span>
   </div>
 </div>
-<div class="row">
+
+<div class="row bottom-padded">
   <div class="col-6 form-group">
     <strong>Avg Form</strong>
   </div>
   <div class="col-6 form-group">
-    <span class="pre-pop-value">{{formGroup.controls.avgFormLastTime.value | rating}}</span>
+    <span>{{formGroup.controls.avgFormLastTime.value | rating}}</span>
   </div>
 </div>
+
 <div class="row little-footroom">
   <div class="col-6 form-group">
     <strong>Resistance</strong>
   </div>
   <div class="col-6 form-group">
-    <span class="pre-pop-value">{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' :
+    <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' :
       formGroup.controls.resistanceAmountLastTime.value}}</span>
     <span *ngIf="formGroup.controls.resistanceMakeupLastTime.value">
       (<span [innerHTML]="formGroup.controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)

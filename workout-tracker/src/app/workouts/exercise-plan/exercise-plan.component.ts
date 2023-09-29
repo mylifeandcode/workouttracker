@@ -23,6 +23,7 @@ export class ExercisePlanComponent {
   }
 
   public selectResistanceBands(formGroup: FormGroup<IExercisePlanFormGroup>): void {
+    window.alert('yo');
     this.resistanceBandsModalRequested.emit(formGroup);
   }
 
@@ -33,14 +34,6 @@ export class ExercisePlanComponent {
       resistanceMakeup: this.formGroup.controls.resistanceMakeupLastTime.value
     }); 
 
-  }
-
-  public useSuggestions(): void {
-    this.formGroup.patchValue({
-      resistanceAmount: this.formGroup.controls.recommendedResistanceAmount.value ?? 0, 
-      resistanceMakeup: this.formGroup.controls.recommendedResistanceMakeup.value, 
-      targetRepCount: this.formGroup.controls.recommendedTargetRepCount.value ?? 0
-    }); 
   }
 
 }

@@ -13,6 +13,11 @@ export class ExercisePlanSuggestionsComponent {
   formGroup!: FormGroup<IExercisePlanFormGroup>;
 
   public useSuggestions(): void {
-    
+    this.formGroup.patchValue({
+      resistanceAmount: this.formGroup.controls.recommendedResistanceAmount.value ?? 0, 
+      resistanceMakeup: this.formGroup.controls.recommendedResistanceMakeup.value, 
+      targetRepCount: this.formGroup.controls.recommendedTargetRepCount.value ?? 0
+    }); 
   }
+
 }

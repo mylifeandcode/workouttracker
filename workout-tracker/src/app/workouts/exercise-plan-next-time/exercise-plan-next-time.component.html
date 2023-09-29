@@ -3,17 +3,19 @@
     <span class="section-title micro-widget">{{planningAhead ? 'Next' : 'This'}} Time</span>
   </div>
 </div>
-<div class="row little-headroom">
+
+<div class="row little-headroom bottom-padded">
   <div class="col-6 form-group">
     <strong>Target Rep Count</strong>
   </div>
-  <div class="col-6 form-group">
+  <div class="col-6 form-group" *ngIf="formGroup" [formGroup]="formGroup">
     <input wtSelectOnFocus *ngIf="formGroup.controls.involvesReps.value" type="number" class="amount"
       formControlName="targetRepCount" required />
     <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
   </div>
 </div>
-<div class="row little-footroom">
+
+<div class="row bottom-padded">
   <div class="col-6 form-group">
     <strong>Resistance Amount</strong>
   </div>
@@ -28,21 +30,25 @@
         <span class="trail-space">(<span
             [innerHTML]="formGroup.controls.resistanceMakeup.value | resistanceBandColor"></span>)</span>
       </ng-container>
-      <button class="btn btn-choose-resistance btn-sm margin-right trail-space"
-        (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
     </span>
     <span *ngIf="formGroup.controls.resistanceType.value==3" class="no-input-value">
       Body Weight
     </span>
   </div>
+</div>
 
-  <div *ngIf="workoutHasBeenExecutedBefore && formGroup.controls.resistanceType.value!=3" class="row little-footroom">
-    <div class="col-12 d-flex justify-content-center">
-      <button 
-        class="btn btn-same-as-last-time btn-sm" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last
-        Time
-      </button>
-    </div>
+<div *ngIf="formGroup.controls.resistanceType.value==2" class="row little-footroom">
+  <div class="col-12">
+    <button class="btn btn-choose-resistance btn-sm btn-fullWidth"
+      (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
   </div>
+</div>
 
+<div *ngIf="workoutHasBeenExecutedBefore && formGroup.controls.resistanceType.value!=3" class="row little-footroom">
+  <div class="col-12">
+    <button 
+      class="btn btn-same-as-last-time btn-sm btn-fullWidth" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last
+      Time
+    </button>
+  </div>
 </div>
