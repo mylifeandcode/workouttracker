@@ -23,7 +23,6 @@ export class ExercisePlanComponent {
   }
 
   public selectResistanceBands(formGroup: FormGroup<IExercisePlanFormGroup>): void {
-    window.alert('yo');
     this.resistanceBandsModalRequested.emit(formGroup);
   }
 

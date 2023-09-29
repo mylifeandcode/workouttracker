@@ -26,7 +26,6 @@ export class ExercisePlanNextTimeComponent {
   }
 
   public selectResistanceBands(formGroup: FormGroup<IExercisePlanFormGroup>): void {
-    window.alert('hi');
     this.resistanceBandsModalRequested.emit(formGroup);
   }
 
