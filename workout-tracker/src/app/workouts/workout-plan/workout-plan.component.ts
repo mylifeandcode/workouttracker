@@ -82,7 +82,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   //PUBLIC METHODS
   public ngOnInit(): void {
     this.getResistanceBandInventory();
-    this.createForm();
+    //this.createForm();
     this.subscribeToRoute();
     this.planningForLater = this._router.url.includes("for-later");
   }

@@ -45,3 +45,17 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 /* End numeric input arrows/spinners suppression */
+
+.error {
+  border-color: red;
+  border-style: solid;
+}
+
+input.ng-invalid.ng-touched {
+  border-color: red;
+}
+
+.info-required {
+  color: red;
+  font-style: italic;
+}

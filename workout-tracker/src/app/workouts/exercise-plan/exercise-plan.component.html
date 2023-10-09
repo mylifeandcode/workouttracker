@@ -2,7 +2,10 @@
   <div class="col-12">
 
     <div class="row exercise-name">
-      <div class="col-12"><h5 class="exercise-header-row">{{formGroup.controls.exerciseName.value}}</h5></div>
+      <div class="col-12">
+        <h5 class="exercise-header-row">{{formGroup.controls.exerciseName.value}}</h5>
+        <h6 class="exercise-header-row">Resistance Type: {{ formGroup.controls.resistanceType.value | resistanceType }}</h6>
+      </div>
     </div>
 
     <div class="row">

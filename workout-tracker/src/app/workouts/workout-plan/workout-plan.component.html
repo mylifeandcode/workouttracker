@@ -38,6 +38,7 @@
             <button *ngIf="isForPastWorkout" type="submit" class="btn btn-primary" (click)="submitPlanForPast()"
               [disabled]="workoutPlanForm.invalid || isProcessing">Log Past Workout</button>
             &nbsp;<span *ngIf="isProcessing">Processing...</span>
+            <span *ngIf="workoutPlanForm.invalid">Please supply all required information above to submit your plan.</span>
           </div>
         </div>
       </fieldset>

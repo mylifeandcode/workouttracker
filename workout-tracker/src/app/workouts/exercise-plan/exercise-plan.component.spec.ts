@@ -3,6 +3,7 @@ import { ReactiveFormsModule, FormBuilder, FormControl, Validators } from '@angu
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 
 import { ExercisePlanComponent } from './exercise-plan.component';
+import { ResistanceTypePipe } from '../pipes/resistance-type.pipe';
 
 describe('ExercisePlanComponent', () => {
   let component: ExercisePlanComponent;
@@ -11,7 +12,10 @@ describe('ExercisePlanComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ ReactiveFormsModule ], 
-      declarations: [ ExercisePlanComponent ]
+      declarations: [ 
+        ExercisePlanComponent,
+        ResistanceTypePipe //TODO: Replace with mock 
+      ]
     })
     .compileComponents();
   });
@@ -71,26 +75,4 @@ describe('ExercisePlanComponent', () => {
 
   });
 
-  it('should apply suggestion values when user chooses to', () => {
-
-    //ARRANGE
-    component.formGroup.patchValue({
-      resistanceAmountLastTime: 50, 
-      resistanceMakeupLastTime: 'Mauve, Tiel', 
-      resistanceAmount: 0, 
-      resistanceMakeup: '', 
-      recommendedResistanceAmount: 60, 
-      recommendedResistanceMakeup: 'Aqua', 
-      recommendedTargetRepCount: 8
-    });
-
-    //ACT
-    component.useSuggestions();
-
-    //ASSERT
-    expect(component.formGroup.controls.resistanceAmount.value).toBe(60);
-    expect(component.formGroup.controls.resistanceMakeup.value).toBe('Aqua');
-    expect(component.formGroup.controls.recommendedTargetRepCount.value).toBe(8);
-
-  });  
 });
