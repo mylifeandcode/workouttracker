@@ -1,42 +1,46 @@
-<div class="row suggestions little-headroom">
-  <div class="col-12">
-    <span class="section-title micro-widget">Suggestions</span>
-  </div>
-</div>
+<div class="d-flex flex-column suggestions-container">
 
-<div class="row little-headroom bottom-padded">
-  <div class="col-6 form-group">
-    <strong>Resistance Amount</strong>
+  <div class="suggestions">
+    <div class="little-headroom">
+      <span class="section-title micro-widget">Suggestions</span>
+    </div>
   </div>
-  <div class="col-6 form-group">
-    <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' : formGroup.controls.recommendedResistanceAmount.value}}</span>
-    <span *ngIf="formGroup.controls.recommendedResistanceMakeup.value">
-      (<span [innerHTML]="formGroup.controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
-    </span>
-  </div>
-</div>
 
-<div class="row bottom-padded">
-  <div class="col-6 form-group">
-    <strong>Target Rep Count</strong>: 
+  <div class="d-flex little-headroom bottom-padded px-2">
+    <div class="half-area">
+      <strong>Resistance Amount</strong>
+    </div>
+    <div class="half-area">
+      <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' : formGroup.controls.recommendedResistanceAmount.value}}</span>
+      <span *ngIf="formGroup.controls.recommendedResistanceMakeup.value">
+        (<span [innerHTML]="formGroup.controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
+      </span>
+    </div>
   </div>
-  <div class="col-6 form-group">
-    <span *ngIf="formGroup.controls.involvesReps.value">{{formGroup.controls.recommendedTargetRepCount.value}}</span>
-    <span *ngIf="!formGroup.controls.involvesReps.value">N/A</span>
-  </div>
-</div>
 
-<div class="row bottom-padded">
-  <div class="col-6 form-group">
-    <strong>Reason(s)</strong> 
+  <div class="d-flex bottom-padded px-2">
+    <div class="half-area">
+      <strong>Target Rep Count</strong>
+    </div>
+    <div class="half-area">
+      <span *ngIf="formGroup.controls.involvesReps.value">{{formGroup.controls.recommendedTargetRepCount.value}}</span>
+      <span *ngIf="!formGroup.controls.involvesReps.value">N/A</span>
+    </div>
   </div>
-  <div class="col-6 form-group">
-    <span>{{formGroup.controls.recommendationReason.value}}</span>
-  </div>
-</div>
 
-<div class="row little-footroom">
-  <div class="col-12 d-flex justify-content-center">
-    <button class="lead-space btn btn-sm btn-use-suggestions btn-fullWidth" (click)="useSuggestions()">Use Suggestions</button>
+  <div class="d-flex bottom-padded flex-grow-1 px-2">
+    <div class="half-area">
+      <strong>Reason(s)</strong> 
+    </div>
+    <div class="half-area">
+      <span>{{formGroup.controls.recommendationReason.value}}</span>
+    </div>
   </div>
+
+  <div class="d-flex flex-grow-1 align-content-end px-2">
+    <div class="flex-grow-1">
+      <button class="lead-space btn btn-sm btn-use-suggestions btn-fullWidth" (click)="useSuggestions()">Use Suggestions</button>
+    </div>
+  </div>
+
 </div>

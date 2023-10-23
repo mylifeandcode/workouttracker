@@ -18,12 +18,11 @@
         <wt-exercise-plan-suggestions [formGroup]="formGroup"></wt-exercise-plan-suggestions>
       </div>
 
-      <div class="col-4" style="background-color: yellow;">
+      <div class="col-4 full-height">
         <wt-exercise-plan-next-time 
           [formGroup]="formGroup" 
           [workoutHasBeenExecutedBefore]="workoutHasBeenExecutedBefore"
-          (resistanceBandsModalRequested)="selectResistanceBands($event)"
-          style="background-color: red">
+          (resistanceBandsModalRequested)="selectResistanceBands($event)">
         </wt-exercise-plan-next-time>
       </div>
 

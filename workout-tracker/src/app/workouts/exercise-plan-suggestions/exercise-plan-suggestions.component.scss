@@ -1,12 +1,25 @@
 @import '/src/variables.scss';
 
+.suggestions-container {
+  margin-left: -12px;
+  margin-right: -12px;
+  height: 100%; 
+  padding-left: 0; 
+  padding-right: 0;  
+}
+
 .suggestions {
   /*background-color: lightgrey;*/
   background-image: url('../../../assets/images/blue-steel.png');
   padding-bottom: 8px;
+  padding-left: 4px;
 }
 
 .btn-use-suggestions {
   color: white;
   background-color: $workout-color-four
+}
+
+.half-area {
+  flex: 1;
 }

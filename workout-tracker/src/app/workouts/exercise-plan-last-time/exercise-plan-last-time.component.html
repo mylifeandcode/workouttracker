@@ -1,61 +1,65 @@
-<div class="row last-time little-headroom bottom-padded">
-  <div class="col-12">
-    <span class="section-title micro-widget">Last Time</span>
-  </div>
-</div>
+<div class="d-flex flex-column last-time-container">
 
-<div class="row little-headroom bottom-padded">
-  <div class="col-6 form-group">
-    <strong>Target Rep Count</strong>
-  </div>
-  <div class="col-6 form-group">
-    <span *ngIf="formGroup.controls.involvesReps.value">
-      {{formGroup.controls.targetRepCountLastTime.value}}
-    </span>
-    <span *ngIf="!formGroup.controls.involvesReps.value">N/A</span>
-  </div>
-</div>
-
-<div class="row bottom-padded">
-  <div class="col-6 form-group">
-    <strong>Avg Actual Rep Count</strong>
-  </div>
-  <div class="col-6 form-group">
-    <span *ngIf="formGroup.controls.involvesReps.value">
-      {{formGroup.controls.avgActualRepCountLastTime.value}}
-    </span>
-    <span *ngIf="!formGroup.controls.involvesReps.value">N/A</span>
-  </div>
-</div>
-
-<div class="row bottom-padded">
-  <div class="col-6 form-group">
-    <strong>Avg Range of Motion</strong>
+  <div class="last-time little-headroom bottom-padded">
+    <div>
+      <span class="section-title micro-widget">Last Time</span>
+    </div>
   </div>
 
-  <div class="col-6 form-group">
-    <span>{{formGroup.controls.avgRangeOfMotionLastTime.value | rating}}</span>
+  <div class="d-flex little-headroom px-2">
+    <div class="half-area">
+      <strong>Resistance Amount</strong>
+    </div>
+    <div class="half-area">
+      <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' :
+        formGroup.controls.resistanceAmountLastTime.value}}</span>
+      <span *ngIf="formGroup.controls.resistanceMakeupLastTime.value">
+        (<span [innerHTML]="formGroup.controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
+      </span>
+    </div>
   </div>
-</div>
 
-<div class="row bottom-padded">
-  <div class="col-6 form-group">
-    <strong>Avg Form</strong>
+  <div class="d-flex little-headroom bottom-padded px-2">
+    <div class="half-area">
+      <strong>Target Rep Count</strong>
+    </div>
+    <div class="half-area">
+      <span *ngIf="formGroup.controls.involvesReps.value">
+        {{formGroup.controls.targetRepCountLastTime.value}}
+      </span>
+      <span *ngIf="!formGroup.controls.involvesReps.value">N/A</span>
+    </div>
   </div>
-  <div class="col-6 form-group">
-    <span>{{formGroup.controls.avgFormLastTime.value | rating}}</span>
-  </div>
-</div>
 
-<div class="row little-footroom">
-  <div class="col-6 form-group">
-    <strong>Resistance</strong>
+  <div class="d-flex bottom-padded px-2">
+    <div class="half-area">
+      <strong>Avg Actual Rep Count</strong>
+    </div>
+    <div class="half-area">
+      <span *ngIf="formGroup.controls.involvesReps.value">
+        {{formGroup.controls.avgActualRepCountLastTime.value}}
+      </span>
+      <span *ngIf="!formGroup.controls.involvesReps.value">N/A</span>
+    </div>
   </div>
-  <div class="col-6 form-group">
-    <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' :
-      formGroup.controls.resistanceAmountLastTime.value}}</span>
-    <span *ngIf="formGroup.controls.resistanceMakeupLastTime.value">
-      (<span [innerHTML]="formGroup.controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
-    </span>
+
+  <div class="d-flex bottom-padded px-2">
+    <div class="half-area">
+      <strong>Avg Range of Motion</strong>
+    </div>
+
+    <div class="half-area">
+      <span>{{formGroup.controls.avgRangeOfMotionLastTime.value | rating}}</span>
+    </div>
   </div>
+
+  <div class="d-flex little-footroom px-2">
+    <div class="half-area">
+      <strong>Avg Form</strong>
+    </div>
+    <div class="half-area">
+      <span>{{formGroup.controls.avgFormLastTime.value | rating}}</span>
+    </div>
+  </div>
+
 </div>

@@ -1,27 +1,16 @@
-<div class="d-flex flex-column" style="height: 100%; background-color: aqua;">
+<div class="d-flex flex-column next-time-container">
 
-  <div class="next-time section-header">
-    <div class="col-12 little-headroom">
+  <div class="d-flex next-time section-header">
+    <div class="little-headroom">
       <span class="section-title micro-widget">{{planningAhead ? 'Next' : 'This'}} Time</span>
     </div>
   </div>
 
-  <div class="little-headroom bottom-padded">
-    <div class="col-6 form-group">
-      <strong>Target Rep Count</strong>
-    </div>
-    <div class="col-6 form-group" *ngIf="formGroup" [formGroup]="formGroup">
-      <input wtSelectOnFocus *ngIf="formGroup.controls.involvesReps.value" type="number" class="amount"
-        formControlName="targetRepCount" required />
-      <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
-    </div>
-  </div>
-
-  <div class="bottom-padded">
-    <div class="col-6 form-group">
+  <div class="d-flex little-headroom little-footroom flex-row px-2">
+    <div class="half-area">
       <strong>Resistance Amount</strong>
     </div>
-    <div class="col-6 form-group" *ngIf="formGroup" [formGroup]="formGroup">
+    <div class="half-area" *ngIf="formGroup" [formGroup]="formGroup">
       <!--TODO: Get these *ngIfs to work with the enum type instead-->
       <input wtSelectOnFocus
         *ngIf="formGroup.controls.resistanceType.value!=2 && formGroup.controls.resistanceType.value!=3" type="number"
@@ -39,26 +28,31 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-12">
-      <span *ngIf="formGroup.invalid" class="info-required">Information required</span>
+  <div class="d-flex bottom-padded px-2">
+    <div class="half-area">
+      <strong>Target Rep Count</strong>
+    </div>
+    <div class="half-area" *ngIf="formGroup" [formGroup]="formGroup">
+      <input wtSelectOnFocus *ngIf="formGroup.controls.involvesReps.value" type="number" class="amount"
+        formControlName="targetRepCount" required />
+      <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
     </div>
   </div>
 
-  <div *ngIf="formGroup.controls.resistanceType.value==2" class="row little-footroom justify-content-end" style="background-color: red;">
-    <div class="col-12 flex-grow-1">
-      <button class="btn btn-choose-resistance btn-sm btn-fullWidth"
-        (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
-    </div>
+  <div class="d-flex align-content-end flex-grow-1 px-2">
+    <span *ngIf="formGroup.invalid" class="info-required">Information required</span>
   </div>
 
-  <div *ngIf="workoutHasBeenExecutedBefore && formGroup.controls.resistanceType.value!=3" class="row little-footroom">
-    <div class="col-12">
-      <button 
-        class="btn btn-same-as-last-time btn-sm btn-fullWidth" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last
-        Time
-      </button>
-    </div>
+  <div *ngIf="formGroup.controls.resistanceType.value==2" class="d-flex align-content-end little-footroom px-2">
+    <button class="btn btn-choose-resistance btn-sm btn-fullWidth"
+      (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
+  </div>
+
+  <div *ngIf="workoutHasBeenExecutedBefore && formGroup.controls.resistanceType.value!=3" class="d-flex align-content-end little-footroom px-2">
+    <button 
+      class="btn btn-same-as-last-time btn-sm btn-fullWidth" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last
+      Time
+    </button>
   </div>
 
 </div>
