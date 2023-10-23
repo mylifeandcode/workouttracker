@@ -59,3 +59,9 @@ input.ng-invalid.ng-touched {
   color: red;
   font-style: italic;
 }
+
+.bottom-aligned {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}

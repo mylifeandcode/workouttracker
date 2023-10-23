@@ -10,19 +10,20 @@
 
     <div class="row">
 
-      <div class="col-4">
+      <div class="col-4 full-height">
         <wt-exercise-plan-last-time [formGroup]="formGroup"></wt-exercise-plan-last-time>
       </div>
 
-      <div *ngIf="formGroup.controls.recommendationReason.value" class="col-4">
+      <div *ngIf="formGroup.controls.recommendationReason.value" class="col-4 full-height">
         <wt-exercise-plan-suggestions [formGroup]="formGroup"></wt-exercise-plan-suggestions>
       </div>
 
-      <div class="col-4">
+      <div class="col-4" style="background-color: yellow;">
         <wt-exercise-plan-next-time 
           [formGroup]="formGroup" 
           [workoutHasBeenExecutedBefore]="workoutHasBeenExecutedBefore"
-          (resistanceBandsModalRequested)="selectResistanceBands($event)">
+          (resistanceBandsModalRequested)="selectResistanceBands($event)"
+          style="background-color: red">
         </wt-exercise-plan-next-time>
       </div>
 
