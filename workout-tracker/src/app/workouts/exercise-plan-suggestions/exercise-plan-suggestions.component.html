@@ -7,10 +7,10 @@
   </div>
 
   <div class="d-flex little-headroom bottom-padded px-2">
-    <div class="half-area">
+    <div style="width: 50%">
       <strong>Resistance Amount</strong>
     </div>
-    <div class="half-area">
+    <div style="width: 50%">
       <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' : formGroup.controls.recommendedResistanceAmount.value}}</span>
       <span *ngIf="formGroup.controls.recommendedResistanceMakeup.value">
         (<span [innerHTML]="formGroup.controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
@@ -28,7 +28,7 @@
     </div>
   </div>
 
-  <div class="d-flex bottom-padded flex-grow-1 px-2">
+  <div class="d-flex bottom-padded px-2 inner-container half-area">
     <div class="half-area">
       <strong>Reason(s)</strong> 
     </div>
@@ -37,8 +37,8 @@
     </div>
   </div>
 
-  <div class="d-flex flex-grow-1 align-content-end px-2">
-    <div class="flex-grow-1">
+  <div class="d-flex align-content-end little-footroom px-2">
+    <div style="width: 100%;">
       <button class="lead-space btn btn-sm btn-use-suggestions btn-fullWidth" (click)="useSuggestions()">Use Suggestions</button>
     </div>
   </div>
