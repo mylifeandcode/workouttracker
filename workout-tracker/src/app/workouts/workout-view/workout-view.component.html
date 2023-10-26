@@ -17,7 +17,7 @@
         Started {{executedWorkout.startDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}, completed {{executedWorkout.endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}
       </div>
       <div *ngIf="executedWorkout.startDateTime == null" class="col-12">
-        This is a <strong>planned</strong> workout. Currently, planned workouts can't be edited, so to make changes, start the workout and edit the values as you go. Currently, planned workouts can't be deleted.
+        This is a <strong>planned</strong> workout. Currently, planned workouts can't be edited, so to make changes, start the workout and edit the values as you go.
       </div>
     </div>
 

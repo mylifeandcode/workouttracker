@@ -11,7 +11,7 @@
       <strong>Resistance Amount</strong>
     </div>
     <div style="width: 50%">
-      <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' : formGroup.controls.recommendedResistanceAmount.value}}</span>
+      <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' : formGroup.controls.recommendedResistanceAmount.value | resistanceAmount}}</span>
       <span *ngIf="formGroup.controls.recommendedResistanceMakeup.value">
         (<span [innerHTML]="formGroup.controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
       </span>

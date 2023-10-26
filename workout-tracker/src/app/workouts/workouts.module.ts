@@ -52,6 +52,7 @@ import { ExerciseSidePipe } from './pipes/exercise-side.pipe';
 import { ExercisePlanLastTimeComponent } from './exercise-plan-last-time/exercise-plan-last-time.component';
 import { ExercisePlanSuggestionsComponent } from './exercise-plan-suggestions/exercise-plan-suggestions.component';
 import { ExercisePlanNextTimeComponent } from './exercise-plan-next-time/exercise-plan-next-time.component';
+import { ResistanceAmountPipe } from './pipes/resistance-amount.pipe';
 
 
 @NgModule({
@@ -81,7 +82,8 @@ import { ExercisePlanNextTimeComponent } from './exercise-plan-next-time/exercis
     ExerciseSidePipe,
     ExercisePlanLastTimeComponent,
     ExercisePlanSuggestionsComponent,
-    ExercisePlanNextTimeComponent
+    ExercisePlanNextTimeComponent,
+    ResistanceAmountPipe
   ],
   imports: [
     CommonModule,

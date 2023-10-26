@@ -44,13 +44,13 @@
   
     <div class="col-4 exercise-info-div">
         <!--TODO: Create a pipe for this-->
-      <span *ngIf="exercise.resistanceType < 2"><strong>{{exercise.resistanceAmount}}</strong></span>
+      <span *ngIf="exercise.resistanceType < 2"><strong>{{exercise.resistanceAmount | resistanceAmount}}</strong></span>
       <span *ngIf="exercise.resistanceType == 3"><strong>Body Weight</strong></span>
       <span *ngIf="exercise.resistanceType == 2 && exercise.resistanceMakeup != null">
         <span [innerHTML]="exercise.resistanceMakeup | resistanceBandColor"></span>
-        <span> ({{exercise.resistanceAmount}} Max)</span>
+        <span> ({{exercise.resistanceAmount | resistanceAmount}} Max)</span>
       </span>
-      <span *ngIf="exercise.resistanceType == 4"><strong>Other - {{exercise.resistanceAmount}}</strong></span>
+      <span *ngIf="exercise.resistanceType == 4"><strong>Other - {{exercise.resistanceAmount | resistanceAmount}}</strong></span>
     </div>
 
     <div class="col-1">

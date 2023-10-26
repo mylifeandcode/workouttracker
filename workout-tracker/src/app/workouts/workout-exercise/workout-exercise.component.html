@@ -70,7 +70,7 @@
                 (click)="selectResistanceBands(setsArray!.controls[i])">Edit</button>
               <span *ngIf="exerciseSet.controls.resistanceMakeup.value">
                 <span [innerHTML]="exerciseSet.controls.resistanceMakeup.value | resistanceBandColor"></span>
-                <span> ({{exerciseSet.controls.resistance.value}} Max)</span>
+                <span> ({{exerciseSet.controls.resistance.value | resistanceAmount}} Max)</span>
               </span>
               <span *ngIf="!exerciseSet.controls.resistanceMakeup.value">Not set</span>
             </span>

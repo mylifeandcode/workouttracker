@@ -12,7 +12,7 @@
     </div>
     <div class="half-area">
       <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' :
-        formGroup.controls.resistanceAmountLastTime.value}}</span>
+        formGroup.controls.resistanceAmountLastTime.value | resistanceAmount}}</span>
       <span *ngIf="formGroup.controls.resistanceMakeupLastTime.value">
         (<span [innerHTML]="formGroup.controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
       </span>
