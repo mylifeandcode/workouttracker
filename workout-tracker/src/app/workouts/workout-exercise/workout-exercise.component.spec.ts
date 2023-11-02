@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WorkoutExerciseComponent } from './workout-exercise.component';
 import { ReactiveFormsModule, Validators, FormBuilder, FormControl, FormArray, FormGroup } from '@angular/forms';
 import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
-import { Pipe } from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 import { ResistanceType } from '../enums/resistance-type';
 import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
@@ -44,6 +44,15 @@ class ExerciseSidePipeMock {
   }
 }
 
+@Pipe({
+  name: 'resistanceAmount'
+})
+export class MockResistanceAmountPipe implements PipeTransform {
+  transform(value: number | null): string {
+    return 'Fake Resistance Amount';
+  }
+}
+
 describe('WorkoutExerciseComponent', () => {
   let component: WorkoutExerciseComponent;
   let fixture: ComponentFixture<WorkoutExerciseComponent>;
@@ -57,7 +66,8 @@ describe('WorkoutExerciseComponent', () => {
         ResistanceTypePipeMock,
         DurationPipeMock,
         ResistanceBandColorMock,
-        ExerciseSidePipeMock 
+        ExerciseSidePipeMock,
+        MockResistanceAmountPipe 
       ]
     })
     .compileComponents();

@@ -3,6 +3,16 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ExercisePlanSuggestionsComponent } from './exercise-plan-suggestions.component';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'resistanceAmount'
+})
+export class MockResistanceAmountPipe implements PipeTransform {
+  transform(value: number | null): string {
+    return 'Fake Resistance Amount';
+  }
+}
 
 describe('ExercisePlanSuggestionsComponent', () => {
   let component: ExercisePlanSuggestionsComponent;
@@ -10,7 +20,10 @@ describe('ExercisePlanSuggestionsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ExercisePlanSuggestionsComponent]
+      declarations: [
+        ExercisePlanSuggestionsComponent,
+        MockResistanceAmountPipe
+      ]
     });
     fixture = TestBed.createComponent(ExercisePlanSuggestionsComponent);
     component = fixture.componentInstance;

@@ -10,18 +10,17 @@ export class ResistanceAmountPipe implements PipeTransform {
 
   constructor(private _configService: ConfigService) {}
 
-  transform(value: number | null): string {
+  transform(value: number | null, isResistanceBand: boolean = false): string {
     if (value == null) return '';
     
     if (ResistanceAmountPipe._unitOfMass == '') {
-      console.log('yar!');
       ResistanceAmountPipe._unitOfMass = this._configService.get('unitOfMass') ?? 'lb';
     }
 
     if (value == 1)
-      return `${value} ${ResistanceAmountPipe._unitOfMass}`;
+      return `${value} ${ResistanceAmountPipe._unitOfMass} ${isResistanceBand ? 'max' : ''}`;
     else
-      return `${value} ${ResistanceAmountPipe._unitOfMass}s`;
+      return `${value} ${ResistanceAmountPipe._unitOfMass}s ${isResistanceBand ? 'max' : ''}`;
   }
 
 }

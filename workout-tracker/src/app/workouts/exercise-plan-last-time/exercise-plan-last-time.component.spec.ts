@@ -4,6 +4,16 @@ import { ExercisePlanLastTimeComponent } from './exercise-plan-last-time.compone
 import { RatingPipe } from '../pipes/rating.pipe';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'resistanceAmount'
+})
+export class MockResistanceAmountPipe implements PipeTransform {
+  transform(value: number | null): string {
+    return 'Fake Resistance Amount';
+  }
+}
 
 describe('ExercisePlanLastTimeComponent', () => {
   let component: ExercisePlanLastTimeComponent;
@@ -13,7 +23,8 @@ describe('ExercisePlanLastTimeComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         ExercisePlanLastTimeComponent, 
-        RatingPipe //TODO: Replace with mock
+        RatingPipe, //TODO: Replace with mock
+        MockResistanceAmountPipe
       ],
       providers: [
         FormBuilder

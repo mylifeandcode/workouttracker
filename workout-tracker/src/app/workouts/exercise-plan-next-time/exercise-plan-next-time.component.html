@@ -17,7 +17,7 @@
         class="amount trail-space" formControlName="resistanceAmount" required />
       <span *ngIf="formGroup.controls.resistanceType.value==2" class="no-input-value">
         <ng-container *ngIf="formGroup.controls.resistanceAmount.value">
-          {{formGroup.controls.resistanceAmount.value}}
+          {{formGroup.controls.resistanceAmount.value | resistanceAmount:true}}
           <span class="trail-space">(<span
               [innerHTML]="formGroup.controls.resistanceMakeup.value | resistanceBandColor"></span>)</span>
         </ng-container>
