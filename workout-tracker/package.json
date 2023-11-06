@@ -30,7 +30,7 @@
     "chart.js": "^3.8.0",
     "core-js": "^3.6.5",
     "font-awesome": "^4.7.0",
-    "howler": "^2.2.3",
+    "howler": "^2.2.4",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",

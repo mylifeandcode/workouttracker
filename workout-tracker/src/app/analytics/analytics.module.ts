@@ -9,6 +9,8 @@ import { WorkoutsModule } from 'app/workouts/workouts.module';
 import { ChartModule } from 'primeng/chart';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
+import { TabViewModule } from 'primeng/tabview';
+
 
 @NgModule({
   declarations: [
@@ -24,6 +26,7 @@ import { DropdownModule } from 'primeng/dropdown';
     ProgressSpinnerModule,
     ReactiveFormsModule,
     SharedModule,
+    TabViewModule,
     WorkoutsModule
   ]
 })

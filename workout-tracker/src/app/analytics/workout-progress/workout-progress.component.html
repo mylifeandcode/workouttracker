@@ -35,22 +35,15 @@
 
 <div *ngIf="!loadingData" class="container-fluid">
   <br />
-  <!--TODO: Ditch the container and use a style to give us some margins-->
-  <div class="row" *ngIf="formAndRangeOfMotionChartData">
-    <div class="col-12">
+  <p-tabView *ngIf="form.controls.exerciseId.value != null">
+    <p-tabPanel *ngIf="formAndRangeOfMotionChartData" header="Form and Range of Motion">
       <p-chart type="line" height="300px" [options]="formAndRangeOfMotionChartOptions" [data]="formAndRangeOfMotionChartData"></p-chart>
-    </div>
-  </div>
-  <br />
-  <div class="row" *ngIf="repsChartData">
-    <div class="col-12">
+    </p-tabPanel>
+    <p-tabPanel *ngIf="repsChartData" header="Reps">
       <p-chart type="line" height="300px" [data]="repsChartData"></p-chart>
-    </div>
-  </div>
-  <br />
-  <div class="row" *ngIf="resistanceChartData">
-    <div class="col-12">
+    </p-tabPanel>
+    <p-tabPanel *ngIf="resistanceChartData" header="Resistance">
       <p-chart type="line" height="300px" [data]="resistanceChartData"></p-chart>
-    </div>
-  </div>
+    </p-tabPanel>
+  </p-tabView>
 </div>
