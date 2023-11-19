@@ -139,34 +139,6 @@
           }
         }
       }
-    },
-    "workout-tracker-e2e": {
-      "root": "e2e/",
-      "projectType": "application",
-      "prefix": "wt",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "workout-tracker:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "workout-tracker:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
-          }
-        }
-      }
     }
   },
   "schematics": {
