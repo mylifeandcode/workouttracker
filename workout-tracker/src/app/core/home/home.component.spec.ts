@@ -3,7 +3,7 @@ import { HomeComponent } from './home.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'app/core/auth.service';
+import { AuthService } from 'app/core/services/auth.service';
 
 class AuthServiceMock {
   logOut = jasmine.createSpy('logOut');

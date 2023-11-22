@@ -7,14 +7,48 @@ import { SkipSelf } from '@angular/core';
 import { SharedModule } from 'app/shared/shared.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth.interceptor';
+import { AccessDeniedComponent } from './access-denied/access-denied.component';
+import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
+import { NavComponent } from './nav/nav.component';
+import { QuickActionsComponent } from './quick-actions/quick-actions.component';
+import { UserOverviewComponent } from './user-overview/user-overview.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { UserSelectComponent } from './user-select/user-select.component';
+import { UserSelectNewComponent } from './user-select-new/user-select-new.component';
+import { WelcomeComponent } from './welcome/welcome.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    AccessDeniedComponent,
+    HomeComponent,
+    LoginComponent,
+    NavComponent,
+    QuickActionsComponent,
+    UserOverviewComponent,
+    UserSelectComponent,
+    UserSelectNewComponent,
+    WelcomeComponent
+  ],
   imports: [
     CommonModule,
+    FormsModule,
+    ProgressSpinnerModule,
+    ReactiveFormsModule,
     SharedModule
   ],
-  exports: [],
+  exports: [
+    AccessDeniedComponent,
+    HomeComponent,
+    LoginComponent,
+    NavComponent,
+    QuickActionsComponent,
+    UserOverviewComponent,
+    UserSelectComponent,
+    UserSelectNewComponent,
+    WelcomeComponent
+  ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS, 

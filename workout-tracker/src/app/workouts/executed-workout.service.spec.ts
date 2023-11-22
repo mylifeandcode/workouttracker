@@ -1,6 +1,6 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ConfigService } from 'app/core/config.service';
+import { ConfigService } from 'app/core/services/config.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 
 import { ExecutedWorkoutService } from './executed-workout.service';

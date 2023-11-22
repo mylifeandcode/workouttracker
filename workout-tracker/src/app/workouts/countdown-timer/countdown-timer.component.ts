@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
-import { SoundService } from 'app/core/sound.service';
+import { SoundService } from 'app/core/services/sound.service';
 
 @Component({
   selector: 'wt-countdown-timer',

@@ -15,26 +15,16 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 
 //Services
-import { ConfigService } from './core/config.service';
-import { UserService } from './core/user.service';
+import { ConfigService } from './core/services/config.service';
+import { UserService } from './core/services/user.service';
 
 //Components
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { NavComponent } from './nav/nav.component';
-import { UserSelectComponent } from './user-select/user-select.component';
 
 //Other
-import { AuthService } from './core/auth.service';
-import { AccessDeniedComponent } from './access-denied/access-denied.component';
-import { WelcomeComponent } from './welcome/welcome.component';
-import { QuickActionsComponent } from './quick-actions/quick-actions.component';
-import { UserOverviewComponent } from './user-overview/user-overview.component';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { AuthService } from './core/services/auth.service';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { LoginComponent } from './login/login.component';
-import { UserSelectNewComponent } from './user-select-new/user-select-new.component';
 
 
 function initializeApp(
@@ -57,16 +47,7 @@ function initializeApp(
 
 @NgModule({
   declarations: [
-    AppComponent,
-    NavComponent,
-    HomeComponent,
-    UserSelectComponent,
-    AccessDeniedComponent,
-    WelcomeComponent,
-    QuickActionsComponent,
-    UserOverviewComponent,
-    LoginComponent,
-    UserSelectNewComponent
+    AppComponent
   ],
   imports: [
     AppRoutingModule,
@@ -75,7 +56,6 @@ function initializeApp(
     CommonModule,
     CoreModule,
     HttpClientModule,
-    ProgressSpinnerModule, 
     ReactiveFormsModule,
     SharedModule
   ],

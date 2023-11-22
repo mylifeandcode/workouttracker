@@ -4,8 +4,8 @@ import { UserService } from './user.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { User } from 'app/core/models/user';
 import { ConfigService } from './config.service';
-import { UserOverview } from './models/user-overview';
-import { UserNewDTO } from './models/user-new-dto';
+import { UserOverview } from '../models/user-overview';
+import { UserNewDTO } from '../models/user-new-dto';
 
 const TEST_USER_ID: string = "1";
 

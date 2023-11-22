@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { User } from './models/user';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { User } from '../models/user';
 import { tap } from 'rxjs/operators';
-import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
-import { LocalStorageService } from './local-storage.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ConfigService } from './config.service';
-import { UserOverview } from './models/user-overview';
+import { UserOverview } from '../models/user-overview';
 import { ApiBaseService } from './api-base.service';
-import { UserNewDTO } from './models/user-new-dto';
+import { UserNewDTO } from '../models/user-new-dto';
 
 const httpOptions = {
   headers: new HttpHeaders({

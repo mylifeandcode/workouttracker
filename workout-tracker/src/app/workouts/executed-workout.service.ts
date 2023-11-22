@@ -1,7 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ApiBaseService } from 'app/core/api-base.service';
-import { ConfigService } from 'app/core/config.service';
+import { ApiBaseService } from 'app/core/services/api-base.service';
+import { ConfigService } from 'app/core/services/config.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { Observable } from 'rxjs';
 import { map, shareReplay, tap } from 'rxjs/operators';

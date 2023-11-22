@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ConfigService } from 'app/core/config.service';
+import { ConfigService } from 'app/core/services/config.service';
 
 @Pipe({
   name: 'resistanceAmount'

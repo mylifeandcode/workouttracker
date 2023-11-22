@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { User } from 'app/core/models/user';
 import { UserNewDTO } from 'app/core/models/user-new-dto';
-import { UserService } from 'app/core/user.service';
+import { UserService } from 'app/core/services/user.service';
 import { of } from 'rxjs';
 
 import { UserAddComponent } from './user-add.component';

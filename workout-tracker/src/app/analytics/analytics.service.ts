@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConfigService } from 'app/core/config.service';
+import { ConfigService } from 'app/core/services/config.service';
 import { Observable } from 'rxjs';
 import { AnalyticsChartData } from './models/analytics-chart-data';
 import { ExecutedExerciseMetrics } from './models/executed-exercise-metrics';

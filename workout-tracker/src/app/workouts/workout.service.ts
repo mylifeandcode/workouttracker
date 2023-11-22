@@ -6,7 +6,7 @@ import { map, catchError } from 'rxjs/operators';
 import { PaginatedResults } from '../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { WorkoutPlan } from './models/workout-plan';
-import { ConfigService } from 'app/core/config.service';
+import { ConfigService } from 'app/core/services/config.service';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../core/user.service';
-import { User } from '../core/models/user';
-import { AuthService } from 'app/core/auth.service';
+import { UserService } from '../services/user.service';
+import { User } from '../models/user';
+import { AuthService } from 'app/core/services/auth.service';
 import { catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 

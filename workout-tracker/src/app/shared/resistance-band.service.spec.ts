@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ResistanceBandService } from './resistance-band.service';
-import { ConfigService } from 'app/core/config.service';
+import { ConfigService } from 'app/core/services/config.service';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 

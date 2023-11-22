@@ -3,7 +3,7 @@ import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@an
 import { TestBed } from '@angular/core/testing';
 
 import { AuthInterceptor } from './auth.interceptor';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/auth.service';
 
 class AuthServiceMock {
   token = "someAccessToken";

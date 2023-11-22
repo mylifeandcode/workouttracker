@@ -12,7 +12,7 @@ import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { finalize } from 'rxjs/operators';
 import { IWorkoutPlanForm } from '../interfaces/i-workout-plan-form';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
-import { CheckForUnsavedDataComponent } from 'app/core/check-for-unsaved-data.component';
+import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
 
 
 @Component({

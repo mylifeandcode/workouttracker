@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AuthService } from 'app/core/auth.service';
+import { AuthService } from 'app/core/services/auth.service';
 import { of } from 'rxjs';
 
 import { ResetPasswordComponent } from './reset-password.component';

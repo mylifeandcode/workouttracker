@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'app/core/auth.service';
+import { AuthService } from 'app/core/services/auth.service';
 import { User } from 'app/core/models/user';
 import { UserMinMaxReps } from 'app/core/models/user-min-max-reps';
-import { UserService } from 'app/core/user.service';
-import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from 'app/validators/custom-validators';
+import { UserService } from 'app/core/services/user.service';
+import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from 'app/core/validators/custom-validators';
 import { catchError, finalize } from 'rxjs/operators';
 import { IRepSettingsForm } from '../user-rep-settings/user-rep-settings.component';
 import { find } from 'lodash-es';
-import { CheckForUnsavedDataComponent } from 'app/core/check-for-unsaved-data.component';
+import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
 import { MessageService } from 'primeng/api';
 
 interface IUserSettingsForm {

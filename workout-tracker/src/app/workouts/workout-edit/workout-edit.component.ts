@@ -6,7 +6,7 @@ import { Workout } from 'app/workouts/models/workout';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
-import { CheckForUnsavedDataComponent } from 'app/core/check-for-unsaved-data.component';
+import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
 
 interface IExerciseInWorkout {
   id: FormControl<number>;

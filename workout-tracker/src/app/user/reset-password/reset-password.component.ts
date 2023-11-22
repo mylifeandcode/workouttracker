@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from 'app/core/auth.service';
-import { CustomValidators } from 'app/validators/custom-validators';
+import { AuthService } from 'app/core/services/auth.service';
+import { CustomValidators } from 'app/core/validators/custom-validators';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 

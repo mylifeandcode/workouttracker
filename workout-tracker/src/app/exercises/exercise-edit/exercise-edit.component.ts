@@ -4,11 +4,11 @@ import { Validators, FormControl, FormGroup, FormRecord, FormBuilder } from '@an
 import { ExerciseService } from '../exercise.service';
 import { Exercise } from '../../workouts/models/exercise';
 import { TargetArea } from '../../workouts/models/target-area';
-import { CustomValidators } from '../../validators/custom-validators';
+import { CustomValidators } from '../../core/validators/custom-validators';
 import { ExerciseTargetAreaLink } from '../../workouts/models/exercise-target-area-link';
 import { finalize } from 'rxjs/operators';
 import { some, find } from 'lodash-es';
-import { CheckForUnsavedDataComponent } from 'app/core/check-for-unsaved-data.component';
+import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
 
 interface IExerciseEditForm {
   id: FormControl<number>;

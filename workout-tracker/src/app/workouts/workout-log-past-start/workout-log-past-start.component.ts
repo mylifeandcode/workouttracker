@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/models/paginated-results';
-import { CustomValidators } from 'app/validators/custom-validators';
+import { CustomValidators } from 'app/core/validators/custom-validators';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
