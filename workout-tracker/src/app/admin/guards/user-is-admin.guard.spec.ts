@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Route, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
-import { AuthService } from 'app/core/services/auth.service';
+import { AuthService } from 'app/core/services/auth/auth.service';
 
 import { UserIsAdminGuard } from './user-is-admin.guard';
 

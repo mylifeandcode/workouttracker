@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'app/core/services/auth.service';
+import { AuthService } from 'app/core/services/auth/auth.service';
 
 @Component({
   selector: 'wt-nav',

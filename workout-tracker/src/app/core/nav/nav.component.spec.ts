@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { NavComponent } from './nav.component';
 import { Observable, of } from 'rxjs';
 import { Component } from '@angular/core';
-import { AuthService } from 'app/core/services/auth.service';
+import { AuthService } from 'app/core/services/auth/auth.service';
 
 const username = 'someuser';
 

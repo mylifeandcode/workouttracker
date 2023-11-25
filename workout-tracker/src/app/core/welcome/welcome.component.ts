@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserOverview } from 'app/core/models/user-overview';
-import { UserService } from 'app/core/services/user.service';
+import { UserService } from 'app/core/services/user/user.service';
 import { finalize } from 'rxjs/operators';
 
 @Component({

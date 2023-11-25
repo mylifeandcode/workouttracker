@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from 'app/core/models/user';
 import { UserNewDTO } from 'app/core/models/user-new-dto';
-import { UserService } from 'app/core/services/user.service';
+import { UserService } from 'app/core/services/user/user.service';
 import { CustomValidators } from 'app/core/validators/custom-validators';
 import { finalize } from 'rxjs/operators';
 

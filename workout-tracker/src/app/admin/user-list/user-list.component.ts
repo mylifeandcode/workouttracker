@@ -1,5 +1,5 @@
 import { AfterContentInit, AfterViewInit, Component, OnInit } from '@angular/core';
-import { UserService } from '../../core/services/user.service';
+import { UserService } from '../../core/services/user/user.service';
 import { User } from '../../core/models/user';
 import { finalize, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';

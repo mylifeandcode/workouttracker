@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from 'app/core/services/auth.service';
-import { ConfigService } from 'app/core/services/config.service';
+import { AuthService } from 'app/core/services/auth/auth.service';
+import { ConfigService } from 'app/core/services/config/config.service';
 import { User } from 'app/core/models/user';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { UserService } from '../../core/services/user.service';
+import { UserService } from '../../core/services/user/user.service';
 
 
 interface IUserEditForm {

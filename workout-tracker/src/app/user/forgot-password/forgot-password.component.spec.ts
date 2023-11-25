@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
-import { AuthService } from 'app/core/services/auth.service';
+import { AuthService } from 'app/core/services/auth/auth.service';
 
 import { ForgotPasswordComponent } from './forgot-password.component';
 

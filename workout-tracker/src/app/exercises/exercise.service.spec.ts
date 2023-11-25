@@ -4,7 +4,7 @@ import { ExerciseService } from './exercise.service';
 import { PaginatedResults } from '../core/models/paginated-results';
 import { Exercise } from 'app/workouts/models/exercise';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
-import { ConfigService } from 'app/core/services/config.service';
+import { ConfigService } from 'app/core/services/config/config.service';
 
 class ConfigServiceMock {
   get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");

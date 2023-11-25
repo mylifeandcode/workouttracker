@@ -3,7 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 
 import { WorkoutService } from './workout.service';
 import { Workout } from 'app/workouts/models/workout';
-import { ConfigService } from 'app/core/services/config.service';
+import { ConfigService } from 'app/core/services/config/config.service';
 import { WorkoutPlan } from './models/workout-plan';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { WorkoutDTO } from './models/workout-dto';

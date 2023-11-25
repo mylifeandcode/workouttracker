@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { User } from 'app/core/models/user';
 import { UserNewDTO } from 'app/core/models/user-new-dto';
-import { UserService } from 'app/core/services/user.service';
+import { UserService } from 'app/core/services/user/user.service';
 import { of } from 'rxjs';
 
 import { UserSelectNewComponent } from './user-select-new.component';

@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
-import { AuthService } from 'app/core/services/auth.service';
+import { AuthService } from 'app/core/services/auth/auth.service';
 import { sortBy } from 'lodash-es';
 
 @Component({

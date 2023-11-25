@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserOverview } from 'app/core/models/user-overview';
-import { UserService } from 'app/core/services/user.service';
+import { UserService } from 'app/core/services/user/user.service';
 import { of } from 'rxjs';
 
 import { WelcomeComponent } from './welcome.component';

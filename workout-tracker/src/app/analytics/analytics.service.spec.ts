@@ -1,6 +1,6 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ConfigService } from 'app/core/services/config.service';
+import { ConfigService } from 'app/core/services/config/config.service';
 import { SetType } from 'app/core/enums/set-type';
 
 import { AnalyticsService, METRICS_TYPE } from './analytics.service';

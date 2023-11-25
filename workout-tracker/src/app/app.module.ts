@@ -15,14 +15,14 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 
 //Services
-import { ConfigService } from './core/services/config.service';
-import { UserService } from './core/services/user.service';
+import { ConfigService } from './core/services/config/config.service';
+import { UserService } from './core/services/user/user.service';
 
 //Components
 import { AppComponent } from './app.component';
 
 //Other
-import { AuthService } from './core/services/auth.service';
+import { AuthService } from './core/services/auth/auth.service';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 

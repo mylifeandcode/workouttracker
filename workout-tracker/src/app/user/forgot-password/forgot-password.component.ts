@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'app/core/services/auth.service';
-import { ConfigService } from 'app/core/services/config.service';
+import { AuthService } from 'app/core/services/auth/auth.service';
+import { ConfigService } from 'app/core/services/config/config.service';
 import { finalize } from 'rxjs/operators';
 
 interface IForgotPasswordForm {

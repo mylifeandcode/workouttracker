@@ -6,8 +6,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { throwError } from 'rxjs';
 
 import { AuthService } from './auth.service';
-import { ConfigService } from './config.service';
-import { LocalStorageService } from './local-storage.service';
+import { ConfigService } from '../config/config.service';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 class ConfigServiceMock {
   get = jasmine.createSpy('get').and.callFake((configKey: string) => {

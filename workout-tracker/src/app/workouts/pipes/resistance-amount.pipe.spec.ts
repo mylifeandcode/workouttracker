@@ -1,4 +1,4 @@
-import { ConfigService } from 'app/core/services/config.service';
+import { ConfigService } from 'app/core/services/config/config.service';
 import { ResistanceAmountPipe } from './resistance-amount.pipe';
 import { TestBed } from '@angular/core/testing';
 

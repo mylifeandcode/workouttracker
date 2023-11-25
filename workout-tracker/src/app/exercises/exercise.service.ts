@@ -6,7 +6,7 @@ import { TargetArea } from '../workouts/models/target-area';
 import { map, catchError } from 'rxjs/operators';
 import { PaginatedResults } from '../core/models/paginated-results';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
-import { ConfigService } from 'app/core/services/config.service';
+import { ConfigService } from 'app/core/services/config/config.service';
 
 const HTTP_OPTIONS = {
     headers: new HttpHeaders({

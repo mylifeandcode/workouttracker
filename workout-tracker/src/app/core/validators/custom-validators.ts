@@ -4,49 +4,49 @@ import { AbstractControl, UntypedFormGroup, ValidationErrors, ValidatorFn } from
 //TODO: Refactor this file to ditch the class/static methods and just export the validator functions
 
 export class CustomValidators {
-/*
-This validator is an example of cross-field validation.
-For more info: https://angular.io/guide/form-validation#cross-field-validation
-*/
-static formGroupOfBooleansRequireOneTrue: ValidatorFn = 
-  (control: AbstractControl): ValidationErrors | null => {
-    let valid = false;
+  /*
+  This validator is an example of cross-field validation.
+  For more info: https://angular.io/guide/form-validation#cross-field-validation
+  */
+  static formGroupOfBooleansRequireOneTrue: ValidatorFn =
+    (control: AbstractControl): ValidationErrors | null => {
+      let valid = false;
 
-    const formGroup = <UntypedFormGroup>control;
+      const formGroup = <UntypedFormGroup>control;
 
-    for (const field in formGroup.controls) {
-      const formGroupControl = control.get(field);
+      for (const field in formGroup.controls) {
+        const formGroupControl = control.get(field);
 
-      if(formGroupControl?.value) {
-        valid = true;
-        break;
+        if (formGroupControl?.value) {
+          valid = true;
+          break;
+        }
       }
-    }
 
-    return valid ? null : {
-      formGroupOfBooleansRequireOneTrue: true
+      return valid ? null : {
+        formGroupOfBooleansRequireOneTrue: true
+      };
     };
-  };
 
-static startDateTimeVsEndDateTime: ValidatorFn = 
-  (control: AbstractControl): ValidationErrors | null => {
-    let valid = true;
+  static startDateTimeVsEndDateTime: ValidatorFn =
+    (control: AbstractControl): ValidationErrors | null => {
+      let valid = true;
 
-    //TODO: Revisit. Code smell here. Control names must match the ones used here in the validator.
-    //More info: https://angular.io/guide/form-validation#cross-field-validation
-    const startDateTime = control.get('startDateTime');
-    const endDateTime = control.get('endDateTime');
+      //TODO: Revisit. Code smell here. Control names must match the ones used here in the validator.
+      //More info: https://angular.io/guide/form-validation#cross-field-validation
+      const startDateTime = control.get('startDateTime');
+      const endDateTime = control.get('endDateTime');
 
-    if(startDateTime && endDateTime) {
-      valid = startDateTime.value?.getTime() < endDateTime.value?.getTime();
-    }
+      if (startDateTime && endDateTime) {
+        valid = startDateTime.value?.getTime() < endDateTime.value?.getTime();
+      }
 
-    return valid ? null : {
-      startDateTimeVsEndDateTime: true
+      return valid ? null : {
+        startDateTimeVsEndDateTime: true
+      };
     };
-  };
 
-  static passwordsMatch: ValidatorFn = 
+  static passwordsMatch: ValidatorFn =
     (control: AbstractControl): ValidationErrors | null => {
       let valid = true;
 
@@ -54,8 +54,8 @@ static startDateTimeVsEndDateTime: ValidatorFn =
       //More info: https://angular.io/guide/form-validation#cross-field-validation
       const password = control.get('password');
       const confirmPassword = control.get('confirmPassword');
-      
-      if(password && confirmPassword) {
+
+      if (password && confirmPassword) {
         valid = (password.value == confirmPassword.value);
       }
 
@@ -67,12 +67,12 @@ static startDateTimeVsEndDateTime: ValidatorFn =
 
 }
 
-export function firstControlValueMustBeLessThanOrEqualToSecond(firstControlName: string, secondControlName: string): ValidatorFn { 
+export function firstControlValueMustBeLessThanOrEqualToSecond(firstControlName: string, secondControlName: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const firstControl = control.get(firstControlName);
     const secondControl = control.get(secondControlName);
 
-    if(firstControl?.value <= secondControl?.value)
+    if (firstControl?.value <= secondControl?.value)
       return null;
     else
       return ({ firstControlValueMustBeLessThanOrEqualToSecond: true });
@@ -81,9 +81,9 @@ export function firstControlValueMustBeLessThanOrEqualToSecond(firstControlName:
 
 export function isRequired(required: boolean): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    if(!required) return null;
+    if (!required) return null;
 
-    if(required && control.value) return null;
+    if (required && control.value) return null;
 
     return { isRequired: true };
   };

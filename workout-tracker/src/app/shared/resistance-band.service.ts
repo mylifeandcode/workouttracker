@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ApiBaseService } from 'app/core/services/api-base.service';
-import { ConfigService } from 'app/core/services/config.service';
+import { ApiBaseService } from 'app/core/services/api-base/api-base.service';
+import { ConfigService } from 'app/core/services/config/config.service';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { Observable } from 'rxjs';

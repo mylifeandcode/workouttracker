@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AuthService } from 'app/core/services/auth.service';
+import { AuthService } from 'app/core/services/auth/auth.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { of } from 'rxjs';
 import { WorkoutDTO } from '../models/workout-dto';

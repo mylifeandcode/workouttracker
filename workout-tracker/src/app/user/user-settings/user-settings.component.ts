@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'app/core/services/auth.service';
+import { AuthService } from 'app/core/services/auth/auth.service';
 import { User } from 'app/core/models/user';
 import { UserMinMaxReps } from 'app/core/models/user-min-max-reps';
-import { UserService } from 'app/core/services/user.service';
+import { UserService } from 'app/core/services/user/user.service';
 import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from 'app/core/validators/custom-validators';
 import { catchError, finalize } from 'rxjs/operators';
 import { IRepSettingsForm } from '../user-rep-settings/user-rep-settings.component';

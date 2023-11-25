@@ -4,7 +4,7 @@ import { UserSelectedGuard } from './user-selected.guard';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Component } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth/auth.service';
 
 
 @Component({})

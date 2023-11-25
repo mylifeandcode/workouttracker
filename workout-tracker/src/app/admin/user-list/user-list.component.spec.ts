@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { UserListComponent } from './user-list.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { UserService } from '../../core/services/user.service';
+import { UserService } from '../../core/services/user/user.service';
 import { of } from 'rxjs';
 import { User } from 'app/core/models/user';
 

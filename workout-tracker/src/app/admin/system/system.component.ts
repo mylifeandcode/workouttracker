@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SoundService } from 'app/core/services/sound.service';
+import { SoundService } from 'app/core/services/sound/sound.service';
 
 @Component({
   selector: 'wt-system',
