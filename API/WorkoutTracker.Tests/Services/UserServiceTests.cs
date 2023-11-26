@@ -5,9 +5,11 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Application.Users.Services;
+using WorkoutTracker.Domain.BaseClasses;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Repository;
 
@@ -41,6 +43,7 @@ namespace WorkoutTracker.Tests.Services
             _userRepositoryMock.Setup(mock => mock.Update(It.IsAny<User>(), true)).Returns((User user, bool save) => user);
             _userRepositoryMock.Setup(mock => mock.Get()).Returns(_users.AsQueryable());
             _userRepositoryMock.Setup(mock => mock.Get(It.IsAny<int>())).Returns(_users[0]);
+            _userRepositoryMock.Setup(mock => mock.Any(It.IsAny<Expression<Func<User, bool>>>())).Returns(false);
 
             _cryptoServiceMock = new Mock<ICryptoService>(MockBehavior.Strict);
             _cryptoServiceMock.Setup(x => x.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHash");
@@ -75,6 +78,20 @@ namespace WorkoutTracker.Tests.Services
             //ASSERT
             _userRepositoryMock.Verify(mock => mock.Add(user, true), Times.Once);
             result.ShouldBeSameAs(user);
+        }
+
+        [TestMethod]
+        public void Should_Create_User_As_Admin_When_No_Users_Exist()
+        {
+            //ARRANGE
+            var user = new User();
+            user.Role = UserRole.Standard;
+
+            //ACT
+            _sut.Add(user);
+
+            //ASSERT
+            _userRepositoryMock.Verify(mock => mock.Add(It.Is<User>(x => x.Role == UserRole.Administrator), true), Times.Once);
         }
 
         [TestMethod]

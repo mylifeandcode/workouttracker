@@ -28,5 +28,8 @@ namespace WorkoutTracker.Repository
         void SetValues(TEntity target, TEntity source);
 
         Task<int> UpdateAsync<T>(T entity, params Expression<Func<T, object>>[] navigations) where T : Entity;
+
+        bool Any();
+        bool Any(Expression<Func<TEntity, bool>> predicate);
     }
 }

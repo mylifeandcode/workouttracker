@@ -34,7 +34,10 @@
     </div>
 
     <div *ngIf="users && users.length == 0" class="row offset-md-4 col-md-4 centeredText gimmeSomeSpace greeting-text">
-      No users have been created yet. Create one with the button below.
+      <p>No users have been created yet. Create one with the button below.</p>
+      <p>
+        <strong>This user will be created as an Administrator.</strong> Administrators have permissions to manage the system.
+      </p>
     </div>
 
     <div class="row offset-md-4 col-md-4 centeredText">

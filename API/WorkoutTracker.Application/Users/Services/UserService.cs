@@ -37,6 +37,8 @@ namespace WorkoutTracker.Application.Users.Services
 
         public User Add(User user)
         {
+            //If no users have been defined, the first one needs to be an administrator
+            if (!_repo.Any(x => x.Name != "SYSTEM")) user.Role = UserRole.Administrator;
             return Add(user, true);
         }
 

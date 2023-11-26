@@ -150,5 +150,15 @@ namespace WorkoutTracker.Repository
 
             return await _context.SaveChangesAsync();
         }
+
+        public bool Any()
+        {
+            return _dbSet.Any();
+        }
+
+        public bool Any(Expression<Func<TEntity, bool>> predicate)
+        {
+            return _dbSet.Any(predicate);
+        }
     }
 }
