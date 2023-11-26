@@ -18,6 +18,7 @@ import { UserSelectComponent } from './user-select/user-select.component';
 import { UserSelectNewComponent } from './user-select-new/user-select-new.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AppRoutingModule } from 'app/app-routing.module';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     WelcomeComponent
   ],
   imports: [
+    AppRoutingModule,
     CommonModule,
     FormsModule,
     ProgressSpinnerModule,
