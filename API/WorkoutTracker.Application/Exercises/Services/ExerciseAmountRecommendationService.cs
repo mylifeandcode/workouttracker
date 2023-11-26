@@ -7,7 +7,6 @@ using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
 using WorkoutTracker.Application.Resistances.Interfaces;
-using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Exercises.Services
