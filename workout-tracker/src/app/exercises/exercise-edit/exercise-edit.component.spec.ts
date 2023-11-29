@@ -246,4 +246,19 @@ describe('ExerciseEditComponent', () => {
 
   });
 
+  it('should disable and clear bilateral option when one sided is chosen', () => {
+    component.exerciseForm.controls.usesBilateralResistance.setValue(true);
+    expect(component.exerciseForm.controls.usesBilateralResistance.value).toBeTrue();
+    component.exerciseForm.controls.oneSided.setValue(true);
+    expect(component.exerciseForm.controls.usesBilateralResistance.value).toBeFalse();
+    expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBeFalse();
+  });
+
+  it('should enable bilateral option when one sided option is cleared', () => {
+    component.exerciseForm.controls.oneSided.setValue(true);
+    expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBeFalse();
+    component.exerciseForm.controls.oneSided.setValue(false);
+    expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBeTrue();
+  });
+
 });

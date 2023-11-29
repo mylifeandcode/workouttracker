@@ -18,5 +18,6 @@ namespace WorkoutTracker.Domain.Exercises
         public bool OneSided { get; set; }
         public bool? BandsEndToEnd { get; set; }
         public bool InvolvesReps { get; set; }
+        public bool UsesBilateralResistance { get; set; }
     }
 }

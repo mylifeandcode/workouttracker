@@ -18,6 +18,7 @@ interface IExerciseEditForm {
   oneSided: FormControl<boolean>;
   endToEnd: FormControl<boolean | null>;
   involvesReps: FormControl<boolean>;
+  usesBilateralResistance: FormControl<boolean>;
   
   //targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
   //Because our target area keys aren't known until run time, we need to us a FormRecord instead of a FormGroup
@@ -69,6 +70,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     private _exerciseSvc: ExerciseService) {
       super();
       this.exerciseForm = this.createForm();
+      this.exerciseForm.controls.oneSided.valueChanges.subscribe((value: boolean) => this.checkForBilateral(value));
   }
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
@@ -191,6 +193,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       oneSided: new FormControl<boolean>(false, { nonNullable: true }),
       endToEnd: new FormControl<boolean | null>(false),
       involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
+      usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true }),
       targetAreas: new FormRecord<FormControl<boolean>>({}, { validators: CustomValidators.formGroupOfBooleansRequireOneTrue}),
       setup: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}),
       movement: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}),
@@ -223,8 +226,9 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       this._exercise.bandsEndToEnd = this.exerciseForm.controls.endToEnd?.value;
 
     this._exercise.involvesReps = this.exerciseForm.controls.involvesReps.value;
-    this._exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
+    this._exercise.usesBilateralResistance = this.exerciseForm.controls.usesBilateralResistance.value;
 
+    this._exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
   }
 
   private getExerciseTargetAreaLinksForPersist(): ExerciseTargetAreaLink[] {
@@ -268,6 +272,18 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     this.exerciseForm.controls.oneSided.setValue(this._exercise.oneSided);
     this.exerciseForm.controls.endToEnd.setValue(this._exercise.bandsEndToEnd);
     this.exerciseForm.controls.involvesReps.setValue(this._exercise.involvesReps);
+    this.exerciseForm.controls.usesBilateralResistance.setValue(this._exercise.usesBilateralResistance);
+  }
+
+  private checkForBilateral(oneSided: boolean): void {
+    if (oneSided) {
+      if (this.exerciseForm.controls.usesBilateralResistance.value)
+        this.exerciseForm.controls.usesBilateralResistance.setValue(false);
+
+      this.exerciseForm.controls.usesBilateralResistance.disable();
+    }
+    else
+      this.exerciseForm.controls.usesBilateralResistance.enable();
   }
 
 }
