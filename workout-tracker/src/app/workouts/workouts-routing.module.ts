@@ -45,7 +45,8 @@ const routes: Routes = [
   {
     path: 'start/:executedWorkoutId',
     component: WorkoutComponent, 
-    canActivate: [UserSelectedGuard]
+    canActivate: [UserSelectedGuard],
+    canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'history/view/:id',

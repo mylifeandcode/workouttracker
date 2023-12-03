@@ -92,6 +92,11 @@ namespace WorkoutTracker.API.Models
         /// </summary>
         public ExerciseSide? Side { get; set; }
 
+        /// <summary>
+        /// Specifies whether or not this is an exercise with separate resistances on each side
+        /// </summary>
+        public bool UsesBilateralResistance { get; set; }
+
 
         public ExecutedExerciseDTO(
             int id, string name, int exerciseId, ResistanceType resistanceType, byte sequence,
@@ -100,7 +105,7 @@ namespace WorkoutTracker.API.Models
             ushort? duration, byte formRating, byte rangeOfMotionRating,
             bool? bandsEndToEnd, bool involvesReps, 
             int createdByUserId, DateTime createdDateTime, int? modifiedByUserId, DateTime? modifiedDateTime,
-            ExerciseSide? side)
+            ExerciseSide? side, bool usesBilateralResistance)
         {
             Id = id;
             Name = name;
@@ -123,6 +128,7 @@ namespace WorkoutTracker.API.Models
             ModifiedByUserId = modifiedByUserId;
             ModifiedDateTime = modifiedDateTime;
             Side = side;
+            UsesBilateralResistance = usesBilateralResistance;
         }
     }
 }

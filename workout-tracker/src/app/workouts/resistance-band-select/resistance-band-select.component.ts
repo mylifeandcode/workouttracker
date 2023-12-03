@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
-import { sumBy } from 'lodash-es';
+import { sumBy, groupBy, some } from 'lodash-es';
+import { Dictionary} from 'lodash';
 
 @Component({
   selector: 'wt-resistance-band-select',
@@ -13,6 +14,9 @@ export class ResistanceBandSelectComponent implements OnInit {
   @Input()
   public resistanceBandInventory: ResistanceBandIndividual[] = [];
 
+  @Input()
+  public exerciseUsesBilateralResistance: boolean = false;
+
   @Output()
   public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
 
@@ -21,6 +25,7 @@ export class ResistanceBandSelectComponent implements OnInit {
 
   public selectedBands: ResistanceBandIndividual[] = [];
   public availableBands: ResistanceBandIndividual[] = [];
+  public showBilateralValidationFailure: boolean = false;
 
   public get maxAvailableResistance(): number {
     return sumBy(this.availableBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
@@ -82,6 +87,20 @@ export class ResistanceBandSelectComponent implements OnInit {
   }
 
   public ok(): void {
+
+    if (this.exerciseUsesBilateralResistance) {
+      if (!this.validateForBilateralResistance()) {
+        this.showBilateralValidationFailure = true;
+        console.log('BOOM');
+        return;
+      }
+      else {
+        this.showBilateralValidationFailure = false;
+        console.log('OK');
+      }
+      
+    }
+
     const selection = new ResistanceBandSelection();
 
     selection.makeup = 
@@ -102,6 +121,12 @@ export class ResistanceBandSelectComponent implements OnInit {
 
   public cancel(): void {
     this.cancelClicked.emit();
+  }
+
+  private validateForBilateralResistance(): boolean {
+    const bandsByColor: Dictionary<ResistanceBandIndividual[]> = groupBy(this.selectedBands, band => band.color);
+    console.log("bandsByColor: ", bandsByColor);
+    return some(bandsByColor, array => array.length % 2 !== 0);
   }
 
 }

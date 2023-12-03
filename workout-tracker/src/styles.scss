@@ -39,6 +39,13 @@
   font-style: italic;
 }
 
+input.ng-invalid.ng-touched, 
+textarea.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: $form-value-invalid-border-color;
+  border-width: $form-value-invalid-border-width;
+}
+
 .ui-multiselect-panel {
   background-color: white;
 }

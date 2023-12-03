@@ -39,6 +39,7 @@
         <div class="row">
           <div class="col-12">
             <button type="submit" *ngIf="!workoutCompleted || isLoggingPastWorkout" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !isLoggingPastWorkout)" (click)="completeWorkout()">Complete Workout</button>
+            <span *ngIf="!workoutForm.valid" class="error-text ms-2">Please enter the required information above to complete the workout.</span>
             <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
           </div>
         </div>
@@ -54,6 +55,7 @@
   <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal" [blockScroll]="true">
     <wt-resistance-band-select 
       [resistanceBandInventory]="allResistanceBands"
+      [exerciseUsesBilateralResistance]="settingResistanceForBilateralExercise"
       (okClicked)="resistanceBandsModalAccepted($event)"
       (cancelClicked)="resistanceBandsModalCancelled()"
       (rangeOfMotionEntered)="saveWorkoutInProgress()">

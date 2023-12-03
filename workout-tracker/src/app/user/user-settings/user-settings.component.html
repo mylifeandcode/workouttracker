@@ -19,7 +19,10 @@
       </div>
     </div>
     <div class="row">
-      <div class="offset-4 col-4">
+      <div class="col-4">
+        <span *ngIf="userSettingsForm.invalid" class="error-text">Please enter the information required above to save settings.</span>
+      </div>
+      <div class="col-4">
         <button class="btn btn-save-settings" [disabled]="userSettingsForm.pristine || userSettingsForm.invalid" (click)="saveSettings()">Save Settings</button>
       </div>
     </div>

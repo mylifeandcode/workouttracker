@@ -108,7 +108,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
           repSettingsId: new FormControl<number>(value.id, { nonNullable: true}),
           setType: new FormControl<number>(value.setType, { nonNullable: true}),
           duration: new FormControl<number | null>(value.duration, [ Validators.min((value.setType == 1 ? 1 : 0)), isRequired((value.setType == 1)) ]),
-          minReps: new FormControl<number>(value.minReps, { nonNullable: true, validators: [ Validators.min(1) ] }),
+          minReps: new FormControl<number>(value.minReps, { nonNullable: true, validators: [ Validators.min(1), isRequired(true) ] }),
           maxReps: new FormControl<number>(value.maxReps, { nonNullable: true, validators: [ Validators.min(1) ] })
         }, { validators: [ firstControlValueMustBeLessThanOrEqualToSecond('minReps', 'maxReps') ] });
 

@@ -12,4 +12,5 @@ export interface IWorkoutFormExerciseSet {
   duration: FormControl<number | null>;
   involvesReps: FormControl<boolean>;
   side: FormControl<number | null>;
+  usesBilateralResistance: FormControl<boolean>;
 }

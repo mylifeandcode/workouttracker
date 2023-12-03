@@ -13,6 +13,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
 import { forEach } from 'lodash-es';
+import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
 
 interface IWorkoutForm {
   id: FormControl<number | null>;
@@ -25,7 +26,7 @@ interface IWorkoutForm {
   templateUrl: './workout.component.html',
   styleUrls: ['./workout.component.scss']
 })
-export class WorkoutComponent implements OnInit {
+export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {
 
   //PUBLIC FIELDS
   public errorInfo: string | undefined = undefined;
@@ -33,6 +34,7 @@ export class WorkoutComponent implements OnInit {
   public workoutName: string | null = null;
 
   public showResistanceBandsSelectModal: boolean = false;
+  public settingResistanceForBilateralExercise: boolean = false;
   public showCountdownModal: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
   public formGroupForResistanceSelection: FormGroup<IWorkoutFormExerciseSet> | undefined = undefined;
@@ -94,6 +96,7 @@ export class WorkoutComponent implements OnInit {
     private _executedWorkoutService: ExecutedWorkoutService,
     private _resistanceBandService: ResistanceBandService,
     private _messageService: MessageService) {
+    super();
     this.workoutForm = this.createForm();
   }
 
@@ -109,6 +112,7 @@ export class WorkoutComponent implements OnInit {
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup<IWorkoutFormExerciseSet>): void {
     this.showResistanceBandsSelectModal = true;
+    this.settingResistanceForBilateralExercise = exerciseFormGroup.controls.usesBilateralResistance.value;
     this.formGroupForResistanceSelection = exerciseFormGroup;
     this.bandSelect?.setBandAllocation(
       exerciseFormGroup.controls.resistanceMakeup.value ?? '', //TODO: Revisit. This is a hack. Type is nullable but we know we'll have a value here.
@@ -282,7 +286,8 @@ export class WorkoutComponent implements OnInit {
         bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd), //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
         duration: new FormControl<number | null>(120), //TODO: Get/set value from API
         involvesReps: new FormControl<boolean>(exercises[i].involvesReps, { nonNullable: true }), //Kind of a hack, but I need to pass this value along
-        side: new FormControl<number | null>(exercises[i].side)
+        side: new FormControl<number | null>(exercises[i].side),
+        usesBilateralResistance: new FormControl<boolean>(exercises[i].usesBilateralResistance, { nonNullable: true })
       });
 
       formArray.push(formGroup);
@@ -358,6 +363,10 @@ export class WorkoutComponent implements OnInit {
           this._messageService.add({ severity: 'error', summary: 'Error!', detail: 'An error occurred while trying to save: ' + error.message ?? "Unknown error", life: 5000 });
         }
       );
+  }
+
+  public hasUnsavedData(): boolean {
+    return this.workoutForm.dirty;
   }
 
 }

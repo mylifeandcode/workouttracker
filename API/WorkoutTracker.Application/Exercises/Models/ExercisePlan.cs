@@ -43,6 +43,7 @@ namespace WorkoutTracker.Application.Exercises.Models
         public string ResistanceMakeup { get; set; }
         public bool? BandsEndToEnd { get; set; }
         public bool InvolvesReps { get; set; }
+        public bool UsesBilateralResistance {  get; set; }
 
         public string RecommendationReason { get; set; }
 
@@ -61,6 +62,7 @@ namespace WorkoutTracker.Application.Exercises.Models
             ResistanceType = exercise.Exercise.ResistanceType;
             BandsEndToEnd = exercise.Exercise.BandsEndToEnd;
             InvolvesReps = exercise.Exercise.InvolvesReps;
+            UsesBilateralResistance = exercise.Exercise.UsesBilateralResistance;
             Sequence = exercise.Sequence;
         }
 

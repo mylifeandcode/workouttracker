@@ -38,15 +38,19 @@
             <button *ngIf="isForPastWorkout" type="submit" class="btn btn-primary" (click)="submitPlanForPast()"
               [disabled]="workoutPlanForm.invalid || isProcessing">Log Past Workout</button>
             &nbsp;<span *ngIf="isProcessing">Processing...</span>
-            <span *ngIf="workoutPlanForm.invalid">Please supply all required information above to submit your plan.</span>
+            <span *ngIf="workoutPlanForm.invalid" class="error-text">Please supply all required information above to
+              submit your plan.</span>
           </div>
         </div>
       </fieldset>
     </form>
 
     <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal" [blockScroll]="true">
-      <wt-resistance-band-select [resistanceBandInventory]="allResistanceBands"
-        (okClicked)="resistanceBandsModalAccepted($event)" (cancelClicked)="resistanceBandsModalCancelled()">
+      <wt-resistance-band-select 
+        [resistanceBandInventory]="allResistanceBands"
+        [exerciseUsesBilateralResistance]="settingResistanceForBilateralExercise"
+        (okClicked)="resistanceBandsModalAccepted($event)" 
+        (cancelClicked)="resistanceBandsModalCancelled()">
       </wt-resistance-band-select>
     </p-dialog>
   </div>

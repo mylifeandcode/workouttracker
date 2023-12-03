@@ -17,4 +17,5 @@ export class ExecutedExerciseDTO extends NamedEntity {
   public bandsEndToEnd: boolean | null = null;
   public involvesReps: boolean = false;
   public side: ExerciseSide | null = null;
+  public usesBilateralResistance: boolean = false;
 }

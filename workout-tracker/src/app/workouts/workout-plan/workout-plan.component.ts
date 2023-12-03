@@ -26,6 +26,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   public workoutPlan: WorkoutPlan | undefined;
   public workoutPlanForm: FormGroup<IWorkoutPlanForm>;
   public showResistanceBandsSelectModal: boolean = false;
+  public settingResistanceForBilateralExercise: boolean = false;
   public allResistanceBands: ResistanceBandIndividual[] = [];
   public formGroupForResistanceSelection: FormGroup | undefined;
   public errorInfo: string | undefined;
@@ -136,6 +137,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
     if (!this.bandSelect) return;
 
+    this.settingResistanceForBilateralExercise = exerciseFormGroup.controls.usesBilateralResistance.value;
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
     this.bandSelect.setBandAllocation(
@@ -224,6 +226,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
           resistanceMakeup: new FormControl<string | null>(exercise.resistanceMakeup), 
           bandsEndToEnd: new FormControl<boolean | null>(exercise.bandsEndToEnd), 
           involvesReps: new FormControl<boolean>(exercise.involvesReps, { nonNullable: true }),
+          usesBilateralResistance: new FormControl<boolean>(exercise.usesBilateralResistance, { nonNullable: true }),
           recommendationReason: new FormControl<string | null>(exercise.recommendationReason)
         })
       );

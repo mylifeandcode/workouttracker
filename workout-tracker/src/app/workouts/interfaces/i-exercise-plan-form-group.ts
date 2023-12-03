@@ -22,5 +22,6 @@ export interface IExercisePlanFormGroup {
   resistanceMakeup: FormControl<string | null>; 
   bandsEndToEnd: FormControl<boolean | null>; 
   involvesReps: FormControl<boolean>; 
+  usesBilateralResistance: FormControl<boolean>;
   recommendationReason: FormControl<string | null>; 
 }

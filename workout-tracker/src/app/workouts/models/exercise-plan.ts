@@ -35,6 +35,7 @@ export class ExercisePlan {
 
   public bandsEndToEnd: boolean | null = null;
   public involvesReps: boolean = true;
+  public usesBilateralResistance: boolean = false;
 
   public recommendationReason: string = '';
 }

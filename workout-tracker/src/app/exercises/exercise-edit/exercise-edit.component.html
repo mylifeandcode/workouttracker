@@ -151,9 +151,10 @@
           <span class="mild-right-margin align-middle">Enable Editing</span>
           <p-inputSwitch id="editModeToggle" styleClass="align-middle" (onChange)="editModeToggled($event)"></p-inputSwitch>
         </div>       
-        <div *ngIf="!readOnlyMode" class="col-4">
+        <div *ngIf="!readOnlyMode" class="col-10">
           <button type="submit" [disabled]="exerciseForm.invalid || saving" (click)="saveExercise()"
             class="btn btn-save-exercise">Save</button>&nbsp;<span>{{infoMsg}}</span>
+            <span *ngIf="exerciseForm.invalid" class="error-text">Please enter all required information above to enable saving.</span>
         </div>
       </div>
       <div class="row">
