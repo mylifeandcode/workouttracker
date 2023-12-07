@@ -18,13 +18,15 @@
     Max Selected Resistance: {{maxSelectedResistance | resistanceAmount}}
   </div>
 </div>
-<div class="row col-12">
-  <span *ngIf="showBilateralValidationFailure">
-    This exercise uses bilateral resistance and must have equal resistance on each side. 
-    The selected resistance can't be divided into two equal parts.
-  </span>
-  &nbsp;
+<div class="row">
+  <div class="col-12">
+    &nbsp;
+  </div>
 </div>
+<span *ngIf="showBilateralValidationFailure" style="max-width: 200px;">
+  This exercise uses bilateral resistance and must have equal resistance on each side.<br /> 
+  The selected resistance can't be divided into two equal parts.
+</span>
 <button class="btn btn-warning pull-right mild-margins" (click)="cancel()">Cancel</button>
 <span style="width:100px"></span>
 <button class="btn btn-success pull-right" (click)="ok()">OK</button>

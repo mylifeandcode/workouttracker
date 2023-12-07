@@ -120,13 +120,13 @@ export class ResistanceBandSelectComponent implements OnInit {
   }
 
   public cancel(): void {
+    this.showBilateralValidationFailure = false;
     this.cancelClicked.emit();
   }
 
   private validateForBilateralResistance(): boolean {
     const bandsByColor: Dictionary<ResistanceBandIndividual[]> = groupBy(this.selectedBands, band => band.color);
-    console.log("bandsByColor: ", bandsByColor);
-    return some(bandsByColor, array => array.length % 2 !== 0);
+    return !some(bandsByColor, array => array.length % 2 !== 0);
   }
 
 }
