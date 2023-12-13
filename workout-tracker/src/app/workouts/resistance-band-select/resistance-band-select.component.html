@@ -2,6 +2,8 @@
   [source]="availableBands" [target]="selectedBands" 
   sourceHeader="Available" targetHeader="Selected" 
   [showSourceControls]="false" [showTargetControls]="false"
+  (onMoveToSource)="bandDeselected($event)"
+  (onMoveToTarget)="bandSelected($event)"
   [sourceStyle]="{'min-width':'200px', 'max-height':'200px'}" [targetStyle]="{'min-width':'200px', 'max-height':'200px'}"
   [dragdrop]="true">
   <ng-template let-resistanceBand pTemplate="item">
@@ -23,10 +25,13 @@
     &nbsp;
   </div>
 </div>
-<span *ngIf="showBilateralValidationFailure" style="max-width: 200px;">
-  This exercise uses bilateral resistance and must have equal resistance on each side.<br /> 
-  The selected resistance can't be divided into two equal parts.
+<span *ngIf="showBilateralValidationFailure" class="bilateral-warning">
+  Bilateral resistance required.
+  <small style="cursor: pointer"
+    pTooltip="''Bilateral resistance'' specifies that the exercise requires two sets of equal resistance, one for each side."
+    tooltipPosition="right">(What's this?)
+  </small>  
 </span>
 <button class="btn btn-warning pull-right mild-margins" (click)="cancel()">Cancel</button>
 <span style="width:100px"></span>
-<button class="btn btn-success pull-right" (click)="ok()">OK</button>
+<button class="btn btn-success pull-right" [disabled]="selectedBands.length == 0 || exerciseUsesBilateralResistance && showBilateralValidationFailure" (click)="ok()">OK</button>

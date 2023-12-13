@@ -1,15 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { sumBy, groupBy, some } from 'lodash-es';
-import { Dictionary} from 'lodash';
+import { Dictionary } from 'lodash';
+import { PickListMoveToSourceEvent, PickListMoveToTargetEvent } from 'primeng/picklist';
 
 @Component({
   selector: 'wt-resistance-band-select',
   templateUrl: './resistance-band-select.component.html',
   styleUrls: ['./resistance-band-select.component.scss']
 })
-export class ResistanceBandSelectComponent implements OnInit {
+export class ResistanceBandSelectComponent implements OnInit, OnChanges {
 
   @Input()
   public resistanceBandInventory: ResistanceBandIndividual[] = [];
@@ -39,6 +40,10 @@ export class ResistanceBandSelectComponent implements OnInit {
 
   constructor() { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.validateForBilateralResistance();
+  }
+
   ngOnInit(): void {}
 
   /**
@@ -49,7 +54,7 @@ export class ResistanceBandSelectComponent implements OnInit {
    * @param doubleMaxResistanceAmounts Specifies whether or not band resistances should be doubled. This should be true when the exercise does not use the band end-to-end without an anchor.
    */
   public setBandAllocation(selectedBands: string, doubleMaxResistanceAmounts: boolean): void {
-    
+
     /*
     At one point, I'd gone down the path of making this private and having it called by 
     ngOnChanges() to avoid the need for this to be a ViewChild and have this method called 
@@ -71,7 +76,7 @@ export class ResistanceBandSelectComponent implements OnInit {
 
     const selectedBandColors: string[] = (selectedBands ? selectedBands.split(',') : []);
     //selectedBandColors.forEach((value: string) => value.trim());
-    
+
     selectedBandColors.forEach((bandColor: string) => {
       //Find first match in array of available bands
       bandColor = bandColor.trim();
@@ -88,26 +93,13 @@ export class ResistanceBandSelectComponent implements OnInit {
 
   public ok(): void {
 
-    if (this.exerciseUsesBilateralResistance) {
-      if (!this.validateForBilateralResistance()) {
-        this.showBilateralValidationFailure = true;
-        console.log('BOOM');
-        return;
-      }
-      else {
-        this.showBilateralValidationFailure = false;
-        console.log('OK');
-      }
-      
-    }
-
     const selection = new ResistanceBandSelection();
 
-    selection.makeup = 
+    selection.makeup =
       this.selectedBands
         .map((band: ResistanceBandIndividual) => band.color)
         .join(',');
-    
+
     selection.maxResistanceAmount = this.maxSelectedResistance;
 
     //Pretty sure the amounts have already been doubled if need be by this point
@@ -124,9 +116,26 @@ export class ResistanceBandSelectComponent implements OnInit {
     this.cancelClicked.emit();
   }
 
-  private validateForBilateralResistance(): boolean {
-    const bandsByColor: Dictionary<ResistanceBandIndividual[]> = groupBy(this.selectedBands, band => band.color);
-    return !some(bandsByColor, array => array.length % 2 !== 0);
+  public bandSelected(event: PickListMoveToTargetEvent): void {
+    this.validateForBilateralResistance();
+  }
+
+  public bandDeselected(event: PickListMoveToSourceEvent): void {
+    this.validateForBilateralResistance();
+  }
+
+  private validateForBilateralResistance(): void {
+    if (this.exerciseUsesBilateralResistance) {
+      if (this.selectedBands.length == 0) {
+        this.showBilateralValidationFailure = true;
+      }
+      else {
+        const bandsByColor: Dictionary<ResistanceBandIndividual[]> = groupBy(this.selectedBands, band => band.color);
+        this.showBilateralValidationFailure = some(bandsByColor, array => array.length % 2 !== 0);
+      }
+    }
+    else
+      console.log('nope!');
   }
 
 }
