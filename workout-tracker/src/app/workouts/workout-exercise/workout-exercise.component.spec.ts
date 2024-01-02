@@ -183,7 +183,8 @@ describe('WorkoutExerciseComponent', () => {
         bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd), 
         duration: new FormControl<number | null>(120), 
         involvesReps: new FormControl<boolean>(exercises[i].involvesReps, { nonNullable: true }),
-        side: new FormControl<number | null>(null)
+        side: new FormControl<number | null>(null),
+        usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true})
       });
 
       formArray.push(formGroup);

@@ -51,7 +51,8 @@ describe('ExercisePlanSuggestionsComponent', () => {
       resistanceMakeup: new FormControl<string | null>(null), 
       bandsEndToEnd: new FormControl<boolean | null>(null), 
       involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
-      recommendationReason: new FormControl<string | null>(null)
+      recommendationReason: new FormControl<string | null>(null),
+      usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true })
     });
 
     fixture.detectChanges();

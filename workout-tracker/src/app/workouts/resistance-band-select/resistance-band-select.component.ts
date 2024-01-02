@@ -134,8 +134,6 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
         this.showBilateralValidationFailure = some(bandsByColor, array => array.length % 2 !== 0);
       }
     }
-    else
-      console.log('nope!');
   }
 
 }
