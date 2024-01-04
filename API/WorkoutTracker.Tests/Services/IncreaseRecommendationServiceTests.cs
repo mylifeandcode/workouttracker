@@ -36,6 +36,7 @@ namespace WorkoutTracker.Tests.Services
                         It.IsAny<decimal>(), 
                         It.IsAny<sbyte>(), 
                         It.IsAny<bool>(), 
+                        It.IsAny<bool>(),
                         out _makeup))
                 .Returns(EXPECTED_NEW_RESISTANCE_AMOUNT);
 

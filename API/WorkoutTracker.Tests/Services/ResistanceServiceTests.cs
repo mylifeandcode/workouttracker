@@ -39,7 +39,7 @@ namespace WorkoutTracker.Tests.Services
         public void Should_Get_Decreased_Resistance_Amount_For_MachineWeight_Exercise_With_Multiplier_Of_Negative_1()
         {
             string makeup = null;
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, -1, false, out makeup);
+            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, -1, false, false, out makeup);
             Assert.AreEqual(20, result);
         }
 
@@ -47,7 +47,7 @@ namespace WorkoutTracker.Tests.Services
         public void Should_Get_Decreased_Resistance_Amount_For_MachineWeight_Exercise_With_Multiplier_Of_Negative_2()
         {
             string makeup = null;
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, -2, false, out makeup);
+            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, -2, false, false, out makeup);
             Assert.AreEqual(10, result);
         }
 
@@ -64,12 +64,14 @@ namespace WorkoutTracker.Tests.Services
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
+                        It.IsAny<bool>(),
                         It.IsAny<bool>()))
                 .Returns(new List<ResistanceBand> { new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 } });
 
             decimal currentResistanceAmount = 30;
             sbyte multiplier = -1;
             bool isDoubledBands = false;
+            bool usesBilateralResistance = false;
             decimal expectedMinimalAdjustment = -3;
             decimal expectedMaximumAdjustment = -13;
 
@@ -80,6 +82,7 @@ namespace WorkoutTracker.Tests.Services
                 currentResistanceAmount, 
                 multiplier, 
                 isDoubledBands, 
+                usesBilateralResistance,
                 out makeup);
             
             Assert.AreEqual(23, result);
@@ -89,7 +92,8 @@ namespace WorkoutTracker.Tests.Services
                     currentResistanceAmount, 
                     expectedMinimalAdjustment, 
                     expectedMaximumAdjustment, 
-                    isDoubledBands), 
+                    isDoubledBands,
+                    usesBilateralResistance), 
                     Times.Once);
         }
 
@@ -106,12 +110,14 @@ namespace WorkoutTracker.Tests.Services
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
+                        It.IsAny<bool>(),
                         It.IsAny<bool>()))
                 .Returns(new List<ResistanceBand> { new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 } });
 
             decimal currentResistanceAmount = 30;
             sbyte multiplier = -2;
             bool isDoubledBands = false;
+            bool usesBilateralResistance = false;
             decimal expectedMinimalAdjustment = -6;
             decimal expectedMaximumAdjustment = -16;
 
@@ -122,6 +128,7 @@ namespace WorkoutTracker.Tests.Services
                 currentResistanceAmount,
                 multiplier,
                 isDoubledBands,
+                usesBilateralResistance,
                 out makeup);
 
             Assert.AreEqual(23, result);
@@ -131,7 +138,8 @@ namespace WorkoutTracker.Tests.Services
                     currentResistanceAmount,
                     expectedMinimalAdjustment,
                     expectedMaximumAdjustment,
-                    isDoubledBands),
+                    isDoubledBands,
+                    usesBilateralResistance),
                     Times.Once);
         }
 
@@ -148,12 +156,14 @@ namespace WorkoutTracker.Tests.Services
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
+                        It.IsAny<bool>(),
                         It.IsAny<bool>()))
                 .Returns(new List<ResistanceBand> { new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 } });
 
             decimal currentResistanceAmount = 30;
             sbyte multiplier = -2;
             bool isDoubledBands = true;
+            bool usesBilateralResistance = false;
             decimal expectedMinimalAdjustment = -6;
             decimal expectedMaximumAdjustment = -16;
 
@@ -164,6 +174,7 @@ namespace WorkoutTracker.Tests.Services
                 currentResistanceAmount,
                 multiplier,
                 isDoubledBands,
+                usesBilateralResistance,
                 out makeup);
 
             Assert.AreEqual(46, result);
@@ -173,8 +184,86 @@ namespace WorkoutTracker.Tests.Services
                     currentResistanceAmount,
                     expectedMinimalAdjustment,
                     expectedMaximumAdjustment,
-                    isDoubledBands),
+                    isDoubledBands, 
+                    usesBilateralResistance),
                     Times.Once);
+        }
+
+        [TestMethod]
+        public void Should_Get_Increased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_1()
+        {
+            string makeup = null;
+            //Assumes a free weight increment of 5 lbs. Bilaterally, that should add up to 10.
+            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.FreeWeight, 30, 1, false, true, out makeup);
+            Assert.AreEqual(40, result);
+        }
+
+        [TestMethod]
+        public void Should_Get_Decreased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_Negative_1()
+        {
+            string makeup = null;
+            //Assumes a free weight increment of 5 lbs. Bilaterally, that should add up to 10.
+            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.FreeWeight, 30, -1, false, true, out makeup);
+            Assert.AreEqual(20, result);
+        }
+
+        [TestMethod]
+        public void Should_Get_Increased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_2()
+        {
+            string makeup = null;
+            //Assumes a free weight increment of 5 lbs. Bilaterally, that should add up to 10.
+            //Multiplier of 2 should give us a result of 50 (30 + (10 * 2)).
+            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.FreeWeight, 30, 2, false, true, out makeup);
+            Assert.AreEqual(50, result);
+        }
+
+        [TestMethod]
+        public void Should_Get_Decreased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_Negative_2()
+        {
+            string makeup = null;
+            //Assumes a free weight increment of 5 lbs. Bilaterally, that should add up to 10.
+            //Multiplier of -2 should give us a result of 10 (30 - (10 * 2)).
+            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.FreeWeight, 30, -2, false, true, out makeup);
+            Assert.AreEqual(10, result);
+        }
+
+        [TestMethod]
+        public void Should_Get_Increased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_1()
+        {
+            string makeup = null;
+            //Assumes a machine weight increment of 10 lbs. Bilaterally, that should add up to 20.
+            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, 1, false, true, out makeup);
+            Assert.AreEqual(50, result);
+        }
+
+        [TestMethod]
+        public void Should_Get_Decreased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_Negative_1()
+        {
+            string makeup = null;
+            //Assumes a machine weight increment of 10 lbs. Bilaterally, that should add up to 20.
+            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, -1, false, true, out makeup);
+            Assert.AreEqual(10, result);
+        }
+
+        [TestMethod]
+        public void Should_Get_Increased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_2()
+        {
+            string makeup = null;
+            //Assumes a machine weight increment of 10 lbs. Bilaterally, that should add up to 20.
+            //Multiplier of 2 should give us a result of 70 (30 + (20 * 2)).
+            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, 2, false, true, out makeup);
+            Assert.AreEqual(70, result);
+        }
+
+        [TestMethod]
+        public void Should_Get_Decreased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_Negative_2()
+        {
+            string makeup = null;
+            //Assumes a machine weight increment of 10 lbs. Bilaterally, that should add up to 20.
+            //Multiplier of -2 should give us a result of -10 (30 - (20 * 2)).
+            //Result should be the minimum resistance amount -- in this case, 10.
+            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, -2, false, true, out makeup);
+            Assert.AreEqual(10, result);
         }
     }
 }

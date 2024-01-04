@@ -96,12 +96,7 @@ namespace WorkoutTracker.Application.Exercises.Services
             */
 
             bool recommendingDecreasedResistance = 
-                formPerformance != Performance.Adequate 
-                || rangeOfMotionPerformance != Performance.Adequate
-                || AverageActualRepCountLessThanMinimum(
-                    executedExerciseAverages.AverageActualRepCount, 
-                    executedExerciseAverages.SetType, 
-                    userSettings);
+                SuggestDecreasedResistance(executedExerciseAverages, formPerformance, rangeOfMotionPerformance, userSettings);
 
             bool recommendingDecreasedTargetRepCount = repPerformance != Performance.Adequate;
 
@@ -133,7 +128,8 @@ namespace WorkoutTracker.Application.Exercises.Services
                         executedExerciseAverages.SetType,
                         executedExerciseAverages.AverageTargetRepCount,
                         repPerformance, 
-                        userSettings);
+                        userSettings,
+                        executedExerciseAverages.Exercise.ResistanceType);
             else
                 recommendation.Reps = executedExerciseAverages.LastExecutedSet.TargetRepCount;
 
@@ -165,6 +161,7 @@ namespace WorkoutTracker.Application.Exercises.Services
                     previousResistanceAmount,
                     multiplier,
                     !exercise.OneSided,
+                    exercise.UsesBilateralResistance,
                     out resistanceMakeup);
 
             _logger.LogInformation($"Decreased resistance amount for exercise {exercise.Name} is {resistanceAmount}.");
@@ -197,11 +194,12 @@ namespace WorkoutTracker.Application.Exercises.Services
             SetType setType,
             double targetRepsLastTime,
             Performance repPerformance, 
-            UserSettings userSettings)
+            UserSettings userSettings,
+            ResistanceType resistanceType)
         {
             var repSettings = userSettings.RepSettings.First(x => x.SetType == SetType.Repetition);
 
-            if (repPerformance == Performance.Awful)
+            if (repPerformance == Performance.Awful && resistanceType != ResistanceType.BodyWeight)
                 return repSettings.MinReps;
             else 
             {
@@ -244,6 +242,23 @@ namespace WorkoutTracker.Application.Exercises.Services
                 repReason = (repPerformance == Performance.Awful ? "Average rep count much less than target." : "Average rep count less than target.");
 
             return $"{formReason}{rangeOfMotionReason}{repReason}".TrimEnd();
+        }
+
+        private bool SuggestDecreasedResistance(
+            ExecutedExerciseAverages executedExerciseAverages,
+            Performance formPerformance,
+            Performance rangeOfMotionPerformance,
+            UserSettings userSettings)
+        {
+            if (executedExerciseAverages.Exercise.ResistanceType == ResistanceType.BodyWeight)
+                return false; //Can't decrease resistance if the resistance type is your body weight
+
+            return formPerformance != Performance.Adequate
+                || rangeOfMotionPerformance != Performance.Adequate
+                || AverageActualRepCountLessThanMinimum(
+                    executedExerciseAverages.AverageActualRepCount,
+                    executedExerciseAverages.SetType,
+                    userSettings);
         }
 
         #endregion Private Static Methods

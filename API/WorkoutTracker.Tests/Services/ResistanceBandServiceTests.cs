@@ -136,7 +136,7 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, 3, 5, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, 3, 5, false, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -154,7 +154,7 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, 20, 25, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, 20, 25, false, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -172,7 +172,7 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(40, 20, 30, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(40, 20, 30, false, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -190,7 +190,7 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(40, 20, 25, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(40, 20, 25, false, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -208,7 +208,7 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(120, 10, 15, true);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(120, 10, 15, true, false);
 
             //ASSERT
             Assert.AreEqual(3, result.Count);
@@ -227,8 +227,7 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
 
             //ACT
-            //var result = sut.CalculatePreviousAvailableResistanceAmount(30, 5, 10, false);
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(10, -5, -10, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(10, -5, -10, false, false);
 
             //ASSERT
             Assert.AreEqual(1, result.Count);
@@ -245,7 +244,7 @@ namespace WorkoutTracker.Tests.Services
 
             //ACT
             //var result = sut.CalculatePreviousAvailableResistanceAmount(30, 5, 10, false);
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, -3, -13, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, -3, -13, false, false);
 
             //ASSERT
             Assert.AreEqual(1, result.Count);
@@ -261,8 +260,7 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
 
             //ACT
-            //var result = sut.CalculatePreviousAvailableResistanceAmount(35, 5, 10, false);
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(35, -5, -10, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(35, -5, -10, false, false);
 
             //ASSERT
             Assert.AreEqual(1, result.Count);
@@ -279,7 +277,7 @@ namespace WorkoutTracker.Tests.Services
 
             //ACT
             //106 = Purple and Orange bands
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(106, -6, -16, true);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(106, -6, -16, true, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -296,8 +294,7 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
 
             //ACT
-            //var result = sut.CalculatePreviousAvailableResistanceAmount(80, 20, 25, false);
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(80, -20, -25, false);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(80, -20, -25, false, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -315,8 +312,7 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
 
             //ACT
-            //var result = sut.CalculatePreviousAvailableResistanceAmount(120, 20, 25, true);
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(120, -20, -25, true);
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(120, -20, -25, true, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);

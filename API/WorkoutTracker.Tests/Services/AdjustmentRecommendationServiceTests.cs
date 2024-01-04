@@ -41,7 +41,8 @@ namespace WorkoutTracker.Tests.Services
                     It.IsAny<ResistanceType>(),
                     It.IsAny<decimal>(),
                     It.IsAny<sbyte>(),
-                    It.IsAny<bool>(), 
+                    It.IsAny<bool>(),
+                    It.IsAny<bool>(),
                     out _makeup))
                 .Returns(13);
 
@@ -82,6 +83,7 @@ namespace WorkoutTracker.Tests.Services
                     executedExercise.ResistanceAmount, 
                     EXPECTED_MODIFIER, 
                     !executedExercise.Exercise.OneSided, 
+                    executedExercise.Exercise.UsesBilateralResistance,
                     out _makeup), Times.Once);
         }
 
@@ -118,6 +120,7 @@ namespace WorkoutTracker.Tests.Services
                     executedExercise.ResistanceAmount,
                     EXPECTED_MODIFIER,
                     !executedExercise.Exercise.OneSided,
+                    executedExercise.Exercise.UsesBilateralResistance,
                     out _makeup), Times.Once);
         }
 
@@ -154,6 +157,7 @@ namespace WorkoutTracker.Tests.Services
                     executedExercise.ResistanceAmount,
                     EXPECTED_MODIFIER,
                     !executedExercise.Exercise.OneSided,
+                    executedExercise.Exercise.UsesBilateralResistance,
                     out _makeup), Times.Once);
         }
 
@@ -190,6 +194,7 @@ namespace WorkoutTracker.Tests.Services
                     executedExercise.ResistanceAmount,
                     EXPECTED_MODIFIER,
                     !executedExercise.Exercise.OneSided,
+                    executedExercise.Exercise.UsesBilateralResistance,
                     out _makeup), Times.Once);
         }
 
@@ -226,6 +231,7 @@ namespace WorkoutTracker.Tests.Services
                     executedExercise.ResistanceAmount,
                     It.IsAny<sbyte>(),
                     !executedExercise.Exercise.OneSided,
+                    executedExercise.Exercise.UsesBilateralResistance,
                     out _makeup), Times.Never);
         }
 
@@ -262,6 +268,7 @@ namespace WorkoutTracker.Tests.Services
                     executedExercise.ResistanceAmount,
                     EXPECTED_MODIFIER,
                     !executedExercise.Exercise.OneSided,
+                    executedExercise.Exercise.UsesBilateralResistance,
                     out _makeup), Times.Once);
         }
 
@@ -298,6 +305,7 @@ namespace WorkoutTracker.Tests.Services
                     executedExercise.ResistanceAmount,
                     EXPECTED_MODIFIER,
                     !executedExercise.Exercise.OneSided,
+                    executedExercise.Exercise.UsesBilateralResistance,
                     out _makeup), Times.Once);
         }
     }

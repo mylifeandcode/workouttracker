@@ -89,6 +89,7 @@ namespace WorkoutTracker.Application.Exercises.Services
                 previousResistanceAmount, 
                 multiplier, 
                 !exercise.OneSided, 
+                exercise.UsesBilateralResistance,
                 out resistanceMakeup);
         }
 

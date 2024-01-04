@@ -7,6 +7,9 @@ using WorkoutTracker.Domain.Exercises;
 
 namespace WorkoutTracker.Application.Exercises.Services;
 
+/// <summary>
+/// A service for providing resistances
+/// </summary>
 public class ResistanceService : IResistanceService
 {
     private IResistanceBandService _resistanceBandService;
@@ -28,7 +31,25 @@ public class ResistanceService : IResistanceService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public decimal GetNewResistanceAmount(ResistanceType resistanceType, decimal previousResistance, sbyte multiplier, bool isDoubledBands, out string makeup)
+    /// <summary>
+    /// Provides a new resistance amount based on the resistance type, previous resistance amount, and a multiplier, among other factors.
+    /// A negative multiplier will provide a reduced resistance while a positive one will provide an increased resistance.
+    /// </summary>
+    /// <param name="resistanceType">The type of resistance being used</param>
+    /// <param name="previousResistance">The previous resistance amount</param>
+    /// <param name="multiplier">The multiplier to use of increasing or decreasing resistance</param>
+    /// <param name="isDoubledBands">For resistance bands, indicates that the bands are looped so that each end of the band is connected to the same handle</param>
+    /// <param name="isBilateralExercise">Specifies that the exercise requires to separate, equal resistances</param>
+    /// <param name="makeup">An output parameter for providing the makeup of resistance bands when that is the resistance type being used</param>
+    /// <returns></returns>
+    /// <exception cref="ApplicationException"></exception>
+    public decimal GetNewResistanceAmount(
+        ResistanceType resistanceType, 
+        decimal previousResistance, 
+        sbyte multiplier, 
+        bool isDoubledBands, 
+        bool isBilateralExercise, 
+        out string makeup)
     {
         switch (resistanceType)
         {
@@ -38,14 +59,14 @@ public class ResistanceService : IResistanceService
             
             case ResistanceType.FreeWeight:
                 makeup = null;
-                return GetCalculatedResistance(previousResistance, FREEWEIGHT_INCREMENT, multiplier);
+                return GetCalculatedResistance(previousResistance, FREEWEIGHT_INCREMENT, multiplier, isBilateralExercise);
             
             case ResistanceType.MachineWeight:
                 makeup = null;
-                return GetCalculatedResistance(previousResistance, MACHINEWEIGHT_INCREMENT, multiplier);
+                return GetCalculatedResistance(previousResistance, MACHINEWEIGHT_INCREMENT, multiplier, isBilateralExercise);
             
             case ResistanceType.ResistanceBand:
-                return GetCalculatedResistanceBandResistance(previousResistance, multiplier, isDoubledBands, out makeup);
+                return GetCalculatedResistanceBandResistance(previousResistance, multiplier, isDoubledBands, isBilateralExercise, out makeup);
             
             case ResistanceType.Other:
                 makeup = null;
@@ -58,15 +79,21 @@ public class ResistanceService : IResistanceService
 
     #region Private Methods
 
-    private static decimal GetCalculatedResistance(decimal previousResistance, byte increment, sbyte multiplier)
+    private static decimal GetCalculatedResistance(decimal previousResistance, byte increment, sbyte multiplier, bool isBilateralExercise)
     {
-        return previousResistance + (increment * multiplier);
+        //Our multiplier could result in a 0 or lesser value, so let's use the increment value as a default in that case.
+        //The increment represents the smallest possible resistance amount for the resistance type in question.
+        if (isBilateralExercise)
+            return Math.Max(previousResistance + ((increment * multiplier) * 2), increment);
+        else
+            return Math.Max(previousResistance + (increment * multiplier), increment);
     }
     
     private decimal GetCalculatedResistanceBandResistance(
         decimal previousResistanceAmount,
         sbyte multiplier,
         bool doubleBandResistanceAmounts,
+        bool isBilateralExercise,
         out string resistanceMakeup)
     {
         decimal lowestResistanceBandAmount = _resistanceBandService.GetLowestResistanceBand()?.MaxResistanceAmount ?? 0;
@@ -77,7 +104,8 @@ public class ResistanceService : IResistanceService
         
         var recommendedBands =
             _resistanceBandService.GetResistanceBandsForResistanceAmountRange(
-                previousResistanceAmount, minAdjustment, maxAdjustment, doubleBandResistanceAmounts);
+                previousResistanceAmount, minAdjustment, maxAdjustment, doubleBandResistanceAmounts, isBilateralExercise);
+
         if (recommendedBands.Any())
             resistanceMakeup = string.Join(',', recommendedBands.Select(band => band.Color));
         else

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WorkoutTracker.Application.Resistances.Interfaces;
@@ -62,7 +63,8 @@ namespace WorkoutTracker.Application.Resistances.Services
             decimal currentAmount,
             decimal minimalAdjustment,
             decimal preferredMaxAdjustment,
-            bool doubleBandResistanceAmounts)
+            bool doubleBandResistanceAmounts, 
+            bool exerciseUsesBilateralResistance)
         {
             //Based on the current resistance amount, assemble a list of bands which exceeds the amount 
             //by the next available increment.
@@ -82,30 +84,15 @@ namespace WorkoutTracker.Application.Resistances.Services
                 preferredMax = currentAmount + minimalAdjustment;
             }
 
-            List<ResistanceBand> selectedBands = new List<ResistanceBand>(5); //Set capacity to 5, just to be a little more optimal than default
-            bool amountOk = false;
-
             //The bands which are available for us to work with are the ones who don't have a max resistance higher than our preferred max amount.
             //We'll select these in descending order by resistance amount.
             List<ResistanceBand> availableBands = 
-                GetIndividualBands()
-                    .Where(x => (x.MaxResistanceAmount * multiplierForDoubledOverBands) <= preferredMax)
-                    .OrderByDescending(x => x.MaxResistanceAmount).ToList();
-            
-            selectedBands.Add(availableBands[0]); //Start by selecting the one with the most resistance
-            availableBands.RemoveAt(0); //The one we just selected is no longer available, so remove it from that list
+                GetAvailableBands(preferredMax, multiplierForDoubledOverBands, exerciseUsesBilateralResistance);
 
-            //Determine if just this first band has a resistance amount within the range we're looking for
-            amountOk = AmountIsInRange(
-                selectedBands[0].MaxResistanceAmount * multiplierForDoubledOverBands,
-                minimum,
-                preferredMax);
-
-            if (!amountOk)
-                AddBandsToSelectedListUntilResistanceCriteriaIsMet(
-                    ref selectedBands, ref availableBands, minimum, preferredMax, multiplierForDoubledOverBands, true);
-
-            return selectedBands; //Return what we've got -- it was the best we could do
+            if (exerciseUsesBilateralResistance)
+                return AllocateBandsForBilateralExercise(availableBands, multiplierForDoubledOverBands, minimum, preferredMax);
+            else
+                return AllocateBands(availableBands, multiplierForDoubledOverBands, minimum, preferredMax);
         }
         
         /// <summary>
@@ -131,7 +118,73 @@ namespace WorkoutTracker.Application.Resistances.Services
         }
 
         #region Private Methods
-        
+
+        private List<ResistanceBand> GetAvailableBands(
+            decimal preferredMax, 
+            byte multiplierForDoubledOverBands,
+            bool forBilateralExercise)
+        {
+            //The bands which are available for us to work with are the ones who don't have a max resistance higher than our preferred max amount.
+            //We'll select these in descending order by resistance amount.
+            var bands = GetIndividualBands();
+            var query = bands.Where(x => (x.MaxResistanceAmount * multiplierForDoubledOverBands) <= preferredMax);
+
+            //For bilateral, we can only use the bands where we have an even number available
+            if (forBilateralExercise) query = query.Where(x => x.NumberAvailable % 2 == 0);
+            return query.OrderByDescending(x => x.MaxResistanceAmount).ToList();
+        }
+
+        private static List<ResistanceBand> AllocateBands(
+            List<ResistanceBand> availableBands, 
+            byte multiplierForDoubledOverBands, 
+            decimal minimum, 
+            decimal preferredMax)
+        {
+            bool amountOk = false;
+
+            List<ResistanceBand> selectedBands = new List<ResistanceBand>(5); //Set capacity to 5, just to be a little more optimal than default
+            selectedBands.Add(availableBands[0]); //Start by selecting the one with the most resistance
+            availableBands.RemoveAt(0); //The one we just selected is no longer available, so remove it from that list
+
+            //Determine if just this first band has a resistance amount within the range we're looking for
+            amountOk = AmountIsInRange(
+                selectedBands[0].MaxResistanceAmount * multiplierForDoubledOverBands,
+                minimum,
+                preferredMax);
+
+            if (!amountOk)
+                AddBandsToSelectedListUntilResistanceCriteriaIsMet(
+                    ref selectedBands, ref availableBands, minimum, preferredMax, multiplierForDoubledOverBands, true);
+
+            return selectedBands; //Return what we've got -- it was the best we could do
+        }
+
+        private static List<ResistanceBand> AllocateBandsForBilateralExercise(
+            List<ResistanceBand> availableBands,
+            byte multiplierForDoubledOverBands,
+            decimal minimum,
+            decimal preferredMax)
+        {
+            bool amountOk = false;
+            List<ResistanceBand> selectedBands = new List<ResistanceBand>(6); //Set capacity to 6, just to be a little more optimal than default
+            /*
+            selectedBands.Add(availableBands[0]); //Start by selecting the one with the most resistance
+            availableBands.RemoveAt(0); //The one we just selected is no longer available, so remove it from that list
+
+            //Determine if just this first band has a resistance amount within the range we're looking for
+            amountOk = AmountIsInRange(
+                selectedBands[0].MaxResistanceAmount * multiplierForDoubledOverBands,
+                minimum,
+                preferredMax);
+
+            if (!amountOk)
+                AddBandsToSelectedListUntilResistanceCriteriaIsMet(
+                    ref selectedBands, ref availableBands, minimum, preferredMax, multiplierForDoubledOverBands, true);
+            */
+            return selectedBands; //Return what we've got -- it was the best we could do
+        }
+
+
         private static bool AddBandsToSelectedListUntilResistanceCriteriaIsMet(
             ref List<ResistanceBand> selectedBands,
             ref List<ResistanceBand> availableBands,
@@ -176,7 +229,7 @@ namespace WorkoutTracker.Application.Resistances.Services
         {
             return actual >= min && actual <= max;
         }
-        
+
         #endregion Private Methods
     }
 }
