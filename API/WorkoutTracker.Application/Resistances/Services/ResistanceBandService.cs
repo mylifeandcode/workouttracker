@@ -202,13 +202,6 @@ namespace WorkoutTracker.Application.Resistances.Services
 
             while (!amountOk && availableBands.Any())
             {
-                /*
-                if ((availableBands[0].MaxResistanceAmount * multiplierForDoubledOverBands) + (selectedBands.Sum(band => band.MaxResistanceAmount) * multiplierForDoubledOverBands) <= maxResistance)
-                {
-                    selectedBands.Add(availableBands[0]);
-                    amountOk = AmountIsInRange(selectedBands.Sum(band => band.MaxResistanceAmount) * multiplierForDoubledOverBands, minResistance, maxResistance);
-                }
-                */
                 var bandToEvaluate = availableBands[0];
                 var bandToEvaluateMaxResistance = bandToEvaluate.MaxResistanceAmount * (multiplierForDoubledOverBands);
                 var totalResistanceOfSelectedBands = (selectedBands.Sum(band => band.MaxResistanceAmount) * multiplierForDoubledOverBands);
