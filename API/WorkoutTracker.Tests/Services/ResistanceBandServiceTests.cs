@@ -353,6 +353,34 @@ namespace WorkoutTracker.Tests.Services
             _repo.Verify(x => x.Get(), Times.Once);
         }
 
+        [TestMethod]
+        public void Should_Return_No_Bands_For_Bilateral_Exercise_When_None_Meet_Criteria()
+        {
+            //ARRANGE
+
+
+            //ACT
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(80, 4, 10, true, true);
+
+            //ASSERT
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public void Should_Return_Bands_For_Bilateral_Exercise()
+        {
+            //ARRANGE
+
+
+            //ACT
+            var result = _sut.GetResistanceBandsForResistanceAmountRange(200, 10, 20, true, true);
+
+            //ASSERT
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, result.Count);
+        }
+
         private void SetupRepoMock()
         {
             _repo = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);

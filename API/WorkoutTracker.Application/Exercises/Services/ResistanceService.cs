@@ -99,8 +99,9 @@ public class ResistanceService : IResistanceService
         decimal lowestResistanceBandAmount = _resistanceBandService.GetLowestResistanceBand()?.MaxResistanceAmount ?? 0;
         
         //We can be increasing or decreasing, so we'll use the term "adjustment"
-        decimal minAdjustment = lowestResistanceBandAmount * multiplier;
-        decimal maxAdjustment = minAdjustment + (multiplier > 0 ? 10 : -10);
+        decimal minAdjustment = lowestResistanceBandAmount * (isBilateralExercise ? 2 : 1)  * multiplier;
+        decimal maxAdjustment = 
+            minAdjustment + (multiplier > 0 ? (isBilateralExercise ? 20 : 10) : (isBilateralExercise ? -20 : -10));
         
         var recommendedBands =
             _resistanceBandService.GetResistanceBandsForResistanceAmountRange(

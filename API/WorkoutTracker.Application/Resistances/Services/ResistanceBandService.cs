@@ -39,7 +39,7 @@ namespace WorkoutTracker.Application.Resistances.Services
             {
                 for (short x = 0; x < band.NumberAvailable; x++)
                 {
-                    output.Add(new ResistanceBand { Color = band.Color, MaxResistanceAmount = band.MaxResistanceAmount });
+                    output.Add(new ResistanceBand { Color = band.Color, MaxResistanceAmount = band.MaxResistanceAmount, NumberAvailable = band.NumberAvailable });
                 }
             });
 
@@ -129,9 +129,25 @@ namespace WorkoutTracker.Application.Resistances.Services
             var bands = GetIndividualBands();
             var query = bands.Where(x => (x.MaxResistanceAmount * multiplierForDoubledOverBands) <= preferredMax);
 
-            //For bilateral, we can only use the bands where we have an even number available
-            if (forBilateralExercise) query = query.Where(x => x.NumberAvailable % 2 == 0);
-            return query.OrderByDescending(x => x.MaxResistanceAmount).ToList();
+            //For bilateral, we can only use the bands where we have more than one of the same resistance amount.
+            //If we have an odd amount greater than one, take an equal amount of what we have.
+            //Example: If we have 3 Onyx 40 lb bands, take 2 of them.
+            //if (forBilateralExercise) query = query.Where(x => x.NumberAvailable % 2 == 0);
+            if (forBilateralExercise)
+            {
+                var bandsWithOddNumber = 
+                    bands
+                        .Where(x => x.NumberAvailable > 1 && x.NumberAvailable % 2 != 0)
+                        .Distinct(new ResistanceBandColorComparer())
+                        .ToList();
+
+                var bandsToReturn = query.ToList();
+                bandsWithOddNumber.ForEach(band => bandsToReturn.Remove(band));
+                var revisedQuery = bandsToReturn.Where(x => x.NumberAvailable >= 2);
+                return revisedQuery.OrderByDescending(x => x.MaxResistanceAmount).ToList();
+            }
+            else
+                return query.OrderByDescending(x => x.MaxResistanceAmount).ToList();
         }
 
         private static List<ResistanceBand> AllocateBands(
@@ -165,8 +181,30 @@ namespace WorkoutTracker.Application.Resistances.Services
             decimal minimum,
             decimal preferredMax)
         {
+            if (availableBands.Count % 2 != 0)
+                throw new ApplicationException("Invalid number of bands for bilateral allottment.");
+
             bool amountOk = false;
             List<ResistanceBand> selectedBands = new List<ResistanceBand>(6); //Set capacity to 6, just to be a little more optimal than default
+
+            bool bandsLeft = true;
+
+            int x = 0;
+            while (bandsLeft)
+            {
+                var bandsToCheck = availableBands.Skip(x).Take(2).ToArray();
+                amountOk = AmountIsInRange(
+                    (bandsToCheck.Sum(x => x.MaxResistanceAmount) * multiplierForDoubledOverBands),
+                    minimum,
+                    preferredMax);
+
+                if (amountOk)
+                    selectedBands.AddRange(bandsToCheck);
+
+                x += 2;
+                bandsLeft = x < availableBands.Count;
+            }
+            
             /*
             selectedBands.Add(availableBands[0]); //Start by selecting the one with the most resistance
             availableBands.RemoveAt(0); //The one we just selected is no longer available, so remove it from that list
@@ -218,11 +256,52 @@ namespace WorkoutTracker.Application.Resistances.Services
             return amountOk;
         }
 
+        private static bool AddBandsToSelectedListUntilResistanceCriteriaIsMetForBilateral(
+            ref List<ResistanceBand> selectedBands,
+            ref List<ResistanceBand> availableBands,
+            decimal minResistance,
+            decimal maxResistance,
+            byte multiplierForDoubledOverBands)
+        {
+            bool amountOk = false;
+
+            while (!amountOk && availableBands.Any())
+            {
+                var bandToEvaluate = availableBands[0];
+                var bandToEvaluateMaxResistance = bandToEvaluate.MaxResistanceAmount * (multiplierForDoubledOverBands);
+                var totalResistanceOfSelectedBands = (selectedBands.Sum(band => band.MaxResistanceAmount) * multiplierForDoubledOverBands);
+
+                if (bandToEvaluateMaxResistance + totalResistanceOfSelectedBands <= maxResistance)
+                {
+                    selectedBands.Add(bandToEvaluate);
+                    amountOk = AmountIsInRange(selectedBands.Sum(band => band.MaxResistanceAmount) * multiplierForDoubledOverBands, minResistance, maxResistance);
+                }
+
+                availableBands.RemoveAt(0);
+            }
+
+            return amountOk;
+        }
+
         private static bool AmountIsInRange(decimal actual, decimal min, decimal max)
         {
             return actual >= min && actual <= max;
         }
 
         #endregion Private Methods
+
+        private class ResistanceBandColorComparer : IEqualityComparer<ResistanceBand>
+        {
+            public bool Equals(ResistanceBand x, ResistanceBand y)
+            {
+                return x.Color == y.Color;
+            }
+
+            public int GetHashCode(ResistanceBand obj)
+            {
+                return obj.Color.GetHashCode();
+            }
+        }
+
     }
 }
