@@ -193,32 +193,31 @@ namespace WorkoutTracker.Application.Resistances.Services
             while (bandsLeft)
             {
                 var bandsToCheck = availableBands.Skip(x).Take(2).ToArray();
-                amountOk = AmountIsInRange(
-                    (bandsToCheck.Sum(x => x.MaxResistanceAmount) * multiplierForDoubledOverBands),
-                    minimum,
-                    preferredMax);
-
-                if (amountOk)
+                var bandsToCheckSum = (bandsToCheck.Sum(x => x.MaxResistanceAmount) * multiplierForDoubledOverBands);
+                var selectedBandsSum = (selectedBands.Sum(x => x.MaxResistanceAmount) * multiplierForDoubledOverBands);
+                if (bandsToCheckSum > preferredMax || (bandsToCheckSum + selectedBandsSum) > preferredMax)
+                {
+                    x += 2;
+                    bandsLeft = x < availableBands.Count;
+                    continue;
+                }
+                else
+                {
                     selectedBands.AddRange(bandsToCheck);
+                }
 
-                x += 2;
-                bandsLeft = x < availableBands.Count;
+                //if (AmountIsInRange(bandsToCheckSum, minimum, preferredMax))
+                if (AmountIsInRange((selectedBands.Sum(x => x.MaxResistanceAmount) * multiplierForDoubledOverBands), minimum, preferredMax))
+                {
+                    break; //TODO: Keep going? Maybe we can add more and still be in range?
+                }
+                else
+                {
+                    x += 2;
+                    bandsLeft = x < availableBands.Count;
+                }
             }
-            
-            /*
-            selectedBands.Add(availableBands[0]); //Start by selecting the one with the most resistance
-            availableBands.RemoveAt(0); //The one we just selected is no longer available, so remove it from that list
 
-            //Determine if just this first band has a resistance amount within the range we're looking for
-            amountOk = AmountIsInRange(
-                selectedBands[0].MaxResistanceAmount * multiplierForDoubledOverBands,
-                minimum,
-                preferredMax);
-
-            if (!amountOk)
-                AddBandsToSelectedListUntilResistanceCriteriaIsMet(
-                    ref selectedBands, ref availableBands, minimum, preferredMax, multiplierForDoubledOverBands, true);
-            */
             return selectedBands; //Return what we've got -- it was the best we could do
         }
 
@@ -237,33 +236,6 @@ namespace WorkoutTracker.Application.Resistances.Services
                 availableBands = availableBands.OrderByDescending(band => band.MaxResistanceAmount).ToList();
             else            
                 availableBands = availableBands.OrderBy(band => band.MaxResistanceAmount).ToList();
-
-            while (!amountOk && availableBands.Any())
-            {
-                var bandToEvaluate = availableBands[0];
-                var bandToEvaluateMaxResistance = bandToEvaluate.MaxResistanceAmount * (multiplierForDoubledOverBands);
-                var totalResistanceOfSelectedBands = (selectedBands.Sum(band => band.MaxResistanceAmount) * multiplierForDoubledOverBands);
-
-                if (bandToEvaluateMaxResistance + totalResistanceOfSelectedBands <= maxResistance)
-                {
-                    selectedBands.Add(bandToEvaluate);
-                    amountOk = AmountIsInRange(selectedBands.Sum(band => band.MaxResistanceAmount) * multiplierForDoubledOverBands, minResistance, maxResistance);
-                }
-
-                availableBands.RemoveAt(0);
-            }
-
-            return amountOk;
-        }
-
-        private static bool AddBandsToSelectedListUntilResistanceCriteriaIsMetForBilateral(
-            ref List<ResistanceBand> selectedBands,
-            ref List<ResistanceBand> availableBands,
-            decimal minResistance,
-            decimal maxResistance,
-            byte multiplierForDoubledOverBands)
-        {
-            bool amountOk = false;
 
             while (!amountOk && availableBands.Any())
             {
