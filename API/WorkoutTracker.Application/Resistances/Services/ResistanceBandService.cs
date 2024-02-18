@@ -184,7 +184,6 @@ namespace WorkoutTracker.Application.Resistances.Services
             if (availableBands.Count % 2 != 0)
                 throw new ApplicationException("Invalid number of bands for bilateral allottment.");
 
-            bool amountOk = false;
             List<ResistanceBand> selectedBands = new List<ResistanceBand>(6); //Set capacity to 6, just to be a little more optimal than default
 
             bool bandsLeft = true;
