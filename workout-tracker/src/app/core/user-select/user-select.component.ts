@@ -22,7 +22,8 @@ export class UserSelectComponent {
     this._userSvc.all$
       .pipe(
         catchError((err: any, caught: Observable<User[]>) => {
-          this.errorMsg = (err.error ? err.error : "An error has occurred. Please contact an administrator.");
+          console.log("ERROR: ", err);
+          this.errorMsg = (err.message ? err.message : "An error has occurred. Please contact an administrator.");
           return of(new Array<User>());
         })        
       );

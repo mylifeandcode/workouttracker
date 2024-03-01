@@ -7,6 +7,11 @@
   padding-left: 0; 
   padding-right: 0;
   flex: 0 0;
+  border-left-style: solid;
+  //border-right-style: solid;
+  border-top-style: solid;
+  border-bottom-style: solid;
+  border-color: $workout-color-four;
 }
 
 .next-time {
@@ -15,7 +20,9 @@
 }
 
 .section-header {
-  background-image: url('../../../assets/images/blue-steel.png');
+  //background-image: url('../../../assets/images/blue-steel.png');
+  //border-style: solid;
+  //border-color: $workout-color-four;
   padding-bottom: 8px;
 }
 

@@ -8,11 +8,6 @@
         <p-progressSpinner></p-progressSpinner>
       </div>
 
-      <div *ngIf="errorMsg" class="offset-2 col-8 text-center">
-        <br />
-        <h4>Oops! An error occurred: {{errorMsg}}</h4>
-      </div>
-
     </div>
   </div>
 </ng-template>
@@ -24,6 +19,11 @@
     <h3 *ngIf="loggingIn" class="text-center mx-auto greeting-text">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
   </div>
 
+  <div *ngIf="errorMsg" class="offset-2 col-8 text-center">
+    <br />
+    <h4>Oops! An error occurred: {{errorMsg}}</h4>
+  </div>
+
   <ng-container *ngIf="!loggingIn">
     <div class="row offset-md-4 col-md-4 card centeredText user-select">
       <div class="list-group">
@@ -33,14 +33,14 @@
       </div>
     </div>
 
-    <div *ngIf="users && users.length == 0" class="row offset-md-4 col-md-4 centeredText gimmeSomeSpace greeting-text">
+    <div *ngIf="users && users.length == 0 && errorMsg == null" class="row offset-md-4 col-md-4 centeredText gimmeSomeSpace greeting-text">
       <p>No users have been created yet. Create one with the button below.</p>
       <p>
         <strong>This user will be created as an Administrator.</strong> Administrators have permissions to manage the system.
       </p>
     </div>
 
-    <div class="row offset-md-4 col-md-4 centeredText">
+    <div *ngIf="!errorMsg" class="row offset-md-4 col-md-4 centeredText">
       <button type="button" class="btn btn-info btn-fullWidth headroom" routerLink='/new-user'>Add User</button>
     </div>
   </ng-container>
