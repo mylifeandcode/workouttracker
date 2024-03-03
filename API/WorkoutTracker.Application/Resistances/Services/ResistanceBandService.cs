@@ -69,6 +69,13 @@ namespace WorkoutTracker.Application.Resistances.Services
             //Based on the current resistance amount, assemble a list of bands which exceeds the amount 
             //by the next available increment.
 
+            _logger.LogInformation(
+                $"Getting resisteance amount: Current = {currentAmount}, " +
+                $"Min Adjustment = {minimalAdjustment}, " +
+                $"Preferred Max = {preferredMaxAdjustment}, " +
+                $"Double Amounts = {doubleBandResistanceAmounts}, " +
+                $"Uses Bilateral = {exerciseUsesBilateralResistance}");
+
             byte multiplierForDoubledOverBands = doubleBandResistanceAmounts ? (byte)2 : (byte)1; //Crazy that I need to cast these!
             decimal minimum;
             decimal preferredMax;
