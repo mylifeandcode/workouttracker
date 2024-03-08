@@ -97,7 +97,7 @@ namespace WorkoutTracker.Application.Resistances.Services
                 GetAvailableBands(preferredMax, multiplierForDoubledOverBands, exerciseUsesBilateralResistance);
 
             if (exerciseUsesBilateralResistance)
-                return AllocateBandsForBilateralExercise(availableBands, multiplierForDoubledOverBands, minimum, preferredMax);
+                return AllocateBandsForBilateralExercise(availableBands, multiplierForDoubledOverBands, minimum, preferredMax, _logger);
             else
                 return AllocateBands(availableBands, multiplierForDoubledOverBands, minimum, preferredMax);
         }
@@ -186,8 +186,11 @@ namespace WorkoutTracker.Application.Resistances.Services
             List<ResistanceBand> availableBands,
             byte multiplierForDoubledOverBands,
             decimal minimum,
-            decimal preferredMax)
+            decimal preferredMax, 
+            ILogger logger)
         {
+            logger.LogDebug($"Allocating bands for bilateral exercise. Band Count: {availableBands.Count}");
+
             if (availableBands.Count % 2 != 0)
                 throw new ApplicationException("Invalid number of bands for bilateral allottment.");
 
@@ -199,16 +202,21 @@ namespace WorkoutTracker.Application.Resistances.Services
             while (bandsLeft)
             {
                 var bandsToCheck = availableBands.Skip(x).Take(2).ToArray();
+
+                logger.LogDebug($"Checking {bandsToCheck[0].Color} bands x2 for bilateral resistance");
+
                 var bandsToCheckSum = (bandsToCheck.Sum(x => x.MaxResistanceAmount) * multiplierForDoubledOverBands);
                 var selectedBandsSum = (selectedBands.Sum(x => x.MaxResistanceAmount) * multiplierForDoubledOverBands);
                 if (bandsToCheckSum > preferredMax || (bandsToCheckSum + selectedBandsSum) > preferredMax)
                 {
+                    logger.LogDebug($"Skipping {bandsToCheck[0].Color} bands x2 for bilateral resistance");
                     x += 2;
                     bandsLeft = x < availableBands.Count;
                     continue;
                 }
                 else
                 {
+                    logger.LogDebug($"Adding {bandsToCheck[0].Color} bands x2 for bilateral resistance");
                     selectedBands.AddRange(bandsToCheck);
                 }
 
@@ -221,6 +229,7 @@ namespace WorkoutTracker.Application.Resistances.Services
                 {
                     x += 2;
                     bandsLeft = x < availableBands.Count;
+                    if (!bandsLeft) logger.LogDebug($"No bands left to check for bilateral resistance");
                 }
             }
 

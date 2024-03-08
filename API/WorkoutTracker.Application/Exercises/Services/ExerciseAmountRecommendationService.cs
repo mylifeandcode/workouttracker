@@ -71,14 +71,14 @@ namespace WorkoutTracker.Application.Exercises.Services
                 if (UserHasPerformedExerciseRecently(lastSetsOfThisExercise))
                 {
                     //Adjust weights or reps accordingly
-                    _logger.LogInformation($"Getting performance-based recommendation for {exercise.Name}.");
+                    _logger.LogInformation($"Getting performance-based recommendation for {exercise.Name}. Uses bilateral resistance = {exercise.UsesBilateralResistance}.");
                     return GetPerformanceBasedRecommendation(lastSetsOfThisExercise, userSettings);
                 }
                 else
                 {
                     //Recommend same as last time, or lower weights or rep if they 
                     //did poorly
-                    _logger.LogInformation($"Getting not-performed-recently recommendation for {exercise.Name}.");
+                    _logger.LogInformation($"Getting not-performed-recently recommendation for {exercise.Name}. Uses bilateral resistance = {exercise.UsesBilateralResistance}.");
                     return GetRecommendationForExerciseNotPerformedRecently(lastSetsOfThisExercise, userSettings);
                 }
             }
