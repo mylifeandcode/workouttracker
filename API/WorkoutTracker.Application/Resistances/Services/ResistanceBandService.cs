@@ -189,7 +189,11 @@ namespace WorkoutTracker.Application.Resistances.Services
             decimal preferredMax, 
             ILogger logger)
         {
-            logger.LogDebug($"Allocating bands for bilateral exercise. Band Count: {availableBands.Count}");
+            logger.LogDebug($"Allocating bands for bilateral exercise. " +
+                $"Band Count: {availableBands.Count}, " +
+                $"multiplierForDoubledOverBands = {multiplierForDoubledOverBands}, " +
+                $"minimum = {minimum}, " +
+                $"preferredMax = {preferredMax}");
 
             if (availableBands.Count % 2 != 0)
                 throw new ApplicationException("Invalid number of bands for bilateral allottment.");
