@@ -1,7 +1,6 @@
-import { AfterContentInit, AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { UserService } from '../../core/services/user/user.service';
 import { User } from '../../core/models/user';
-import { finalize, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -9,18 +8,14 @@ import { Observable } from 'rxjs';
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss']
 })
-export class UserListComponent implements OnInit, AfterViewInit, AfterContentInit {
+export class UserListComponent implements OnInit, AfterViewInit {
 
   public busy: boolean = true;
   public busyMsg: string = '';
-  //public users: User[] | null = null;
   public users$: Observable<User[]> = this._userSvc.all$;
   public errorMsg: string | undefined;
 
   constructor(private _userSvc: UserService) { } //TODO: We have a caching issue! Fix it!
-  ngAfterContentInit(): void {
-    //this.loadUsers();
-  }
   
   public ngAfterViewInit(): void {
   }
