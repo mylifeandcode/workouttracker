@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, AbstractControl, FormControl, FormGroup, FormArray, FormBuilder } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { Workout } from 'app/workouts/models/workout';
@@ -54,7 +54,8 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   constructor(
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
-    private _workoutService: WorkoutService) {
+    private _workoutService: WorkoutService, 
+    private _router: Router) {
     super();
     this.workoutForm = this.createForm();
   }
@@ -181,7 +182,9 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       .subscribe((addedWorkout: Workout) => {
         //this.workout = value;
         this.workoutId = addedWorkout.id;
+        this._workout = addedWorkout; //TODO: Refactor! We have redundant variables!
         this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
+        this._router.navigate([`workouts/edit/${this.workoutId}`]);
       },
         (error: any) => {
           this.errorMsg = error.message;

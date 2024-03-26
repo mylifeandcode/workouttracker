@@ -352,6 +352,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           this.workoutCompleted = true;
           this.endDateTime = this._executedWorkout.endDateTime;
           this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Workout completed!', life: 5000 });
+          this.workoutForm.markAsPristine();
         }
         else {
           if (!this.startDateTime) this.startDateTime = this._executedWorkout.startDateTime;

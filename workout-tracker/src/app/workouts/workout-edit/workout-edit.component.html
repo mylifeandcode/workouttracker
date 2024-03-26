@@ -42,6 +42,8 @@
             https://jasonwatmore.com/post/2019/06/25/angular-8-dynamic-reactive-forms-example
             -->
 
+      <!-- TODO: Replace exercise edit code below with a child component -->
+      <!-- TODO: Update exercise edit code with typed-forms syntax -->
       <div *ngFor="let exercise of exercisesArray.controls; let i = index" class="row exerciseRow"
         [formGroup]="exercise">
 
@@ -50,7 +52,7 @@
           <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
         </div>
         <div class="col-2">
-          # of sets: <input type="number" formControlName="numberOfSets" class="number-of-sets" />
+          # of sets: <input type="number" wtSelectOnFocus formControlName="numberOfSets" class="number-of-sets" />
           <span *ngIf="exercise.controls['numberOfSets'].invalid" class="error-text"><br />Must be > 0</span>
         </div>
         <div class="col-2">
