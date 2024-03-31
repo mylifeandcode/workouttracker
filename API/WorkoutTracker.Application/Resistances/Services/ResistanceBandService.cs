@@ -25,6 +25,11 @@ namespace WorkoutTracker.Application.Resistances.Services
             return Update(resistanceBand, true);
         }
 
+        public IEnumerable<ResistanceBand> GetAllWithoutTracking() 
+        {
+            return _repo.GetWithoutTracking();
+        }
+
         /// <summary>
         /// Gets a list of each individual resistance band in inventory. For example, if there are 2 red bands and 3 orange bands, this will
         /// return 5 objects.

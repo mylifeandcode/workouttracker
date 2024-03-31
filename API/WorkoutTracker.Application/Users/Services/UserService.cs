@@ -68,6 +68,11 @@ namespace WorkoutTracker.Application.Users.Services
             return _repo.Get().Where(x => x.Name.ToUpper() != "SYSTEM");
         }
 
+        public IEnumerable<User> GetAllWithoutTracking() 
+        {
+            return _repo.GetWithoutTracking().Where(x => x.Name.ToUpper() != "SYSTEM");
+        }
+
         public void ChangePassword(int userId, string currentPassword, string newPassword)
         {
             try

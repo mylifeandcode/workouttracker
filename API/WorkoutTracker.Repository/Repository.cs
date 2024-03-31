@@ -28,9 +28,19 @@ namespace WorkoutTracker.Repository
             return _dbSet.AsQueryable();
         }
 
+        public IQueryable<TEntity> GetWithoutTracking()
+        {
+            return _dbSet.AsNoTracking().AsQueryable();
+        }
+
         public TEntity Get(int id)
         {
             return _dbSet.Find(id);
+        }
+
+        public TEntity GetWithoutTracking(int id)
+        { 
+            return _dbSet.AsNoTracking().FirstOrDefault(x => x.Id == id);
         }
 
         public TEntity Add(TEntity entity, bool saveChanges = false)

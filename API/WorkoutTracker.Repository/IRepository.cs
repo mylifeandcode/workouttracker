@@ -13,7 +13,9 @@ namespace WorkoutTracker.Repository
     public interface IRepository<TEntity>
     {
         IQueryable<TEntity> Get();
+        IQueryable<TEntity> GetWithoutTracking();
         TEntity Get(int id);
+        TEntity GetWithoutTracking(int id);
         TEntity Add(TEntity entity, bool saveChanges = false);
         //Task<TEntity> AddAsync(TEntity entity, bool saveChanges = false);
         TEntity Update(TEntity entity, bool saveChanges = false);

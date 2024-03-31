@@ -59,7 +59,7 @@ namespace WorkoutTracker.Tests.Services
                     new TargetArea() 
                 }.AsQueryable();            
             var repo = new Mock<IRepository<TargetArea>>(MockBehavior.Strict);
-            repo.Setup(x => x.Get()).Returns(allTargetAreas);
+            repo.Setup(x => x.GetWithoutTracking()).Returns(allTargetAreas);
             var sut = new TargetAreaService(repo.Object, _loggerMock.Object);
 
             //ACT
@@ -67,7 +67,7 @@ namespace WorkoutTracker.Tests.Services
 
             //ASSERT
             Assert.AreEqual(allTargetAreas, results);
-            repo.Verify(x => x.Get(), Times.Once);
+            repo.Verify(x => x.GetWithoutTracking(), Times.Once);
         }
 
         [TestMethod]
@@ -84,7 +84,7 @@ namespace WorkoutTracker.Tests.Services
                     new TargetArea(){ Id = 5 }
                 }.AsQueryable();
             var repo = new Mock<IRepository<TargetArea>>(MockBehavior.Strict);
-            repo.Setup(x => x.Get()).Returns(allTargetAreas);
+            repo.Setup(x => x.GetWithoutTracking()).Returns(allTargetAreas);
             var sut = new TargetAreaService(repo.Object, _loggerMock.Object);
             var idsToGet = new int[] { 2, 3, 5 };
 
@@ -98,7 +98,7 @@ namespace WorkoutTracker.Tests.Services
             {
                 Assert.IsNotNull(results.First(y => y.Id == idsToGet[x]));
             }
-            repo.Verify(x => x.Get(), Times.Once);
+            repo.Verify(x => x.GetWithoutTracking(), Times.Once);
         }
     }
 }

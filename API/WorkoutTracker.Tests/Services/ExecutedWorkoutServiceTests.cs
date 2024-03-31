@@ -110,7 +110,7 @@ namespace WorkoutTracker.Tests.Services
             );
 
             var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
-            workoutRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(workout);
+            workoutRepo.Setup(x => x.GetWithoutTracking(It.IsAny<int>())).Returns(workout);
             
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
@@ -225,7 +225,7 @@ namespace WorkoutTracker.Tests.Services
 
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
-                .Setup(x => x.Get())
+                .Setup(x => x.GetWithoutTracking())
                 .Returns(executedWorkouts.AsQueryable());
 
             var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);

@@ -90,7 +90,7 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         public IEnumerable<ExecutedWorkout> GetFilteredSubset(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst)
         {
-            IQueryable<ExecutedWorkout> query = _repo.Get();
+            IQueryable<ExecutedWorkout> query = _repo.GetWithoutTracking();
 
             if (filter != null)
                 ApplyQueryFilters(ref query, filter);
@@ -106,7 +106,7 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         public IEnumerable<ExecutedWorkout> GetRecent(int numberOfMostRecent)
         {
-            IQueryable<ExecutedWorkout> query = _repo.Get();
+            IQueryable<ExecutedWorkout> query = _repo.GetWithoutTracking();
             var output = query
                 .Where(workout => workout.StartDateTime.HasValue)
                 .OrderByDescending(workout => workout.StartDateTime.Value)
@@ -117,7 +117,7 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         public ExecutedWorkout GetLatest(int workoutId)
         {
-            return _repo.Get()
+            return _repo.GetWithoutTracking()
                 .Where(x => x.StartDateTime.HasValue && x.EndDateTime.HasValue)
                 .OrderByDescending(x => x.Id)
                 .FirstOrDefault(x => x.WorkoutId == workoutId);
@@ -125,7 +125,7 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         public int GetTotalCount(ExecutedWorkoutFilter filter)
         {
-            var query = _repo.Get();
+            var query = _repo.GetWithoutTracking();
             ApplyQueryFilters(ref query, filter);
             return query.Count();
         }
@@ -133,7 +133,7 @@ namespace WorkoutTracker.Application.Workouts.Services
         public int GetPlannedCount(int userId)
         {
             return 
-                _repo.Get()
+                _repo.GetWithoutTracking()
                     .Where(x => x.CreatedByUserId == userId 
                         && !x.StartDateTime.HasValue 
                         && !x.EndDateTime.HasValue).Count();
@@ -142,7 +142,7 @@ namespace WorkoutTracker.Application.Workouts.Services
         public IEnumerable<ExecutedWorkout> GetInProgress(int userId)
         {
             return
-                _repo.Get()
+                _repo.GetWithoutTracking()
                     .Where(x => x.CreatedByUserId == userId
                         && x.StartDateTime.HasValue
                         && !x.EndDateTime.HasValue)
@@ -168,7 +168,7 @@ namespace WorkoutTracker.Application.Workouts.Services
             executedWorkout.WorkoutId = workoutPlan.WorkoutId;
             executedWorkout.CreatedByUserId = workoutPlan.UserId;
             executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
-            var workout = _workoutRepo.Get(workoutPlan.WorkoutId);
+            var workout = _workoutRepo.GetWithoutTracking(workoutPlan.WorkoutId);
 
             byte exerciseSequence = 0;
             foreach (var exerciseInWorkout in workout.Exercises?.OrderBy(x => x.Sequence))

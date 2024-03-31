@@ -10,6 +10,7 @@ namespace WorkoutTracker.Application.Shared.Interfaces
         T Update(T value);
         void Delete(int id);
         IEnumerable<T> GetAll();
+        IEnumerable<T> GetAllWithoutTracking();
         T GetById(int id);
     }
 }

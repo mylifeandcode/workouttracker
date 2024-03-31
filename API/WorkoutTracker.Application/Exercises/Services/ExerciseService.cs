@@ -17,7 +17,7 @@ namespace WorkoutTracker.Application.Exercises.Services
 
         public IEnumerable<Exercise> Get(int firstRecord, short pageSize, ExerciseFilter filter)
         {
-            IQueryable<Exercise> query = _repo.Get();
+            IQueryable<Exercise> query = _repo.GetWithoutTracking();
 
             if (filter != null)
                 ApplyQueryFilters(ref query, filter);
@@ -58,7 +58,7 @@ namespace WorkoutTracker.Application.Exercises.Services
 
         public int GetTotalCount(ExerciseFilter filter)
         {
-            var query = _repo.Get();
+            var query = _repo.GetWithoutTracking();
             ApplyQueryFilters(ref query, filter);
             return query.Count();
         }

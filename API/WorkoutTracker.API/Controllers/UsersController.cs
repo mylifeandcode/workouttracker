@@ -88,7 +88,7 @@ namespace WorkoutTracker.API.Controllers
         [AllowAnonymous]
         public override ActionResult<IEnumerable<User>> Get()
         {
-            return base.Get(); //TODO: Remember why I overrode this rather than just deferring to the base class!
+            return Ok(_service.GetAllWithoutTracking());
         }
 
         [Authorize(Roles = "Administrator")]

@@ -26,12 +26,12 @@ namespace WorkoutTracker.Application.Exercises.Services
 
         public IEnumerable<TargetArea> GetAll()
         {
-            return _repo.Get();
+            return _repo.GetWithoutTracking();
         }
 
         public IEnumerable<TargetArea> GetByIds(int[] ids)
         {
-            return _repo.Get().Where(x => ids.Contains(x.Id));
+            return _repo.GetWithoutTracking().Where(x => ids.Contains(x.Id));
         }
     }
 }

@@ -30,7 +30,7 @@ namespace WorkoutTracker.Tests.Controllers
             //ARRANGE
             var users = new List<User>(2) { new User { Id = 1 }, new User { Id = 2 } };
             var userService = new Mock<IUserService>(MockBehavior.Strict);
-            userService.Setup(mock => mock.GetAll()).Returns(users);
+            userService.Setup(mock => mock.GetAllWithoutTracking()).Returns(users);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
             var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object);
 
@@ -42,7 +42,7 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             Assert.AreEqual(users, (result.Result as OkObjectResult).Value);
 
-            userService.Verify(mock => mock.GetAll(), Times.Once);
+            userService.Verify(mock => mock.GetAllWithoutTracking(), Times.Once);
         }
 
         [TestMethod]
