@@ -181,7 +181,7 @@ namespace WorkoutTracker.Application.Workouts.Services
                     var exerciseToExecute = new ExecutedExercise();
                     exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
                     exerciseToExecute.CreatedDateTime = workoutPlan.SubmittedDateTime.Value;
-                    exerciseToExecute.Exercise = exerciseInWorkout.Exercise;
+                    //exerciseToExecute.Exercise = exerciseInWorkout.Exercise; //NOPE! Don't do this. Just the ID (below) will do. Otherwise, it tries to update the object graph for Exercise!
                     exerciseToExecute.ExerciseId = exerciseInWorkout.Exercise.Id;
                     exerciseToExecute.Sequence = exerciseSequence;
                     exerciseToExecute.SetType = exerciseInWorkout.SetType;
