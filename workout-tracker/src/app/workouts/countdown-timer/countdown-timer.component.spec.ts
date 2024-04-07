@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SoundService } from 'app/core/services/sound/sound.service';
-import { CountdownConfig, CountdownEvent, CountdownStatus } from 'ngx-countdown';
+import { CountdownConfig, CountdownEvent, CountdownModule, CountdownStatus, CountdownTimer } from 'ngx-countdown';
 
 import { CountdownTimerComponent } from './countdown-timer.component';
 
@@ -9,19 +9,6 @@ class SoundServiceMock {
   playSound = jasmine.createSpy('playSound');
 }
 
-@Component({
-  selector: 'countdown',
-  template: ''
-})
-class CountdownComponentMock {
-  begin(): void {}
-  
-  @Input()
-  config: CountdownConfig | undefined;
-
-  @Output()
-  event: EventEmitter<CountdownEvent> = new EventEmitter<CountdownEvent>();
-}
 
 //TODO: Need to resolve tests which are failing because ViewChild objects aren't visible
 //and therefore the backing objects are null
@@ -31,13 +18,15 @@ describe('CountdownTimerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CountdownTimerComponent, CountdownComponentMock ],
+      imports: [ CountdownModule ],
+      declarations: [ CountdownTimerComponent ],
       providers: [
         {
           provide: SoundService,
           useClass: SoundServiceMock
         }
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   });

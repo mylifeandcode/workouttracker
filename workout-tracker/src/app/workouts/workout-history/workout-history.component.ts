@@ -41,14 +41,14 @@ export class WorkoutHistoryComponent implements OnInit {
     //TODO: Refactor. Get user ID in API from token.
     this._executedWorkoutService.getFilteredSubset(first, this.pageSize)
       .pipe(finalize(() => { this.loading = false; }))
-      .subscribe(
-        (results: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
+      .subscribe({
+        next: (results: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
           this.executedWorkouts = results.results;
           //console.log('executedWorkouts: ', this.executedWorkouts);
           this.totalRecords = results.totalCount;
         },
-        (error: any) => window.alert("An error occurred getting executed workouts: " + error)
-      );
+        error: (error: any) => window.alert("An error occurred getting executed workouts: " + error)
+      });
   }
 
   public getExecutedWorkoutsLazy(event: any): void {

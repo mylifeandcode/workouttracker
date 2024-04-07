@@ -21,7 +21,7 @@ class RouterMock {}
   selector: 'wt-workout-info', 
   template: ''
 })
-class WorkoutInfoComponentMock {
+class MockWorkoutInfoComponent {
   @Input()
   workout: Workout | undefined;
 }
@@ -35,7 +35,7 @@ describe('RecentWorkoutsComponent', () => {
       declarations: [ 
         RecentWorkoutsComponent, 
         DialogComponentMock, 
-        WorkoutInfoComponentMock
+        MockWorkoutInfoComponent
       ], 
       providers: [
         {

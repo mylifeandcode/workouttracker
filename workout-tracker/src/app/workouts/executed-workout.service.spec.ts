@@ -19,13 +19,13 @@ describe('ExecutedWorkoutService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        ExecutedWorkoutService, 
+        ExecutedWorkoutService,
         {
-          provide: ConfigService, 
+          provide: ConfigService,
           useClass: ConfigServiceMock
         }
       ],
-      imports :[
+      imports: [
         HttpClientTestingModule
       ]
     });
@@ -46,13 +46,14 @@ describe('ExecutedWorkoutService', () => {
 
     //ACT
     service.getFilteredSubset(10, 50)
-      .subscribe((response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-        //ASSERT
-        expect(response).toEqual(expectedResults);
-        done();
-      }, 
-      fail
-    );
+      .subscribe({
+        next: (response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
+          //ASSERT
+          expect(response).toEqual(expectedResults);
+          done();
+        },
+        error: fail
+      });
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=10&pageSize=50`);
@@ -73,13 +74,14 @@ describe('ExecutedWorkoutService', () => {
 
     //ACT
     service.getPlanned(20, 10)
-      .subscribe((response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-        //ASSERT
-        expect(response).toEqual(expectedResults);
-        done();
-      }, 
-      fail
-    );
+      .subscribe({
+        next: (response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
+          //ASSERT
+          expect(response).toEqual(expectedResults);
+          done();
+        },
+        error: fail
+      });
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout/planned?firstRecord=20&pageSize=10`);
@@ -97,14 +99,14 @@ describe('ExecutedWorkoutService', () => {
     expectedResults.totalCount = 1;
 
     //ACT
-    service.getRecent().subscribe(
-      (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
+    service.getRecent().subscribe({
+      next: (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
         //ASSERT
         expect(recentWorkouts).toEqual(expectedResults.results);
         done();
       },
-      fail
-    );
+      error: fail
+    });
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5`);
@@ -120,14 +122,14 @@ describe('ExecutedWorkoutService', () => {
     expectedResults.push(...[new ExecutedWorkoutSummaryDTO(), new ExecutedWorkoutSummaryDTO()]);
 
     //ACT
-    service.getInProgress().subscribe(
-      (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
+    service.getInProgress().subscribe({
+      next: (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
         //ASSERT
         expect(recentWorkouts).toEqual(expectedResults);
         done();
       },
-      fail
-    );
+      error: fail
+    });
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout/in-progress`);

@@ -21,15 +21,15 @@ export class WorkoutListComponent implements OnInit {
   public pageSize: number = 10;
   public workouts: WorkoutDTO[] = [];
   public cols: any = [
-    { field: 'name', header: 'Name' }, 
-    { field: 'targetAreas', header: 'Target Areas' }, 
+    { field: 'name', header: 'Name' },
+    { field: 'targetAreas', header: 'Target Areas' },
     { field: 'active', header: 'Status' }
   ]; //TODO: Create specific type
 
   private _filterByNameContains: string | null = null;
   private _filterByActiveOnly: boolean = true;
 
-  constructor(private _workoutSvc: WorkoutService) { 
+  constructor(private _workoutSvc: WorkoutService) {
   }
 
   ngOnInit(): void {
@@ -41,13 +41,13 @@ export class WorkoutListComponent implements OnInit {
     this.loading = true;
     this._workoutSvc.getFilteredSubset(first, 10, this._filterByActiveOnly, this._filterByNameContains)
       .pipe(finalize(() => { this.loading = false; }))
-      .subscribe(
-          (results: PaginatedResults<WorkoutDTO>) => {
-            this.workouts = results.results;
-            this.totalRecords = results.totalCount;
-          }, 
-          (error: any) => window.alert("An error occurred getting workouts: " + error)
-      );
+      .subscribe({
+        next: (results: PaginatedResults<WorkoutDTO>) => {
+          this.workouts = results.results;
+          this.totalRecords = results.totalCount;
+        },
+        error: (error: any) => window.alert("An error occurred getting workouts: " + error)
+      });
   }
 
   public getWorkoutsLazy(event: any): void {
@@ -66,30 +66,30 @@ export class WorkoutListComponent implements OnInit {
   }
 
   public retireWorkout(workoutId: number, workoutName: string): void {
-    if(window.confirm(`Are you sure you want to retire workout "${workoutName}"?`)){
+    if (window.confirm(`Are you sure you want to retire workout "${workoutName}"?`)) {
       this.loading = true;
       this._workoutSvc.retire(workoutId)
         .pipe(finalize(() => { this.loading = false; }))
-        .subscribe(
-          (response: HttpResponse<any>) => { 
+        .subscribe({
+          next: (response: HttpResponse<any>) => {
             this.getWorkouts(0);
-          }, 
-          (error: any) => window.alert("An error occurred while retiring workout: " + error)
-        );
+          },
+          error: (error: any) => window.alert("An error occurred while retiring workout: " + error)
+        });
     }
   }
 
   public reactivateWorkout(workoutId: number, workoutName: string): void {
-    if(window.confirm(`Are you sure you want to reactivate workout "${workoutName}"?`)){
+    if (window.confirm(`Are you sure you want to reactivate workout "${workoutName}"?`)) {
       this.loading = true;
       this._workoutSvc.reactivate(workoutId)
         .pipe(finalize(() => { this.loading = false; }))
-        .subscribe(
-          (response: HttpResponse<any>) => { 
+        .subscribe({
+          next: (response: HttpResponse<any>) => {
             this.getWorkouts(0);
-          }, 
-          (error: any) => window.alert("An error occurred while reactivating workout: " + error)
-        );
+          },
+          error: (error: any) => window.alert("An error occurred while reactivating workout: " + error)
+        });
     }
   }
 

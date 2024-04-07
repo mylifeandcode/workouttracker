@@ -56,7 +56,7 @@ class ExecutedWorkoutServiceMock {
   selector: 'wt-executed-exercises',
   template: ''
 })
-export class ExecutedExercisesComponentMock {
+export class MockExecutedExercisesComponent {
 
   @Input()
   executedExercises: ExecutedExerciseDTO[] = [];
@@ -74,7 +74,7 @@ describe('WorkoutViewComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ 
         WorkoutViewComponent, 
-        ExecutedExercisesComponentMock, 
+        MockExecutedExercisesComponent, 
         ProgressSpinnerComponentMock
       ],
       providers: [

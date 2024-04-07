@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute, ActivatedRouteSnapshot, RouterModule, UrlSegment } from '@angular/router';
 
 import { of } from 'rxjs';
 
@@ -72,7 +71,7 @@ describe('WorkoutEditComponent', () => {
       ],
       imports: [
         ReactiveFormsModule,
-        RouterTestingModule
+        RouterModule.forRoot([])
       ],
       providers: [
         {

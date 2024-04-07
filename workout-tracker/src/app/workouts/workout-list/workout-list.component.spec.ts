@@ -1,8 +1,4 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-
-import { TableModule } from 'primeng/table';
-
 import { WorkoutListComponent } from './workout-list.component';
 import { WorkoutService } from '../workout.service';
 import { of } from 'rxjs';
@@ -10,6 +6,7 @@ import { PaginatedResults } from '../../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 import { HttpResponse } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 
 
 class WorkoutServiceMock {
@@ -25,12 +22,12 @@ describe('WorkoutListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
-        WorkoutListComponent, 
-        TableComponentMock 
+      declarations: [
+        WorkoutListComponent,
+        TableComponentMock
       ],
       imports: [
-        RouterTestingModule
+        RouterModule.forRoot([])
       ],
       providers: [
         {
@@ -39,7 +36,7 @@ describe('WorkoutListComponent', () => {
         }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -62,10 +59,10 @@ describe('WorkoutListComponent', () => {
       "rows": 10,
       "sortOrder": 1,
       "filters": {
-          "name": {
-              "value": "Chest",
-              "matchMode": "in"
-          }
+        "name": {
+          "value": "Chest",
+          "matchMode": "in"
+        }
       },
       "globalFilter": null
     };
@@ -86,14 +83,14 @@ describe('WorkoutListComponent', () => {
       "rows": 10,
       "sortOrder": 1,
       "filters": {
-          "activeOnly": {
-              "value": false,
-              "matchMode": "equals"
-          },
-          "name": {
-              "value": "Arms",
-              "matchMode": "in"
-          }
+        "activeOnly": {
+          "value": false,
+          "matchMode": "equals"
+        },
+        "name": {
+          "value": "Arms",
+          "matchMode": "in"
+        }
       },
       "globalFilter": null
     };
@@ -114,10 +111,10 @@ describe('WorkoutListComponent', () => {
       "rows": 10,
       "sortOrder": 1,
       "filters": {
-          "activeOnly": {
-              "value": true,
-              "matchMode": "equals"
-          }
+        "activeOnly": {
+          "value": true,
+          "matchMode": "equals"
+        }
       },
       "globalFilter": null
     };

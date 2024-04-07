@@ -152,7 +152,7 @@ Unfortunately, for now, I've had to mock each property and method. :/
   selector: 'wt-resistance-band-select',
   template: ''
 })
-class ResistanceBandSelectComponentMock extends ResistanceBandSelectComponent {
+class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
   @Input()
   public resistanceBandInventory: ResistanceBandIndividual[] = [];
@@ -200,7 +200,7 @@ describe('WorkoutComponent', () => {
       imports: [ ReactiveFormsModule ],
       declarations: [ 
         WorkoutComponent, 
-        ResistanceBandSelectComponentMock, 
+        MockResistanceBandSelectComponent, 
         DialogComponentMock, 
         ProgressSpinnerComponentMock
       ],
@@ -242,7 +242,7 @@ describe('WorkoutComponent', () => {
     fixture.detectChanges();
 
     //IMPORTANT: Need to set this AFTER detectChanges, because otherwise it is undefined (probably due to the visible attribute being false)
-    component.bandSelect = TestBed.createComponent(ResistanceBandSelectComponentMock).componentInstance;
+    component.bandSelect = TestBed.createComponent(MockResistanceBandSelectComponent).componentInstance;
   });
 
   it('should create', () => {

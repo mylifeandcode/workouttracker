@@ -21,12 +21,12 @@ let httpMock: HttpTestingController;
 describe('WorkoutService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports :[
+      imports: [
         HttpClientTestingModule
-      ], 
+      ],
       providers: [
         {
-          provide: ConfigService, 
+          provide: ConfigService,
           useClass: MockConfigService
         }
       ]
@@ -46,13 +46,13 @@ describe('WorkoutService', () => {
     expectedResults.results.push(new WorkoutDTO());
     expectedResults.totalCount = 2;
 
-    service.getFilteredSubset(10, 25, false).subscribe(
-      (response: PaginatedResults<WorkoutDTO>) => {
+    service.getFilteredSubset(10, 25, false).subscribe({
+      next: (response: PaginatedResults<WorkoutDTO>) => {
         expect(response).toEqual(expectedResults);
         done();
       },
-      fail
-    );
+      error: fail
+    });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}?firstRecord=10&pageSize=25&activeOnly=false`);
     expect(req.request.method).toEqual('GET');
@@ -66,13 +66,13 @@ describe('WorkoutService', () => {
     const workoutId: number = parseInt(TEST_WORKOUT_ID);
     expectedResults.id = workoutId;
 
-    service.getById(workoutId).subscribe(
-      (workout: Workout) => {
+    service.getById(workoutId).subscribe({
+      next: (workout: Workout) => {
         expect(workout).toEqual(expectedResults);
         done();
       },
-      fail
-    );
+      error: fail
+    });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}/${TEST_WORKOUT_ID}`);
     expect(req.request.method).toEqual('GET');
@@ -89,13 +89,13 @@ describe('WorkoutService', () => {
 
     //ACT
     service.add(workout)
-      .subscribe(
-        (addedWorkout: Workout) => {
+      .subscribe({
+        next: (addedWorkout: Workout) => {
           expect(addedWorkout).toEqual(workout); //ASSERT
           done();
         },
-        fail
-    );
+        error: fail
+      });
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}`);
@@ -115,13 +115,13 @@ describe('WorkoutService', () => {
 
     //ACT
     service.update(workout)
-      .subscribe(
-        (updatedWorkout: Workout) => {
+      .subscribe({
+        next: (updatedWorkout: Workout) => {
           expect(updatedWorkout).toEqual(workout); //ASSERT
           done();
         },
-        fail
-    );
+        error: fail
+      });
 
 
     //ASSERT
@@ -144,13 +144,13 @@ describe('WorkoutService', () => {
 
     //ACT
     service.submitPlan(workoutPlan)
-      .subscribe(
-        (executedWorkoutId: number) => {
+      .subscribe({
+        next: (executedWorkoutId: number) => {
           expect(executedWorkoutId).toEqual(expectedNewExecutedWorkoutId); //ASSERT
           done();
         },
-        fail
-      );
+        error: fail
+      });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan`);
     expect(req.request.method).toEqual('POST');
@@ -171,13 +171,13 @@ describe('WorkoutService', () => {
 
     //ACT
     service.submitPlanForLater(workoutPlan)
-      .subscribe(
-        (executedWorkoutId: number) => {
+      .subscribe({
+        next: (executedWorkoutId: number) => {
           expect(executedWorkoutId).toEqual(expectedNewExecutedWorkoutId); //ASSERT
           done();
         },
-        fail
-      );
+        error: fail
+      });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan-for-later`);
     expect(req.request.method).toEqual('POST');
@@ -200,13 +200,13 @@ describe('WorkoutService', () => {
 
     //ACT
     service.submitPlanForPast(workoutPlan, startDateTime, endDateTime)
-      .subscribe(
-        (executedWorkoutId: number) => {
+      .subscribe({
+        next: (executedWorkoutId: number) => {
           expect(executedWorkoutId).toEqual(expectedNewExecutedWorkoutId); //ASSERT
           done();
         },
-        fail
-      );
+        error: fail
+      });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`);
     expect(req.request.method).toEqual('POST');

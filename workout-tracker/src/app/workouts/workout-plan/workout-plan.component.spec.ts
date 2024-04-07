@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
@@ -22,7 +21,7 @@ class WorkoutServiceMock {
   submitPlanForLater = jasmine.createSpy('submitPlanForLater').and.returnValue(of(32));
 }
 
-class ResistanceBandServiceMock {
+class MockResistanceBandService {
   getAllIndividualBands = 
     jasmine.createSpy('getAllIndividualBands')
       .and.callFake(() => {
@@ -37,7 +36,7 @@ class ResistanceBandServiceMock {
   selector: 'wt-resistance-band-select',
   template: ''
 })
-class ResistanceBandSelectComponentMock extends ResistanceBandSelectComponent {
+class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
   @Input()
   public resistanceBandInventory: ResistanceBandIndividual[] = [];
@@ -61,7 +60,7 @@ describe('WorkoutPlanComponent', () => {
       declarations: [ 
         WorkoutPlanComponent, 
         DialogComponentMock, 
-        ResistanceBandSelectComponentMock, 
+        MockResistanceBandSelectComponent, 
         ProgressSpinnerComponentMock
       ], 
       providers: [
@@ -71,7 +70,7 @@ describe('WorkoutPlanComponent', () => {
         }, 
         {
           provide: ResistanceBandService, 
-          useClass: ResistanceBandServiceMock
+          useClass: MockResistanceBandService
         }, 
         {
           provide: ActivatedRoute,
@@ -80,7 +79,7 @@ describe('WorkoutPlanComponent', () => {
         UntypedFormBuilder //TODO: Determine if this is kosher or if there's a preferred mocking approach
       ],
       imports: [
-        RouterTestingModule, 
+        RouterModule.forRoot([]), 
         ReactiveFormsModule
       ]
     })

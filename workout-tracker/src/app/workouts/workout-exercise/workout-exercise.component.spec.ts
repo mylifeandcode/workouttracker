@@ -11,7 +11,7 @@ import { SafeHtml } from '@angular/platform-browser';
 @Pipe({
   name: 'resistanceType'
 })
-class ResistanceTypePipeMock {
+class ResistanceTypePipeMock implements PipeTransform {
   transform(value: ResistanceType, capitalizeEachWord: boolean = true): string {
     return 'whatever';
   }
@@ -20,7 +20,7 @@ class ResistanceTypePipeMock {
 @Pipe({
   name: 'duration'
 })
-class DurationPipeMock {
+class DurationPipeMock implements PipeTransform {
   transform(value: number, precise: boolean = false): number {
     return 0;
   }
@@ -29,7 +29,7 @@ class DurationPipeMock {
 @Pipe({
   name: 'resistanceBandColor'
 })
-class ResistanceBandColorMock {
+class ResistanceBandColorMock implements PipeTransform {
   transform(value: string | null): SafeHtml {
     return "<span style='color: red'>Red</span>";
   }
@@ -38,7 +38,7 @@ class ResistanceBandColorMock {
 @Pipe({
   name: 'exerciseSide'
 })
-class ExerciseSidePipeMock {
+class ExerciseSidePipeMock implements PipeTransform {
   transform(value: number | null): string {
     return "";
   }

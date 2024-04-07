@@ -56,7 +56,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   /**
    * A property representing all of the Exercises which are part of the Workout
    */
-   get exercisesArray(): FormArray<FormGroup<IExercisePlanFormGroup>> {
+  get exercisesArray(): FormArray<FormGroup<IExercisePlanFormGroup>> {
     //This property provides an easier way for the template to access this information, 
     //and is used by the component code as a short-hand reference to the form array.
     return this.workoutPlanForm.controls.exercises;
@@ -66,18 +66,18 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
    * A property indicating whether or not the component is still loading information
    */
   public get loading(): boolean {
-    return this._apiCallsInProgress > 0; 
+    return this._apiCallsInProgress > 0;
   }
   //END PUBLIC PROPERTIES
 
   constructor(
-    private _workoutService: WorkoutService, 
-    private _resistanceBandService: ResistanceBandService, 
-    private _activatedRoute: ActivatedRoute, 
-    private _router: Router, 
+    private _workoutService: WorkoutService,
+    private _resistanceBandService: ResistanceBandService,
+    private _activatedRoute: ActivatedRoute,
+    private _router: Router,
     private _formBuilder: FormBuilder) {
-      super();
-      this.workoutPlanForm = this.createForm(); 
+    super();
+    this.workoutPlanForm = this.createForm();
   }
 
   //PUBLIC METHODS
@@ -94,8 +94,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     if (this.workoutPlan) {
       this.setupDataForPlanSubmission();
       this._workoutService.submitPlan(this.workoutPlan)
-        .pipe(finalize(() => { 
-          this.isProcessing = false; 
+        .pipe(finalize(() => {
+          this.isProcessing = false;
           this.workoutPlanForm.markAsPristine();
         }))
         .subscribe((executedWorkoutId: number) => {
@@ -110,8 +110,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     if (this.workoutPlan) {
       this.setupDataForPlanSubmission();
       this._workoutService.submitPlanForLater(this.workoutPlan)
-        .pipe(finalize(() => { 
-          this.isProcessing = false; 
+        .pipe(finalize(() => {
+          this.isProcessing = false;
           this.workoutPlanForm.markAsPristine();
         }))
         .subscribe((executedWorkoutId: number) => {
@@ -124,12 +124,12 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     if (this.workoutPlan && this.workoutPlanForm && this._pastWorkoutStartDateTime && this._pastWorkoutEndDateTime) {
       this.setupDataForPlanSubmission();
       this._workoutService.submitPlanForPast(this.workoutPlan, this._pastWorkoutStartDateTime, this._pastWorkoutEndDateTime)
-        .pipe(finalize(() => { 
-          this.isProcessing = false; 
+        .pipe(finalize(() => {
+          this.isProcessing = false;
           this.workoutPlanForm.markAsPristine();
         }))
         .subscribe((executedWorkoutId: number) => {
-          this._router.navigate([`workouts/start/${executedWorkoutId}`], { queryParams: { pastWorkout: true }});
+          this._router.navigate([`workouts/start/${executedWorkoutId}`], { queryParams: { pastWorkout: true } });
         });
     }
   }
@@ -141,16 +141,16 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
     this.bandSelect.setBandAllocation(
-      exerciseFormGroup.controls.resistanceMakeup.value, 
+      exerciseFormGroup.controls.resistanceMakeup.value,
       !exerciseFormGroup.controls.bandsEndToEnd.value);
   }
 
   public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {
     if (!this.formGroupForResistanceSelection) return;
 
-    this.formGroupForResistanceSelection.patchValue({ 
-      resistanceMakeup: selectedBands.makeup, 
-      resistanceAmount: selectedBands.maxResistanceAmount 
+    this.formGroupForResistanceSelection.patchValue({
+      resistanceMakeup: selectedBands.makeup,
+      resistanceAmount: selectedBands.maxResistanceAmount
     });
     this.showResistanceBandsSelectModal = false;
   }
@@ -158,7 +158,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   public resistanceBandsModalCancelled(): void {
     this.showResistanceBandsSelectModal = false;
   }
-  
+
   //END PUBLIC METHODS
 
   //PRIVATE METHODS
@@ -179,8 +179,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
         .subscribe((result: WorkoutPlan) => {
           this.workoutPlan = result;
           this.workoutPlanForm.patchValue({
-            workoutId: workoutId, 
-            workoutName: result.workoutName, 
+            workoutId: workoutId,
+            workoutName: result.workoutName,
             hasBeenExecutedBefore: result.hasBeenExecutedBefore
           });
           this.setupExercisesFormGroup(result.exercises);
@@ -190,13 +190,13 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
 
   private createForm(): FormGroup<IWorkoutPlanForm> {
     return this._formBuilder.group<IWorkoutPlanForm>({
-        workoutId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
-        workoutName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }), 
-        hasBeenExecutedBefore: new FormControl<boolean>(false, { nonNullable: true }), 
-        exercises: new FormArray<FormGroup<IExercisePlanFormGroup>>([])
+      workoutId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+      workoutName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+      hasBeenExecutedBefore: new FormControl<boolean>(false, { nonNullable: true }),
+      exercises: new FormArray<FormGroup<IExercisePlanFormGroup>>([])
     });
   }
-  
+
   private setupExercisesFormGroup(exercises: ExercisePlan[]): void {
     if (!this.exercisesArray) return;
 
@@ -205,40 +205,40 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
 
       this.exercisesArray.push(
         this._formBuilder.group<IExercisePlanFormGroup>({
-          exerciseInWorkoutId: new FormControl<number>(exercise.exerciseInWorkoutId, { nonNullable: true, validators: Validators.required }), 
-          exerciseId: new FormControl<number>(exercise.exerciseId, { nonNullable: true, validators: Validators.required }), 
+          exerciseInWorkoutId: new FormControl<number>(exercise.exerciseInWorkoutId, { nonNullable: true, validators: Validators.required }),
+          exerciseId: new FormControl<number>(exercise.exerciseId, { nonNullable: true, validators: Validators.required }),
           exerciseName: new FormControl<string>(exercise.exerciseName, { nonNullable: true, validators: Validators.required }),
           numberOfSets: new FormControl<number>(exercise.numberOfSets, { nonNullable: true, validators: Validators.required }),
           setType: new FormControl<number>(exercise.setType, { nonNullable: true, validators: Validators.required }),
           resistanceType: new FormControl<number>(exercise.resistanceType, { nonNullable: true, validators: Validators.required }),
           sequence: new FormControl<number>(exercise.sequence, { nonNullable: true, validators: Validators.required }),
-          targetRepCountLastTime: new FormControl<number | null>(exercise.targetRepCountLastTime), 
+          targetRepCountLastTime: new FormControl<number | null>(exercise.targetRepCountLastTime),
           avgActualRepCountLastTime: new FormControl<number | null>(exercise.avgActualRepCountLastTime),
-          avgRangeOfMotionLastTime: new FormControl<number | null>(exercise.avgRangeOfMotionLastTime), 
-          avgFormLastTime: new FormControl<number | null>(exercise.avgFormLastTime), 
-          recommendedTargetRepCount: new FormControl<number | null>(exercise.recommendedTargetRepCount), 
+          avgRangeOfMotionLastTime: new FormControl<number | null>(exercise.avgRangeOfMotionLastTime),
+          avgFormLastTime: new FormControl<number | null>(exercise.avgFormLastTime),
+          recommendedTargetRepCount: new FormControl<number | null>(exercise.recommendedTargetRepCount),
           targetRepCount: new FormControl<number | null>(exercise.targetRepCount, { validators: Validators.min(exercise.involvesReps ? 1 : 0) }),
-          resistanceAmountLastTime: new FormControl<number | null>(exercise.resistanceAmountLastTime), 
-          resistanceMakeupLastTime: new FormControl<string | null>(exercise.resistanceMakeupLastTime), 
+          resistanceAmountLastTime: new FormControl<number | null>(exercise.resistanceAmountLastTime),
+          resistanceMakeupLastTime: new FormControl<string | null>(exercise.resistanceMakeupLastTime),
           recommendedResistanceAmount: new FormControl<number | null>(exercise.recommendedResistanceAmount),
-          recommendedResistanceMakeup: new FormControl<string | null>(exercise.recommendedResistanceMakeup), 
-          resistanceAmount: new FormControl<number>(exercise.resistanceAmount, { nonNullable: true, validators: (exercise.resistanceType != 3 ? Validators.min(0.1) : null)} ), 
-          resistanceMakeup: new FormControl<string | null>(exercise.resistanceMakeup), 
-          bandsEndToEnd: new FormControl<boolean | null>(exercise.bandsEndToEnd), 
+          recommendedResistanceMakeup: new FormControl<string | null>(exercise.recommendedResistanceMakeup),
+          resistanceAmount: new FormControl<number>(exercise.resistanceAmount, { nonNullable: true, validators: (exercise.resistanceType != 3 ? Validators.min(0.1) : null) }),
+          resistanceMakeup: new FormControl<string | null>(exercise.resistanceMakeup),
+          bandsEndToEnd: new FormControl<boolean | null>(exercise.bandsEndToEnd),
           involvesReps: new FormControl<boolean>(exercise.involvesReps, { nonNullable: true }),
           usesBilateralResistance: new FormControl<boolean>(exercise.usesBilateralResistance, { nonNullable: true }),
           recommendationReason: new FormControl<string | null>(exercise.recommendationReason)
         })
       );
 
-    });  
+    });
 
   }
 
   private updateWorkoutPlanFromForm(): void {
     if (this.workoutPlan && this.exercisesArray) {
       this.exercisesArray.controls.forEach((exerciseFormGroup: FormGroup<IExercisePlanFormGroup>, index: number) => {
-        
+
         //TODO: Revisit. Maybe can be made simpler now that we have Typed Forms. :)
 
         const exercisePlan = this.workoutPlan?.exercises[index];
@@ -255,14 +255,14 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     this._apiCallsInProgress++;
     this._resistanceBandService.getAllIndividualBands()
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
-      .subscribe(
-        (bands: ResistanceBandIndividual[]) => {
+      .subscribe({
+        next: (bands: ResistanceBandIndividual[]) => {
           this.allResistanceBands = bands;
-        }, 
-        (error: any) => {
+        },
+        error: (error: any) => {
           this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
         }
-      );
+      });
   }
 
   private setErrorInfo(error: any, defaultMessage: string): void {
@@ -271,7 +271,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     else
       this.errorInfo = defaultMessage;
   }
-  
+
   private setupDataForPlanSubmission(): void {
     if (this.workoutPlan) {
       this.updateWorkoutPlanFromForm();

@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from 'app/core/services/auth/auth.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { of } from 'rxjs';
@@ -8,6 +7,7 @@ import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
 
 import { WorkoutSelectComponent } from './workout-select.component';
+import { RouterModule } from '@angular/router';
 
 class WorkoutServiceMock {
   getFilteredSubset = jasmine.createSpy('getFilteredSubset').and.callFake(() => {
@@ -26,7 +26,7 @@ class WorkoutServiceMock {
   selector: 'wt-recent-workouts', 
   template: ''
 })
-class RecentWorkoutsComponentMock {
+class MockRecentWorkoutsComponent {
   @Input()
   planningForLater: boolean = false;
 }
@@ -37,7 +37,7 @@ describe('WorkoutSelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutSelectComponent, RecentWorkoutsComponentMock ], 
+      declarations: [ WorkoutSelectComponent, MockRecentWorkoutsComponent ], 
       providers: [
         {
           provide: WorkoutService, 
@@ -49,7 +49,7 @@ describe('WorkoutSelectComponent', () => {
         }
       ], 
       imports: [
-        RouterTestingModule
+        RouterModule.forRoot([])
       ]
     })
     .compileComponents();

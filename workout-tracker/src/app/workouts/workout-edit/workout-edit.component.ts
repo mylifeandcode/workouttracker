@@ -24,7 +24,7 @@ interface IWorkoutEditForm {
 }
 
 @Component({
-  selector: 'app-workout-edit',
+  selector: 'wt-workout-edit',
   templateUrl: './workout-edit.component.html',
   styleUrls: ['./workout-edit.component.scss']
 })
@@ -54,7 +54,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   constructor(
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
-    private _workoutService: WorkoutService, 
+    private _workoutService: WorkoutService,
     private _router: Router) {
     super();
     this.workoutForm = this.createForm();
@@ -179,18 +179,19 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
         this.saving = false;
         this.workoutForm.markAsPristine();
       }))
-      .subscribe((addedWorkout: Workout) => {
-        //this.workout = value;
-        this.workoutId = addedWorkout.id;
-        this._workout = addedWorkout; //TODO: Refactor! We have redundant variables!
-        this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
-        this._router.navigate([`workouts/edit/${this.workoutId}`]);
-      },
-        (error: any) => {
+      .subscribe({
+        next: (addedWorkout: Workout) => {
+          //this.workout = value;
+          this.workoutId = addedWorkout.id;
+          this._workout = addedWorkout; //TODO: Refactor! We have redundant variables!
+          this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
+          this._router.navigate([`workouts/edit/${this.workoutId}`]);
+        },
+        error: (error: any) => {
           this.errorMsg = error.message;
           this.infoMsg = null;
         }
-      );
+      });
   }
 
   private updateWorkout(): void {
@@ -200,16 +201,17 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
         this.saving = false;
         this.workoutForm.markAsPristine();
       }))
-      .subscribe((updatedWorkout: Workout) => {
-        this.saving = false;
-        this.infoMsg = "Workout updated at " + new Date().toLocaleTimeString();
-      },
-        (error: any) => {
+      .subscribe({
+        next: (updatedWorkout: Workout) => {
+          this.saving = false;
+          this.infoMsg = "Workout updated at " + new Date().toLocaleTimeString();
+        },
+        error: (error: any) => {
           //console.log("ERROR: ", error);
           this.errorMsg = error.message;
           this.infoMsg = null;
         }
-      );
+      });
 
   }
 

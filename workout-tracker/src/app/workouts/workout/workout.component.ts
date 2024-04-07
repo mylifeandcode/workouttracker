@@ -179,7 +179,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   private getRouteParams(): void {
     this._executedWorkoutId = this._route.snapshot.params['executedWorkoutId'];
 
-    if(this._executedWorkoutId <= 0) {
+    if (this._executedWorkoutId <= 0) {
       this._messageService.add({ severity: 'error', summary: 'Error', detail: 'ExecutedWorkoutId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.', closable: true });
     }
     else {
@@ -188,8 +188,8 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   }
 
   private getOptionalQueryParams(): void {
-      if (this._route.snapshot.queryParams['pastWorkout']) //TODO: Clean up
-        this.isLoggingPastWorkout = this._route.snapshot.queryParams['pastWorkout'];
+    if (this._route.snapshot.queryParams['pastWorkout']) //TODO: Clean up
+      this.isLoggingPastWorkout = this._route.snapshot.queryParams['pastWorkout'];
   }
 
   private createForm(): FormGroup<IWorkoutForm> {
@@ -204,22 +204,22 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     this._apiCallsInProgress++;
     this._resistanceBandService.getAllIndividualBands()
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
-      .subscribe(
-        (bands: ResistanceBandIndividual[]) => {
+      .subscribe({
+        next: (bands: ResistanceBandIndividual[]) => {
           this.allResistanceBands = bands;
         },
-        (error: any) => {
+        error: (error: any) => {
           this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
         }
-      );
+      });
   }
 
   private setupWorkout(id: number): void {
     this._apiCallsInProgress++;
     this._executedWorkoutService.getById(id)
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
-      .subscribe(
-        (executedWorkout: ExecutedWorkoutDTO) => {
+      .subscribe({
+        next: (executedWorkout: ExecutedWorkoutDTO) => {
           this._executedWorkout = executedWorkout;
           this.workoutName = executedWorkout.name;
 
@@ -242,8 +242,8 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
           this.workoutLoaded = true;
         },
-        (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
-      );
+        error: (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
+  });
   }
 
   private setupExercisesFormGroup(exercises: ExecutedExerciseDTO[]): void {
@@ -344,26 +344,27 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     this._executedWorkoutService
       .update(this._executedWorkout)
       .pipe(finalize(() => { this.saving = false; }))
-      .subscribe((workout: ExecutedWorkoutDTO) => {
-        this._messageService.clear();
-        this._executedWorkout = workout;
-        if (completed) {
-          this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
-          this.workoutCompleted = true;
-          this.endDateTime = this._executedWorkout.endDateTime;
-          this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Workout completed!', life: 5000 });
-          this.workoutForm.markAsPristine();
-        }
-        else {
-          if (!this.startDateTime) this.startDateTime = this._executedWorkout.startDateTime;
-          this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Progress updated!', life: 1000 });
-        }
-      },
-        (error: any) => {
+      .subscribe({
+        next: (workout: ExecutedWorkoutDTO) => {
+          this._messageService.clear();
+          this._executedWorkout = workout;
+          if (completed) {
+            this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
+            this.workoutCompleted = true;
+            this.endDateTime = this._executedWorkout.endDateTime;
+            this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Workout completed!', life: 5000 });
+            this.workoutForm.markAsPristine();
+          }
+          else {
+            if (!this.startDateTime) this.startDateTime = this._executedWorkout.startDateTime;
+            this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Progress updated!', life: 1000 });
+          }
+        },
+        error: (error: any) => {
           this.setErrorInfo(error, "An error occurred saving workout information. See console for details.");
           this._messageService.add({ severity: 'error', summary: 'Error!', detail: 'An error occurred while trying to save: ' + error.message ?? "Unknown error", life: 5000 });
         }
-      );
+      });
   }
 
   public hasUnsavedData(): boolean {
