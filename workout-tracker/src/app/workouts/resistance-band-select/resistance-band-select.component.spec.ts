@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PickListComponentMock } from 'app/testing/component-mocks/primeNg/p-pick-list-mock';
-
 import { ResistanceBandSelectComponent } from './resistance-band-select.component';
-import { Pipe, PipeTransform } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { PickListMoveToTargetEvent } from 'primeng/picklist';
 
@@ -23,9 +21,9 @@ describe('ResistanceBandSelectComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ 
         ResistanceBandSelectComponent, 
-        PickListComponentMock,
         MockResistanceAmountPipe
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   });

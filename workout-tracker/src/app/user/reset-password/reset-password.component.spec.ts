@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from 'app/core/services/auth/auth.service';
 import { of } from 'rxjs';
 
@@ -18,7 +17,7 @@ describe('ResetPasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ RouterTestingModule, ReactiveFormsModule ],
+      imports: [ RouterModule.forRoot([]), ReactiveFormsModule ],
       declarations: [ ResetPasswordComponent ],
       providers: [
         FormBuilder,

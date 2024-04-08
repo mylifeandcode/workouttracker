@@ -1,10 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
-import { ConfirmDialogComponentMock } from 'app/testing/component-mocks/primeNg/p-confirm-dialog-mock';
-import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
-import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { ResistanceBandService } from '../../shared/resistance-band.service';
@@ -49,10 +46,7 @@ describe('ResistanceBandsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ 
         ResistanceBandsComponent, 
-        ToastComponentMock, 
-        DialogComponentMock, 
-        TableComponentMock, 
-        ConfirmDialogComponentMock 
+        ToastComponentMock
       ],
       providers: [
         {
@@ -67,7 +61,8 @@ describe('ResistanceBandsComponent', () => {
           provide: ConfirmationService,
           useClass: ConfirmationServiceMock
         }
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));

@@ -4,9 +4,9 @@ import { WorkoutService } from '../workout.service';
 import { of } from 'rxjs';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
-import { TableComponentMock } from 'app/testing/component-mocks/primeNg/p-table-mock';
 import { HttpResponse } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 
 class WorkoutServiceMock {
@@ -23,8 +23,7 @@ describe('WorkoutListComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        WorkoutListComponent,
-        TableComponentMock
+        WorkoutListComponent
       ],
       imports: [
         RouterModule.forRoot([])
@@ -34,7 +33,8 @@ describe('WorkoutListComponent', () => {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
         }
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
       .compileComponents();
   }));

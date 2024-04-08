@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from 'app/core/services/auth/auth.service';
 
 import { ChangePasswordComponent } from './change-password.component';
+import { RouterModule } from '@angular/router';
 
 class AuthServiceMock {}
 
@@ -13,7 +13,7 @@ describe('ChangePasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ RouterTestingModule, ReactiveFormsModule ],
+      imports: [ RouterModule.forRoot([]), ReactiveFormsModule ],
       declarations: [ ChangePasswordComponent ],
       providers: [
         FormBuilder,

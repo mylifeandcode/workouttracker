@@ -1,11 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
-import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
-import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { of } from 'rxjs';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { WorkoutPlan } from '../models/workout-plan';
@@ -59,9 +57,7 @@ describe('WorkoutPlanComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ 
         WorkoutPlanComponent, 
-        DialogComponentMock, 
-        MockResistanceBandSelectComponent, 
-        ProgressSpinnerComponentMock
+        MockResistanceBandSelectComponent
       ], 
       providers: [
         {
@@ -81,7 +77,8 @@ describe('WorkoutPlanComponent', () => {
       imports: [
         RouterModule.forRoot([]), 
         ReactiveFormsModule
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   });

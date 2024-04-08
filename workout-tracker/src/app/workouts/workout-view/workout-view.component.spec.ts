@@ -1,7 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { Dictionary } from 'lodash';
 import { groupBy } from 'lodash-es';
 import { of } from 'rxjs';
@@ -74,8 +73,7 @@ describe('WorkoutViewComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ 
         WorkoutViewComponent, 
-        MockExecutedExercisesComponent, 
-        ProgressSpinnerComponentMock
+        MockExecutedExercisesComponent
       ],
       providers: [
         {
@@ -90,7 +88,8 @@ describe('WorkoutViewComponent', () => {
           provide: ExecutedWorkoutService,
           useClass: ExecutedWorkoutServiceMock
         }
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   });

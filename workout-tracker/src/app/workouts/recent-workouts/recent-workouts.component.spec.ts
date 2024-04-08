@@ -1,7 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
@@ -34,7 +33,6 @@ describe('RecentWorkoutsComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ 
         RecentWorkoutsComponent, 
-        DialogComponentMock, 
         MockWorkoutInfoComponent
       ], 
       providers: [

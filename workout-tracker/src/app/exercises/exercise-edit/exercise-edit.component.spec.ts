@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { Pipe, PipeTransform } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
-import { ActivatedRoute, ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, RouterModule, UrlSegment } from '@angular/router';
 
 import { of } from 'rxjs';
 
@@ -10,7 +9,6 @@ import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../exercise.service';
 import { TargetArea } from 'app/workouts/models/target-area';
 import { Exercise } from 'app/workouts/models/exercise';
-import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { ExerciseTargetAreaLink } from 'app/workouts/models/exercise-target-area-link';
 
 //TODO: Move initialization inside beforeEach()
@@ -80,12 +78,11 @@ describe('ExerciseEditComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         ExerciseEditComponent, 
-        InsertSpaceBeforeCapitalPipeMock, 
-        ProgressSpinnerComponentMock
+        InsertSpaceBeforeCapitalPipeMock
       ],
       imports: [
         ReactiveFormsModule,
-        RouterTestingModule
+        RouterModule.forRoot([])
        ],
        providers: [
          {
@@ -101,7 +98,8 @@ describe('ExerciseEditComponent', () => {
              snapshot: getActivatedRouteSnapshot()
             }
          }
-       ]
+       ],
+       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));

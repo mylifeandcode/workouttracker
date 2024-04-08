@@ -15,8 +15,6 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
 import { ActivatedRoute, ActivatedRouteSnapshot, convertToParamMap } from '@angular/router';
-import { DialogComponentMock } from 'app/testing/component-mocks/primeNg/p-dialog-mock';
-import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { MessageService } from 'primeng/api';
 import { groupBy } from 'lodash-es';
 import { Dictionary } from 'lodash';
@@ -200,9 +198,7 @@ describe('WorkoutComponent', () => {
       imports: [ ReactiveFormsModule ],
       declarations: [ 
         WorkoutComponent, 
-        MockResistanceBandSelectComponent, 
-        DialogComponentMock, 
-        ProgressSpinnerComponentMock
+        MockResistanceBandSelectComponent
       ],
       providers: [
         {
@@ -226,7 +222,7 @@ describe('WorkoutComponent', () => {
           useClass: MessageServiceMock
         }
       ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   }));

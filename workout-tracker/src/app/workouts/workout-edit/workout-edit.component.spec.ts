@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import { WorkoutEditComponent } from './workout-edit.component';
 import { WorkoutService } from '../workout.service';
 import { Workout } from 'app/workouts/models/workout';
-import { ProgressSpinnerComponentMock } from 'app/testing/component-mocks/primeNg/p-progress-spinner-mock';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { ExerciseDTO } from '../models/exercise-dto';
 
@@ -66,8 +65,7 @@ describe('WorkoutEditComponent', () => {
       declarations: [
         WorkoutEditComponent,
         FakeExerciseListMiniComponent,
-        FakeWorkoutSetDefComponent, 
-        ProgressSpinnerComponentMock
+        FakeWorkoutSetDefComponent
       ],
       imports: [
         ReactiveFormsModule,
