@@ -1,8 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from 'app/core/services/auth/auth.service';
 import { of } from 'rxjs';
 
@@ -31,7 +30,7 @@ describe('LoginComponent', () => {
           useClass: AuthServiceMock
         }
       ],
-      imports: [ RouterTestingModule, ReactiveFormsModule ],
+      imports: [ RouterModule.forRoot([]), ReactiveFormsModule ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();

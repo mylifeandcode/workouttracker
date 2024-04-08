@@ -23,21 +23,21 @@ class ExerciseServiceMock {
 
 //We're testing an abstract base class, so let's create a class here that extends it
 @Component({})
-class ExerciseListBaseExtender extends ExerciseListBase {
+class ExerciseListBaseExtenderComponent extends ExerciseListBase {
   constructor(private _exerciseService: ExerciseService) {
     super(_exerciseService);
   }
 }
 
 describe('ExerciseListMiniComponent', () => {
-  let component: ExerciseListBaseExtender;
-  let fixture: ComponentFixture<ExerciseListBaseExtender>;
+  let component: ExerciseListBaseExtenderComponent;
+  let fixture: ComponentFixture<ExerciseListBaseExtenderComponent>;
   let exerciseService: ExerciseService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ 
-        ExerciseListBaseExtender
+        ExerciseListBaseExtenderComponent
       ],
       providers: [
         {
@@ -53,7 +53,7 @@ describe('ExerciseListMiniComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ExerciseListBaseExtender);
+    fixture = TestBed.createComponent(ExerciseListBaseExtenderComponent);
     component = fixture.componentInstance;
     exerciseService = TestBed.inject(ExerciseService);
     fixture.detectChanges();

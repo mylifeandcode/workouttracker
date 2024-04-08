@@ -2,11 +2,10 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { UserSelectComponent } from './user-select.component';
 import { UserService } from '../services/user/user.service';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { User } from 'app/core/models/user';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from 'app/core/services/auth/auth.service';
 
 
@@ -33,7 +32,7 @@ describe('UserSelectComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ UserSelectComponent ],
       imports: [
-        RouterTestingModule.withRoutes(
+        RouterModule.forRoot(
           [{path: 'home', component: FakeComponent}])
       ],
       providers: [

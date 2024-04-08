@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { Router, RouterModule } from '@angular/router';
 import { User } from 'app/core/models/user';
 import { UserNewDTO } from 'app/core/models/user-new-dto';
 import { UserService } from 'app/core/services/user/user.service';
@@ -15,7 +14,7 @@ class MockUserService {
 }
 
 @Component({
-  selector: 'blank',
+  selector: 'wt-blank',
   template: ''
 })
 class BlankComponent {}
@@ -39,7 +38,7 @@ describe('UserSelectNewComponent', () => {
         }
       ], 
       imports: [ 
-        RouterTestingModule.withRoutes([ { path: 'user-select', component: BlankComponent } ]),
+        RouterModule.forRoot([ { path: 'user-select', component: BlankComponent } ]),
         ReactiveFormsModule
       ]
     })

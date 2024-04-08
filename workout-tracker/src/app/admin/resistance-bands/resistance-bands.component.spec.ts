@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Input } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
@@ -28,16 +28,6 @@ class ConfirmationServiceMock {
       //.and.returnValue(this);
 }
 
-@Component({
-  selector: 'p-toast',
-  template: ''
-})
-class ToastComponentMock {
-  @Input()
-  position: string = '';
-}
-
-
 describe('ResistanceBandsComponent', () => {
   let component: ResistanceBandsComponent;
   let fixture: ComponentFixture<ResistanceBandsComponent>;
@@ -45,8 +35,7 @@ describe('ResistanceBandsComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ 
-        ResistanceBandsComponent, 
-        ToastComponentMock
+        ResistanceBandsComponent
       ],
       providers: [
         {

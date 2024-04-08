@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HomeComponent } from './home.component';
-import { RouterTestingModule } from '@angular/router/testing';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from 'app/core/services/auth/auth.service';
 
 class AuthServiceMock {
@@ -22,7 +21,7 @@ describe('HomeComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule.withRoutes(
+        RouterModule.forRoot(
           [{path: 'login', component: FakeComponent}]
         )
       ],

@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { NavComponent } from './nav.component';
 import { Observable, of } from 'rxjs';
 import { Component } from '@angular/core';
 import { AuthService } from 'app/core/services/auth/auth.service';
+import { RouterModule } from '@angular/router';
 
 const username = 'someuser';
 
@@ -26,7 +26,7 @@ describe('NavComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule.withRoutes(
+        RouterModule.forRoot(
           [{path: 'admin/users', component: FakeComponent}])
       ],
       declarations: [ NavComponent ],

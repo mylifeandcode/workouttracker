@@ -1,13 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { throwError } from 'rxjs';
 
 import { AuthService } from './auth.service';
 import { ConfigService } from '../config/config.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
+import { RouterModule } from '@angular/router';
 
 class ConfigServiceMock {
   get = jasmine.createSpy('get').and.callFake((configKey: string) => {
@@ -50,7 +49,7 @@ describe('AuthService', () => {
       ], 
       imports :[
         HttpClientTestingModule, 
-        RouterTestingModule.withRoutes(
+        RouterModule.forRoot(
           [{path: 'user-select', component: FakeComponent}])
       ]
     });
