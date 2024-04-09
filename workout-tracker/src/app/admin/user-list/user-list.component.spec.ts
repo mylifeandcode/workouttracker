@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { UserListComponent } from './user-list.component';
-import { RouterTestingModule } from '@angular/router/testing';
 import { UserService } from '../../core/services/user/user.service';
 import { of } from 'rxjs';
 import { User } from 'app/core/models/user';
+import { RouterModule } from '@angular/router';
 
 class UserServiceMock {
   private fakeUsers: User[] =
@@ -28,7 +28,7 @@ describe('UserListComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ UserListComponent ],
-      imports: [ RouterTestingModule ],
+      imports: [ RouterModule.forRoot([]) ],
       providers: [
         {
           provide: UserService,

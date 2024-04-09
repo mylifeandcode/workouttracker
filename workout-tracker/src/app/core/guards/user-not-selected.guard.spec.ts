@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../services/auth/auth.service';
 import { UserNotSelectedGuard } from './user-not-selected.guard';
 
@@ -23,7 +22,7 @@ describe('UserNotSelectedGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule.withRoutes(
+        RouterModule.forRoot(
           [{path: 'home', component: FakeComponent}])
       ],
       providers: [

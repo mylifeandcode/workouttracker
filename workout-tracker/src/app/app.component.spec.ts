@@ -1,8 +1,8 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppComponent } from './app.component';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'wt-nav',
@@ -17,7 +17,7 @@ describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule
+        RouterModule.forRoot([])
       ],
       declarations: [
         AppComponent,

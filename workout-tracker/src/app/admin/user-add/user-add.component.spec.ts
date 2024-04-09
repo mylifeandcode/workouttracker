@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { User } from 'app/core/models/user';
 import { UserNewDTO } from 'app/core/models/user-new-dto';
@@ -15,7 +15,7 @@ class UserServiceMock {
 }
 
 @Component({
-  selector: 'blank',
+  selector: 'wt-blank',
   template: ''
 })
 class BlankComponent {}
@@ -30,9 +30,8 @@ describe('UserAddComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ UserAddComponent, BlankComponent ],
       imports: [ 
-        RouterTestingModule, 
         ReactiveFormsModule, 
-        RouterTestingModule.withRoutes([ { path: 'admin/users', component: BlankComponent } ])
+        RouterModule.forRoot([ { path: 'admin/users', component: BlankComponent } ])
       ],
       providers: [
         {
