@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExercisePlanNextTimeComponent } from './exercise-plan-next-time.component';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 import { Pipe, PipeTransform } from '@angular/core';
 
@@ -23,7 +23,8 @@ describe('ExercisePlanNextTimeComponent', () => {
       declarations: [
         ExercisePlanNextTimeComponent,
         MockResistanceAmountPipe
-      ]
+      ],
+      imports: [ ReactiveFormsModule ]
     });
     fixture = TestBed.createComponent(ExercisePlanNextTimeComponent);
     component = fixture.componentInstance;

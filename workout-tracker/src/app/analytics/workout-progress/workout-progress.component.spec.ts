@@ -10,7 +10,8 @@ import { ExecutedExerciseMetrics } from '../models/executed-exercise-metrics';
 import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
 
 import { WorkoutProgressComponent } from './workout-progress.component';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
 
 class AnalyticsServiceMock {
   getExerciseChartData = jasmine.createSpy('getExerciseChartData')
@@ -80,6 +81,10 @@ describe('WorkoutProgressComponent', () => {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
         }
+      ],
+      imports: [ 
+        ReactiveFormsModule,
+        DropdownModule //CUSTOM_ELEMENTS_SCHEMA doesn't compensate for this because my ReactiveForm is using them
       ],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA //Needed for p-chart element (ChartJS)

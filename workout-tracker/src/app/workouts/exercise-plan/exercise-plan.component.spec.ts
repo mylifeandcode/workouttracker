@@ -4,6 +4,7 @@ import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group
 
 import { ExercisePlanComponent } from './exercise-plan.component';
 import { ResistanceTypePipe } from '../pipes/resistance-type.pipe';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('ExercisePlanComponent', () => {
   let component: ExercisePlanComponent;
@@ -15,7 +16,8 @@ describe('ExercisePlanComponent', () => {
       declarations: [ 
         ExercisePlanComponent,
         ResistanceTypePipe //TODO: Replace with mock 
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   });

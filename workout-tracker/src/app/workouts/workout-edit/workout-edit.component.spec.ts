@@ -23,6 +23,12 @@ class FakeExerciseListMiniComponent{}
 })
 class FakeWorkoutSetDefComponent{}
 
+@Component({
+  selector: 'wt-blank',
+  template: ''
+})
+class BlankComponent {}
+
 class WorkoutServiceMock {
   private getTestWorkout(): Workout {
     const workout = new Workout();
@@ -69,7 +75,9 @@ describe('WorkoutEditComponent', () => {
       ],
       imports: [
         ReactiveFormsModule,
-        RouterModule.forRoot([])
+        RouterModule.forRoot([
+          { path: 'workouts/edit/:id', component: BlankComponent }
+        ])
       ],
       providers: [
         {
@@ -211,8 +219,6 @@ describe('WorkoutEditComponent', () => {
     component.workoutForm.controls.exercises.controls[0].controls.setType.setValue(1);
     component.workoutForm.controls.exercises.controls[0].controls.numberOfSets.setValue(3);
     component.saveWorkout();
-
-    console.log('FORM AT END: ', component.workoutForm);
 
     expect(component.workoutForm.invalid).toBeFalse();
     expect(workoutService.add).toHaveBeenCalled();

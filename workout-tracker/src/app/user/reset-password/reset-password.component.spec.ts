@@ -5,6 +5,7 @@ import { AuthService } from 'app/core/services/auth/auth.service';
 import { of } from 'rxjs';
 
 import { ResetPasswordComponent } from './reset-password.component';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 class AuthServiceMock {
   validatePasswordResetCode = 
@@ -35,7 +36,8 @@ describe('ResetPasswordComponent', () => {
             }
           }
         }
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
 

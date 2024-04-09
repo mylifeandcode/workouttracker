@@ -133,7 +133,6 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   private getWorkoutIdFromRouteParams(): void {
     this.workoutId = this._route.snapshot.params['id'];
-    console.log("WORKOUT ID: ", this.workoutId);
   }
 
   private createForm(): FormGroup<IWorkoutEditForm> {
