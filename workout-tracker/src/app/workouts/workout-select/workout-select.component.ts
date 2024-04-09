@@ -7,6 +7,7 @@ import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
 import { AuthService } from 'app/core/services/auth/auth.service';
 import { sortBy } from 'lodash-es';
+import { DropdownChangeEvent } from 'primeng/dropdown';
 
 @Component({
   selector: 'wt-workout-select',
@@ -73,14 +74,14 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
     this._userSusbscription.unsubscribe();
   }
 
-  public workoutSelectChange(event: any): void { //TODO: Get concrete type instead of using any
+  public workoutSelectChange(event: DropdownChangeEvent): void { //TODO: Get concrete type instead of using any
     if(this.navigateOnSelect) {
       if(this.planningForLater)
-        this._router.navigate([`workouts/plan-for-later/${event.target.value}`]);
+        this._router.navigate([`workouts/plan-for-later/${event.value.id}`]);
       else
-        this._router.navigate([`workouts/plan/${event.target.value}`]);
+        this._router.navigate([`workouts/plan/${event.value.id}`]);
     }
-    this.workoutSelected.emit(event.target.value);
+    this.workoutSelected.emit(event.value.id);
   }
 
   private subscribeToUser(): void {

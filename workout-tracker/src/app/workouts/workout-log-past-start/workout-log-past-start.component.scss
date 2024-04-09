@@ -19,3 +19,13 @@ select {
   color: $button-text-color-one;
   background-color: $workout-color-two;
 }
+
+.btn-duration {
+  color: $button-text-color-one;
+  background-color: $workout-color-three;
+
+  &-disabled {
+    color: white;
+    background-color: gray;
+  }
+}

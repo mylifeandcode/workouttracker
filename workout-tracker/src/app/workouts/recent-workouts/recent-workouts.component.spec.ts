@@ -8,6 +8,7 @@ import { Workout } from '../models/workout';
 import { WorkoutService } from '../workout.service';
 
 import { RecentWorkoutsComponent } from './recent-workouts.component';
+import { DropdownModule } from 'primeng/dropdown';
 
 class ExecutedWorkoutServiceMock {
   getRecent = jasmine.createSpy('getRecent ').and.returnValue(of(new Array<ExecutedWorkoutSummaryDTO>()));
@@ -49,6 +50,7 @@ describe('RecentWorkoutsComponent', () => {
           useClass: RouterMock
         }
       ],
+      imports: [ DropdownModule ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();

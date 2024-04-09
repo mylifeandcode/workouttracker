@@ -9,18 +9,12 @@
     <div class="row a-little-space">
       <div class="col-2">Select a Workout</div>
       <div class="col-3">
-        <!--
-        <select id="workoutDefinitions" formControlName="workoutId">
-          <option disabled [value]="null">Choose a Workout</option>
-          <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
-            {{workouts[i].name}}
-          </option>          
-        </select>
-        -->
-        <p-dropdown [options]="workouts" formControlName="workoutId" optionLabel="name" optionValue="id" placeholder="Choose a Workout"></p-dropdown>
+        <p-dropdown [options]="workouts" formControlName="workoutId" optionLabel="name" optionValue="id"
+          placeholder="Choose a Workout"></p-dropdown>
       </div>
       <div class="col-7">
-        <span *ngIf="formGroup?.get('workoutId')?.dirty && formGroup?.get('workoutId')?.errors" class="text-danger">Required</span>
+        <span *ngIf="formGroup?.get('workoutId')?.dirty && formGroup?.get('workoutId')?.errors"
+          class="text-danger">Required</span>
       </div>
     </div>
     <div class="row a-little-space">
@@ -28,20 +22,15 @@
         <label for="startDateTime">Start Date/Time</label>
       </div>
       <div class="col-3">
-        <p-calendar 
-          formControlName="startDateTime" 
-          [showTime]="true" 
-          hourFormat="12" 
-          inputId="startDateTime" 
-          [showIcon]="true"
-          [hideOnDateTimeSelect]="false"
-        > <!--https://github.com/primefaces/primeng/blob/f5129d8cc90475b239ae5e3412dbe9ed23de31f8/src/app/components/calendar/calendar.ts-->
+        <p-calendar formControlName="startDateTime" [showTime]="true" hourFormat="12" inputId="startDateTime"
+          [showIcon]="true" [hideOnDateTimeSelect]="false">
+          <!--https://github.com/primefaces/primeng/blob/f5129d8cc90475b239ae5e3412dbe9ed23de31f8/src/app/components/calendar/calendar.ts-->
           <ng-template pTemplate="footer">
             <div class="text-center">
               Click/Touch outside the calendar to close it
             </div>
           </ng-template>
-        </p-calendar>      
+        </p-calendar>
       </div>
       <div class="col-7">
         <span *ngIf="startDateTime?.invalid && (startDateTime?.touched || startDateTime?.dirty)" class="text-danger">
@@ -56,22 +45,26 @@
         <label for="endDateTime">End Date/Time</label>
       </div>
       <div class="col-3">
-        <p-calendar 
-          id="endDateTime" 
-          name="endDateTime" 
-          formControlName="endDateTime" 
-          [showTime]="true" 
-          hourFormat="12" 
-          inputId="endDateTime"
-          [showIcon]="true"
-          [hideOnDateTimeSelect]="false"
-        >
-          <ng-template pTemplate="footer">
-            <div class="text-center">
-              Click/Touch outside the calendar to close it
-            </div>
-          </ng-template>
-        </p-calendar>      
+        <p>
+          <button [disabled]="formGroup.controls.startDateTime.invalid" 
+            [ngClass]="{ 'btn-duration-disabled': formGroup.controls.startDateTime.invalid, 'btn-duration': !formGroup.controls.startDateTime.invalid }" (click)="enterDuration()">
+            Get from Workout Duration
+          </button>
+        </p>
+        <p>
+          or
+        </p>
+        <p>
+          Enter Manually<br />
+          <p-calendar id="endDateTime" name="endDateTime" formControlName="endDateTime" [showTime]="true"
+            hourFormat="12" inputId="endDateTime" [showIcon]="true" [hideOnDateTimeSelect]="false">
+            <ng-template pTemplate="footer">
+              <div class="text-center">
+                Click/Touch outside the calendar to close it
+              </div>
+            </ng-template>
+          </p-calendar>
+        </p>
       </div>
       <div class="col-7">
         <span *ngIf="endDateTime?.invalid && (endDateTime?.touched || endDateTime?.dirty)" class="text-danger">
@@ -83,7 +76,8 @@
     </div>
     <div class="row a-little-space">
       <div class="offset-1 col-3">
-        <button [disabled]="!formGroup.valid" type="submit" (click)="proceedToWorkoutEntry()" class="btn btn-enter-info">Enter Workout Information</button>
+        <button [disabled]="!formGroup.valid" type="submit" (click)="proceedToWorkoutEntry()"
+          class="btn btn-enter-info">Enter Workout Information</button>
       </div>
       <div class="col-8">
         <span *ngIf="formGroup?.invalid && (endDateTime?.touched || endDateTime?.dirty)" class="text-danger">
@@ -95,3 +89,9 @@
     </div>
   </form>
 </div>
+<p-dialog [(visible)]="showDurationModal" header="Duration">
+  <wt-duration       
+    (okClicked)="durationModalAccepted($event)"
+    (cancelClicked)="durationModalCancelled()">
+  </wt-duration>
+</p-dialog>

@@ -38,11 +38,11 @@ export class UserEditComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _router: Router,
     private _configService: ConfigService,
-    private _authService: AuthService) { 
+    private _authService: AuthService) {
 
-      this.showPasswordResetButton = !this._configService.get("smtpEnabled");
-      this._resetPasswordUrlRoot = `${window.location.protocol}//${window.location.host}/user/reset-password/`;
-      this.userEditForm = this.createForm();
+    this.showPasswordResetButton = !this._configService.get("smtpEnabled");
+    this._resetPasswordUrlRoot = `${window.location.protocol}//${window.location.host}/user/reset-password/`;
+    this.userEditForm = this.createForm();
   }
 
   //PUBLIC METHODS
@@ -60,27 +60,28 @@ export class UserEditComponent implements OnInit {
     const result: Observable<User> =
       (user.id === 0 ? this._userSvc.add(user) : this._userSvc.update(user));
 
-      result
-          .pipe(finalize(() => { this.savingUserInfo = false; }))
-          .subscribe(
-            () => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
-            (error: any) => { 
-              if(error?.status == 403)
-                this.errorMsg = "You do not have permission to add or edit users.";
-              else
-                this.errorMsg = error.error ? error.error : "An error has occurred. Please contact an administrator.";
-            });
+    result
+      .pipe(finalize(() => { this.savingUserInfo = false; }))
+      .subscribe({
+        next: () => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
+        error: (error: any) => {
+          if (error?.status == 403)
+            this.errorMsg = "You do not have permission to add or edit users.";
+          else
+            this.errorMsg = error.error ? error.error : "An error has occurred. Please contact an administrator.";
+        }
+      });
   }
 
   public cancel(): void {
     if (this.userEditForm.dirty && !window.confirm("Cancel without saving changes?"))
-        return;
+      return;
 
     this._router.navigate(['/admin/users']);
   }
 
   public resetPassword(): void {
-    if(window.confirm("This will reset the user's password. You will need to provide them with the URL to create their new password. Do you want to proceed?")) {
+    if (window.confirm("This will reset the user's password. You will need to provide them with the URL to create their new password. Do you want to proceed?")) {
       this._authService.requestPasswordReset(this.userEditForm.controls.emailAddress.value)
         .subscribe((resetCode: string) => {
           window.alert(`Password has been reset. Instruct user to go to ${this._resetPasswordUrlRoot}${resetCode}.`);
@@ -98,8 +99,8 @@ export class UserEditComponent implements OnInit {
     return this._formBuilder.group<IUserEditForm>({
       id: new FormControl<number>(0, { nonNullable: true }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-      emailAddress: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email]}),
-      role: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)]})
+      emailAddress: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+      role: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] })
     });
 
   }
@@ -117,18 +118,18 @@ export class UserEditComponent implements OnInit {
 
     this._userSvc.getById(userId)
       .subscribe(
-      (user: User) => {
-        this._user = user;
-        this.userEditForm.patchValue(
-          { 
-            id: this._user.id, 
-            name: this._user.name, 
-            emailAddress: this._user.emailAddress, 
-            role: this._user.role 
-          });
-      },
-      (error: any) => this.errorMsg = error,
-      () => this.loadingUserInfo = false);
+        (user: User) => {
+          this._user = user;
+          this.userEditForm.patchValue(
+            {
+              id: this._user.id,
+              name: this._user.name,
+              emailAddress: this._user.emailAddress,
+              role: this._user.role
+            });
+        },
+        (error: any) => this.errorMsg = error,
+        () => this.loadingUserInfo = false);
 
   }
 

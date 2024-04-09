@@ -118,6 +118,11 @@ select.ng-invalid.ng-touched {
   font-weight: normal !important;
 }
 
+.micro-widget-opaque {
+  @extend .micro-widget;
+  background: rgba(0, 0, 0, 1);
+}
+
 .section-title {
   font-weight: bolder;
   font-size: large;
@@ -126,4 +131,8 @@ select.ng-invalid.ng-touched {
 
 .white-steel-background {
   background-image: url('./assets/images/white-steel.png');
+}
+
+.p-dropdown-items { //Fix for style broken by PrimeNG 17. Won't work at component level, needs to be in a higher stylesheet like this.
+  padding-left: 0px !important;
 }

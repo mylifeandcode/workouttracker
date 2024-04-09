@@ -3,12 +3,8 @@
   <div *ngIf="!loading && workouts?.length" class="row select-row">
     <div class="col-12">
       <label>Select a Workout</label>&nbsp;
-      <select id="workoutDefinitions" (change)="workoutSelectChange($event)">
-        <option value="" selected disabled>Choose a Workout</option>
-        <option *ngFor="let workout of workouts; let i = index" [value]="workouts[i].id">
-          {{workouts[i].name}}
-        </option>          
-      </select>
+      <p-dropdown id="workoutDefinitions" [options]="workouts" optionLabel="name" (onChange)="workoutSelectChange($event)" placeholder="Choose a Workout">
+      </p-dropdown>
     </div>
   </div>
   <div *ngIf="!loading && showRecent && workouts?.length == 0">

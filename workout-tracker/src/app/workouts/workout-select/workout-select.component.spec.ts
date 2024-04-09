@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthService } from 'app/core/services/auth/auth.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
@@ -8,6 +8,7 @@ import { WorkoutService } from '../workout.service';
 
 import { WorkoutSelectComponent } from './workout-select.component';
 import { RouterModule } from '@angular/router';
+import { DropdownModule } from 'primeng/dropdown';
 
 class WorkoutServiceMock {
   getFilteredSubset = jasmine.createSpy('getFilteredSubset').and.callFake(() => {
@@ -50,7 +51,8 @@ describe('WorkoutSelectComponent', () => {
       ], 
       imports: [
         RouterModule.forRoot([])
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   });

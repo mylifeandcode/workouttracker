@@ -57,7 +57,8 @@ describe('WorkoutLogPastStartComponent', () => {
         ReactiveFormsModule, 
         CalendarModule, //Importing this because I couldn't use CUSTOM_ELEMENTS_SCHEMA due to formControlName being used with the calendar component
         DropdownModule //Same as above
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
   });
@@ -98,6 +99,22 @@ describe('WorkoutLogPastStartComponent', () => {
     expect(router.navigate)
       .toHaveBeenCalledWith(['/workouts/plan-for-past/1/2022-04-04T16:00:00.000Z/2022-04-04T16:30:15.000Z']);
 
+  });
+
+  it('should set endDateTime via duration', () => {
+    //ARRANGE
+    component.formGroup.patchValue( 
+      { 
+        workoutId: 1, 
+        startDateTime: new Date(2022, 3, 4, 12, 0, 0) 
+      } 
+    );
+
+    //ACT
+    component.durationModalAccepted(3600);
+
+    //ASSERT
+    expect(component.formGroup.controls.endDateTime.value).toEqual(new Date(2022, 3, 4, 13, 0, 0));
   });
 
 });

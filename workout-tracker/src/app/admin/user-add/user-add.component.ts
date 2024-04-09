@@ -10,8 +10,8 @@ import { finalize } from 'rxjs/operators';
 interface IUserAddForm {
   name: FormControl<string>;
   emailAddress: FormControl<string>;
-  password: FormControl<string>; 
-  confirmPassword: FormControl<string>; 
+  password: FormControl<string>;
+  confirmPassword: FormControl<string>;
   role: FormControl<number>;
 }
 
@@ -28,11 +28,11 @@ export class UserAddComponent implements OnInit {
   public showAdminControls: boolean = false;
 
   constructor(
-    private _userSvc: UserService, 
-    private _formBuilder: FormBuilder, 
-    private _router: Router, 
-    private _activatedRoute: ActivatedRoute) { 
-      this.userAddForm = this.createForm();
+    private _userSvc: UserService,
+    private _formBuilder: FormBuilder,
+    private _router: Router,
+    private _activatedRoute: ActivatedRoute) {
+    this.userAddForm = this.createForm();
   }
 
   public ngOnInit(): void {
@@ -45,39 +45,40 @@ export class UserAddComponent implements OnInit {
 
     this._userSvc.addNew(user)
       .pipe(finalize(() => { this.savingUserInfo = false; }))
-      .subscribe(
-        (savedUser: User) => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
-        (error: any) => { 
-          if(error?.status == 403)
+      .subscribe({
+        next: (savedUser: User) => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
+        error: (error: any) => {
+          if (error?.status == 403)
             this.errorMsg = "You do not have permission to add users.";
           else
             this.errorMsg = error.error ? error.error : "An error has occurred. Please contact an administrator.";
-        });
+        }
+      });
 
   }
 
   public cancel(): void {
     if (this.userAddForm.dirty && !window.confirm("Cancel without saving changes?"))
-        return;
+      return;
 
     if (this.showAdminControls)
       this._router.navigate(['/admin/users']);
     else
-    this._router.navigate(['/']);
+      this._router.navigate(['/']);
   }
 
   private createForm(): FormGroup<IUserAddForm> {
 
     return this._formBuilder.group<IUserAddForm>({
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-      emailAddress: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.email ]}),
-      password: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),
-      confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),
-      role: new FormControl<number>((this.showAdminControls ? 0 : 1), { nonNullable: true, validators: [ Validators.required, Validators.min(1), Validators.max(2) ]})
+      emailAddress: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+      password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(7)] }),
+      confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(7)] }),
+      role: new FormControl<number>((this.showAdminControls ? 0 : 1), { nonNullable: true, validators: [Validators.required, Validators.min(1), Validators.max(2)] })
     }, { validators: CustomValidators.passwordsMatch });
 
   }
-  
+
   private getUserForPersist(): UserNewDTO {
     const user = new UserNewDTO();
 
@@ -87,6 +88,6 @@ export class UserAddComponent implements OnInit {
     user.role = this.userAddForm.controls.role.value;
 
     return user;
-  }  
+  }
 
 }

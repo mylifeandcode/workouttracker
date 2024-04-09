@@ -22,13 +22,13 @@ export class AnalyticsDashboardComponent implements OnInit {
       .pipe(
         finalize(() => { this.gettingData = false; })
       )
-      .subscribe(
-        (summary: ExecutedWorkoutsSummary) => {
+      .subscribe({
+        next: (summary: ExecutedWorkoutsSummary) => {
           this.executedWorkoutsSummary = summary;
         },
-        (error: any) => {
+        error: (error: any) => {
           this.errorMessage = error.error ? error.error : "An error has occurred. Please contact an administrator.";
         }
-      );
+      });
   }
 }

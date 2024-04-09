@@ -29,17 +29,17 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
     this.busy = true;
     this.busyMsg = "Deleting...";
-    this._userSvc.delete(userId).subscribe(
-      () => {
+    this._userSvc.delete(userId).subscribe({
+      next:() => {
           //const index = _.findIndex(this.users, (user: User) => user.id == userId);
           //this.users?.splice(index, 1);
       },
-      (error: any) => this.errorMsg = error,
-      () => {
+      error: (error: any) => this.errorMsg = error,
+      complete: () => { //TODO: Replace with piped finalize()
           this.busy = false;
           this.busyMsg = "";
       }
-    );
+  });
   }
 
   /*

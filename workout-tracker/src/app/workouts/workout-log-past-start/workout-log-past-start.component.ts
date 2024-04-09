@@ -38,6 +38,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
   public formGroup: FormGroup<ILogPastWorkoutForm>;
   public workouts: WorkoutDTO[] = [];
   public gettingData: boolean = true;
+  public showDurationModal: boolean = false;
 
   constructor(
     private _formBuilder: FormBuilder, 
@@ -56,6 +57,25 @@ export class WorkoutLogPastStartComponent implements OnInit {
         [`/workouts/plan-for-past/${this.formGroup.controls.workoutId.value}/${this.formGroup.controls.startDateTime.value.toISOString()}/${this.formGroup.controls.endDateTime.value.toISOString()}`] 
       );
     }
+  }
+
+  public enterDuration(): void {
+    this.showDurationModal = true;
+  }
+
+  public durationModalAccepted(duration: number): void {
+    this.showDurationModal = false;
+
+    if (!this.formGroup.controls.startDateTime.value) return;
+
+    const endDate = new Date(this.formGroup.controls.startDateTime.value);
+    endDate.setSeconds(duration);
+
+    this.formGroup.patchValue({ endDateTime: endDate });
+  }
+
+  public durationModalCancelled(): void {
+    this.showDurationModal = false;
   }
 
   private buildForm(): FormGroup<ILogPastWorkoutForm> {

@@ -24,11 +24,11 @@ describe('UserService', () => {
       providers: [
         UserService,
         {
-          provide: ConfigService, 
+          provide: ConfigService,
           useClass: ConfigServiceMock
         }
       ],
-      imports :[
+      imports: [
         HttpClientTestingModule
       ]
     });
@@ -45,10 +45,10 @@ describe('UserService', () => {
   it('should get all users', () => {
     const expectedResults = new Array<User>();
 
-    service.all$.subscribe(
-      (users: Array<User>) => expect(users).toEqual(expectedResults),
-      fail
-    );
+    service.all$.subscribe({
+      next: (users: Array<User>) => expect(users).toEqual(expectedResults),
+      error: fail
+    });
 
     const req = http.expectOne("http://localhost:5600/api/Users");
     expect(req.request.method).toEqual('GET');
@@ -58,15 +58,15 @@ describe('UserService', () => {
 
   });
 
-  it('should get user info by user ID',  () => {
+  it('should get user info by user ID', () => {
     const expectedResults = new User();
     const userId: number = parseInt(TEST_USER_ID);
     expectedResults.id = userId;
 
-    service.getById(userId).subscribe(
-      (user: User) => expect(user).toEqual(expectedResults),
-      fail
-    );
+    service.getById(userId).subscribe({
+      next: (user: User) => expect(user).toEqual(expectedResults),
+      error: fail
+    });
 
     const req = http.expectOne(`http://localhost:5600/api/Users/${TEST_USER_ID}`);
     expect(req.request.method).toEqual('GET');
@@ -81,10 +81,10 @@ describe('UserService', () => {
     const userSaved = new User();
 
     service.addNew(userNew)
-      .subscribe(
-        (result: User) => expect(result).toEqual(userSaved),
-        fail
-      );
+      .subscribe({
+        next: (result: User) => expect(result).toEqual(userSaved),
+        error: fail
+      });
 
     const request = http.expectOne('http://localhost:5600/api/Users/new');
     expect(request.request.method).toEqual('POST');
@@ -100,10 +100,10 @@ describe('UserService', () => {
     user.id = parseInt(TEST_USER_ID);
 
     service.update(user)
-      .subscribe(
-        (result: User) => expect(result).toEqual(user),
-        fail
-      );
+      .subscribe({
+        next: (result: User) => expect(result).toEqual(user),
+        error: fail
+      });
 
     const request = http.expectOne(`http://localhost:5600/api/Users/${user.id}`);
     expect(request.request.method).toEqual('PUT');
@@ -118,10 +118,10 @@ describe('UserService', () => {
     const userId = 7;
 
     service.delete(7)
-      .subscribe(
-        (result: any) => expect(result).toBeNull(),
-        fail
-      );
+      .subscribe({
+        next: (result: any) => expect(result).toBeNull(),
+        error: fail
+      });
 
     const request = http.expectOne(`http://localhost:5600/api/Users/${userId}`);
     expect(request.request.method).toEqual('DELETE');
@@ -135,7 +135,7 @@ describe('UserService', () => {
   it('should get user overview', () => {
 
     const userOverview = new UserOverview();
-    
+
     service.getOverview().subscribe((overview: UserOverview) => {
       expect(overview).toBe(userOverview);
     });

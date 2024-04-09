@@ -38,7 +38,7 @@ export class ResistanceBandsComponent implements OnInit {
 
   public onRowEditInit(band: ResistanceBand): void {
     //Clone the row we're editing in case we decide to cancel. That way, we can get the original version back.
-    this._clonedResistanceBands[band.id] = {...band};
+    this._clonedResistanceBands[band.id] = { ...band };
   }
 
   public onRowEditSave(band: ResistanceBand): void {
@@ -70,16 +70,16 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   public deleteBand(resistanceBand: ResistanceBand): void {
-      this._confirmationService.confirm({
-        message: 'Are you sure you want to delete this resistance band?',
-        accept: () => {
-          this._resistanceBandService
+    this._confirmationService.confirm({
+      message: 'Are you sure you want to delete this resistance band?',
+      accept: () => {
+        this._resistanceBandService
           .delete(resistanceBand.id)
           .subscribe((response: any) => {
-            this._messageService.add({severity:'success', summary: 'Successful', detail: 'Resistance Band deleted', life: 3000});
+            this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Resistance Band deleted', life: 3000 });
             this.getResistanceBandData(false);
           });
-        }
+      }
     });
   }
 
@@ -91,7 +91,7 @@ export class ResistanceBandsComponent implements OnInit {
   private getResistanceBandData(fromCache: boolean): void {
     this._resistanceBandService
       .getAll(fromCache)
-      .subscribe((results: ResistanceBand[]) => { 
+      .subscribe((results: ResistanceBand[]) => {
         this.resistanceBands = results;
       });
   }
@@ -101,27 +101,27 @@ export class ResistanceBandsComponent implements OnInit {
 
     this._resistanceBandService
       .add(this.newResistanceBand)
-      .subscribe(
-        (band: ResistanceBand) => {
-          this._messageService.add({severity:'success', summary: 'Successful', detail: 'Resistance Band added', life: 3000});
+      .subscribe({
+        next: (band: ResistanceBand) => {
+          this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Resistance Band added', life: 3000 });
           this.getResistanceBandData(false);
         },
-        (error: any) => {
-          this._messageService.add({severity:'error', summary: 'Error', detail: 'Failed to add Resistance Band', sticky: true});
+        error: (error: any) => {
+          this._messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add Resistance Band', sticky: true });
         }
-      );
+      });
   }
 
   private updateResistanceBand(band: ResistanceBand): void {
     this._resistanceBandService
       .update(band)
-      .subscribe(
-        (updatedBand: ResistanceBand) => {
-          this._messageService.add({severity:'success', summary: 'Successful', detail: 'Resistance Band updated', life: 3000});
+      .subscribe({
+        next: (updatedBand: ResistanceBand) => {
+          this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Resistance Band updated', life: 3000 });
         },
-        (error: any) => {
-          this._messageService.add({severity:'error', summary: 'Error', detail: 'Failed to update Resistance Band', sticky: true});
+        error: (error: any) => {
+          this._messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update Resistance Band', sticky: true });
         }
-      );
+      });
   }
 }
