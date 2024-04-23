@@ -19,12 +19,12 @@ interface IExerciseEditForm {
   endToEnd: FormControl<boolean | null>;
   involvesReps: FormControl<boolean>;
   usesBilateralResistance: FormControl<boolean>;
-  
+
   //targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
   //Because our target area keys aren't known until run time, we need to us a FormRecord instead of a FormGroup
   //https://angular.io/guide/typed-forms#formrecord
   targetAreas: FormRecord<FormControl<boolean>>;
-  
+
   setup: FormControl<string>;
   movement: FormControl<string>;
   pointsToRemember: FormControl<string>;
@@ -61,16 +61,16 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   public errorMsg: string | null = null;
 
   //PRIVATE FIELDS
-  private _exercise: Exercise = new Exercise(); 
+  private _exercise: Exercise = new Exercise();
   private _exerciseId: number = 0; //TODO: Refactor. We have an exercise variable. Why have this too?
 
   constructor(
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
     private _exerciseSvc: ExerciseService) {
-      super();
-      this.exerciseForm = this.createForm();
-      this.exerciseForm.controls.oneSided.valueChanges.subscribe((value: boolean) => this.checkForBilateral(value));
+    super();
+    this.exerciseForm = this.createForm();
+    this.exerciseForm.controls.oneSided.valueChanges.subscribe((value: boolean) => this.checkForBilateral(value));
   }
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
@@ -79,8 +79,8 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     //this.createForm();
 
     //TODO: Rethink the following. This can probably be done a much better way. Thinking "forkJoin()".
-    this._exerciseSvc.getTargetAreas().subscribe((targetAreas: TargetArea[]) => { 
-      this.allTargetAreas = targetAreas; 
+    this._exerciseSvc.getTargetAreas().subscribe((targetAreas: TargetArea[]) => {
+      this.allTargetAreas = targetAreas;
       this._exerciseSvc.getResistanceTypes().subscribe((resistanceTypes: Map<number, string>) => {
         this.resistanceTypes = resistanceTypes;
         this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
@@ -93,7 +93,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   }
 
   public saveExercise(): void {
-    if(!this.exerciseForm.valid) return;
+    if (!this.exerciseForm.valid) return;
 
     //Called by Save button
     this.saving = true;
@@ -107,30 +107,32 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
           this.saving = false;
           this.exerciseForm.markAsPristine();
         }))
-        .subscribe((addedExercise: Exercise) => {
-          this._exercise = addedExercise;
-          this._exerciseId = this._exercise.id;
-          this.infoMsg = "Exercise created at " + new Date().toLocaleTimeString();
-        },
-        (error: any) => {
-          this.errorMsg = error.message;
-        }
-      );
+        .subscribe({
+          next: (addedExercise: Exercise) => {
+            this._exercise = addedExercise;
+            this._exerciseId = this._exercise.id;
+            this.infoMsg = "Exercise created at " + new Date().toLocaleTimeString();
+          },
+          error: (error: any) => {
+            this.errorMsg = error.message;
+          }
+        });
     else
       this._exerciseSvc.update(this._exercise)
         .pipe(finalize(() => {
           this.saving = false;
-          this.exerciseForm.markAsPristine();          
+          this.exerciseForm.markAsPristine();
         }))
-        .subscribe((updatedExercise: Exercise) => {
-          this._exercise = updatedExercise;
-          this.saving = false;
-          this.infoMsg = "Exercise updated at " + new Date().toLocaleTimeString();
-        }, 
-        (error: any) => {
-          this.errorMsg = error.message;
-        }
-      );
+        .subscribe({
+          next: (updatedExercise: Exercise) => {
+            this._exercise = updatedExercise;
+            this.saving = false;
+            this.infoMsg = "Exercise updated at " + new Date().toLocaleTimeString();
+          },
+          error: (error: any) => {
+            this.errorMsg = error.message;
+          }
+        });
   }
 
   public hasUnsavedData(): boolean {
@@ -150,7 +152,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     this.allTargetAreas.forEach((targetArea: TargetArea) => {
       const thisTargetAreaIsSelected: boolean = some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id);
       this.exerciseForm.controls.targetAreas.addControl(
-        targetArea.name, 
+        targetArea.name,
         new FormControl<boolean>(thisTargetAreaIsSelected, { nonNullable: true }));
     });
 
@@ -162,23 +164,23 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     //TODO: Re-evaluate. Do I really need to do this? I think a better solution might be to just look at the snapshot.
     //this._route.params.subscribe(params => {
 
-      this._exerciseId = this._route.snapshot.params['id'];
-      if (this._exerciseId != 0) {
-        this.loadExercise(); 
-      }
-      else {
-        //Creating a new exercise
-        this.setupTargetAreas([]);
-        this.exerciseForm.reset();
-        this.exerciseForm.controls.id.setValue(0);
-        this.exerciseForm.controls.oneSided.setValue(false);
-        this.exerciseForm.controls.endToEnd.setValue(false);
-        this.exerciseForm.controls.involvesReps.setValue(true);
+    this._exerciseId = this._route.snapshot.params['id'];
+    if (this._exerciseId != 0) {
+      this.loadExercise();
+    }
+    else {
+      //Creating a new exercise
+      this.setupTargetAreas([]);
+      this.exerciseForm.reset();
+      this.exerciseForm.controls.id.setValue(0);
+      this.exerciseForm.controls.oneSided.setValue(false);
+      this.exerciseForm.controls.endToEnd.setValue(false);
+      this.exerciseForm.controls.involvesReps.setValue(true);
 
-        this._exercise = new Exercise();
-        this._exercise.id = 0;
-        this.loading = false;
-      }
+      this._exercise = new Exercise();
+      this._exercise.id = 0;
+      this.loading = false;
+    }
     //}
 
   }
@@ -186,21 +188,21 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   private createForm(): FormGroup<IExerciseEditForm> {
 
     return this._formBuilder.group<IExerciseEditForm>({
-      id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
-      name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }), 
-      description: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}), 
+      id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+      name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+      description: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)]) }),
       resistanceType: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
       oneSided: new FormControl<boolean>(false, { nonNullable: true }),
       endToEnd: new FormControl<boolean | null>(false),
       involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
       usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true }),
-      targetAreas: new FormRecord<FormControl<boolean>>({}, { validators: CustomValidators.formGroupOfBooleansRequireOneTrue}),
-      setup: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}),
-      movement: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])}),
-      pointsToRemember: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)])})
+      targetAreas: new FormRecord<FormControl<boolean>>({}, { validators: CustomValidators.formGroupOfBooleansRequireOneTrue }),
+      setup: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)]) }),
+      movement: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)]) }),
+      pointsToRemember: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)]) })
     });
 
- }
+  }
 
   private loadExercise(): void {
     this.loading = true;
@@ -221,7 +223,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     this._exercise.pointsToRemember = this.exerciseForm.controls.pointsToRemember.value;
     this._exercise.resistanceType = this.exerciseForm.controls.resistanceType.value;
     this._exercise.oneSided = this.exerciseForm.controls.oneSided.value;
-        
+
     if (this._exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
       this._exercise.bandsEndToEnd = this.exerciseForm.controls.endToEnd?.value;
 
@@ -239,12 +241,12 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     const output: ExerciseTargetAreaLink[] = [];
 
-    for(const key in this.exerciseForm.value.targetAreas) {
+    for (const key in this.exerciseForm.value.targetAreas) {
       if (this.exerciseForm.value.targetAreas[key]) {
-        const selectedTargetArea = find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key); 
+        const selectedTargetArea = find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key);
         if (selectedTargetArea) {
           output.push(new ExerciseTargetAreaLink(
-            this._exerciseId, 
+            this._exerciseId,
             selectedTargetArea.id
           ));
         }
@@ -255,9 +257,9 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   }
 
   private updateFormWithExerciseValues(): void {
-    this.exerciseForm.patchValue ({
+    this.exerciseForm.patchValue({
       id: this._exercise.id,
-      name: this._exercise.name, 
+      name: this._exercise.name,
       description: this._exercise.description,
       setup: this._exercise.setup,
       movement: this._exercise.movement,

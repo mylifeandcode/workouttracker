@@ -113,7 +113,7 @@ describe('AuthService', () => {
     const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
     expect(testRequest.request.method).toEqual('POST');
 
-    testRequest.flush(throwError("Something bad happened!"));
+    testRequest.flush(throwError(() => "Something bad happened!"));
     
   });
 

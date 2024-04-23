@@ -243,7 +243,7 @@ describe('ResistanceBandsComponent', () => {
     
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
-    resistanceBandService.add = jasmine.createSpy('add').and.returnValue(throwError(new Error("Something went wrong!")));
+    resistanceBandService.add = jasmine.createSpy('add').and.returnValue(throwError(() => new Error("Something went wrong!")));
 
     const messageService = TestBed.inject(MessageService);
 
@@ -259,7 +259,7 @@ describe('ResistanceBandsComponent', () => {
     
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
-    resistanceBandService.update = jasmine.createSpy('update').and.returnValue(throwError(new Error("Something went wrong!")));
+    resistanceBandService.update = jasmine.createSpy('update').and.returnValue(throwError(() => new Error("Something went wrong!")));
 
     const messageService = TestBed.inject(MessageService);
 

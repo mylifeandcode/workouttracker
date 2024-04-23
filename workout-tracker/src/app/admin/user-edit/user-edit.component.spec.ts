@@ -97,7 +97,7 @@ describe('UserEditComponent', () => {
 
   it('should populate error message when error occurs while saving user info', () => {
     //ARRANGE
-    userService.update = jasmine.createSpy('update').and.returnValue(throwError(new Error("Something bad happened.")));
+    userService.update = jasmine.createSpy('update').and.returnValue(throwError(() => new Error("Something bad happened.")));
     component.userEditForm.controls.id.setValue(100);
     component.userEditForm.controls.name.setValue('Doug');
 
@@ -111,7 +111,9 @@ describe('UserEditComponent', () => {
 
   it('should populate error message when user does not have permissions to save user info', () => {
     //ARRANGE
-    userService.update = jasmine.createSpy('update').and.returnValue(throwError({ status: 403 }));
+    //userService.update = jasmine.createSpy('update').and.returnValue(throwError(() => { status: 403 }));
+    const error = { status: 403 };
+    userService.update = jasmine.createSpy('update').and.returnValue(throwError(() => error));
     component.userEditForm.controls.id.setValue(100);
     component.userEditForm.controls.name.setValue('Doug');
 

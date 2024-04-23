@@ -23,12 +23,12 @@ export class ChangePasswordComponent {
   public errorMessage: string | null = null;
   public changingPassword: boolean = false;
   public passwordChanged: boolean = false;
-  
+
   constructor(
     private _router: Router,
     private _authService: AuthService,
-    private _formBuilder: FormBuilder) { 
-      this.changePasswordForm = this.createForm();
+    private _formBuilder: FormBuilder) {
+    this.changePasswordForm = this.createForm();
   }
 
   public changePassword(): void {
@@ -37,22 +37,22 @@ export class ChangePasswordComponent {
       this.errorMessage = null;
       this.passwordChanged = false;
       this._authService.changePassword(
-        this.changePasswordForm.controls.currentPassword.value, 
+        this.changePasswordForm.controls.currentPassword.value,
         this.changePasswordForm.controls.password.value)
-          .pipe(finalize(() => { this.changingPassword = false; }))
-          .subscribe(
-            () => { this.passwordChanged = true; }, 
-            (error: any) => { 
-              this.errorMessage = "Couldn't change password: " + (error?.error ?? "An error occurred.");
-            }
-          );
+        .pipe(finalize(() => { this.changingPassword = false; }))
+        .subscribe({
+          next: () => { this.passwordChanged = true; },
+          error: (error: any) => {
+            this.errorMessage = "Couldn't change password: " + (error?.error ?? "An error occurred.");
+          }
+        });
     }
   }
 
   public cancel(): void {
 
     if (this.changePasswordForm.dirty && !window.confirm("Cancel without changing password?"))
-        return;
+      return;
 
     this._router.navigate(['/']);
 
@@ -62,8 +62,8 @@ export class ChangePasswordComponent {
 
     return this._formBuilder.group<IChangePasswordForm>({
       currentPassword: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-      password: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),
-      confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.minLength(7) ]}),
+      password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(7)] }),
+      confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(7)] }),
     }, { validators: CustomValidators.passwordsMatch });
 
   }

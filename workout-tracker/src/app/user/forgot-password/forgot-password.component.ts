@@ -22,10 +22,10 @@ export class ForgotPasswordComponent implements OnInit {
   public requestInProgress: boolean = false;
 
   constructor(
-    private _configService: ConfigService, 
-    private _formBuilder: FormBuilder, 
-    private _authService: AuthService) { 
-      this.forgotPasswordForm = this.buildForm();
+    private _configService: ConfigService,
+    private _formBuilder: FormBuilder,
+    private _authService: AuthService) {
+    this.forgotPasswordForm = this.buildForm();
   }
 
   public ngOnInit(): void {
@@ -39,15 +39,15 @@ export class ForgotPasswordComponent implements OnInit {
     this._authService
       .requestPasswordReset(this.forgotPasswordForm.controls.emailAddress.value)
       .pipe(finalize(() => { this.requestInProgress = false; }))
-      .subscribe(
-        () => { this.requestSuccessful = true; },
-        (error: any) => { this.errorMessage = error?.error ?? "Password reset request failed. Please try again later."; }
-      );
+      .subscribe({
+        next: () => { this.requestSuccessful = true; },
+        error: (error: any) => { this.errorMessage = error?.error ?? "Password reset request failed. Please try again later."; }
+      });
   }
 
   private buildForm(): FormGroup<IForgotPasswordForm> {
     return this._formBuilder.group<IForgotPasswordForm>({
-      emailAddress: new FormControl('', { nonNullable: true, validators: [ Validators.required, Validators.email ] })
+      emailAddress: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] })
     });
   }
 

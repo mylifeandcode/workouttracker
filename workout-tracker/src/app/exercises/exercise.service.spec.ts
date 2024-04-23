@@ -16,13 +16,13 @@ describe('ExerciseService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        ExerciseService, 
+        ExerciseService,
         {
           provide: ConfigService,
           useClass: ConfigServiceMock
         }
       ],
-      imports :[
+      imports: [
         HttpClientTestingModule
       ]
     });
@@ -40,10 +40,10 @@ describe('ExerciseService', () => {
 
     const expectedResults = new PaginatedResults<ExerciseDTO>();
 
-    service.getAll(0, 10).subscribe(
-      exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
-      fail
-    );
+    service.getAll(0, 10).subscribe({
+      next: exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
+      error: fail
+    });
 
     // ExerciseService should have made one request to GET exercises from expected URL
     const req = httpMock.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10"); //TODO: Refactor
@@ -61,10 +61,10 @@ describe('ExerciseService', () => {
 
     const expectedResults = new PaginatedResults<ExerciseDTO>();
 
-    service.getAll(0, 10, 'Press').subscribe(
-      exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
-      fail
-    );
+    service.getAll(0, 10, 'Press').subscribe({
+      next: exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
+      error: fail
+    });
 
     // ExerciseService should have made one request to GET exercises from expected URL
     const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&nameContains=Press");
@@ -82,10 +82,10 @@ describe('ExerciseService', () => {
 
     const expectedResults = new PaginatedResults<ExerciseDTO>();
 
-    service.getAll(0, 10, null, ['Chest']).subscribe(
-      exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
-      fail
-    );
+    service.getAll(0, 10, null, ['Chest']).subscribe({
+      next: exercises => expect(exercises).toEqual(expectedResults, 'should return expected results'),
+      error: fail
+    });
 
     // ExerciseService should have made one request to GET exercises from expected URL
     const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&hasTargetAreas=Chest");
@@ -94,16 +94,16 @@ describe('ExerciseService', () => {
     // Respond with the mock results
     req.flush(expectedResults);
 
-  });  
+  });
 
   it('should retrieve exercise by ID', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
 
     const expectedExercise = new Exercise();
 
-    service.getById(5).subscribe(
-      exercise => expect(exercise).toEqual(expectedExercise, 'should return expected results'),
-      fail
-    );
+    service.getById(5).subscribe({
+      next: exercise => expect(exercise).toEqual(expectedExercise, 'should return expected results'),
+      error: fail
+    });
 
     // ExerciseService should have made one request to GET exercise from expected URL
     const req = httpMock.expectOne("http://localhost:5600/api/exercises/5"); //TODO: Refactor
@@ -118,10 +118,10 @@ describe('ExerciseService', () => {
 
     const exercise = new Exercise();
 
-    service.add(exercise).subscribe(
-      (result: Exercise) => expect(result).toEqual(exercise, 'should return newly created exercise'),
-      fail
-    );
+    service.add(exercise).subscribe({
+      next: (result: Exercise) => expect(result).toEqual(exercise, 'should return newly created exercise'),
+      error: fail
+    });
 
     // ExerciseService should have made one request to POST exercise to expected URL
     const req = httpMock.expectOne("http://localhost:5600/api/exercises"); //TODO: Refactor
@@ -138,10 +138,10 @@ describe('ExerciseService', () => {
     const exercise = new Exercise();
     exercise.id = 6;
 
-    service.update(exercise).subscribe(
-      (result: Exercise) => expect(result).toEqual(exercise, 'should return udpated exercise'),
-      fail
-    );
+    service.update(exercise).subscribe({
+      next: (result: Exercise) => expect(result).toEqual(exercise, 'should return udpated exercise'),
+      error: fail
+    });
 
     // ExerciseService should have made one request to PUT exercises to expected URL
     const req = httpMock.expectOne(`http://localhost:5600/api/exercises/${exercise.id}`);

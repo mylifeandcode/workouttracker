@@ -117,8 +117,8 @@ export class UserEditComponent implements OnInit {
   private getUserInfoFromService(userId: number): void {
 
     this._userSvc.getById(userId)
-      .subscribe(
-        (user: User) => {
+      .subscribe({
+        next: (user: User) => {
           this._user = user;
           this.userEditForm.patchValue(
             {
@@ -128,8 +128,8 @@ export class UserEditComponent implements OnInit {
               role: this._user.role
             });
         },
-        (error: any) => this.errorMsg = error,
-        () => this.loadingUserInfo = false);
+        error: (error: any) => this.errorMsg = error,
+        complete: () => this.loadingUserInfo = false});
 
   }
 

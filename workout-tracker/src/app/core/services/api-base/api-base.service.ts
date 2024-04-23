@@ -141,10 +141,12 @@ export abstract class ApiBaseService<T extends Entity> {
    * @param err The error.
    * @returns An Observable that emits no items to the Observer and immediately emits an error notification.
    */
+  /*
   private handleError(err: any): Observable<never> {
     //TODO: Implement this to do something meaningful/useful
     //console.log("Error in ApiBaseService: ", err);
-    return throwError(err);
+    return throwError(() => err);
   }
+  */
   //END PRIVATE METHODS ///////////////////////////////////////////////////////
 }
