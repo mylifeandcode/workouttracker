@@ -9,7 +9,7 @@ import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
 import { forEach } from 'lodash-es';
@@ -95,7 +95,8 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     private _formBuilder: FormBuilder,
     private _executedWorkoutService: ExecutedWorkoutService,
     private _resistanceBandService: ResistanceBandService,
-    private _messageService: MessageService) {
+    private _messageService: MessageService,
+    private _router: Router) {
     super();
     this.workoutForm = this.createForm();
   }
@@ -243,7 +244,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           this.workoutLoaded = true;
         },
         error: (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
-  });
+      });
   }
 
   private setupExercisesFormGroup(exercises: ExecutedExerciseDTO[]): void {
@@ -349,11 +350,17 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           this._messageService.clear();
           this._executedWorkout = workout;
           if (completed) {
-            this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
-            this.workoutCompleted = true;
-            this.endDateTime = this._executedWorkout.endDateTime;
-            this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Workout completed!', life: 5000 });
-            this.workoutForm.markAsPristine();
+            if (this.isLoggingPastWorkout) {
+              this.workoutForm.markAsPristine(); //To allow the guard to let us navigate away
+              this._router.navigate(['/workouts/history']);
+            } 
+            else {
+              this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
+              this.workoutCompleted = true;
+              this.endDateTime = this._executedWorkout.endDateTime;
+              this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Workout completed!', life: 5000 });
+              this.workoutForm.markAsPristine();
+            }
           }
           else {
             if (!this.startDateTime) this.startDateTime = this._executedWorkout.startDateTime;
