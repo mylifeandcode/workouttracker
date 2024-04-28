@@ -1,4 +1,4 @@
-<h3 class="headroom">Workout Progress</h3>
+<h3 class="pt-3">Workout Progress</h3>
 
 <div class="container-fluid">
   <form [formGroup]="form" novalidate>
@@ -13,7 +13,7 @@
         <input formControlName="workoutCount" wtSelectOnFocus pInputText type="number" class="count" required />
       </div>
     </div>
-    <div class="row little-headroom">
+    <div class="row pt-2">
       <div *ngIf="metrics && metrics.length > 0" class="col-12">
         <label class="exercise-label">Exercise</label>
         <p-dropdown formControlName="exerciseId" placeholder="Select an Exercise" [options]="metrics[0].exerciseMetrics" optionValue="exerciseId" optionLabel="name">

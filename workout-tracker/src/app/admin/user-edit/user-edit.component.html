@@ -1,29 +1,29 @@
   <div class="container">
     <div class="row">
-      <div *ngIf="!loadingUserInfo" class="headroom offset-4 col-4">
+      <div *ngIf="!loadingUserInfo" class="pt-3 offset-4 col-4">
         <h3>Edit User</h3>
         <form [formGroup]="userEditForm" novalidate>
           <div class="form-group">
             <input type="hidden" formControlName="id" />
       
-            <label class="center-block headroom">
+            <label class="center-block pt-3">
               Name:
               <input class="form-control" formControlName="name" placeholder="User Name (required)" />
             </label>
-            <span class="text-danger headroom" *ngIf="userEditForm.controls.name.touched && userEditForm.controls.name.errors?.required"> Required</span>
+            <span class="text-danger pt-3" *ngIf="userEditForm.controls.name.touched && userEditForm.controls.name.errors?.required"> Required</span>
           </div>
 
           <div class="form-group">
-            <label class="center-block headroom">
+            <label class="center-block pt-3">
               Email Address:
               <input class="form-control" formControlName="emailAddress" placeholder="Email Address (required)" />
             </label>
-            <span class="text-danger headroom" *ngIf="userEditForm.controls.emailAddress.touched && userEditForm.controls.emailAddress.errors?.required"> Required.</span>
-            <span class="text-danger headroom" *ngIf="userEditForm.controls.emailAddress.touched && userEditForm.controls.emailAddress.errors?.email"> Must be a valid email address.</span>
+            <span class="text-danger pt-3" *ngIf="userEditForm.controls.emailAddress.touched && userEditForm.controls.emailAddress.errors?.required"> Required.</span>
+            <span class="text-danger pt-3" *ngIf="userEditForm.controls.emailAddress.touched && userEditForm.controls.emailAddress.errors?.email"> Must be a valid email address.</span>
           </div>
 
           <div class="form-group">
-            <label class="center-block headroom">
+            <label class="center-block pt-3">
               Role:
               <select class="form-control" formControlName="role" placeholder="User Role (required)">
                 <option value="0" selected disabled>Choose a User Role</option>
@@ -31,22 +31,22 @@
                 <option value="2">Administrator</option>
               </select>
             </label>
-            <span class="text-danger headroom" *ngIf="userEditForm.controls.name.touched && userEditForm.controls.name.errors?.required"> Required</span>
+            <span class="text-danger pt-3" *ngIf="userEditForm.controls.name.touched && userEditForm.controls.name.errors?.required"> Required</span>
           </div>
 
-          <div *ngIf="showPasswordResetButton" class="headroom">
+          <div *ngIf="showPasswordResetButton" class="pt-3">
             <button type="button" [disabled]="userEditForm.dirty" class="btn btn-primary" (click)="resetPassword()">Reset Password</button>
             <span *ngIf="userEditForm.dirty"><br /><small> This button is disabled if unsaved changes have been made. Please save any changes if you want to reset this user's password.</small></span>
           </div>
 
-          <div class="headroom">
+          <div class="pt-3">
             <button type="submit" [disabled]="userEditForm.invalid" (click)="saveUser()" class="btn btn-success">Save</button>
             &nbsp;
             <button type="button" [disabled]="savingUserInfo || loadingUserInfo" (click)="cancel()" class="btn btn-warning">Cancel</button>
             <span *ngIf="savingUserInfo">Saving...</span> <span *ngIf="errorMsg" class="error-text">{{errorMsg}}</span>
           </div>
         </form>
-        <div class="headroom">
+        <div class="pt-3">
           <a routerLink="/admin/users">Users List</a>
         </div>
       </div>

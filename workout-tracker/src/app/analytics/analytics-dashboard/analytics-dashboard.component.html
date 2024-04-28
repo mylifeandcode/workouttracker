@@ -8,7 +8,7 @@
   </div>
 </div>
 
-<h3 *ngIf="!gettingData && executedWorkoutsSummary" class="headroom">Analytics</h3>
+<h3 *ngIf="!gettingData && executedWorkoutsSummary" class="pt-3">Analytics</h3>
 <div *ngIf="!gettingData && executedWorkoutsSummary" class="container-fluid">
   <p>
     You have logged {{executedWorkoutsSummary.totalLoggedWorkouts}} workouts since {{executedWorkoutsSummary.firstLoggedWorkoutDateTime | date:'M/d/yyyy'}}.
