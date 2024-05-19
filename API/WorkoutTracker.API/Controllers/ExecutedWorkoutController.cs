@@ -10,6 +10,7 @@ using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.API.Models;
 using WorkoutTracker.API.Mappers;
 using System.Collections.Generic;
+using System.Net;
 
 namespace WorkoutTracker.API.Controllers
 {
@@ -183,6 +184,12 @@ namespace WorkoutTracker.API.Controllers
         {
             try
             {
+                if(value.Exercises.Any(x => x.ExecutedWorkoutId == 0))
+                    return StatusCode(400, "One or more ExecutedExercises has an ExecutedWorkoutId of 0.");
+
+                if(value.Id == 0)
+                    return StatusCode(400, "ExecutedWorkout has an Id of 0.");
+
                 SetModifiedAuditFields(value);
                 return _executedWorkoutService.Update(value, true);
             }

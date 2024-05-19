@@ -146,7 +146,10 @@ namespace WorkoutTracker.Tests.Services
                     Assert.AreEqual(submittedDate, executedExercisesInResult[x].CreatedDateTime);
                     
                     //Confirm exercise
-                    Assert.AreEqual(exerciseInWorkout.Exercise, executedExercisesInResult[x].Exercise);
+
+                    //NOPE for this condition -- having the object and not just the ID caused trouble elsewhere!
+                    //Assert.AreEqual(exerciseInWorkout.Exercise, executedExercisesInResult[x].Exercise);
+                    
                     Assert.AreEqual(exerciseInWorkout.ExerciseId, executedExercisesInResult[x].ExerciseId);
                     Assert.AreEqual(exerciseInWorkout.SetType, executedExercisesInResult[x].SetType);
 
