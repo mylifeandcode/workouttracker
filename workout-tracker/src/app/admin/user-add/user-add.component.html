@@ -1,47 +1,68 @@
 <div class="container">
   <div class="row">
-    <div class="headroom offset-4 col-8">
+    <div class="pt-3">
       <h3 *ngIf="showAdminControls">Add User</h3>
       <h3 *ngIf="!showAdminControls">Register</h3>
       <form [formGroup]="userAddForm" novalidate>
-        <div class="form-group">
-          <label class="center-block headroom">
-            Name:
-            <input class="form-control" formControlName="name" placeholder="User Name (required)" />
-          </label>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.name.touched && userAddForm.controls.name.errors?.required"> Required.</span>
+
+        <div class="row">
+          <div class="col-md-6 form-group">
+            <label class="center-block pt-3">
+              Name:
+              <input class="form-control" formControlName="name" placeholder="User Name (required)" />
+            </label>
+            <span class="text-danger pt-3"
+              *ngIf="userAddForm.controls.name.touched && userAddForm.controls.name.errors?.required">
+              Required.</span>
+          </div>
+          <div class="col-md-6 form-group">
+            <label class="center-block pt-3">
+              Email Address:
+              <input class="form-control" formControlName="emailAddress" placeholder="Email Address (required)" />
+            </label>
+            <span class="text-danger pt-3"
+              *ngIf="userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.required">
+              Required.</span>
+            <span class="text-danger pt-3"
+              *ngIf="userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.email">
+              Must be a valid email address.</span>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label class="center-block headroom">
-            Email Address:
-            <input class="form-control" formControlName="emailAddress" placeholder="Email Address (required)" />
-          </label>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.required"> Required.</span>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.email"> Must be a valid email address.</span>
-        </div>
-
-        <div class="form-group">
-          <label class="center-block headroom">
-            Password:
-            <input type="password" class="form-control" formControlName="password" placeholder="Password (required)" />
-          </label>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.password.touched && userAddForm.controls.password.errors?.required"> Required.</span>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.password.touched && userAddForm.controls.password.errors?.minlength"> Must be at least 7 characters.</span>
-        </div>
-        
-        <div class="form-group">
-          <label class="center-block headroom">
-            Confirm Password:
-            <input type="password" class="form-control" formControlName="confirmPassword" placeholder="Confirm Password (required)" />
-          </label>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.required"> Required.</span>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.minlength"> Must be at least 7 characters.</span>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.errors?.passwordsMatch"> Passwords must match.</span>
+        <div class="row">
+          <div class="col-md-6 form-group">
+            <label class="center-block pt-3">
+              Password:
+              <input type="password" class="form-control" formControlName="password"
+                placeholder="Password (required)" />
+            </label>
+            <span class="text-danger pt-3"
+              *ngIf="userAddForm.controls.password.touched && userAddForm.controls.password.errors?.required">
+              Required.</span>
+            <span class="text-danger pt-3"
+              *ngIf="userAddForm.controls.password.touched && userAddForm.controls.password.errors?.minlength"> Must
+              be at least 7 characters.</span>
+          </div>
+          <div class="col-md-6 form-group">
+            <label class="center-block pt-3">
+              Confirm Password:
+              <input type="password" class="form-control" formControlName="confirmPassword"
+                placeholder="Confirm Password (required)" />
+            </label>
+            <span class="text-danger pt-3"
+              *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.required">
+              Required.</span>
+            <span class="text-danger pt-3"
+              *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.minlength">
+              Must be at least 7 characters.</span>
+            <span class="text-danger pt-3"
+              *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.errors?.passwordsMatch"> Passwords
+              must match.</span>
+          </div>
         </div>
 
         <div *ngIf="showAdminControls" class="form-group">
-          <label class="center-block headroom">
+          <label class="center-block pt-3">
             Role:
             <select class="form-control" formControlName="role" placeholder="User Role (required)">
               <option value="0" selected disabled>Choose a User Role</option>
@@ -49,20 +70,21 @@
               <option value="2">Administrator</option>
             </select>
           </label>
-          <span class="text-danger headroom" *ngIf="userAddForm.controls.role.touched && userAddForm.controls.role.errors?.required"> Required.</span>
+          <span class="text-danger pt-3"
+            *ngIf="userAddForm.controls.role.touched && userAddForm.controls.role.errors?.required"> Required.</span>
         </div>
 
-        <div class="headroom">
-          <button type="submit" [disabled]="userAddForm.invalid" (click)="addUser()" class="btn btn-success">Add</button>
+        <div class="pt-3">
+          <button type="submit" [disabled]="userAddForm.invalid" (click)="addUser()"
+            class="btn btn-success">Add</button>
           &nbsp;
           <button type="button" [disabled]="savingUserInfo" (click)="cancel()" class="btn btn-warning">Cancel</button>
           <span *ngIf="savingUserInfo">Saving...</span> <span *ngIf="errorMsg" class="error-text">{{errorMsg}}</span>
         </div>
       </form>
-      <div *ngIf="showAdminControls" class="headroom">
+      <div *ngIf="showAdminControls" class="pt-3">
         <a routerLink="/admin/users">Users List</a>
       </div>
     </div>
   </div>
 </div>
-

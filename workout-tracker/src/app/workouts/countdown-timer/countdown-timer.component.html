@@ -4,21 +4,21 @@ or not to render them. If you render one which had not originally been rendered,
 try to call a method on it via ViewChild, it throws a null reference exception, claiming 
 that the newly-rendered countdown is null.
 -->
-<div *ngIf="targetReps" class="centeredText target-reps-text">
+<div *ngIf="targetReps" class="text-center target-reps-text">
   Target Reps: {{targetReps}}
 </div>
-<div [ngStyle]="{'text-align': 'center', 'display': (showPreCountdown)?'inline-block':'none'}" class="centeredText timer-text">
+<div [ngStyle]="{'text-align': 'center', 'display': (showPreCountdown)?'inline-block':'none'}" class="text-center timer-text">
     Get ready: 
     <countdown #preCountdown [config]="preCountdownConfig" (event)="handlePreCountdownEvent($event)"></countdown>
 </div>
-<div *ngIf="countdownHasBegun" class="centeredText timer-text">
+<div *ngIf="countdownHasBegun" class="text-center timer-text">
   GO!
 </div>
-<div class="centeredText timer-text">
+<div class="text-center timer-text">
   <countdown #mainCountdown [config]="countdownConfig" (event)="handleCountdownEvent($event)"></countdown>
 </div>
 <p></p>
-<div class="centeredText">
+<div class="text-center">
   <button *ngIf="!showPreCountdown && !countdownHasBegun" class="btn btn-success" (click)="startCountdown()">Begin</button>
 </div>
 

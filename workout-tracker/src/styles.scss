@@ -7,23 +7,8 @@
   font-family: $font-one, $font-two, $font-three, $font-four;
 }
 
-/*
-.p-dropdown-label.p-placeholder {
-  font-family: $font-one, $font-two, $font-three, $font-four;
-}
-*/
-
 .p-inputtext {
   font-family: $font-one, $font-two, $font-three, $font-four !important; //Theme CSS is getting in the way
-}
-
-
-.gimmeSomeSpace {
-  padding: 6px;
-}
-
-.centeredText {
-  text-align: center;
 }
 
 .btn.btn-fullWidth {
@@ -71,10 +56,6 @@ select.ng-invalid.ng-touched {
 
 .headroom {
   padding-top: 14px;
-}
-
-.little-headroom {
-  padding-top: 8px;
 }
 
 .little-footroom {

@@ -25,7 +25,7 @@
   </div>
 
   <ng-container *ngIf="!loggingIn">
-    <div class="row offset-md-4 col-md-4 card centeredText user-select">
+    <div class="row offset-md-4 col-md-4 card text-center user-select">
       <div class="list-group">
         <div *ngFor="let user of users" (click)="selectUser(user.id, user.name)" class="list-group-item list-group-item-action list-group-item-success user-select-panel">
           {{user.name}}
@@ -33,14 +33,14 @@
       </div>
     </div>
 
-    <div *ngIf="users && users.length == 0 && errorMsg == null" class="row offset-md-4 col-md-4 centeredText gimmeSomeSpace greeting-text">
+    <div *ngIf="users && users.length == 0 && errorMsg == null" class="row offset-md-4 col-md-4 text-center p-1 greeting-text">
       <p>No users have been created yet. Create one with the button below.</p>
       <p>
         <strong>This user will be created as an Administrator.</strong> Administrators have permissions to manage the system.
       </p>
     </div>
 
-    <div *ngIf="!errorMsg" class="row offset-md-4 col-md-4 centeredText">
+    <div *ngIf="!errorMsg" class="row offset-md-4 col-md-4 text-center">
       <button type="button" class="btn btn-info btn-fullWidth headroom" routerLink='/new-user'>Add User</button>
     </div>
   </ng-container>
