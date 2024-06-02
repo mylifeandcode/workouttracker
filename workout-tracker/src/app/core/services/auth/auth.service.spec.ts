@@ -1,4 +1,4 @@
-import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@angular/common/http/testing';
+import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { throwError } from 'rxjs';
@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { ConfigService } from '../config/config.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { RouterModule } from '@angular/router';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 class ConfigServiceMock {
   get = jasmine.createSpy('get').and.callFake((configKey: string) => {
@@ -37,22 +38,20 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
+    imports: [RouterModule.forRoot([{ path: 'user-select', component: FakeComponent }])],
+    providers: [
         {
-          provide: ConfigService,
-          useClass: ConfigServiceMock
+            provide: ConfigService,
+            useClass: ConfigServiceMock
         },
         {
-          provide: LocalStorageService,
-          useClass: LocalStorageServiceMock
-        }
-      ], 
-      imports :[
-        HttpClientTestingModule, 
-        RouterModule.forRoot(
-          [{path: 'user-select', component: FakeComponent}])
-      ]
-    });
+            provide: LocalStorageService,
+            useClass: LocalStorageServiceMock
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     service = TestBed.inject(AuthService);
     configService = TestBed.inject(ConfigService);
     localStorageService = TestBed.inject(LocalStorageService);

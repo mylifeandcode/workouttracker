@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { WorkoutService } from './workout.service';
 import { Workout } from 'app/workouts/models/workout';
@@ -7,6 +7,7 @@ import { ConfigService } from 'app/core/services/config/config.service';
 import { WorkoutPlan } from './models/workout-plan';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { WorkoutDTO } from './models/workout-dto';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 const TEST_WORKOUT_ID = "5";
 const API_ROOT_URL = "http://localhost:5600/api/workouts";
@@ -21,16 +22,16 @@ let httpMock: HttpTestingController;
 describe('WorkoutService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
+    imports: [],
+    providers: [
         {
-          provide: ConfigService,
-          useClass: MockConfigService
-        }
-      ]
-    });
+            provide: ConfigService,
+            useClass: MockConfigService
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     service = TestBed.inject(WorkoutService);
     httpMock = TestBed.inject(HttpTestingController);
   });

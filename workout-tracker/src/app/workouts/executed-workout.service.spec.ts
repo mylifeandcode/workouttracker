@@ -1,10 +1,11 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ConfigService } from 'app/core/services/config/config.service';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 
 import { ExecutedWorkoutService } from './executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from './models/executed-workout-summary-dto';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 const API_ROOT_URL: string = "http://localhost:5600/api/";
 
@@ -18,17 +19,17 @@ describe('ExecutedWorkoutService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
+    imports: [],
+    providers: [
         ExecutedWorkoutService,
         {
-          provide: ConfigService,
-          useClass: ConfigServiceMock
-        }
-      ],
-      imports: [
-        HttpClientTestingModule
-      ]
-    });
+            provide: ConfigService,
+            useClass: ConfigServiceMock
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     service = TestBed.inject(ExecutedWorkoutService);
     httpMock = TestBed.inject(HttpTestingController);
   });

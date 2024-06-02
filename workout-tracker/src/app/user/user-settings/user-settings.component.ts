@@ -49,7 +49,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
       .pipe(
         finalize(() => { this.loading = false; }),
         catchError((err) => {
-          window.alert("ERROR: " + err.message ?? "Unknown error");
+          window.alert("ERROR: " + err.message);
           throw err.message;
         })
       )
@@ -78,7 +78,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
           this.userSettingsForm?.markAsPristine();
         }),
         catchError((err) => {
-          window.alert("ERROR: " + err.message ?? "Unknown error");
+          window.alert("ERROR: " + err.message);
           throw err.message;
         })
       )

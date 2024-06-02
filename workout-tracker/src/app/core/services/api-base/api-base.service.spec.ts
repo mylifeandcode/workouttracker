@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Entity } from 'app/shared/models/entity';
 import { ApiBaseService } from './api-base.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 const API_ROOT = "https://someApiRoot";
@@ -25,13 +25,13 @@ class WidgetService extends ApiBaseService<Widget> {
 describe('ApiBaseService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        WidgetService
-      ],
-      imports :[
-        HttpClientTestingModule
-      ]
-    });
+    imports: [],
+    providers: [
+        WidgetService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
   });
 
   let service: WidgetService;

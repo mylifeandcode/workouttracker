@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { WorkoutHistoryComponent } from './workout-history.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('WorkoutHistoryComponent', () => {
   let component: WorkoutHistoryComponent;
@@ -9,14 +10,13 @@ describe('WorkoutHistoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ 
+    declarations: [
         WorkoutHistoryComponent
-      ],
-      imports: [
-        HttpClientTestingModule
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+})
     .compileComponents();
   });
 

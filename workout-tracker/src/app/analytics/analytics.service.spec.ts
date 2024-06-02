@@ -1,4 +1,4 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ConfigService } from 'app/core/services/config/config.service';
 import { SetType } from 'app/core/enums/set-type';
@@ -8,6 +8,7 @@ import { AnalyticsChartData } from './models/analytics-chart-data';
 import { ExecutedExerciseMetrics } from './models/executed-exercise-metrics';
 import { ExecutedWorkoutMetrics } from './models/executed-workout-metrics';
 import { ExecutedWorkoutsSummary } from './models/executed-workouts-summary';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 class ConfigServiceMock {
   get = jasmine.createSpy('get').and.returnValue('http://localhost:5600/api/');
@@ -18,16 +19,16 @@ describe('AnalyticsService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
+    imports: [],
+    providers: [
         {
-          provide: ConfigService,
-          useClass: ConfigServiceMock
-        }
-      ]
-    });
+            provide: ConfigService,
+            useClass: ConfigServiceMock
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     service = TestBed.inject(AnalyticsService);
   });
 

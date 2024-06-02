@@ -1,10 +1,11 @@
 import { TestBed, inject } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ExerciseService } from './exercise.service';
 import { PaginatedResults } from '../core/models/paginated-results';
 import { Exercise } from 'app/workouts/models/exercise';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 import { ConfigService } from 'app/core/services/config/config.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 class ConfigServiceMock {
   get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
@@ -15,17 +16,17 @@ class ConfigServiceMock {
 describe('ExerciseService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
+    imports: [],
+    providers: [
         ExerciseService,
         {
-          provide: ConfigService,
-          useClass: ConfigServiceMock
-        }
-      ],
-      imports: [
-        HttpClientTestingModule
-      ]
-    });
+            provide: ConfigService,
+            useClass: ConfigServiceMock
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
   });
 
   afterEach(inject([HttpTestingController], (httpMock: HttpTestingController) => {
