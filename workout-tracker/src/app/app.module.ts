@@ -3,7 +3,7 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
 //Third-Party imports
@@ -45,28 +45,22 @@ function initializeApp(
       );
 }
 
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    BrowserModule,
-    CommonModule,
-    CoreModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    SharedModule
-  ],
-  providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeApp,
-      deps: [ConfigService, UserService, AuthService, HttpClient],
-      multi: true
-    }
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent
+    ],
+    bootstrap: [AppComponent], imports: [AppRoutingModule,
+        BrowserAnimationsModule,
+        BrowserModule,
+        CommonModule,
+        CoreModule,
+        ReactiveFormsModule,
+        SharedModule], providers: [
+        {
+            provide: APP_INITIALIZER,
+            useFactory: initializeApp,
+            deps: [ConfigService, UserService, AuthService, HttpClient],
+            multi: true
+        },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }
