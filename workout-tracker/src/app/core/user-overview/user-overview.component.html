@@ -1,19 +1,27 @@
-<div *ngIf="loading" class="row widget">
-  <div class="col-12">
-    <p-progressSpinner></p-progressSpinner>
-  </div>
-</div>
-<div *ngIf="!loading && userOverview" class="row widget">
-  <div class="col-12">
-    <h5>Welcome, {{userOverview.username}}</h5>
-    <div class="row">
-      <div class="col-12">
-        <span *ngIf="userOverview.lastWorkoutDateTime == null">You haven't worked out yet.</span>
-        <span *ngIf="userOverview.lastWorkoutDateTime != null">Your last workout was on {{userOverview.lastWorkoutDateTime | date: 'EEEE, M/d/yyyy'}}.</span>
-      </div>
-      <div class="col-12">
-        You have {{userOverview.plannedWorkoutCount}} planned {{userOverview.plannedWorkoutCount == 1 ? 'workout' : 'workouts'}}.
-      </div>
+@if (loading) {
+  <div class="row widget">
+    <div class="col-12">
+      <p-progressSpinner></p-progressSpinner>
     </div>
   </div>
-</div>  
+}
+
+@if (!loading && userOverview) {
+  <div class="row widget">
+    <div class="col-12">
+      <h5>Welcome, {{userOverview.username}}</h5>
+      <div class="row">
+        <div class="col-12">
+          @if (userOverview.lastWorkoutDateTime == null) {
+            <span>You haven't worked out yet.</span>
+          } @else {
+            <span>Your last workout was on {{userOverview.lastWorkoutDateTime | date: 'EEEE, M/d/yyyy'}}.</span>
+          }
+        </div>
+        <div class="col-12">
+          You have {{userOverview.plannedWorkoutCount}} planned {{userOverview.plannedWorkoutCount == 1 ? 'workout' : 'workouts'}}.
+        </div>
+      </div>
+    </div>
+  </div>  
+}

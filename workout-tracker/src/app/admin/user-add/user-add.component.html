@@ -1,31 +1,34 @@
 <div class="container">
   <div class="row">
     <div class="pt-3">
-      <h3 *ngIf="showAdminControls">Add User</h3>
-      <h3 *ngIf="!showAdminControls">Register</h3>
-      <form [formGroup]="userAddForm" novalidate>
+      @if (showAdminControls) {
+      <h3>Add User</h3>
+      } @else {
+      <h3>Register</h3>
+      }
 
+      <form [formGroup]="userAddForm" novalidate>
         <div class="row">
           <div class="col-md-6 form-group">
             <label class="center-block pt-3">
               Name:
               <input class="form-control" formControlName="name" placeholder="User Name (required)" />
             </label>
-            <span class="text-danger pt-3"
-              *ngIf="userAddForm.controls.name.touched && userAddForm.controls.name.errors?.required">
-              Required.</span>
+            @if (userAddForm.controls.name.touched && userAddForm.controls.name.errors?.required) {
+            <span class="text-danger pt-3">Required.</span>
+            }
           </div>
           <div class="col-md-6 form-group">
             <label class="center-block pt-3">
               Email Address:
               <input class="form-control" formControlName="emailAddress" placeholder="Email Address (required)" />
             </label>
-            <span class="text-danger pt-3"
-              *ngIf="userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.required">
-              Required.</span>
-            <span class="text-danger pt-3"
-              *ngIf="userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.email">
-              Must be a valid email address.</span>
+            @if (userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.required) {
+            <span class="text-danger pt-3">Required.</span>
+            }
+            @if (userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.email) {
+            <span class="text-danger pt-3">Must be a valid email address.</span>
+            }
           </div>
         </div>
 
@@ -36,12 +39,12 @@
               <input type="password" class="form-control" formControlName="password"
                 placeholder="Password (required)" />
             </label>
-            <span class="text-danger pt-3"
-              *ngIf="userAddForm.controls.password.touched && userAddForm.controls.password.errors?.required">
-              Required.</span>
-            <span class="text-danger pt-3"
-              *ngIf="userAddForm.controls.password.touched && userAddForm.controls.password.errors?.minlength"> Must
-              be at least 7 characters.</span>
+            @if (userAddForm.controls.password.touched && userAddForm.controls.password.errors?.required) {
+            <span class="text-danger pt-3">Required.</span>
+            }
+            @if (userAddForm.controls.password.touched && userAddForm.controls.password.errors?.minlength) {
+            <span class="text-danger pt-3">Must be at least 7 characters.</span>
+            }
           </div>
           <div class="col-md-6 form-group">
             <label class="center-block pt-3">
@@ -49,19 +52,25 @@
               <input type="password" class="form-control" formControlName="confirmPassword"
                 placeholder="Confirm Password (required)" />
             </label>
-            <span class="text-danger pt-3"
-              *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.required">
-              Required.</span>
-            <span class="text-danger pt-3"
-              *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.minlength">
-              Must be at least 7 characters.</span>
-            <span class="text-danger pt-3"
-              *ngIf="userAddForm.controls.confirmPassword.touched && userAddForm.errors?.passwordsMatch"> Passwords
-              must match.</span>
+            @if (userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.required)
+            {
+            <span class="text-danger pt-3">Required.</span>
+            <!--Why does the document formatter format this one differently?-->
+            }
+            @if (userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.minlength)
+            {
+            <span class="text-danger pt-3">Must be at least 7 characters.</span>
+            <!--Why does the document formatter format this one differently?-->
+            }
+            @if (userAddForm.controls.confirmPassword.touched && userAddForm.errors?.passwordsMatch) {
+            <span class="text-danger pt-3">Passwords must match.</span>
+            }
+
           </div>
         </div>
 
-        <div *ngIf="showAdminControls" class="form-group">
+        @if (showAdminControls) {
+        <div class="form-group">
           <label class="center-block pt-3">
             Role:
             <select class="form-control" formControlName="role" placeholder="User Role (required)">
@@ -70,21 +79,31 @@
               <option value="2">Administrator</option>
             </select>
           </label>
-          <span class="text-danger pt-3"
-            *ngIf="userAddForm.controls.role.touched && userAddForm.controls.role.errors?.required"> Required.</span>
+          @if (userAddForm.controls.role.touched && userAddForm.controls.role.errors?.required) {
+          <span class="text-danger pt-3">Required.</span>
+          }
         </div>
+        }
 
         <div class="pt-3">
           <button type="submit" [disabled]="userAddForm.invalid" (click)="addUser()"
             class="btn btn-success">Add</button>
           &nbsp;
           <button type="button" [disabled]="savingUserInfo" (click)="cancel()" class="btn btn-warning">Cancel</button>
-          <span *ngIf="savingUserInfo">Saving...</span> <span *ngIf="errorMsg" class="error-text">{{errorMsg}}</span>
+          @if (savingUserInfo) {
+          <span>Saving...</span>
+          }
+          @if (errorMsg) {
+          <span class="error-text">{{errorMsg}}</span>
+          }
+
         </div>
       </form>
-      <div *ngIf="showAdminControls" class="pt-3">
+      @if (showAdminControls) {
+      <div class="pt-3">
         <a routerLink="/admin/users">Users List</a>
       </div>
+      }
     </div>
   </div>
 </div>
