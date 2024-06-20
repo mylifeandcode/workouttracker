@@ -8,7 +8,7 @@
         <th scope="col" class="text-end">Actions</th>
       </tr>
     </thead>
-    <tbody *ngIf="users$ | async as users">
+    <tbody *ngIf="users$ | async as users"> <!--https://angular.dev/guide/http/making-requests#best-practices-->
       @for (user of users; track user.id) {
       <tr>
         <td>{{user.name}}</td>

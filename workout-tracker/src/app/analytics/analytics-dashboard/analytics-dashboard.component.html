@@ -1,4 +1,5 @@
-<div *ngIf="gettingData" class="container-fluid">
+@if (gettingData) {
+<div class="container-fluid">
   <br />
   <div class="row">
     <div class="col-12 text-center">
@@ -7,11 +8,14 @@
     </div>
   </div>
 </div>
+}
 
-<h3 *ngIf="!gettingData && executedWorkoutsSummary" class="pt-3">Analytics</h3>
-<div *ngIf="!gettingData && executedWorkoutsSummary" class="container-fluid">
+@if (!gettingData && executedWorkoutsSummary) {
+<h3 class="pt-3">Analytics</h3>
+<div class="container-fluid">
   <p>
-    You have logged {{executedWorkoutsSummary.totalLoggedWorkouts}} workouts since {{executedWorkoutsSummary.firstLoggedWorkoutDateTime | date:'M/d/yyyy'}}.
+    You have logged {{executedWorkoutsSummary.totalLoggedWorkouts}} workouts since
+    {{executedWorkoutsSummary.firstLoggedWorkoutDateTime | date:'M/d/yyyy'}}.
   </p>
   <p>
     Here's the breakdown of each target area and the number of times you've completed a workout that includes it:
@@ -24,10 +28,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let workout of executedWorkoutsSummary.targetAreasWithWorkoutCounts | keyvalue">
-        <td>{{workout.key}}</td>
-        <td class="text-center" [innerHTML]="workout.value | zeroIsBad"></td>
-      </tr>
+      @for (workout of executedWorkoutsSummary.targetAreasWithWorkoutCounts | keyvalue; track workout.key) {
+        <tr>
+          <td>{{workout.key}}</td>
+          <td class="text-center" [innerHTML]="workout.value | zeroIsBad"></td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>
+}

@@ -5,7 +5,8 @@
     <div class="row">
       <div class="col-5">
         <label>Select a Workout</label>&nbsp;
-        <p-dropdown formControlName="workoutId" placeholder="Select a Workout" [options]="workouts" optionValue="id" optionLabel="name">
+        <p-dropdown formControlName="workoutId" placeholder="Select a Workout" [options]="workouts" optionValue="id"
+          optionLabel="name">
         </p-dropdown>
       </div>
       <div class="col-7 workout-count">
@@ -14,16 +15,20 @@
       </div>
     </div>
     <div class="row pt-2">
-      <div *ngIf="metrics && metrics.length > 0" class="col-12">
+      @if (metrics && metrics.length > 0) {
+      <div class="col-12">
         <label class="exercise-label">Exercise</label>
-        <p-dropdown formControlName="exerciseId" placeholder="Select an Exercise" [options]="metrics[0].exerciseMetrics" optionValue="exerciseId" optionLabel="name">
+        <p-dropdown formControlName="exerciseId" placeholder="Select an Exercise" [options]="metrics[0].exerciseMetrics"
+          optionValue="exerciseId" optionLabel="name">
         </p-dropdown>
       </div>
+      }
     </div>
   </form>
 </div>
 
-<div *ngIf="loadingData" class="container-fluid">
+@if (loadingData) {
+<div class="container-fluid">
   <br />
   <div class="row">
     <div class="col-12 text-center">
@@ -32,12 +37,13 @@
     </div>
   </div>
 </div>
-
-<div *ngIf="!loadingData" class="container-fluid">
+} @else {
+<div class="container-fluid">
   <br />
   <p-tabView *ngIf="form.controls.exerciseId.value != null">
     <p-tabPanel *ngIf="formAndRangeOfMotionChartData" header="Form and Range of Motion">
-      <p-chart type="line" height="300px" [options]="formAndRangeOfMotionChartOptions" [data]="formAndRangeOfMotionChartData"></p-chart>
+      <p-chart type="line" height="300px" [options]="formAndRangeOfMotionChartOptions"
+        [data]="formAndRangeOfMotionChartData"></p-chart>
     </p-tabPanel>
     <p-tabPanel *ngIf="repsChartData" header="Reps">
       <p-chart type="line" height="300px" [data]="repsChartData"></p-chart>
@@ -47,3 +53,4 @@
     </p-tabPanel>
   </p-tabView>
 </div>
+}
