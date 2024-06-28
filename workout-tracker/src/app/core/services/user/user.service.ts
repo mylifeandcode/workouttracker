@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { User } from '../../models/user';
 import { tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -18,10 +18,6 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class UserService extends ApiBaseService<User> {
-
-  //private _apiRoot: string;
-  private _userSubject$ = new BehaviorSubject<User | null>(null);
-  //private _userObservable$: Observable<User> = this._userSubject$.asObservable();
 
   constructor(private _configService: ConfigService, _http: HttpClient) { 
     super(_configService.get('apiRoot') + "Users", _http);
