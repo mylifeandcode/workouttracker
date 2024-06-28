@@ -1,71 +1,74 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand nav-app-title" routerLink="/home">Workout Tracker</a>
-  <button *ngIf="userIsLoggedIn" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div *ngIf="userIsLoggedIn" class="collapse navbar-collapse" id="mainNavigation">
-    <ul class="navbar-nav w-100">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/home">Home <span class="sr-only">(current)</span></a>
-      </li>
-
-      <li class="nav-item dropdown">
-        <a id="workoutsDropdown" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Workouts
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="workoutsDropdown">
-          <li><a class="dropdown-item" routerLink="/workouts/select">Start a Workout</a></li>
-          <li><a class="dropdown-item" routerLink="/workouts/edit/0">Create a Workout</a></li>
-          <li><a class="dropdown-item" routerLink="/workouts/select-for-later">Plan a Workout for Later</a></li>
-          <li><a class="dropdown-item" routerLink="/workouts/select-planned">Start/View a Pre-Planned Workout</a></li>
-          <li><a class="dropdown-item" routerLink="/workouts/log-past-start">Enter Information About a Past Workout</a></li>
-          <li><a class="dropdown-item" routerLink="/workouts">Manage Workouts</a></li>
-          <li><a class="dropdown-item" routerLink="/workouts/history">View Workout History</a></li>
-          <li><a class="dropdown-item" routerLink="/workouts/in-progress">In-Progress Workouts</a></li>
-        </ul>
-      </li>      
-
-      <li class="nav-item dropdown">
-        <a id="exercisesDropdown" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Exercises
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="exercisesDropdown">
-          <li><a class="dropdown-item" routerLink="/exercises/edit/0">Create an Exercise</a></li>
-          <li><a class="dropdown-item" routerLink="/exercises">Manage Exercises</a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item dropdown {{userIsLoggedIn && !userIsAdmin ? 'me-auto' : ''}}">
-        <a id="analyticsDropdown" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Analytics
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="analyticsDropdown">
-          <li><a class="dropdown-item" routerLink="/analytics">Dashboard</a></li>
-          <li><a class="dropdown-item" routerLink="/analytics/workouts">Workout Progress</a></li>
-        </ul>
-      </li>
-
-      <li *ngIf="userIsLoggedIn && userIsAdmin" class="nav-item me-auto">
-        <a class="nav-link" routerLink="/admin">Admin</a>
-      </li>
-
-      <li class="nav-item dropdown ml-auto">
-        <a id="userDropdown" class="nav-link" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Welcome {{userName}}!
-        </a> 
-        <ul class="dropdown-menu" aria-labelledby="userDropdown">
-          <li><a class="dropdown-item" routerLink="/user/user-settings">Settings</a></li>
-        </ul>
-      </li>
+  @if (userIsLoggedIn) {
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNavigation">
+      <ul class="navbar-nav w-100">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home">Home <span class="sr-only">(current)</span></a>
+        </li>
   
-      <li class="navbar-nav">
-        <a class="nav-link" (click)="logOff()">Log off</a> 
-      </li>    
-      <li class="navbar-nav nav-github d-flex justify-content-end">
-        <a class="nav-link me-2" href="https://github.com/mylifeandcode"><i class="fa fa-github" aria-hidden="true"></i></a>
-      </li>
-
-    </ul>
-  </div>
+        <li class="nav-item dropdown">
+          <a id="workoutsDropdown" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Workouts
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="workoutsDropdown">
+            <li><a class="dropdown-item" routerLink="/workouts/select">Start a Workout</a></li>
+            <li><a class="dropdown-item" routerLink="/workouts/edit/0">Create a Workout</a></li>
+            <li><a class="dropdown-item" routerLink="/workouts/select-for-later">Plan a Workout for Later</a></li>
+            <li><a class="dropdown-item" routerLink="/workouts/select-planned">Start/View a Pre-Planned Workout</a></li>
+            <li><a class="dropdown-item" routerLink="/workouts/log-past-start">Enter Information About a Past Workout</a></li>
+            <li><a class="dropdown-item" routerLink="/workouts">Manage Workouts</a></li>
+            <li><a class="dropdown-item" routerLink="/workouts/history">View Workout History</a></li>
+            <li><a class="dropdown-item" routerLink="/workouts/in-progress">In-Progress Workouts</a></li>
+          </ul>
+        </li>      
   
+        <li class="nav-item dropdown">
+          <a id="exercisesDropdown" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Exercises
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="exercisesDropdown">
+            <li><a class="dropdown-item" routerLink="/exercises/edit/0">Create an Exercise</a></li>
+            <li><a class="dropdown-item" routerLink="/exercises">Manage Exercises</a></li>
+          </ul>
+        </li>
+  
+        <li class="nav-item dropdown {{userIsLoggedIn && !userIsAdmin ? 'me-auto' : ''}}">
+          <a id="analyticsDropdown" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Analytics
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="analyticsDropdown">
+            <li><a class="dropdown-item" routerLink="/analytics">Dashboard</a></li>
+            <li><a class="dropdown-item" routerLink="/analytics/workouts">Workout Progress</a></li>
+          </ul>
+        </li>
+  
+        @if (userIsAdmin) {
+          <li class="nav-item me-auto">
+            <a class="nav-link" routerLink="/admin">Admin</a>
+          </li>
+        }
+  
+        <li class="nav-item dropdown ml-auto">
+          <a id="userDropdown" class="nav-link" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Welcome {{userName}}!
+          </a> 
+          <ul class="dropdown-menu" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" routerLink="/user/user-settings">Settings</a></li>
+          </ul>
+        </li>
+    
+        <li class="navbar-nav">
+          <a class="nav-link" (click)="logOff()">Log off</a> 
+        </li>    
+        <li class="navbar-nav nav-github d-flex justify-content-end">
+          <a class="nav-link me-2" href="https://github.com/mylifeandcode"><i class="fa fa-github" aria-hidden="true"></i></a>
+        </li>
+  
+      </ul>
+    </div>
+  }
 </nav>

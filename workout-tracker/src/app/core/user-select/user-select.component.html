@@ -3,10 +3,12 @@
     <br />
     <div class="row">
       
-      <div *ngIf="!errorMsg" class="col-12 text-center">
-        <h4>Loading users...</h4><br />
-        <p-progressSpinner></p-progressSpinner>
-      </div>
+      @if (!errorMsg) {
+        <div class="col-12 text-center">
+          <h4>Loading users...</h4><br />
+          <p-progressSpinner></p-progressSpinner>
+        </div>
+      }
 
     </div>
   </div>
@@ -15,34 +17,44 @@
 <div *ngIf="users$ | async as users; else loading" class="container-fluid wallpaper">
   <br />
   <div class="row offset-md-4 col-md-4">
-    <h3 *ngIf="!loggingIn" class="text-center mx-auto greeting-text">Who are you?</h3>
-    <h3 *ngIf="loggingIn" class="text-center mx-auto greeting-text">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
+    @if (!loggingIn) {
+      <h3 class="text-center mx-auto greeting-text">Who are you?</h3>
+    } @else {
+      <h3 class="text-center mx-auto greeting-text">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
+    }
   </div>
 
-  <div *ngIf="errorMsg" class="offset-2 col-8 text-center">
-    <br />
-    <h4>Oops! An error occurred: {{errorMsg}}</h4>
-  </div>
+  @if (errorMsg) {
+    <div class="offset-2 col-8 text-center">
+      <br />
+      <h4>Oops! An error occurred: {{errorMsg}}</h4>
+    </div>
+  }
 
-  <ng-container *ngIf="!loggingIn">
-    <div class="row offset-md-4 col-md-4 card text-center user-select">
-      <div class="list-group">
-        <div *ngFor="let user of users" (click)="selectUser(user.id, user.name)" class="list-group-item list-group-item-action list-group-item-success user-select-panel">
-          {{user.name}}
+  @if (!loggingIn) {
+    <ng-container>
+      <div class="row offset-md-4 col-md-4 card text-center user-select">
+        <div class="list-group">
+          <div *ngFor="let user of users" (click)="selectUser(user.id, user.name)" class="list-group-item list-group-item-action list-group-item-success user-select-panel">
+            {{user.name}}
+          </div>
         </div>
       </div>
-    </div>
-
-    <div *ngIf="users && users.length == 0 && errorMsg == null" class="row offset-md-4 col-md-4 text-center p-1 greeting-text">
-      <p>No users have been created yet. Create one with the button below.</p>
-      <p>
-        <strong>This user will be created as an Administrator.</strong> Administrators have permissions to manage the system.
-      </p>
-    </div>
-
-    <div *ngIf="!errorMsg" class="row offset-md-4 col-md-4 text-center">
-      <button type="button" class="btn btn-info btn-fullWidth headroom" routerLink='/new-user'>Add User</button>
-    </div>
-  </ng-container>
-
+  
+      @if (users?.length == 0 && errorMsg == null) {
+        <div class="row offset-md-4 col-md-4 text-center p-1 greeting-text">
+          <p>No users have been created yet. Create one with the button below.</p>
+          <p>
+            <strong>This user will be created as an Administrator.</strong> Administrators have permissions to manage the system.
+          </p>
+        </div>
+      }
+  
+      @if (!errorMsg) {
+        <div class="row offset-md-4 col-md-4 text-center">
+          <button type="button" class="btn btn-info btn-fullWidth headroom" routerLink='/new-user'>Add User</button>
+        </div>
+      }
+    </ng-container>
+  }
 </div>

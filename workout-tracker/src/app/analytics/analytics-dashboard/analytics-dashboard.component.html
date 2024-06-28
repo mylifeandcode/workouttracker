@@ -1,40 +1,40 @@
 @if (gettingData) {
-<div class="container-fluid">
-  <br />
-  <div class="row">
-    <div class="col-12 text-center">
-      <h4>Getting data...</h4><br />
-      <p-progressSpinner></p-progressSpinner>
+  <div class="container-fluid">
+    <br />
+    <div class="row">
+      <div class="col-12 text-center">
+        <h4>Getting data...</h4><br />
+        <p-progressSpinner></p-progressSpinner>
+      </div>
     </div>
   </div>
-</div>
 }
 
 @if (!gettingData && executedWorkoutsSummary) {
-<h3 class="pt-3">Analytics</h3>
-<div class="container-fluid">
-  <p>
-    You have logged {{executedWorkoutsSummary.totalLoggedWorkouts}} workouts since
-    {{executedWorkoutsSummary.firstLoggedWorkoutDateTime | date:'M/d/yyyy'}}.
-  </p>
-  <p>
-    Here's the breakdown of each target area and the number of times you've completed a workout that includes it:
-  </p>
-  <table>
-    <thead>
-      <tr>
-        <th>Target Area</th>
-        <th>Workouts Completed</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (workout of executedWorkoutsSummary.targetAreasWithWorkoutCounts | keyvalue; track workout.key) {
+  <h3 class="pt-3">Analytics</h3>
+  <div class="container-fluid">
+    <p>
+      You have logged {{executedWorkoutsSummary.totalLoggedWorkouts}} workouts since
+      {{executedWorkoutsSummary.firstLoggedWorkoutDateTime | date:'M/d/yyyy'}}.
+    </p>
+    <p>
+      Here's the breakdown of each target area and the number of times you've completed a workout that includes it:
+    </p>
+    <table>
+      <thead>
         <tr>
-          <td>{{workout.key}}</td>
-          <td class="text-center" [innerHTML]="workout.value | zeroIsBad"></td>
+          <th>Target Area</th>
+          <th>Workouts Completed</th>
         </tr>
-      }
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody>
+        @for (workout of executedWorkoutsSummary.targetAreasWithWorkoutCounts | keyvalue; track workout.key) {
+          <tr>
+            <td>{{workout.key}}</td>
+            <td class="text-center" [innerHTML]="workout.value | zeroIsBad"></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 }
