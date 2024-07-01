@@ -15,6 +15,7 @@
     <div *ngIf="recommendationEngineEnabled" class="row">
       <div class="col-12">
         <h5 class="headroom">Suggestion Settings</h5>
+        <!--TODO: Revisit. What can I track by for this using @for in the new control flow?-->
         <wt-user-rep-settings *ngFor="let settings of userSettingsForm.controls.repSettings.controls; let i = index" [repSettingsFormGroup]="settings"></wt-user-rep-settings>
       </div>
     </div>

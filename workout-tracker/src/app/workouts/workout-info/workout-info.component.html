@@ -1,5 +1,5 @@
 <p-progressSpinner *ngIf="workout === undefined"></p-progressSpinner>
-<ng-container *ngIf="workout">
+@if (workout) {
   <h5>{{workout.name}}</h5>
   <table class="table table-striped">
     <thead>
@@ -11,13 +11,14 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let exercise of workout.exercises">
-        <td>{{exercise.exercise?.name}}</td>
-        <td>{{exercise.numberOfSets}}</td>
-        <td>{{exercise.exercise?.resistanceType | resistanceType}}</td>
-        <td>{{exercise.exercise?.exerciseTargetAreaLinks | targetAreas}}</td>
-      </tr>
+      @for (exercise of workout.exercises; track exercise.id) {
+        <tr>
+          <td>{{exercise.exercise?.name}}</td>
+          <td>{{exercise.numberOfSets}}</td>
+          <td>{{exercise.exercise?.resistanceType | resistanceType}}</td>
+          <td>{{exercise.exercise?.exerciseTargetAreaLinks | targetAreas}}</td>
+        </tr>
+      }
     </tbody>
   </table>
-
-</ng-container>
+}

@@ -1,57 +1,67 @@
-<ng-container *ngIf="!loading">
+@if (!loading) {
   <h3 class="headroom">{{workoutName}}</h3>
   <h4 *ngIf="isLoggingPastWorkout">PLEASE ENTER INFORMATION FOR THIS PREVIOUSLY COMPLETED WORKOUT BELOW</h4>
-</ng-container>
+}
+
 <div class="container-fluid">
-  <div *ngIf="loading" class="row">
+  @if (loading) {
+    <div class="row">
       <div class="offset-md-5 col-md-1">
-          <p-progressSpinner></p-progressSpinner>
+        <p-progressSpinner></p-progressSpinner>
       </div>
-  </div>
+    </div>
+  }
+
   <p-toast position="center"></p-toast>
-  <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
-    <fieldset [disabled]="saving || (workoutCompleted && !isLoggingPastWorkout)">
-      <ng-container *ngIf="workoutLoaded">
-        <p>
-          <span *ngIf="workoutStarted">Workout started {{startDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
-          <span *ngIf="workoutCompleted">, completed {{endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
-        </p>
-        <wt-workout-exercise 
-          *ngFor="let exercise of exercisesArray?.controls; let i = index" 
-          [formGroup]="exercise" 
-          (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
-          (showTimerRequest)="showTimer($event)"
-          (rangeOfMotionEntered)="saveWorkoutInProgress()"
-          (durationEdit)="openDurationModal($event)">
-        </wt-workout-exercise>
 
-        <div class="row">
-          <div class="col-12">&nbsp;</div>
-        </div>
-
-        <div class="row bottom-padded">
-          <div class="col-12">
-            <label for="journal">Notes/Journal</label>
-            <textarea id="journal" class="form-control" formControlName="journal"></textarea>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-12">
-            <button type="submit" *ngIf="!workoutCompleted || isLoggingPastWorkout" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !isLoggingPastWorkout)" (click)="completeWorkout()">Complete Workout</button>
-            <span *ngIf="!workoutForm.valid" class="error-text ms-2">Please enter the required information above to complete the workout.</span>
-            <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
-          </div>
-        </div>
-
-      </ng-container>
-    </fieldset>
-  </form>
+  @if (workoutForm && !loading) {
+    <form [formGroup]="workoutForm" novalidate>
+      <fieldset [disabled]="saving || (workoutCompleted && !isLoggingPastWorkout)">
+        @if (workoutLoaded) {
+          <p>
+            <span *ngIf="workoutStarted">Workout started {{startDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
+            <span *ngIf="workoutCompleted">, completed {{endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
+          </p>
+          <wt-workout-exercise 
+            *ngFor="let exercise of exercisesArray?.controls; let i = index" 
+            [formGroup]="exercise" 
+            (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
+            (showTimerRequest)="showTimer($event)"
+            (rangeOfMotionEntered)="saveWorkoutInProgress()"
+            (durationEdit)="openDurationModal($event)">
+          </wt-workout-exercise>
   
-  <button *ngIf="workoutCompleted && !isLoggingPastWorkout" class="btn btn-success" routerLink="/workouts/history">View Workout History</button>
-  &nbsp;
-  <button *ngIf="workoutCompleted && !isLoggingPastWorkout" class="btn btn-success" routerLink="/workouts/select-for-later">Plan Next Workout</button>
-  <p></p>  
+          <div class="row">
+            <div class="col-12">&nbsp;</div>
+          </div>
+  
+          <div class="row bottom-padded">
+            <div class="col-12">
+              <label for="journal">Notes/Journal</label>
+              <textarea id="journal" class="form-control" formControlName="journal"></textarea>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col-12">
+              <button type="submit" *ngIf="!workoutCompleted || isLoggingPastWorkout" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !isLoggingPastWorkout)" (click)="completeWorkout()">Complete Workout</button>
+              <span *ngIf="!workoutForm.valid" class="error-text ms-2">Please enter the required information above to complete the workout.</span>
+              <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
+            </div>
+          </div>
+        }
+      </fieldset>
+    </form>
+  }
+  
+  @if (workoutCompleted && !isLoggingPastWorkout) {
+    <button class="btn btn-success" routerLink="/workouts/history">View Workout History</button>
+    &nbsp;
+    <button class="btn btn-success" routerLink="/workouts/select-for-later">Plan Next Workout</button>
+  }
+
+  <p></p> 
+
   <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal" [blockScroll]="true">
     <wt-resistance-band-select 
       [resistanceBandInventory]="allResistanceBands"
@@ -62,20 +72,24 @@
     </wt-resistance-band-select>
   </p-dialog>
 
-  <p-dialog [style]="{width: '50vw'}" header="Timed Set Countdown" *ngIf="formGroupForCountdownModal" [(visible)]="showCountdownModal">
-    <wt-countdown-timer
-      [secondsToCountdown]="formGroupForCountdownModal.controls.duration!.value!"
-      [secondsLeadInTime]="10"
-      [activatedDateTime]="countdownModalActivatedDateTime"
-      [targetReps]="formGroupForCountdownModal.controls.targetReps.value">
-    </wt-countdown-timer>
-  </p-dialog>
+  @if (formGroupForCountdownModal) {
+    <p-dialog [style]="{width: '50vw'}" header="Timed Set Countdown" [(visible)]="showCountdownModal">
+      <wt-countdown-timer
+        [secondsToCountdown]="formGroupForCountdownModal.controls.duration!.value!"
+        [secondsLeadInTime]="10"
+        [activatedDateTime]="countdownModalActivatedDateTime"
+        [targetReps]="formGroupForCountdownModal.controls.targetReps.value">
+      </wt-countdown-timer>
+    </p-dialog>
+  }
 
-  <p-dialog header="Duration" *ngIf="formControlForDurationEdit" [(visible)]="showDurationModal">
-    <wt-duration 
-      [currentDuration]="formControlForDurationEdit!.value!"
-      (okClicked)="durationModalAccepted($event)"
-      (cancelClicked)="durationModalCancelled()">
-    </wt-duration>
-  </p-dialog>
+  @if (formControlForDurationEdit) {
+    <p-dialog header="Duration" [(visible)]="showDurationModal">
+      <wt-duration 
+        [currentDuration]="formControlForDurationEdit!.value!"
+        (okClicked)="durationModalAccepted($event)"
+        (cancelClicked)="durationModalCancelled()">
+      </wt-duration>
+    </p-dialog>
+  }
 </div>

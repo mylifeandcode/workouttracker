@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
+import { ResistanceType } from '../enums/resistance-type';
 
 @Component({
   selector: 'wt-exercise-plan-next-time',
@@ -20,6 +21,8 @@ export class ExercisePlanNextTimeComponent {
 
   @Output()
   resistanceBandsModalRequested: EventEmitter<FormGroup<IExercisePlanFormGroup>>;
+
+  public resistanceTypeEnum: typeof ResistanceType = ResistanceType; //Needed for template to reference enum
 
   constructor() { 
     this.resistanceBandsModalRequested = new EventEmitter<FormGroup<IExercisePlanFormGroup>>();

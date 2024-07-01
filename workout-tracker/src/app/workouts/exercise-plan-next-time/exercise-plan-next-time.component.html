@@ -10,22 +10,29 @@
     <div class="half-area">
       <strong>Resistance Amount</strong>
     </div>
-    <div class="half-area" *ngIf="formGroup" [formGroup]="formGroup">
-      <!--TODO: Get these *ngIfs to work with the enum type instead-->
-      <input wtSelectOnFocus
-        *ngIf="formGroup.controls.resistanceType.value!=2 && formGroup.controls.resistanceType.value!=3" type="number"
-        class="amount trail-space" formControlName="resistanceAmount" required />
-      <span *ngIf="formGroup.controls.resistanceType.value==2" class="no-input-value">
-        <ng-container *ngIf="formGroup.controls.resistanceAmount.value">
-          {{formGroup.controls.resistanceAmount.value | resistanceAmount:true}}
-          <span class="trail-space">(<span
-              [innerHTML]="formGroup.controls.resistanceMakeup.value | resistanceBandColor"></span>)</span>
-        </ng-container>
-      </span>
-      <span *ngIf="formGroup.controls.resistanceType.value==3" class="no-input-value">
-        Body Weight
-      </span>
-    </div>
+
+    @if (formGroup) {
+      <div class="half-area" [formGroup]="formGroup">
+
+        <!--TODO: Create a child component for this-->
+        @if (formGroup.controls.resistanceType.value != resistanceTypeEnum.ResistanceBand && formGroup.controls.resistanceType.value !=resistanceTypeEnum.BodyWeight) {
+          <input wtSelectOnFocus type="number" class="amount trail-space" formControlName="resistanceAmount" required />
+        } @else if (formGroup.controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
+          <span class="no-input-value">
+            @if (formGroup.controls.resistanceAmount.value) {
+              {{formGroup.controls.resistanceAmount.value | resistanceAmount:true}}
+              <span class="trail-space">(<span
+                  [innerHTML]="formGroup.controls.resistanceMakeup.value | resistanceBandColor"></span>)</span>
+            }
+          </span>
+        } @else if (formGroup.controls.resistanceType.value == resistanceTypeEnum.BodyWeight) {
+          <span class="no-input-value">
+            Body Weight
+          </span>
+        }
+        
+      </div>
+    }
   </div>
 
   <div class="d-flex bottom-padded px-2">
