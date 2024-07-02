@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/core/services/auth/auth.service';
 
@@ -7,23 +7,13 @@ import { AuthService } from 'app/core/services/auth/auth.service';
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
-export class NavComponent implements OnInit {
+export class NavComponent {
 
-  public userName: string | null = null;
-  public userIsLoggedIn: boolean = false;
-  public userIsAdmin: boolean = false;
+  public userName: Signal<string | null> = computed(() => this._authService.currentUserName());
+  public userIsLoggedIn: Signal<boolean> = computed(() => this._authService.currentUserName() != null);
+  public userIsAdmin: Signal<boolean> = computed(() => this._authService.currentUserName() != null && this._authService.isUserAdmin);
 
   constructor(private _authService: AuthService, private _router: Router) { }
-
-  public ngOnInit(): void {
-    this._authService.currentUserName.subscribe(
-      (username: string | null) => {
-        this.userName = username;
-        this.userIsLoggedIn = (username != null);
-        this.userIsAdmin = this._authService.isUserAdmin;
-      });
-
-  }
 
   public logOff(): void {
     this._authService.logOut();

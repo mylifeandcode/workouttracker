@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, WritableSignal, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
@@ -10,14 +10,14 @@ import { of } from 'rxjs';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
-    'Content-Type':  'application/json'
+    'Content-Type': 'application/json'
   })
 };
 
 const HTTP_OPTIONS_FOR_TEXT_RESPONSE = {
   headers: new HttpHeaders({
     'Accept': 'text/html, application/xhtml+xml, */*',
-    'Content-Type':  'application/json'
+    'Content-Type': 'application/json'
   }),
   responseType: 'text' as 'json'
 };
@@ -40,12 +40,16 @@ export class AuthService {
   public token: string | null = null; //TODO: Refactor. This should be a read-only property exposing a private field.
   public decodedTokenPayload: JwtPayload | undefined; //This is an interface, not a concrete type
 
+  public currentUserName: WritableSignal<string | null> = signal(null);
+
   //PRIVATE FIELDS
   private _apiRoot: string = '';
   private _loginRoute: string = '';
 
+  /*
   private _userSubject$ = new BehaviorSubject<string | null>(null);
   private _userObservable$: Observable<string | null> = this._userSubject$.asObservable();
+  */
 
   //PRIVATE READ-ONLY FIELDS
   private readonly ROLE_CLAIM_TYPE: string = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
@@ -56,18 +60,17 @@ export class AuthService {
     private _configService: ConfigService,
     private _localStorageService: LocalStorageService,
     private _router: Router) {
-
   }
 
   //PROPERTIES ////////////////////////////////////////////////////////////////
 
+  /*
   public get currentUserName(): Observable<string | null> {
-    //console.log("CURRENT USERNAME CHANGED");
     return this._userObservable$;
   }
+  */
 
   public get isUserLoggedIn(): boolean {
-    //return (this._userSubject$.value != null);
     return (this.token != null);
   }
 
@@ -100,7 +103,8 @@ export class AuthService {
           //Using map() here so I can act on the result and then return a boolean.
           this.decodedTokenPayload = jwtDecode<JwtPayload>(token); //Do this first, before setting token which states "user is logged in"
           this.token = token;
-          this._userSubject$.next(username);
+          //this._userSubject$.next(username);
+          this.currentUserName.set(username);
           this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, token);
           return true;
         }),
@@ -111,7 +115,8 @@ export class AuthService {
   public logOut(): void {
     this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);
     this.token = null;
-    this._userSubject$.next(null);
+    //this._userSubject$.next(null);
+    this.currentUserName.set(null);
     this._router.navigate([this._loginRoute]);
   }
 
@@ -120,23 +125,19 @@ export class AuthService {
 
     if (token) {
       const decodedToken = jwtDecode<JwtPayload>(token);
-      if(decodedToken) {
+      if (decodedToken) {
 
-        if(!this.isExpired(decodedToken?.exp)) {
-          //console.log("NOT EXPIRED");
+        if (!this.isExpired(decodedToken?.exp)) {
           this.decodedTokenPayload = decodedToken;
           this.token = token;
 
           const username = <string | null>this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name' as keyof JwtPayload];
-          if(username)
-            this._userSubject$.next(username);
+          if (username) {
+            //this._userSubject$.next(username);
+            this.currentUserName.set(username);
+          }
 
         }
-        /*
-        else {
-          console.log("EXPIRED!");
-        }
-        */
       }
     }
   }
@@ -161,7 +162,7 @@ export class AuthService {
 
   private isExpired(expirationSecondsSinceEpoch: number | undefined): boolean {
     //console.log("expirationSecondsSinceEpoch: ", expirationSecondsSinceEpoch);
-    if(!expirationSecondsSinceEpoch) return true;
+    if (!expirationSecondsSinceEpoch) return true;
     return expirationSecondsSinceEpoch < this.getSecondsSinceEpoch();
   }
 
