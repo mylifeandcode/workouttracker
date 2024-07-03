@@ -9,6 +9,7 @@ import { ExerciseTargetAreaLink } from '../../workouts/models/exercise-target-ar
 import { finalize } from 'rxjs/operators';
 import { some, find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
+import { ResistanceType } from 'app/workouts/enums/resistance-type';
 
 interface IExerciseEditForm {
   id: FormControl<number>;
@@ -59,6 +60,8 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   //PUBLIC FIELDS
   public saving: boolean = false;
   public errorMsg: string | null = null;
+
+  public resistanceTypeEnum: typeof ResistanceType = ResistanceType; //Needed for template to reference enum
 
   //PRIVATE FIELDS
   private _exercise: Exercise = new Exercise();

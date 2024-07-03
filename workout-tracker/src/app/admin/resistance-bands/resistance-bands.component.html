@@ -1,14 +1,14 @@
 @if (busy) {
-<span>{{busyMsg}}</span>
+  <span>{{busyMsg}}</span>
 } @else {
-<h3 class="pt-2">Resistance Band Inventory</h3>
+  <h3 class="pt-2">Resistance Band Inventory</h3>
 }
 
 <p-toast position="center"></p-toast>
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
 @if (!busy) {
-<div class="container-fluid">
+  <div class="container-fluid">
 
   <p-table #dt [value]="resistanceBands" dataKey="id" editMode="row">
     <ng-template pTemplate="header">
@@ -75,7 +75,7 @@
   <button pButton pRipple label="Add New" icon="pi pi-plus" class="p-button-success p-mr-2"
     (click)="openAddModal()"></button>
   <p></p>
-</div>
+  </div>
 }
 
 <!--
@@ -90,7 +90,9 @@ PrimeNg docs and results in tight coupling.
       <label for="color">Color</label>
       <input type="text" class="p-inputtext" pInputText id="color" [(ngModel)]="newResistanceBand.color" required
         autofocus />
-      <small class="p-invalid" *ngIf="modalSubmitted && newResistanceBand?.color">Color is required.</small>
+      @if (modalSubmitted && newResistanceBand?.color) { <!--TODO: REVISIT. This isn't right.-->
+        <small class="p-invalid">Color is required.</small>
+      }
     </div>
     <div class="p-field">
       <label for="maxResistanceAmount">Maximum End-to-End Resistance Amount *</label>

@@ -1,12 +1,18 @@
-<div *ngIf="loading" class="row">
-  <div class="offset-md-5 col-md-1">
-    <p-progressSpinner></p-progressSpinner>
+@if (loading) {
+  <div class="row">
+    <div class="offset-md-5 col-md-1">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
   </div>
-</div>
+}
 
-<ng-container *ngIf="workoutPlan">
-  <h3 *ngIf="!isForPastWorkout" class="headroom">Plan Your Workout</h3>
-  <h3 *ngIf="isForPastWorkout" class="headroom">What Was Your Plan For This Workout?</h3>
+@if (workoutPlan) {
+  @if (isForPastWorkout) {
+    <h3 class="headroom">What Was Your Plan For This Workout?</h3>
+  } @else {
+    <h3 class="headroom">Plan Your Workout</h3>
+  }
+  
   <div class="container-fluid form-group">
     <div class="row"></div>
     <form [formGroup]="workoutPlanForm" novalidate>
@@ -18,28 +24,42 @@
           </div>
         </div>
 
-        <div *ngIf="!workoutPlan.hasBeenExecutedBefore" class="row">
-          <div class="col-12">
-            <h4 class="no-last-time">This workout hasn't been done before, so no "Last Time" information is shown.</h4>
+        @if (!workoutPlan.hasBeenExecutedBefore) {
+          <div class="row">
+            <div class="col-12">
+              <h4 class="no-last-time">This workout hasn't been done before, so no "Last Time" information is shown.</h4>
+            </div>
           </div>
-        </div>
+        }
 
-        <wt-exercise-plan *ngFor="let exercise of exercisesArray.controls; let i=index" [formGroup]="exercise"
-          [workoutHasBeenExecutedBefore]="workoutPlan.hasBeenExecutedBefore"
-          (resistanceBandsModalRequested)="resistanceBandsModalEnabled($event)">
-        </wt-exercise-plan>
+        @for (exercise of exercisesArray.controls; track $index) {
+          <wt-exercise-plan [formGroup]="exercise"
+            [workoutHasBeenExecutedBefore]="workoutPlan.hasBeenExecutedBefore"
+            (resistanceBandsModalRequested)="resistanceBandsModalEnabled($event)">
+          </wt-exercise-plan>
+        }
 
         <div class="row submit-row">
           <div class="col-12 bottom-padded">
-            <button *ngIf="!planningForLater && !isForPastWorkout" type="submit" class="btn btn-primary"
-              (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
-            <button *ngIf="planningForLater" type="submit" class="btn btn-primary" (click)="submitPlanForLater()"
-              [disabled]="workoutPlanForm.invalid || isProcessing">Save Workout Plan</button>
-            <button *ngIf="isForPastWorkout" type="submit" class="btn btn-primary" (click)="submitPlanForPast()"
+            @if (!planningForLater && !isForPastWorkout) {
+              <button type="submit" class="btn btn-primary"
+                (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
+            } @else if (planningForLater) {
+              <button type="submit" class="btn btn-primary" (click)="submitPlanForLater()"
+                [disabled]="workoutPlanForm.invalid || isProcessing">Save Workout Plan</button>
+            } @else if (isForPastWorkout) {
+              <button type="submit" class="btn btn-primary" (click)="submitPlanForPast()"
               [disabled]="workoutPlanForm.invalid || isProcessing">Log Past Workout</button>
-            &nbsp;<span *ngIf="isProcessing">Processing...</span>
-            <span *ngIf="workoutPlanForm.invalid" class="error-text">Please supply all required information above to
-              submit your plan.</span>
+            }
+
+            &nbsp; <!--Get rid of this, use a margin or padding instead-->
+            @if (isProcessing) {
+              <span>Processing...</span>
+            }
+            
+            @if (workoutPlanForm.invalid) {
+              <span class="error-text">Please supply all required information above to submit your plan.</span>
+            }
           </div>
         </div>
       </fieldset>
@@ -54,4 +74,4 @@
       </wt-resistance-band-select>
     </p-dialog>
   </div>
-</ng-container>
+}

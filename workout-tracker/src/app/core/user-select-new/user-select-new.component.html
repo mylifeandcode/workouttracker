@@ -8,7 +8,9 @@
             Name:
             <input class="form-control" formControlName="name" placeholder="User Name (required)" />
           </label>
-          <span class="text-danger headroom" *ngIf="newUserForm.controls.name.touched && newUserForm.controls.name.errors?.required"> Required.</span>
+          @if (newUserForm.controls.name.touched && newUserForm.controls.name.errors?.required) {
+            <span class="text-danger headroom"> Required.</span>
+          }
         </div>
 
         <div class="form-group">
@@ -16,15 +18,26 @@
             Email Address:
             <input class="form-control" formControlName="emailAddress" placeholder="Email Address (required)" />
           </label>
-          <span class="text-danger headroom" *ngIf="newUserForm.controls.emailAddress.touched && newUserForm.controls.emailAddress.errors?.required"> Required.</span>
-          <span class="text-danger headroom" *ngIf="newUserForm.controls.emailAddress.touched && newUserForm.controls.emailAddress.errors?.email"> Must be a valid email address.</span>
+          @if (newUserForm.controls.emailAddress.touched && newUserForm.controls.emailAddress.errors?.required) {
+            <span class="text-danger headroom"> Required.</span>
+          }
+
+          @if (newUserForm.controls.emailAddress.touched && newUserForm.controls.emailAddress.errors?.email) {
+            <span class="text-danger headroom"> Must be a valid email address.</span>
+          }
+          
         </div>
 
         <div class="headroom">
           <button type="submit" [disabled]="newUserForm.invalid" (click)="addUser()" class="btn btn-success">Add</button>
           &nbsp;
           <button type="button" [disabled]="addingUser" routerLink="/user-select" class="btn btn-warning">Cancel</button>
-          <span *ngIf="addingUser"> Saving...</span> <span *ngIf="errorMsg" class="error-text">{{errorMsg}}</span>
+          @if (addingUser) {
+            <span> Saving...</span>  
+          }
+          @if (errorMsg) {
+            <span *ngIf="errorMsg" class="error-text">{{errorMsg}}</span>
+          }
         </div>
       </form>
 

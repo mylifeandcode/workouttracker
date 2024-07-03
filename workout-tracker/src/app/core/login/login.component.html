@@ -4,44 +4,55 @@
       <h3>Welcome to Workout Tracker</h3>
     </div>
   </div>
-  <form *ngIf="loginForm != null" [formGroup]="loginForm">
-    <fieldset [disabled]="loggingIn">
-      <div class="row bump-it-down">
-        <div class="offset-4 col-4">
-          <label for="username">Username</label><br>      
-          <input type="text" id="username" class="form-control" formControlName="username" placeholder="Username (required)">
-          <span *ngIf="loginForm.controls['username'].dirty && loginForm.controls['username']?.errors" class="form-error">Username required</span>
+  @if (loginForm != null) {
+    <form [formGroup]="loginForm">
+      <fieldset [disabled]="loggingIn">
+        <div class="row bump-it-down">
+          <div class="offset-4 col-4">
+            <label for="username">Username</label><br>      
+            <input type="text" id="username" class="form-control" formControlName="username" placeholder="Username (required)">
+            @if (loginForm.controls.username.dirty && loginForm.controls.username.errors) {
+              <span class="form-error">Username required</span>
+            }
+          </div>
         </div>
-      </div>
-      <div class="row bump-it-down">
-        <div class="offset-4 col-4">
-          <label for="password">Password</label>
-          <input type="password" id="password" class="form-control" formControlName="password" placeholder="Password (required)">
-          <span *ngIf="loginForm.controls['password'].dirty && loginForm.controls['password']?.errors" class="form-error">Password required</span>
-          <br />
-          <a routerLink="/forgot-password">Forgot password?</a>
+        <div class="row bump-it-down">
+          <div class="offset-4 col-4">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" formControlName="password" placeholder="Password (required)">
+            @if (loginForm.controls.password.dirty && loginForm.controls.password.errors) {
+              <span class="form-error">Password required</span>
+            }
+            <br />
+            <a routerLink="/forgot-password">Forgot password?</a>
+          </div>
         </div>
-      </div>
-      <div class="row bump-it-down">
-        <div class="offset-4 col-4 text-center">
-          <button class="btn btn-success" [disabled]="!loginForm.valid" (click)="login()">Login</button>
+        <div class="row bump-it-down">
+          <div class="offset-4 col-4 text-center">
+            <button class="btn btn-success" [disabled]="!loginForm.valid" (click)="login()">Login</button>
+          </div>
         </div>
-      </div>
-      <div class="row bump-it-down">
-        <div class="offset-4 col-4 text-center">
-          <button class="btn btn-primary" routerLink="/user/register">Register New User</button>
+        <div class="row bump-it-down">
+          <div class="offset-4 col-4 text-center">
+            <button class="btn btn-primary" routerLink="/user/register">Register New User</button>
+          </div>
         </div>
+      </fieldset>
+    </form>
+  }
+  
+  @if (loggingIn) {
+    <div class="row">
+      <div class="offset-4 col-4 text-center">
+        <p-progressSpinner></p-progressSpinner>
       </div>
-    </fieldset>
-  </form>
-  <div *ngIf="loggingIn" class="row">
-    <div class="offset-4 col-4 text-center">
-      <p-progressSpinner></p-progressSpinner>
     </div>
-  </div>
-  <div *ngIf="showLoginFailed" class="row">
-    <div class="offset-4 col-4 text-center login-failed">
-      Login failed. Please check your username and password and try again.
+  }
+  @if (showLoginFailed) {
+    <div class="row">
+      <div class="offset-4 col-4 text-center login-failed">
+        Login failed. Please check your username and password and try again.
+      </div>
     </div>
-  </div>
+  }
 </div>
