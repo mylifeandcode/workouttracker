@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
+import { SetType } from '../enums/set-type';
+import { ResistanceType } from '../enums/resistance-type';
 
 /**
  * A component representing an Exercise as part of a Workout instance,
@@ -33,6 +35,9 @@ export class WorkoutExerciseComponent implements OnInit {
 
   @Output()
   durationEdit = new EventEmitter<FormControl<number | null>>();
+
+  public setTypeEnum: typeof SetType = SetType;
+  public resistanceTypeEnum: typeof ResistanceType = ResistanceType;
 
   //Properties
   get setsArray(): FormArray<FormGroup<IWorkoutFormExerciseSet>> { //TODO: Consider refactoring. This is a property, but functionally the same as a method -- not good for using in template expressions!
