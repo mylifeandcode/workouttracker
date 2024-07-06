@@ -3,9 +3,12 @@
       <label>{{repSettingsFormGroup.controls.setType.value == 0 ? "Repetition" : "Timed"}} Sets</label> 
     </div>
     <div class="col-1">
-      <label>Duration 
-        <input wtSelectOnFocus *ngIf="repSettingsFormGroup.controls.setType.value == 1" formControlName="duration" type="number" />
-        <span *ngIf="repSettingsFormGroup.controls.setType.value == 0">N/A</span>
+      <label>Duration
+        @if (repSettingsFormGroup.controls.setType.value == setTypeEnum.Timed) {
+          <input wtSelectOnFocus formControlName="duration" type="number" />
+        } @else {
+          <span>N/A</span>
+        }
       </label>
 
     </div>
@@ -17,9 +20,11 @@
     </div>
     <div class="col-7">
       <br />
-      <span *ngIf="repSettingsFormGroup.errors || repSettingsFormGroup.controls.duration.errors" class="error-text">
-        {{repSettingsFormGroup.controls.duration.errors ? 'Duration is required and must be greater than zero.' : null}}
-        {{repSettingsFormGroup.errors ? 'Min Reps must be less than or equal to Max Reps.' : null}}
-      </span>
+      @if (repSettingsFormGroup.errors || repSettingsFormGroup.controls.duration.errors) {
+        <span class="error-text">
+          {{repSettingsFormGroup.controls.duration.errors ? 'Duration is required and must be greater than zero.' : null}}
+          {{repSettingsFormGroup.errors ? 'Min Reps must be less than or equal to Max Reps.' : null}}
+        </span>
+      }
     </div>
 </div>

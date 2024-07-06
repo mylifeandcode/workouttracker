@@ -12,10 +12,13 @@
     </div>
     <div class="half-area">
       <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' :
-        formGroup.controls.resistanceAmountLastTime.value | resistanceAmount:formGroup.controls.resistanceType.value==2}}</span>
-      <span *ngIf="formGroup.controls.resistanceMakeupLastTime.value">
-        (<span [innerHTML]="formGroup.controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
-      </span>
+        formGroup.controls.resistanceAmountLastTime.value |
+        resistanceAmount:formGroup.controls.resistanceType.value==2}}</span>
+      @if (formGroup.controls.resistanceMakeupLastTime.value) {
+        <span>
+          (<span [innerHTML]="formGroup.controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
+        </span>
+      }
     </div>
   </div>
 
@@ -24,10 +27,11 @@
       <strong>Target Rep Count</strong>
     </div>
     <div class="half-area">
-      <span *ngIf="formGroup.controls.involvesReps.value">
-        {{formGroup.controls.targetRepCountLastTime.value}}
-      </span>
-      <span *ngIf="!formGroup.controls.involvesReps.value">N/A</span>
+      @if (formGroup.controls.involvesReps.value) {
+        <span>{{formGroup.controls.targetRepCountLastTime.value}}</span>
+      } @else {
+        <span>N/A</span>
+      }
     </div>
   </div>
 
@@ -36,10 +40,11 @@
       <strong>Avg Actual Rep Count</strong>
     </div>
     <div class="half-area">
-      <span *ngIf="formGroup.controls.involvesReps.value">
-        {{formGroup.controls.avgActualRepCountLastTime.value}}
-      </span>
-      <span *ngIf="!formGroup.controls.involvesReps.value">N/A</span>
+      @if (formGroup.controls.involvesReps.value) {
+        <span>{{formGroup.controls.avgActualRepCountLastTime.value}}</span>
+      } @else {
+        <span>N/A</span>
+      }
     </div>
   </div>
 

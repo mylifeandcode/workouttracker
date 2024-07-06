@@ -1,32 +1,34 @@
-<div class="row" *ngIf="formGroup" [formGroup]="formGroup">
-  <div class="col-12">
-
-    <div class="row exercise-name">
-      <div class="col-12">
-        <h5 class="exercise-header-row">{{formGroup.controls.exerciseName.value}}</h5>
-        <h6 class="exercise-header-row">Resistance Type: {{ formGroup.controls.resistanceType.value | resistanceType }}</h6>
+@if (formGroup) {
+  <div class="row" [formGroup]="formGroup">
+    <div class="col-12">
+  
+      <div class="row exercise-name">
+        <div class="col-12">
+          <h5 class="exercise-header-row">{{formGroup.controls.exerciseName.value}}</h5>
+          <h6 class="exercise-header-row">Resistance Type: {{ formGroup.controls.resistanceType.value | resistanceType }}</h6>
+        </div>
       </div>
+  
+      <div class="row">
+  
+        <div class="col-4 full-height">
+          <wt-exercise-plan-last-time [formGroup]="formGroup"></wt-exercise-plan-last-time>
+        </div>
+  
+        <div *ngIf="formGroup.controls.recommendationReason.value" class="col-4 full-height">
+          <wt-exercise-plan-suggestions [formGroup]="formGroup"></wt-exercise-plan-suggestions>
+        </div>
+  
+        <div class="col-4 full-height">
+          <wt-exercise-plan-next-time 
+            [formGroup]="formGroup" 
+            [workoutHasBeenExecutedBefore]="workoutHasBeenExecutedBefore"
+            (resistanceBandsModalRequested)="selectResistanceBands($event)">
+          </wt-exercise-plan-next-time>
+        </div>
+  
+      </div>
+  
     </div>
-
-    <div class="row">
-
-      <div class="col-4 full-height">
-        <wt-exercise-plan-last-time [formGroup]="formGroup"></wt-exercise-plan-last-time>
-      </div>
-
-      <div *ngIf="formGroup.controls.recommendationReason.value" class="col-4 full-height">
-        <wt-exercise-plan-suggestions [formGroup]="formGroup"></wt-exercise-plan-suggestions>
-      </div>
-
-      <div class="col-4 full-height">
-        <wt-exercise-plan-next-time 
-          [formGroup]="formGroup" 
-          [workoutHasBeenExecutedBefore]="workoutHasBeenExecutedBefore"
-          (resistanceBandsModalRequested)="selectResistanceBands($event)">
-        </wt-exercise-plan-next-time>
-      </div>
-
-    </div>
-
   </div>
-</div>
+}

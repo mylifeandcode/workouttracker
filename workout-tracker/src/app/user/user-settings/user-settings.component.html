@@ -1,33 +1,35 @@
 <h3 class="headroom">User Settings</h3>
 <div class="container-fluid">
   <h4>Settings</h4>
-  <form *ngIf="userSettingsForm" [formGroup]="userSettingsForm" novalidate>
-    <div class="row">
-      <div class="col-4">
-        Use Suggestion Engine<br />
-        <span class="description headroom">This feature provides suggestions for repetition and resistance amounts based on your previous performance of an exercise.</span><br />
-        <span class="headroom"><small><strong>IMPORTANT: </strong>By enabling suggestions, you acknowledge suggestions are followed at your own risk.</small></span>
+  @if (userSettingsForm) {
+    <form [formGroup]="userSettingsForm" novalidate>
+      <div class="row">
+        <div class="col-4">
+          Use Suggestion Engine<br />
+          <span class="description headroom">This feature provides suggestions for repetition and resistance amounts based on your previous performance of an exercise.</span><br />
+          <span class="headroom"><small><strong>IMPORTANT: </strong>By enabling suggestions, you acknowledge suggestions are followed at your own risk.</small></span>
+        </div>
+        <div class="col-4">
+          <p-inputSwitch id="useRecommendationEngine" formControlName="recommendationsEnabled" styleClass="align-middle" (onChange)="recommendationEngineToggled($event)"></p-inputSwitch>
+        </div>
       </div>
-      <div class="col-4">
-        <p-inputSwitch id="useRecommendationEngine" formControlName="recommendationsEnabled" styleClass="align-middle" (onChange)="recommendationEngineToggled($event)"></p-inputSwitch>
+      <div *ngIf="recommendationEngineEnabled" class="row">
+        <div class="col-12">
+          <h5 class="headroom">Suggestion Settings</h5>
+          <!--TODO: Revisit. What can I track by for this using @for in the new control flow?-->
+          <wt-user-rep-settings *ngFor="let settings of userSettingsForm.controls.repSettings.controls; let i = index" [repSettingsFormGroup]="settings"></wt-user-rep-settings>
+        </div>
       </div>
-    </div>
-    <div *ngIf="recommendationEngineEnabled" class="row">
-      <div class="col-12">
-        <h5 class="headroom">Suggestion Settings</h5>
-        <!--TODO: Revisit. What can I track by for this using @for in the new control flow?-->
-        <wt-user-rep-settings *ngFor="let settings of userSettingsForm.controls.repSettings.controls; let i = index" [repSettingsFormGroup]="settings"></wt-user-rep-settings>
+      <div class="row">
+        <div class="col-4">
+          <span *ngIf="userSettingsForm.invalid" class="error-text">Please enter the information required above to save settings.</span>
+        </div>
+        <div class="col-4">
+          <button class="btn btn-save-settings" [disabled]="userSettingsForm.pristine || userSettingsForm.invalid" (click)="saveSettings()">Save Settings</button>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-4">
-        <span *ngIf="userSettingsForm.invalid" class="error-text">Please enter the information required above to save settings.</span>
-      </div>
-      <div class="col-4">
-        <button class="btn btn-save-settings" [disabled]="userSettingsForm.pristine || userSettingsForm.invalid" (click)="saveSettings()">Save Settings</button>
-      </div>
-    </div>
-  </form>
+    </form>
+  }
 
   <h4 class="headroom">Security</h4>
   <div class="row">
