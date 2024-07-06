@@ -20,9 +20,11 @@
       </p-table>
     </div>
   </div>
-  <div *ngIf="!loading && inProgressWorkouts.length == 0" class="row">
-    <div class="col-12">
-      There are no in-progress workouts.
+  @if (!loading && inProgressWorkouts.length == 0) {
+    <div class="row">
+      <div class="col-12">
+        There are no in-progress workouts.
+      </div>
     </div>
-  </div>
+  }
 </div>

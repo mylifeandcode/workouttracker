@@ -39,27 +39,38 @@
     <div class="half-area">
       <strong>Target Rep Count</strong>
     </div>
-    <div class="half-area" *ngIf="formGroup" [formGroup]="formGroup">
-      <input wtSelectOnFocus *ngIf="formGroup.controls.involvesReps.value" type="number" class="amount"
-        formControlName="targetRepCount" required />
-      <span *ngIf="!formGroup.controls.involvesReps.value" class="pre-pop-value">N/A</span>
-    </div>
+    @if (formGroup) {
+      <div class="half-area" [formGroup]="formGroup">
+        @if (formGroup.controls.involvesReps.value) {
+          <input wtSelectOnFocus type="number" class="amount"
+          formControlName="targetRepCount" required />
+        } @else {
+          <span class="pre-pop-value">N/A</span>
+        }
+      </div>
+    }
   </div>
 
   <div class="d-flex align-content-end flex-grow-1 px-2">
-    <span *ngIf="formGroup.invalid" class="info-required">Information required</span>
+    @if (formGroup.invalid) {
+      <span class="info-required">Information required</span>
+    }
   </div>
 
-  <div *ngIf="formGroup.controls.resistanceType.value==2" class="d-flex align-content-end little-footroom px-2">
-    <button class="btn btn-choose-resistance btn-sm btn-fullWidth"
-      (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
-  </div>
+  @if (formGroup.controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
+    <div class="d-flex align-content-end little-footroom px-2">
+      <button class="btn btn-choose-resistance btn-sm btn-fullWidth"
+        (click)="selectResistanceBands(formGroup)">Choose Resistance</button>
+    </div>
+  }
 
-  <div *ngIf="workoutHasBeenExecutedBefore && formGroup.controls.resistanceType.value!=3" class="d-flex align-content-end little-footroom px-2">
-    <button 
-      class="btn btn-same-as-last-time btn-sm btn-fullWidth" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last
-      Time
-    </button>
-  </div>
+  @if (workoutHasBeenExecutedBefore && formGroup.controls.resistanceType.value != resistanceTypeEnum.BodyWeight) {
+    <div class="d-flex align-content-end little-footroom px-2">
+      <button 
+        class="btn btn-same-as-last-time btn-sm btn-fullWidth" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last
+        Time
+      </button>
+    </div>
+  }
 
 </div>

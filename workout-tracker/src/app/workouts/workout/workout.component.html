@@ -1,6 +1,8 @@
 @if (!loading) {
   <h3 class="headroom">{{workoutName}}</h3>
-  <h4 *ngIf="isLoggingPastWorkout">PLEASE ENTER INFORMATION FOR THIS PREVIOUSLY COMPLETED WORKOUT BELOW</h4>
+  @if (isLoggingPastWorkout) {
+    <h4>PLEASE ENTER INFORMATION FOR THIS PREVIOUSLY COMPLETED WORKOUT BELOW</h4>
+  }
 }
 
 <div class="container-fluid">
@@ -19,17 +21,24 @@
       <fieldset [disabled]="saving || (workoutCompleted && !isLoggingPastWorkout)">
         @if (workoutLoaded) {
           <p>
-            <span *ngIf="workoutStarted">Workout started {{startDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
-            <span *ngIf="workoutCompleted">, completed {{endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
+            @if (workoutStarted) {
+              <span>Workout started {{startDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
+            }
+
+            @if (workoutCompleted) {
+              <span>, completed {{endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}</span>
+            }
           </p>
-          <wt-workout-exercise 
-            *ngFor="let exercise of exercisesArray?.controls; let i = index" 
-            [formGroup]="exercise" 
-            (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
-            (showTimerRequest)="showTimer($event)"
-            (rangeOfMotionEntered)="saveWorkoutInProgress()"
-            (durationEdit)="openDurationModal($event)">
-          </wt-workout-exercise>
+
+          @for (exercise of exercisesArray.controls; track $index) {
+            <wt-workout-exercise 
+              [formGroup]="exercise" 
+              (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
+              (showTimerRequest)="showTimer($event)"
+              (rangeOfMotionEntered)="saveWorkoutInProgress()"
+              (durationEdit)="openDurationModal($event)">
+            </wt-workout-exercise>
+          }
   
           <div class="row">
             <div class="col-12">&nbsp;</div>
@@ -44,9 +53,17 @@
   
           <div class="row">
             <div class="col-12">
-              <button type="submit" *ngIf="!workoutCompleted || isLoggingPastWorkout" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !isLoggingPastWorkout)" (click)="completeWorkout()">Complete Workout</button>
-              <span *ngIf="!workoutForm.valid" class="error-text ms-2">Please enter the required information above to complete the workout.</span>
-              <span *ngIf="saving">Saving...</span>&nbsp;{{infoMsg}}
+              @if (!workoutCompleted || isLoggingPastWorkout) {
+                <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !isLoggingPastWorkout)" (click)="completeWorkout()">Complete Workout</button>
+              }
+              
+              @if (!workoutForm.valid) {
+                <span class="error-text ms-2">Please enter the required information above to complete the workout.</span>
+              }
+              
+              @if (saving) {
+                <span>Saving...</span>&nbsp;{{infoMsg}}
+              }
             </div>
           </div>
         }
