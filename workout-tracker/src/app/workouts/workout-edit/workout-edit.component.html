@@ -1,109 +1,129 @@
-<h3 *ngIf="!readOnlyMode" class="headroom">Workout {{ workoutId > 0 ? 'Edit' : 'Creation' }}</h3>
-<h3 *ngIf="readOnlyMode" class="headroom">Workout</h3>
+@if (readOnlyMode) {
+  <h3 class="headroom">Workout</h3>
+} @else {
+  <h3 class="headroom">Workout {{ workoutId > 0 ? 'Edit' : 'Creation' }}</h3>
+}
 
 <div class="container-fluid form-group">
-  <div *ngIf="loading" class="row">
-    <div class="offset-5 col-1">
-      <p-progressSpinner></p-progressSpinner>
+  @if (loading) {
+    <div class="row">
+      <div class="offset-5 col-1">
+        <p-progressSpinner></p-progressSpinner>
+      </div>
     </div>
-  </div>
-
-  <form *ngIf="workoutForm && !loading" [formGroup]="workoutForm" novalidate>
-    <fieldset [disabled]="readOnlyMode">
-      <div class="row bottom-padded">
-        <div class="col-12">
-          <input type="hidden" formControlName="id" />
-          <input type="hidden" formControlName="active" />
-
-          <label class="center-block"
-            [ngClass]="{'has-error': workoutForm.controls['name'].touched && workoutForm.controls['name'].errors}">
-            Name:
-          </label>
-          <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
-          <span *ngIf="workoutForm.controls['name'].touched && workoutForm.controls['name']?.errors"
-            class="error-text">Required</span>
+  } @else if (workoutForm) {
+    <form [formGroup]="workoutForm" novalidate>
+      <fieldset [disabled]="readOnlyMode">
+        <div class="row bottom-padded">
+          <div class="col-12">
+            <input type="hidden" formControlName="id" />
+            <input type="hidden" formControlName="active" />
+  
+            <label class="center-block"
+              [ngClass]="{'has-error': workoutForm.controls.name.touched && workoutForm.controls.name.errors}">
+              Name:
+            </label>
+            <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
+            @if (workoutForm.controls.name.touched && workoutForm.controls.name.errors) {
+              <span class="error-text">Required</span>
+            }
+          </div>
         </div>
-      </div>
-
-      <label class="center-block bottom-padded">
-        <!--Sets (Repetition vs Timed vs Super)-->
-        Exercises
-      </label>
-
-      <div class="row">
-        <div class="col-6">Exercise Name</div>
-        <div class="col-2">Number of Sets</div>
-        <div class="col-2">Set Type</div>
-        <div *ngIf="!readOnlyMode" class="col-2">Move/Delete</div>
-      </div>
-
-      <!--
-            Useful example code at:
-            https://jasonwatmore.com/post/2019/06/25/angular-8-dynamic-reactive-forms-example
-            -->
-
-      <!-- TODO: Replace exercise edit code below with a child component -->
-      <!-- TODO: Update exercise edit code with typed-forms syntax -->
-      <div *ngFor="let exercise of exercisesArray.controls; let i = index" class="row exerciseRow"
-        [formGroup]="exercise">
-
-        <div class="col-6">
-          <input type="hidden" formControlName="exerciseId" />
-          <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
+  
+        <label class="center-block bottom-padded">
+          <!--Sets (Repetition vs Timed vs Super)-->
+          Exercises
+        </label>
+  
+        <div class="row">
+          <div class="col-6">Exercise Name</div>
+          <div class="col-2">Number of Sets</div>
+          <div class="col-2">Set Type</div>
+          @if (!readOnlyMode) {
+            <div class="col-2">Move/Delete</div>
+          }
         </div>
-        <div class="col-2">
-          # of sets: <input type="number" wtSelectOnFocus formControlName="numberOfSets" class="number-of-sets" />
-          <span *ngIf="exercise.controls['numberOfSets'].invalid" class="error-text"><br />Must be > 0</span>
+  
+        <!--
+              Useful example code at:
+              https://jasonwatmore.com/post/2019/06/25/angular-8-dynamic-reactive-forms-example
+              -->
+  
+        <!-- TODO: Replace exercise edit code below with a child component -->
+        @for (exercise of exercisesArray.controls; track $index) {
+          <div class="row exerciseRow" [formGroup]="exercise">
+  
+            <div class="col-6">
+              <input type="hidden" formControlName="exerciseId" />
+              <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
+            </div>
+            <div class="col-2">
+              # of sets: <input type="number" wtSelectOnFocus formControlName="numberOfSets" class="number-of-sets" />
+              @if (exercise.controls.numberOfSets.invalid) {
+                <span class="error-text"><br />Must be > 0</span>
+              }
+            </div>
+            <div class="col-2">
+              <select formControlName="setType">
+                <option value="0">Repetition</option>
+                <option value="1">Timed</option>
+              </select>
+              @if (exercise.controls.setType.invalid) {
+                <span class="error-text"><br />Required</span>
+              }
+            </div>
+            @if (!readOnlyMode) {
+              <div class="col-2">
+                <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp($index)" [disabled]="$index == 0">
+                  <i class="fa fa-arrow-up"></i>
+                </button>
+                <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseDown($index)"
+                  [disabled]="$index == (exercisesArray.controls.length - 1)">
+                  <i class="fa fa-arrow-down"></i>
+                </button>
+                <button class="btn btn-danger btn-sm exerciseButton" (click)="removeExercise($index)">
+                  <i class="fa fa-minus-circle"></i>
+                </button>
+              </div>
+            }
+          </div>
+        }
+  
+        @if (!readOnlyMode) {
+          <p>
+            <button class="btn btn-add-exercise btn-sm" (click)="openModal()">
+              <i class="fa fa-plus"></i> Add Exercise to Workout
+            </button>
+          </p>
+        }
+  
+        <div class="row">
+          <div class="col-2" *ngIf="fromViewRoute">
+            <span class="mild-right-margin align-middle">Enable Editing</span>
+            <p-inputSwitch id="editModeToggle" styleClass="align-middle" (onChange)="editModeToggled($event)"></p-inputSwitch>
+          </div>
+          @if (!readOnlyMode) {
+            <div class="col-8">
+              <button type="submit" [disabled]="workoutForm.invalid || saving" (click)="saveWorkout()"
+                class="btn btn-save-workout">Save</button>&nbsp;<span>{{infoMsg}}</span>
+              @if (workoutForm.touched && workoutForm.invalid) {
+                <span class="error-text">Please enter required information</span>
+              }
+            </div>
+          }      
         </div>
-        <div class="col-2">
-          <select formControlName="setType">
-            <option value="0">Repetition</option>
-            <option value="1">Timed</option>
-          </select>
-          <span *ngIf="exercise.controls['setType'].invalid" class="error-text"><br />Required</span>
-        </div>
-        <div *ngIf="!readOnlyMode" class="col-2">
-          <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp(i)" [disabled]="i == 0">
-            <i class="fa fa-arrow-up"></i>
-          </button>
-          <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseDown(i)"
-            [disabled]="i == (exercisesArray.controls.length - 1)">
-            <i class="fa fa-arrow-down"></i>
-          </button>
-          <button class="btn btn-danger btn-sm exerciseButton" (click)="removeExercise(i)">
-            <i class="fa fa-minus-circle"></i>
-          </button>
-        </div>
-
-      </div>
-
-      <p *ngIf="!readOnlyMode">
-        <button class="btn btn-add-exercise btn-sm" (click)="openModal()">
-          <i class="fa fa-plus"></i> Add Exercise to Workout
-        </button>
-      </p>
-
-      <div class="row">
-        <div class="col-2" *ngIf="fromViewRoute">
-          <span class="mild-right-margin align-middle">Enable Editing</span>
-          <p-inputSwitch id="editModeToggle" styleClass="align-middle" (onChange)="editModeToggled($event)"></p-inputSwitch>
-        </div>       
-        <div *ngIf="!readOnlyMode" class="col-8">
-          <button type="submit" [disabled]="workoutForm.invalid || saving" (click)="saveWorkout()"
-            class="btn btn-save-workout">Save</button>&nbsp;<span>{{infoMsg}}</span>
-          <span *ngIf="workoutForm.touched && workoutForm.invalid" class="error-text">Please enter required
-            information</span>
-        </div>
-      </div>
-      <div *ngIf="errorMsg" class="offset-2 col-4 error-text">
-        {{errorMsg}}
-      </div>
-
-      <!--Select Exercise Modal-->
-      <p-dialog header="Select an Exercise" [(visible)]="showExerciseSelectModal">
-        <wt-exercise-list-mini (exerciseSelected)="addExercise($event)"></wt-exercise-list-mini>
-      </p-dialog>
-    </fieldset>
-  </form>
+        @if (errorMsg) {
+          <div class="offset-2 col-4 error-text">
+            {{errorMsg}}
+          </div>
+        }
+  
+        <!--Select Exercise Modal-->
+        <p-dialog header="Select an Exercise" [(visible)]="showExerciseSelectModal">
+          <wt-exercise-list-mini (exerciseSelected)="addExercise($event)"></wt-exercise-list-mini>
+        </p-dialog>
+      </fieldset>
+    </form>
+  }
 
 </div>

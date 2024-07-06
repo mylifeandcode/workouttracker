@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Validators, AbstractControl, FormControl, FormGroup, FormArray, FormBuilder } from '@angular/forms';
+import { Validators, FormControl, FormGroup, FormArray, FormBuilder } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { Workout } from 'app/workouts/models/workout';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
