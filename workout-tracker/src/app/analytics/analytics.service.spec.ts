@@ -1,7 +1,7 @@
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ConfigService } from 'app/core/services/config/config.service';
-import { SetType } from 'app/core/enums/set-type';
+import { SetType } from 'app/workouts/enums/set-type';
 
 import { AnalyticsService, METRICS_TYPE } from './analytics.service';
 import { AnalyticsChartData } from './models/analytics-chart-data';
@@ -9,6 +9,7 @@ import { ExecutedExerciseMetrics } from './models/executed-exercise-metrics';
 import { ExecutedWorkoutMetrics } from './models/executed-workout-metrics';
 import { ExecutedWorkoutsSummary } from './models/executed-workouts-summary';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+
 
 class ConfigServiceMock {
   get = jasmine.createSpy('get').and.returnValue('http://localhost:5600/api/');
