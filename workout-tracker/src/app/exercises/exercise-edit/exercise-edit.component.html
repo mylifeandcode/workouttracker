@@ -50,7 +50,6 @@
           </div>
   
           @if (exerciseForm.controls.targetAreas) {
-            <!--<div *ngIf="exerciseForm.get('targetAreas')" class="col-3" formGroupName="targetAreas">-->
             <div class="col-3" formGroupName="targetAreas">
               <strong>Target Areas</strong>
     
@@ -169,29 +168,41 @@
             </label>
             <textarea class="form-control" rows="12" formControlName="pointsToRemember"
               placeholder="Points to remember (required)"></textarea>
-            <span
-              *ngIf="exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember']?.errors?.required"
-              class="error-text">Required</span>
-            <span
-              *ngIf="exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember']?.errors?.maxlength"
-              class="error-text">Max length exceeded</span>
+            @if (exerciseForm.controls.pointsToRemember.touched) {
+              @if (exerciseForm.controls.pointsToRemember.errors?.required) {
+                <span class="error-text">Required</span>
+              }
+
+              @if (exerciseForm.controls.pointsToRemember.errors?.maxlength) {
+                <span class="error-text">Max length exceeded</span>
+              }
+            }
           </div>
         </div>
         <div class="row bottom-padded">
-          <div class="col-2" *ngIf="fromViewRoute">
-            <span class="mild-right-margin align-middle">Enable Editing</span>
-            <p-inputSwitch id="editModeToggle" styleClass="align-middle" (onChange)="editModeToggled($event)"></p-inputSwitch>
-          </div>       
-          <div *ngIf="!readOnlyMode" class="col-10">
-            <button type="submit" [disabled]="exerciseForm.invalid || saving" (click)="saveExercise()"
-              class="btn btn-save-exercise">Save</button>&nbsp;<span>{{infoMsg}}</span>
-              <span *ngIf="exerciseForm.invalid" class="error-text">Please enter all required information above to enable saving.</span>
-          </div>
+          @if (fromViewRoute) {
+            <div class="col-2">
+              <span class="mild-right-margin align-middle">Enable Editing</span>
+              <p-inputSwitch id="editModeToggle" styleClass="align-middle" (onChange)="editModeToggled($event)"></p-inputSwitch>
+            </div>       
+          }
+
+          @if (!readOnlyMode) {
+            <div class="col-10">
+              <button type="submit" [disabled]="exerciseForm.invalid || saving" (click)="saveExercise()"
+                class="btn btn-save-exercise">Save</button>&nbsp;<span>{{infoMsg}}</span>
+                @if (exerciseForm.invalid) {
+                  <span class="error-text">Please enter all required information above to enable saving.</span>
+                }
+            </div>
+          }
         </div>
         <div class="row">
-          <div *ngIf="errorMsg" class="col-4 error-text">
-            {{errorMsg}}
-          </div>
+          @if (errorMsg) {
+            <div class="col-4 error-text">
+              {{errorMsg}}
+            </div>
+          }
         </div>
       </fieldset>
     </form>

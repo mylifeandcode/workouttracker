@@ -1,5 +1,5 @@
 ﻿//From https://stackoverflow.com/questions/42038099/validation-on-a-list-of-checkboxes-angular-2
-import { AbstractControl, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 //TODO: Refactor this file to ditch the class/static methods and just export the validator functions
 
@@ -45,6 +45,35 @@ export class CustomValidators {
         startDateTimeVsEndDateTime: true
       };
     };
+
+  //static compareDatesValidator(startDateControl: FormControl<Date | null>, endDateControl: FormControl<Date | null>, canBeEqual: boolean = false): ValidatorFn {
+  static compareDatesValidator(startDateControlName: string, endDateControlName: string, canBeEqual: boolean = false): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const startDateControl = control.get(startDateControlName);
+      const endDateControl = control.get(endDateControlName);
+      let valid: boolean = false;
+      
+      if (startDateControl?.value && endDateControl?.value) {
+        //PrimeNG bug assigns different seconds values...when seconds aren't even part of the displayed component
+        const start = new Date(startDateControl.value).setSeconds(0);
+        const end = new Date(endDateControl.value).setSeconds(0);
+
+        //console.log('start, end', start, end);
+
+        if (canBeEqual) {
+          valid = start <= end;
+        } else {
+          valid = start < end;
+        }
+      } 
+
+      //console.log('valid?', valid);
+
+      return valid ? null : {
+        compareDates: true
+      }
+    }
+  };
 
   static passwordsMatch: ValidatorFn =
     (control: AbstractControl): ValidationErrors | null => {

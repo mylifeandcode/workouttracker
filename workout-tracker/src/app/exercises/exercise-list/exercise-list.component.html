@@ -34,8 +34,11 @@
   </div>
   <div class="row">
     <div class="col-12">
-      <span *ngIf="totalRecords > 0">{{totalRecords}} total exercises</span>
-      <span *ngIf="totalRecords == 0">No exercises have been defined. Pleae add some using the button below.</span>
+      @if (totalRecords > 0) {
+        <span>{{totalRecords}} total exercises</span>
+      } @else {
+        <span>No exercises have been defined. Pleae add some using the button below.</span>
+      }
     </div>
   </div>
   <div class="row bottom-padded">

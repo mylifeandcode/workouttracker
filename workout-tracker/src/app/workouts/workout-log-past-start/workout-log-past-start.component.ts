@@ -83,7 +83,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
       workoutId: new FormControl<number | null>(null, { validators: Validators.required}), 
       startDateTime: new FormControl<Date | null>(null, { validators: Validators.required}), 
       endDateTime: new FormControl<Date | null>(null, { validators: Validators.required})
-    }, { validators: CustomValidators.startDateTimeVsEndDateTime });
+    }, { validators: CustomValidators.compareDatesValidator('startDateTime', 'endDateTime', true) });
   }
 
   private getUserWorkouts(): void {
