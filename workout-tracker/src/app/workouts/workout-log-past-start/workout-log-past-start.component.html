@@ -13,8 +13,9 @@
           placeholder="Choose a Workout"></p-dropdown>
       </div>
       <div class="col-7">
-        <span *ngIf="formGroup?.get('workoutId')?.dirty && formGroup?.get('workoutId')?.errors"
-          class="text-danger">Required</span>
+        @if (formGroup.controls.workoutId.dirty && formGroup.controls.workoutId.errors) {
+          <span class="text-danger">Required</span>
+        }
       </div>
     </div>
     <div class="row a-little-space">
@@ -33,11 +34,11 @@
         </p-calendar>
       </div>
       <div class="col-7">
-        <span *ngIf="startDateTime?.invalid && (startDateTime?.touched || startDateTime?.dirty)" class="text-danger">
-          <span *ngIf="startDateTime?.errors?.['required']">
+        @if (startDateTime.invalid && (startDateTime.touched || startDateTime.dirty) && startDateTime.errors?.required) {
+          <span class="text-danger">
             Start Date/Time is required.
           </span>
-        </span>
+        }
       </div>
     </div>
     <div class="row a-little-space">
@@ -67,11 +68,11 @@
         </p>
       </div>
       <div class="col-7">
-        <span *ngIf="endDateTime?.invalid && (endDateTime?.touched || endDateTime?.dirty)" class="text-danger">
-          <span *ngIf="endDateTime?.errors?.['required']">
+        @if (endDateTime.invalid && (endDateTime.touched || endDateTime.dirty) && endDateTime.errors?.required) {
+          <span class="text-danger">
             End Date/Time is required.
           </span>
-        </span>
+        }
       </div>
     </div>
     <div class="row a-little-space">
@@ -80,11 +81,11 @@
           class="btn btn-enter-info">Enter Workout Information</button>
       </div>
       <div class="col-8">
-        <span *ngIf="formGroup?.invalid && (endDateTime?.touched || endDateTime?.dirty)" class="text-danger">
-          <span *ngIf="formGroup?.errors?.['startDateTimeVsEndDateTime']">
+        @if (formGroup.invalid && (endDateTime.touched || endDateTime.dirty) && formGroup.errors?.startDateTimeVsEndDateTime) {
+          <span class="text-danger">
             Start Date/Time must be earlier than End Date/Time
           </span>
-        </span>
+        }
       </div>
     </div>
   </form>

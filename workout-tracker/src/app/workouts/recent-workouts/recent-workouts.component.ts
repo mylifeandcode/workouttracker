@@ -28,7 +28,7 @@ export class RecentWorkoutsComponent implements OnInit {
 
   public ngOnInit(): void {
     this._executedWorkoutService
-      .getRecent()
+      .getRecent() //TODO: Add code to exclude any workouts which have since been retired!
       .subscribe((workouts: ExecutedWorkoutSummaryDTO[]) => {
         this.recentWorkouts = workouts;
         this.loading = false; //TODO: Use finalize and set this there instead.

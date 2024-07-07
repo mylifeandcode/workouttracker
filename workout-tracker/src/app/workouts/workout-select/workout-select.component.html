@@ -1,17 +1,29 @@
-<h3 *ngIf="showHeading" class="headroom">Select a Workout to {{planningForLater ? "Plan" : "Start"}}</h3>
+@if (showHeading) {
+  <h3 class="headroom">Select a Workout to {{planningForLater ? "Plan" : "Start"}}</h3>
+}
+
 <div class="container-fluid">
-  <div *ngIf="!loading && workouts?.length" class="row select-row">
-    <div class="col-12">
-      <label>Select a Workout</label>&nbsp;
-      <p-dropdown id="workoutDefinitions" [options]="workouts" optionLabel="name" (onChange)="workoutSelectChange($event)" placeholder="Choose a Workout">
-      </p-dropdown>
+  @if (!loading && workouts.length) {
+    <div class="row select-row">
+      <div class="col-12">
+        <label>Select a Workout</label>&nbsp;
+        <p-dropdown id="workoutDefinitions" [options]="workouts" optionLabel="name" (onChange)="workoutSelectChange($event)" placeholder="Choose a Workout">
+        </p-dropdown>
+      </div>
     </div>
-  </div>
-  <div *ngIf="!loading && showRecent && workouts?.length == 0">
-    <p>
-      <br />You haven't defined any workouts yet. Please use the menu to create one.
-    </p>
-  </div>
-  <wt-recent-workouts *ngIf="!loading && showRecent && workouts?.length" [planningForLater]="planningForLater"></wt-recent-workouts>
+  }
+
+  @if (!loading && showRecent && workouts.length == 0) {
+    <div>
+      <p>
+        <br />You haven't defined any workouts yet. Please use the menu to create one.
+      </p>
+    </div>
+  }
+
+  @if (!loading && showRecent && workouts.length) {
+    <wt-recent-workouts [planningForLater]="planningForLater"></wt-recent-workouts>
+  }
+  
 </div>
 
