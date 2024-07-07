@@ -13,16 +13,21 @@
           <p-inputSwitch id="useRecommendationEngine" formControlName="recommendationsEnabled" styleClass="align-middle" (onChange)="recommendationEngineToggled($event)"></p-inputSwitch>
         </div>
       </div>
-      <div *ngIf="recommendationEngineEnabled" class="row">
-        <div class="col-12">
-          <h5 class="headroom">Suggestion Settings</h5>
-          <!--TODO: Revisit. What can I track by for this using @for in the new control flow?-->
-          <wt-user-rep-settings *ngFor="let settings of userSettingsForm.controls.repSettings.controls; let i = index" [repSettingsFormGroup]="settings"></wt-user-rep-settings>
+      @if (recommendationEngineEnabled) {
+        <div class="row">
+          <div class="col-12">
+            <h5 class="headroom">Suggestion Settings</h5>
+            @for (settings of userSettingsForm.controls.repSettings.controls; track $index) {
+              <wt-user-rep-settings [repSettingsFormGroup]="settings"></wt-user-rep-settings>
+            }
+          </div>
         </div>
-      </div>
+      }
       <div class="row">
         <div class="col-4">
-          <span *ngIf="userSettingsForm.invalid" class="error-text">Please enter the information required above to save settings.</span>
+          @if (userSettingsForm.invalid) {
+            <span class="error-text">Please enter the information required above to save settings.</span>  
+          }
         </div>
         <div class="col-4">
           <button class="btn btn-save-settings" [disabled]="userSettingsForm.pristine || userSettingsForm.invalid" (click)="saveSettings()">Save Settings</button>

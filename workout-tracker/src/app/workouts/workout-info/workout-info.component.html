@@ -1,4 +1,7 @@
-<p-progressSpinner *ngIf="workout === undefined"></p-progressSpinner>
+@if (workout === undefined) {
+  <p-progressSpinner></p-progressSpinner>
+}
+
 @if (workout) {
   <h5>{{workout.name}}</h5>
   <table class="table table-striped">

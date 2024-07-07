@@ -5,8 +5,7 @@
       Filter by Name &nbsp;<input pInputText type="text" (input)="filterTableByInput(dt, $event, 'name')" />
     </div>
     <div class="col-4">
-      Active Workouts Only &nbsp;<input type="checkbox" checked
-        (input)="filterTableByActive(dt, $event)" />
+      Active Workouts Only &nbsp;<input type="checkbox" checked (input)="filterTableByActive(dt, $event)" />
     </div>
   </div>
   <div class="row">
@@ -25,30 +24,46 @@
           <tr>
             <td>
               <a [routerLink]="['/workouts/view/', workout.id]">{{workout.name}}</a>
-              <a [routerLink]="['/workouts/edit/', workout.id]" style="padding-left:10px"><i class="fa fa-pencil"></i></a>
+              <a [routerLink]="['/workouts/edit/', workout.id]" style="padding-left:10px"><i
+                  class="fa fa-pencil"></i></a>
             </td>
             <td [style]="{'overflow': 'visible'}">{{workout.targetAreas}}</td>
             <td>
               {{workout.active ? 'Active' : 'Retired'}}
               &nbsp;
-              <button *ngIf="workout.active" class="btn btn-danger"
-                (click)="retireWorkout(workout.id, workout.name)">Retire</button>
-              <button *ngIf="!workout.active" class="btn btn-success"
-                (click)="reactivateWorkout(workout.id, workout.name)">Reactivate</button>
+              @if (workout.active) {
+                <button 
+                  class="btn btn-danger"
+                  (click)="retireWorkout(workout.id, workout.name)">
+                  Retire
+                </button>
+              } @else {
+                <button 
+                  class="btn btn-success"
+                  (click)="reactivateWorkout(workout.id, workout.name)">
+                  Reactivate
+                </button>
+              }
             </td>
           </tr>
         </ng-template>
       </p-table>
     </div>
   </div>
-  <div class="row" *ngIf="totalRecords != null">
-    <div class="col-3">{{totalRecords}} total workout(s)</div>
-    <div class="col-9" *ngIf="totalRecords == 0" style="font-style: italic">No workouts have been defined. Please
-      create one using the "Add New" button below.</div>
-  </div>
+  @if (totalRecords != null) {
+    <div class="row">
+      <div class="col-3">{{totalRecords}} total workout(s)</div>
+      @if (totalRecords == 0) {
+        <div class="col-9" style="font-style: italic">
+          No workouts have been defined. Please create one using the "Add New" button below.
+        </div>
+      }
+    </div>
+  }
   <div class="row bottom-padded">
     <div class="col-12">
-      <button routerLink="/workouts/edit/0" [disabled]="loading" class="btn btn-new-workout"><i class="fa fa-plus"></i> Add
+      <button routerLink="/workouts/edit/0" [disabled]="loading" class="btn btn-new-workout"><i class="fa fa-plus"></i>
+        Add
         New
       </button>
     </div>
