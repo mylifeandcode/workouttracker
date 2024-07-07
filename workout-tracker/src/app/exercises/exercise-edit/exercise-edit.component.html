@@ -73,9 +73,11 @@
                 Resistance Type
               </label>
               <select formControlName="resistanceType" id="resistanceType" class="form-select">
-                <option *ngFor="let resistanceType of resistanceTypes | keyvalue" [value]="resistanceType.key">
-                  {{resistanceType.value | insertSpaceBeforeCapital}}
-                </option>
+                @for (resistanceType of resistanceTypes | keyvalue; track $index) {
+                  <option [value]="resistanceType.key">
+                    {{resistanceType.value | insertSpaceBeforeCapital}}
+                  </option>
+                }
               </select>
             }
           </div>

@@ -8,18 +8,20 @@
         <th scope="col" class="text-end">Actions</th>
       </tr>
     </thead>
-    <tbody *ngIf="users$ | async as users"> <!--https://angular.dev/guide/http/making-requests#best-practices-->
-      @for (user of users; track user.id) {
-      <tr>
-        <td>{{user.name}}</td>
-        <td class="text-end">
-          <button type="button" routerLink="edit/{{user.id}}" class="btn btn-primary">Edit</button>
-          &nbsp;
-          <button type="button" (click)="deleteUser(user.id)" class="btn btn-danger">Delete</button>
-        </td>
-      </tr>
-      }
-    </tbody>
+    @if (users$ | async; as users) { <!-- https://angular.dev/guide/http/making-requests#best-practices -->
+      <tbody> 
+        @for (user of users; track user.id) {
+        <tr>
+          <td>{{user.name}}</td>
+          <td class="text-end">
+            <button type="button" routerLink="edit/{{user.id}}" class="btn btn-primary">Edit</button>
+            &nbsp;
+            <button type="button" (click)="deleteUser(user.id)" class="btn btn-danger">Delete</button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    }
   </table>
   <div class="row offset-md-11 col-md-1">
     <button type="button" class="btn btn-primary" routerLink="add">Add</button>

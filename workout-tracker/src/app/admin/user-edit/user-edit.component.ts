@@ -140,7 +140,10 @@ export class UserEditComponent implements OnInit {
     user.emailAddress = this.userEditForm.controls.emailAddress.value;
     user.name = this.userEditForm.controls.name.value;
     user.role = this.userEditForm.controls.role.value;
-    user.settings = this._user!.settings;
+
+    if (this._user?.settings) {
+      user.settings = this._user.settings;
+    }
 
     return user;
   }

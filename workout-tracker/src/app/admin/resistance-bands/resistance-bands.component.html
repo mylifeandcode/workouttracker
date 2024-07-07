@@ -90,8 +90,8 @@ PrimeNg docs and results in tight coupling.
       <label for="color">Color</label>
       <input type="text" class="p-inputtext" pInputText id="color" [(ngModel)]="newResistanceBand.color" required
         autofocus />
-      @if (modalSubmitted && newResistanceBand?.color) { <!--TODO: REVISIT. This isn't right.-->
-        <small class="p-invalid">Color is required.</small>
+      @if (!newResistanceBand.color) {
+        <small class="error-text">Color is required.</small>
       }
     </div>
     <div class="p-field">
@@ -99,15 +99,21 @@ PrimeNg docs and results in tight coupling.
       <input type="number" class="p-inputtext" pInputText id="maxResistanceAmount"
         [(ngModel)]="newResistanceBand.maxResistanceAmount" required />
       <small>*Resistance will be 2x when band is doubled over</small>
-      <small class="p-invalid" *ngIf="modalSubmitted && newResistanceBand.maxResistanceAmount">Max Resistance Amount is
-        required.</small>
+      @if (newResistanceBand.maxResistanceAmount <= 0) {
+        <small class="error-text">
+          Max Resistance Amount is required.
+        </small>
+      }
     </div>
     <div class="p-field">
       <label for="numberAvailable"># Available</label>
       <input type="number" class="p-inputtext" pInputText id="numberAvailable"
         [(ngModel)]="newResistanceBand.numberAvailable" required />
-      <small class="p-invalid" *ngIf="modalSubmitted && newResistanceBand.numberAvailable"># Available is
-        required.</small>
+      @if (newResistanceBand.numberAvailable <= 0) {
+        <small class="error-text">
+          # Available is required.
+        </small>
+      }
     </div>
   </ng-template>
 

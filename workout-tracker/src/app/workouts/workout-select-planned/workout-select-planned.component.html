@@ -27,12 +27,12 @@
       </p-table>
     </div>
   </div>
-  @if (totalCount != null) {
-    <div class="row">
-      <div class="col-12">{{totalCount}} total planned workouts</div>
-      <div class="col-12" *ngIf="totalCount == 0" style="font-style: italic">No workouts have been planned. You can plan one using the "Plan" button below.</div>
-    </div>
-  }
+  <div class="row">
+    <div class="col-12">{{totalCount}} total planned workouts</div>
+    @if (totalCount == 0) {
+      <div class="col-12" style="font-style: italic">No workouts have been planned. You can plan one using the "Plan" button below.</div>
+    }
+  </div>
   <div class="row">
     <div class="col-12">
       <button routerLink="/workouts/select-for-later" [disabled]="loading" class="btn btn-plan"><i class="fa fa-plus"></i> Plan</button>

@@ -71,8 +71,8 @@ export class CustomValidators {
 
       return valid ? null : {
         compareDates: true
-      }
-    }
+      };
+    };
   };
 
   static passwordsMatch: ValidatorFn =
