@@ -12,7 +12,7 @@ namespace WorkoutTracker.Domain.Users
 
         public string ProfilePic { get; set; }
 
-        public virtual UserSettings Settings { get; set; } = new UserSettings(); //Single object containing all of the user-specific settings
+        public virtual UserSettings Settings { get; set; } //This was causing problems after EF Core 8.0.6 -- = new UserSettings(); //Single object containing all of the user-specific settings
         
         public UserRole Role { get; set; }
 
