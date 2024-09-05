@@ -2,11 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { AnalyticsService } from '../analytics.service';
 import { ExecutedWorkoutsSummary } from '../models/executed-workouts-summary';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DatePipe, KeyValuePipe } from '@angular/common';
+import { ZeroIsBadPipe } from '../../shared/pipes/zero-is-bad.pipe';
 
 @Component({
-  selector: 'wt-analytics-dashboard',
-  templateUrl: './analytics-dashboard.component.html',
-  styleUrls: ['./analytics-dashboard.component.scss']
+    selector: 'wt-analytics-dashboard',
+    templateUrl: './analytics-dashboard.component.html',
+    styleUrls: ['./analytics-dashboard.component.scss'],
+    standalone: true,
+    imports: [ProgressSpinnerModule, DatePipe, KeyValuePipe, ZeroIsBadPipe]
 })
 export class AnalyticsDashboardComponent implements OnInit {
 

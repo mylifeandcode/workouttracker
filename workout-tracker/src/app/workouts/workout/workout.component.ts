@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Validators, FormGroup, FormArray, FormControl, FormBuilder } from '@angular/forms';
+import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ResistanceBandService } from 'app/shared/resistance-band.service';
@@ -9,11 +9,18 @@ import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
 import { forEach } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ToastModule } from 'primeng/toast';
+import { WorkoutExerciseComponent } from '../workout-exercise/workout-exercise.component';
+import { DialogModule } from 'primeng/dialog';
+import { CountdownTimerComponent } from '../countdown-timer/countdown-timer.component';
+import { DurationComponent } from '../duration/duration.component';
+import { DatePipe } from '@angular/common';
 
 interface IWorkoutForm {
   id: FormControl<number | null>;
@@ -24,7 +31,21 @@ interface IWorkoutForm {
 @Component({
   selector: 'wt-workout',
   templateUrl: './workout.component.html',
-  styleUrls: ['./workout.component.scss']
+  styleUrls: ['./workout.component.scss'],
+  standalone: true,
+  imports: [
+    ProgressSpinnerModule, 
+    ToastModule, 
+    FormsModule, 
+    ReactiveFormsModule, 
+    WorkoutExerciseComponent, 
+    RouterLink, 
+    DialogModule, 
+    ResistanceBandSelectComponent, 
+    CountdownTimerComponent, 
+    DurationComponent, 
+    DatePipe
+  ]
 })
 export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {
 
@@ -353,7 +374,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
             if (this.isLoggingPastWorkout) {
               this.workoutForm.markAsPristine(); //To allow the guard to let us navigate away
               this._router.navigate(['/workouts/history']);
-            } 
+            }
             else {
               this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
               this.workoutCompleted = true;

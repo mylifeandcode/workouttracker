@@ -32,31 +32,30 @@ describe('UserEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserEditComponent ],
-      imports: [
+    imports: [
         ReactiveFormsModule,
-        RouterModule.forRoot(
-          [{path: 'admin/users', component: FakeComponent}])
-      ],
-      providers: [
+        RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
+        UserEditComponent
+    ],
+    providers: [
         {
-          provide: UserService,
-          useClass: UserServiceMock
+            provide: UserService,
+            useClass: UserServiceMock
         },
         {
-          provide: ActivatedRoute,
-          useValue: {
-            params: of({
-              id: 5
-            })
-          }
+            provide: ActivatedRoute,
+            useValue: {
+                params: of({
+                    id: 5
+                })
+            }
         },
         {
-          provide: AuthService,
-          useClass: AuthServiceMock
+            provide: AuthService,
+            useClass: AuthServiceMock
         }
-      ]
-    })
+    ]
+})
     .compileComponents();
   }));
 

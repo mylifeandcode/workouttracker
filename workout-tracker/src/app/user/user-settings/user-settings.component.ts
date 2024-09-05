@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'app/core/services/auth/auth.service';
 import { User } from 'app/core/models/user';
 import { UserMinMaxReps } from 'app/core/models/user-min-max-reps';
 import { UserService } from 'app/core/services/user/user.service';
 import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from 'app/core/validators/custom-validators';
 import { catchError, finalize } from 'rxjs/operators';
-import { IRepSettingsForm } from '../user-rep-settings/user-rep-settings.component';
+import { IRepSettingsForm, UserRepSettingsComponent } from '../user-rep-settings/user-rep-settings.component';
 import { find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
 import { MessageService } from 'primeng/api';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { RouterLink } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
 
 interface IUserSettingsForm {
   recommendationsEnabled: FormControl<boolean>;
@@ -22,9 +25,18 @@ interface IToggleEvent { //TODO: Determine if PrimeNg has a type for this (proba
 }
 
 @Component({
-  selector: 'wt-user-settings',
-  templateUrl: './user-settings.component.html',
-  styleUrls: ['./user-settings.component.scss']
+    selector: 'wt-user-settings',
+    templateUrl: './user-settings.component.html',
+    styleUrls: ['./user-settings.component.scss'],
+    standalone: true,
+    imports: [
+      FormsModule, 
+      ReactiveFormsModule, 
+      InputSwitchModule, 
+      UserRepSettingsComponent, 
+      RouterLink, 
+      ToastModule
+    ]
 })
 export class UserSettingsComponent extends CheckForUnsavedDataComponent implements OnInit {
 

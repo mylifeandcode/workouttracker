@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SelectOnFocusDirective } from '../../shared/select-on-focus.directive';
 
 interface IDurationForm {
   hours: FormControl<number>;
@@ -8,9 +9,11 @@ interface IDurationForm {
 }
 
 @Component({
-  selector: 'wt-duration',
-  templateUrl: './duration.component.html',
-  styleUrls: ['./duration.component.scss']
+    selector: 'wt-duration',
+    templateUrl: './duration.component.html',
+    styleUrls: ['./duration.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective]
 })
 export class DurationComponent implements OnChanges {;
   @Input()

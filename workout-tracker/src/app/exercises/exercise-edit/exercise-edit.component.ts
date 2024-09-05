@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Validators, FormControl, FormGroup, FormRecord, FormBuilder } from '@angular/forms';
+import { Validators, FormControl, FormGroup, FormRecord, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExerciseService } from '../exercise.service';
 import { Exercise } from '../../workouts/models/exercise';
 import { TargetArea } from '../../workouts/models/target-area';
@@ -10,6 +10,11 @@ import { finalize } from 'rxjs/operators';
 import { some, find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
 import { ResistanceType } from 'app/workouts/enums/resistance-type';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NgClass, KeyValuePipe } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
 
 interface IExerciseEditForm {
   id: FormControl<number>;
@@ -33,9 +38,11 @@ interface IExerciseEditForm {
 
 
 @Component({
-  selector: 'wt-exercise-edit',
-  templateUrl: './exercise-edit.component.html',
-  styleUrls: ['./exercise-edit.component.scss']
+    selector: 'wt-exercise-edit',
+    templateUrl: './exercise-edit.component.html',
+    styleUrls: ['./exercise-edit.component.scss'],
+    standalone: true,
+    imports: [ProgressSpinnerModule, FormsModule, ReactiveFormsModule, NgClass, TooltipModule, InputSwitchModule, KeyValuePipe, InsertSpaceBeforeCapitalPipe]
 })
 export class ExerciseEditComponent extends CheckForUnsavedDataComponent implements OnInit {
 

@@ -1,10 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UserOverview } from 'app/core/models/user-overview';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'wt-user-overview',
-  templateUrl: './user-overview.component.html',
-  styleUrls: ['./user-overview.component.scss']
+    selector: 'wt-user-overview',
+    templateUrl: './user-overview.component.html',
+    styleUrls: ['./user-overview.component.scss'],
+    standalone: true,
+    imports: [ProgressSpinnerModule, DatePipe]
 })
 export class UserOverviewComponent implements OnInit {
 

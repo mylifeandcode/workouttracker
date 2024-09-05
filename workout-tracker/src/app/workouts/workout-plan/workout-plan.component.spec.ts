@@ -31,8 +31,10 @@ class MockResistanceBandService {
 }
 
 @Component({
-  selector: 'wt-resistance-band-select',
-  template: ''
+    selector: 'wt-resistance-band-select',
+    template: '',
+    standalone: true,
+    imports: [ReactiveFormsModule]
 })
 class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
@@ -55,31 +57,29 @@ describe('WorkoutPlanComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ 
-        WorkoutPlanComponent, 
-        MockResistanceBandSelectComponent
-      ], 
-      providers: [
+    providers: [
         {
-          provide: WorkoutService, 
-          useClass: WorkoutServiceMock
-        }, 
+            provide: WorkoutService,
+            useClass: WorkoutServiceMock
+        },
         {
-          provide: ResistanceBandService, 
-          useClass: MockResistanceBandService
-        }, 
+            provide: ResistanceBandService,
+            useClass: MockResistanceBandService
+        },
         {
-          provide: ActivatedRoute,
-          useValue: { params: of({}) }
+            provide: ActivatedRoute,
+            useValue: { params: of({}) }
         },
         UntypedFormBuilder //TODO: Determine if this is kosher or if there's a preferred mocking approach
-      ],
-      imports: [
-        RouterModule.forRoot([]), 
-        ReactiveFormsModule
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    ],
+    imports: [
+        RouterModule.forRoot([]),
+        ReactiveFormsModule,
+        WorkoutPlanComponent,
+        MockResistanceBandSelectComponent
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   });
 

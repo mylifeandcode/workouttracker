@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { ConfigService } from 'app/core/services/config/config.service';
 
 @Pipe({
-  name: 'resistanceAmount'
+    name: 'resistanceAmount',
+    standalone: true
 })
 export class ResistanceAmountPipe implements PipeTransform {
 

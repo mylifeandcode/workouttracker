@@ -30,22 +30,21 @@ describe('UserSelectComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserSelectComponent ],
-      imports: [
-        RouterModule.forRoot(
-          [{path: 'home', component: FakeComponent}])
-      ],
-      providers: [
+    imports: [
+        RouterModule.forRoot([{ path: 'home', component: FakeComponent }]),
+        UserSelectComponent
+    ],
+    providers: [
         {
-          provide: UserService,
-          useClass: UserServiceMock
-        }, 
+            provide: UserService,
+            useClass: UserServiceMock
+        },
         {
-          provide: AuthService, 
-          useClass: AuthServiceMock
+            provide: AuthService,
+            useClass: AuthServiceMock
         }
-      ]
-    })
+    ]
+})
     .compileComponents();
   }));
 

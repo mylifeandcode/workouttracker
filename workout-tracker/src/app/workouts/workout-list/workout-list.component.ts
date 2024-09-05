@@ -4,20 +4,24 @@ import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { PaginatedResults } from '../../core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
-import { Table } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
+import { PrimeTemplate } from 'primeng/api';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'wt-workout-list',
-  templateUrl: './workout-list.component.html',
-  styleUrls: ['./workout-list.component.scss']
+    selector: 'wt-workout-list',
+    templateUrl: './workout-list.component.html',
+    styleUrls: ['./workout-list.component.scss'],
+    standalone: true,
+    imports: [TableModule, PrimeTemplate, RouterLink]
 })
-export class WorkoutListComponent implements OnInit {
+export class WorkoutListComponent {
 
   //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
   //Turbo Table automatically makes a call to get data on initialization
 
   public totalRecords: number = 0;
-  public loading: boolean = true;
+  public loading: boolean = false;
   public pageSize: number = 10;
   public workouts: WorkoutDTO[] = [];
   public cols: any = [
@@ -30,10 +34,6 @@ export class WorkoutListComponent implements OnInit {
   private _filterByActiveOnly: boolean = true;
 
   constructor(private _workoutSvc: WorkoutService) {
-  }
-
-  ngOnInit(): void {
-    this.getWorkouts(0);
   }
 
   public getWorkouts(first: number): void {

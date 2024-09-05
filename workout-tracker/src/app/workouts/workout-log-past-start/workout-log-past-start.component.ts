@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { CustomValidators } from 'app/core/validators/custom-validators';
@@ -7,6 +7,12 @@ import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
 import { sortBy } from 'lodash-es';
+import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
+import { PrimeTemplate } from 'primeng/api';
+import { NgClass } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { DurationComponent } from '../duration/duration.component';
 
 interface ILogPastWorkoutForm {
   workoutId: FormControl<number | null>; 
@@ -15,9 +21,11 @@ interface ILogPastWorkoutForm {
 }
 
 @Component({
-  selector: 'wt-workout-log-past-start',
-  templateUrl: './workout-log-past-start.component.html',
-  styleUrls: ['./workout-log-past-start.component.scss']
+    selector: 'wt-workout-log-past-start',
+    templateUrl: './workout-log-past-start.component.html',
+    styleUrls: ['./workout-log-past-start.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, DropdownModule, CalendarModule, PrimeTemplate, NgClass, DialogModule, DurationComponent]
 })
 export class WorkoutLogPastStartComponent implements OnInit {
   

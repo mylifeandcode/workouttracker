@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SetType } from 'app/workouts/enums/set-type';
+import { SelectOnFocusDirective } from '../../shared/select-on-focus.directive';
 
 export interface IRepSettingsForm {
   repSettingsId: FormControl<number>;
@@ -11,9 +12,11 @@ export interface IRepSettingsForm {
 }
 
 @Component({
-  selector: 'wt-user-rep-settings',
-  templateUrl: './user-rep-settings.component.html',
-  styleUrls: ['./user-rep-settings.component.scss']
+    selector: 'wt-user-rep-settings',
+    templateUrl: './user-rep-settings.component.html',
+    styleUrls: ['./user-rep-settings.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective]
 })
 export class UserRepSettingsComponent implements OnInit {
 

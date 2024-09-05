@@ -1,11 +1,14 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
 import { SoundService } from 'app/core/services/sound/sound.service';
+import { NgStyle } from '@angular/common';
 
 @Component({
-  selector: 'wt-countdown-timer',
-  templateUrl: './countdown-timer.component.html',
-  styleUrls: ['./countdown-timer.component.scss']
+    selector: 'wt-countdown-timer',
+    templateUrl: './countdown-timer.component.html',
+    styleUrls: ['./countdown-timer.component.scss'],
+    standalone: true,
+    imports: [NgStyle, CountdownComponent]
 })
 export class CountdownTimerComponent implements OnInit {
 

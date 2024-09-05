@@ -1,29 +1,36 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
 
 import { AppComponent } from './app.component';
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { NavComponent } from './core/nav/nav.component';
 
 @Component({
   selector: 'wt-nav',
-  template: ''
+  template: '',
+  standalone: true
 })
 class MockNavComponent {
 
 }
 
-
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterModule.forRoot([])
+        MockNavComponent,
+        AppComponent
       ],
-      declarations: [
-        AppComponent,
-        MockNavComponent
-      ],
-    }).compileComponents();
+      providers: [
+        provideRouter([])
+      ]
+    }).overrideComponent(
+      AppComponent,
+      {
+        remove: { imports: [NavComponent] },
+        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+      }
+    ).compileComponents();
   }));
 
   it('should create the app', waitForAsync(() => {
@@ -39,3 +46,4 @@ describe('AppComponent', () => {
   }));
 
 });
+

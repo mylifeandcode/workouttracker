@@ -22,7 +22,10 @@ class ExerciseServiceMock {
 }
 
 //We're testing an abstract base class, so let's create a class here that extends it
-@Component({})
+@Component({
+    standalone: true,
+    imports: [MultiSelectModule]
+})
 class ExerciseListBaseExtenderComponent extends ExerciseListBase {
   constructor(private _exerciseService: ExerciseService) {
     super(_exerciseService);
@@ -36,19 +39,17 @@ describe('ExerciseListMiniComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
-        ExerciseListBaseExtenderComponent
-      ],
-      providers: [
+    providers: [
         {
-          provide: ExerciseService,
-          useClass: ExerciseServiceMock
+            provide: ExerciseService,
+            useClass: ExerciseServiceMock
         }
-      ],
-      imports: [
-        MultiSelectModule
-      ]
-    })
+    ],
+    imports: [
+        MultiSelectModule,
+        ExerciseListBaseExtenderComponent
+    ]
+})
     .compileComponents();
   }));
 

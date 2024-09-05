@@ -9,7 +9,8 @@ import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-s
 import { SafeHtml } from '@angular/platform-browser';
 
 @Pipe({
-  name: 'resistanceType'
+    name: 'resistanceType',
+    standalone: true
 })
 class ResistanceTypePipeMock implements PipeTransform {
   transform(value: ResistanceType, capitalizeEachWord: boolean = true): string {
@@ -18,7 +19,8 @@ class ResistanceTypePipeMock implements PipeTransform {
 }
 
 @Pipe({
-  name: 'duration'
+    name: 'duration',
+    standalone: true
 })
 class DurationPipeMock implements PipeTransform {
   transform(value: number, precise: boolean = false): number {
@@ -27,7 +29,8 @@ class DurationPipeMock implements PipeTransform {
 }
 
 @Pipe({
-  name: 'resistanceBandColor'
+    name: 'resistanceBandColor',
+    standalone: true
 })
 class ResistanceBandColorMock implements PipeTransform {
   transform(value: string | null): SafeHtml {
@@ -36,7 +39,8 @@ class ResistanceBandColorMock implements PipeTransform {
 }
 
 @Pipe({
-  name: 'exerciseSide'
+    name: 'exerciseSide',
+    standalone: true
 })
 class ExerciseSidePipeMock implements PipeTransform {
   transform(value: number | null): string {
@@ -45,7 +49,8 @@ class ExerciseSidePipeMock implements PipeTransform {
 }
 
 @Pipe({
-  name: 'resistanceAmount'
+    name: 'resistanceAmount',
+    standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
   transform(value: number | null): string {
@@ -60,16 +65,13 @@ describe('WorkoutExerciseComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule ], 
-      declarations: [ 
-        WorkoutExerciseComponent, 
+    imports: [ReactiveFormsModule, WorkoutExerciseComponent,
         ResistanceTypePipeMock,
         DurationPipeMock,
         ResistanceBandColorMock,
         ExerciseSidePipeMock,
-        MockResistanceAmountPipe 
-      ]
-    })
+        MockResistanceAmountPipe]
+})
     .compileComponents();
   }));
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/services/auth/auth.service';
 import { ConfigService } from 'app/core/services/config/config.service';
 import { User } from 'app/core/models/user';
@@ -17,9 +17,11 @@ interface IUserEditForm {
 }
 
 @Component({
-  selector: 'wt-user-edit',
-  templateUrl: './user-edit.component.html',
-  styleUrls: ['./user-edit.component.scss']
+    selector: 'wt-user-edit',
+    templateUrl: './user-edit.component.html',
+    styleUrls: ['./user-edit.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserEditComponent implements OnInit {
 

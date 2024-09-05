@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { ExerciseSide } from '../enums/exercise-side';
 
 @Pipe({
-  name: 'exerciseSide'
+    name: 'exerciseSide',
+    standalone: true
 })
 export class ExerciseSidePipe implements PipeTransform {
 

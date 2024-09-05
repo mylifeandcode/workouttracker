@@ -1,8 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { WorkoutHistoryComponent } from './workout-history.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { ExecutedWorkoutService } from '../executed-workout.service';
+import { RouterModule } from '@angular/router';
+import { PaginatedResults } from 'app/core/models/paginated-results';
+import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
+import { of } from 'rxjs';
+
+class MockExecutedWorkoutService {
+  getFilteredSubset =
+    jasmine.createSpy('getFilteredSubset')
+      .and.returnValue(of(new PaginatedResults<ExecutedWorkoutSummaryDTO>()));
+}
 
 describe('WorkoutHistoryComponent', () => {
   let component: WorkoutHistoryComponent;
@@ -10,14 +19,16 @@ describe('WorkoutHistoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [
-        WorkoutHistoryComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-})
-    .compileComponents();
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [WorkoutHistoryComponent, RouterModule.forRoot([])],
+      providers: [
+        {
+          provide: ExecutedWorkoutService,
+          useClass: MockExecutedWorkoutService
+        }
+      ]
+    })
+      .compileComponents();
   });
 
   beforeEach(() => {

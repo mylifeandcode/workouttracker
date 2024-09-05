@@ -1,14 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, PrimeTemplate } from 'primeng/api';
 
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from '../../shared/resistance-band.service';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TableModule } from 'primeng/table';
+import { FormsModule } from '@angular/forms';
+import { NgStyle } from '@angular/common';
+import { ButtonDirective } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
-  selector: 'wt-resistance-bands',
-  templateUrl: './resistance-bands.component.html',
-  styleUrls: ['./resistance-bands.component.scss']
+    selector: 'wt-resistance-bands',
+    templateUrl: './resistance-bands.component.html',
+    styleUrls: ['./resistance-bands.component.scss'],
+    standalone: true,
+    imports: [ToastModule, ConfirmDialogModule, TableModule, PrimeTemplate, FormsModule, NgStyle, ButtonDirective, DialogModule]
 })
 export class ResistanceBandsComponent implements OnInit {
 

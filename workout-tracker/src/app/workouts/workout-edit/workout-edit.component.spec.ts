@@ -10,24 +10,21 @@ import { WorkoutService } from '../workout.service';
 import { Workout } from 'app/workouts/models/workout';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { ExerciseDTO } from '../models/exercise-dto';
+import { ExerciseListMiniComponent } from 'app/exercises/exercise-list-mini/exercise-list-mini.component';
 
 @Component({
   selector: 'wt-exercise-list-mini',
-  template: ''
+  template: '',
+  standalone: true,
+  imports: [ReactiveFormsModule]
 })
-class FakeExerciseListMiniComponent{}
-
-@Component({
-  selector: 'wt-workout-set-definition',
-  template: ''
-})
-class FakeWorkoutSetDefComponent{}
+class FakeExerciseListMiniComponent { }
 
 @Component({
   selector: 'wt-blank',
   template: ''
 })
-class BlankComponent {}
+class BlankComponent { }
 
 class WorkoutServiceMock {
   private getTestWorkout(): Workout {
@@ -36,12 +33,12 @@ class WorkoutServiceMock {
     workout.active = true;
     workout.name = 'Test Workout';
     workout.exercises = [];
-    workout.exercises.push(<ExerciseInWorkout>{ 
+    workout.exercises.push(<ExerciseInWorkout>{
       id: 1, exerciseId: 10, exercise: { name: 'Bench Press' }, setType: 1, numberOfSets: 3
     });
-    workout.exercises.push(<ExerciseInWorkout>{ 
+    workout.exercises.push(<ExerciseInWorkout>{
       id: 2, exerciseId: 20, exercise: { name: 'Biceps Curls' }, setType: 2, numberOfSets: 4
-    });    
+    });
     return workout;
   }
   getById = jasmine.createSpy('getById').and.returnValue(of(this.getTestWorkout()));
@@ -68,16 +65,13 @@ describe('WorkoutEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        WorkoutEditComponent,
-        FakeExerciseListMiniComponent,
-        FakeWorkoutSetDefComponent
-      ],
       imports: [
         ReactiveFormsModule,
         RouterModule.forRoot([
           { path: 'workouts/edit/:id', component: BlankComponent }
-        ])
+        ]),
+        WorkoutEditComponent,
+        FakeExerciseListMiniComponent
       ],
       providers: [
         {
@@ -86,17 +80,23 @@ describe('WorkoutEditComponent', () => {
             params: of({
               id: WORKOUT_ID
             }),
-            snapshot: getActivatedRouteSnapshot()            
+            snapshot: getActivatedRouteSnapshot()
           }
         },
         {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
         }
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+      ]
     })
-    .compileComponents();
+    .overrideComponent(
+      WorkoutEditComponent,
+      {
+        remove: { imports: [ExerciseListMiniComponent] },
+        add: { imports: [FakeExerciseListMiniComponent], schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+      }
+    )
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -143,15 +143,15 @@ describe('WorkoutEditComponent', () => {
   });
 
   it('should toggle read-only mode to false', () => {
-    component.editModeToggled({checked: true});
+    component.editModeToggled({ checked: true });
     expect(component.readOnlyMode).toBeFalse();
   });
 
   it('should toggle read-only mode to true', () => {
-    component.editModeToggled({checked: false});
+    component.editModeToggled({ checked: false });
     expect(component.readOnlyMode).toBeTrue();
   });
-  
+
   it('should not load workout when creating a new one', () => {
     //TODO: Improve this test if possible
 
@@ -206,7 +206,7 @@ describe('WorkoutEditComponent', () => {
     //We need to reset.
     component.workoutForm.reset();
     component.workoutForm.controls.exercises.clear();
-    
+
     //Re-initialize to pick up change to default ActivatedRoute
     component.ngOnInit();
 
@@ -223,7 +223,7 @@ describe('WorkoutEditComponent', () => {
     expect(component.workoutForm.invalid).toBeFalse();
     expect(workoutService.add).toHaveBeenCalled();
   });
-  
+
   it('should update an existing workout', () => {
     component.saveWorkout();
     expect(workoutService.update).toHaveBeenCalled();

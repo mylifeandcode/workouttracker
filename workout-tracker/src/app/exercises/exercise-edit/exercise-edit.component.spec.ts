@@ -55,7 +55,8 @@ class ExerciseServiceMock {
 }
 
 @Pipe({
-  name: 'insertSpaceBeforeCapital'
+    name: 'insertSpaceBeforeCapital',
+    standalone: true
 })
 class InsertSpaceBeforeCapitalPipeMock implements PipeTransform {
   transform(value: string): string { return "I'm just a mock!"; }
@@ -76,31 +77,29 @@ describe('ExerciseEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ExerciseEditComponent, 
-        InsertSpaceBeforeCapitalPipeMock
-      ],
-      imports: [
+    imports: [
         ReactiveFormsModule,
-        RouterModule.forRoot([])
-       ],
-       providers: [
-         {
-           provide: ExerciseService,
-           useClass: ExerciseServiceMock
-         },
-         {
-           provide: ActivatedRoute,
-           useValue: {
-             params: of({
-               id: 2,
-             }), 
-             snapshot: getActivatedRouteSnapshot()
+        RouterModule.forRoot([]),
+        ExerciseEditComponent,
+        InsertSpaceBeforeCapitalPipeMock
+    ],
+    providers: [
+        {
+            provide: ExerciseService,
+            useClass: ExerciseServiceMock
+        },
+        {
+            provide: ActivatedRoute,
+            useValue: {
+                params: of({
+                    id: 2,
+                }),
+                snapshot: getActivatedRouteSnapshot()
             }
-         }
-       ],
-       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+        }
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   }));
 

@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { ExerciseTargetAreaLink } from '../models/exercise-target-area-link';
 
 @Pipe({
-  name: 'targetAreas'
+    name: 'targetAreas',
+    standalone: true
 })
 export class TargetAreasPipe implements PipeTransform {
 

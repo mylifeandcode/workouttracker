@@ -1,12 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Validators, FormControl, FormGroup, FormArray, FormBuilder } from '@angular/forms';
+import { Validators, FormControl, FormGroup, FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../workout.service';
 import { Workout } from 'app/workouts/models/workout';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NgClass } from '@angular/common';
+import { SelectOnFocusDirective } from '../../shared/select-on-focus.directive';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { DialogModule } from 'primeng/dialog';
+import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
 
 interface IExerciseInWorkout {
   id: FormControl<number>;
@@ -24,9 +30,11 @@ interface IWorkoutEditForm {
 }
 
 @Component({
-  selector: 'wt-workout-edit',
-  templateUrl: './workout-edit.component.html',
-  styleUrls: ['./workout-edit.component.scss']
+    selector: 'wt-workout-edit',
+    templateUrl: './workout-edit.component.html',
+    styleUrls: ['./workout-edit.component.scss'],
+    standalone: true,
+    imports: [ProgressSpinnerModule, FormsModule, ReactiveFormsModule, NgClass, SelectOnFocusDirective, InputSwitchModule, DialogModule, ExerciseListMiniComponent]
 })
 export class WorkoutEditComponent extends CheckForUnsavedDataComponent implements OnInit {
 

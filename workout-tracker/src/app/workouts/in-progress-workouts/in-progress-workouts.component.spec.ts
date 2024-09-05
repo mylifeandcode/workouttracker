@@ -5,33 +5,34 @@ import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 
 import { InProgressWorkoutsComponent } from './in-progress-workouts.component';
+import { provideRouter } from '@angular/router';
 
 class MockExeceutedWorkoutService {
   getInProgress = jasmine.createSpy('getInProgress').and.callFake(() => {
     const workouts: ExecutedWorkoutDTO[] = [];
     workouts.push(...
       [<ExecutedWorkoutDTO>
-      { 
-        id: 56, 
-        name: 'Chest and Arms', 
-        workoutId: 56, 
-        startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null, 
-        journal: null, rating: 0, exercises: [], 
-        createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0), 
-        modifiedByUserId: 1, modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
-      },
+        {
+          id: 56,
+          name: 'Chest and Arms',
+          workoutId: 56,
+          startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
+          journal: null, rating: 0, exercises: [],
+          createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
+          modifiedByUserId: 1, modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
+        },
       <ExecutedWorkoutDTO>
-      { 
-        id: 56, 
-        name: 'Chest and Arms', 
-        workoutId: 56, 
-        startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null, 
-        journal: null, rating: 0, exercises: [], 
-        createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0), 
+      {
+        id: 56,
+        name: 'Chest and Arms',
+        workoutId: 56,
+        startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
+        journal: null, rating: 0, exercises: [],
+        createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
         modifiedByUserId: 1, modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
       }]);
 
-      return of(workouts);
+    return of(workouts);
   });
 }
 
@@ -41,16 +42,17 @@ describe('InProgressWorkoutsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InProgressWorkoutsComponent ],
+      imports: [InProgressWorkoutsComponent],
       providers: [
         {
           provide: ExecutedWorkoutService,
           useClass: MockExeceutedWorkoutService
-        }
+        },
+        provideRouter([])
       ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(InProgressWorkoutsComponent);
     component = fixture.componentInstance;

@@ -6,7 +6,9 @@ import { SelectOnFocusDirective } from './select-on-focus.directive';
 //Helpful testing information found here: https://angular.io/guide/testing-attribute-directives#testing-attribute-directives
 
 @Component({
-  template: `<input wtSelectOnFocus value=""/>`
+  template: `<input wtSelectOnFocus value=""/>`,
+  standalone: true,
+  imports: [SelectOnFocusDirective]
 })
 class TestComponent { }
 
@@ -16,15 +18,15 @@ describe('SelectOnFocusDirective', () => {
 
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({
-      declarations: [ SelectOnFocusDirective, TestComponent ]
-    })
-    .createComponent(TestComponent);
-  
+      imports: [SelectOnFocusDirective, TestComponent]
+    }).createComponent(TestComponent);
+
     fixture.detectChanges(); //Initial binding
-  
+
     //Get the element with an attached SelectOnFocusDirective
     inputElement = fixture.debugElement.query(By.directive(SelectOnFocusDirective));
-  });  
+    expect(inputElement).toBeTruthy();
+  });
 
   it('should select input value on focus', () => {
     //ARRANGE

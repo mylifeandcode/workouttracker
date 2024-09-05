@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { ResistanceType } from '../enums/resistance-type';
 
 @Pipe({
-  name: 'resistanceType'
+    name: 'resistanceType',
+    standalone: true
 })
 export class ResistanceTypePipe implements PipeTransform {
 

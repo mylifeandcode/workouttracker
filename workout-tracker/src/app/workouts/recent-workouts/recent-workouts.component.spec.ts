@@ -18,8 +18,10 @@ class WorkoutServiceMock {}
 class RouterMock {}
 
 @Component({
-  selector: 'wt-workout-info', 
-  template: ''
+    selector: 'wt-workout-info',
+    template: '',
+    standalone: true,
+    imports: [DropdownModule]
 })
 class MockWorkoutInfoComponent {
   @Input()
@@ -32,27 +34,24 @@ describe('RecentWorkoutsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ 
-        RecentWorkoutsComponent, 
-        MockWorkoutInfoComponent
-      ], 
-      providers: [
+    providers: [
         {
-          provide: ExecutedWorkoutService, 
-          useClass: ExecutedWorkoutServiceMock
-        }, 
+            provide: ExecutedWorkoutService,
+            useClass: ExecutedWorkoutServiceMock
+        },
         {
-          provide: WorkoutService, 
-          useClass: WorkoutServiceMock
-        }, 
+            provide: WorkoutService,
+            useClass: WorkoutServiceMock
+        },
         {
-          provide: Router, 
-          useClass: RouterMock
+            provide: Router,
+            useClass: RouterMock
         }
-      ],
-      imports: [ DropdownModule ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    ],
+    imports: [DropdownModule, RecentWorkoutsComponent,
+        MockWorkoutInfoComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   });
 

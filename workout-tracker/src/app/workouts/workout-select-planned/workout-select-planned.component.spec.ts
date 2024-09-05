@@ -8,9 +8,11 @@ import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dt
 import { WorkoutSelectPlannedComponent } from './workout-select-planned.component';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
 import { HttpResponse } from '@angular/common/http';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { provideRouter } from '@angular/router';
 
 class MockExecutedWorkoutService {
-  getPlanned = 
+  getPlanned =
     jasmine.createSpy('getPlanned')
       .and.callFake(() => {
         const response = new PaginatedResults<ExecutedWorkoutSummaryDTO>();
@@ -20,10 +22,10 @@ class MockExecutedWorkoutService {
         response.totalCount = 2;
         return of(response);
       });
-  
-  deletePlanned = 
-      jasmine.createSpy('deletePlanned')
-        .and.returnValue(of(new HttpResponse<any>()));
+
+  deletePlanned =
+    jasmine.createSpy('deletePlanned')
+      .and.returnValue(of(new HttpResponse<any>()));
 }
 
 class MockMessageService {
@@ -36,7 +38,7 @@ class MockConfirmationService {
       .and.callFake((confirmation: Confirmation) => {
         confirmation?.accept?.(); //Because confirmation could be undefined
       });
-      //.and.returnValue(this);
+  //.and.returnValue(this);
 }
 
 describe('WorkoutSelectPlannedComponent', () => {
@@ -46,10 +48,10 @@ describe('WorkoutSelectPlannedComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutSelectPlannedComponent ], 
+      imports: [WorkoutSelectPlannedComponent],
       providers: [
         {
-          provide: ExecutedWorkoutService, 
+          provide: ExecutedWorkoutService,
           useClass: MockExecutedWorkoutService
         },
         {
@@ -59,11 +61,18 @@ describe('WorkoutSelectPlannedComponent', () => {
         {
           provide: ConfirmationService,
           useClass: MockConfirmationService
-        }
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+        },
+        provideRouter([])
+      ]
     })
-    .compileComponents();
+      .overrideComponent(
+        WorkoutSelectPlannedComponent, 
+        {
+          remove: { imports: [ConfirmDialogModule] },
+          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        }
+      )    
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -91,7 +100,7 @@ describe('WorkoutSelectPlannedComponent', () => {
     component.totalCount = 0;
 
     //ACT
-    component.getPlannedWorkoutsLazy({first: 100});
+    component.getPlannedWorkoutsLazy({ first: 100 });
 
     //ASSERT
     expect(executedWorkoutService.getPlanned).toHaveBeenCalledWith(100, component.pageSize);
@@ -111,6 +120,6 @@ describe('WorkoutSelectPlannedComponent', () => {
     //ASSERT
     expect(confirmationService.confirm).toHaveBeenCalled();
     expect(messageService.add)
-      .toHaveBeenCalledWith({severity:'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000});
+      .toHaveBeenCalledWith({ severity: 'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000 });
   });
 });

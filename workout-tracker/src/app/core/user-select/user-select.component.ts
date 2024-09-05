@@ -1,15 +1,19 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../services/user/user.service';
 import { User } from '../models/user';
 import { AuthService } from 'app/core/services/auth/auth.service';
 import { catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'wt-user-select',
-  templateUrl: './user-select.component.html',
-  styleUrls: ['./user-select.component.scss']
+    selector: 'wt-user-select',
+    templateUrl: './user-select.component.html',
+    styleUrls: ['./user-select.component.scss'],
+    standalone: true,
+    imports: [RouterLink, ProgressSpinnerModule, AsyncPipe]
 })
 export class UserSelectComponent {
   public errorMsg: string | null = null;

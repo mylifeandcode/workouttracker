@@ -52,8 +52,9 @@ class ExecutedWorkoutServiceMock {
 }
 
 @Component({
-  selector: 'wt-executed-exercises',
-  template: ''
+    selector: 'wt-executed-exercises',
+    template: '',
+    standalone: true
 })
 export class MockExecutedExercisesComponent {
 
@@ -71,26 +72,24 @@ describe('WorkoutViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ 
-        WorkoutViewComponent, 
-        MockExecutedExercisesComponent
-      ],
-      providers: [
+    imports: [WorkoutViewComponent,
+        MockExecutedExercisesComponent],
+    providers: [
         {
-          provide: ActivatedRoute,
-          useValue: {
-            params: of({
-              id: EXECUTED_WORKOUT_ID
-            })
-          }
+            provide: ActivatedRoute,
+            useValue: {
+                params: of({
+                    id: EXECUTED_WORKOUT_ID
+                })
+            }
         },
         {
-          provide: ExecutedWorkoutService,
-          useClass: ExecutedWorkoutServiceMock
+            provide: ExecutedWorkoutService,
+            useClass: ExecutedWorkoutServiceMock
         }
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   });
 

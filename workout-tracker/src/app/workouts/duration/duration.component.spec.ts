@@ -10,10 +10,9 @@ describe('DurationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule ],
-      declarations: [ DurationComponent ],
-      providers: [ FormBuilder ]
-    })
+    imports: [ReactiveFormsModule, DurationComponent],
+    providers: [FormBuilder]
+})
     .compileComponents();
   });
 

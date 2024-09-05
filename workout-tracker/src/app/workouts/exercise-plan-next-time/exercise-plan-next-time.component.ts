@@ -1,12 +1,17 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 import { ResistanceType } from '../enums/resistance-type';
+import { SelectOnFocusDirective } from '../../shared/select-on-focus.directive';
+import { ResistanceBandColorPipe } from '../../shared/pipes/resistance-band-color.pipe';
+import { ResistanceAmountPipe } from '../pipes/resistance-amount.pipe';
 
 @Component({
-  selector: 'wt-exercise-plan-next-time',
-  templateUrl: './exercise-plan-next-time.component.html',
-  styleUrls: ['./exercise-plan-next-time.component.scss']
+    selector: 'wt-exercise-plan-next-time',
+    templateUrl: './exercise-plan-next-time.component.html',
+    styleUrls: ['./exercise-plan-next-time.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective, ResistanceBandColorPipe, ResistanceAmountPipe]
 })
 export class ExercisePlanNextTimeComponent {
 

@@ -21,14 +21,14 @@ describe('AnalyticsDashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AnalyticsDashboardComponent ],
-      providers: [ 
+    imports: [AnalyticsDashboardComponent],
+    providers: [
         {
-          provide: AnalyticsService,
-          useClass: AnalyticsServiceMock
+            provide: AnalyticsService,
+            useClass: AnalyticsServiceMock
         }
-      ]
-    })
+    ]
+})
     .compileComponents();
   });
 

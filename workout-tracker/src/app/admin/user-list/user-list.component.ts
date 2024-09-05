@@ -2,11 +2,15 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { UserService } from '../../core/services/user/user.service';
 import { User } from '../../core/models/user';
 import { Observable } from 'rxjs';
+import { RouterLink } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'wt-user-list',
-  templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss']
+    selector: 'wt-user-list',
+    templateUrl: './user-list.component.html',
+    styleUrls: ['./user-list.component.scss'],
+    standalone: true,
+    imports: [RouterLink, AsyncPipe]
 })
 export class UserListComponent implements OnInit, AfterViewInit {
 

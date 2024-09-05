@@ -20,19 +20,17 @@ describe('HomeComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot(
-          [{path: 'login', component: FakeComponent}]
-        )
-      ],
-      declarations: [ HomeComponent ],
-      providers: [
+    imports: [
+        RouterModule.forRoot([{ path: 'login', component: FakeComponent }]),
+        HomeComponent
+    ],
+    providers: [
         {
-          provide: AuthService,
-          useClass: AuthServiceMock
+            provide: AuthService,
+            useClass: AuthServiceMock
         }
-      ]
-    })
+    ]
+})
     .compileComponents();
   }));
 

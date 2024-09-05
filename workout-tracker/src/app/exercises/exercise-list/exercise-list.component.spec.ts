@@ -21,20 +21,18 @@ describe('ExerciseListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
+    imports: [
+        RouterModule.forRoot([]),
         ExerciseListComponent
-      ],
-      imports: [
-        RouterModule.forRoot([])
-      ],
-      providers: [
+    ],
+    providers: [
         {
-          provide: ExerciseService,
-          useClass: ExerciseServiceMock
+            provide: ExerciseService,
+            useClass: ExerciseServiceMock
         }
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   }));
 

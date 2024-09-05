@@ -10,9 +10,8 @@ describe('UserRepSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserRepSettingsComponent ],
-      imports: [ ReactiveFormsModule ]
-    })
+    imports: [ReactiveFormsModule, UserRepSettingsComponent]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(UserRepSettingsComponent);

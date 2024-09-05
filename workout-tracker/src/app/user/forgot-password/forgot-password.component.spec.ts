@@ -12,15 +12,15 @@ describe('ForgotPasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ForgotPasswordComponent ],
-      providers: [ 
+    imports: [ForgotPasswordComponent],
+    providers: [
         FormBuilder,
         {
-          provide: AuthService,
-          useClass: AuthServiceMock
-        } 
-      ]
-    })
+            provide: AuthService,
+            useClass: AuthServiceMock
+        }
+    ]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(ForgotPasswordComponent);

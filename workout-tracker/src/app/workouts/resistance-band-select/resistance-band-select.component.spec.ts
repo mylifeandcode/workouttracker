@@ -5,7 +5,8 @@ import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-indi
 import { PickListMoveToTargetEvent } from 'primeng/picklist';
 
 @Pipe({
-  name: 'resistanceAmount'
+    name: 'resistanceAmount',
+    standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
   transform(value: number | null): string {
@@ -19,12 +20,10 @@ describe('ResistanceBandSelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ 
-        ResistanceBandSelectComponent, 
-        MockResistanceAmountPipe
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    imports: [ResistanceBandSelectComponent,
+        MockResistanceAmountPipe],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   });
 

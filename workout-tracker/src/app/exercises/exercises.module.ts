@@ -14,28 +14,25 @@ import { ExercisesRoutingModule } from './exercises-routing.module';
 import { ExerciseListComponent } from './exercise-list/exercise-list.component';
 import { ExerciseListMiniComponent } from './exercise-list-mini/exercise-list-mini.component';
 import { ExerciseEditComponent } from './exercise-edit/exercise-edit.component';
-import { SharedModule } from 'app/shared/shared.module';
+
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @NgModule({
-  declarations: [
-    ExerciseListComponent, 
-    ExerciseListMiniComponent, 
-    ExerciseEditComponent
-  ],
-  imports: [
-    CommonModule, 
-    TableModule, 
-    ExercisesRoutingModule, 
-    SharedModule,
+    imports: [
+    CommonModule,
+    TableModule,
+    ExercisesRoutingModule,
     ReactiveFormsModule,
     InputSwitchModule,
     TooltipModule,
     MultiSelectModule,
-    ProgressSpinnerModule
-  ], 
-  exports: [
-    ExerciseListMiniComponent
-  ]
+    ProgressSpinnerModule,
+    ExerciseListComponent,
+    ExerciseListMiniComponent,
+    ExerciseEditComponent
+],
+    exports: [
+        ExerciseListMiniComponent
+    ]
 })
 export class ExercisesModule { }

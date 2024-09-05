@@ -1,17 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'app/core/services/auth/auth.service';
 import { ConfigService } from 'app/core/services/config/config.service';
 import { finalize } from 'rxjs/operators';
+import { RouterLink } from '@angular/router';
 
 interface IForgotPasswordForm {
   emailAddress: FormControl<string>;
 }
 
 @Component({
-  selector: 'wt-forgot-password',
-  templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.scss']
+    selector: 'wt-forgot-password',
+    templateUrl: './forgot-password.component.html',
+    styleUrls: ['./forgot-password.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class ForgotPasswordComponent implements OnInit {
 

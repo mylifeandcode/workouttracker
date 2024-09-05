@@ -27,15 +27,14 @@ describe('UserListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserListComponent ],
-      imports: [ RouterModule.forRoot([]) ],
-      providers: [
+    imports: [RouterModule.forRoot([]), UserListComponent],
+    providers: [
         {
-          provide: UserService,
-          useClass: UserServiceMock
+            provide: UserService,
+            useClass: UserServiceMock
         }
-      ]
-    })
+    ]
+})
     .compileComponents();
   }));
 

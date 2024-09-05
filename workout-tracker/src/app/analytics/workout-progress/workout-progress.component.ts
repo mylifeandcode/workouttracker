@@ -7,7 +7,12 @@ import { AnalyticsService, METRICS_TYPE } from '../analytics.service';
 import { AnalyticsChartData } from '../models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
 import { sortBy } from 'lodash-es';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { SelectOnFocusDirective } from '../../shared/select-on-focus.directive';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TabViewModule } from 'primeng/tabview';
+import { ChartModule } from 'primeng/chart';
 
 interface IWorkoutProgressForm {
   workoutId: FormControl<number | null>,
@@ -16,9 +21,11 @@ interface IWorkoutProgressForm {
 }
 
 @Component({
-  selector: 'wt-workout-progress',
-  templateUrl: './workout-progress.component.html',
-  styleUrls: ['./workout-progress.component.scss']
+    selector: 'wt-workout-progress',
+    templateUrl: './workout-progress.component.html',
+    styleUrls: ['./workout-progress.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, DropdownModule, SelectOnFocusDirective, ProgressSpinnerModule, TabViewModule, ChartModule]
 })
 export class WorkoutProgressComponent implements OnInit {
 

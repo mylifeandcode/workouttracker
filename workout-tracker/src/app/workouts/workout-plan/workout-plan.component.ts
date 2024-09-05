@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../models/workout-plan';
 import { WorkoutService } from '../workout.service';
@@ -13,12 +13,17 @@ import { finalize } from 'rxjs/operators';
 import { IWorkoutPlanForm } from '../interfaces/i-workout-plan-form';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ExercisePlanComponent } from '../exercise-plan/exercise-plan.component';
+import { DialogModule } from 'primeng/dialog';
 
 
 @Component({
-  selector: 'wt-workout-plan',
-  templateUrl: './workout-plan.component.html',
-  styleUrls: ['./workout-plan.component.scss']
+    selector: 'wt-workout-plan',
+    templateUrl: './workout-plan.component.html',
+    styleUrls: ['./workout-plan.component.scss'],
+    standalone: true,
+    imports: [ProgressSpinnerModule, FormsModule, ReactiveFormsModule, ExercisePlanComponent, DialogModule, ResistanceBandSelectComponent]
 })
 export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implements OnInit {
 

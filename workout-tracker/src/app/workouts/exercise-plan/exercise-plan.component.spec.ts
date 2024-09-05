@@ -12,13 +12,11 @@ describe('ExercisePlanComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule ], 
-      declarations: [ 
-        ExercisePlanComponent,
+    imports: [ReactiveFormsModule, ExercisePlanComponent,
         ResistanceTypePipe //TODO: Replace with mock 
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   });
 

@@ -5,14 +5,16 @@ import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
-import { AuthService } from 'app/core/services/auth/auth.service';
 import { sortBy } from 'lodash-es';
-import { DropdownChangeEvent } from 'primeng/dropdown';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { RecentWorkoutsComponent } from '../recent-workouts/recent-workouts.component';
 
 @Component({
   selector: 'wt-workout-select',
   templateUrl: './workout-select.component.html',
-  styleUrls: ['./workout-select.component.scss']
+  styleUrls: ['./workout-select.component.scss'],
+  standalone: true,
+  imports: [DropdownModule, RecentWorkoutsComponent]
 })
 export class WorkoutSelectComponent implements OnInit, OnDestroy {
 
@@ -43,7 +45,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
    * A property indicating whether or not the component is loading information it requires
    */
   public get loading(): boolean {
-    if(this._apiCallsInProgress > 0)
+    if (this._apiCallsInProgress > 0)
       return true;
     else
       return false;
@@ -61,8 +63,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   //END PRIVATE FIELDS
 
   constructor(
-    private _workoutService: WorkoutService, 
-    private _authService: AuthService, 
+    private _workoutService: WorkoutService,
     private _router: Router) { }
 
   public ngOnInit(): void {
@@ -75,8 +76,8 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   }
 
   public workoutSelectChange(event: DropdownChangeEvent): void { //TODO: Get concrete type instead of using any
-    if(this.navigateOnSelect) {
-      if(this.planningForLater)
+    if (this.navigateOnSelect) {
+      if (this.planningForLater)
         this._router.navigate([`workouts/plan-for-later/${event.value.id}`]);
       else
         this._router.navigate([`workouts/plan/${event.value.id}`]);
@@ -85,9 +86,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToUser(): void {
-    //this._authService.currentUserName.subscribe((username: string | null) => {
-      this.getUserWorkouts();
-    //});
+    this.getUserWorkouts();
   }
 
   private getUserWorkouts(): void {

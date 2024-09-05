@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { AdminHomeComponent } from './admin-home.component';
+import { provideRouter } from '@angular/router';
 
 describe('AdminHomeComponent', () => {
   let component: AdminHomeComponent;
@@ -8,7 +9,10 @@ describe('AdminHomeComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ AdminHomeComponent ]
+      imports: [AdminHomeComponent],
+      providers: [
+        provideRouter([])
+      ]
     })
     .compileComponents();
   }));

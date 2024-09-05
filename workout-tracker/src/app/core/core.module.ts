@@ -4,7 +4,7 @@ import { UserSelectedGuard } from './guards/user-selected.guard';
 import { EnsureModuleLoadedOnceGuard } from './guards/ensure-module-loaded-once.guard';
 import { Optional } from '@angular/core';
 import { SkipSelf } from '@angular/core';
-import { SharedModule } from 'app/shared/shared.module';
+
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth.interceptor';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
@@ -21,26 +21,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from 'app/app-routing.module';
 
 @NgModule({
-  declarations: [
-    AccessDeniedComponent,
-    HomeComponent,
-    LoginComponent,
-    NavComponent,
-    QuickActionsComponent,
-    UserOverviewComponent,
-    UserSelectComponent,
-    UserSelectNewComponent,
-    WelcomeComponent
-  ],
-  imports: [
+    imports: [
     AppRoutingModule,
     CommonModule,
     FormsModule,
     ProgressSpinnerModule,
     ReactiveFormsModule,
-    SharedModule
-  ],
-  exports: [
     AccessDeniedComponent,
     HomeComponent,
     LoginComponent,
@@ -50,15 +36,26 @@ import { AppRoutingModule } from 'app/app-routing.module';
     UserSelectComponent,
     UserSelectNewComponent,
     WelcomeComponent
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS, 
-      useClass: AuthInterceptor, 
-      multi: true
-    }, 
-    UserSelectedGuard
-  ] //UserService is provided in root
+],
+    exports: [
+        AccessDeniedComponent,
+        HomeComponent,
+        LoginComponent,
+        NavComponent,
+        QuickActionsComponent,
+        UserOverviewComponent,
+        UserSelectComponent,
+        UserSelectNewComponent,
+        WelcomeComponent
+    ],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true
+        },
+        UserSelectedGuard
+    ] //UserService is provided in root
 })
 export class CoreModule extends EnsureModuleLoadedOnceGuard {
 

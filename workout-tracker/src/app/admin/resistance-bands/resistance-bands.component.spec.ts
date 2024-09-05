@@ -7,6 +7,8 @@ import { of, throwError } from 'rxjs';
 import { ResistanceBandService } from '../../shared/resistance-band.service';
 
 import { ResistanceBandsComponent } from './resistance-bands.component';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 class ResistanceBandServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new Array<ResistanceBand>()));
@@ -25,7 +27,7 @@ class ConfirmationServiceMock {
       .and.callFake((confirmation: Confirmation) => {
         confirmation?.accept?.(); //Because confirmation could be undefined
       });
-      //.and.returnValue(this);
+  //.and.returnValue(this);
 }
 
 describe('ResistanceBandsComponent', () => {
@@ -34,9 +36,7 @@ describe('ResistanceBandsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
-        ResistanceBandsComponent
-      ],
+      imports: [ResistanceBandsComponent],
       providers: [
         {
           provide: ResistanceBandService,
@@ -51,9 +51,13 @@ describe('ResistanceBandsComponent', () => {
           useClass: ConfirmationServiceMock
         }
       ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
-    .compileComponents();
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).overrideComponent(
+      ResistanceBandsComponent,
+      {
+        remove: { imports: [ToastModule, ConfirmDialogModule] }, //To resolve error: "TypeError: Cannot read properties of undefined (reading 'subscribe')", even though all dependencies were provided
+        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+      }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -87,7 +91,7 @@ describe('ResistanceBandsComponent', () => {
     expect(resistanceBandService.add).toHaveBeenCalledWith(<ResistanceBand>component.newResistanceBand);
     expect(messageService.add)
       .toHaveBeenCalledWith({
-        severity:'success',
+        severity: 'success',
         summary: 'Successful',
         detail: 'Resistance Band added', life: 3000
       });
@@ -109,7 +113,7 @@ describe('ResistanceBandsComponent', () => {
     expect(resistanceBandService.update).toHaveBeenCalledWith(band);
     expect(messageService.add)
       .toHaveBeenCalledWith({
-        severity:'success',
+        severity: 'success',
         summary: 'Successful',
         detail: 'Resistance Band updated', life: 3000
       });
@@ -131,7 +135,7 @@ describe('ResistanceBandsComponent', () => {
     expect(resistanceBandService.delete).toHaveBeenCalledWith(band.id);
     expect(messageService.add)
       .toHaveBeenCalledWith({
-        severity:'success',
+        severity: 'success',
         summary: 'Successful',
         detail: 'Resistance Band deleted', life: 3000
       });
@@ -145,7 +149,7 @@ describe('ResistanceBandsComponent', () => {
     const resistanceBandService = TestBed.inject(ResistanceBandService);
     const messageService = TestBed.inject(MessageService);
     const confirmationService = TestBed.inject(ConfirmationService);
-    confirmationService.confirm = jasmine.createSpy('confirm').and.callFake(() => {});
+    confirmationService.confirm = jasmine.createSpy('confirm').and.callFake(() => { });
     const band = new ResistanceBand();
     band.id = 5;
 
@@ -240,7 +244,7 @@ describe('ResistanceBandsComponent', () => {
   */
 
   it('should add message to MessageService when error occurs when adding a resistance band', () => {
-    
+
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
     resistanceBandService.add = jasmine.createSpy('add').and.returnValue(throwError(() => new Error("Something went wrong!")));
@@ -251,12 +255,12 @@ describe('ResistanceBandsComponent', () => {
     component.saveNewBand();
 
     //ASSERT
-    expect(messageService.add).toHaveBeenCalledWith({severity:'error', summary: 'Error', detail: 'Failed to add Resistance Band', sticky: true});
+    expect(messageService.add).toHaveBeenCalledWith({ severity: 'error', summary: 'Error', detail: 'Failed to add Resistance Band', sticky: true });
 
   });
 
   it('should add message to MessageService when error occurs when updating a resistance band', () => {
-    
+
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
     resistanceBandService.update = jasmine.createSpy('update').and.returnValue(throwError(() => new Error("Something went wrong!")));
@@ -267,7 +271,7 @@ describe('ResistanceBandsComponent', () => {
     component.onRowEditSave(new ResistanceBand());
 
     //ASSERT
-    expect(messageService.add).toHaveBeenCalledWith({severity:'error', summary: 'Error', detail: 'Failed to update Resistance Band', sticky: true});
+    expect(messageService.add).toHaveBeenCalledWith({ severity: 'error', summary: 'Error', detail: 'Failed to update Resistance Band', sticky: true });
 
   });
 

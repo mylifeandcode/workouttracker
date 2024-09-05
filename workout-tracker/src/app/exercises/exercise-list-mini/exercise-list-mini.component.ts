@@ -2,12 +2,16 @@ import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/cor
 import { ExerciseListBase } from '../exercise-list-base';
 import { ExerciseService } from '../exercise.service';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
-import { Table } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
+import { PrimeTemplate } from 'primeng/api';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
-  selector: 'wt-exercise-list-mini',
-  templateUrl: './exercise-list-mini.component.html', //TODO: Fix alternating row colors not working
-  styleUrls: ['./exercise-list-mini.component.scss']
+    selector: 'wt-exercise-list-mini',
+    templateUrl: './exercise-list-mini.component.html', //TODO: Fix alternating row colors not working
+    styleUrls: ['./exercise-list-mini.component.scss'],
+    standalone: true,
+    imports: [TableModule, PrimeTemplate, MultiSelectModule]
 })
 export class ExerciseListMiniComponent extends ExerciseListBase {
 

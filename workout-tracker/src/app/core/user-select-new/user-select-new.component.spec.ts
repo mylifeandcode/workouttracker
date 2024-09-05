@@ -14,8 +14,10 @@ class MockUserService {
 }
 
 @Component({
-  selector: 'wt-blank',
-  template: ''
+    selector: 'wt-blank',
+    template: '',
+    standalone: true,
+    imports: [ReactiveFormsModule]
 })
 class BlankComponent {}
 
@@ -26,22 +28,20 @@ describe('UserSelectNewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ 
-        UserSelectNewComponent, 
-        BlankComponent
-      ], 
-      providers: [
-        FormBuilder, 
+    providers: [
+        FormBuilder,
         {
-          provide: UserService,
-          useClass: MockUserService
+            provide: UserService,
+            useClass: MockUserService
         }
-      ], 
-      imports: [ 
-        RouterModule.forRoot([ { path: 'user-select', component: BlankComponent } ]),
-        ReactiveFormsModule
-      ]
-    })
+    ],
+    imports: [
+        RouterModule.forRoot([{ path: 'user-select', component: BlankComponent }]),
+        ReactiveFormsModule,
+        UserSelectNewComponent,
+        BlankComponent
+    ]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(UserSelectNewComponent);

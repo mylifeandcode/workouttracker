@@ -1,11 +1,13 @@
 import { Component, Signal, computed } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/services/auth/auth.service';
 
 @Component({
-  selector: 'wt-nav',
-  templateUrl: './nav.component.html',
-  styleUrls: ['./nav.component.scss']
+    selector: 'wt-nav',
+    templateUrl: './nav.component.html',
+    styleUrls: ['./nav.component.scss'],
+    standalone: true,
+    imports: [RouterLink]
 })
 export class NavComponent {
 

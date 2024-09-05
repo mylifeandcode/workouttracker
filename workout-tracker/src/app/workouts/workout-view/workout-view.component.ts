@@ -5,11 +5,16 @@ import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { forEach } from 'lodash-es';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ExecutedExercisesComponent } from '../executed-exercises/executed-exercises.component';
+import { DatePipe, KeyValuePipe } from '@angular/common';
 
 @Component({
-  selector: 'wt-workout-view',
-  templateUrl: './workout-view.component.html',
-  styleUrls: ['./workout-view.component.scss']
+    selector: 'wt-workout-view',
+    templateUrl: './workout-view.component.html',
+    styleUrls: ['./workout-view.component.scss'],
+    standalone: true,
+    imports: [ProgressSpinnerModule, ExecutedExercisesComponent, DatePipe, KeyValuePipe]
 })
 export class WorkoutViewComponent implements OnInit {
 

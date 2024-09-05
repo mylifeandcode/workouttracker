@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/services/auth/auth.service';
 import { CustomValidators } from 'app/core/validators/custom-validators';
 import { finalize } from 'rxjs/operators';
@@ -12,9 +12,11 @@ interface IChangePasswordForm {
 }
 
 @Component({
-  selector: 'wt-change-password',
-  templateUrl: './change-password.component.html',
-  styleUrls: ['./change-password.component.scss']
+    selector: 'wt-change-password',
+    templateUrl: './change-password.component.html',
+    styleUrls: ['./change-password.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class ChangePasswordComponent {
 

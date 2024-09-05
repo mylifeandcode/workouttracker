@@ -18,16 +18,15 @@ describe('CountdownTimerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ CountdownModule ],
-      declarations: [ CountdownTimerComponent ],
-      providers: [
+    imports: [CountdownModule, CountdownTimerComponent],
+    providers: [
         {
-          provide: SoundService,
-          useClass: SoundServiceMock
+            provide: SoundService,
+            useClass: SoundServiceMock
         }
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   });
 

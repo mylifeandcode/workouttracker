@@ -29,33 +29,31 @@ import { UserAddComponent } from './user-add/user-add.component';
 
 
 @NgModule({
-  declarations: [
-    AdminHomeComponent,
-    ResistanceBandsComponent,
-    UserEditComponent,
-    UserListComponent,
-    SystemComponent,
-    UserAddComponent
-  ],
-  imports: [
-    AdminRoutingModule,
-    ButtonModule,
-    ConfirmDialogModule,
-    CommonModule, 
-    DialogModule,
-    FormsModule,
-    MessageModule,
-    MessagesModule,
-    ReactiveFormsModule,
-    TableModule,
-    ToastModule
-  ],
-  providers: [
-    ConfirmationService,
-    MessageService
-  ],
-  exports: [
-    UserAddComponent
-  ]
+    imports: [
+        AdminRoutingModule,
+        ButtonModule,
+        ConfirmDialogModule,
+        CommonModule,
+        DialogModule,
+        FormsModule,
+        MessageModule,
+        MessagesModule,
+        ReactiveFormsModule,
+        TableModule,
+        ToastModule,
+        AdminHomeComponent,
+        ResistanceBandsComponent,
+        UserEditComponent,
+        UserListComponent,
+        SystemComponent,
+        UserAddComponent
+    ],
+    providers: [
+        ConfirmationService,
+        MessageService
+    ],
+    exports: [
+        UserAddComponent
+    ]
 })
 export class AdminModule {}

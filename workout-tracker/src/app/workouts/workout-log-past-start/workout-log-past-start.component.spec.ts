@@ -41,25 +41,26 @@ describe('WorkoutLogPastStartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutLogPastStartComponent ],
-      providers: [
+    providers: [
         {
-          provide: WorkoutService,
-          useClass: WorkoutServiceMock
+            provide: WorkoutService,
+            useClass: WorkoutServiceMock
         },
         {
-          provide: Router,
-          useClass: RouterMock
+            provide: Router,
+            useClass: RouterMock
         },
         FormBuilder //TODO: Find out what the proper ettiquite is for components which use a FormBuilder -- should we mock it like other dependencies?
-      ],
-      imports: [ 
-        ReactiveFormsModule, 
+    ],
+    imports: [
+        ReactiveFormsModule,
         CalendarModule, //Importing this because I couldn't use CUSTOM_ELEMENTS_SCHEMA due to formControlName being used with the calendar component
         DropdownModule //Same as above
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+        ,
+        WorkoutLogPastStartComponent
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   });
 

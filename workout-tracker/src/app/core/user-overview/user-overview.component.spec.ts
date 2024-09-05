@@ -9,9 +9,9 @@ describe('UserOverviewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserOverviewComponent ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    imports: [UserOverviewComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   });
 

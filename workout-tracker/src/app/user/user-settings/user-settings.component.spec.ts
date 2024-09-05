@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'app/core/services/auth/auth.service';
@@ -12,8 +12,20 @@ import { of } from 'rxjs';
 
 import { UserSettingsComponent } from './user-settings.component';
 import { MessageService } from 'primeng/api';
+import { RouterModule } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
 
-class MockAuthService {}
+@Component({
+  selector: 'p-toast',
+  template: ''
+})
+class MockToastComponent {
+}
+
+class MockAuthService {
+  userId: number = 0;
+}
+
 class MockUserService {
   getById = jasmine.createSpy('getById').and.callFake(() => {
     const user = new User();
@@ -43,15 +55,17 @@ describe('UserSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserSettingsComponent ], 
+      declarations: [
+        MockToastComponent
+      ],
       providers: [
-        FormBuilder, 
+        FormBuilder,
         {
-          provide: AuthService, 
+          provide: AuthService,
           useClass: MockAuthService
-        }, 
+        },
         {
-          provide: UserService, 
+          provide: UserService,
           useClass: MockUserService
         },
         {
@@ -59,12 +73,19 @@ describe('UserSettingsComponent', () => {
           useClass: MessageServiceMock
         }
       ],
-      imports: [ 
-        ReactiveFormsModule, 
-        InputSwitchModule //Importing this module because using CUSTOM_ELEMENTS_SCHEMA wasn't working due to the input switch's formControlName assignment
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+      imports: [
+        ReactiveFormsModule,
+        InputSwitchModule, //Importing this module because using CUSTOM_ELEMENTS_SCHEMA wasn't working due to the input switch's formControlName assignment
+        UserSettingsComponent,
+        RouterModule.forRoot([])
+      ]
     })
+    .overrideComponent( 
+      UserSettingsComponent, 
+      { 
+        remove: { imports: [ToastModule] }, //Was getting an error about an undefined object before doing this, despite importing everything the component did
+        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+      })
     .compileComponents();
   });
 
@@ -87,7 +108,7 @@ describe('UserSettingsComponent', () => {
     component.recommendationEngineToggled({ originalEvent: null, checked: false });
     expect(component.userSettingsForm?.controls.recommendationsEnabled.value).toBeFalsy();
   });
-  
+
   it('should save settings', () => {
     //ARRANGE
     const userService = TestBed.inject(UserService);
@@ -125,6 +146,6 @@ describe('UserSettingsComponent', () => {
 
     //ASSERT
     expect(userService.update).toHaveBeenCalledWith(expectedSavedUser);
-    expect(messageService.add).toHaveBeenCalledOnceWith({severity:'success', summary: 'Successful', detail: 'Settings saved.', life: 3000});
+    expect(messageService.add).toHaveBeenCalledOnceWith({ severity: 'success', summary: 'Successful', detail: 'Settings saved.', life: 3000 });
   });
 });

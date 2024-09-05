@@ -18,6 +18,11 @@ import { ActivatedRoute, ActivatedRouteSnapshot, convertToParamMap } from '@angu
 import { MessageService } from 'primeng/api';
 import { groupBy } from 'lodash-es';
 import { Dictionary } from 'lodash';
+import { WorkoutExerciseComponent } from '../workout-exercise/workout-exercise.component';
+import { CountdownTimerComponent } from '../countdown-timer/countdown-timer.component';
+import { DurationComponent } from '../duration/duration.component';
+import { DatePipe } from '@angular/common';
+import { ToastModule } from 'primeng/toast';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -26,7 +31,7 @@ const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
 const getFakeUserWorkouts = (): PaginatedResults<WorkoutDTO> => {
   const workouts = new PaginatedResults<WorkoutDTO>();
   workouts.totalCount = 3;
-  for(let x = 0; x < workouts.totalCount; x++) {
+  for (let x = 0; x < workouts.totalCount; x++) {
     workouts.results = new Array<WorkoutDTO>();
     workouts.results.push(new WorkoutDTO());
   }
@@ -46,7 +51,7 @@ function getFakeExecutedWorkout(): ExecutedWorkoutDTO {
 
   executedWorkout.name = "Fake Workout";
   executedWorkout.exercises = [];
-  for(let x = 0; x < NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT; x++) {
+  for (let x = 0; x < NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT; x++) {
     const exercise = new ExecutedExerciseDTO();
 
     exercise.bandsEndToEnd = (x % 2 > 0);
@@ -114,8 +119,8 @@ class ExecutedWorkoutServiceMock {
 
   public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
     const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
-    
-    const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>  
+
+    const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>
       exercise.exerciseId.toString() + '-' + exercise.setType.toString()
     );
     return groupedExercises;
@@ -148,7 +153,9 @@ Unfortunately, for now, I've had to mock each property and method. :/
 */
 @Component({
   selector: 'wt-resistance-band-select',
-  template: ''
+  template: '',
+  standalone: true,
+  imports: [ReactiveFormsModule]
 })
 class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
@@ -195,9 +202,9 @@ describe('WorkoutComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule ],
-      declarations: [ 
-        WorkoutComponent, 
+      imports: [
+        ReactiveFormsModule,
+        WorkoutComponent,
         MockResistanceBandSelectComponent
       ],
       providers: [
@@ -212,9 +219,9 @@ describe('WorkoutComponent', () => {
         {
           provide: ExecutedWorkoutService,
           useClass: ExecutedWorkoutServiceMock
-        }, 
+        },
         {
-          provide: ActivatedRoute, 
+          provide: ActivatedRoute,
           useClass: ActivatedRouteMock
         },
         {
@@ -222,9 +229,24 @@ describe('WorkoutComponent', () => {
           useClass: MessageServiceMock
         }
       ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .overrideComponent(
+        WorkoutComponent,
+        {
+          remove:
+          {
+            imports: [
+              WorkoutExerciseComponent,
+              ResistanceBandSelectComponent,
+              CountdownTimerComponent,
+              DurationComponent,
+              ToastModule
+            ]
+          },
+          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        })
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -303,7 +325,7 @@ describe('WorkoutComponent', () => {
       //expect(executedExercises.length).toEqual(exerciseSets.length, "exerciseSets.length not as expected.");
 
       //Make sure each set was initialized correctly
-      for(let x = 0; x < exerciseSets.length; x++) {
+      for (let x = 0; x < exerciseSets.length; x++) {
         const exerciseSetFormGroup = <UntypedFormGroup>exerciseSets[x];
 
         expect(exerciseSetFormGroup.controls.actualReps).toBeDefined();
@@ -415,7 +437,7 @@ describe('WorkoutComponent', () => {
     //component.workoutSelected(12);
     component.startWorkout();
 
-    component.workoutForm.patchValue({journal: '38 degrees, sunny. ST: TOS - \"The Omega Glory\" and YouTube'});
+    component.workoutForm.patchValue({ journal: '38 degrees, sunny. ST: TOS - \"The Omega Glory\" and YouTube' });
 
     const expectedExecutedWorkout = new ExecutedWorkoutDTO();
     expectedExecutedWorkout.createdByUserId = MOCK_USER_ID;
@@ -432,7 +454,7 @@ describe('WorkoutComponent', () => {
       //Each exercise has a FormArray of exercise sets
       const sets = <UntypedFormArray>formGroup.controls.exerciseSets;
       //sets.controls.forEach(set => {
-      for(let x = 0; x < sets.controls.length; x++) {
+      for (let x = 0; x < sets.controls.length; x++) {
 
         const setGroup = <UntypedFormGroup>sets.controls[x];
         setGroup.patchValue({
@@ -482,7 +504,7 @@ describe('WorkoutComponent', () => {
     //Override default mock behavior
     const activatedRoute = TestBed.inject(ActivatedRoute);
     activatedRoute.snapshot.queryParams['pastWorkout'] = true;
-  
+
     //ACT
     //We need to reinit because we changed the ActivatedRoute mock
     component.ngOnInit();
@@ -497,14 +519,14 @@ describe('WorkoutComponent', () => {
     //Override default mock behavior
     const activatedRoute = TestBed.inject(ActivatedRoute);
     activatedRoute.snapshot.queryParams['pastWorkout'] = false;
-  
+
     //ACT
     //We need to reinit because we changed the ActivatedRoute mock
     component.ngOnInit();
 
     //ASSERT
     expect(component.isLoggingPastWorkout).toBeFalse();
-  });  
+  });
 
   it('should have values of false for isLoggingPastWorkout when query param not present', () => {
 
@@ -512,7 +534,7 @@ describe('WorkoutComponent', () => {
     //Override default mock behavior
     const activatedRoute = TestBed.inject(ActivatedRoute);
     activatedRoute.snapshot.queryParams = {};
-  
+
     //ACT
     //We need to reinit because we changed the ActivatedRoute mock
     component.ngOnInit();
@@ -533,9 +555,9 @@ describe('WorkoutComponent', () => {
     //component._executedWorkout = workout;
 
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    executedWorkoutService.getById = 
+    executedWorkoutService.getById =
       jasmine.createSpy('getById').and.returnValue(of(workout));
-    
+
     //ACT
     component.ngOnInit(); //Need to reinitialize due to changed mock
     component.completeWorkout();

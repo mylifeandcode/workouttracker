@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../services/auth/auth.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface ILoginForm {
   username: FormControl<string>;
@@ -10,9 +11,11 @@ interface ILoginForm {
 }
 
 @Component({
-  selector: 'wt-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+    selector: 'wt-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, RouterLink, ProgressSpinnerModule]
 })
 export class LoginComponent {
 

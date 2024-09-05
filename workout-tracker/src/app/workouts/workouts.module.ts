@@ -42,7 +42,7 @@ import { WorkoutPlanComponent } from './workout-plan/workout-plan.component';
 import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
 import { ExercisesModule } from 'app/exercises/exercises.module';
 import { WorkoutSelectPlannedComponent } from './workout-select-planned/workout-select-planned.component';
-import { SharedModule } from 'app/shared/shared.module';
+
 import { WorkoutLogPastStartComponent } from '../workouts/workout-log-past-start/workout-log-past-start.component';
 import { DurationPipe } from './pipes/duration.pipe';
 import { DurationComponent } from '../workouts/duration/duration.component';
@@ -56,7 +56,25 @@ import { ResistanceAmountPipe } from './pipes/resistance-amount.pipe';
 
 
 @NgModule({
-  declarations: [
+    imports: [
+    CommonModule,
+    CalendarModule,
+    CountdownModule,
+    ConfirmDialogModule,
+    DialogModule,
+    DropdownModule,
+    ReactiveFormsModule,
+    InputSwitchModule,
+    TableModule,
+    TooltipModule,
+    PickListModule,
+    ProgressSpinnerModule,
+    MultiSelectModule,
+    ToastModule,
+    MessageModule,
+    MessagesModule,
+    WorkoutsRoutingModule,
+    ExercisesModule,
     WorkoutComponent,
     WorkoutListComponent,
     WorkoutEditComponent,
@@ -84,34 +102,13 @@ import { ResistanceAmountPipe } from './pipes/resistance-amount.pipe';
     ExercisePlanSuggestionsComponent,
     ExercisePlanNextTimeComponent,
     ResistanceAmountPipe
-  ],
-  imports: [
-    CommonModule,
-    CalendarModule,
-    CountdownModule,
-    ConfirmDialogModule,
-    DialogModule,
-    DropdownModule,
-    ReactiveFormsModule,
-    InputSwitchModule,
-    TableModule,
-    TooltipModule,
-    PickListModule,
-    ProgressSpinnerModule,
-    MultiSelectModule,
-    ToastModule,
-    MessageModule,
-    MessagesModule,
-    WorkoutsRoutingModule, 
-    ExercisesModule,
-    SharedModule
-  ], 
-  providers: [
-    ConfirmationService,
-    MessageService
-  ],
-  exports: [
-    WorkoutSelectComponent
-  ]
+],
+    providers: [
+        ConfirmationService,
+        MessageService
+    ],
+    exports: [
+        WorkoutSelectComponent
+    ]
 })
 export class WorkoutsModule { }

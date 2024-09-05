@@ -6,7 +6,8 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'resistanceAmount'
+    name: 'resistanceAmount',
+    standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
   transform(value: number | null): string {
@@ -20,11 +21,9 @@ describe('ExercisePlanSuggestionsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ExercisePlanSuggestionsComponent,
-        MockResistanceAmountPipe
-      ]
-    });
+    imports: [ExercisePlanSuggestionsComponent,
+        MockResistanceAmountPipe]
+});
     fixture = TestBed.createComponent(ExercisePlanSuggestionsComponent);
     component = fixture.componentInstance;
 

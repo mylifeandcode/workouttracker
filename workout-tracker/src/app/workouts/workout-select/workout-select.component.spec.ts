@@ -8,28 +8,19 @@ import { WorkoutService } from '../workout.service';
 
 import { WorkoutSelectComponent } from './workout-select.component';
 import { RouterModule } from '@angular/router';
-import { DropdownModule } from 'primeng/dropdown';
+import { RecentWorkoutsComponent } from '../recent-workouts/recent-workouts.component';
 
 class WorkoutServiceMock {
   getFilteredSubset = jasmine.createSpy('getFilteredSubset').and.callFake(() => {
-      const fakeResponse = new PaginatedResults<WorkoutDTO>();
-      fakeResponse.results = [];
-      fakeResponse.results.push(new WorkoutDTO());
-      fakeResponse.results[0].name = "Workout 1";
-      fakeResponse.results.push(new WorkoutDTO());
-      fakeResponse.results[1].name = "Workout 2";
-      fakeResponse.totalCount = 2;
-      return of(fakeResponse);
-    });
-}
-
-@Component({
-  selector: 'wt-recent-workouts', 
-  template: ''
-})
-class MockRecentWorkoutsComponent {
-  @Input()
-  planningForLater: boolean = false;
+    const fakeResponse = new PaginatedResults<WorkoutDTO>();
+    fakeResponse.results = [];
+    fakeResponse.results.push(new WorkoutDTO());
+    fakeResponse.results[0].name = "Workout 1";
+    fakeResponse.results.push(new WorkoutDTO());
+    fakeResponse.results[1].name = "Workout 2";
+    fakeResponse.totalCount = 2;
+    return of(fakeResponse);
+  });
 }
 
 describe('WorkoutSelectComponent', () => {
@@ -38,23 +29,29 @@ describe('WorkoutSelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutSelectComponent, MockRecentWorkoutsComponent ], 
       providers: [
         {
-          provide: WorkoutService, 
+          provide: WorkoutService,
           useClass: WorkoutServiceMock
-        }, 
+        },
         {
-          provide: AuthService, 
+          provide: AuthService,
           useValue: jasmine.createSpyObj("AuthService", {}, { currentUserName: of("someUser") })
         }
-      ], 
-      imports: [
-        RouterModule.forRoot([])
       ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+      imports: [
+        RouterModule.forRoot([]),
+        WorkoutSelectComponent
+      ]
     })
-    .compileComponents();
+      .overrideComponent(
+        WorkoutSelectComponent,
+        { 
+          remove: { imports: [RecentWorkoutsComponent] },
+          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        }
+      )
+      .compileComponents();
   });
 
   beforeEach(() => {

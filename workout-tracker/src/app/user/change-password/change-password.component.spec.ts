@@ -16,16 +16,15 @@ describe('ChangePasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ RouterModule.forRoot([]), ReactiveFormsModule ],
-      declarations: [ ChangePasswordComponent ],
-      providers: [
+    imports: [RouterModule.forRoot([]), ReactiveFormsModule, ChangePasswordComponent],
+    providers: [
         FormBuilder,
         {
-          provide: AuthService,
-          useClass: AuthServiceMock
+            provide: AuthService,
+            useClass: AuthServiceMock
         }
-      ]
-    })
+    ]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(ChangePasswordComponent);

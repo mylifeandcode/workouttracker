@@ -22,11 +22,9 @@ describe('WorkoutListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        WorkoutListComponent
-      ],
       imports: [
-        RouterModule.forRoot([])
+        RouterModule.forRoot([]),
+        WorkoutListComponent
       ],
       providers: [
         {
@@ -34,7 +32,7 @@ describe('WorkoutListComponent', () => {
           useClass: WorkoutServiceMock
         }
       ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
   }));

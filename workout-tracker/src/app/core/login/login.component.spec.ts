@@ -22,17 +22,16 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LoginComponent ], 
-      providers: [ 
+    providers: [
         FormBuilder,
         {
-          provide: AuthService, 
-          useClass: AuthServiceMock
+            provide: AuthService,
+            useClass: AuthServiceMock
         }
-      ],
-      imports: [ RouterModule.forRoot([]), ReactiveFormsModule ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    ],
+    imports: [RouterModule.forRoot([]), ReactiveFormsModule, LoginComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   });
 

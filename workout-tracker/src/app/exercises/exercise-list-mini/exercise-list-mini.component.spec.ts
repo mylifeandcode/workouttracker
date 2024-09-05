@@ -20,20 +20,18 @@ describe('ExerciseListMiniComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
-        ExerciseListMiniComponent
-      ],
-      providers: [
+    providers: [
         {
-          provide: ExerciseService,
-          useClass: ExerciseServiceMock
+            provide: ExerciseService,
+            useClass: ExerciseServiceMock
         }
-      ],
-      imports: [
-        MultiSelectModule
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
-    })
+    ],
+    imports: [
+        MultiSelectModule,
+        ExerciseListMiniComponent
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
     .compileComponents();
   }));
 

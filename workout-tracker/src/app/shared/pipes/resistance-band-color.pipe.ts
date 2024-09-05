@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Pipe({
-  name: 'resistanceBandColor'
+    name: 'resistanceBandColor',
+    standalone: true
 })
 export class ResistanceBandColorPipe implements PipeTransform {
 

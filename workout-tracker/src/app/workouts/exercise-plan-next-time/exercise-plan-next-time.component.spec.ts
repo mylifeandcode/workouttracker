@@ -6,7 +6,8 @@ import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'resistanceAmount'
+    name: 'resistanceAmount',
+    standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
   transform(value: number | null): string {
@@ -20,12 +21,9 @@ describe('ExercisePlanNextTimeComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ExercisePlanNextTimeComponent,
-        MockResistanceAmountPipe
-      ],
-      imports: [ ReactiveFormsModule ]
-    });
+    imports: [ReactiveFormsModule, ExercisePlanNextTimeComponent,
+        MockResistanceAmountPipe]
+});
     fixture = TestBed.createComponent(ExercisePlanNextTimeComponent);
     component = fixture.componentInstance;
 

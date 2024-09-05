@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { User } from 'app/core/models/user';
 import { UserNewDTO } from 'app/core/models/user-new-dto';
 import { UserService } from 'app/core/services/user/user.service';
@@ -16,9 +16,11 @@ interface IUserAddForm {
 }
 
 @Component({
-  selector: 'wt-user-add',
-  templateUrl: './user-add.component.html',
-  styleUrls: ['./user-add.component.scss']
+    selector: 'wt-user-add',
+    templateUrl: './user-add.component.html',
+    styleUrls: ['./user-add.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserAddComponent implements OnInit {
 

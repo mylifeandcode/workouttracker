@@ -24,18 +24,17 @@ describe('NavComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot(
-          [{path: 'admin/users', component: FakeComponent}])
-      ],
-      declarations: [ NavComponent ],
-      providers: [
+    imports: [
+        RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
+        NavComponent
+    ],
+    providers: [
         {
-          provide: AuthService,
-          useClass: AuthServiceMock
+            provide: AuthService,
+            useClass: AuthServiceMock
         }
-      ]
-    })
+    ]
+})
     .compileComponents();
   }));
 

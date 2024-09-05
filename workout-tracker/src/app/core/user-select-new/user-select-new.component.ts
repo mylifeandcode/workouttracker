@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { User } from 'app/core/models/user';
 import { UserNewDTO } from 'app/core/models/user-new-dto';
 import { UserService } from 'app/core/services/user/user.service';
@@ -15,9 +15,11 @@ interface INewUserForm {
  * This component is for new user creation when the loginWithUserSelect mode is enabled
  */
 @Component({
-  selector: 'wt-user-select-new',
-  templateUrl: './user-select-new.component.html',
-  styleUrls: ['./user-select-new.component.scss']
+    selector: 'wt-user-select-new',
+    templateUrl: './user-select-new.component.html',
+    styleUrls: ['./user-select-new.component.scss'],
+    standalone: true,
+    imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserSelectNewComponent {
 

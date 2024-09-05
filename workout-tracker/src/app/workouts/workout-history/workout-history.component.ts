@@ -3,21 +3,30 @@ import { PaginatedResults } from 'app/core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
+import { TableModule } from 'primeng/table';
+import { PrimeTemplate } from 'primeng/api';
+import { RouterLink } from '@angular/router';
+import { TooltipModule } from 'primeng/tooltip';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonDirective } from 'primeng/button';
+import { DatePipe } from '@angular/common';
 
 //TODO: This is similar to WorkoutsListComponent. Find a way to consolidate/reuse code.
 
 @Component({
-  selector: 'wt-workout-history',
-  templateUrl: './workout-history.component.html',
-  styleUrls: ['./workout-history.component.scss']
+    selector: 'wt-workout-history',
+    templateUrl: './workout-history.component.html',
+    styleUrls: ['./workout-history.component.scss'],
+    standalone: true,
+    imports: [TableModule, PrimeTemplate, RouterLink, TooltipModule, DialogModule, ButtonDirective, DatePipe]
 })
-export class WorkoutHistoryComponent implements OnInit {
+export class WorkoutHistoryComponent {
 
   //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
   //Turbo Table automatically makes a call to get data on initialization
 
   public totalRecords: number = 0;
-  public loading: boolean = true;
+  public loading: boolean = false;
   public pageSize: number = 10;
   public executedWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public showNotesModal: boolean = false;
@@ -29,10 +38,6 @@ export class WorkoutHistoryComponent implements OnInit {
 
   constructor(
     private _executedWorkoutService: ExecutedWorkoutService) {
-
-  }
-
-  public ngOnInit(): void {
   }
 
   public getExecutedWorkouts(first: number, nameContains: string | null): void {

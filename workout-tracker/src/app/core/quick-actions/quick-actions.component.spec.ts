@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuickActionsComponent } from './quick-actions.component';
+import { provideRouter } from '@angular/router';
 
 describe('QuickActionsComponent', () => {
   let component: QuickActionsComponent;
@@ -8,9 +9,12 @@ describe('QuickActionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ QuickActionsComponent ]
+      imports: [QuickActionsComponent],
+      providers: [
+        provideRouter([])
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

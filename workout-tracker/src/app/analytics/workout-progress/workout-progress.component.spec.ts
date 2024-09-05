@@ -70,26 +70,27 @@ describe('WorkoutProgressComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkoutProgressComponent ],
-      providers: [
+    providers: [
         FormBuilder,
         {
-          provide: AnalyticsService,
-          useClass: AnalyticsServiceMock
+            provide: AnalyticsService,
+            useClass: AnalyticsServiceMock
         },
         {
-          provide: WorkoutService,
-          useClass: WorkoutServiceMock
+            provide: WorkoutService,
+            useClass: WorkoutServiceMock
         }
-      ],
-      imports: [ 
+    ],
+    imports: [
         ReactiveFormsModule,
         DropdownModule //CUSTOM_ELEMENTS_SCHEMA doesn't compensate for this because my ReactiveForm is using them
-      ],
-      schemas: [
+        ,
+        WorkoutProgressComponent
+    ],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA //Needed for p-chart element (ChartJS)
-      ]
-    })
+    ]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(WorkoutProgressComponent);

@@ -3,14 +3,20 @@ import { PaginatedResults } from 'app/core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, PrimeTemplate } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TableModule } from 'primeng/table';
+import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 //TODO: This component shares similarities with WorkoutListComponent. Consolidate code.
 
 @Component({
-  selector: 'wt-workout-select-planned',
-  templateUrl: './workout-select-planned.component.html',
-  styleUrls: ['./workout-select-planned.component.scss']
+    selector: 'wt-workout-select-planned',
+    templateUrl: './workout-select-planned.component.html',
+    styleUrls: ['./workout-select-planned.component.scss'],
+    standalone: true,
+    imports: [ConfirmDialogModule, TableModule, PrimeTemplate, RouterLink, DatePipe]
 })
 export class WorkoutSelectPlannedComponent implements OnInit {
 
