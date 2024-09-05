@@ -15,13 +15,6 @@ import { MessageService } from 'primeng/api';
 import { RouterModule } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 
-@Component({
-  selector: 'p-toast',
-  template: ''
-})
-class MockToastComponent {
-}
-
 class MockAuthService {
   userId: number = 0;
 }
@@ -55,9 +48,6 @@ describe('UserSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        MockToastComponent
-      ],
       providers: [
         FormBuilder,
         {
@@ -80,13 +70,13 @@ describe('UserSettingsComponent', () => {
         RouterModule.forRoot([])
       ]
     })
-    .overrideComponent( 
-      UserSettingsComponent, 
-      { 
-        remove: { imports: [ToastModule] }, //Was getting an error about an undefined object before doing this, despite importing everything the component did
-        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
-      })
-    .compileComponents();
+      .overrideComponent(
+        UserSettingsComponent,
+        {
+          remove: { imports: [ToastModule] }, //Was getting an error about an undefined object before doing this, despite importing everything the component did
+          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        })
+      .compileComponents();
   });
 
   beforeEach(() => {
