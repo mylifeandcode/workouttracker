@@ -3,43 +3,43 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { UserSelectedGuard } from 'app/core/guards/user-selected.guard';
 
-import { AdminHomeComponent } from './admin-home/admin-home.component';
-import { ResistanceBandsComponent } from './resistance-bands/resistance-bands.component';
-import { SystemComponent } from './system/system.component';
-import { UserAddComponent } from './user-add/user-add.component';
-import { UserEditComponent } from './user-edit/user-edit.component';
-import { UserListComponent } from './user-list/user-list.component';
+
+
+
+
+
+
 
 
 const routes: Routes = [
   {
     path: 'resistancebands',
-    component: ResistanceBandsComponent
+    loadComponent: () => import('./resistance-bands/resistance-bands.component').then(m => m.ResistanceBandsComponent)
   },
   {
     path: 'users',
-    component: UserListComponent
+    loadComponent: () => import('./user-list/user-list.component').then(m => m.UserListComponent)
   },
   {
     path: 'users/edit/:id',
-    component: UserEditComponent,
+    loadComponent: () => import('./user-edit/user-edit.component').then(m => m.UserEditComponent),
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'users/first',
-    component: UserEditComponent
+    loadComponent: () => import('./user-edit/user-edit.component').then(m => m.UserEditComponent)
   },
   {
     path: 'users/add',
-    component: UserAddComponent
+    loadComponent: () => import('./user-add/user-add.component').then(m => m.UserAddComponent)
   },
   {
     path: 'system',
-    component: SystemComponent
+    loadComponent: () => import('./system/system.component').then(m => m.SystemComponent)
   },
   {
     path: '**',
-    component: AdminHomeComponent
+    loadComponent: () => import('./admin-home/admin-home.component').then(m => m.AdminHomeComponent)
   }
 ];
 

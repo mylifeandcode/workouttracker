@@ -2,92 +2,92 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { UnsavedChangesGuard } from 'app/core/guards/unsaved-changes.guard';
 import { UserSelectedGuard } from 'app/core/guards/user-selected.guard'; //TODO: Correct path/method of import?
-import { InProgressWorkoutsComponent } from './in-progress-workouts/in-progress-workouts.component';
-import { WorkoutEditComponent } from './workout-edit/workout-edit.component';
-import { WorkoutHistoryComponent } from './workout-history/workout-history.component';
-import { WorkoutListComponent } from './workout-list/workout-list.component';
-import { WorkoutLogPastStartComponent } from './workout-log-past-start/workout-log-past-start.component';
-import { WorkoutPlanComponent } from './workout-plan/workout-plan.component';
-import { WorkoutSelectPlannedComponent } from './workout-select-planned/workout-select-planned.component';
-import { WorkoutSelectComponent } from './workout-select/workout-select.component';
-import { WorkoutViewComponent } from './workout-view/workout-view.component';
-import { WorkoutComponent } from './workout/workout.component';
+
+
+
+
+
+
+
+
+
+
 
 
 const routes: Routes = [
   {
     path: 'edit/:id',
-    component: WorkoutEditComponent,
+    loadComponent: () => import('./workout-edit/workout-edit.component').then(m => m.WorkoutEditComponent),
     canActivate: [UserSelectedGuard],
     canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'view/:id',
-    component: WorkoutEditComponent,
+    loadComponent: () => import('./workout-edit/workout-edit.component').then(m => m.WorkoutEditComponent),
     canActivate: [UserSelectedGuard],
     canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'select', 
-    component: WorkoutSelectComponent, 
+    loadComponent: () => import('./workout-select/workout-select.component').then(m => m.WorkoutSelectComponent), 
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'select-for-later', 
-    component: WorkoutSelectComponent, 
+    loadComponent: () => import('./workout-select/workout-select.component').then(m => m.WorkoutSelectComponent), 
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'select-planned', 
-    component: WorkoutSelectPlannedComponent, 
+    loadComponent: () => import('./workout-select-planned/workout-select-planned.component').then(m => m.WorkoutSelectPlannedComponent), 
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'start/:executedWorkoutId',
-    component: WorkoutComponent, 
+    loadComponent: () => import('./workout/workout.component').then(m => m.WorkoutComponent), 
     canActivate: [UserSelectedGuard],
     canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'history/view/:id',
-    component: WorkoutViewComponent,
+    loadComponent: () => import('./workout-view/workout-view.component').then(m => m.WorkoutViewComponent),
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'history',
-    component: WorkoutHistoryComponent,
+    loadComponent: () => import('./workout-history/workout-history.component').then(m => m.WorkoutHistoryComponent),
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'plan/:id',
-    component: WorkoutPlanComponent, 
+    loadComponent: () => import('./workout-plan/workout-plan.component').then(m => m.WorkoutPlanComponent), 
     canActivate: [UserSelectedGuard],
     canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'plan-for-later/:id',
-    component: WorkoutPlanComponent, 
+    loadComponent: () => import('./workout-plan/workout-plan.component').then(m => m.WorkoutPlanComponent), 
     canActivate: [UserSelectedGuard],
     canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'plan-for-past/:id/:start/:end',
-    component: WorkoutPlanComponent, 
+    loadComponent: () => import('./workout-plan/workout-plan.component').then(m => m.WorkoutPlanComponent), 
     canActivate: [UserSelectedGuard],
     canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'log-past-start',
-    component: WorkoutLogPastStartComponent, 
+    loadComponent: () => import('./workout-log-past-start/workout-log-past-start.component').then(m => m.WorkoutLogPastStartComponent), 
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'in-progress',
-    component: InProgressWorkoutsComponent
+    loadComponent: () => import('./in-progress-workouts/in-progress-workouts.component').then(m => m.InProgressWorkoutsComponent)
   },
   {
     path: '**',
-    component: WorkoutListComponent,
+    loadComponent: () => import('./workout-list/workout-list.component').then(m => m.WorkoutListComponent),
     canActivate: [UserSelectedGuard]
   }
 ];

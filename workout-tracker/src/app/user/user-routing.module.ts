@@ -1,36 +1,36 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { UserAddComponent } from 'app/admin/user-add/user-add.component';
+
 import { UnsavedChangesGuard } from 'app/core/guards/unsaved-changes.guard';
 import { UserSelectedGuard } from 'app/core/guards/user-selected.guard';
-import { ChangePasswordComponent } from './change-password/change-password.component';
-import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './reset-password/reset-password.component';
-import { UserSettingsComponent } from './user-settings/user-settings.component';
+
+
+
+
 
 const routes: Routes = [
   {
     path: 'user-settings',
-    component: UserSettingsComponent,
+    loadComponent: () => import('./user-settings/user-settings.component').then(m => m.UserSettingsComponent),
     canActivate: [UserSelectedGuard],
     canDeactivate: [UnsavedChangesGuard]
   },
   {
     path: 'change-password',
-    component: ChangePasswordComponent,
+    loadComponent: () => import('./change-password/change-password.component').then(m => m.ChangePasswordComponent),
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'forgot-password',
-    component: ForgotPasswordComponent
+    loadComponent: () => import('./forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
   },
   {
     path: 'reset-password/:resetCode',
-    component: ResetPasswordComponent
+    loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
   },
   {
     path: 'register',
-    component: UserAddComponent
+    loadComponent: () => import('app/admin/user-add/user-add.component').then(m => m.UserAddComponent)
   },
 ];
 

@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './core/home/home.component';
-import { UserSelectComponent } from './core/user-select/user-select.component';
+
+
 import { UserSelectedGuard } from './core/guards/user-selected.guard';
 import { UserNotSelectedGuard } from './core/guards/user-not-selected.guard';
 import { UserIsAdminGuard } from './admin/guards/user-is-admin.guard';
-import { AccessDeniedComponent } from './core/access-denied/access-denied.component';
-import { WelcomeComponent } from './core/welcome/welcome.component';
-import { LoginComponent } from './core/login/login.component';
-import { UserSelectNewComponent } from './core/user-select-new/user-select-new.component';
+
+
+
+
 import { AdminModule } from './admin/admin.module';
 import { WorkoutsModule } from './workouts/workouts.module';
 import { ExercisesModule } from './exercises/exercises.module';
@@ -18,37 +18,37 @@ import { UserModule } from './user/user.module';
 const routes: Routes = [
   {
     path: '',
-    component: UserSelectComponent,
+    loadComponent: () => import('./core/user-select/user-select.component').then(m => m.UserSelectComponent),
     canActivate: [UserNotSelectedGuard]
   },
   {
     path: 'user-select',
-    component: UserSelectComponent,
+    loadComponent: () => import('./core/user-select/user-select.component').then(m => m.UserSelectComponent),
     canActivate: [UserNotSelectedGuard]
   },
   {
     path: 'new-user',
-    component: UserSelectNewComponent,
+    loadComponent: () => import('./core/user-select-new/user-select-new.component').then(m => m.UserSelectNewComponent),
     canActivate: [UserNotSelectedGuard]
   },
   {
     path: 'home',
-    component: WelcomeComponent,
+    loadComponent: () => import('./core/welcome/welcome.component').then(m => m.WelcomeComponent),
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'oldhome',
-    component: HomeComponent,
+    loadComponent: () => import('./core/home/home.component').then(m => m.HomeComponent),
     canActivate: [UserSelectedGuard]
   }, 
   {
     path: 'login', 
-    component: LoginComponent,
+    loadComponent: () => import('./core/login/login.component').then(m => m.LoginComponent),
     canActivate: [UserNotSelectedGuard]
   },
   {
     path: 'denied',
-    component: AccessDeniedComponent
+    loadComponent: () => import('./core/access-denied/access-denied.component').then(m => m.AccessDeniedComponent)
   },
   {
     path: 'admin', 

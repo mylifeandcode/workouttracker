@@ -1,23 +1,23 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { UserSelectedGuard } from "app/core/guards/user-selected.guard";
-import { AnalyticsDashboardComponent } from "./analytics-dashboard/analytics-dashboard.component";
-import { WorkoutProgressComponent } from "./workout-progress/workout-progress.component";
+
+
 
 const routes: Routes = [
   {
     path: '',
-    component: AnalyticsDashboardComponent,
+    loadComponent: () => import('./analytics-dashboard/analytics-dashboard.component').then(m => m.AnalyticsDashboardComponent),
     canActivate: [UserSelectedGuard]
   },
   {
     path: 'workouts',
-    component: WorkoutProgressComponent,
+    loadComponent: () => import('./workout-progress/workout-progress.component').then(m => m.WorkoutProgressComponent),
     canActivate: [UserSelectedGuard]
   },
   {
     path: '**',
-    component: AnalyticsDashboardComponent,
+    loadComponent: () => import('./analytics-dashboard/analytics-dashboard.component').then(m => m.AnalyticsDashboardComponent),
     canActivate: [UserSelectedGuard]
   }
 ];
