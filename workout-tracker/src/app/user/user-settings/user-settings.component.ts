@@ -36,7 +36,8 @@ interface IToggleEvent { //TODO: Determine if PrimeNg has a type for this (proba
       UserRepSettingsComponent, 
       RouterLink, 
       ToastModule
-    ]
+    ],
+    //providers: [MessageService]
 })
 export class UserSettingsComponent extends CheckForUnsavedDataComponent implements OnInit {
 

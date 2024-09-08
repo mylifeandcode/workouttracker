@@ -21,7 +21,7 @@ export class WorkoutListComponent {
   //Turbo Table automatically makes a call to get data on initialization
 
   public totalRecords: number = 0;
-  public loading: boolean = false;
+  public loading: boolean = true;
   public pageSize: number = 10;
   public workouts: WorkoutDTO[] = [];
   public cols: any = [

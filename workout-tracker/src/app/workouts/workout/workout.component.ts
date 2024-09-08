@@ -45,7 +45,8 @@ interface IWorkoutForm {
     CountdownTimerComponent, 
     DurationComponent, 
     DatePipe
-  ]
+  ],
+  //providers: [MessageService]
 })
 export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {
 

@@ -1,21 +1,9 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-
-
-import { UserSelectedGuard } from './core/guards/user-selected.guard';
+import { Routes } from '@angular/router';
 import { UserNotSelectedGuard } from './core/guards/user-not-selected.guard';
+import { UserSelectedGuard } from './core/guards/user-selected.guard';
 import { UserIsAdminGuard } from './admin/guards/user-is-admin.guard';
 
-
-
-
-import { AdminModule } from './admin/admin.module';
-import { WorkoutsModule } from './workouts/workouts.module';
-import { ExercisesModule } from './exercises/exercises.module';
-import { AnalyticsModule } from './analytics/analytics.module';
-import { UserModule } from './user/user.module';
-
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./core/user-select/user-select.component').then(m => m.UserSelectComponent),
@@ -54,32 +42,26 @@ const routes: Routes = [
     path: 'admin', 
     canLoad: [ UserIsAdminGuard ], 
     canActivate: [ UserIsAdminGuard ], //Yes, we need this too, in case an admin user logs out and a non-admin then logs in after the admin module has already been loaded
-    loadChildren: (): Promise<typeof AdminModule> => import('./admin/admin.module').then(m => m.AdminModule)
+    loadChildren: (): Promise<Routes> => import('./admin/admin.routes').then(r => r.adminRoutes)
   },
   {
     path: 'workouts',
-    loadChildren: (): Promise<typeof WorkoutsModule> => import('./workouts/workouts.module').then(m => m.WorkoutsModule)
+    loadChildren: (): Promise<Routes> => import('./workouts/workouts.routes').then(r => r.workoutsRoutes)
   },
   {
     path: 'exercises',
-    loadChildren: (): Promise<typeof ExercisesModule> => import('./exercises/exercises.module').then(m => m.ExercisesModule)
+    loadChildren: (): Promise<Routes> => import('./exercises/exercises.routes').then(r => r.exercisesRoutes)
   },
   {
     path: 'analytics',
-    loadChildren: (): Promise<typeof AnalyticsModule> => import('./analytics/analytics.module').then(m => m.AnalyticsModule)
+    loadChildren: (): Promise<Routes> => import('./analytics/analytics.routes').then(r => r.analyticsroutes)
   },
   {
     path: 'user',
-    loadChildren: (): Promise<typeof UserModule> => import('./user/user.module').then(m => m.UserModule)
+    loadChildren: (): Promise<Routes> => import('./user/user.routes').then(r => r.userRoutes)
   },
   {
     path: '**',
     redirectTo: ''
   }
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes, {})],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }

@@ -16,7 +16,8 @@ import { DatePipe } from '@angular/common';
     templateUrl: './workout-select-planned.component.html',
     styleUrls: ['./workout-select-planned.component.scss'],
     standalone: true,
-    imports: [ConfirmDialogModule, TableModule, PrimeTemplate, RouterLink, DatePipe]
+    imports: [ConfirmDialogModule, TableModule, PrimeTemplate, RouterLink, DatePipe],
+    //providers: [MessageService]
 })
 export class WorkoutSelectPlannedComponent implements OnInit {
 

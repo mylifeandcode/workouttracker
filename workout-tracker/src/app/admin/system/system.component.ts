@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SoundService } from 'app/core/services/sound/sound.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -8,7 +8,8 @@ import { ToastModule } from 'primeng/toast';
     templateUrl: './system.component.html',
     styleUrls: ['./system.component.scss'],
     standalone: true,
-    imports: [ToastModule]
+    imports: [ToastModule],
+    //providers: [MessageService]
 })
 export class SystemComponent {
 

@@ -3,7 +3,9 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/ro
 import { Observable } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UserSelectedGuard  {
 
   constructor(private _authService: AuthService, private _router: Router) { }

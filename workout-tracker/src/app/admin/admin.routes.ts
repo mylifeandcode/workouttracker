@@ -1,17 +1,7 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-
+import { Routes } from '@angular/router';
 import { UserSelectedGuard } from 'app/core/guards/user-selected.guard';
 
-
-
-
-
-
-
-
-
-const routes: Routes = [
+export const adminRoutes: Routes = [
   {
     path: 'resistancebands',
     loadComponent: () => import('./resistance-bands/resistance-bands.component').then(m => m.ResistanceBandsComponent)
@@ -42,9 +32,3 @@ const routes: Routes = [
     loadComponent: () => import('./admin-home/admin-home.component').then(m => m.AdminHomeComponent)
   }
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class AdminRoutingModule { }
