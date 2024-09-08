@@ -1,3 +1,5 @@
+<!--Angular's @defer has made this unnecessary :)-->
+<!--
 @if (loading) {
   <div class="row widget">
     <div class="col-12">
@@ -5,8 +7,9 @@
     </div>
   </div>
 }
-
-@if (!loading && userOverview) {
+-->
+<!--@if (!loading && userOverview) {-->
+@if (userOverview) {
   <div class="row widget">
     <div class="col-12">
       <h5>Welcome, {{userOverview.username}}</h5>

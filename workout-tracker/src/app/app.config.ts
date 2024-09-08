@@ -12,7 +12,7 @@ import { AuthInterceptor } from './core/auth.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { Observable, tap } from 'rxjs';
 import { MessageModule } from 'primeng/message';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,7 +32,8 @@ export const appConfig: ApplicationConfig = {
     },
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
-    MessageService //Providing this here simplifies unit testing
+    MessageService, //Providing this here simplifies unit testing
+    ConfirmationService
   ]
 };
 

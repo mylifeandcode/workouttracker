@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { UserOverview } from 'app/core/models/user-overview';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+//import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -8,15 +8,19 @@ import { DatePipe } from '@angular/common';
     templateUrl: './user-overview.component.html',
     styleUrls: ['./user-overview.component.scss'],
     standalone: true,
-    imports: [ProgressSpinnerModule, DatePipe]
+    //imports: [ProgressSpinnerModule, DatePipe]
+    imports: [DatePipe]
 })
-export class UserOverviewComponent implements OnInit {
+export class UserOverviewComponent {
 
   @Input()
   userOverview: UserOverview | undefined;
 
+  //Replaced with @defer where this component is used :)
+  /*
   @Input()
   public loading: boolean = true;
+  */
 
   constructor() { }
 

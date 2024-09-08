@@ -4,13 +4,14 @@ import { UserService } from 'app/core/services/user/user.service';
 import { finalize } from 'rxjs/operators';
 import { UserOverviewComponent } from '../user-overview/user-overview.component';
 import { QuickActionsComponent } from '../quick-actions/quick-actions.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
     selector: 'wt-welcome',
     templateUrl: './welcome.component.html',
     styleUrls: ['./welcome.component.scss'],
     standalone: true,
-    imports: [UserOverviewComponent, QuickActionsComponent]
+    imports: [UserOverviewComponent, QuickActionsComponent, ProgressSpinnerModule]
 })
 export class WelcomeComponent implements OnInit {
 
