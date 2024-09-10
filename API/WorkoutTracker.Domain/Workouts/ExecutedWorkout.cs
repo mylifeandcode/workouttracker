@@ -21,6 +21,11 @@ namespace WorkoutTracker.Domain.Workouts
         /// The ID of the Workout which was executed.
         /// </summary>
         public virtual int WorkoutId { get; set; }
+
+        /// <summary>
+        /// The publicly-accessible ID for the executed Workout
+        /// </summary>
+        public virtual Guid PublicId { get; set; }
         
         /// <summary>
         /// The date/time the user began the Workout.

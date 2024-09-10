@@ -7,6 +7,7 @@ namespace WorkoutTracker.Domain.Exercises
 {
     public class Exercise : NamedEntity
     {
+        public Guid PublicId { get; set; }
         public string Description { get; set; }
         public string Setup { get; set; }
         public string Movement { get; set; }

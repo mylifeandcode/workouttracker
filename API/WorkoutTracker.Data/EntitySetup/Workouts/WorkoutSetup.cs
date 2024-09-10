@@ -12,6 +12,7 @@ namespace WorkoutTracker.Data.EntitySetup.Workouts
         {
             var entity = builder.Entity<Workout>();
 
+            entity.Property(x => x.PublicId).HasDefaultValueSql("NEWID()");
             entity.Property(x => x.Name).HasMaxLength(50).IsRequired();
             entity.HasMany(x => x.Exercises);
             entity.Property(x => x.Active).HasDefaultValue(true);

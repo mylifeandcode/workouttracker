@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using WorkoutTracker.Domain.BaseClasses;
 
 namespace WorkoutTracker.Domain.Users
 {
     public class User : NamedEntity
     {
+        public Guid PublicId { get; set; }
+
         public string EmailAddress { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]

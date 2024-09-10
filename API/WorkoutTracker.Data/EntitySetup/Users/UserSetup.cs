@@ -9,6 +9,7 @@ namespace WorkoutTracker.Data.EntitySetup.Users
         {
             var entity = builder.Entity<User>();
 
+            entity.Property(x => x.PublicId).HasDefaultValueSql("NEWID()");
             entity.Property(x => x.Name).HasMaxLength(50).IsRequired();
             entity.Property(x => x.HashedPassword).HasMaxLength(1024); //WARN: Need to restrict non-hashed password length
             entity.Property(x => x.ProfilePic).HasMaxLength(4096);
