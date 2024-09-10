@@ -19,6 +19,7 @@ namespace WorkoutTracker.Data.EntitySetup.Workouts
 
             entity.HasIndex(x => x.StartDateTime);
             entity.HasIndex(x => x.Rating);
+            entity.HasIndex(x => x.PublicId);
 
             //When deleting an ExecutedWorkout, don't delete the associated Workout
             entity

@@ -29,6 +29,7 @@ namespace WorkoutTracker.Data.EntitySetup.Exercises
                 .HasConversion<int>();
 
             entity.HasIndex(x => x.Name);
+            entity.HasIndex(x => x.PublicId);
 
             base.SetupAuditFields<Exercise>(builder);
         }
