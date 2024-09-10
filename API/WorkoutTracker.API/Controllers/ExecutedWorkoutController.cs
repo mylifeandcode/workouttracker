@@ -44,8 +44,11 @@ namespace WorkoutTracker.API.Controllers
                 var executedWorkout = _executedWorkoutService.GetById(id);
                 if (executedWorkout == null)
                     return NotFound();
-                else
-                    return _dtoMapper.MapFromExecutedWorkout(executedWorkout);
+
+                if (executedWorkout.CreatedByUserId != GetUserID())
+                    return Forbid();
+
+                return _dtoMapper.MapFromExecutedWorkout(executedWorkout);
             }
             catch (Exception ex)
             {
@@ -184,6 +187,7 @@ namespace WorkoutTracker.API.Controllers
         {
             try
             {
+                //This attempt to prevent an intermittent problem caused BIGGER problems! Revisit!
                 /*
                 if(value.Exercises.Any(x => x.ExecutedWorkoutId == 0))
                     return StatusCode(400, "One or more ExecutedExercises has an ExecutedWorkoutId of 0.");

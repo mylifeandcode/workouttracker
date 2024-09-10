@@ -81,6 +81,9 @@ namespace WorkoutTracker.API.Controllers
                     return NotFound(id);
                 else
                 {
+                    if (workout.CreatedByUserId != GetUserID())
+                        return Forbid();
+
                     workout.Exercises = workout.Exercises?.OrderBy(x => x.Sequence).ToList();
                     return Ok(workout);
                 }
@@ -100,6 +103,9 @@ namespace WorkoutTracker.API.Controllers
                 if (workout == null)
                     return NotFound(id);
 
+                if (workout.CreatedByUserId != GetUserID())
+                    return Forbid();
+
                 var dto = _workoutDTOMapper.MapFromWorkout(workout);
 
                 return Ok(dto);
@@ -116,6 +122,10 @@ namespace WorkoutTracker.API.Controllers
             try
             {
                 var plan = _workoutPlanService.Create(id, this.GetUserID());
+
+                if (plan.UserId != GetUserID())
+                    return Forbid();
+
                 return Ok(plan);
             }
             catch (Exception ex)
