@@ -14,6 +14,7 @@ namespace WorkoutTracker.Application.Workouts.Interfaces
         IEnumerable<Workout> Get(int firstRecord, short pageSize, WorkoutFilter filter);
         int GetTotalCount();
         Workout GetById(int workoutId);
+        Workout GetByPublicId(Guid publicId);
         void Retire(int workoutId);
         void Reactivate(int workoutId);
         int GetTotalCount(WorkoutFilter filter);

@@ -52,9 +52,11 @@ namespace WorkoutTracker.API.Controllers
                 var results = exercises.Select((exercise) =>
                 {
                     return new ExerciseDTO(
-                        exercise.Id, 
-                        exercise.Name, 
-                        string.Join(", ", exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name)));
+                        exercise.Id,
+                        exercise.Name,
+                        string.Join(", ", exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name)),
+                        exercise.PublicId);
+                        
                 });
 
                 var result = new PaginatedResults<ExerciseDTO>(results, totalCount);
@@ -76,6 +78,22 @@ namespace WorkoutTracker.API.Controllers
                 var exercise = _exerciseService.GetById(id);
                 if (exercise == null)
                     return NotFound(id);
+                else
+                    return Ok(exercise);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpGet("public/{publicId}")]
+        public ActionResult<Exercise> GetByPublicId(Guid publicId)
+        {
+            try
+            {
+                var exercise = _exerciseService.GetByPublicId(publicId);
+                if (exercise == null)
+                    return NotFound(publicId);
                 else
                     return Ok(exercise);
             }

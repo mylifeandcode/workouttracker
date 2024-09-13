@@ -26,6 +26,11 @@ namespace WorkoutTracker.Application.Workouts.Services
             return output;
         }
 
+        public Workout GetByPublicId(Guid publicId)
+        {
+            return _repo.GetWithoutTracking().FirstOrDefault(x => x.PublicId == publicId);
+        }
+
         public override Workout Update(Workout modifiedWorkout, bool saveChanges = false)
         {
             //TODO: Refactor to make async

@@ -94,6 +94,29 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
+        [HttpGet("public/{publicId}")]
+        public ActionResult<Workout> GetByPublicId(Guid publicId)
+        {
+            try
+            {
+                var workout = _workoutService.GetByPublicId(publicId);
+                if (workout == null)
+                    return NotFound(publicId);
+                else
+                {
+                    if (workout.CreatedByUserId != GetUserID())
+                        return Forbid();
+
+                    workout.Exercises = workout.Exercises?.OrderBy(x => x.Sequence).ToList();
+                    return Ok(workout);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("DTO/{id}")]
         public ActionResult<WorkoutDTO> GetDTO(int id)
         {

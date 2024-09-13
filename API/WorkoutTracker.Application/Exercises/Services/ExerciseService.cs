@@ -26,6 +26,11 @@ namespace WorkoutTracker.Application.Exercises.Services
             return output;
         }
 
+        public Exercise GetByPublicId(Guid publicId)
+        {
+            return _repo.GetWithoutTracking().FirstOrDefault(x => x.PublicId == publicId);
+        }
+
         public override Exercise Update(Exercise modifiedExercise, bool saveChanges = false)
         {
             if (modifiedExercise == null)
