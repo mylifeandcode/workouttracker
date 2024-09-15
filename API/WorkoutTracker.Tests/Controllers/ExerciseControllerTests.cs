@@ -8,6 +8,7 @@ using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
 using WorkoutTracker.API.Controllers;
 using WorkoutTracker.API.Models;
+using System;
 
 namespace WorkoutTracker.Tests.Controllers
 {
@@ -15,17 +16,18 @@ namespace WorkoutTracker.Tests.Controllers
     public class ExerciseControllerTests : UserAwareControllerTestsBase
     {
         [TestMethod]
-        public void Should_Get_Exercise_By_ID()
+        public void Should_Get_Exercise_By_PublicId()
         {
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
             var exercise = new Exercise();
-            exerciseSvc.Setup(x => x.GetById(It.IsAny<int>())).Returns(exercise);
+            exercise.PublicId = Guid.NewGuid();
+            exerciseSvc.Setup(x => x.GetByPublicId(It.IsAny<Guid>())).Returns(exercise);
             var sut = new ExerciseController(exerciseSvc.Object);
             SetupUser(sut);
 
             //ACT
-            var response = sut.Get(12345);
+            var response = sut.GetByPublicId(exercise.PublicId);
 
             //ASSERT
             Assert.IsNotNull(response);
@@ -34,15 +36,15 @@ namespace WorkoutTracker.Tests.Controllers
         }
 
         [TestMethod]
-        public void Should_Return_Not_Found_When_Getting_Exercise_By_ID_And_Not_Found()
+        public void Should_Return_Not_Found_When_Getting_Exercise_By_PublicId_And_Not_Found()
         {
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
-            exerciseSvc.Setup(x => x.GetById(It.IsAny<int>())).Returns((Exercise)null);
+            exerciseSvc.Setup(x => x.GetByPublicId(It.IsAny<Guid>())).Returns((Exercise)null);
             var sut = new ExerciseController(exerciseSvc.Object);
 
             //ACT
-            var response = sut.Get(12345);
+            var response = sut.GetByPublicId(Guid.NewGuid());
 
             //ASSERT
             Assert.IsNotNull(response);
@@ -85,7 +87,7 @@ namespace WorkoutTracker.Tests.Controllers
             SetupUser(sut);
 
             //ACT
-            var response = sut.Put(exercise.Id, exercise);
+            var response = sut.Put(exercise);
 
             //ASSERT
             Assert.IsNotNull(response);

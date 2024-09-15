@@ -35,49 +35,49 @@ export class WorkoutService {
     return this._http.get<PaginatedResults<WorkoutDTO>>(url);
   }
 
-  public getById(id: number): Observable<Workout> {
-    return this._http.get<Workout>(`${this.API_ROOT}/${id}`);
+  public getByPublicId(publicId: string): Observable<Workout> {
+    return this._http.get<Workout>(`${this.API_ROOT}/${publicId}`);
   }
 
   /*
   public getDTObyId(id: number): Observable<WorkoutDTO> {
     return this._http.get<WorkoutDTO>(`${this.API_ROOT}/DTO/${id}`);
   }
-  */
 
   public getByUserId(id: number): Observable<WorkoutDTO[]> {
     return this._http.get<WorkoutDTO[]>(`${this.API_ROOT}/user/${id}`);
   }
+  */
 
   public add(workout: Workout): Observable<Workout> {
     return this._http.post<Workout>(this.API_ROOT, workout, HTTP_OPTIONS);
   }
 
   public update(workout: Workout): Observable<Workout> {
-    return this._http.put<Workout>(`${this.API_ROOT}/${workout.id}`, workout, HTTP_OPTIONS);
+    return this._http.put<Workout>(this.API_ROOT, workout, HTTP_OPTIONS);
   }
 
-  public getPlan(workoutId: number): Observable<WorkoutPlan> {
-    return this._http.get<WorkoutPlan>(`${this.API_ROOT}/${workoutId}/plan`);
+  public getNewPlan(workoutPublicId: string): Observable<WorkoutPlan> {
+    return this._http.get<WorkoutPlan>(`${this.API_ROOT}/${workoutPublicId}/plan`);
   }
 
   public submitPlan(plan: WorkoutPlan): Observable<number> {
-    return this._http.post<number>(`${this.API_ROOT}/${plan.workoutId}/plan`, plan);
+    return this._http.post<number>(`${this.API_ROOT}/plan`, plan);
   }
 
   public submitPlanForLater(plan: WorkoutPlan): Observable<number> {
-    return this._http.post<number>(`${this.API_ROOT}/${plan.workoutId}/plan-for-later`, plan);
+    return this._http.post<number>(`${this.API_ROOT}/plan-for-later`, plan);
   }
 
   public submitPlanForPast(plan: WorkoutPlan, startDateTime: Date, endDateTime: Date): Observable<number> {
-    return this._http.post<number>(`${this.API_ROOT}/${plan.workoutId}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`, plan);
+    return this._http.post<number>(`${this.API_ROOT}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`, plan);
   }
 
-  public retire(id: number): Observable<HttpResponse<any>> {
-    return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${id}/retire`, null);
+  public retire(publicId: string): Observable<HttpResponse<any>> {
+    return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${publicId}/retire`, null);
   }
 
-  public reactivate(id: number): Observable<HttpResponse<any>> {
-    return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${id}/reactivate`, null);
+  public reactivate(publicId: string): Observable<HttpResponse<any>> {
+    return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${publicId}/reactivate`, null);
   }  
 }

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using WorkoutTracker.Domain.BaseClasses;
+using WorkoutTracker.Domain.Interfaces;
 
 namespace WorkoutTracker.Domain.Users
 {
-    public class User : NamedEntity
+    public class User : NamedEntity, IPublicEntity
     {
         public Guid PublicId { get; set; }
 

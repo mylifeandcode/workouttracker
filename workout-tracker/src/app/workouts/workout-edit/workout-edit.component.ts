@@ -156,7 +156,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   private loadWorkout(): void {
     this.loading = true;
-    this._workoutService.getById(this.workoutId).subscribe((workout: Workout) => {
+    this._workoutService.getByPublicId(this.workoutId).subscribe((workout: Workout) => {
       this.updateFormWithWorkoutValues(workout);
       this.loading = false;
       this._workout = workout;

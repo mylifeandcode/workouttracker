@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using WorkoutTracker.Domain.Users;
 
 namespace WorkoutTracker.Application.Shared.Interfaces
 {
@@ -12,5 +13,7 @@ namespace WorkoutTracker.Application.Shared.Interfaces
         IEnumerable<T> GetAll();
         IEnumerable<T> GetAllWithoutTracking();
         T GetById(int id);
+        T GetByPublicId(Guid publicId);
+
     }
 }

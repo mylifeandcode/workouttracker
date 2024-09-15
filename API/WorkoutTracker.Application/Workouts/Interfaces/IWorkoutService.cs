@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Application.Workouts.Models;
 using WorkoutTracker.Domain.Workouts;
 
 namespace WorkoutTracker.Application.Workouts.Interfaces
 {
-    public interface IWorkoutService
+    public interface IWorkoutService: IPublicEntityServiceBase<Workout>
     {
         Workout Add(Workout workout, bool saveChanges = false);
         Workout Update(Workout workout, bool saveChanges = false);
@@ -15,8 +16,8 @@ namespace WorkoutTracker.Application.Workouts.Interfaces
         int GetTotalCount();
         Workout GetById(int workoutId);
         Workout GetByPublicId(Guid publicId);
-        void Retire(int workoutId);
-        void Reactivate(int workoutId);
+        void Retire(Guid publicId);
+        void Reactivate(Guid publicId);
         int GetTotalCount(WorkoutFilter filter);
     }
 }

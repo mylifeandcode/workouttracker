@@ -10,7 +10,6 @@ using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.API.Models;
 using WorkoutTracker.API.Mappers;
 using System.Collections.Generic;
-using System.Net;
 
 namespace WorkoutTracker.API.Controllers
 {
@@ -36,12 +35,12 @@ namespace WorkoutTracker.API.Controllers
         }
 
         // GET api/ExecutedWorkout/5
-        [HttpGet("{id}")]
-        public ActionResult<ExecutedWorkoutDTO> Get(int id)
+        [HttpGet("{publicId}")]
+        public ActionResult<ExecutedWorkoutDTO> Get(Guid publicId)
         {
             try
             {
-                var executedWorkout = _executedWorkoutService.GetById(id);
+                var executedWorkout = _executedWorkoutService.GetByPublicId(publicId);
                 if (executedWorkout == null)
                     return NotFound();
 

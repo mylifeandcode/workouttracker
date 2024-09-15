@@ -1,5 +1,6 @@
 ﻿using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Shared.Interfaces;
+using System;
 
 namespace WorkoutTracker.Application.Users.Interfaces
 {

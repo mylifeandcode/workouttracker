@@ -32,14 +32,14 @@ namespace WorkoutTracker.Application.Workouts.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public WorkoutPlan Create(int workoutId, int userId)
+        public WorkoutPlan Create(Guid workoutPublicId, int userId)
         {
             try
             {
-                ExecutedWorkout lastExecutedWorkout = _executedWorkoutService.GetLatest(workoutId);
+                ExecutedWorkout lastExecutedWorkout = _executedWorkoutService.GetLatest(workoutPublicId);
 
                 if (lastExecutedWorkout == null)
-                    return CreatePlanForNewWorkout(workoutId, userId);
+                    return CreatePlanForNewWorkout(workoutPublicId, userId);
                 else
                     return CreatePlanForExecutedWorkout(lastExecutedWorkout);
             }
@@ -50,9 +50,9 @@ namespace WorkoutTracker.Application.Workouts.Services
             }
         }
 
-        private WorkoutPlan CreatePlanForNewWorkout(int workoutId, int userId)
+        private WorkoutPlan CreatePlanForNewWorkout(Guid workoutPublicId, int userId)
         {
-            Workout workout = _workoutService.GetById(workoutId);
+            Workout workout = _workoutService.GetByPublicId(workoutPublicId);
             var userSettings = GetUserSettings(userId);
 
             var plan = new WorkoutPlan(workout, false);

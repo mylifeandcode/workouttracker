@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using WorkoutTracker.Domain.BaseClasses;
 using WorkoutTracker.Domain.Exercises;
+using WorkoutTracker.Domain.Interfaces;
 
 namespace WorkoutTracker.Domain.Workouts
 {
@@ -10,7 +11,7 @@ namespace WorkoutTracker.Domain.Workouts
     /// A class representing on occurrence of a Workout, i.e. a Workout 
     /// which a user performed.
     /// </summary>
-    public class ExecutedWorkout : Entity
+    public class ExecutedWorkout : Entity, IPublicEntity
     {
         /// <summary>
         /// The Workout which was executed.

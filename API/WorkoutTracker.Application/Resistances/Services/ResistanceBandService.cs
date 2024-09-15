@@ -5,6 +5,7 @@ using System.Linq;
 using WorkoutTracker.Application.Resistances.Interfaces;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Domain.Resistances;
+using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Application.Resistances.Services
@@ -127,6 +128,11 @@ namespace WorkoutTracker.Application.Resistances.Services
             }
 
             return _lowestResistanceBand;
+        }
+
+        public ResistanceBand GetByPublicId(Guid publicId)
+        {
+            return _repo.GetWithoutTracking().FirstOrDefault(x => x.PublicId == publicId);
         }
 
         #region Private Methods

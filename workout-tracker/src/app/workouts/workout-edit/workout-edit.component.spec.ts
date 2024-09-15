@@ -126,7 +126,7 @@ describe('WorkoutEditComponent', () => {
   });
 
   it('should load workout based on route param ID during init', () => {
-    expect(workoutService.getById).toHaveBeenCalledOnceWith(WORKOUT_ID);
+    expect(workoutService.getByPublicId).toHaveBeenCalledOnceWith(WORKOUT_ID);
     expect(component.workoutForm.controls.id.value).toBe(WORKOUT_ID);
     expect(component.workoutForm.controls.active.value).toBeTrue();
     expect(component.workoutForm.controls.name.value).toBe('Test Workout');
@@ -161,7 +161,7 @@ describe('WorkoutEditComponent', () => {
     component.ngOnInit();
 
     expect(component.workoutId).toBe(0);
-    expect(workoutService.getById).not.toHaveBeenCalledWith(0); //The original ngOnInit() call would've called it with WORKOUT_ID
+    expect(workoutService.getByPublicId).not.toHaveBeenCalledWith(0); //The original ngOnInit() call would've called it with WORKOUT_ID
   });
 
   it('should open modal', () => {

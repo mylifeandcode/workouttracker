@@ -140,14 +140,15 @@ namespace WorkoutTracker.Tests.Services
         {
             //ARRANGE
             _executedWorkoutServiceMock
-                .Setup(x => x.GetLatest(It.IsAny<int>()))
+                .Setup(x => x.GetLatest(It.IsAny<Guid>()))
                 .Returns(_executedWorkout);
 
             const int WORKOUT_ID = 1;
+            Guid WORKOUT_PUBLIC_ID = Guid.NewGuid();
             const int USER_ID = 5;
 
             //ACT
-            var plan = _sut.Create(WORKOUT_ID, USER_ID);
+            var plan = _sut.Create(WORKOUT_PUBLIC_ID, USER_ID);
 
             //ASSERT
             plan.ShouldNotBeNull();
@@ -167,7 +168,7 @@ namespace WorkoutTracker.Tests.Services
             }
 
             _executedWorkoutServiceMock
-                .Verify(x => x.GetLatest(WORKOUT_ID), Times.Once);
+                .Verify(x => x.GetLatest(WORKOUT_PUBLIC_ID), Times.Once);
             _workoutServiceMock
                 .Verify(x => x.GetById(It.IsAny<int>()), Times.Never);
         }

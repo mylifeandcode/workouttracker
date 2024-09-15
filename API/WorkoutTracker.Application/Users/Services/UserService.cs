@@ -11,7 +11,7 @@ using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Application.Users.Services
 {
-    public class UserService : ServiceBase<User>, IUserService, IDisposable
+    public class UserService : PublicEntityServiceBase<User>, IUserService, IDisposable
     {
         private ICryptoService _cryptoService;
         private IEmailService _emailService;
@@ -131,6 +131,11 @@ namespace WorkoutTracker.Application.Users.Services
         public bool ValidatePasswordResetCode(string resetCode)
         {
             return _repo.Get().Any(user => user.PasswordResetCode == resetCode);
+        }
+
+        public User GetByPublicId(Guid publicId)
+        {
+            return _repo.GetWithoutTracking().FirstOrDefault(x => x.PublicId == publicId);
         }
 
         protected virtual void Dispose(bool disposing)

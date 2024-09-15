@@ -11,7 +11,7 @@ using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Application.Workouts.Services
 {
-    public class ExecutedWorkoutService : ServiceBase<ExecutedWorkout>, IExecutedWorkoutService
+    public class ExecutedWorkoutService : PublicEntityServiceBase<ExecutedWorkout>, IExecutedWorkoutService
     {
         private IRepository<Workout> _workoutRepo;
 
@@ -115,12 +115,12 @@ namespace WorkoutTracker.Application.Workouts.Services
             return output;
         }
 
-        public ExecutedWorkout GetLatest(int workoutId)
+        public ExecutedWorkout GetLatest(Guid workoutPublicId)
         {
             return _repo.GetWithoutTracking()
                 .Where(x => x.StartDateTime.HasValue && x.EndDateTime.HasValue)
                 .OrderByDescending(x => x.Id)
-                .FirstOrDefault(x => x.WorkoutId == workoutId);
+                .FirstOrDefault(x => x.PublicId == workoutPublicId);
         }
 
         public int GetTotalCount(ExecutedWorkoutFilter filter)
@@ -158,6 +158,11 @@ namespace WorkoutTracker.Application.Workouts.Services
                 throw new ArgumentException($"Executed workout {id} not found.");
 
             _repo.Delete(id);
+        }
+
+        public ExecutedWorkout GetByPublicId(Guid publicId)
+        {
+            return base.GetByPublicID(publicId);
         }
 
         #region Private Methods

@@ -23,7 +23,8 @@ import { DurationComponent } from '../duration/duration.component';
 import { DatePipe } from '@angular/common';
 
 interface IWorkoutForm {
-  id: FormControl<number | null>;
+  //id: FormControl<number | null>;
+  publicId: FormControl<string | null>;
   exercises: FormArray<FormGroup<IWorkoutFormExercise>>;
   journal: FormControl<string | null>;
 }
@@ -108,7 +109,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   //END PUBLIC PROPERTIES
 
   //PRIVATE FIELDS
-  private _executedWorkoutId: number = 0;
+  private _executedWorkoutPublicId: string = ''; //GUID
   private _apiCallsInProgress: number = 0;
   //END PRIVATE FIELDS
 
@@ -200,13 +201,13 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
   private getRouteParams(): void {
-    this._executedWorkoutId = this._route.snapshot.params['executedWorkoutId'];
+    this._executedWorkoutPublicId = this._route.snapshot.params['executedWorkoutId'];
 
-    if (this._executedWorkoutId <= 0) {
+    if (this._executedWorkoutPublicId <= '') {
       this._messageService.add({ severity: 'error', summary: 'Error', detail: 'ExecutedWorkoutId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.', closable: true });
     }
     else {
-      this.setupWorkout(this._executedWorkoutId);
+      this.setupWorkout(this._executedWorkoutPublicId);
     }
   }
 
@@ -217,7 +218,8 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
   private createForm(): FormGroup<IWorkoutForm> {
     return this._formBuilder.group<IWorkoutForm>({
-      id: new FormControl<number | null>(0, Validators.required),
+      //id: new FormControl<number | null>(0, Validators.required),
+      publicId: new FormControl<string | null>(null, Validators.required),
       exercises: new FormArray<FormGroup<IWorkoutFormExercise>>([]),
       journal: new FormControl<string | null>('')
     });
@@ -237,9 +239,9 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       });
   }
 
-  private setupWorkout(id: number): void {
+  private setupWorkout(executedWorkoutPublicId: string): void {
     this._apiCallsInProgress++;
-    this._executedWorkoutService.getById(id)
+    this._executedWorkoutService.getByPublicId(executedWorkoutPublicId)
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe({
         next: (executedWorkout: ExecutedWorkoutDTO) => {
@@ -252,7 +254,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           this.startDateTime = this._executedWorkout.startDateTime;
 
           this.workoutForm?.patchValue({
-            id: id
+            publicId: executedWorkoutPublicId
           });
 
           this.setupExercisesFormGroup(executedWorkout.exercises);

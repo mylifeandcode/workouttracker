@@ -70,8 +70,21 @@ export abstract class ApiBaseService<T extends Entity> {
    * @returns An Observable containing the specified entity which completes after the value is 
    * emitted. This value is not cached.
    */
+  /*
   public getById(id: number): Observable<T> {
     return this._http.get<T>(`${this._apiRoot}/${id}`);
+  }
+  */
+
+  /**
+   * Gets the specified entity by public ID.
+   * 
+   * @param publicId The public ID of the entity to retrieve.
+   * @returns An Observable containing the specified entity which completes after the value is 
+   * emitted. This value is not cached.
+   */
+  public getByPublicId(publicId: string): Observable<T> {
+    return this._http.get<T>(`${this._apiRoot}/${publicId}`);
   }
 
   /**

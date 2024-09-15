@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using WorkoutTracker.Domain.BaseClasses;
+using WorkoutTracker.Domain.Interfaces;
 
 namespace WorkoutTracker.API.Models
 {
-    public class ExecutedWorkoutDTO : NamedEntity
+    public class ExecutedWorkoutDTO : NamedEntity, IPublicEntity
     {
         public int WorkoutId { get; set; }
         public DateTime? StartDateTime { get; set; }
@@ -12,9 +13,11 @@ namespace WorkoutTracker.API.Models
         public string Journal { get; set; }
         public int Rating { get; set; }
         public IEnumerable<ExecutedExerciseDTO> Exercises { get; set; }
+        public Guid PublicId { get; set; }
 
         public ExecutedWorkoutDTO(
             int id,
+            Guid publicId,
             string name,
             int workoutId,
             DateTime? startDateTime,
@@ -28,6 +31,7 @@ namespace WorkoutTracker.API.Models
             DateTime? modifiedDateTime)
         {
             Id = id;
+            PublicId = publicId;
             Name = name;
             WorkoutId = workoutId;
             StartDateTime = startDateTime;

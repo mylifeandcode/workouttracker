@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Exercises.Models;
@@ -17,6 +15,7 @@ namespace WorkoutTracker.Application.Workouts.Models
     public class WorkoutPlan
     {
         public int WorkoutId { get; set; }
+        public Guid WorkoutPublicId { get; set; }
         public string WorkoutName { get; set; }
         public int UserId { get; set; }
         public bool HasBeenExecutedBefore { get; set; }
@@ -31,6 +30,7 @@ namespace WorkoutTracker.Application.Workouts.Models
                 throw new ArgumentNullException(nameof(workout));
 
             WorkoutId = workout.Id;
+            WorkoutPublicId = workout.PublicId;
             WorkoutName = workout.Name;
             HasBeenExecutedBefore = hasBeenExecutedBefore;
             UserId = workout.CreatedByUserId;

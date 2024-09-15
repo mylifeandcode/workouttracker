@@ -45,7 +45,7 @@ export class RecentWorkoutsComponent implements OnInit {
   public viewExercises(workoutId: number): void {
     //this.selectedWorkout = null;
     this._workoutService
-      .getById(workoutId)
+      .getByPublicId(workoutId)
       .subscribe((result: Workout) => {
         this.showExercises = true;
         this.selectedWorkout = result;

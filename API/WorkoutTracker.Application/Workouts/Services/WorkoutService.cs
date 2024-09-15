@@ -11,7 +11,7 @@ using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Application.Workouts.Services
 {
-    public class WorkoutService : ServiceBase<Workout>, IWorkoutService
+    public class WorkoutService : PublicEntityServiceBase<Workout>, IWorkoutService
     {
         public WorkoutService(IRepository<Workout> repo, ILogger<WorkoutService> logger) : base(repo, logger) { }
 
@@ -28,7 +28,7 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         public Workout GetByPublicId(Guid publicId)
         {
-            return _repo.GetWithoutTracking().FirstOrDefault(x => x.PublicId == publicId);
+            return base.GetByPublicID(publicId);
         }
 
         public override Workout Update(Workout modifiedWorkout, bool saveChanges = false)
@@ -44,14 +44,14 @@ namespace WorkoutTracker.Application.Workouts.Services
             return modifiedWorkout;
         }
 
-        public void Retire(int workoutId)
+        public void Retire(Guid publicId)
         {
-            SetActive(workoutId, false);
+            SetActive(publicId, false);
         }
 
-        public void Reactivate(int workoutId)
+        public void Reactivate(Guid publicId)
         {
-            SetActive(workoutId, true);
+            SetActive(publicId, true);
         }
 
         public int GetTotalCount(WorkoutFilter filter)
@@ -75,11 +75,11 @@ namespace WorkoutTracker.Application.Workouts.Services
                 query = query.Where(workout => EF.Functions.Like(workout.Name, "%" + filter.NameContains + "%"));
         }
 
-        private void SetActive(int workoutId, bool active)
+        private void SetActive(Guid workoutPublicId, bool active)
         {
             try
             {
-                var workout = _repo.Get().First(x => x.Id == workoutId);
+                var workout = _repo.Get().First(x => x.PublicId == workoutPublicId);
                 workout.Active = active;
                 workout.ModifiedByUserId = workout.CreatedByUserId;
                 workout.ModifiedDateTime = DateTime.Now;
@@ -87,7 +87,7 @@ namespace WorkoutTracker.Application.Workouts.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, null, [workoutId, active]);
+                _logger.LogError(ex, null, [workoutPublicId, active]);
                 throw;
             }
         }

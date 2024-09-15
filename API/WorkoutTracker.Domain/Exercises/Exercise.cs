@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using WorkoutTracker.Domain.BaseClasses;
+using WorkoutTracker.Domain.Interfaces;
 
 namespace WorkoutTracker.Domain.Exercises
 {
-    public class Exercise : NamedEntity
+    public class Exercise : NamedEntity, IPublicEntity
     {
         public Guid PublicId { get; set; }
         public string Description { get; set; }

@@ -41,7 +41,6 @@ namespace WorkoutTracker.API.Controllers
         {
             try
             {
-                //TODO: Consolidate this code somewhere!
                 var userId = GetUserID();
 
                 var filter = BuildWorkoutFilter(userId, activeOnly, nameContains);
@@ -70,6 +69,7 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
+        /*
         // GET api/Workouts/5
         [HttpGet("{id}")]
         public ActionResult<Workout> Get(int id)
@@ -93,8 +93,9 @@ namespace WorkoutTracker.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        */
 
-        [HttpGet("public/{publicId}")]
+        [HttpGet("{publicId}")]
         public ActionResult<Workout> GetByPublicId(Guid publicId)
         {
             try
@@ -117,6 +118,7 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
+        /*
         [HttpGet("DTO/{id}")]
         public ActionResult<WorkoutDTO> GetDTO(int id)
         {
@@ -138,13 +140,14 @@ namespace WorkoutTracker.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        */
 
-        [HttpGet("{id}/plan")]
-        public ActionResult<WorkoutPlan> GetPlan(int id)
+        [HttpGet("{workoutPublicId}/plan")]
+        public ActionResult<WorkoutPlan> GetNewPlan(Guid workoutPublicId)
         {
             try
             {
-                var plan = _workoutPlanService.Create(id, this.GetUserID());
+                var plan = _workoutPlanService.Create(workoutPublicId, this.GetUserID());
 
                 if (plan.UserId != GetUserID())
                     return Forbid();
@@ -157,22 +160,20 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        [HttpPost("{id}/plan")]
-        public ActionResult<int> SubmitPlan([FromBody] WorkoutPlan plan)
+        [HttpPost("plan")]
+        public ActionResult<Guid> SubmitPlan([FromBody] WorkoutPlan plan)
         {
             return CreateWorkoutFromWorkoutPlan(plan, true);
         }
 
-        [HttpPost("{id}/plan-for-later")]
-        public ActionResult<int> SubmitPlanForLater([FromBody] WorkoutPlan plan)
+        [HttpPost("plan-for-later")]
+        public ActionResult<Guid> SubmitPlanForLater([FromBody] WorkoutPlan plan)
         {
-            //TODO: Change URL -- id isn't needed
             return CreateWorkoutFromWorkoutPlan(plan, false);
         }
 
-        [HttpPost("{id}/plan-for-past/{startDateTime}/{endDateTime}")]
-        public ActionResult<int> SubmitPlanForPast([FromBody] WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime) {
-            //TODO: Change URL -- id isn't needed
+        [HttpPost("plan-for-past/{startDateTime}/{endDateTime}")]
+        public ActionResult<Guid> SubmitPlanForPast([FromBody] WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime) {
             return CreateWorkoutFromWorkoutPlanForPast(plan, startDateTime, endDateTime);
         }
 
@@ -191,9 +192,9 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        // PUT api/Workouts/5
-        [HttpPut("{id}")]
-        public ActionResult<Workout> Put(int id, [FromBody]Workout value)
+        // PUT api/Workouts
+        [HttpPut]
+        public ActionResult<Workout> Put([FromBody]Workout value)
         {
             try
             {
@@ -206,19 +207,19 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        // DELETE api/Workouts/5
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        // DELETE api/Workouts/some-guid
+        [HttpDelete("{publicId}")]
+        public ActionResult Delete(Guid publicId)
         {
             throw new NotImplementedException();
         }
 
-        [HttpPut("{id}/retire")]
-        public ActionResult Retire(int id)
+        [HttpPut("{publicId}/retire")]
+        public ActionResult Retire(Guid publicId)
         {
             try
             {
-                _workoutService.Retire(id);
+                _workoutService.Retire(publicId);
                 return Ok();
             }
             catch (Exception ex)
@@ -227,12 +228,12 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        [HttpPut("{id}/reactivate")]
-        public ActionResult Reactivate(int id)
+        [HttpPut("{publicId}/reactivate")]
+        public ActionResult Reactivate(Guid publicId)
         {
             try
             {
-                _workoutService.Reactivate(id);
+                _workoutService.Reactivate(publicId);
                 return Ok();
             }
             catch (Exception ex)
@@ -254,12 +255,12 @@ namespace WorkoutTracker.API.Controllers
             return filter;
         }
 
-        private ActionResult<int> CreateWorkoutFromWorkoutPlan(WorkoutPlan plan, bool startWorkout)
+        private ActionResult<Guid> CreateWorkoutFromWorkoutPlan(WorkoutPlan plan, bool startWorkout)
         {
             try
             {
                 var executedWorkout = _executedWorkoutService.Create(plan, startWorkout);
-                return Ok(executedWorkout.Id);
+                return Ok(executedWorkout.PublicId);
 
             }
             catch (Exception ex)
@@ -268,12 +269,12 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        private ActionResult<int> CreateWorkoutFromWorkoutPlanForPast(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime)
+        private ActionResult<Guid> CreateWorkoutFromWorkoutPlanForPast(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime)
         {
             try
             {
                 var executedWorkout = _executedWorkoutService.Create(plan, startDateTime, endDateTime);
-                return Ok(executedWorkout.Id);
+                return Ok(executedWorkout.PublicId);
 
             }
             catch (Exception ex)

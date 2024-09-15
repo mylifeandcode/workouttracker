@@ -12,6 +12,7 @@ namespace WorkoutTracker.Data.EntitySetup.Resistances
         {
             var entity = builder.Entity<ResistanceBand>();
 
+            entity.Property(x => x.PublicId).HasDefaultValueSql("NEWID()");
             entity.Property(x => x.Color).HasMaxLength(25).IsRequired();
             entity
                 .Property(x => x.MaxResistanceAmount)
@@ -19,6 +20,7 @@ namespace WorkoutTracker.Data.EntitySetup.Resistances
                 .IsRequired();
 
             entity.HasIndex(x => x.Color);
+            entity.HasIndex(x => x.PublicId);
 
             base.SetupAuditFields<ResistanceBand>(builder);
         }

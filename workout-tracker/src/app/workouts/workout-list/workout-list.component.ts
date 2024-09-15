@@ -65,10 +65,10 @@ export class WorkoutListComponent {
     this.getWorkouts(event.first);
   }
 
-  public retireWorkout(workoutId: number, workoutName: string): void {
+  public retireWorkout(workoutPublicId: string, workoutName: string): void {
     if (window.confirm(`Are you sure you want to retire workout "${workoutName}"?`)) {
       this.loading = true;
-      this._workoutSvc.retire(workoutId)
+      this._workoutSvc.retire(workoutPublicId)
         .pipe(finalize(() => { this.loading = false; }))
         .subscribe({
           next: (response: HttpResponse<any>) => {
@@ -79,10 +79,10 @@ export class WorkoutListComponent {
     }
   }
 
-  public reactivateWorkout(workoutId: number, workoutName: string): void {
+  public reactivateWorkout(workoutPublicId: string, workoutName: string): void {
     if (window.confirm(`Are you sure you want to reactivate workout "${workoutName}"?`)) {
       this.loading = true;
-      this._workoutSvc.reactivate(workoutId)
+      this._workoutSvc.reactivate(workoutPublicId)
         .pipe(finalize(() => { this.loading = false; }))
         .subscribe({
           next: (response: HttpResponse<any>) => {

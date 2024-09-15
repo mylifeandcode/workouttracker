@@ -179,7 +179,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
         this._pastWorkoutEndDateTime = new Date(params["end"]);
 
       this._apiCallsInProgress++;
-      this._workoutService.getPlan(workoutId)
+      this._workoutService.getNewPlan(workoutId)
         .pipe(finalize(() => { this._apiCallsInProgress--; }))
         .subscribe((result: WorkoutPlan) => {
           this.workoutPlan = result;

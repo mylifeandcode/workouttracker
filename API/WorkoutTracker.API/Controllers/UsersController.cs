@@ -61,15 +61,15 @@ namespace WorkoutTracker.API.Controllers
         }
         */
 
-        [HttpGet("{id}")]
-        public override ActionResult<User> Get(int id)
+        [HttpGet("{publicId}")]
+        public ActionResult<User> GetByPublicId(Guid publicId)
         {
             //This method replaces the default implementation because we don't 
             //want to return the domain object which includes the user's 
             //hashed password.
             try
             {
-                var entity = _service.GetById(id);
+                var entity = _service.GetByPublicId(publicId);
 
                 if (entity == null)
                     return NotFound();

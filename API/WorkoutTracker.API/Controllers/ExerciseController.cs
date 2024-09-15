@@ -69,6 +69,7 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
+        /*
         // GET api/Exercises/5
         [HttpGet("{id}")]
         public ActionResult<Exercise> Get(int id)
@@ -86,7 +87,9 @@ namespace WorkoutTracker.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpGet("public/{publicId}")]
+        */
+
+        [HttpGet("{publicId}")]
         public ActionResult<Exercise> GetByPublicId(Guid publicId)
         {
             try
@@ -122,9 +125,9 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        // PUT api/Exercises/5
-        [HttpPut("{id}")]
-        public ActionResult<Exercise> Put(int id, [FromBody]Exercise value)
+        // PUT api/Exercises
+        [HttpPut]
+        public ActionResult<Exercise> Put([FromBody]Exercise value)
         {
             try
             {
@@ -141,9 +144,9 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        // DELETE api/Exercises/5
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        // DELETE api/Exercises/some-guid
+        [HttpDelete("{publicId}")]
+        public ActionResult Delete(Guid publicId)
         {
             throw new NotImplementedException();
         }

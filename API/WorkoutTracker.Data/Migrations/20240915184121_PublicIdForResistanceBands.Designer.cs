@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutTracker.Data;
 
@@ -11,9 +12,11 @@ using WorkoutTracker.Data;
 namespace WorkoutTracker.Data.Migrations
 {
     [DbContext(typeof(WorkoutsContext))]
-    partial class WorkoutsContextModelSnapshot : ModelSnapshot
+    [Migration("20240915184121_PublicIdForResistanceBands")]
+    partial class PublicIdForResistanceBands
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -366,8 +369,6 @@ namespace WorkoutTracker.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Color");
-
-                    b.HasIndex("PublicId");
 
                     b.HasIndex("CreatedByUserId", "CreatedDateTime", "ModifiedByUserId", "ModifiedDateTime");
 

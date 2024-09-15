@@ -44,9 +44,11 @@ export class ExerciseService {
 
     }
 
+    /*
     public getById(id: number): Observable<Exercise> {
       return this._http.get<Exercise>(`${this.API_ROOT}/${id}`);
     }
+    */
 
     public getByPublicId(publicId: string): Observable<Exercise> {
       return this._http.get<Exercise>(`${this.API_ROOT}/${publicId}`);
@@ -62,7 +64,7 @@ export class ExerciseService {
     }
 
     public update(exercise: Exercise): Observable<Exercise> {
-      return this._http.put<Exercise>(`${this.API_ROOT}/${exercise.id}`, exercise, HTTP_OPTIONS);
+      return this._http.put<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS);
     }
 
     public getResistanceTypes(): Observable<Map<number, string>> {

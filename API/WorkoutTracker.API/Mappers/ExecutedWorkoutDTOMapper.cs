@@ -15,6 +15,7 @@ namespace WorkoutTracker.API.Mappers
 
             return new ExecutedWorkoutDTO(
                 executedWorkout.Id,
+                executedWorkout.PublicId,
                 executedWorkout.Workout.Name,
                 executedWorkout.WorkoutId,
                 executedWorkout.StartDateTime,
