@@ -20,7 +20,8 @@ namespace WorkoutTracker.API.Auth
             var claims = new[] {
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim("UserID", user.Id.ToString())
+                new Claim("UserID", user.Id.ToString()),
+                new Claim("UserPublicID", user.PublicId.ToString())
             };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));

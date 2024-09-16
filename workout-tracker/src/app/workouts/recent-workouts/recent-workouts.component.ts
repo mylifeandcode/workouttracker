@@ -42,21 +42,21 @@ export class RecentWorkoutsComponent implements OnInit {
       });
   }
 
-  public viewExercises(workoutId: number): void {
+  public viewExercises(workoutPublicId: string): void {
     //this.selectedWorkout = null;
     this._workoutService
-      .getByPublicId(workoutId)
+      .getByPublicId(workoutPublicId)
       .subscribe((result: Workout) => {
         this.showExercises = true;
         this.selectedWorkout = result;
       });
   }
 
-  public doWorkout(workoutId: number): void {
-    this._router.navigate([`workouts/plan/${workoutId}`]);
+  public doWorkout(workoutPublicId: number): void {
+    this._router.navigate([`workouts/plan/${workoutPublicId}`]);
   }
 
-  public planWorkout(workoutId: number): void {
-    this._router.navigate([`workouts/plan-for-later/${workoutId}`]);
+  public planWorkout(workoutPublicId: number): void {
+    this._router.navigate([`workouts/plan-for-later/${workoutPublicId}`]);
   }
 }

@@ -24,6 +24,7 @@ interface IExerciseInWorkout {
 
 interface IWorkoutEditForm {
   id: FormControl<number>;
+  publicId: FormControl<string | null>; //Will be null for a new Workout
   active: FormControl<boolean>;
   name: FormControl<string>;
   exercises: FormArray<FormGroup<IExerciseInWorkout>>;
@@ -41,7 +42,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   //A helfpul link for dynamic form arrays: https://codinglatte.com/posts/angular/angular-dynamic-form-fields-using-formarray/
 
   //Public fields
-  public workoutId: number = 0;
+  public workoutPublicId: string = '00000000-0000-0000-0000-000000000000';
   public workoutForm: FormGroup<IWorkoutEditForm>;
   public loading: boolean = true;
   public infoMsg: string | null = null;
@@ -119,7 +120,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       this.saving = true;
       this.infoMsg = "Saving...";
 
-      if (this._workout.id == 0)
+      if (!this._workout.publicId)
         this.addWorkout();
       else
         this.updateWorkout();
@@ -130,7 +131,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   //PRIVATE METHODS ///////////////////////////////////////////////////////////////////////////////
 
   private setupForm(): void {
-    if (this.workoutId != 0) {
+    if (this.workoutPublicId != null) {
       this.loadWorkout();
     }
     else {
@@ -140,13 +141,14 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   private getWorkoutIdFromRouteParams(): void {
-    this.workoutId = this._route.snapshot.params['id'];
+    this.workoutPublicId = this._route.snapshot.params['id'];
   }
 
   private createForm(): FormGroup<IWorkoutEditForm> {
 
     return this._formBuilder.group<IWorkoutEditForm>({
       id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+      publicId: new FormControl<string>('00000000-0000-0000-0000-000000000000', { nonNullable: true, validators: Validators.required }),
       active: new FormControl<boolean>(true, { nonNullable: true, validators: Validators.required }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       exercises: new FormArray<FormGroup<IExerciseInWorkout>>([])
@@ -155,8 +157,9 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   private loadWorkout(): void {
+    if (!this.workoutPublicId) return;
     this.loading = true;
-    this._workoutService.getByPublicId(this.workoutId).subscribe((workout: Workout) => {
+    this._workoutService.getByPublicId(this.workoutPublicId).subscribe((workout: Workout) => {
       this.updateFormWithWorkoutValues(workout);
       this.loading = false;
       this._workout = workout;
@@ -166,6 +169,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   private updateFormWithWorkoutValues(workout: Workout): void {
     this.workoutForm.patchValue({
       id: workout.id,
+      publicId: workout.publicId!,
       active: workout.active,
       name: workout.name
     });
@@ -181,6 +185,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   private addWorkout(): void {
     //console.log("ADDING WORKOUT: ", this._workout);
+    this._workout.publicId = '00000000-0000-0000-0000-000000000000'; //TODO: Create a constant for this, clean-up!
     this._workoutService.add(this._workout)
       .pipe(finalize(() => {
         this.saving = false;
@@ -189,10 +194,10 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       .subscribe({
         next: (addedWorkout: Workout) => {
           //this.workout = value;
-          this.workoutId = addedWorkout.id;
+          this.workoutPublicId = addedWorkout.publicId!;
           this._workout = addedWorkout; //TODO: Refactor! We have redundant variables!
           this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
-          this._router.navigate([`workouts/edit/${this.workoutId}`]);
+          this._router.navigate([`workouts/edit/${this.workoutPublicId}`]);
         },
         error: (error: any) => {
           this.errorMsg = error.message;

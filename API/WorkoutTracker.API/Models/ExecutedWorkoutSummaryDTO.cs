@@ -12,8 +12,9 @@ namespace WorkoutTracker.API.Models
         public DateTime CreatedDateTime { get; }
         public int WorkoutId { get; }
         public string Journal { get; }
+        public Guid PublicId { get; }
 
-        public ExecutedWorkoutSummaryDTO(int id, string name, int workoutId, DateTime? startDateTime, DateTime? endDateTime, DateTime createdDateTime, string journal): base(id, name)
-            => (WorkoutId, StartDateTime, EndDateTime, CreatedDateTime, Journal) = (workoutId, startDateTime, endDateTime, createdDateTime, journal);
+        public ExecutedWorkoutSummaryDTO(int id, string name, int workoutId, DateTime? startDateTime, DateTime? endDateTime, DateTime createdDateTime, string journal, Guid publicId): base(id, name)
+            => (WorkoutId, StartDateTime, EndDateTime, CreatedDateTime, Journal, PublicId) = (workoutId, startDateTime, endDateTime, createdDateTime, journal, publicId);
     }
 }

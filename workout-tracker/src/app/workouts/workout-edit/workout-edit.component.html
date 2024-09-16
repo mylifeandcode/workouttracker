@@ -1,7 +1,7 @@
 @if (readOnlyMode) {
   <h3 class="headroom">Workout</h3>
 } @else {
-  <h3 class="headroom">Workout {{ workoutId > 0 ? 'Edit' : 'Creation' }}</h3>
+  <h3 class="headroom">Workout {{ workoutPublicId ? 'Edit' : 'Creation' }}</h3>
 }
 
 <div class="container-fluid form-group">
@@ -17,6 +17,7 @@
         <div class="row bottom-padded">
           <div class="col-12">
             <input type="hidden" formControlName="id" />
+            <input type="hidden" formControlName="publicId" />
             <input type="hidden" formControlName="active" />
   
             <label class="center-block"

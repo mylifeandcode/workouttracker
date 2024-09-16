@@ -1,3 +1,3 @@
 export interface IPublicEntity {
-  publicId: string; //GUID
+  publicId: string | null; //GUID
 }

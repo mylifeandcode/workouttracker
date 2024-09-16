@@ -58,7 +58,8 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   }
 
   public ngOnInit(): void {
-    this._userService.getById(this._authService.userId)
+    if (!this._authService.userPublicId) return;
+    this._userService.getByPublicId(this._authService.userPublicId)
       .pipe(
         finalize(() => { this.loading = false; }),
         catchError((err) => {

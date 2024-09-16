@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +8,7 @@ using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.API.Models;
 using WorkoutTracker.Application.Workouts.Interfaces;
-using WorkoutTracker.API.Auth;
 using WorkoutTracker.Application.Security.Interfaces;
-using WorkoutTracker.Application.Shared.Services;
-using WorkoutTracker.Application.Shared.Interfaces;
 
 namespace WorkoutTracker.API.Controllers
 {

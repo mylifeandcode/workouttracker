@@ -21,7 +21,8 @@ namespace WorkoutTracker.API.Mappers
                         x.Exercise?.ExerciseTargetAreaLinks?.Select(x => x.TargetArea.Name))
                     .OrderBy(x => x)
                     .Distinct()),
-                workout.Active);
+                workout.Active, 
+                workout.PublicId);
         }
     }
 }

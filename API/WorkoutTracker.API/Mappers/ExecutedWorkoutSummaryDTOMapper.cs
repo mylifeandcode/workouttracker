@@ -17,7 +17,8 @@ namespace WorkoutTracker.API.Mappers
                         executedWorkout.StartDateTime,
                         executedWorkout.EndDateTime,
                         executedWorkout.CreatedDateTime,
-                        executedWorkout.Journal);
+                        executedWorkout.Journal,
+                        executedWorkout.PublicId);
         }
     }
 }

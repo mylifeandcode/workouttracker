@@ -1,57 +1,60 @@
 <h3 class="headroom">Workout History</h3>
 <div class="container-fluid">
   <div class="row">
-      <div class="col-12">
-          <p-table #dt styleClass="p-datatable-striped" [value]="executedWorkouts" [paginator]="true" [columns]="cols" [rows]="pageSize" [lazy]="true" (onLazyLoad)="getExecutedWorkoutsLazy($event)" [totalRecords]="totalRecords" [loading]="loading">
-              <ng-template pTemplate="header" let-columns>
-                  <tr>
-                      <th>Workout Name</th>
-                      <th>Start Date/Time</th>
-                      <th>End Date/Time</th>
-                      <th>Notes/Journal</th>
-                  </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-executedWorkout>
-                  <tr class="workout-history">
-                      <td><a [routerLink]="['/workouts/history/view/', executedWorkout.id]">{{executedWorkout.name}}</a></td>
-                      <td>{{executedWorkout.startDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
-                      <td>{{executedWorkout.endDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
-                      <td>
-                        @if (executedWorkout.journal) {
-                          <span 
-                            (click)="openNotesModal(executedWorkout.journal)" 
-                            pTooltip="{{executedWorkout.journal}}">
-                              Notes
-                          </span>
-                        }
-                      </td>
-                  </tr>
-              </ng-template>
-          </p-table>
-      </div>
+    <div class="col-12">
+      <p-table #dt styleClass="p-datatable-striped" [value]="executedWorkouts" [paginator]="true" [columns]="cols"
+        [rows]="pageSize" [lazy]="true" (onLazyLoad)="getExecutedWorkoutsLazy($event)" [totalRecords]="totalRecords"
+        [loading]="loading">
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th>Workout Name</th>
+            <th>Start Date/Time</th>
+            <th>End Date/Time</th>
+            <th>Notes/Journal</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-executedWorkout>
+          <tr class="workout-history">
+            <td><a routerLink="/workouts/history/view/{{executedWorkout.publicId}}">{{executedWorkout.name}}</a></td>
+            <td>{{executedWorkout.startDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
+            <td>{{executedWorkout.endDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
+            <td>
+              @if (executedWorkout.journal) {
+              <span (click)="openNotesModal(executedWorkout.journal)" pTooltip="{{executedWorkout.journal}}">
+                Notes
+              </span>
+              }
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
   @if (totalRecords != null) {
-    <div class="row">
-      @if (totalRecords > 0) {
-        <div class="col-12">{{totalRecords}} total workouts</div>
-      } @else {
-        <div class="col-12" style="font-style: italic">No workouts have been executed yet.</div>
-      }
-    </div>
+  <div class="row">
+    @if (totalRecords > 0) {
+    <div class="col-12">{{totalRecords}} total workouts</div>
+    } @else {
+    <div class="col-12" style="font-style: italic">No workouts have been executed yet.</div>
+    }
+  </div>
   }
   <div class="row">
     <div class="col-12 bottom-padded">
-      <button routerLink="/workouts/select" [disabled]="loading" class="btn btn-start-workout me-2"><i class="fa fa-plus"></i> Start a Workout</button>
-      <button routerLink="/workouts/log-past-start" class="btn btn-log-past-workout"><i class="fa fa-pencil"></i> Log a Past Workout</button>
+      <button routerLink="/workouts/select" [disabled]="loading" class="btn btn-start-workout me-2"><i
+          class="fa fa-plus"></i> Start a Workout</button>
+      <button routerLink="/workouts/log-past-start" class="btn btn-log-past-workout"><i class="fa fa-pencil"></i> Log a
+        Past Workout</button>
     </div>
   </div>
 </div>
 
-<p-dialog [(visible)]="showNotesModal" [style]="{width: '450px'}" header="Notes/Journal" [modal]="true" styleClass="p-fluid">
+<p-dialog [(visible)]="showNotesModal" [style]="{width: '450px'}" header="Notes/Journal" [modal]="true"
+  styleClass="p-fluid">
   <ng-template pTemplate="content">
     {{notes}}
   </ng-template>
   <ng-template pTemplate="footer">
     <button pButton pRipple label="Close" icon="pi pi-times" class="p-button-text" (click)="closeNotesModal()"></button>
-  </ng-template>  
+  </ng-template>
 </p-dialog>

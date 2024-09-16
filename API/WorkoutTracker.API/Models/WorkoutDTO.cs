@@ -10,8 +10,9 @@ namespace WorkoutTracker.API.Models
         public IEnumerable<ExerciseInWorkoutDTO> Exercises { get; }
         public string TargetAreas { get; }
         public bool Active { get; set; }
+        public Guid PublicId { get; set; }
 
-        public WorkoutDTO(int id, string name, IEnumerable<ExerciseInWorkoutDTO> exercises, string targetAreas, bool active) : base(id, name)
-            => (Exercises, TargetAreas, Active) = (exercises, targetAreas, active);
+        public WorkoutDTO(int id, string name, IEnumerable<ExerciseInWorkoutDTO> exercises, string targetAreas, bool active, Guid publicId) : base(id, name)
+            => (Exercises, TargetAreas, Active, PublicId) = (exercises, targetAreas, active, publicId);
     }
 }

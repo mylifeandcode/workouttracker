@@ -42,7 +42,10 @@ interface IExerciseEditForm {
     templateUrl: './exercise-edit.component.html',
     styleUrls: ['./exercise-edit.component.scss'],
     standalone: true,
-    imports: [ProgressSpinnerModule, FormsModule, ReactiveFormsModule, NgClass, TooltipModule, InputSwitchModule, KeyValuePipe, InsertSpaceBeforeCapitalPipe]
+    imports: [
+      ProgressSpinnerModule, FormsModule, ReactiveFormsModule, NgClass, TooltipModule, InputSwitchModule, 
+      KeyValuePipe, InsertSpaceBeforeCapitalPipe
+    ]
 })
 export class ExerciseEditComponent extends CheckForUnsavedDataComponent implements OnInit {
 
@@ -72,7 +75,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   //PRIVATE FIELDS
   private _exercise: Exercise = new Exercise();
-  private _exerciseId: number = 0; //TODO: Refactor. We have an exercise variable. Why have this too?
+  private _exercisePublicId: string | null = null; //TODO: Refactor. We have an exercise variable. Why have this too?
 
   constructor(
     private _route: ActivatedRoute,
@@ -111,7 +114,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     this.updateExerciseForPersisting();
 
     //TODO: Refactor to use a pointer to the service method, as both signatures and return types are the same
-    if (this._exerciseId == 0)
+    if (!this._exercisePublicId)
       this._exerciseSvc.add(this._exercise)
         .pipe(finalize(() => {
           this.saving = false;
@@ -120,7 +123,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
         .subscribe({
           next: (addedExercise: Exercise) => {
             this._exercise = addedExercise;
-            this._exerciseId = this._exercise.id;
+            this._exercisePublicId = this._exercise.publicId;
             this.infoMsg = "Exercise created at " + new Date().toLocaleTimeString();
           },
           error: (error: any) => {
@@ -174,8 +177,8 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     //TODO: Re-evaluate. Do I really need to do this? I think a better solution might be to just look at the snapshot.
     //this._route.params.subscribe(params => {
 
-    this._exerciseId = this._route.snapshot.params['id'];
-    if (this._exerciseId != 0) {
+    this._exercisePublicId = this._route.snapshot.params['id'];
+    if (this._exercisePublicId) {
       this.loadExercise();
     }
     else {
@@ -215,9 +218,10 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   }
 
   private loadExercise(): void {
+    if (!this._exercisePublicId) return;
     this.loading = true;
 
-    this._exerciseSvc.getById(this._exerciseId).subscribe((value: Exercise) => {
+    this._exerciseSvc.getByPublicId(this._exercisePublicId).subscribe((value: Exercise) => {
       this._exercise = value;
       this.updateFormWithExerciseValues();
       this.loading = false;
@@ -256,7 +260,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
         const selectedTargetArea = find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key);
         if (selectedTargetArea) {
           output.push(new ExerciseTargetAreaLink(
-            this._exerciseId,
+            this._exercise.id,
             selectedTargetArea.id
           ));
         }

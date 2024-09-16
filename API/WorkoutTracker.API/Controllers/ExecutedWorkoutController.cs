@@ -82,7 +82,8 @@ namespace WorkoutTracker.API.Controllers
                         executedWorkout.StartDateTime,
                         executedWorkout.EndDateTime, 
                         executedWorkout.CreatedDateTime, 
-                        executedWorkout.Journal);
+                        executedWorkout.Journal,
+                        executedWorkout.PublicId);
                 });
 
                 var result = new PaginatedResults<ExecutedWorkoutSummaryDTO>(results, totalCount);
@@ -127,7 +128,8 @@ namespace WorkoutTracker.API.Controllers
                         executedWorkout.StartDateTime,
                         executedWorkout.EndDateTime, 
                         executedWorkout.CreatedDateTime, 
-                        executedWorkout.Journal);
+                        executedWorkout.Journal, 
+                        executedWorkout.PublicId);
                 });
 
                 var result = new PaginatedResults<ExecutedWorkoutSummaryDTO>(results, totalCount);
