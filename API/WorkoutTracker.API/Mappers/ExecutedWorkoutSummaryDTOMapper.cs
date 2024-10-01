@@ -13,7 +13,7 @@ namespace WorkoutTracker.API.Mappers
             return new ExecutedWorkoutSummaryDTO(
                         executedWorkout.Id,
                         executedWorkout.Workout.Name,
-                        executedWorkout.WorkoutId,
+                        executedWorkout.Workout.PublicId,
                         executedWorkout.StartDateTime,
                         executedWorkout.EndDateTime,
                         executedWorkout.CreatedDateTime,

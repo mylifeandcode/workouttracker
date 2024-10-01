@@ -29,7 +29,7 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public virtual ActionResult<T> Get(int id)
         {
             try

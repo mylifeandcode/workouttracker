@@ -20,14 +20,14 @@ const httpOptions = {
 export class UserService extends ApiBaseService<User> {
 
   constructor(private _configService: ConfigService, _http: HttpClient) { 
-    super(_configService.get('apiRoot') + "Users", _http);
+    super(_configService.get('apiRoot') + "users", _http);
   }
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
 
   public init(): void {
     //Race condition in app initializer prevents this from being done in constructor
-    this._apiRoot = this._configService.get("apiRoot") + "Users";
+    this._apiRoot = this._configService.get("apiRoot") + "users";
   }
 
   public getOverview(): Observable<UserOverview> {

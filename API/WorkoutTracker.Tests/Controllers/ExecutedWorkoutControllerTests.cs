@@ -57,15 +57,16 @@ namespace WorkoutTracker.Tests.Controllers
         public void Should_Delete_Planned_Workouts()
         {
             //ARRANGE
+            var publicId = Guid.NewGuid();
 
             //ACT
-            ActionResult response = _sut.DeletePlanned(100);
+            ActionResult response = _sut.DeletePlanned(publicId);
 
             //ASSERT
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response, typeof(StatusCodeResult));
             Assert.AreEqual(200, (response as StatusCodeResult).StatusCode);
-            _executedWorkoutService.Verify(x => x.DeletePlanned(100), Times.Once);
+            _executedWorkoutService.Verify(x => x.DeletePlanned(publicId), Times.Once);
         }
 
         #region Setup Methods
@@ -78,7 +79,7 @@ namespace WorkoutTracker.Tests.Controllers
                 _inProgressWorkouts.Add(new ExecutedWorkout());
             }
             _executedWorkoutService.Setup(x => x.GetInProgress(It.IsAny<int>())).Returns(_inProgressWorkouts);
-            _executedWorkoutService.Setup(x => x.DeletePlanned(It.IsAny<int>()));
+            _executedWorkoutService.Setup(x => x.DeletePlanned(It.IsAny<Guid>()));
         }
 
         private void SetupExecutedWorkoutDTOMapperMock()
@@ -93,7 +94,7 @@ namespace WorkoutTracker.Tests.Controllers
             _executedWorkoutSummaryDTOMapper
                 .Setup(x => x.MapFromExecutedWorkout(It.IsAny<ExecutedWorkout>()))
                 .Returns(new ExecutedWorkoutSummaryDTO(
-                    0, "Sample Workout", 1, 
+                    0, "Sample Workout", Guid.NewGuid(), 
                     new DateTime(2023, 5, 6, 12, 0, 0), 
                     new DateTime(2023, 5, 6, 13, 0, 0), 
                     new DateTime(2023, 5, 6, 11, 58, 0), "Some notes", Guid.NewGuid()));

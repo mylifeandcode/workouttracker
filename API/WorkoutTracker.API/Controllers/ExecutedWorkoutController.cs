@@ -78,7 +78,7 @@ namespace WorkoutTracker.API.Controllers
                     return new ExecutedWorkoutSummaryDTO(
                         executedWorkout.Id,
                         executedWorkout.Workout.Name,
-                        executedWorkout.WorkoutId,
+                        executedWorkout.Workout.PublicId,
                         executedWorkout.StartDateTime,
                         executedWorkout.EndDateTime, 
                         executedWorkout.CreatedDateTime, 
@@ -124,7 +124,7 @@ namespace WorkoutTracker.API.Controllers
                     return new ExecutedWorkoutSummaryDTO(
                         executedWorkout.Id,
                         executedWorkout.Workout.Name,
-                        executedWorkout.WorkoutId,
+                        executedWorkout.Workout.PublicId,
                         executedWorkout.StartDateTime,
                         executedWorkout.EndDateTime, 
                         executedWorkout.CreatedDateTime, 
@@ -209,12 +209,12 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        [HttpDelete("planned/{id}")]
-        public ActionResult DeletePlanned(int id)
+        [HttpDelete("planned/{publicId}")]
+        public ActionResult DeletePlanned(Guid publicId)
         {
             try
             { 
-                _executedWorkoutService.DeletePlanned(id);
+                _executedWorkoutService.DeletePlanned(publicId);
                 return StatusCode(200);
             }
             catch (Exception ex)

@@ -17,7 +17,7 @@ namespace WorkoutTracker.Application.Workouts.Interfaces
         int GetTotalCount(ExecutedWorkoutFilter filter);
         int GetPlannedCount(int userId);
         IEnumerable<ExecutedWorkout> GetInProgress(int userId);
-        void DeletePlanned(int id);
+        void DeletePlanned(Guid publicId);
         ExecutedWorkout GetByPublicId(Guid publicId);
     }
 }

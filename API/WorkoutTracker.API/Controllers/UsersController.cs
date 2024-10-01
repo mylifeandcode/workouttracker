@@ -57,7 +57,7 @@ namespace WorkoutTracker.API.Controllers
         }
         */
 
-        [HttpGet("{publicId}")]
+        [HttpGet("{publicId:guid}")]
         public ActionResult<User> GetByPublicId(Guid publicId)
         {
             //This method replaces the default implementation because we don't 

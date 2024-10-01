@@ -7,10 +7,12 @@ import { User } from 'app/core/models/user';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { UserService } from '../../core/services/user/user.service';
+import { EMPTY_GUID } from 'app/shared/shared-constants';
 
 
 interface IUserEditForm {
   id: FormControl<number>;
+  publicId: FormControl<string | null>;
   name: FormControl<string>;
   emailAddress: FormControl<string>;
   role: FormControl<number>;
@@ -100,6 +102,7 @@ export class UserEditComponent implements OnInit {
 
     return this._formBuilder.group<IUserEditForm>({
       id: new FormControl<number>(0, { nonNullable: true }),
+      publicId: new FormControl<string | null>(EMPTY_GUID, { nonNullable: true }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       emailAddress: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
       role: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] })
@@ -125,6 +128,7 @@ export class UserEditComponent implements OnInit {
           this.userEditForm.patchValue(
             {
               id: this._user.id,
+              publicId: this._user.publicId,
               name: this._user.name,
               emailAddress: this._user.emailAddress,
               role: this._user.role
@@ -139,6 +143,7 @@ export class UserEditComponent implements OnInit {
     const user = new User();
 
     user.id = this.userEditForm.controls.id.value;
+    user.publicId = this.userEditForm.controls.publicId.value;
     user.emailAddress = this.userEditForm.controls.emailAddress.value;
     user.name = this.userEditForm.controls.name.value;
     user.role = this.userEditForm.controls.role.value;

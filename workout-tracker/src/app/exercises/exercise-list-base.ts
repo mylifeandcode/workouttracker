@@ -2,7 +2,7 @@ import { ExerciseService } from 'app/exercises/exercise.service';
 import { PaginatedResults } from '../core/models/paginated-results';
 import { finalize, map } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
-import { SelectItem } from 'primeng/api/selectitem';
+import { SelectItem } from 'primeng/api';
 import { Table } from 'primeng/table';
 
 export abstract class ExerciseListBase {

@@ -119,6 +119,7 @@ export abstract class ApiBaseService<T extends Entity> {
    * @param id The ID of the entity to delete.
    * @returns The response from the API to the DELETE request.
    */
+  /*
   public delete(id: number): Observable<any> { //TODO: Re-evaluate use of "any" type here, should probably be HttpResponse.
     //console.log("DELETING");
     return this._http.delete(`${this._apiRoot}/${id}`)
@@ -126,6 +127,21 @@ export abstract class ApiBaseService<T extends Entity> {
         tap(() => this.invalidateCache()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
   }
+  */
+
+  /**
+   * Deletes the specified entity and invalidates the cache.
+   * 
+   * @param publicId The public ID of the entity to delete.
+   * @returns The response from the API to the DELETE request.
+   */
+  public deleteByPublicId(publicId: string): Observable<any> { //TODO: Re-evaluate use of "any" type here, should probably be HttpResponse.
+    //console.log("DELETING");
+    return this._http.delete(`${this._apiRoot}/${publicId}`)
+      .pipe(
+        tap(() => this.invalidateCache()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+      );
+  }  
 
   /**
    * Invalidates cached data

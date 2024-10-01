@@ -23,8 +23,8 @@
         <ng-template pTemplate="body" let-exercise>
           <tr>
             <td>
-              <a [routerLink]="['view/', exercise.id]">{{exercise.name}}</a>
-              <a [routerLink]="['edit/', exercise.id]" style="padding-left:10px"><i class="fa fa-pencil"></i></a>
+              <a [routerLink]="['view/', exercise.publicId]">{{exercise.name}}</a>
+              <a [routerLink]="['edit/', exercise.publicId]" style="padding-left:10px"><i class="fa fa-pencil"></i></a>
             </td>
             <td [style]="{'overflow': 'visible'}">{{exercise.targetAreas}}</td>
           </tr>

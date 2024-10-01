@@ -149,15 +149,17 @@ namespace WorkoutTracker.Application.Workouts.Services
                     .OrderByDescending(x => x.StartDateTime);
         }
 
-        public void DeletePlanned(int id)
+        public void DeletePlanned(Guid publicId)
         {
-            if (_repo.Get().Any(x => x.Id == id && x.StartDateTime.HasValue))
-                throw new ArgumentException($"Executed workout {id} has already been started.");
-                
-            if (!_repo.Get().Any(x => x.Id == id)) 
-                throw new ArgumentException($"Executed workout {id} not found.");
+            var executedWorkout = _repo.Get().FirstOrDefault(x => x.PublicId == publicId);
 
-            _repo.Delete(id);
+            if (executedWorkout == null)
+                throw new ArgumentException($"Executed workout {publicId} not found.");
+
+            if (executedWorkout.StartDateTime.HasValue)
+                throw new ArgumentException($"Executed workout {publicId} has already been started.");
+
+            _repo.Delete(executedWorkout.Id);
         }
 
         public ExecutedWorkout GetByPublicId(Guid publicId)

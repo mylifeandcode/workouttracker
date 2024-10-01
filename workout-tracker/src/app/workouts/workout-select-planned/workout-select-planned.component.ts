@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../executed-workout.service';
@@ -8,6 +8,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableModule } from 'primeng/table';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 
 //TODO: This component shares similarities with WorkoutListComponent. Consolidate code.
 
@@ -19,7 +20,7 @@ import { DatePipe } from '@angular/common';
     imports: [ConfirmDialogModule, TableModule, PrimeTemplate, RouterLink, DatePipe],
     //providers: [MessageService]
 })
-export class WorkoutSelectPlannedComponent implements OnInit {
+export class WorkoutSelectPlannedComponent { //No ngOnInit() needed -- table will automatically get initial data due to lazy loading
 
   public plannedWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public totalCount: number = 0;
@@ -34,10 +35,6 @@ export class WorkoutSelectPlannedComponent implements OnInit {
     private _executedWorkoutService: ExecutedWorkoutService,
     private _confirmationService: ConfirmationService,
     private _messageService: MessageService) { }
-
-  public ngOnInit(): void {
-    this.getPlannedWorkouts(0);
-  }
 
   private getPlannedWorkouts(first: number): void {
     this.totalCount = 0;
@@ -56,15 +53,24 @@ export class WorkoutSelectPlannedComponent implements OnInit {
     this.getPlannedWorkouts(event.first);
   }
 
-  public deletePlannedWorkout(id: number): void {
+  public deletePlannedWorkout(publicId: string): void {
     this._confirmationService.confirm({
       message: 'Are you sure you want to delete this planned workout?',
       accept: () => {
         this.loading = true;
-        this._executedWorkoutService.deletePlanned(id).subscribe(() => {
-          this._messageService.add({severity:'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000});
-          this.getPlannedWorkouts(0);
-        });
+        this._executedWorkoutService.deletePlanned(publicId)
+          .pipe(finalize(() => this.loading = false))
+          .subscribe({
+            next: () => {
+              this._messageService.add({severity:'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000});
+              this.getPlannedWorkouts(0);
+            },
+            error: (error: HttpErrorResponse) => {
+              console.log("ERROR: ", error);
+              window.alert("Couldn't delete workout! " + error.error.errors.id.map((e: any) => e).join(', '));
+            }
+          }
+        );
       }
     });
   }

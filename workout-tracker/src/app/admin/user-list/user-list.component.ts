@@ -27,13 +27,13 @@ export class UserListComponent implements OnInit, AfterViewInit {
   public ngOnInit(): void {
   }
 
-  public deleteUser(userId: number): void {
+  public deleteUser(userPublicId: string): void {
     if (!window.confirm("Are you sure you want to delete this user?"))
       return;
 
     this.busy = true;
     this.busyMsg = "Deleting...";
-    this._userSvc.delete(userId).subscribe({
+    this._userSvc.deleteByPublicId(userPublicId).subscribe({
       next:() => {
           //const index = _.findIndex(this.users, (user: User) => user.id == userId);
           //this.users?.splice(index, 1);

@@ -9,10 +9,11 @@
     "importHelpers": true,
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "ES2022",
+    "module": "ES2022",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -20,7 +21,6 @@
       "es2020",
       "dom"
     ],
-    "module": "es2020",
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": { //https://angular.io/guide/angular-compiler-options

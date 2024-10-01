@@ -79,11 +79,12 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   public deleteBand(resistanceBand: ResistanceBand): void {
+    if (!resistanceBand.publicId) return;
     this._confirmationService.confirm({
       message: 'Are you sure you want to delete this resistance band?',
       accept: () => {
         this._resistanceBandService
-          .delete(resistanceBand.id)
+          .deleteByPublicId(resistanceBand.publicId!)
           .subscribe((response: any) => {
             this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Resistance Band deleted', life: 3000 });
             this.getResistanceBandData(false);

@@ -74,7 +74,7 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
     return this._http.get<ExecutedWorkoutSummaryDTO[]>(`${this._apiRoot}/in-progress`);
   }
 
-  public deletePlanned(id: number): Observable<HttpResponse<any>> {
-    return this._http.delete<HttpResponse<any>>(`${this._apiRoot}/planned/${id}`);
+  public deletePlanned(publicId: string): Observable<HttpResponse<any>> {
+    return this._http.delete<HttpResponse<any>>(`${this._apiRoot}/planned/${publicId}`);
   }
 }

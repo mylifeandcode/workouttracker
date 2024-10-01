@@ -7,7 +7,7 @@ export class User extends NamedEntity implements IPublicEntity {
   public profilePic: string = '';
   public settings: UserSettings = new UserSettings();
   public role: number = 0;
-  public publicId: string = ''; //GUID
+  public publicId: string | null = null; //GUID
 
   public constructor(init?: Partial<User>) {
     super();

@@ -20,9 +20,9 @@
             <td>{{executedWorkout.endDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
             <td>
               @if (executedWorkout.journal) {
-              <span (click)="openNotesModal(executedWorkout.journal)" pTooltip="{{executedWorkout.journal}}">
-                Notes
-              </span>
+                <span (click)="openNotesModal(executedWorkout.journal)" pTooltip="{{executedWorkout.journal}}">
+                  Notes
+                </span>
               }
             </td>
           </tr>
@@ -31,13 +31,13 @@
     </div>
   </div>
   @if (totalRecords != null) {
-  <div class="row">
-    @if (totalRecords > 0) {
-    <div class="col-12">{{totalRecords}} total workouts</div>
-    } @else {
-    <div class="col-12" style="font-style: italic">No workouts have been executed yet.</div>
-    }
-  </div>
+    <div class="row">
+      @if (totalRecords > 0) {
+        <div class="col-12">{{totalRecords}} total workouts</div>
+      } @else {
+        <div class="col-12" style="font-style: italic">No workouts have been executed yet.</div>
+      }
+    </div>
   }
   <div class="row">
     <div class="col-12 bottom-padded">

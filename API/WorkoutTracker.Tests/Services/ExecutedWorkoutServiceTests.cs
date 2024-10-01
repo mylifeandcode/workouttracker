@@ -272,7 +272,7 @@ namespace WorkoutTracker.Tests.Services
 
 
             //ACT
-            sut.DeletePlanned(100);
+            sut.DeletePlanned(Guid.NewGuid());
 
             //ASSERT
             executedWorkoutRepo.Verify(x => x.Get(), Times.Exactly(2));
@@ -303,7 +303,7 @@ namespace WorkoutTracker.Tests.Services
 
 
             //ACT
-            sut.DeletePlanned(100);
+            sut.DeletePlanned(Guid.NewGuid());
 
             //ASSERT
             //No assertions. Test will fail if ExpectedException doesn't occur.
@@ -333,7 +333,7 @@ namespace WorkoutTracker.Tests.Services
 
 
             //ACT
-            sut.DeletePlanned(100);
+            sut.DeletePlanned(Guid.NewGuid());
 
             //ASSERT
             //No assertions. Test will fail if ExpectedException doesn't occur.

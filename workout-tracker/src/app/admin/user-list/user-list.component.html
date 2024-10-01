@@ -14,9 +14,9 @@
         <tr>
           <td>{{user.name}}</td>
           <td class="text-end">
-            <button type="button" routerLink="edit/{{user.id}}" class="btn btn-primary">Edit</button>
+            <button type="button" routerLink="edit/{{user.publicId}}" class="btn btn-primary">Edit</button>
             &nbsp;
-            <button type="button" (click)="deleteUser(user.id)" class="btn btn-danger">Delete</button>
+            <button type="button" (click)="deleteUser(user.publicId!)" class="btn btn-danger">Delete</button>
           </td>
         </tr>
         }

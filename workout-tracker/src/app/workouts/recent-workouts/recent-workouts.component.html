@@ -5,12 +5,12 @@
         <ng-template pTemplate="body" let-executedWorkout>
             <tr class="workout-history">
                 <td>{{executedWorkout.name}}</td>
-                <td><a type="button" class="button-type-link" (click)="viewExercises(executedWorkout.workoutId)">View Exercises</a></td>
+                <td><a type="button" class="button-type-link" (click)="viewExercises(executedWorkout.workoutPublicId)">View Exercises</a></td>
 
                 @if (planningForLater) {
-                  <td><a type="button" class="button-type-link" (click)="planWorkout(executedWorkout.workoutId)">Plan This Workout</a></td>
+                  <td><a type="button" class="button-type-link" (click)="planWorkout(executedWorkout.workoutPublicId)">Plan This Workout</a></td>
                 } @else {
-                  <td><a type="button" class="button-type-link" (click)="doWorkout(executedWorkout.workoutId)">Do This Workout</a></td>
+                  <td><a type="button" class="button-type-link" (click)="doWorkout(executedWorkout.workoutPublicId)">Do This Workout</a></td>
                 }
 
                 <td>{{executedWorkout.startDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>

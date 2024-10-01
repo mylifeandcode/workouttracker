@@ -16,6 +16,7 @@ import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ExercisePlanComponent } from '../exercise-plan/exercise-plan.component';
 import { DialogModule } from 'primeng/dialog';
+import { EMPTY_GUID } from 'app/shared/shared-constants';
 
 
 @Component({
@@ -184,7 +185,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
         .subscribe((result: WorkoutPlan) => {
           this.workoutPlan = result;
           this.workoutPlanForm.patchValue({
-            workoutId: workoutId,
+            //workoutId: workoutId,
+            workoutPublicId: result.workoutPublicId,
             workoutName: result.workoutName,
             hasBeenExecutedBefore: result.hasBeenExecutedBefore
           });
@@ -195,7 +197,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
 
   private createForm(): FormGroup<IWorkoutPlanForm> {
     return this._formBuilder.group<IWorkoutPlanForm>({
-      workoutId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+      //workoutId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+      workoutPublicId: new FormControl<string>(EMPTY_GUID, { nonNullable: true, validators: Validators.required }),
       workoutName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       hasBeenExecutedBefore: new FormControl<boolean>(false, { nonNullable: true }),
       exercises: new FormArray<FormGroup<IExercisePlanFormGroup>>([])
