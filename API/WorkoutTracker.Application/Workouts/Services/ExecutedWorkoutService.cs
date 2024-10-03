@@ -117,10 +117,11 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         public ExecutedWorkout GetLatest(Guid workoutPublicId)
         {
+            //No user ID needed here, as workouts are user-centric
             return _repo.GetWithoutTracking()
                 .Where(x => x.StartDateTime.HasValue && x.EndDateTime.HasValue)
                 .OrderByDescending(x => x.Id)
-                .FirstOrDefault(x => x.PublicId == workoutPublicId);
+                .FirstOrDefault(x => x.Workout.PublicId == workoutPublicId);
         }
 
         public int GetTotalCount(ExecutedWorkoutFilter filter)

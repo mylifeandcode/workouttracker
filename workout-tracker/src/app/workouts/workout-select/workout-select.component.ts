@@ -78,11 +78,11 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   public workoutSelectChange(event: DropdownChangeEvent): void { //TODO: Get concrete type instead of using any
     if (this.navigateOnSelect) {
       if (this.planningForLater)
-        this._router.navigate([`workouts/plan-for-later/${event.value.id}`]);
+        this._router.navigate([`workouts/plan-for-later/${event.value.publicId}`]);
       else
-        this._router.navigate([`workouts/plan/${event.value.id}`]);
+        this._router.navigate([`workouts/plan/${event.value.publicId}`]);
     }
-    this.workoutSelected.emit(event.value.id);
+    this.workoutSelected.emit(event.value.publicId);
   }
 
   private subscribeToUser(): void {
