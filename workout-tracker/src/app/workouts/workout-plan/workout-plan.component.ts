@@ -104,8 +104,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
           this.isProcessing = false;
           this.workoutPlanForm.markAsPristine();
         }))
-        .subscribe((executedWorkoutId: number) => {
-          this._router.navigate([`workouts/start/${executedWorkoutId}`]);
+        .subscribe((executedWorkoutPublicId: string) => {
+          this._router.navigate([`workouts/start/${executedWorkoutPublicId}`]);
         });
     }
   }
@@ -120,7 +120,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
           this.isProcessing = false;
           this.workoutPlanForm.markAsPristine();
         }))
-        .subscribe((executedWorkoutId: number) => {
+        .subscribe((executedWorkoutPublicId: string) => {
           this._router.navigate([`workouts/select-planned`]);
         });
     }
@@ -134,8 +134,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
           this.isProcessing = false;
           this.workoutPlanForm.markAsPristine();
         }))
-        .subscribe((executedWorkoutId: number) => {
-          this._router.navigate([`workouts/start/${executedWorkoutId}`], { queryParams: { pastWorkout: true } });
+        .subscribe((executedWorkoutPublicId: string) => {
+          this._router.navigate([`workouts/start/${executedWorkoutPublicId}`], { queryParams: { pastWorkout: true } });
         });
     }
   }

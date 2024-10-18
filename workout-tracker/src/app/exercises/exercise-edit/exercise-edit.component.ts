@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormRecord, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExerciseService } from '../exercise.service';
 import { Exercise } from '../../workouts/models/exercise';
@@ -15,12 +15,14 @@ import { NgClass, KeyValuePipe } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
+import { EMPTY_GUID } from 'app/shared/shared-constants';
 
 interface IExerciseEditForm {
   id: FormControl<number>;
+  publicId: FormControl<string>; //Will be EMPTY_GUID for a new Exercise
   name: FormControl<string>;
   description: FormControl<string>;
-  resistanceType: FormControl<number>; //TODO: Rename to singular
+  resistanceType: FormControl<number>;
   oneSided: FormControl<boolean>;
   endToEnd: FormControl<boolean | null>;
   involvesReps: FormControl<boolean>;
@@ -80,7 +82,8 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   constructor(
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
-    private _exerciseSvc: ExerciseService) {
+    private _exerciseSvc: ExerciseService, 
+    private _router: Router) {
     super();
     this.exerciseForm = this.createForm();
     this.exerciseForm.controls.oneSided.valueChanges.subscribe((value: boolean) => this.checkForBilateral(value));
@@ -125,6 +128,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
             this._exercise = addedExercise;
             this._exercisePublicId = this._exercise.publicId;
             this.infoMsg = "Exercise created at " + new Date().toLocaleTimeString();
+            this._router.navigate([`exercises/edit/${this._exercise.publicId}`]);
           },
           error: (error: any) => {
             this.errorMsg = error.message;
@@ -186,6 +190,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       this.setupTargetAreas([]);
       this.exerciseForm.reset();
       this.exerciseForm.controls.id.setValue(0);
+      this.exerciseForm.controls.publicId.setValue(EMPTY_GUID);
       this.exerciseForm.controls.oneSided.setValue(false);
       this.exerciseForm.controls.endToEnd.setValue(false);
       this.exerciseForm.controls.involvesReps.setValue(true);
@@ -202,6 +207,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     return this._formBuilder.group<IExerciseEditForm>({
       id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+      publicId: new FormControl<string>(EMPTY_GUID, { nonNullable: true, validators: Validators.required }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       description: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)]) }),
       resistanceType: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
@@ -230,6 +236,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   private updateExerciseForPersisting(): void {
 
+    this._exercise.publicId = this.exerciseForm.controls.publicId.value;
     this._exercise.name = this.exerciseForm.controls.name.value;
     this._exercise.description = this.exerciseForm.controls.description.value;
     this._exercise.setup = this.exerciseForm.controls.setup.value;
@@ -273,6 +280,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   private updateFormWithExerciseValues(): void {
     this.exerciseForm.patchValue({
       id: this._exercise.id,
+      publicId: this._exercise.publicId!,
       name: this._exercise.name,
       description: this._exercise.description,
       setup: this._exercise.setup,

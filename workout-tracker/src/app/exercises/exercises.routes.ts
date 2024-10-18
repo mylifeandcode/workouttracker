@@ -9,6 +9,12 @@ export const exercisesRoutes: Routes = [
       canActivate: [UserSelectedGuard]
     },
     {
+      path: 'new',
+      loadComponent: () => import('../exercises/exercise-edit/exercise-edit.component').then(m => m.ExerciseEditComponent),
+      canActivate: [UserSelectedGuard],
+      canDeactivate: [UnsavedChangesGuard]
+    },
+    {
       path: 'edit/:id',
       loadComponent: () => import('../exercises/exercise-edit/exercise-edit.component').then(m => m.ExerciseEditComponent),
       canActivate: [UserSelectedGuard],

@@ -15,7 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DurationComponent } from '../duration/duration.component';
 
 interface ILogPastWorkoutForm {
-  workoutId: FormControl<number | null>; 
+  workoutPublicId: FormControl<string | null>; 
   startDateTime: FormControl<Date | null>; 
   endDateTime: FormControl<Date | null>; 
 }
@@ -62,7 +62,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
   public proceedToWorkoutEntry(): void {
     if (this.formGroup.controls.startDateTime.value && this.formGroup.controls.endDateTime.value) {
       this._router.navigate(
-        [`/workouts/plan-for-past/${this.formGroup.controls.workoutId.value}/${this.formGroup.controls.startDateTime.value.toISOString()}/${this.formGroup.controls.endDateTime.value.toISOString()}`] 
+        [`/workouts/plan-for-past/${this.formGroup.controls.workoutPublicId.value}/${this.formGroup.controls.startDateTime.value.toISOString()}/${this.formGroup.controls.endDateTime.value.toISOString()}`] 
       );
     }
   }
@@ -88,7 +88,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
 
   private buildForm(): FormGroup<ILogPastWorkoutForm> {
     return this._formBuilder.group<ILogPastWorkoutForm>({
-      workoutId: new FormControl<number | null>(null, { validators: Validators.required}), 
+      workoutPublicId: new FormControl<string | null>(null, { validators: Validators.required}), 
       startDateTime: new FormControl<Date | null>(null, { validators: Validators.required}), 
       endDateTime: new FormControl<Date | null>(null, { validators: Validators.required})
     }, { validators: CustomValidators.compareDatesValidator('startDateTime', 'endDateTime', true) });

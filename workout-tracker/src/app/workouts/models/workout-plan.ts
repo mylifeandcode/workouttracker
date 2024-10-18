@@ -1,7 +1,7 @@
 import { ExercisePlan } from "./exercise-plan";
 
 export class WorkoutPlan {
-  public workoutId: number = 0;
+  //public workoutId: number = 0;
   public workoutPublicId: string = ''; //GUID
   public workoutName: string = '';
   public userId: number = 0;

@@ -102,10 +102,17 @@ namespace WorkoutTracker.Application.Resistances.Services
             List<ResistanceBand> availableBands = 
                 GetAvailableBands(preferredMax, multiplierForDoubledOverBands, exerciseUsesBilateralResistance);
 
-            if (exerciseUsesBilateralResistance)
-                return AllocateBandsForBilateralExercise(availableBands, multiplierForDoubledOverBands, minimum, preferredMax, _logger);
-            else
-                return AllocateBands(availableBands, multiplierForDoubledOverBands, minimum, preferredMax);
+            if (availableBands.Any())
+            {
+                if (exerciseUsesBilateralResistance)
+                    return AllocateBandsForBilateralExercise(availableBands, multiplierForDoubledOverBands, minimum, preferredMax, _logger);
+                else
+                    return AllocateBands(availableBands, multiplierForDoubledOverBands, minimum, preferredMax);
+            }
+            else 
+            {
+                return new List<ResistanceBand>(0);
+            }
         }
         
         /// <summary>

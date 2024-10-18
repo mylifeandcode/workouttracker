@@ -9,11 +9,11 @@
     <div class="row a-little-space">
       <div class="col-2">Select a Workout</div>
       <div class="col-3">
-        <p-dropdown [options]="workouts" formControlName="workoutId" optionLabel="name" optionValue="id"
+        <p-dropdown [options]="workouts" formControlName="workoutPublicId" optionLabel="name" optionValue="publicId"
           placeholder="Choose a Workout"></p-dropdown>
       </div>
       <div class="col-7">
-        @if (formGroup.controls.workoutId.dirty && formGroup.controls.workoutId.errors) {
+        @if (formGroup.controls.workoutPublicId.dirty && formGroup.controls.workoutPublicId.errors) {
           <span class="text-danger">Required</span>
         }
       </div>

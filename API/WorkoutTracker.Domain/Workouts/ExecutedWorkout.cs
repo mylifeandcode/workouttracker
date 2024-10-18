@@ -26,8 +26,8 @@ namespace WorkoutTracker.Domain.Workouts
         /// <summary>
         /// The publicly-accessible ID for the executed Workout
         /// </summary>
-        public virtual Guid PublicId { get; set; }
-        
+        public Guid PublicId { get; set; } = Guid.NewGuid(); //Because even with EF's ValueGeneratedOnAdd(), this wasn't getting set in code, but was working for direct SQL inserts
+
         /// <summary>
         /// The date/time the user began the Workout.
         /// </summary>

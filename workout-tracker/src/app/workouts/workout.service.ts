@@ -61,16 +61,16 @@ export class WorkoutService {
     return this._http.get<WorkoutPlan>(`${this.API_ROOT}/${workoutPublicId}/plan`);
   }
 
-  public submitPlan(plan: WorkoutPlan): Observable<number> {
-    return this._http.post<number>(`${this.API_ROOT}/plan`, plan);
+  public submitPlan(plan: WorkoutPlan): Observable<string> {
+    return this._http.post<string>(`${this.API_ROOT}/plan`, plan);
   }
 
-  public submitPlanForLater(plan: WorkoutPlan): Observable<number> {
-    return this._http.post<number>(`${this.API_ROOT}/plan-for-later`, plan);
+  public submitPlanForLater(plan: WorkoutPlan): Observable<string> {
+    return this._http.post<string>(`${this.API_ROOT}/plan-for-later`, plan);
   }
 
-  public submitPlanForPast(plan: WorkoutPlan, startDateTime: Date, endDateTime: Date): Observable<number> {
-    return this._http.post<number>(`${this.API_ROOT}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`, plan);
+  public submitPlanForPast(plan: WorkoutPlan, startDateTime: Date, endDateTime: Date): Observable<string> {
+    return this._http.post<string>(`${this.API_ROOT}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`, plan);
   }
 
   public retire(publicId: string): Observable<HttpResponse<any>> {

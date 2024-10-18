@@ -71,7 +71,6 @@ namespace WorkoutTracker.Application.Workouts.Services
             {
                 executedExercise.Exercise = null;
             }
-
             return base.Add(entity, saveChanges);
         }
 
@@ -173,10 +172,11 @@ namespace WorkoutTracker.Application.Workouts.Services
         private ExecutedWorkout CreateFromPlan(WorkoutPlan workoutPlan, DateTime? startDateTime, DateTime? endDateTime)
         {
             var executedWorkout = new ExecutedWorkout();
-            executedWorkout.WorkoutId = workoutPlan.WorkoutId;
+            var workout = _workoutRepo.GetWithoutTracking().First(x => x.PublicId == workoutPlan.WorkoutPublicId);
+            //executedWorkout.WorkoutId = workoutPlan.WorkoutId;
+            executedWorkout.WorkoutId = workout.Id;
             executedWorkout.CreatedByUserId = workoutPlan.UserId;
             executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
-            var workout = _workoutRepo.GetWithoutTracking(workoutPlan.WorkoutId);
 
             byte exerciseSequence = 0;
             foreach (var exerciseInWorkout in workout.Exercises?.OrderBy(x => x.Sequence))

@@ -42,7 +42,8 @@ namespace WorkoutTracker.Tests.Services
             DateTime submittedDate = new DateTime(2020, 2, 3);
             int userId = 123;
             var workoutPlan = new WorkoutPlan();
-            workoutPlan.WorkoutId = 5;
+            //workoutPlan.WorkoutId = 5;
+            workoutPlan.WorkoutPublicId = Guid.NewGuid();
             workoutPlan.WorkoutName = "Chest and Arms v1";
             workoutPlan.UserId = 1;
             workoutPlan.SubmittedDateTime = submittedDate;

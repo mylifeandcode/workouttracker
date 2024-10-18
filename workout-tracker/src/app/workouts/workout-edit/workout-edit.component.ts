@@ -13,6 +13,7 @@ import { SelectOnFocusDirective } from '../../shared/select-on-focus.directive';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { DialogModule } from 'primeng/dialog';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
+import { EMPTY_GUID } from 'app/shared/shared-constants';
 
 interface IExerciseInWorkout {
   id: FormControl<number>;
@@ -24,7 +25,7 @@ interface IExerciseInWorkout {
 
 interface IWorkoutEditForm {
   id: FormControl<number>;
-  publicId: FormControl<string | null>; //Will be null for a new Workout
+  publicId: FormControl<string>; //Will be EMPTY_GUID for a new Workout
   active: FormControl<boolean>;
   name: FormControl<string>;
   exercises: FormArray<FormGroup<IExerciseInWorkout>>;
@@ -42,7 +43,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   //A helfpul link for dynamic form arrays: https://codinglatte.com/posts/angular/angular-dynamic-form-fields-using-formarray/
 
   //Public fields
-  public workoutPublicId: string = '00000000-0000-0000-0000-000000000000';
+  public workoutPublicId: string = EMPTY_GUID;
   public workoutForm: FormGroup<IWorkoutEditForm>;
   public loading: boolean = true;
   public infoMsg: string | null = null;
@@ -148,7 +149,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
     return this._formBuilder.group<IWorkoutEditForm>({
       id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
-      publicId: new FormControl<string>('00000000-0000-0000-0000-000000000000', { nonNullable: true, validators: Validators.required }),
+      publicId: new FormControl<string>(EMPTY_GUID, { nonNullable: true, validators: Validators.required }),
       active: new FormControl<boolean>(true, { nonNullable: true, validators: Validators.required }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       exercises: new FormArray<FormGroup<IExerciseInWorkout>>([])
@@ -185,7 +186,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   private addWorkout(): void {
     //console.log("ADDING WORKOUT: ", this._workout);
-    this._workout.publicId = '00000000-0000-0000-0000-000000000000'; //TODO: Create a constant for this, clean-up!
+    this._workout.publicId = EMPTY_GUID;
     this._workoutService.add(this._workout)
       .pipe(finalize(() => {
         this.saving = false;

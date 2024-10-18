@@ -14,7 +14,7 @@ namespace WorkoutTracker.Application.Workouts.Models
     /// </summary>
     public class WorkoutPlan
     {
-        public int WorkoutId { get; set; }
+        //public int WorkoutId { get; set; }
         public Guid WorkoutPublicId { get; set; }
         public string WorkoutName { get; set; }
         public int UserId { get; set; }
@@ -29,7 +29,7 @@ namespace WorkoutTracker.Application.Workouts.Models
             if (workout == null)
                 throw new ArgumentNullException(nameof(workout));
 
-            WorkoutId = workout.Id;
+            //WorkoutId = workout.Id;
             WorkoutPublicId = workout.PublicId;
             WorkoutName = workout.Name;
             HasBeenExecutedBefore = hasBeenExecutedBefore;
