@@ -115,7 +115,7 @@ describe('WorkoutSelectPlannedComponent', () => {
     const messageService = TestBed.inject(MessageService);
 
     //ACT
-    component.deletePlannedWorkout(100);
+    component.deletePlannedWorkout('some-guid-100');
 
     //ASSERT
     expect(confirmationService.confirm).toHaveBeenCalled();

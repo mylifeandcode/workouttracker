@@ -37,7 +37,7 @@ export const workoutsRoutes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
-    path: 'start/:executedWorkoutId',
+    path: 'start/:executedWorkoutPublicId',
     loadComponent: () => import('./workout/workout.component').then(m => m.WorkoutComponent),
     canActivate: [UserSelectedGuard],
     canDeactivate: [UnsavedChangesGuard]

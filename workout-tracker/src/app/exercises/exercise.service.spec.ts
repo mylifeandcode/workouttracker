@@ -101,7 +101,7 @@ describe('ExerciseService', () => {
 
     const expectedExercise = new Exercise();
 
-    service.getById(5).subscribe({
+    service.getByPublicId('5').subscribe({
       next: exercise => expect(exercise).toEqual(expectedExercise, 'should return expected results'),
       error: fail
     });

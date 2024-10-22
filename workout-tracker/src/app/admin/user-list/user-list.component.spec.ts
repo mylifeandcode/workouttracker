@@ -8,15 +8,15 @@ import { RouterModule } from '@angular/router';
 
 class UserServiceMock {
   private fakeUsers: User[] =
-  [
-    new User({id: 1, name: 'Fred'}),
-    new User({id: 2, name: 'Joe'}), 
-    new User({id: 3, name: 'Paul'})
-  ];
+    [
+      new User({ id: 1, name: 'Fred' }),
+      new User({ id: 2, name: 'Joe' }),
+      new User({ id: 3, name: 'Paul' })
+    ];
 
   getAll = jasmine.createSpy('getAll').and.returnValue(of(this.fakeUsers));
   getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
-  delete = jasmine.createSpy('delete').and.returnValue(of(null)); //TOOD: Revisit
+  delete = jasmine.createSpy('deleteByPublicId').and.returnValue(of(null)); //TOOD: Revisit
   all$ = of(this.fakeUsers);
 }
 
@@ -27,15 +27,15 @@ describe('UserListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    imports: [RouterModule.forRoot([]), UserListComponent],
-    providers: [
+      imports: [RouterModule.forRoot([]), UserListComponent],
+      providers: [
         {
-            provide: UserService,
-            useClass: UserServiceMock
+          provide: UserService,
+          useClass: UserServiceMock
         }
-    ]
-})
-    .compileComponents();
+      ]
+    })
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -62,21 +62,21 @@ describe('UserListComponent', () => {
     spyOn(window, 'confirm').and.returnValue(false);
 
     //ACT
-    component.deleteUser(1);
+    component.deleteUser('1');
 
     //ASSERT
-    expect(userService.delete).not.toHaveBeenCalled();
+    expect(userService.deleteByPublicId).not.toHaveBeenCalled();
   });
 
   it('should call service to delete user when confirm dialog returns true', () => {
     //ARRANGE
     spyOn(window, 'confirm').and.returnValue(true);
- 
+
     //ACT
-    component.deleteUser(2);
+    component.deleteUser('2');
 
     //ASSERT
-    expect(userService.delete).toHaveBeenCalledWith(2);
+    expect(userService.deleteByPublicId).toHaveBeenCalledWith('2');
   });
 
   //Removed. Using async pipe with Observable on service now.

@@ -9,11 +9,11 @@ import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { WorkoutViewComponent } from './workout-view.component';
 
-const EXECUTED_WORKOUT_ID = 5;
+const EXECUTED_WORKOUT_PUBLIC_ID = 'some-guid-5';
 
 class ExecutedWorkoutServiceMock {
-  getById =
-    jasmine.createSpy('getById')
+  getByPublicId =
+    jasmine.createSpy('getByPublicId')
       .and.returnValue(of(this.getFakeExecutedWorkout()));
 
   private getFakeExecutedWorkout(): ExecutedWorkoutDTO {
@@ -42,9 +42,9 @@ class ExecutedWorkoutServiceMock {
 
   public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
     const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
-    
-    const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>  
-      exercise.exerciseId.toString() + '-' + exercise.setType.toString() 
+
+    const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>
+      exercise.exerciseId.toString() + '-' + exercise.setType.toString()
     );
     return groupedExercises;
   }
@@ -52,9 +52,9 @@ class ExecutedWorkoutServiceMock {
 }
 
 @Component({
-    selector: 'wt-executed-exercises',
-    template: '',
-    standalone: true
+  selector: 'wt-executed-exercises',
+  template: '',
+  standalone: true
 })
 export class MockExecutedExercisesComponent {
 
@@ -72,25 +72,25 @@ describe('WorkoutViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [WorkoutViewComponent,
+      imports: [WorkoutViewComponent,
         MockExecutedExercisesComponent],
-    providers: [
+      providers: [
         {
-            provide: ActivatedRoute,
-            useValue: {
-                params: of({
-                    id: EXECUTED_WORKOUT_ID
-                })
-            }
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({
+              id: EXECUTED_WORKOUT_PUBLIC_ID
+            })
+          }
         },
         {
-            provide: ExecutedWorkoutService,
-            useClass: ExecutedWorkoutServiceMock
+          provide: ExecutedWorkoutService,
+          useClass: ExecutedWorkoutServiceMock
         }
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-    .compileComponents();
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    })
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -105,10 +105,10 @@ describe('WorkoutViewComponent', () => {
 
   it('should get executed workout based on route', () => {
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    expect(executedWorkoutService.getById).toHaveBeenCalledOnceWith(EXECUTED_WORKOUT_ID);
+    expect(executedWorkoutService.getByPublicId).toHaveBeenCalledOnceWith(EXECUTED_WORKOUT_PUBLIC_ID);
     expect(component.executedWorkout).toBeTruthy();
     expect(component.groupedExercises).toBeTruthy();
-    
+
     //TypeScript documentation says "size" is the way to determine the number of entries in the 
     //map, but I get "Expected undefined to be 2." from the line below:
     //expect(component.groupedExercises.size).toBe(2);

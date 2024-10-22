@@ -130,10 +130,10 @@ describe('WorkoutListComponent', () => {
     spyOn(window, 'confirm').and.returnValue(true);
 
     //ACT
-    component.retireWorkout(1, "My Workout");
+    component.retireWorkout('some-guid', "My Workout");
 
     //ASSERT
-    expect(workoutService.retire).toHaveBeenCalledWith(1);
+    expect(workoutService.retire).toHaveBeenCalledWith('some-guid');
     expect(workoutService.getFilteredSubset).toHaveBeenCalledTimes(2); //Once on component init, once after workout is retired
   });
 
@@ -142,10 +142,10 @@ describe('WorkoutListComponent', () => {
     spyOn(window, 'confirm').and.returnValue(true);
 
     //ACT
-    component.reactivateWorkout(1, "My Workout");
+    component.reactivateWorkout("some-guid", "My Workout");
 
     //ASSERT
-    expect(workoutService.reactivate).toHaveBeenCalledWith(1);
+    expect(workoutService.reactivate).toHaveBeenCalledWith("some-guid");
     expect(workoutService.getFilteredSubset).toHaveBeenCalledTimes(2); //Once on component init, once after workout is retired
   });
 

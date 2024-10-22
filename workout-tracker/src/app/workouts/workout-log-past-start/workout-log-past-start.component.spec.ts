@@ -87,7 +87,7 @@ describe('WorkoutLogPastStartComponent', () => {
     const router = TestBed.inject(Router);
     component.formGroup.patchValue( 
       { 
-        workoutId: 1, 
+        workoutPublicId: 'some-guid-1', 
         startDateTime: new Date(2022, 3, 4, 12, 0, 0), 
         endDateTime: new Date(2022, 3, 4, 12, 30, 15) 
       } 
@@ -106,7 +106,7 @@ describe('WorkoutLogPastStartComponent', () => {
     //ARRANGE
     component.formGroup.patchValue( 
       { 
-        workoutId: 1, 
+        workoutPublicId: 'some-guid-1', 
         startDateTime: new Date(2022, 3, 4, 12, 0, 0) 
       } 
     );

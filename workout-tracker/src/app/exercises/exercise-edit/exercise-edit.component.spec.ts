@@ -153,7 +153,7 @@ describe('ExerciseEditComponent', () => {
 
   it('should load exercise when editing', () => {
     //Our default route mock includes a value for exercise ID
-    expect(exerciseService.getById).toHaveBeenCalledWith(2);
+    expect(exerciseService.getByPublicId).toHaveBeenCalledWith('2');
     //expect(component._exercise).toEqual(EXERCISE);
     expect(component.exerciseForm).not.toBeNull();
     expect(component.exerciseForm).toBeTruthy();

@@ -61,10 +61,10 @@ describe('UserService', () => {
 
   it('should get user info by user ID', () => {
     const expectedResults = new User();
-    const userId: number = parseInt(TEST_USER_ID);
-    expectedResults.id = userId;
+    const userId: string = TEST_USER_ID;
+    expectedResults.publicId = userId;
 
-    service.getById(userId).subscribe({
+    service.getByPublicId(userId).subscribe({
       next: (user: User) => expect(user).toEqual(expectedResults),
       error: fail
     });
@@ -116,9 +116,9 @@ describe('UserService', () => {
   });
 
   it('should delete user', () => {
-    const userId = 7;
+    const userId = '7';
 
-    service.delete(7)
+    service.deleteByPublicId('7')
       .subscribe({
         next: (result: any) => expect(result).toBeNull(),
         error: fail

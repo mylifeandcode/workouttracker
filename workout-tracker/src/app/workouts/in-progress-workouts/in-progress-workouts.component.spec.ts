@@ -13,9 +13,9 @@ class MockExeceutedWorkoutService {
     workouts.push(...
       [<ExecutedWorkoutDTO>
         {
-          id: 56,
+          publicId: 'guid-56',
           name: 'Chest and Arms',
-          workoutId: 56,
+          workoutPublicId: 'some-guid-56',
           startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
           journal: null, rating: 0, exercises: [],
           createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
@@ -23,9 +23,9 @@ class MockExeceutedWorkoutService {
         },
       <ExecutedWorkoutDTO>
       {
-        id: 56,
+        publicId: 'guid-56',
         name: 'Chest and Arms',
-        workoutId: 56,
+        workoutPublicId: 'some-guid-56',
         startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
         journal: null, rating: 0, exercises: [],
         createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0),

@@ -70,10 +70,10 @@ describe('ApiBaseService', () => {
 
     //ARRANGE
     const widget = new Widget();
-    const WIDGET_ID: number = 1;
+    const WIDGET_ID: string = '1';
 
     //ACT
-    const result = service.getById(WIDGET_ID);
+    const result = service.getByPublicId(WIDGET_ID);
     result.subscribe((widgetResult: Widget) => {
       expect(widgetResult).toBe(widget, fail);
     });
@@ -129,10 +129,10 @@ describe('ApiBaseService', () => {
   it('should delete', () => {
 
     //ARRANGE
-    const WIDGET_ID: number = 1;
+    const WIDGET_ID: string = '1';
 
     //ACT
-    const result = service.delete(WIDGET_ID);
+    const result = service.deleteByPublicId(WIDGET_ID);
     result.subscribe((serviceEntity: any) => { //TODO: Re-evaluate return type to use here!
       expect(serviceEntity).toBeTruthy(fail);
     });

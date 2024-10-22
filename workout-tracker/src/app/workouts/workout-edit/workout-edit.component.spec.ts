@@ -11,6 +11,7 @@ import { Workout } from 'app/workouts/models/workout';
 import { ExerciseInWorkout } from '../models/exercise-in-workout';
 import { ExerciseDTO } from '../models/exercise-dto';
 import { ExerciseListMiniComponent } from 'app/exercises/exercise-list-mini/exercise-list-mini.component';
+import { EMPTY_GUID } from 'app/shared/shared-constants';
 
 @Component({
   selector: 'wt-exercise-list-mini',
@@ -29,7 +30,7 @@ class BlankComponent { }
 class WorkoutServiceMock {
   private getTestWorkout(): Workout {
     const workout = new Workout();
-    workout.id = WORKOUT_ID;
+    workout.publicId = WORKOUT_PUBLIC_ID;
     workout.active = true;
     workout.name = 'Test Workout';
     workout.exercises = [];
@@ -46,13 +47,13 @@ class WorkoutServiceMock {
   update = jasmine.createSpy('update').and.returnValue(of(new Workout()));
 }
 
-const WORKOUT_ID: number = 5;
+const WORKOUT_PUBLIC_ID: string = "some-guid";
 
 function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
   const activatedRouteSnapshot = new ActivatedRouteSnapshot();
   activatedRouteSnapshot.url = [];
   activatedRouteSnapshot.url.push(new UrlSegment('edit', {}));
-  activatedRouteSnapshot.params = { 'id': WORKOUT_ID };
+  activatedRouteSnapshot.params = { 'id': WORKOUT_PUBLIC_ID };
   return activatedRouteSnapshot;
 }
 
@@ -78,7 +79,7 @@ describe('WorkoutEditComponent', () => {
           provide: ActivatedRoute,
           useValue: {
             params: of({
-              id: WORKOUT_ID
+              id: WORKOUT_PUBLIC_ID
             }),
             snapshot: getActivatedRouteSnapshot()
           }
@@ -110,8 +111,8 @@ describe('WorkoutEditComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get workout ID from route params during init', () => {
-    expect(component.workoutPublicId).toBe(WORKOUT_ID);
+  it('should get workout public ID from route params during init', () => {
+    expect(component.workoutPublicId).toBe(WORKOUT_PUBLIC_ID);
   });
 
   it('should get create form during init', () => {
@@ -126,8 +127,8 @@ describe('WorkoutEditComponent', () => {
   });
 
   it('should load workout based on route param ID during init', () => {
-    expect(workoutService.getByPublicId).toHaveBeenCalledOnceWith(WORKOUT_ID);
-    expect(component.workoutForm.controls.id.value).toBe(WORKOUT_ID);
+    expect(workoutService.getByPublicId).toHaveBeenCalledOnceWith(WORKOUT_PUBLIC_ID);
+    expect(component.workoutForm.controls.publicId.value).toBe(WORKOUT_PUBLIC_ID);
     expect(component.workoutForm.controls.active.value).toBeTrue();
     expect(component.workoutForm.controls.name.value).toBe('Test Workout');
     expect(component.workoutForm.controls.exercises.value[0].id).toBe(1);
@@ -156,12 +157,12 @@ describe('WorkoutEditComponent', () => {
     //TODO: Improve this test if possible
 
     const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.params['id'] = 0;
+    activatedRoute.snapshot.params['id'] = 'some-guid';
 
     component.ngOnInit();
 
-    expect(component.workoutPublicId).toBe(0);
-    expect(workoutService.getByPublicId).not.toHaveBeenCalledWith(0); //The original ngOnInit() call would've called it with WORKOUT_ID
+    expect(component.workoutPublicId).toBe('some-guid');
+    expect(workoutService.getByPublicId).not.toHaveBeenCalledWith(EMPTY_GUID); //The original ngOnInit() call would've called it with WORKOUT_PUBLIC_ID
   });
 
   it('should open modal', () => {
