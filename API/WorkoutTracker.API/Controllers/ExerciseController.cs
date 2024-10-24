@@ -52,11 +52,11 @@ namespace WorkoutTracker.API.Controllers
                 var results = exercises.Select((exercise) =>
                 {
                     return new ExerciseDTO(
-                        exercise.Id,
+                        exercise.PublicId,
+                        exercise.CreatedDateTime,
+                        exercise.ModifiedDateTime,
                         exercise.Name,
-                        string.Join(", ", exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name)),
-                        exercise.PublicId);
-                        
+                        string.Join(", ", exercise.ExerciseTargetAreaLinks.Select(x => x.TargetArea.Name)));
                 });
 
                 var result = new PaginatedResults<ExerciseDTO>(results, totalCount);

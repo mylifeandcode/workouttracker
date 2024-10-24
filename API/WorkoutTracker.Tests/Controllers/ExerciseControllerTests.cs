@@ -131,7 +131,7 @@ namespace WorkoutTracker.Tests.Controllers
 
             var results = ((response.Result as OkObjectResult).Value as PaginatedResults<ExerciseDTO>).Results.ToList();
             Assert.AreEqual(results.Count, 1);
-            Assert.AreEqual(exercise.Id, results[0].Id);
+            Assert.AreEqual(exercise.PublicId, results[0].Id);
             Assert.AreEqual(exercise.Name, results[0].Name);
             Assert.AreEqual(exercise.ExerciseTargetAreaLinks.ToList()[0].TargetArea.Name, results[0].TargetAreas);
         }

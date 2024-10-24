@@ -11,14 +11,14 @@ namespace WorkoutTracker.API.Mappers
             if (executedWorkout == null) throw new ArgumentNullException(nameof(executedWorkout));
 
             return new ExecutedWorkoutSummaryDTO(
-                        executedWorkout.Id,
+                        executedWorkout.PublicId,
+                        executedWorkout.CreatedDateTime,
+                        executedWorkout.ModifiedDateTime,
                         executedWorkout.Workout.Name,
                         executedWorkout.Workout.PublicId,
                         executedWorkout.StartDateTime,
                         executedWorkout.EndDateTime,
-                        executedWorkout.CreatedDateTime,
-                        executedWorkout.Journal,
-                        executedWorkout.PublicId);
+                        executedWorkout.Journal);
         }
     }
 }

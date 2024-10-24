@@ -76,14 +76,14 @@ namespace WorkoutTracker.API.Controllers
                 var results = executedWorkouts.Select((executedWorkout) =>
                 {
                     return new ExecutedWorkoutSummaryDTO(
-                        executedWorkout.Id,
+                        executedWorkout.PublicId,
+                        executedWorkout.CreatedDateTime,
+                        executedWorkout.ModifiedDateTime,
                         executedWorkout.Workout.Name,
                         executedWorkout.Workout.PublicId,
                         executedWorkout.StartDateTime,
-                        executedWorkout.EndDateTime, 
-                        executedWorkout.CreatedDateTime, 
-                        executedWorkout.Journal,
-                        executedWorkout.PublicId);
+                        executedWorkout.EndDateTime,
+                        executedWorkout.Journal);
                 });
 
                 var result = new PaginatedResults<ExecutedWorkoutSummaryDTO>(results, totalCount);
@@ -122,14 +122,14 @@ namespace WorkoutTracker.API.Controllers
                 var results = executedWorkouts.Select((executedWorkout) =>
                 {
                     return new ExecutedWorkoutSummaryDTO(
-                        executedWorkout.Id,
+                        executedWorkout.PublicId,
+                        executedWorkout.CreatedDateTime,
+                        executedWorkout.ModifiedDateTime,
                         executedWorkout.Workout.Name,
                         executedWorkout.Workout.PublicId,
                         executedWorkout.StartDateTime,
                         executedWorkout.EndDateTime, 
-                        executedWorkout.CreatedDateTime, 
-                        executedWorkout.Journal, 
-                        executedWorkout.PublicId);
+                        executedWorkout.Journal);
                 });
 
                 var result = new PaginatedResults<ExecutedWorkoutSummaryDTO>(results, totalCount);

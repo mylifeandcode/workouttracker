@@ -14,19 +14,22 @@ namespace WorkoutTracker.API.Mappers
             if(executedWorkout == null) throw new ArgumentNullException(nameof(executedWorkout));
 
             return new ExecutedWorkoutDTO(
-                executedWorkout.Id,
                 executedWorkout.PublicId,
+                executedWorkout.CreatedDateTime,
+                executedWorkout.ModifiedDateTime,
                 executedWorkout.Workout.Name,
-                executedWorkout.WorkoutId,
+                executedWorkout.Workout.PublicId,
                 executedWorkout.StartDateTime,
                 executedWorkout.EndDateTime,
                 executedWorkout.Journal,
                 executedWorkout.Rating,
                 executedWorkout.Exercises?.Select(executedExercise => 
                     new ExecutedExerciseDTO(
-                        executedExercise.Id, 
+                        executedExercise.Id,
+                        executedExercise.CreatedDateTime,
+                        executedExercise.ModifiedDateTime,
                         executedExercise.Exercise.Name, 
-                        executedExercise.Exercise.Id, 
+                        executedExercise.Exercise.PublicId,
                         executedExercise.Exercise.ResistanceType, 
                         executedExercise.Sequence, 
                         executedExercise.TargetRepCount, 
@@ -40,17 +43,9 @@ namespace WorkoutTracker.API.Mappers
                         executedExercise.RangeOfMotionRating, 
                         executedExercise.Exercise.BandsEndToEnd, 
                         executedExercise.Exercise.InvolvesReps, 
-                        executedExercise.CreatedByUserId, 
-                        executedExercise.CreatedDateTime, 
-                        executedExercise.ModifiedByUserId, 
-                        executedExercise.ModifiedDateTime,
                         executedExercise.Side, 
                         executedExercise.Exercise.UsesBilateralResistance)
-                    ),
-                executedWorkout.CreatedByUserId, 
-                executedWorkout.CreatedDateTime, 
-                executedWorkout.ModifiedByUserId, 
-                executedWorkout.ModifiedDateTime
+                    )
             );
         }
     }

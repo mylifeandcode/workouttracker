@@ -94,10 +94,14 @@ namespace WorkoutTracker.Tests.Controllers
             _executedWorkoutSummaryDTOMapper
                 .Setup(x => x.MapFromExecutedWorkout(It.IsAny<ExecutedWorkout>()))
                 .Returns(new ExecutedWorkoutSummaryDTO(
-                    0, "Sample Workout", Guid.NewGuid(), 
+                    Guid.NewGuid(), 
+                    DateTime.Now, 
+                    null, 
+                    "Some Workout", 
+                    Guid.NewGuid(),
                     new DateTime(2023, 5, 6, 12, 0, 0), 
                     new DateTime(2023, 5, 6, 13, 0, 0), 
-                    new DateTime(2023, 5, 6, 11, 58, 0), "Some notes", Guid.NewGuid()));
+                    "Some notes"));
         }
         #endregion Setup Methods
     }

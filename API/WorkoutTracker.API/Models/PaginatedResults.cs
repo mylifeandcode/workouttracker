@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace WorkoutTracker.API.Models
 {
-    public record PaginatedResults<T>
-    {
-        public IEnumerable<T> Results { get; }
-        public int TotalCount { get; }
-
-        public PaginatedResults(IEnumerable<T> results, int totalCount) 
-            => (Results, TotalCount) = (results, totalCount);
-    }
+    public record PaginatedResults<T>(IEnumerable<T> Results, int TotalCount);
 }
