@@ -1,7 +1,10 @@
-import { NamedEntity } from "app/shared/models/named-entity";
 import { ExerciseSide } from "../enums/exercise-side";
 
-export class ExecutedExerciseDTO extends NamedEntity {
+export class ExecutedExerciseDTO {
+  public id: number = 0;
+  public createdDateTime: Date = new Date();
+  public modifiedDateTime?: Date | null = null;
+  public name: string = '';
   public exerciseId: number = 0;
   public resistanceType: number = 0;
   public sequence: number = 0;

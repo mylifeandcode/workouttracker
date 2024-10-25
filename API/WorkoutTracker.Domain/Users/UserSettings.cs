@@ -12,6 +12,8 @@ namespace WorkoutTracker.Domain.Users
         //Was tempted to just use a Dictionary<T, T> for this, but didn't want to 
         //save all settings as strings
 
+        //TODO: Add Public ID
+
         public int UserId { get; set; }
         //public UserGoal Goal { get; set; }
         public virtual List<UserMinMaxReps> RepSettings { get; set; }
