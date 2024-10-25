@@ -17,7 +17,7 @@ import { ChartModule } from 'primeng/chart';
 interface IWorkoutProgressForm {
   workoutId: FormControl<number | null>,
   workoutCount: FormControl<number>,
-  exerciseId: FormControl<number | null>
+  exerciseId: FormControl<string | null>
 }
 
 @Component({
@@ -92,7 +92,7 @@ export class WorkoutProgressComponent implements OnInit {
       });
   }
 
-  private setupChartData(exerciseId: number): void {
+  private setupChartData(exerciseId: string): void {
     this.formAndRangeOfMotionChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.FormAndRangeOfMotion);
     this.repsChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Reps);
     this.resistanceChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Resistance);
@@ -116,7 +116,7 @@ export class WorkoutProgressComponent implements OnInit {
     const form = builder.group<IWorkoutProgressForm>({
       workoutId: new FormControl<number | null>(null, Validators.required),
       workoutCount: new FormControl<number>(this.DEFAULT_WORKOUT_COUNT, { nonNullable: true, validators: [ Validators.required, Validators.min(1) ]}),
-      exerciseId: new FormControl<number | null>(null, Validators.required)
+      exerciseId: new FormControl<string | null>(null, Validators.required)
     });
 
     form.controls.workoutId.valueChanges.subscribe(value => this.workoutIdChanged(value));
@@ -153,7 +153,7 @@ export class WorkoutProgressComponent implements OnInit {
     }
   }
 
-  private exerciseChanged(id: number | null): void {
+  private exerciseChanged(id: string | null): void {
     if (!id) return;
     this.setupChartData(id);
   }

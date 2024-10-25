@@ -84,7 +84,7 @@ export class ResistanceBandsComponent implements OnInit {
       message: 'Are you sure you want to delete this resistance band?',
       accept: () => {
         this._resistanceBandService
-          .deleteByPublicId(resistanceBand.publicId!)
+          .deleteById(resistanceBand.publicId!)
           .subscribe((response: any) => {
             this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Resistance Band deleted', life: 3000 });
             this.getResistanceBandData(false);

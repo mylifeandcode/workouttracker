@@ -1,8 +1,7 @@
-import { IPublicEntity } from 'app/shared/interfaces/i-public-entity';
 import { NamedEntity } from '../../shared/models/named-entity';
 import { UserSettings } from './user-settings';
 
-export class User extends NamedEntity implements IPublicEntity {
+export class User extends NamedEntity {
   public emailAddress: string = '';
   public profilePic: string = '';
   public settings: UserSettings = new UserSettings();

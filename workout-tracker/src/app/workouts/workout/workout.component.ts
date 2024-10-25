@@ -241,7 +241,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
   private setupWorkout(executedWorkoutPublicId: string): void {
     this._apiCallsInProgress++;
-    this._executedWorkoutService.getByPublicId(executedWorkoutPublicId)
+    this._executedWorkoutService.getById(executedWorkoutPublicId)
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe({
         next: (executedWorkout: ExecutedWorkoutDTO) => {

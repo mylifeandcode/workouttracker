@@ -1,12 +1,8 @@
-import { IPublicEntity } from "app/shared/interfaces/i-public-entity";
-
-export class ExerciseDTO implements IPublicEntity {
-    id: number = 0;
-    publicId: string | null = null;
-    name: string = '';
-    targetAreas: string = '';
-    description: string = '';
-    setup: string = '';
-    movements: string = '';
-    pointsToRemember: string = '';
+export class ExerciseDTO {
+  id: number = 0;
+  publicId: string = '';
+  createdDateTime: Date = new Date();
+  modifiedDateTime?: Date | null = null;
+  name: string = '';
+  targetAreas: string = '';
 }

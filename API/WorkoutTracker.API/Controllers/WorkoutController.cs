@@ -148,10 +148,6 @@ namespace WorkoutTracker.API.Controllers
             try
             {
                 var plan = _workoutPlanService.Create(workoutPublicId, this.GetUserID());
-
-                if (plan.UserId != GetUserID())
-                    return Forbid();
-
                 return Ok(plan);
             }
             catch (Exception ex)

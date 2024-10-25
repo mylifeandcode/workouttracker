@@ -186,7 +186,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
           this.workoutPlan = result;
           this.workoutPlanForm.patchValue({
             //workoutId: workoutId,
-            workoutPublicId: result.workoutPublicId,
+            workoutPublicId: result.workoutId,
             workoutName: result.workoutName,
             hasBeenExecutedBefore: result.hasBeenExecutedBefore
           });
@@ -284,8 +284,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     if (this.workoutPlan) {
       this.updateWorkoutPlanFromForm();
       this.workoutPlan.submittedDateTime = new Date();
-      this.workoutPlan.pastWorkoutStartDateTime = this._pastWorkoutStartDateTime;
-      this.workoutPlan.pastWorkoutEndDateTime = this._pastWorkoutEndDateTime;
+      //this.workoutPlan.pastWorkoutStartDateTime = this._pastWorkoutStartDateTime;
+      //this.workoutPlan.pastWorkoutEndDateTime = this._pastWorkoutEndDateTime;
       this.isProcessing = true;
     }
   }

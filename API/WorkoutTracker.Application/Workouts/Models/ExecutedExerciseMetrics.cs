@@ -9,7 +9,7 @@ namespace WorkoutTracker.Application.Workouts.Models
 {
     public class ExecutedExerciseMetrics
     {
-        public int ExerciseId { get; set; }
+        public Guid ExerciseId { get; set; }
         public string Name { get; set; }
         public short Sequence { get; set; }
         public SetType SetType { get; set; }
@@ -22,7 +22,7 @@ namespace WorkoutTracker.Application.Workouts.Models
         {
             if (executedExercises != null && executedExercises.Any())
             {
-                ExerciseId = executedExercises[0].ExerciseId;
+                ExerciseId = executedExercises[0].Exercise.PublicId;
                 Name = executedExercises[0].Exercise.Name;
                 Sequence = executedExercises[0].Sequence;
                 SetType = executedExercises[0].SetType;

@@ -35,19 +35,9 @@ export class WorkoutService {
     return this._http.get<PaginatedResults<WorkoutDTO>>(url);
   }
 
-  public getByPublicId(publicId: string): Observable<Workout> {
-    return this._http.get<Workout>(`${this.API_ROOT}/${publicId}`);
+  public getById(id: number): Observable<Workout> {
+    return this._http.get<Workout>(`${this.API_ROOT}/${id}`);
   }
-
-  /*
-  public getDTObyId(id: number): Observable<WorkoutDTO> {
-    return this._http.get<WorkoutDTO>(`${this.API_ROOT}/DTO/${id}`);
-  }
-
-  public getByUserId(id: number): Observable<WorkoutDTO[]> {
-    return this._http.get<WorkoutDTO[]>(`${this.API_ROOT}/user/${id}`);
-  }
-  */
 
   public add(workout: Workout): Observable<Workout> {
     return this._http.post<Workout>(this.API_ROOT, workout, HTTP_OPTIONS);

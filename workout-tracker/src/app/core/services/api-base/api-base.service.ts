@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Entity } from 'app/shared/models/entity';
+import { IEntity } from 'app/shared/interfaces/i-entity';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { mergeMap, shareReplay, take, tap } from 'rxjs/operators';
 
@@ -9,7 +9,7 @@ const HTTP_OPTIONS = {
   })
 };
 
-export abstract class ApiBaseService<T extends Entity> {
+export abstract class ApiBaseService<T extends IEntity> {
 
   /*
   This BehaviorSubject is here for us to call next() on, which will trigger a new call to 
@@ -83,7 +83,7 @@ export abstract class ApiBaseService<T extends Entity> {
    * @returns An Observable containing the specified entity which completes after the value is 
    * emitted. This value is not cached.
    */
-  public getByPublicId(publicId: string): Observable<T> {
+  public getById(publicId: string): Observable<T> {
     return this._http.get<T>(`${this._apiRoot}/${publicId}`);
   }
 
@@ -135,7 +135,7 @@ export abstract class ApiBaseService<T extends Entity> {
    * @param publicId The public ID of the entity to delete.
    * @returns The response from the API to the DELETE request.
    */
-  public deleteByPublicId(publicId: string): Observable<any> { //TODO: Re-evaluate use of "any" type here, should probably be HttpResponse.
+  public deleteById(publicId: string): Observable<any> { //TODO: Re-evaluate use of "any" type here, should probably be HttpResponse.
     //console.log("DELETING");
     return this._http.delete(`${this._apiRoot}/${publicId}`)
       .pipe(

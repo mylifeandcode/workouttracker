@@ -141,7 +141,7 @@ describe('WorkoutService', () => {
     const workoutPlan = new WorkoutPlan();
     const expectedNewExecutedWorkoutPublicId: string = "some-guid-456";
 
-    workoutPlan.workoutPublicId = "some-guid-25";
+    workoutPlan.workoutId = "some-guid-25";
 
     //ACT
     service.submitPlan(workoutPlan)
@@ -153,7 +153,7 @@ describe('WorkoutService', () => {
         error: fail
       });
 
-    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutPublicId}/plan`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan`);
     expect(req.request.method).toEqual('POST');
     expect(req.request.body).toBe(workoutPlan);
 
@@ -168,7 +168,7 @@ describe('WorkoutService', () => {
     const workoutPlan = new WorkoutPlan();
     const expectedNewExecutedWorkoutPublicId: string = "some-new-guid";
 
-    workoutPlan.workoutPublicId = "some-guid-30-blah-blah";
+    workoutPlan.workoutId = "some-guid-30-blah-blah";
 
     //ACT
     service.submitPlanForLater(workoutPlan)
@@ -180,7 +180,7 @@ describe('WorkoutService', () => {
         error: fail
       });
 
-    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutPublicId}/plan-for-later`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan-for-later`);
     expect(req.request.method).toEqual('POST');
     expect(req.request.body).toBe(workoutPlan);
 
@@ -195,7 +195,7 @@ describe('WorkoutService', () => {
     const workoutPlan = new WorkoutPlan();
     const expectedNewExecutedWorkoutPublicId: string = "someOtherGuid";
 
-    workoutPlan.workoutPublicId = "someGuid";
+    workoutPlan.workoutId = "someGuid";
     const startDateTime = new Date(2022, 3, 22, 13, 30, 0);
     const endDateTime = new Date(2022, 3, 4, 14, 5, 30);
 
@@ -209,7 +209,7 @@ describe('WorkoutService', () => {
         error: fail
       });
 
-    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutPublicId}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`);
     expect(req.request.method).toEqual('POST');
     expect(req.request.body).toBe(workoutPlan);
 

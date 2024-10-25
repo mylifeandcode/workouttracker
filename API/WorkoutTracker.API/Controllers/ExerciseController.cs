@@ -52,6 +52,7 @@ namespace WorkoutTracker.API.Controllers
                 var results = exercises.Select((exercise) =>
                 {
                     return new ExerciseDTO(
+                        exercise.Id,
                         exercise.PublicId,
                         exercise.CreatedDateTime,
                         exercise.ModifiedDateTime,

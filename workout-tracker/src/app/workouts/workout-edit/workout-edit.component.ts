@@ -43,7 +43,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   //A helfpul link for dynamic form arrays: https://codinglatte.com/posts/angular/angular-dynamic-form-fields-using-formarray/
 
   //Public fields
-  public workoutPublicId: string = EMPTY_GUID;
+  public workoutId: number | null = null;
   public workoutForm: FormGroup<IWorkoutEditForm>;
   public loading: boolean = true;
   public infoMsg: string | null = null;
@@ -74,6 +74,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     this.readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
     this.getWorkoutIdFromRouteParams();
     this.setupForm();
+    console.log("Workout: ", this._workout);
   }
 
   public editModeToggled(event: any): void { //TODO: Get or specify a concrete type for the event param
@@ -132,7 +133,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   //PRIVATE METHODS ///////////////////////////////////////////////////////////////////////////////
 
   private setupForm(): void {
-    if (this.workoutPublicId != null) {
+    if (this.workoutId != null) {
       this.loadWorkout();
     }
     else {
@@ -142,7 +143,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   private getWorkoutIdFromRouteParams(): void {
-    this.workoutPublicId = this._route.snapshot.params['id'];
+    this.workoutId = this._route.snapshot.params['id'];
   }
 
   private createForm(): FormGroup<IWorkoutEditForm> {
@@ -158,9 +159,9 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   private loadWorkout(): void {
-    if (!this.workoutPublicId) return;
+    if (!this.workoutId) return;
     this.loading = true;
-    this._workoutService.getByPublicId(this.workoutPublicId).subscribe((workout: Workout) => {
+    this._workoutService.getById(this.workoutId).subscribe((workout: Workout) => {
       this.updateFormWithWorkoutValues(workout);
       this.loading = false;
       this._workout = workout;
@@ -185,7 +186,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   private addWorkout(): void {
-    //console.log("ADDING WORKOUT: ", this._workout);
+    console.log("ADDING WORKOUT: ", this._workout);
     this._workout.publicId = EMPTY_GUID;
     this._workoutService.add(this._workout)
       .pipe(finalize(() => {
@@ -195,10 +196,10 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       .subscribe({
         next: (addedWorkout: Workout) => {
           //this.workout = value;
-          this.workoutPublicId = addedWorkout.publicId!;
+          this.workoutId = addedWorkout.id!;
           this._workout = addedWorkout; //TODO: Refactor! We have redundant variables!
           this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
-          this._router.navigate([`workouts/edit/${this.workoutPublicId}`]);
+          this._router.navigate([`workouts/edit/${addedWorkout.publicId}`]);
         },
         error: (error: any) => {
           this.errorMsg = error.message;

@@ -46,7 +46,7 @@ export class WorkoutViewComponent implements OnInit {
 
   private getExecutedWorkout(publicId: string): void {
     this.loading = true;
-    this._executedWorkoutService.getByPublicId(publicId)
+    this._executedWorkoutService.getById(publicId)
       .pipe(finalize(() => { this.loading = false; }))
       .subscribe((executedWorkout: ExecutedWorkoutDTO) => {
         

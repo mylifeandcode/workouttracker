@@ -61,7 +61,7 @@ export class AnalyticsService {
     return this._http.get<ExecutedWorkoutMetrics[]>(`${this.API_ROOT}/workout-metrics/${workoutId}/${count}`);
   }
 
-  public getExerciseChartData(metrics: ExecutedWorkoutMetrics[], exerciseId: number, metricsType: METRICS_TYPE): AnalyticsChartData {
+  public getExerciseChartData(metrics: ExecutedWorkoutMetrics[], exerciseId: string, metricsType: METRICS_TYPE): AnalyticsChartData {
     const chartData = new AnalyticsChartData();
 
     if(metrics) {
@@ -116,7 +116,7 @@ export class AnalyticsService {
     });
   }
 
-  private getFlattenedExerciseMetrices(metrics: ExecutedWorkoutMetrics[], exerciseId: number, chartDataType: CHART_DATA_TYPE = CHART_DATA_TYPE.Resistance): number[] {
+  private getFlattenedExerciseMetrices(metrics: ExecutedWorkoutMetrics[], exerciseId: string, chartDataType: CHART_DATA_TYPE = CHART_DATA_TYPE.Resistance): number[] {
     return metrics.flatMap((metric: ExecutedWorkoutMetrics) => metric.exerciseMetrics.filter((executedExerciseMetrics: ExecutedExerciseMetrics) => executedExerciseMetrics.exerciseId == exerciseId).map((executedExerciseMetrics: ExecutedExerciseMetrics) => {
       switch(chartDataType) {
         case CHART_DATA_TYPE.Form:

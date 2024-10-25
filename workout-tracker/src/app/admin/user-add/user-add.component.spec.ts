@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { User } from 'app/core/models/user';
 import { UserNewDTO } from 'app/core/models/user-new-dto';
 import { UserService } from 'app/core/services/user/user.service';
@@ -15,12 +14,12 @@ class UserServiceMock {
 }
 
 @Component({
-    selector: 'wt-blank',
-    template: '',
-    standalone: true,
-    imports: [ReactiveFormsModule]
+  selector: 'wt-blank',
+  template: '',
+  standalone: true,
+  imports: [ReactiveFormsModule]
 })
-class BlankComponent {}
+class BlankComponent { }
 
 describe('UserAddComponent', () => {
   let component: UserAddComponent;
@@ -30,27 +29,27 @@ describe('UserAddComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [
+      imports: [
         ReactiveFormsModule,
         RouterModule.forRoot([{ path: 'admin/users', component: BlankComponent }]),
         UserAddComponent, BlankComponent
-    ],
-    providers: [
+      ],
+      providers: [
         {
-            provide: UserService,
-            useClass: UserServiceMock
+          provide: UserService,
+          useClass: UserServiceMock
         },
         {
-            provide: ActivatedRoute,
-            useValue: {
-                routeConfig: {
-                    path: '/user/register'
-                }
+          provide: ActivatedRoute,
+          useValue: {
+            routeConfig: {
+              path: '/user/register'
             }
+          }
         }
-    ]
-})
-    .compileComponents();
+      ]
+    })
+      .compileComponents();
 
     fixture = TestBed.createComponent(UserAddComponent);
     component = fixture.componentInstance;
@@ -65,7 +64,7 @@ describe('UserAddComponent', () => {
   });
 
   it('should add user', () => {
-    
+
     //ARRANGE
     const expectedUser = new UserNewDTO();
     expectedUser.userName = "NewUser";

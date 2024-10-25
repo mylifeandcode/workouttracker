@@ -121,7 +121,7 @@ export class UserEditComponent implements OnInit {
 
   private getUserInfoFromService(userPublicId: string): void {
 
-    this._userSvc.getByPublicId(userPublicId)
+    this._userSvc.getById(userPublicId)
       .subscribe({
         next: (user: User) => {
           this._user = user;

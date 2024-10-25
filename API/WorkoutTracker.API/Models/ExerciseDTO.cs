@@ -2,7 +2,12 @@
 
 namespace WorkoutTracker.API.Models
 {
-    public record ExerciseDTO(Guid Id, DateTime CreatedDateTime, DateTime? ModifiedDateTime, string Name, 
-        string TargetAreas) 
-        : NamedEntityDTO(Id, CreatedDateTime, ModifiedDateTime, Name);
+    //WE NEED BOTH IDS HERE
+    public record ExerciseDTO(
+        int Id, 
+        Guid PublicId, 
+        DateTime CreatedDateTime, 
+        DateTime? ModifiedDateTime, 
+        string Name, 
+        string TargetAreas);
 }

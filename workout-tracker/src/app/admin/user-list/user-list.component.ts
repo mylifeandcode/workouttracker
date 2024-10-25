@@ -33,7 +33,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
     this.busy = true;
     this.busyMsg = "Deleting...";
-    this._userSvc.deleteByPublicId(userPublicId).subscribe({
+    this._userSvc.deleteById(userPublicId).subscribe({
       next:() => {
           //const index = _.findIndex(this.users, (user: User) => user.id == userId);
           //this.users?.splice(index, 1);

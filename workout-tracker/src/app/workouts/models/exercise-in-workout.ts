@@ -1,17 +1,13 @@
+import { Entity } from 'app/shared/models/entity';
 import { Exercise } from './exercise';
 
-export class ExerciseInWorkout {
+export class ExerciseInWorkout extends Entity {
 
-  //TODO: Refactor! This class differs from the server-side version for client-side 
-  //needs, which seems like a bad idea.
-
-  public id: number;
+  public exercise: Exercise | null;
   public exerciseId: number;
-  public exerciseName: string; //Not on the server-side model -- maybe we should add it there?
   public numberOfSets: number;
   public setType: number;
   public sequence: number;
-  public exercise: Exercise | null;
 
   constructor(
     id: number,
@@ -20,10 +16,11 @@ export class ExerciseInWorkout {
     numberOfSets: number,
     setType: number,
     sequence: number) {
-
+    super();
     this.id = id;
     this.exerciseId = exerciseId;
-    this.exerciseName = exerciseName;
+    this.exercise = new Exercise();
+    this.exercise.name = exerciseName;
     this.numberOfSets = numberOfSets;
     this.setType = setType;
     this.sequence = sequence;

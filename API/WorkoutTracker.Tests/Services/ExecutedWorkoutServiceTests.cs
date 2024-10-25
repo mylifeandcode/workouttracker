@@ -43,9 +43,8 @@ namespace WorkoutTracker.Tests.Services
             int userId = 123;
             var workoutPlan = new WorkoutPlan();
             //workoutPlan.WorkoutId = 5;
-            workoutPlan.WorkoutPublicId = Guid.NewGuid();
+            workoutPlan.WorkoutId = Guid.NewGuid();
             workoutPlan.WorkoutName = "Chest and Arms v1";
-            workoutPlan.UserId = 1;
             workoutPlan.SubmittedDateTime = submittedDate;
             workoutPlan.Exercises = new List<ExercisePlan>(3);
             workoutPlan.Exercises.Add(

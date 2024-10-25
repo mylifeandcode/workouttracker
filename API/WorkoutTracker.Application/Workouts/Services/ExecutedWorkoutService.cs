@@ -172,10 +172,10 @@ namespace WorkoutTracker.Application.Workouts.Services
         private ExecutedWorkout CreateFromPlan(WorkoutPlan workoutPlan, DateTime? startDateTime, DateTime? endDateTime)
         {
             var executedWorkout = new ExecutedWorkout();
-            var workout = _workoutRepo.GetWithoutTracking().First(x => x.PublicId == workoutPlan.WorkoutPublicId);
+            var workout = _workoutRepo.GetWithoutTracking().First(x => x.PublicId == workoutPlan.WorkoutId);
             //executedWorkout.WorkoutId = workoutPlan.WorkoutId;
             executedWorkout.WorkoutId = workout.Id;
-            executedWorkout.CreatedByUserId = workoutPlan.UserId;
+            executedWorkout.CreatedByUserId = workout.Id;
             executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
 
             byte exerciseSequence = 0;
