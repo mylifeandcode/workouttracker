@@ -175,7 +175,7 @@ namespace WorkoutTracker.Application.Workouts.Services
             var workout = _workoutRepo.GetWithoutTracking().First(x => x.PublicId == workoutPlan.WorkoutId);
             //executedWorkout.WorkoutId = workoutPlan.WorkoutId;
             executedWorkout.WorkoutId = workout.Id;
-            executedWorkout.CreatedByUserId = workout.Id;
+            executedWorkout.CreatedByUserId = workout.CreatedByUserId;
             executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
 
             byte exerciseSequence = 0;

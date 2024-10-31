@@ -48,5 +48,11 @@ namespace WorkoutTracker.API.Mappers
                     )
             );
         }
+
+        public ExecutedWorkout MapToExecutedWorkout(ExecutedWorkoutDTO dto)
+        {
+            ArgumentNullException.ThrowIfNull(dto);
+            return new ExecutedWorkout();
+        }
     }
 }

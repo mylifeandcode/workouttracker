@@ -155,6 +155,7 @@
 
             <!--Range of Motion Rating-->
             <div class="col-2 exercise-dropdown-cell">
+              <!--TODO: Remove the change handler and use the ReactiveForm instead-->
               <select class="form-select" formControlName="rangeOfMotionRating" (change)="rangeOfMotionChanged()"
                 required> <!--TODO: Set up differenty, this is just for POC-->
                 <option value=0>N/A</option>

@@ -57,8 +57,8 @@ export class AnalyticsService {
     return this._http.get<ExecutedWorkoutsSummary>(`${this.API_ROOT}/executed-workouts`);
   }
 
-  public getExecutedWorkoutMetrics(workoutId: number, count: number = 10): Observable<ExecutedWorkoutMetrics[]> {
-    return this._http.get<ExecutedWorkoutMetrics[]>(`${this.API_ROOT}/workout-metrics/${workoutId}/${count}`);
+  public getExecutedWorkoutMetrics(workoutPublicId: string, count: number = 10): Observable<ExecutedWorkoutMetrics[]> {
+    return this._http.get<ExecutedWorkoutMetrics[]>(`${this.API_ROOT}/workout-metrics/${workoutPublicId}/${count}`);
   }
 
   public getExerciseChartData(metrics: ExecutedWorkoutMetrics[], exerciseId: string, metricsType: METRICS_TYPE): AnalyticsChartData {

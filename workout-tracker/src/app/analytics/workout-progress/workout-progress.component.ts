@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PaginatedResults } from 'app/core/models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/models/workout-dto';
 import { WorkoutService } from 'app/workouts/workout.service';
 import { finalize } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { AnalyticsService, METRICS_TYPE } from '../analytics.service';
 import { AnalyticsChartData } from '../models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
@@ -15,19 +16,19 @@ import { TabViewModule } from 'primeng/tabview';
 import { ChartModule } from 'primeng/chart';
 
 interface IWorkoutProgressForm {
-  workoutId: FormControl<number | null>,
+  workoutId: FormControl<string | null>,
   workoutCount: FormControl<number>,
   exerciseId: FormControl<string | null>
 }
 
 @Component({
-    selector: 'wt-workout-progress',
-    templateUrl: './workout-progress.component.html',
-    styleUrls: ['./workout-progress.component.scss'],
-    standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, DropdownModule, SelectOnFocusDirective, ProgressSpinnerModule, TabViewModule, ChartModule]
+  selector: 'wt-workout-progress',
+  templateUrl: './workout-progress.component.html',
+  styleUrls: ['./workout-progress.component.scss'],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, DropdownModule, SelectOnFocusDirective, ProgressSpinnerModule, TabViewModule, ChartModule]
 })
-export class WorkoutProgressComponent implements OnInit {
+export class WorkoutProgressComponent implements OnInit, OnDestroy {
 
   public loadingData: boolean = true;
   public metrics: ExecutedWorkoutMetrics[] = [];
@@ -66,6 +67,10 @@ export class WorkoutProgressComponent implements OnInit {
   public form: FormGroup<IWorkoutProgressForm>;
   public readonly DEFAULT_WORKOUT_COUNT: number = 5;
 
+  private _workoutId$: Subscription | undefined;
+  private _workoutCount$: Subscription | undefined;
+  private _exerciseId$: Subscription | undefined;
+
   constructor(
     private _analyticsService: AnalyticsService,
     private _workoutService: WorkoutService,
@@ -77,11 +82,17 @@ export class WorkoutProgressComponent implements OnInit {
     this.getUserWorkouts();
   }
 
-  private getMetrics(workoutId: number): void {
+  public ngOnDestroy(): void {
+    if (this._workoutId$) this._workoutId$.unsubscribe();
+    if (this._workoutCount$) this._workoutCount$.unsubscribe();
+    if (this._exerciseId$) this._exerciseId$.unsubscribe();
+  }
+
+  private getMetrics(workoutPublicId: string): void {
     this.metrics = [];
     const count = this.form.controls.workoutCount.value;
 
-    this._analyticsService.getExecutedWorkoutMetrics(workoutId, count)
+    this._analyticsService.getExecutedWorkoutMetrics(workoutPublicId, count)
       .pipe(
         finalize(() => {
           this.loadingData = false;
@@ -114,26 +125,26 @@ export class WorkoutProgressComponent implements OnInit {
 
   private buildForm(builder: FormBuilder): FormGroup<IWorkoutProgressForm> {
     const form = builder.group<IWorkoutProgressForm>({
-      workoutId: new FormControl<number | null>(null, Validators.required),
-      workoutCount: new FormControl<number>(this.DEFAULT_WORKOUT_COUNT, { nonNullable: true, validators: [ Validators.required, Validators.min(1) ]}),
+      workoutId: new FormControl<string | null>(null, Validators.required),
+      workoutCount: new FormControl<number>(this.DEFAULT_WORKOUT_COUNT, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       exerciseId: new FormControl<string | null>(null, Validators.required)
     });
 
-    form.controls.workoutId.valueChanges.subscribe(value => this.workoutIdChanged(value));
-    form.controls.workoutCount.valueChanges.subscribe(value => this.workoutCountChanged(value));
-    form.controls.exerciseId.valueChanges.subscribe(value => this.exerciseChanged(value));
-    //TODO: Determine if I need to unsubscribe from those!
+    this._workoutId$ = form.controls.workoutId.valueChanges.subscribe(value => this.workoutIdChanged(value));
+    this._workoutCount$ = form.controls.workoutCount.valueChanges.subscribe(value => this.workoutCountChanged(value));
+    this._exerciseId$ = form.controls.exerciseId.valueChanges.subscribe(value => this.exerciseChanged(value));
+
     return form;
   }
 
-  private workoutIdChanged(id: number | null): void {
-    if (!id) return;
+  private workoutIdChanged(publicId: string | null): void {
+    if (!publicId) return;
 
     this.loadingData = true;
     this.metrics = [];
     this.clearAnalyticsData();
 
-    this._analyticsService.getExecutedWorkoutMetrics(id, this.form.controls.workoutCount.value)
+    this._analyticsService.getExecutedWorkoutMetrics(publicId, this.form.controls.workoutCount.value)
       .pipe(
         finalize(() => {
           this.loadingData = false;

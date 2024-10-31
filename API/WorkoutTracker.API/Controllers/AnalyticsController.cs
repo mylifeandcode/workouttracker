@@ -16,10 +16,12 @@ namespace WorkoutTracker.API.Controllers
     public class AnalyticsController : UserAwareController
     {
         private IAnalyticsService _analyticsService;
+        private IWorkoutService _workoutService;
 
-        public AnalyticsController(IAnalyticsService analyticsService)
+        public AnalyticsController(IAnalyticsService analyticsService, IWorkoutService workoutService)
         {
             _analyticsService = analyticsService ?? throw new ArgumentNullException(nameof(analyticsService));
+            _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));
         }
 
         [HttpGet("executed-workouts")]
@@ -30,9 +32,10 @@ namespace WorkoutTracker.API.Controllers
             return Ok(summary);
         }
 
-        [HttpGet("workout-metrics/{workoutId}/{count}")]
-        public ActionResult<List<ExecutedWorkoutMetrics>> GetExecutedWorkoutMetrics(int workoutId, int count = 5)
+        [HttpGet("workout-metrics/{workoutPublicId}/{count}")]
+        public ActionResult<List<ExecutedWorkoutMetrics>> GetExecutedWorkoutMetrics(Guid workoutPublicId, int count = 5)
         {
+            var workoutId = _workoutService.GetByPublicId(workoutPublicId).Id;
             var metrics = _analyticsService.GetExecutedWorkoutMetrics(workoutId, count);
             return Ok(metrics);
         }

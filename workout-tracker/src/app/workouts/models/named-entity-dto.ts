@@ -1,6 +1,5 @@
-import { IEntity } from "app/shared/interfaces/i-entity";
+import { EntityDTO } from "app/shared/models/entity-dto";
 
-export abstract class NamedEntityDTO implements IEntity {
-  public id: number = 0;
+export abstract class NamedEntityDTO extends EntityDTO {
   public name: string = '';
 }

@@ -393,7 +393,8 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
         },
         error: (error: any) => {
           this.setErrorInfo(error, "An error occurred saving workout information. See console for details.");
-          this._messageService.add({ severity: 'error', summary: 'Error!', detail: 'An error occurred while trying to save: ' + error.message, life: 5000 });
+          //TODO: Fix the styling for this!
+          this._messageService.add({ severity: 'error', summary: 'Error!', detail: error.message, life: 5000 });
         }
       });
   }

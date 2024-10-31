@@ -166,7 +166,7 @@ namespace WorkoutTracker.API.Controllers
 
         // POST api/ExecutedWorkout
         [HttpPost]
-        public ActionResult<ExecutedWorkout> Post([FromBody] ExecutedWorkout value)
+        public ActionResult<ExecutedWorkoutDTO> Post([FromBody] ExecutedWorkoutDTO value)
         {
             try
             {
