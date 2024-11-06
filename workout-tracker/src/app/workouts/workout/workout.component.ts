@@ -9,7 +9,7 @@ import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
-import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
 import { forEach } from 'lodash-es';
