@@ -105,7 +105,7 @@ describe('WorkoutViewComponent', () => {
 
   it('should get executed workout based on route', () => {
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    expect(executedWorkoutService.getByPublicId).toHaveBeenCalledOnceWith(EXECUTED_WORKOUT_PUBLIC_ID);
+    expect(executedWorkoutService.getById).toHaveBeenCalledOnceWith(EXECUTED_WORKOUT_PUBLIC_ID);
     expect(component.executedWorkout).toBeTruthy();
     expect(component.groupedExercises).toBeTruthy();
 

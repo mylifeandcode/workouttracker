@@ -67,7 +67,7 @@ describe('WorkoutService', () => {
     const workoutId: string = TEST_WORKOUT_ID;
     expectedResults.publicId = workoutId;
 
-    service.getByPublicId(workoutId).subscribe({
+    service.getById(workoutId).subscribe({
       next: (workout: Workout) => {
         expect(workout).toEqual(expectedResults);
         done();

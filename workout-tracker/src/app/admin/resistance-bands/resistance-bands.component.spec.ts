@@ -14,7 +14,7 @@ class ResistanceBandServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new Array<ResistanceBand>()));
   add = jasmine.createSpy('add').and.returnValue(of(new ResistanceBand()));
   update = jasmine.createSpy('update').and.returnValue(of(new ResistanceBand()));
-  deleteByPublicId = jasmine.createSpy('deleteByPublicId').and.returnValue(of(new HttpResponse<string>()));
+  deleteById = jasmine.createSpy('deleteById').and.returnValue(of(new HttpResponse<string>()));
 }
 
 class MessageServiceMock {
@@ -132,7 +132,7 @@ describe('ResistanceBandsComponent', () => {
     component.deleteBand(band);
 
     //ASSERT
-    expect(resistanceBandService.deleteByPublicId).toHaveBeenCalledWith(band.id);
+    expect(resistanceBandService.deleteById).toHaveBeenCalledWith(band.publicId);
     expect(messageService.add)
       .toHaveBeenCalledWith({
         severity: 'success',
@@ -157,7 +157,7 @@ describe('ResistanceBandsComponent', () => {
     component.deleteBand(band);
 
     //ASSERT
-    expect(resistanceBandService.deleteByPublicId).not.toHaveBeenCalled();
+    expect(resistanceBandService.deleteById).not.toHaveBeenCalled();
     expect(messageService.add).not.toHaveBeenCalled();
     expect(resistanceBandService.getAll).toHaveBeenCalledTimes(1); //Just the initial call
 

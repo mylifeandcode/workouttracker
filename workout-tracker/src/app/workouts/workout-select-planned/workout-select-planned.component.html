@@ -3,7 +3,9 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <p-table #dt styleClass="p-datatable-striped" [value]="plannedWorkouts" [paginator]="true" [columns]="cols" [rows]="pageSize" [lazy]="true" (onLazyLoad)="getPlannedWorkoutsLazy($event)" [totalRecords]="totalCount" [loading]="loading">
+      <p-table #dt styleClass="p-datatable-striped" [value]="plannedWorkouts" [paginator]="true" [columns]="cols" 
+        [rows]="pageSize" [lazy]="true" (onLazyLoad)="getPlannedWorkoutsLazy($event)" [totalRecords]="totalCount" 
+        [loading]="loading">
         <ng-template pTemplate="header" let-columns>
           <tr>
             <th>Workout Name</th>

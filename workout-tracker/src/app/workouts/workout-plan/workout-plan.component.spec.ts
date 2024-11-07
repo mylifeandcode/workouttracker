@@ -7,20 +7,20 @@ import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-indi
 import { of } from 'rxjs';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { WorkoutPlan } from '../models/workout-plan';
-import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
+import { ResistanceBandSelectComponent } from '../shared/resistance-band-select/resistance-band-select.component';
 import { WorkoutService } from '../workout.service';
 
 import { WorkoutPlanComponent } from './workout-plan.component';
 
 class WorkoutServiceMock {
-  getPlan = jasmine.createSpy('getPlan').and.returnValue(of(new WorkoutPlan()));
+  getNewPlan = jasmine.createSpy('getNewPlan').and.returnValue(of(new WorkoutPlan()));
   submitPlanForPast = jasmine.createSpy('submitPlanForPast').and.returnValue(of(12));
   submitPlan = jasmine.createSpy('submitPlan').and.returnValue(of(5));
   submitPlanForLater = jasmine.createSpy('submitPlanForLater').and.returnValue(of(32));
 }
 
 class MockResistanceBandService {
-  getAllIndividualBands = 
+  getAllIndividualBands =
     jasmine.createSpy('getAllIndividualBands')
       .and.callFake(() => {
         const bands: ResistanceBandIndividual[] = [];
@@ -31,10 +31,10 @@ class MockResistanceBandService {
 }
 
 @Component({
-    selector: 'wt-resistance-band-select',
-    template: '',
-    standalone: true,
-    imports: [ReactiveFormsModule]
+  selector: 'wt-resistance-band-select',
+  template: '',
+  standalone: true,
+  imports: [ReactiveFormsModule]
 })
 class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
@@ -57,30 +57,30 @@ describe('WorkoutPlanComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    providers: [
+      providers: [
         {
-            provide: WorkoutService,
-            useClass: WorkoutServiceMock
+          provide: WorkoutService,
+          useClass: WorkoutServiceMock
         },
         {
-            provide: ResistanceBandService,
-            useClass: MockResistanceBandService
+          provide: ResistanceBandService,
+          useClass: MockResistanceBandService
         },
         {
-            provide: ActivatedRoute,
-            useValue: { params: of({}) }
+          provide: ActivatedRoute,
+          useValue: { params: of({}) }
         },
         UntypedFormBuilder //TODO: Determine if this is kosher or if there's a preferred mocking approach
-    ],
-    imports: [
+      ],
+      imports: [
         RouterModule.forRoot([]),
         ReactiveFormsModule,
         WorkoutPlanComponent,
         MockResistanceBandSelectComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-    .compileComponents();
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    })
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -94,7 +94,7 @@ describe('WorkoutPlanComponent', () => {
   });
 
   it('should submit plan', () => {
-    
+
     //ARRANGE
     const router = TestBed.inject(Router);
     const workoutService = TestBed.inject(WorkoutService);
@@ -138,13 +138,13 @@ describe('WorkoutPlanComponent', () => {
   });
 
   it('should determine plan is for past workout based on route params', () => {
-    
+
     //ARRANGE
     const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.params = 
-      of({ 
+    activatedRoute.params =
+      of({
         start: new Date(2022, 3, 22, 12, 13, 0),
-        end: new Date(2022, 3, 22, 13, 35, 6) 
+        end: new Date(2022, 3, 22, 13, 35, 6)
       });
 
     //ACT
@@ -159,7 +159,7 @@ describe('WorkoutPlanComponent', () => {
     //Using default mock, no change is required, and default expectation is false
     expect(component.isForPastWorkout).toBeFalse();
   });
-  
+
   it('should submit plan for a past workout', () => {
 
     //ARRANGE
@@ -167,12 +167,12 @@ describe('WorkoutPlanComponent', () => {
     const endDate = new Date(2022, 3, 22, 13, 35, 6);
 
     const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.params = 
-      of({ 
+    activatedRoute.params =
+      of({
         start: startDate,
         end: endDate
       });
-    
+
     const workoutService = TestBed.inject(WorkoutService);
     const router = TestBed.inject(Router);
     spyOn(router, 'navigate');
@@ -193,7 +193,7 @@ describe('WorkoutPlanComponent', () => {
     //expect(workoutPlan.pastWorkoutEndDateTime).toEqual(endDate);
     expect(component.workoutPlan).not.toBeNull();
     expect(workoutService.submitPlanForPast).toHaveBeenCalledWith(workoutPlan, startDate, endDate);
-    expect(router.navigate).toHaveBeenCalledWith(["workouts/start/12"], { queryParams: { pastWorkout: true }});
+    expect(router.navigate).toHaveBeenCalledWith(["workouts/start/12"], { queryParams: { pastWorkout: true } });
 
   });
 

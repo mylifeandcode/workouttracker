@@ -5,16 +5,16 @@ import { WorkoutPlan } from '../models/workout-plan';
 import { WorkoutService } from '../workout.service';
 import { ExercisePlan } from '../models/exercise-plan';
 import { forEach } from 'lodash-es';
-import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
+import { ResistanceBandSelectComponent } from '../shared/resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { finalize } from 'rxjs/operators';
 import { IWorkoutPlanForm } from '../workout/interfaces/i-workout-plan-form';
-import { IExercisePlanFormGroup } from '../workout/interfaces/i-exercise-plan-form-group';
+import { IExercisePlanFormGroup } from './exercise-plan/interfaces/i-exercise-plan-form-group';
 import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ExercisePlanComponent } from '../exercise-plan/exercise-plan.component';
+import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
 import { DialogModule } from 'primeng/dialog';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 
@@ -24,7 +24,10 @@ import { EMPTY_GUID } from 'app/shared/shared-constants';
     templateUrl: './workout-plan.component.html',
     styleUrls: ['./workout-plan.component.scss'],
     standalone: true,
-    imports: [ProgressSpinnerModule, FormsModule, ReactiveFormsModule, ExercisePlanComponent, DialogModule, ResistanceBandSelectComponent]
+    imports: [
+      ProgressSpinnerModule, FormsModule, ReactiveFormsModule, DialogModule, 
+      ExercisePlanComponent, ResistanceBandSelectComponent
+    ]
 })
 export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implements OnInit {
 

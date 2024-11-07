@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 import { FormGroup } from '@angular/forms';
-import { ResistanceBandColorPipe } from '../../shared/pipes/resistance-band-color.pipe';
-import { ResistanceAmountPipe } from '../pipes/resistance-amount.pipe';
+import { ResistanceBandColorPipe } from '../../../../shared/pipes/resistance-band-color.pipe';
+import { ResistanceAmountPipe } from '../../../pipes/resistance-amount.pipe';
 
 @Component({
     selector: 'wt-exercise-plan-suggestions',

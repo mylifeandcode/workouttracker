@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
-import { ResistanceBandSelection } from '../models/resistance-band-selection';
+import { ResistanceBandSelection } from '../../models/resistance-band-selection';
 import { sumBy, groupBy, some } from 'lodash-es';
 import { Dictionary } from 'lodash';
 import { PickListMoveToSourceEvent, PickListMoveToTargetEvent, PickListModule } from 'primeng/picklist';
 import { PrimeTemplate } from 'primeng/api';
 import { NgStyle } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
-import { ResistanceAmountPipe } from '../pipes/resistance-amount.pipe';
+import { ResistanceAmountPipe } from '../../pipes/resistance-amount.pipe';
 
 @Component({
     selector: 'wt-resistance-band-select',

@@ -13,12 +13,12 @@ import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '@angular/core';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
-import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
+import { ResistanceBandSelectComponent } from '../shared/resistance-band-select/resistance-band-select.component';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { groupBy } from 'lodash-es';
 import { Dictionary } from 'lodash';
-import { WorkoutExerciseComponent } from '../workout-exercise/workout-exercise.component';
+import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { DurationComponent } from '../shared/duration/duration.component';
 import { ToastModule } from 'primeng/toast';
@@ -114,7 +114,7 @@ class ResistanceBandServiceMock {
 class ExecutedWorkoutServiceMock {
   //getNew = jasmine.createSpy('getNew').and.returnValue(of(getFakeExecutedWorkout()));
   add = jasmine.createSpy('add').and.callFake((workout: ExecutedWorkoutDTO) => of(workout));
-  getByPublicId = jasmine.createSpy('getByPublicId').and.returnValue(of(getFakeExecutedWorkout()));
+  getById = jasmine.createSpy('getById').and.returnValue(of(getFakeExecutedWorkout()));
 
   public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
     const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
@@ -439,7 +439,7 @@ describe('WorkoutComponent', () => {
     component.workoutForm.patchValue({ journal: '38 degrees, sunny. ST: TOS - \"The Omega Glory\" and YouTube' });
 
     const expectedExecutedWorkout = new ExecutedWorkoutDTO();
-    expectedExecutedWorkout.createdByUserId = MOCK_USER_ID;
+    //expectedExecutedWorkout.createdByUserId = MOCK_USER_ID;
     expectedExecutedWorkout.startDateTime = component.startDateTime;
     expectedExecutedWorkout.journal = component.workoutForm.controls.journal.value;
     expectedExecutedWorkout.exercises = [];
@@ -554,8 +554,8 @@ describe('WorkoutComponent', () => {
     //component._executedWorkout = workout;
 
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    executedWorkoutService.getByPublicId =
-      jasmine.createSpy('getByPublicId').and.returnValue(of(workout));
+    executedWorkoutService.getById =
+      jasmine.createSpy('getById').and.returnValue(of(workout));
 
     //ACT
     component.ngOnInit(); //Need to reinitialize due to changed mock

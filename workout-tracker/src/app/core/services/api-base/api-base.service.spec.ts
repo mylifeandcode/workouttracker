@@ -73,7 +73,7 @@ describe('ApiBaseService', () => {
     const WIDGET_ID: string = '1';
 
     //ACT
-    const result = service.getByPublicId(WIDGET_ID);
+    const result = service.getById(WIDGET_ID);
     result.subscribe((widgetResult: Widget) => {
       expect(widgetResult).toBe(widget, fail);
     });
@@ -132,7 +132,7 @@ describe('ApiBaseService', () => {
     const WIDGET_ID: string = '1';
 
     //ACT
-    const result = service.deleteByPublicId(WIDGET_ID);
+    const result = service.deleteById(WIDGET_ID);
     result.subscribe((serviceEntity: any) => { //TODO: Re-evaluate return type to use here!
       expect(serviceEntity).toBeTruthy(fail);
     });

@@ -21,19 +21,19 @@ describe('ExerciseListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         RouterModule.forRoot([]),
         ExerciseListComponent
-    ],
-    providers: [
+      ],
+      providers: [
         {
-            provide: ExerciseService,
-            useClass: ExerciseServiceMock
+          provide: ExerciseService,
+          useClass: ExerciseServiceMock
         }
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-    .compileComponents();
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    })
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -54,21 +54,21 @@ describe('ExerciseListComponent', () => {
       "rows": 10,
       "sortOrder": 1,
       "filters": {
-          "targetAreas": {
-              "value": [
-                  "Chest"
-              ],
-              "matchMode": "in"
-          },
-          "name": {
-              "value": "Pre",
-              "matchMode": "in"
-          }
+        "targetAreas": {
+          "value": [
+            "Chest"
+          ],
+          "matchMode": "in"
+        },
+        "name": {
+          "value": "Pre",
+          "matchMode": "in"
+        }
       },
       "globalFilter": null
     };
 
-    const expectedParams: any[] =[0, 10, 'Pre', ['Chest']];
+    const expectedParams: any[] = [0, 10, 'Pre', ['Chest']];
 
     //ACT
     component.getExercisesLazy(lazyLoadEvent);

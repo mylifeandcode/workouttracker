@@ -42,10 +42,10 @@ export class RecentWorkoutsComponent implements OnInit {
       });
   }
 
-  public viewExercises(workoutId: number): void { //TODO: Refactor to use a DTO or summary object
+  public viewExercises(workoutPublicId: string): void { //TODO: Refactor to use a DTO or summary object
     //this.selectedWorkout = null;
     this._workoutService
-      .getById(workoutId)
+      .getById(workoutPublicId)
       .subscribe((result: Workout) => {
         this.showExercises = true;
         this.selectedWorkout = result;

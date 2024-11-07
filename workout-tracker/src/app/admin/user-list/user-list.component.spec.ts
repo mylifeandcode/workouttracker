@@ -16,7 +16,7 @@ class UserServiceMock {
 
   getAll = jasmine.createSpy('getAll').and.returnValue(of(this.fakeUsers));
   getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
-  delete = jasmine.createSpy('deleteByPublicId').and.returnValue(of(null)); //TOOD: Revisit
+  delete = jasmine.createSpy('deleteById').and.returnValue(of(null)); //TOOD: Revisit
   all$ = of(this.fakeUsers);
 }
 
@@ -65,7 +65,7 @@ describe('UserListComponent', () => {
     component.deleteUser('1');
 
     //ASSERT
-    expect(userService.deleteByPublicId).not.toHaveBeenCalled();
+    expect(userService.deleteById).not.toHaveBeenCalled();
   });
 
   it('should call service to delete user when confirm dialog returns true', () => {
@@ -76,7 +76,7 @@ describe('UserListComponent', () => {
     component.deleteUser('2');
 
     //ASSERT
-    expect(userService.deleteByPublicId).toHaveBeenCalledWith('2');
+    expect(userService.deleteById).toHaveBeenCalledWith('2');
   });
 
   //Removed. Using async pipe with Observable on service now.

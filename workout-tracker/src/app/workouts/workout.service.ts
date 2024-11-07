@@ -35,7 +35,7 @@ export class WorkoutService {
     return this._http.get<PaginatedResults<WorkoutDTO>>(url);
   }
 
-  public getById(id: number): Observable<Workout> {
+  public getById(id: string): Observable<Workout> {
     return this._http.get<Workout>(`${this.API_ROOT}/${id}`);
   }
 

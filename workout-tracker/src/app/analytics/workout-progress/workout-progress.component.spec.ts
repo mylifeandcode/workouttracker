@@ -22,13 +22,13 @@ class AnalyticsServiceMock {
       const metrics = new Array<ExecutedWorkoutMetrics>();
       const exercise1Metrics = new ExecutedExerciseMetrics();
       exercise1Metrics.name = "Exercise 1";
-      exercise1Metrics.exerciseId = 1;
+      exercise1Metrics.exerciseId = '1';
       const exercise2Metrics = new ExecutedExerciseMetrics();
       exercise2Metrics.name = "Exercise 2";
-      exercise2Metrics.exerciseId = 2;
+      exercise2Metrics.exerciseId = '2';
       const exercise3Metrics = new ExecutedExerciseMetrics();
       exercise3Metrics.name = "Exercise 3";
-      exercise3Metrics.exerciseId = 3;
+      exercise3Metrics.exerciseId = '3';
       const metric1 = new ExecutedWorkoutMetrics();
       metric1.exerciseMetrics = [];
       metric1.exerciseMetrics.push(exercise1Metrics, exercise2Metrics, exercise3Metrics);
@@ -45,15 +45,15 @@ class WorkoutServiceMock {
 
       const workout1 = new WorkoutDTO();
       workout1.name = "Workout B";
-      workout1.id = 20;
+      workout1.id = '20';
 
       const workout2 = new WorkoutDTO();
       workout2.name = "Workout C";
-      workout2.id = 30;
+      workout2.id = '30';
 
       const workout3 = new WorkoutDTO();
       workout3.name = "Workout A";
-      workout3.id = 10;
+      workout3.id = '10';
 
       result.results.push(workout1, workout2, workout3);
 
@@ -118,24 +118,24 @@ describe('WorkoutProgressComponent', () => {
     //ARRANGE
 
     //ACT
-    component.form.controls.workoutId.setValue(1);
+    component.form.controls.workoutId.setValue('some-id');
     fixture.detectChanges(); //Not really needed for this test, but a good practice
 
     //ASSERT
-    expect(analyticsService.getExecutedWorkoutMetrics).toHaveBeenCalledWith(1, component.DEFAULT_WORKOUT_COUNT);
+    expect(analyticsService.getExecutedWorkoutMetrics).toHaveBeenCalledWith('some-id', component.DEFAULT_WORKOUT_COUNT);
   });
 
   it('should select exercise from workout', () => {
     //ARRANGE
-    component.form.controls.workoutId.setValue(1);
+    component.form.controls.workoutId.setValue('some-workout-id');
 
     //ACT
-    component.form.controls.exerciseId.setValue(1);
+    component.form.controls.exerciseId.setValue('some-exercise-id');
     fixture.detectChanges();
 
     //ASSERT
     expect(analyticsService.getExerciseChartData).toHaveBeenCalledTimes(3);
-    expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(component.metrics, 1, METRICS_TYPE.FormAndRangeOfMotion);
+    expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(component.metrics, 'some-workout-id', METRICS_TYPE.FormAndRangeOfMotion);
   });
 
   it('should clear analytics data when selected workout changes', () => {
@@ -151,7 +151,7 @@ describe('WorkoutProgressComponent', () => {
     expect(component.resistanceChartData).not.toBeNull();
 
     //ACT
-    component.form.controls.workoutId.setValue(1);
+    component.form.controls.workoutId.setValue('new value');
     fixture.detectChanges();
 
     //ASSERT

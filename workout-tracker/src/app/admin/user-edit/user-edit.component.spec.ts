@@ -13,7 +13,7 @@ const CURRENT_USER_ID = 5150;
 
 class UserServiceMock {
   getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User({id: CURRENT_USER_ID})));
-  getByPublicId = jasmine.createSpy('getByPublicId').and.returnValue(of(new User()));
+  getById = jasmine.createSpy('getById').and.returnValue(of(new User()));
   add = jasmine.createSpy('add').and.returnValue(of(new User()));
   update = jasmine.createSpy('update').and.returnValue(of(new User()));
 }
@@ -77,7 +77,7 @@ describe('UserEditComponent', () => {
   });
 
   it('should get user info when route specifies a user ID', () => {
-    expect(userService.getByPublicId).toHaveBeenCalledTimes(1);
+    expect(userService.getById).toHaveBeenCalledTimes(1);
   });
 
   it('should update existing user', () => {

@@ -13,12 +13,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 //TODO: This component shares similarities with WorkoutListComponent. Consolidate code.
 
 @Component({
-    selector: 'wt-workout-select-planned',
-    templateUrl: './workout-select-planned.component.html',
-    styleUrls: ['./workout-select-planned.component.scss'],
-    standalone: true,
-    imports: [ConfirmDialogModule, TableModule, PrimeTemplate, RouterLink, DatePipe],
-    //providers: [MessageService]
+  selector: 'wt-workout-select-planned',
+  templateUrl: './workout-select-planned.component.html',
+  styleUrls: ['./workout-select-planned.component.scss'],
+  standalone: true,
+  imports: [ConfirmDialogModule, TableModule, PrimeTemplate, RouterLink, DatePipe],
+  //providers: [MessageService]
 })
 export class WorkoutSelectPlannedComponent { //No ngOnInit() needed -- table will automatically get initial data due to lazy loading
 
@@ -27,7 +27,7 @@ export class WorkoutSelectPlannedComponent { //No ngOnInit() needed -- table wil
   public loading: boolean = true;
   public pageSize: number = 10;
   public cols: any = [
-    { field: 'name', header: 'Workout Name' }, 
+    { field: 'name', header: 'Workout Name' },
     { field: 'createdDateTime', header: 'Created' }
   ]; //TODO: Create specific type
 
@@ -35,19 +35,6 @@ export class WorkoutSelectPlannedComponent { //No ngOnInit() needed -- table wil
     private _executedWorkoutService: ExecutedWorkoutService,
     private _confirmationService: ConfirmationService,
     private _messageService: MessageService) { }
-
-  private getPlannedWorkouts(first: number): void {
-    this.totalCount = 0;
-    this.loading = true;
-
-    this._executedWorkoutService
-      .getPlanned(first, this.pageSize)
-      .pipe(finalize(() => { this.loading = false; }))      
-      .subscribe((plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-        this.plannedWorkouts = plannedWorkoutInfo.results;
-        this.totalCount = plannedWorkoutInfo.totalCount;
-      });
-  }
 
   public getPlannedWorkoutsLazy(event: any): void {
     this.getPlannedWorkouts(event.first);
@@ -62,7 +49,7 @@ export class WorkoutSelectPlannedComponent { //No ngOnInit() needed -- table wil
           .pipe(finalize(() => this.loading = false))
           .subscribe({
             next: () => {
-              this._messageService.add({severity:'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000});
+              this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000 });
               this.getPlannedWorkouts(0);
             },
             error: (error: HttpErrorResponse) => {
@@ -70,9 +57,30 @@ export class WorkoutSelectPlannedComponent { //No ngOnInit() needed -- table wil
               window.alert("Couldn't delete workout! " + error.error.errors.id.map((e: any) => e).join(', '));
             }
           }
-        );
+          );
       }
     });
+  }
+
+  private getPlannedWorkouts(first: number): void {
+    this.totalCount = 0;
+    this.loading = true;
+
+    this._executedWorkoutService
+      .getPlanned(first, this.pageSize)
+      .pipe(finalize(() => { this.loading = false; }))
+      /*      
+      .subscribe((plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
+        this.plannedWorkouts = plannedWorkoutInfo.results;
+        this.totalCount = plannedWorkoutInfo.totalCount;
+      });
+      */
+      .subscribe({
+        next: (plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
+          this.plannedWorkouts = plannedWorkoutInfo.results;
+          this.totalCount = plannedWorkoutInfo.totalCount;
+        }
+      });
   }
 
 }

@@ -63,12 +63,12 @@ describe('AnalyticsService', () => {
     const expectedResults: ExecutedWorkoutMetrics[] = [];
     const httpMock = TestBed.inject(HttpTestingController);
 
-    service.getExecutedWorkoutMetrics(2, 50)
+    service.getExecutedWorkoutMetrics('some-id', 50)
       .subscribe((results: ExecutedWorkoutMetrics[]) => {
         expect(results).toBe(expectedResults);
       });
 
-    const req = httpMock.expectOne("http://localhost:5600/api/analytics/workout-metrics/2/50"); 
+    const req = httpMock.expectOne("http://localhost:5600/api/analytics/workout-metrics/some-id/50"); 
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
@@ -90,7 +90,7 @@ describe('AnalyticsService', () => {
     expectedResults.datasets.push({ label: 'Average Range of Motion Rating', data: [ 5, 3 ], borderColor: '#DAA520' });
 
     //ACT
-    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.FormAndRangeOfMotion);
+    const results: AnalyticsChartData = service.getExerciseChartData(metrics, '7', METRICS_TYPE.FormAndRangeOfMotion);
 
     //ASSERT
     expect(results).toEqual(expectedResults);
@@ -110,7 +110,7 @@ describe('AnalyticsService', () => {
     expectedResults.datasets.push({ label: 'Average Rep Count', data: [ 8, 6 ], borderColor: '#7CFC00' });
 
     //ACT
-    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.Reps);
+    const results: AnalyticsChartData = service.getExerciseChartData(metrics, '7', METRICS_TYPE.Reps);
 
     //ASSERT
     expect(results).toEqual(expectedResults);
@@ -130,7 +130,7 @@ describe('AnalyticsService', () => {
     expectedResults.datasets.push({ label: 'Average Resistance Amount', data: [ 120, 140 ], borderColor: '#FF0000' });
 
     //ACT
-    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 7, METRICS_TYPE.Resistance);
+    const results: AnalyticsChartData = service.getExerciseChartData(metrics, '7', METRICS_TYPE.Resistance);
 
     //console.log("RESULTS: ", results);
 

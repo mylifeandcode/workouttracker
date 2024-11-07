@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
+import { IExercisePlanFormGroup } from './interfaces/i-exercise-plan-form-group';
 import { ExercisePlanLastTimeComponent } from './exercise-plan-last-time/exercise-plan-last-time.component';
 import { ExercisePlanSuggestionsComponent } from './exercise-plan-suggestions/exercise-plan-suggestions.component';
 import { ExercisePlanNextTimeComponent } from './exercise-plan-next-time/exercise-plan-next-time.component';
-import { ResistanceTypePipe } from '../pipes/resistance-type.pipe';
+import { ResistanceTypePipe } from '../../pipes/resistance-type.pipe';
 
 @Component({
     selector: 'wt-exercise-plan',

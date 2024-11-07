@@ -64,7 +64,7 @@ describe('UserService', () => {
     const userId: string = TEST_USER_ID;
     expectedResults.publicId = userId;
 
-    service.getByPublicId(userId).subscribe({
+    service.getById(userId).subscribe({
       next: (user: User) => expect(user).toEqual(expectedResults),
       error: fail
     });
@@ -118,7 +118,7 @@ describe('UserService', () => {
   it('should delete user', () => {
     const userId = '7';
 
-    service.deleteByPublicId('7')
+    service.deleteById('7')
       .subscribe({
         next: (result: any) => expect(result).toBeNull(),
         error: fail

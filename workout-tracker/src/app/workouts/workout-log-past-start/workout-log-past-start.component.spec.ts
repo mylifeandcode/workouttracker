@@ -16,14 +16,14 @@ class WorkoutServiceMock {
 
   private getWorkouts(): PaginatedResults<WorkoutDTO> {
     const result = new PaginatedResults<WorkoutDTO>();
-    
+
     result.totalCount = 3;
     result.results = [];
 
-    for(let x = 0; x < 3; x++) {
+    for (let x = 0; x < 3; x++) {
       result.results.push(new WorkoutDTO());
-      result.results[x].id = x;
-      result.results[x].name = `Workout ${x}`;  
+      result.results[x].id = x.toString();
+      result.results[x].name = `Workout ${x}`;
     }
 
     return result;
@@ -41,27 +41,27 @@ describe('WorkoutLogPastStartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    providers: [
+      providers: [
         {
-            provide: WorkoutService,
-            useClass: WorkoutServiceMock
+          provide: WorkoutService,
+          useClass: WorkoutServiceMock
         },
         {
-            provide: Router,
-            useClass: RouterMock
+          provide: Router,
+          useClass: RouterMock
         },
         FormBuilder //TODO: Find out what the proper ettiquite is for components which use a FormBuilder -- should we mock it like other dependencies?
-    ],
-    imports: [
+      ],
+      imports: [
         ReactiveFormsModule,
         CalendarModule, //Importing this because I couldn't use CUSTOM_ELEMENTS_SCHEMA due to formControlName being used with the calendar component
         DropdownModule //Same as above
         ,
         WorkoutLogPastStartComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-    .compileComponents();
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    })
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -85,12 +85,12 @@ describe('WorkoutLogPastStartComponent', () => {
 
     //ARRANGE
     const router = TestBed.inject(Router);
-    component.formGroup.patchValue( 
-      { 
-        workoutPublicId: 'some-guid-1', 
-        startDateTime: new Date(2022, 3, 4, 12, 0, 0), 
-        endDateTime: new Date(2022, 3, 4, 12, 30, 15) 
-      } 
+    component.formGroup.patchValue(
+      {
+        workoutPublicId: 'some-guid-1',
+        startDateTime: new Date(2022, 3, 4, 12, 0, 0),
+        endDateTime: new Date(2022, 3, 4, 12, 30, 15)
+      }
     );
 
     //ACT
@@ -104,11 +104,11 @@ describe('WorkoutLogPastStartComponent', () => {
 
   it('should set endDateTime via duration', () => {
     //ARRANGE
-    component.formGroup.patchValue( 
-      { 
-        workoutPublicId: 'some-guid-1', 
-        startDateTime: new Date(2022, 3, 4, 12, 0, 0) 
-      } 
+    component.formGroup.patchValue(
+      {
+        workoutPublicId: 'some-guid-1',
+        startDateTime: new Date(2022, 3, 4, 12, 0, 0)
+      }
     );
 
     //ACT

@@ -43,7 +43,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   //A helfpul link for dynamic form arrays: https://codinglatte.com/posts/angular/angular-dynamic-form-fields-using-formarray/
 
   //Public fields
-  public workoutId: number | null = null;
+  public workoutId: string | null = null; //Public GUID Workout ID
   public workoutForm: FormGroup<IWorkoutEditForm>;
   public loading: boolean = true;
   public infoMsg: string | null = null;
@@ -196,7 +196,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       .subscribe({
         next: (addedWorkout: Workout) => {
           //this.workout = value;
-          this.workoutId = addedWorkout.id!;
+          this.workoutId = addedWorkout.publicId!;
           this._workout = addedWorkout; //TODO: Refactor! We have redundant variables!
           this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
           this._router.navigate([`workouts/edit/${addedWorkout.publicId}`]);
