@@ -55,6 +55,37 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
+        //THERE IS NOT POST FOR EXECUTEDWORKOUTDTO -- THESE ONLY GET CREATED SERVER-SIDE
+
+        [HttpPut("{id}")]
+        public ActionResult<ExecutedWorkoutDTO> Put([FromBody] ExecutedWorkoutDTO value)
+        {
+            try
+            {
+                //This attempt to prevent an intermittent problem caused BIGGER problems! Revisit!
+                /*
+                if(value.Exercises.Any(x => x.ExecutedWorkoutId == 0))
+                    return StatusCode(400, "One or more ExecutedExercises has an ExecutedWorkoutId of 0.");
+
+                if(value.Id == 0)
+                    return StatusCode(400, "ExecutedWorkout has an Id of 0.");
+                */
+                var executedWorkout = _executedWorkoutService.GetByPublicId(value.Id);
+                UpdateExecutedWorkoutFromDTO(executedWorkout, value);
+                SetModifiedAuditFields(executedWorkout);
+                var updatedWorkout = _executedWorkoutService.Update(executedWorkout, true);
+                return _dtoMapper.MapFromExecutedWorkout(executedWorkout);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return BadRequest(ex);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet]
         public ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>> Get(int firstRecord, short pageSize, DateTime? startDateTime = null, DateTime? endDateTime = null, bool newestFirst = true)
         {
@@ -164,51 +195,6 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        // POST api/ExecutedWorkout
-        [HttpPost]
-        public ActionResult<ExecutedWorkoutDTO> Post([FromBody] ExecutedWorkoutDTO value)
-        {
-            try
-            {
-                SetCreatedAuditFields(value);
-                return _executedWorkoutService.Add(value, true);
-            }
-            catch (BadHttpRequestException ex)
-            {
-                return BadRequest(ex);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        [HttpPut("{id}")]
-        public ActionResult<ExecutedWorkout> Put([FromBody] ExecutedWorkout value)
-        {
-            try
-            {
-                //This attempt to prevent an intermittent problem caused BIGGER problems! Revisit!
-                /*
-                if(value.Exercises.Any(x => x.ExecutedWorkoutId == 0))
-                    return StatusCode(400, "One or more ExecutedExercises has an ExecutedWorkoutId of 0.");
-
-                if(value.Id == 0)
-                    return StatusCode(400, "ExecutedWorkout has an Id of 0.");
-                */
-                SetModifiedAuditFields(value);
-                return _executedWorkoutService.Update(value, true);
-            }
-            catch (BadHttpRequestException ex)
-            {
-                return BadRequest(ex);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [HttpDelete("planned/{publicId}")]
         public ActionResult DeletePlanned(Guid publicId)
         {
@@ -244,6 +230,23 @@ namespace WorkoutTracker.API.Controllers
             }
 
             return filter;
+        }
+
+        private void UpdateExecutedWorkoutFromDTO(ExecutedWorkout executedWorkout, ExecutedWorkoutDTO dto)
+        {
+            //The only values that change here are related to the executed exercises
+            foreach (var exerciseDTO in dto.Exercises)
+            {
+                var exercise = executedWorkout.Exercises.First(x => x.Sequence == exerciseDTO.Sequence);
+                exercise.ActualRepCount = exerciseDTO.ActualRepCount;
+                exercise.Duration = exerciseDTO.Duration;
+                exercise.FormRating = exerciseDTO.FormRating;
+                exercise.Notes = exerciseDTO.Notes;
+                exercise.RangeOfMotionRating = exerciseDTO.RangeOfMotionRating;
+                exercise.ResistanceAmount = exerciseDTO.ResistanceAmount;
+                exercise.ResistanceMakeup = exerciseDTO.ResistanceMakeup;
+                exercise.TargetRepCount = exerciseDTO.TargetRepCount;
+            }
         }
     }
 }
