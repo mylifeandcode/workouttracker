@@ -8,7 +8,7 @@ import { WorkoutService } from '../workout.service';
 
 import { WorkoutSelectComponent } from './workout-select.component';
 import { RouterModule } from '@angular/router';
-import { RecentWorkoutsComponent } from '../recent-workouts/recent-workouts.component';
+import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.component';
 
 class WorkoutServiceMock {
   getFilteredSubset = jasmine.createSpy('getFilteredSubset').and.callFake(() => {

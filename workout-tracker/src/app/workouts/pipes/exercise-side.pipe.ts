@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ExerciseSide } from '../enums/exercise-side';
+import { ExerciseSide } from '../workout/enums/exercise-side';
 
 @Pipe({
     name: 'exerciseSide',

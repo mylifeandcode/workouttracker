@@ -19,8 +19,8 @@ import { MessageService } from 'primeng/api';
 import { groupBy } from 'lodash-es';
 import { Dictionary } from 'lodash';
 import { WorkoutExerciseComponent } from '../workout-exercise/workout-exercise.component';
-import { CountdownTimerComponent } from '../countdown-timer/countdown-timer.component';
-import { DurationComponent } from '../duration/duration.component';
+import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
+import { DurationComponent } from '../shared/duration/duration.component';
 import { ToastModule } from 'primeng/toast';
 
 const MOCK_USER_ID: number = 15;

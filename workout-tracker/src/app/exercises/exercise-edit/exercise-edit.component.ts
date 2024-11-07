@@ -9,7 +9,7 @@ import { ExerciseTargetAreaLink } from '../../workouts/models/exercise-target-ar
 import { finalize } from 'rxjs/operators';
 import { some, find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
-import { ResistanceType } from 'app/workouts/enums/resistance-type';
+import { ResistanceType } from 'app/workouts/workout/enums/resistance-type';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { NgClass, KeyValuePipe } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';

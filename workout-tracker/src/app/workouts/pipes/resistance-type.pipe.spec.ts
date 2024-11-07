@@ -1,4 +1,4 @@
-import { ResistanceType } from '../enums/resistance-type';
+import { ResistanceType } from '../workout/enums/resistance-type';
 import { ResistanceTypePipe } from './resistance-type.pipe';
 
 describe('ResistanceTypePipe', () => {

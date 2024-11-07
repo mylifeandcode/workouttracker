@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
-import { Workout } from '../models/workout';
-import { WorkoutService } from '../workout.service';
+import { ExecutedWorkoutService } from '../../executed-workout.service';
+import { ExecutedWorkoutSummaryDTO } from '../../models/executed-workout-summary-dto';
+import { Workout } from '../../models/workout';
+import { WorkoutService } from '../../workout.service';
 import { TableModule } from 'primeng/table';
 import { PrimeTemplate } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
-import { WorkoutInfoComponent } from '../workout-info/workout-info.component';
+import { WorkoutInfoComponent } from './workout-info/workout-info.component';
 import { DatePipe } from '@angular/common';
 
 @Component({

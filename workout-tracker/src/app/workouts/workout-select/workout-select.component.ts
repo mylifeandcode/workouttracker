@@ -7,7 +7,7 @@ import { WorkoutDTO } from '../models/workout-dto';
 import { WorkoutService } from '../workout.service';
 import { sortBy } from 'lodash-es';
 import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
-import { RecentWorkoutsComponent } from '../recent-workouts/recent-workouts.component';
+import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.component';
 
 @Component({
   selector: 'wt-workout-select',

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SelectOnFocusDirective } from '../../shared/select-on-focus.directive';
+import { SelectOnFocusDirective } from '../../../shared/select-on-focus.directive';
 
 interface IDurationForm {
   hours: FormControl<number>;

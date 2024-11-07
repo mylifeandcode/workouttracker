@@ -1,4 +1,4 @@
-import { SetType } from "app/workouts/enums/set-type";
+import { SetType } from "app/workouts/workout/enums/set-type";
 
 export class ExecutedExerciseMetrics {
   public exerciseId: string = ''; //GUID

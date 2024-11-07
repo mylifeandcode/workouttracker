@@ -1,5 +1,5 @@
-import { ResistanceType } from "../enums/resistance-type";
-import { SetType } from "../enums/set-type";
+import { ResistanceType } from "../workout/enums/resistance-type";
+import { SetType } from "../workout/enums/set-type";
 
 export class ExerciseInWorkoutDTO {
   id: number = 0;

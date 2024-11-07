@@ -6,7 +6,7 @@ import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { forEach } from 'lodash-es';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ExecutedExercisesComponent } from '../executed-exercises/executed-exercises.component';
+import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 
 @Component({

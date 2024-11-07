@@ -1,7 +1,7 @@
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ConfigService } from 'app/core/services/config/config.service';
-import { SetType } from 'app/workouts/enums/set-type';
+import { SetType } from 'app/workouts/workout/enums/set-type';
 
 import { AnalyticsService, METRICS_TYPE } from './analytics.service';
 import { AnalyticsChartData } from './models/analytics-chart-data';

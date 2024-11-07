@@ -3,23 +3,23 @@ import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { ResistanceBandService } from 'app/shared/resistance-band.service';
-import { ResistanceBandSelectComponent } from '../resistance-band-select/resistance-band-select.component';
+import { ResistanceBandSelectComponent } from '../shared/resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ExecutedWorkoutService } from '../executed-workout.service';
 import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
 import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
-import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
-import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
+import { IWorkoutFormExercise } from './interfaces/i-workout-form-exercise';
+import { IWorkoutFormExerciseSet } from './interfaces/i-workout-form-exercise-set';
 import { forEach } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
-import { WorkoutExerciseComponent } from '../workout-exercise/workout-exercise.component';
+import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
 import { DialogModule } from 'primeng/dialog';
-import { CountdownTimerComponent } from '../countdown-timer/countdown-timer.component';
-import { DurationComponent } from '../duration/duration.component';
+import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
+import { DurationComponent } from '../shared/duration/duration.component';
 import { DatePipe } from '@angular/common';
 
 interface IWorkoutForm {

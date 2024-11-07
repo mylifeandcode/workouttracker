@@ -10,8 +10,8 @@ import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-indi
 import { ResistanceBandSelection } from '../models/resistance-band-selection';
 import { ResistanceBandService } from 'app/shared/resistance-band.service';
 import { finalize } from 'rxjs/operators';
-import { IWorkoutPlanForm } from '../interfaces/i-workout-plan-form';
-import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
+import { IWorkoutPlanForm } from '../workout/interfaces/i-workout-plan-form';
+import { IExercisePlanFormGroup } from '../workout/interfaces/i-exercise-plan-form-group';
 import { CheckForUnsavedDataComponent } from 'app/shared/check-for-unsaved-data.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ExercisePlanComponent } from '../exercise-plan/exercise-plan.component';

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SetType } from 'app/workouts/enums/set-type';
+import { SetType } from 'app/workouts/workout/enums/set-type';
 import { SelectOnFocusDirective } from '../../shared/select-on-focus.directive';
 
 export interface IRepSettingsForm {

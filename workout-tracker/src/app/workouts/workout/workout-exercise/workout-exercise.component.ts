@@ -1,16 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
-import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
 import { SetType } from '../enums/set-type';
 import { ResistanceType } from '../enums/resistance-type';
 import { NgStyle } from '@angular/common';
-import { SelectOnFocusDirective } from '../../shared/select-on-focus.directive';
-import { ResistanceBandColorPipe } from '../../shared/pipes/resistance-band-color.pipe';
-import { ResistanceTypePipe } from '../pipes/resistance-type.pipe';
-import { DurationPipe } from '../pipes/duration.pipe';
-import { ExerciseSidePipe } from '../pipes/exercise-side.pipe';
-import { ResistanceAmountPipe } from '../pipes/resistance-amount.pipe';
+import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
+import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
+import { SelectOnFocusDirective } from '../../../shared/select-on-focus.directive';
+import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';
+import { ResistanceTypePipe } from '../../pipes/resistance-type.pipe';
+import { ResistanceAmountPipe } from 'app/workouts/pipes/resistance-amount.pipe';
+import { DurationPipe } from 'app/workouts/pipes/duration.pipe';
+import { ExerciseSidePipe } from 'app/workouts/pipes/exercise-side.pipe';
 
 /**
  * A component representing an Exercise as part of a Workout instance,
@@ -22,7 +22,17 @@ import { ResistanceAmountPipe } from '../pipes/resistance-amount.pipe';
     templateUrl: './workout-exercise.component.html',
     styleUrls: ['./workout-exercise.component.scss'],
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, NgStyle, SelectOnFocusDirective, ResistanceBandColorPipe, ResistanceTypePipe, DurationPipe, ExerciseSidePipe, ResistanceAmountPipe]
+    imports: [
+      FormsModule, 
+      ReactiveFormsModule, 
+      NgStyle, 
+      SelectOnFocusDirective, 
+      ResistanceBandColorPipe, 
+      ResistanceTypePipe, 
+      DurationPipe, 
+      ExerciseSidePipe, 
+      ResistanceAmountPipe
+    ]
 })
 export class WorkoutExerciseComponent implements OnInit {
 

@@ -12,7 +12,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { PrimeTemplate } from 'primeng/api';
 import { NgClass } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
-import { DurationComponent } from '../duration/duration.component';
+import { DurationComponent } from '../shared/duration/duration.component';
 
 interface ILogPastWorkoutForm {
   workoutPublicId: FormControl<string | null>; 
