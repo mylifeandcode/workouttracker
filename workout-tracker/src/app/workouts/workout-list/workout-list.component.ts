@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { WorkoutService } from '../workout.service';
-import { WorkoutDTO } from 'app/workouts/models/workout-dto';
-import { PaginatedResults } from '../../core/models/paginated-results';
+import { WorkoutService } from '../_services/workout.service';
+import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
+import { PaginatedResults } from '../../core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
 import { Table, TableModule } from 'primeng/table';

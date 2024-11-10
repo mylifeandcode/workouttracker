@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from 'app/core/services/auth/auth.service';
+import { AuthService } from 'app/core/_services/auth/auth.service';
 
 import { ChangePasswordComponent } from './change-password.component';
 import { Router, RouterModule } from '@angular/router';

@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from 'app/core/services/auth/auth.service';
+import { AuthService } from 'app/core/_services/auth/auth.service';
 import { of } from 'rxjs';
 
 import { LoginComponent } from './login.component';

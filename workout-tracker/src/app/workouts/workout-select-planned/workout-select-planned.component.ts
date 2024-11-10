@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { PaginatedResults } from 'app/core/models/paginated-results';
+import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
-import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
+import { ExecutedWorkoutService } from '../_services/executed-workout.service';
+import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { ConfirmationService, MessageService, PrimeTemplate } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableModule } from 'primeng/table';

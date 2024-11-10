@@ -2,8 +2,8 @@ import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 import { ResistanceBandColorPipe } from '../../../../shared/pipes/resistance-band-color.pipe';
-import { RatingPipe } from '../../../pipes/rating.pipe';
-import { ResistanceAmountPipe } from '../../../pipes/resistance-amount.pipe';
+import { RatingPipe } from '../../../_pipes/rating.pipe';
+import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';
 
 @Component({
     selector: 'wt-exercise-plan-last-time',

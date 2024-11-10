@@ -2,13 +2,13 @@ import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, Output } from '
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ResistanceBandService } from 'app/shared/resistance-band.service';
+import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { of } from 'rxjs';
-import { ResistanceBandSelection } from '../models/resistance-band-selection';
-import { WorkoutPlan } from '../models/workout-plan';
-import { ResistanceBandSelectComponent } from '../shared/resistance-band-select/resistance-band-select.component';
-import { WorkoutService } from '../workout.service';
+import { ResistanceBandSelection } from '../_models/resistance-band-selection';
+import { WorkoutPlan } from '../_models/workout-plan';
+import { ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
+import { WorkoutService } from '../_services/workout.service';
 
 import { WorkoutPlanComponent } from './workout-plan.component';
 

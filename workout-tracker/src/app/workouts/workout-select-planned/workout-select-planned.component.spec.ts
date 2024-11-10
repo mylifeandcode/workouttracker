@@ -1,9 +1,9 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PaginatedResults } from 'app/core/models/paginated-results';
+import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { of } from 'rxjs';
-import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
+import { ExecutedWorkoutService } from '../_services/executed-workout.service';
+import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 
 import { WorkoutSelectPlannedComponent } from './workout-select-planned.component';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';

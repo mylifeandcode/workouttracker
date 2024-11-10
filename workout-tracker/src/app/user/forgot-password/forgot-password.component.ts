@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from 'app/core/services/auth/auth.service';
-import { ConfigService } from 'app/core/services/config/config.service';
+import { AuthService } from 'app/core/_services/auth/auth.service';
+import { ConfigService } from 'app/core/_services/config/config.service';
 import { finalize } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 

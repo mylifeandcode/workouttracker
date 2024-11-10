@@ -1,7 +1,7 @@
 import { ExerciseService } from 'app/exercises/exercise.service';
-import { PaginatedResults } from '../core/models/paginated-results';
+import { PaginatedResults } from '../core/_models/paginated-results';
 import { finalize, map } from 'rxjs/operators';
-import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
+import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { SelectItem } from 'primeng/api';
 import { Table } from 'primeng/table';
 

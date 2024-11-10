@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { User } from 'app/core/models/user';
-import { UserNewDTO } from 'app/core/models/user-new-dto';
-import { UserService } from 'app/core/services/user/user.service';
+import { User } from 'app/core/_models/user';
+import { UserNewDTO } from 'app/core/_models/user-new-dto';
+import { UserService } from 'app/core/_services/user/user.service';
 import { finalize } from 'rxjs/operators';
 
 interface INewUserForm {

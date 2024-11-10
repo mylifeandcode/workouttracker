@@ -1,4 +1,4 @@
-import { EnvironmentConfig } from 'app/core/models/environment-config';
+import { EnvironmentConfig } from 'app/core/_models/environment-config';
 
 export const environment: EnvironmentConfig = {
   production: true,

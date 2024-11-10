@@ -1,6 +1,6 @@
 import { Component, Signal, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from 'app/core/services/auth/auth.service';
+import { AuthService } from 'app/core/_services/auth/auth.service';
 
 @Component({
     selector: 'wt-nav',

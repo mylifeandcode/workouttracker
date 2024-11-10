@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { UserNotSelectedGuard } from './core/guards/user-not-selected.guard';
-import { UserSelectedGuard } from './core/guards/user-selected.guard';
-import { UserIsAdminGuard } from './admin/guards/user-is-admin.guard';
+import { UserNotSelectedGuard } from './core/_guards/user-not-selected.guard';
+import { UserSelectedGuard } from './core/_guards/user-selected.guard';
+import { UserIsAdminGuard } from './admin/_guards/user-is-admin.guard';
 
 export const routes: Routes = [
   {

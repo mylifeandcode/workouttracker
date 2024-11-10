@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NavComponent } from './nav.component';
 import { Observable, of } from 'rxjs';
 import { Component, signal, WritableSignal } from '@angular/core';
-import { AuthService } from 'app/core/services/auth/auth.service';
+import { AuthService } from 'app/core/_services/auth/auth.service';
 import { RouterModule } from '@angular/router';
 
 const username = 'someuser';

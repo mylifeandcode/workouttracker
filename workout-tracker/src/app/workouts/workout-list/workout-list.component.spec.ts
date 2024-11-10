@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WorkoutListComponent } from './workout-list.component';
-import { WorkoutService } from '../workout.service';
+import { WorkoutService } from '../_services/workout.service';
 import { of } from 'rxjs';
-import { PaginatedResults } from '../../core/models/paginated-results';
-import { WorkoutDTO } from 'app/workouts/models/workout-dto';
+import { PaginatedResults } from '../../core/_models/paginated-results';
+import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { HttpResponse } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';

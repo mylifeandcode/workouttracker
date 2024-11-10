@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthService } from 'app/core/services/auth/auth.service';
-import { CustomValidators } from 'app/core/validators/custom-validators';
+import { AuthService } from 'app/core/_services/auth/auth.service';
+import { CustomValidators } from 'app/core/_validators/custom-validators';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';

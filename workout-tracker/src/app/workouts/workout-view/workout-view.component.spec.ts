@@ -4,9 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Dictionary } from 'lodash';
 import { groupBy } from 'lodash-es';
 import { of } from 'rxjs';
-import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
-import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
+import { ExecutedWorkoutService } from '../_services/executed-workout.service';
+import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
+import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { WorkoutViewComponent } from './workout-view.component';
 
 const EXECUTED_WORKOUT_PUBLIC_ID = 'some-guid-5';

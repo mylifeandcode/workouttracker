@@ -5,12 +5,12 @@ import { ResistanceType } from '../enums/resistance-type';
 import { NgStyle } from '@angular/common';
 import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
-import { SelectOnFocusDirective } from '../../../shared/select-on-focus.directive';
+import { SelectOnFocusDirective } from '../../../shared/directives/select-on-focus.directive';
 import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';
-import { ResistanceTypePipe } from '../../pipes/resistance-type.pipe';
-import { ResistanceAmountPipe } from 'app/workouts/pipes/resistance-amount.pipe';
-import { DurationPipe } from 'app/workouts/pipes/duration.pipe';
-import { ExerciseSidePipe } from 'app/workouts/pipes/exercise-side.pipe';
+import { ResistanceTypePipe } from '../../_pipes/resistance-type.pipe';
+import { ResistanceAmountPipe } from 'app/workouts/_pipes/resistance-amount.pipe';
+import { DurationPipe } from 'app/workouts/_pipes/duration.pipe';
+import { ExerciseSidePipe } from 'app/workouts/_pipes/exercise-side.pipe';
 
 /**
  * A component representing an Exercise as part of a Workout instance,

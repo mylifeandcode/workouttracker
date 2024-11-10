@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UserOverview } from 'app/core/models/user-overview';
+import { UserOverview } from 'app/core/_models/user-overview';
 import { UserOverviewComponent } from './user-overview.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 

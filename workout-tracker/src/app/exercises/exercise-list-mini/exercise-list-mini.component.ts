@@ -1,8 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { ExerciseListBase } from '../exercise-list-base';
 import { ExerciseService } from '../exercise.service';
-import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
-import { Table, TableModule } from 'primeng/table';
+import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
+import { TableModule } from 'primeng/table';
 import { PrimeTemplate } from 'primeng/api';
 import { MultiSelectModule } from 'primeng/multiselect';
 

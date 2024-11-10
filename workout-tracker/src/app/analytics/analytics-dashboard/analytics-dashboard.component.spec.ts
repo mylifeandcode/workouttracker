@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ExecutedWorkoutsSummary } from '../models/executed-workouts-summary';
+import { ExecutedWorkoutsSummary } from '../_models/executed-workouts-summary';
 import { of } from 'rxjs';
 
 import { AnalyticsDashboardComponent } from './analytics-dashboard.component';
-import { AnalyticsService } from '../analytics.service';
+import { AnalyticsService } from '../_services/analytics.service';
 
 class AnalyticsServiceMock {
   getExecutedWorkoutsSummary = 

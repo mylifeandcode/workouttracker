@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
-import { AuthService } from '../services/auth/auth.service';
+import { AuthService } from '../_services/auth/auth.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface ILoginForm {

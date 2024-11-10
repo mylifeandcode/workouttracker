@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SoundService } from 'app/core/services/sound/sound.service';
+import { SoundService } from 'app/core/_services/sound/sound.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 

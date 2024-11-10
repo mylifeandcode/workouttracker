@@ -2,10 +2,10 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
-import { ExecutedWorkoutService } from '../../executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../../models/executed-workout-summary-dto';
-import { Workout } from '../../models/workout';
-import { WorkoutService } from '../../workout.service';
+import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
+import { ExecutedWorkoutSummaryDTO } from '../../_models/executed-workout-summary-dto';
+import { Workout } from '../../_models/workout';
+import { WorkoutService } from '../../_services/workout.service';
 
 import { RecentWorkoutsComponent } from './recent-workouts.component';
 import { DropdownModule } from 'primeng/dropdown';

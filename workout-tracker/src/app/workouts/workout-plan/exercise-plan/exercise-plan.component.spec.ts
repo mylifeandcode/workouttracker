@@ -3,7 +3,7 @@ import { ReactiveFormsModule, FormBuilder, FormControl, Validators } from '@angu
 import { IExercisePlanFormGroup } from './interfaces/i-exercise-plan-form-group';
 
 import { ExercisePlanComponent } from './exercise-plan.component';
-import { ResistanceTypePipe } from '../../pipes/resistance-type.pipe';
+import { ResistanceTypePipe } from '../../_pipes/resistance-type.pipe';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('ExercisePlanComponent', () => {

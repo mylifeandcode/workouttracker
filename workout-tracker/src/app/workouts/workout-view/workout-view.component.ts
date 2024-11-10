@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { finalize } from 'rxjs/operators';
-import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedExerciseDTO } from '../models/executed-exercise-dto';
-import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
+import { ExecutedWorkoutService } from '../_services/executed-workout.service';
+import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
+import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { forEach } from 'lodash-es';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';

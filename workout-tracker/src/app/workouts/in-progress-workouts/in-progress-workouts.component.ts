@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-import { ExecutedWorkoutService } from '../executed-workout.service';
-import { ExecutedWorkoutDTO } from '../models/executed-workout-dto';
-import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
+import { ExecutedWorkoutService } from '../_services/executed-workout.service';
+import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { TableModule } from 'primeng/table';
 import { PrimeTemplate } from 'primeng/api';
 import { RouterLink } from '@angular/router';

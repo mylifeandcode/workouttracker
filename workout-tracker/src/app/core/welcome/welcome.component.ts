@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { UserOverview } from 'app/core/models/user-overview';
-import { UserService } from 'app/core/services/user/user.service';
+import { UserOverview } from 'app/core/_models/user-overview';
+import { UserService } from 'app/core/_services/user/user.service';
 import { finalize } from 'rxjs/operators';
 import { UserOverviewComponent } from '../user-overview/user-overview.component';
 import { QuickActionsComponent } from '../quick-actions/quick-actions.component';

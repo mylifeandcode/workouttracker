@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService, PrimeTemplate } from 'primeng/api';
 
 import { ResistanceBand } from 'app/shared/models/resistance-band';
-import { ResistanceBandService } from '../../shared/resistance-band.service';
+import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableModule } from 'primeng/table';

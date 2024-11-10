@@ -1,13 +1,13 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PaginatedResults } from 'app/core/models/paginated-results';
-import { WorkoutDTO } from 'app/workouts/models/workout-dto';
-import { WorkoutService } from 'app/workouts/workout.service';
+import { PaginatedResults } from 'app/core/_models/paginated-results';
+import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
+import { WorkoutService } from 'app/workouts/_services/workout.service';
 import { of } from 'rxjs';
-import { AnalyticsService, METRICS_TYPE } from '../analytics.service';
-import { AnalyticsChartData } from '../models/analytics-chart-data';
-import { ExecutedExerciseMetrics } from '../models/executed-exercise-metrics';
-import { ExecutedWorkoutMetrics } from '../models/executed-workout-metrics';
+import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';
+import { AnalyticsChartData } from '../_models/analytics-chart-data';
+import { ExecutedExerciseMetrics } from '../_models/executed-exercise-metrics';
+import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 
 import { WorkoutProgressComponent } from './workout-progress.component';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';

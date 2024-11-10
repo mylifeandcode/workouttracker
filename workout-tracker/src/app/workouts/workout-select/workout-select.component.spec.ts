@@ -1,10 +1,10 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Input } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AuthService } from 'app/core/services/auth/auth.service';
-import { PaginatedResults } from 'app/core/models/paginated-results';
+import { AuthService } from 'app/core/_services/auth/auth.service';
+import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { of } from 'rxjs';
-import { WorkoutDTO } from '../models/workout-dto';
-import { WorkoutService } from '../workout.service';
+import { WorkoutDTO } from '../_models/workout-dto';
+import { WorkoutService } from '../_services/workout.service';
 
 import { WorkoutSelectComponent } from './workout-select.component';
 import { RouterModule } from '@angular/router';

@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutHistoryComponent } from './workout-history.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ExecutedWorkoutService } from '../executed-workout.service';
+import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { RouterModule } from '@angular/router';
-import { PaginatedResults } from 'app/core/models/paginated-results';
-import { ExecutedWorkoutSummaryDTO } from '../models/executed-workout-summary-dto';
+import { PaginatedResults } from 'app/core/_models/paginated-results';
+import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { of } from 'rxjs';
 
 class MockExecutedWorkoutService {

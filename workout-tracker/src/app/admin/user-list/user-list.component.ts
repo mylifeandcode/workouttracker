@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { UserService } from '../../core/services/user/user.service';
-import { User } from '../../core/models/user';
+import { UserService } from '../../core/_services/user/user.service';
+import { User } from '../../core/_models/user';
 import { Observable } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';

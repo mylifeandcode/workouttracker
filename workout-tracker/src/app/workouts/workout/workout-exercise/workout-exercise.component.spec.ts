@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WorkoutExerciseComponent } from './workout-exercise.component';
 import { ReactiveFormsModule, Validators, FormBuilder, FormControl, FormArray, FormGroup } from '@angular/forms';
-import { ExecutedExerciseDTO } from '../../models/executed-exercise-dto';
+import { ExecutedExerciseDTO } from '../../_models/executed-exercise-dto';
 import { Pipe, PipeTransform } from '@angular/core';
 import { ResistanceType } from '../enums/resistance-type';
 import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';

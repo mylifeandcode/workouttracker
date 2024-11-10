@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { UserOverview } from 'app/core/models/user-overview';
+import { UserOverview } from 'app/core/_models/user-overview';
 //import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DatePipe } from '@angular/common';
 

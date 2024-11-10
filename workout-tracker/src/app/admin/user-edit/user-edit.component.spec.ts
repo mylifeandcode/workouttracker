@@ -2,12 +2,12 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { UserEditComponent } from './user-edit.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UserService } from '../../core/services/user/user.service';
+import { UserService } from '../../core/_services/user/user.service';
 import { of, throwError } from 'rxjs';
-import { User } from 'app/core/models/user';
+import { User } from 'app/core/_models/user';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Component } from '@angular/core';
-import { AuthService } from 'app/core/services/auth/auth.service';
+import { AuthService } from 'app/core/_services/auth/auth.service';
 
 const CURRENT_USER_ID = 5150;
 

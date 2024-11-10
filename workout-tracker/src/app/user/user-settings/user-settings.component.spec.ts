@@ -1,12 +1,12 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from 'app/core/services/auth/auth.service';
+import { AuthService } from 'app/core/_services/auth/auth.service';
 import { SetType } from 'app/workouts/workout/enums/set-type';
-import { User } from 'app/core/models/user';
-import { UserMinMaxReps } from 'app/core/models/user-min-max-reps';
-import { UserSettings } from 'app/core/models/user-settings';
-import { UserService } from 'app/core/services/user/user.service';
+import { User } from 'app/core/_models/user';
+import { UserMinMaxReps } from 'app/core/_models/user-min-max-reps';
+import { UserSettings } from 'app/core/_models/user-settings';
+import { UserService } from 'app/core/_services/user/user.service';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { of } from 'rxjs';
 

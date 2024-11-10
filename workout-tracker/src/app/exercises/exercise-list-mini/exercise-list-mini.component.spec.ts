@@ -2,10 +2,10 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ExerciseListMiniComponent } from './exercise-list-mini.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ExerciseService } from '../exercise.service';
-import { PaginatedResults } from '../../core/models/paginated-results';
+import { PaginatedResults } from '../../core/_models/paginated-results';
 import { of } from 'rxjs';
-import { ExerciseDTO } from 'app/workouts/models/exercise-dto';
-import { TargetArea } from 'app/workouts/models/target-area';
+import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
+import { TargetArea } from 'app/workouts/_models/target-area';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 class ExerciseServiceMock {

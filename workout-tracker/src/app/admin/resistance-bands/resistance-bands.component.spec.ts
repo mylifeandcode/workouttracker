@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
-import { ResistanceBandService } from '../../shared/resistance-band.service';
+import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 
 import { ResistanceBandsComponent } from './resistance-bands.component';
 import { ToastModule } from 'primeng/toast';

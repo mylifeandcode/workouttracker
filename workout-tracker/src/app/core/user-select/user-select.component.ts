@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { UserService } from '../services/user/user.service';
-import { User } from '../models/user';
-import { AuthService } from 'app/core/services/auth/auth.service';
+import { UserService } from '../_services/user/user.service';
+import { User } from '../_models/user';
+import { AuthService } from 'app/core/_services/auth/auth.service';
 import { catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';

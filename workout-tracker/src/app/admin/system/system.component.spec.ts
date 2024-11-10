@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SoundService } from 'app/core/services/sound/sound.service';
+import { SoundService } from 'app/core/_services/sound/sound.service';
 
 import { SystemComponent } from './system.component';
 import { MessageService } from 'primeng/api';

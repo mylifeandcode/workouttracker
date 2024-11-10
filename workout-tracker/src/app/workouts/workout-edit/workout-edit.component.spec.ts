@@ -6,10 +6,10 @@ import { ActivatedRoute, ActivatedRouteSnapshot, RouterModule, UrlSegment } from
 import { of } from 'rxjs';
 
 import { WorkoutEditComponent } from './workout-edit.component';
-import { WorkoutService } from '../workout.service';
-import { Workout } from 'app/workouts/models/workout';
-import { ExerciseInWorkout } from '../models/exercise-in-workout';
-import { ExerciseDTO } from '../models/exercise-dto';
+import { WorkoutService } from '../_services/workout.service';
+import { Workout } from 'app/workouts/_models/workout';
+import { ExerciseInWorkout } from '../_models/exercise-in-workout';
+import { ExerciseDTO } from '../_models/exercise-dto';
 import { ExerciseListMiniComponent } from 'app/exercises/exercise-list-mini/exercise-list-mini.component';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 

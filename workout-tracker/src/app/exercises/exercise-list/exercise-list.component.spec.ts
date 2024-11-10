@@ -2,10 +2,10 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ExerciseListComponent } from './exercise-list.component';
 import { ExerciseService } from '../exercise.service';
-import { Exercise } from 'app/workouts/models/exercise';
+import { Exercise } from 'app/workouts/_models/exercise';
 import { of } from 'rxjs';
-import { PaginatedResults } from '../../core/models/paginated-results';
-import { TargetArea } from 'app/workouts/models/target-area';
+import { PaginatedResults } from '../../core/_models/paginated-results';
+import { TargetArea } from 'app/workouts/_models/target-area';
 import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 

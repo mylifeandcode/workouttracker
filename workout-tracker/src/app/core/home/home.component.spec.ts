@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HomeComponent } from './home.component';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from 'app/core/services/auth/auth.service';
+import { AuthService } from 'app/core/_services/auth/auth.service';
 
 class AuthServiceMock {
   logOut = jasmine.createSpy('logOut');

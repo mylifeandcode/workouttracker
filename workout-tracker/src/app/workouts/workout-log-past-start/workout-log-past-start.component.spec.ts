@@ -2,11 +2,11 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PaginatedResults } from 'app/core/models/paginated-results';
+import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { CalendarModule } from 'primeng/calendar';
 import { of } from 'rxjs';
-import { WorkoutDTO } from '../models/workout-dto';
-import { WorkoutService } from '../workout.service';
+import { WorkoutDTO } from '../_models/workout-dto';
+import { WorkoutService } from '../_services/workout.service';
 
 import { WorkoutLogPastStartComponent } from './workout-log-past-start.component';
 import { DropdownModule } from 'primeng/dropdown';

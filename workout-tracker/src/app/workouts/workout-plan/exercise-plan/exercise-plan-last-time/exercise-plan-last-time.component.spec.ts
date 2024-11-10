@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExercisePlanLastTimeComponent } from './exercise-plan-last-time.component';
-import { RatingPipe } from '../../../pipes/rating.pipe';
+import { RatingPipe } from '../../../_pipes/rating.pipe';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 import { Pipe, PipeTransform } from '@angular/core';

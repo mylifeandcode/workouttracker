@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { PaginatedResults } from 'app/core/models/paginated-results';
+import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { WorkoutDTO } from '../models/workout-dto';
-import { WorkoutService } from '../workout.service';
+import { WorkoutDTO } from '../_models/workout-dto';
+import { WorkoutService } from '../_services/workout.service';
 import { sortBy } from 'lodash-es';
 import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.component';

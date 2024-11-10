@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { UserListComponent } from './user-list.component';
-import { UserService } from '../../core/services/user/user.service';
+import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
-import { User } from 'app/core/models/user';
+import { User } from 'app/core/_models/user';
 import { RouterModule } from '@angular/router';
 
 class UserServiceMock {

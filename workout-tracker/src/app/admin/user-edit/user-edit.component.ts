@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthService } from 'app/core/services/auth/auth.service';
-import { ConfigService } from 'app/core/services/config/config.service';
-import { User } from 'app/core/models/user';
+import { AuthService } from 'app/core/_services/auth/auth.service';
+import { ConfigService } from 'app/core/_services/config/config.service';
+import { User } from 'app/core/_models/user';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { UserService } from '../../core/services/user/user.service';
+import { UserService } from '../../core/_services/user/user.service';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 
 
