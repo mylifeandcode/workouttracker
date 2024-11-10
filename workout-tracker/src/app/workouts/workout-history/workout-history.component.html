@@ -15,7 +15,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-executedWorkout>
           <tr class="workout-history">
-            <td><a routerLink="/workouts/history/view/{{executedWorkout.publicId}}">{{executedWorkout.name}}</a></td>
+            <td><a routerLink="/workouts/history/view/{{executedWorkout.id}}">{{executedWorkout.name}}</a></td>
             <td>{{executedWorkout.startDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
             <td>{{executedWorkout.endDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
             <td>

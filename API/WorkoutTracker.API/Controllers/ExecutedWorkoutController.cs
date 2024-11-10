@@ -236,6 +236,7 @@ namespace WorkoutTracker.API.Controllers
         {
             executedWorkout.StartDateTime = dto.StartDateTime;
             executedWorkout.EndDateTime = dto.EndDateTime;
+            executedWorkout.Journal = dto.Journal;
 
             foreach (var exerciseDTO in dto.Exercises)
             {

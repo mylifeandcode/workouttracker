@@ -18,11 +18,11 @@
               <td>{{plannedWorkout.name}}</td>
               <td>{{plannedWorkout.createdDateTime | date:'short'}}</td>
               <td>
-                <a class="btn btn-success" [routerLink]="['/workouts/start/', plannedWorkout.publicId]">Start</a>
+                <a class="btn btn-success" [routerLink]="['/workouts/start/', plannedWorkout.id]">Start</a>
                 &nbsp;&nbsp;
-                <a class="btn btn-info" [routerLink]="['/workouts/history/view/', plannedWorkout.publicId]">Review</a>
+                <a class="btn btn-info" [routerLink]="['/workouts/history/view/', plannedWorkout.id]">Review</a>
                 &nbsp;&nbsp;
-                <button class="btn btn-danger" (click)="deletePlannedWorkout(plannedWorkout.publicId)">Delete</button>
+                <button class="btn btn-danger" (click)="deletePlannedWorkout(plannedWorkout.id)">Delete</button>
               </td>
             </tr>
           </ng-template>
