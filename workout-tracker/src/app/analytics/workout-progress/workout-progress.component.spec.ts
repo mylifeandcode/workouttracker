@@ -135,7 +135,7 @@ describe('WorkoutProgressComponent', () => {
 
     //ASSERT
     expect(analyticsService.getExerciseChartData).toHaveBeenCalledTimes(3);
-    expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(component.metrics, 'some-workout-id', METRICS_TYPE.FormAndRangeOfMotion);
+    expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(component.metrics, 'some-exercise-id', METRICS_TYPE.FormAndRangeOfMotion);
   });
 
   it('should clear analytics data when selected workout changes', () => {

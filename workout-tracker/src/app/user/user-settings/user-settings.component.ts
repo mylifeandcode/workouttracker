@@ -69,7 +69,6 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
       )
       .subscribe((user: User) => {
         this.user = user;
-        //console.log("USER: ", user);
         this.recommendationEngineEnabled = user.settings.recommendationsEnabled;
         this.createForm();
       });

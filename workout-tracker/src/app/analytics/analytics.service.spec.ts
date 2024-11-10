@@ -20,16 +20,16 @@ describe('AnalyticsService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [
+      imports: [],
+      providers: [
         {
-            provide: ConfigService,
-            useClass: ConfigServiceMock
+          provide: ConfigService,
+          useClass: ConfigServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
-    ]
-});
+      ]
+    });
     service = TestBed.inject(AnalyticsService);
   });
 
@@ -68,7 +68,7 @@ describe('AnalyticsService', () => {
         expect(results).toBe(expectedResults);
       });
 
-    const req = httpMock.expectOne("http://localhost:5600/api/analytics/workout-metrics/some-id/50"); 
+    const req = httpMock.expectOne("http://localhost:5600/api/analytics/workout-metrics/some-id/50");
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
@@ -77,7 +77,7 @@ describe('AnalyticsService', () => {
   });
 
   it('should get exercise chart data for form and range of motion', () => {
-    
+
     //ARRANGE
     const metrics = getMetricsForTest();
 
@@ -86,11 +86,11 @@ describe('AnalyticsService', () => {
     expectedResults.labels[0] = "Mon Apr 04 2022";
     expectedResults.labels[1] = "Mon Apr 11 2022";
     expectedResults.datasets = [];
-    expectedResults.datasets.push({ label: 'Average Form Rating', data: [ 5, 4 ], borderColor: '#0000FF' });
-    expectedResults.datasets.push({ label: 'Average Range of Motion Rating', data: [ 5, 3 ], borderColor: '#DAA520' });
+    expectedResults.datasets.push({ label: 'Average Form Rating', data: [5, 4], borderColor: '#0000FF' });
+    expectedResults.datasets.push({ label: 'Average Range of Motion Rating', data: [5, 3], borderColor: '#DAA520' });
 
     //ACT
-    const results: AnalyticsChartData = service.getExerciseChartData(metrics, '7', METRICS_TYPE.FormAndRangeOfMotion);
+    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 'some-guid-7', METRICS_TYPE.FormAndRangeOfMotion);
 
     //ASSERT
     expect(results).toEqual(expectedResults);
@@ -98,7 +98,7 @@ describe('AnalyticsService', () => {
   });
 
   it('should get exercise chart data for reps', () => {
-    
+
     //ARRANGE
     const metrics = getMetricsForTest();
 
@@ -107,10 +107,10 @@ describe('AnalyticsService', () => {
     expectedResults.labels[0] = "Mon Apr 04 2022";
     expectedResults.labels[1] = "Mon Apr 11 2022";
     expectedResults.datasets = [];
-    expectedResults.datasets.push({ label: 'Average Rep Count', data: [ 8, 6 ], borderColor: '#7CFC00' });
+    expectedResults.datasets.push({ label: 'Average Rep Count', data: [8, 6], borderColor: '#7CFC00' });
 
     //ACT
-    const results: AnalyticsChartData = service.getExerciseChartData(metrics, '7', METRICS_TYPE.Reps);
+    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 'some-guid-7', METRICS_TYPE.Reps);
 
     //ASSERT
     expect(results).toEqual(expectedResults);
@@ -118,7 +118,7 @@ describe('AnalyticsService', () => {
   });
 
   it('should get exercise chart data for resistance', () => {
-    
+
     //ARRANGE
     const metrics = getMetricsForTest();
 
@@ -127,10 +127,10 @@ describe('AnalyticsService', () => {
     expectedResults.labels[0] = "Mon Apr 04 2022";
     expectedResults.labels[1] = "Mon Apr 11 2022";
     expectedResults.datasets = [];
-    expectedResults.datasets.push({ label: 'Average Resistance Amount', data: [ 120, 140 ], borderColor: '#FF0000' });
+    expectedResults.datasets.push({ label: 'Average Resistance Amount', data: [120, 140], borderColor: '#FF0000' });
 
     //ACT
-    const results: AnalyticsChartData = service.getExerciseChartData(metrics, '7', METRICS_TYPE.Resistance);
+    const results: AnalyticsChartData = service.getExerciseChartData(metrics, 'some-guid-7', METRICS_TYPE.Resistance);
 
     //console.log("RESULTS: ", results);
 
@@ -153,7 +153,7 @@ describe('AnalyticsService', () => {
     workout1Exercise1.averageRangeOfMotion = 3;
     workout1Exercise1.averageRepCount = 8;
     workout1Exercise1.averageResistanceAmount = 150;
-    workout1Exercise1.exerciseId = "someGuid";
+    workout1Exercise1.exerciseId = "some-guid-6";
     workout1Exercise1.name = "Chest Press with Bands";
     workout1Exercise1.sequence = 0;
     workout1Exercise1.setType = SetType.Repetition;
@@ -163,7 +163,7 @@ describe('AnalyticsService', () => {
     workout1Exercise2.averageRangeOfMotion = 5;
     workout1Exercise2.averageRepCount = 8;
     workout1Exercise2.averageResistanceAmount = 120;
-    workout1Exercise2.exerciseId = "someGuid";
+    workout1Exercise2.exerciseId = "some-guid-7";
     workout1Exercise2.name = "Overhead Triceps Ext. with Bands";
     workout1Exercise2.sequence = 1;
     workout1Exercise2.setType = SetType.Repetition;
@@ -179,7 +179,7 @@ describe('AnalyticsService', () => {
     workout2Exercise1.averageRangeOfMotion = 2;
     workout2Exercise1.averageRepCount = 8;
     workout2Exercise1.averageResistanceAmount = 180;
-    workout2Exercise1.exerciseId = "someGuid";
+    workout2Exercise1.exerciseId = "some-guid-6";
     workout2Exercise1.name = "Chest Press with Bands";
     workout2Exercise1.sequence = 0;
     workout2Exercise1.setType = SetType.Repetition;
@@ -189,7 +189,7 @@ describe('AnalyticsService', () => {
     workout2Exercise2.averageRangeOfMotion = 3;
     workout2Exercise2.averageRepCount = 6;
     workout2Exercise2.averageResistanceAmount = 140;
-    workout2Exercise2.exerciseId = "someGuid";
+    workout2Exercise2.exerciseId = "some-guid-7";
     workout2Exercise2.name = "Overhead Triceps Ext. with Bands";
     workout2Exercise2.sequence = 1;
     workout2Exercise2.setType = SetType.Repetition;

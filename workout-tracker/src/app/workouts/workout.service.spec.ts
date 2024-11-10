@@ -141,8 +141,6 @@ describe('WorkoutService', () => {
     const workoutPlan = new WorkoutPlan();
     const expectedNewExecutedWorkoutPublicId: string = "some-guid-456";
 
-    workoutPlan.workoutId = "some-guid-25";
-
     //ACT
     service.submitPlan(workoutPlan)
       .subscribe({
@@ -153,7 +151,7 @@ describe('WorkoutService', () => {
         error: fail
       });
 
-    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}/plan`);
     expect(req.request.method).toEqual('POST');
     expect(req.request.body).toBe(workoutPlan);
 

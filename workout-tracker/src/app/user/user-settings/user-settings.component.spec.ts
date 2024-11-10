@@ -17,6 +17,7 @@ import { ToastModule } from 'primeng/toast';
 
 class MockAuthService {
   userId: number = 0;
+  userPublicId: string = 'some-guid';
 }
 
 class MockUserService {

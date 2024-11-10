@@ -51,7 +51,7 @@ describe('UserService', () => {
       error: fail
     });
 
-    const req = http.expectOne("http://localhost:5600/api/Users");
+    const req = http.expectOne("http://localhost:5600/api/users");
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
@@ -69,7 +69,7 @@ describe('UserService', () => {
       error: fail
     });
 
-    const req = http.expectOne(`http://localhost:5600/api/Users/${TEST_USER_ID}`);
+    const req = http.expectOne(`http://localhost:5600/api/users/${TEST_USER_ID}`);
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
@@ -87,7 +87,7 @@ describe('UserService', () => {
         error: fail
       });
 
-    const request = http.expectOne('http://localhost:5600/api/Users/new');
+    const request = http.expectOne('http://localhost:5600/api/users/new');
     expect(request.request.method).toEqual('POST');
     expect(request.request.body).toEqual(userNew);
 
@@ -106,7 +106,7 @@ describe('UserService', () => {
         error: fail
       });
 
-    const request = http.expectOne(`http://localhost:5600/api/Users/${user.id}`);
+    const request = http.expectOne(`http://localhost:5600/api/users/${user.id}`);
     expect(request.request.method).toEqual('PUT');
     expect(request.request.body).toEqual(user);
 
@@ -124,7 +124,7 @@ describe('UserService', () => {
         error: fail
       });
 
-    const request = http.expectOne(`http://localhost:5600/api/Users/${userId}`);
+    const request = http.expectOne(`http://localhost:5600/api/users/${userId}`);
     expect(request.request.method).toEqual('DELETE');
 
     // Respond with the mock results
@@ -141,7 +141,7 @@ describe('UserService', () => {
       expect(overview).toBe(userOverview);
     });
 
-    const request = http.expectOne(`http://localhost:5600/api/Users/overview`);
+    const request = http.expectOne(`http://localhost:5600/api/users/overview`);
     expect(request.request.method).toEqual('GET');
 
     // Respond with the mock results

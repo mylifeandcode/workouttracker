@@ -203,7 +203,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   private getRouteParams(): void {
     this._executedWorkoutPublicId = this._route.snapshot.params['executedWorkoutPublicId'];
 
-    if (this._executedWorkoutPublicId <= '') {
+    if (this._executedWorkoutPublicId == null) {
       this._messageService.add({ severity: 'error', summary: 'Error', detail: 'executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.', closable: true });
     }
     else {

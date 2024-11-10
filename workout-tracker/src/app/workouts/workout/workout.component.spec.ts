@@ -571,7 +571,7 @@ describe('WorkoutComponent', () => {
     //ARRANGE
     //Override default mock behavior
     const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.params['executedWorkoutId'] = 0;
+    activatedRoute.snapshot.params['executedWorkoutPublicId'] = null;
 
     const messageService = TestBed.inject(MessageService);
 
@@ -579,7 +579,7 @@ describe('WorkoutComponent', () => {
     component.ngOnInit(); //Need to reinitialize due to changed mock
 
     //ASSERT
-    expect(messageService.add).toHaveBeenCalledOnceWith({ severity: 'error', summary: 'Error', detail: 'ExecutedWorkoutId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.', closable: true });
+    expect(messageService.add).toHaveBeenCalledOnceWith({ severity: 'error', summary: 'Error', detail: 'executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.', closable: true });
   });
 
 });

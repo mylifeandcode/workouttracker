@@ -16,7 +16,7 @@ class UserServiceMock {
 
   getAll = jasmine.createSpy('getAll').and.returnValue(of(this.fakeUsers));
   getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User()));
-  delete = jasmine.createSpy('deleteById').and.returnValue(of(null)); //TOOD: Revisit
+  deleteById = jasmine.createSpy('deleteById').and.returnValue(of(null)); //TOOD: Revisit
   all$ = of(this.fakeUsers);
 }
 

@@ -12,8 +12,8 @@ import { WorkoutViewComponent } from './workout-view.component';
 const EXECUTED_WORKOUT_PUBLIC_ID = 'some-guid-5';
 
 class ExecutedWorkoutServiceMock {
-  getByPublicId =
-    jasmine.createSpy('getByPublicId')
+  getById =
+    jasmine.createSpy('getById')
       .and.returnValue(of(this.getFakeExecutedWorkout()));
 
   private getFakeExecutedWorkout(): ExecutedWorkoutDTO {

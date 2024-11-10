@@ -98,7 +98,7 @@ describe('WorkoutLogPastStartComponent', () => {
 
     //ASSERT
     expect(router.navigate)
-      .toHaveBeenCalledWith(['/workouts/plan-for-past/1/2022-04-04T16:00:00.000Z/2022-04-04T16:30:15.000Z']);
+      .toHaveBeenCalledWith(['/workouts/plan-for-past/some-guid-1/2022-04-04T16:00:00.000Z/2022-04-04T16:30:15.000Z']);
 
   });
 
