@@ -126,7 +126,7 @@ describe('WorkoutService', () => {
 
 
     //ASSERT
-    const req = httpMock.expectOne(`${API_ROOT_URL}/${workout.id}`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}`);
     expect(req.request.method).toEqual('PUT');
     expect(req.request.body).toBe(workout);
 
@@ -178,7 +178,7 @@ describe('WorkoutService', () => {
         error: fail
       });
 
-    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan-for-later`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}/plan-for-later`);
     expect(req.request.method).toEqual('POST');
     expect(req.request.body).toBe(workoutPlan);
 
@@ -207,7 +207,7 @@ describe('WorkoutService', () => {
         error: fail
       });
 
-    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPlan.workoutId}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`);
     expect(req.request.method).toEqual('POST');
     expect(req.request.body).toBe(workoutPlan);
 

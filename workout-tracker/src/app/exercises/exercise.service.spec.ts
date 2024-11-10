@@ -101,7 +101,7 @@ describe('ExerciseService', () => {
 
     const expectedExercise = new Exercise();
 
-    service.getByPublicId('5').subscribe({
+    service.getById('5').subscribe({
       next: exercise => expect(exercise).toEqual(expectedExercise, 'should return expected results'),
       error: fail
     });
@@ -145,7 +145,7 @@ describe('ExerciseService', () => {
     });
 
     // ExerciseService should have made one request to PUT exercises to expected URL
-    const req = httpMock.expectOne(`http://localhost:5600/api/exercises/${exercise.id}`);
+    const req = httpMock.expectOne(`http://localhost:5600/api/exercises`);
     expect(req.request.method).toEqual('PUT');
     expect(req.request.body).toEqual(exercise);
 

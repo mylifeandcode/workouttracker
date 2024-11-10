@@ -86,6 +86,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     private _router: Router) {
     super();
     this.exerciseForm = this.createForm();
+    //TODO: Add subscription and unsubscribe on destroy
     this.exerciseForm.controls.oneSided.valueChanges.subscribe((value: boolean) => this.checkForBilateral(value));
   }
 
@@ -180,7 +181,6 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     //TODO: Re-evaluate. Do I really need to do this? I think a better solution might be to just look at the snapshot.
     //this._route.params.subscribe(params => {
-
     this._exercisePublicId = this._route.snapshot.params['id'];
     if (this._exercisePublicId) {
       this.loadExercise();
@@ -227,7 +227,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     if (!this._exercisePublicId) return;
     this.loading = true;
 
-    this._exerciseSvc.getByPublicId(this._exercisePublicId).subscribe((value: Exercise) => {
+    this._exerciseSvc.getById(this._exercisePublicId).subscribe((value: Exercise) => {
       this._exercise = value;
       this.updateFormWithExerciseValues();
       this.loading = false;

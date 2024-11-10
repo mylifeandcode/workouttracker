@@ -50,7 +50,7 @@ export class ExerciseService {
     }
     */
 
-    public getByPublicId(publicId: string): Observable<Exercise> {
+    public getById(publicId: string): Observable<Exercise> {
       return this._http.get<Exercise>(`${this.API_ROOT}/${publicId}`);
     }    
 

@@ -10,14 +10,16 @@ import { ExerciseService } from '../exercise.service';
 import { TargetArea } from 'app/workouts/models/target-area';
 import { Exercise } from 'app/workouts/models/exercise';
 import { ExerciseTargetAreaLink } from 'app/workouts/models/exercise-target-area-link';
+import { EMPTY_GUID } from 'app/shared/shared-constants';
 
 //TODO: Move initialization inside beforeEach()
-const EXERCISE: Exercise = <Exercise> {
-  id: 2, 
-  name: 'Some Exercise', 
-  description: 'This is a nice exercise. Blah, blah, blah.', 
-  setup: 'Get ready', 
-  movement: 'Whatever', 
+const EXERCISE: Exercise = <Exercise>{
+  id: 2,
+  publicId: 'some-guid',
+  name: 'Some Exercise',
+  description: 'This is a nice exercise. Blah, blah, blah.',
+  setup: 'Get ready',
+  movement: 'Whatever',
   pointsToRemember: 'Be careful',
   resistanceType: 1,
   exerciseTargetAreaLinks: [
@@ -55,8 +57,8 @@ class ExerciseServiceMock {
 }
 
 @Pipe({
-    name: 'insertSpaceBeforeCapital',
-    standalone: true
+  name: 'insertSpaceBeforeCapital',
+  standalone: true
 })
 class InsertSpaceBeforeCapitalPipeMock implements PipeTransform {
   transform(value: string): string { return "I'm just a mock!"; }
@@ -66,7 +68,7 @@ function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
   const activatedRouteSnapshot = new ActivatedRouteSnapshot();
   activatedRouteSnapshot.url = [];
   activatedRouteSnapshot.url.push(new UrlSegment('edit', {}));
-  activatedRouteSnapshot.params = { 'id': 2 };
+  activatedRouteSnapshot.params = { 'id': 'some-guid' };
   return activatedRouteSnapshot;
 }
 
@@ -77,30 +79,30 @@ describe('ExerciseEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         ReactiveFormsModule,
         RouterModule.forRoot([]),
         ExerciseEditComponent,
         InsertSpaceBeforeCapitalPipeMock
-    ],
-    providers: [
+      ],
+      providers: [
         {
-            provide: ExerciseService,
-            useClass: ExerciseServiceMock
+          provide: ExerciseService,
+          useClass: ExerciseServiceMock
         },
         {
-            provide: ActivatedRoute,
-            useValue: {
-                params: of({
-                    id: 2,
-                }),
-                snapshot: getActivatedRouteSnapshot()
-            }
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({
+              id: 'some-guid',
+            }),
+            snapshot: getActivatedRouteSnapshot()
+          }
         }
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-    .compileComponents();
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    })
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -121,10 +123,10 @@ describe('ExerciseEditComponent', () => {
     expect(component.exerciseForm.controls.name).toBeTruthy();
     expect(component.exerciseForm.controls.name.hasValidator(Validators.required)).toBeTrue();
     expect(component.exerciseForm.controls.description).toBeTruthy();
-    
+
     //TODO: Determine why this check fails
     //expect(component.exerciseForm.controls.description.hasValidator(Validators.compose([Validators.required, Validators.maxLength(4000)]))).toBeTrue();
-    
+
     expect(component.exerciseForm.controls.resistanceType).toBeTruthy();
     expect(component.exerciseForm.controls.oneSided).toBeTruthy();
     expect(component.exerciseForm.controls.targetAreas).toBeTruthy();
@@ -136,14 +138,14 @@ describe('ExerciseEditComponent', () => {
   it('should have default values for form if no exercise loaded', () => {
     //ARRANGE
     const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.params = {id: 0};
+    activatedRoute.snapshot.params = { id: 0 };
 
     //ACT
     component.ngOnInit(); //Because we changed ActivatedRoute
 
     //ASSERT
     expect(component.exerciseForm.controls.id.value).toEqual(0);
-    
+
   });
 
   it('should get all target areas', () => {
@@ -153,7 +155,7 @@ describe('ExerciseEditComponent', () => {
 
   it('should load exercise when editing', () => {
     //Our default route mock includes a value for exercise ID
-    expect(exerciseService.getByPublicId).toHaveBeenCalledWith('2');
+    expect(exerciseService.getById).toHaveBeenCalledWith('some-guid');
     //expect(component._exercise).toEqual(EXERCISE);
     expect(component.exerciseForm).not.toBeNull();
     expect(component.exerciseForm).toBeTruthy();
@@ -176,12 +178,12 @@ describe('ExerciseEditComponent', () => {
   });
 
   it('should enable edit mode', () => {
-    component.editModeToggled({checked: false});
+    component.editModeToggled({ checked: false });
     expect(component.readOnlyMode).toBeTrue();
   });
 
   it('should disable edit mode', () => {
-    component.editModeToggled({checked: true});
+    component.editModeToggled({ checked: true });
     expect(component.readOnlyMode).toBeFalse();
   });
 
@@ -191,10 +193,11 @@ describe('ExerciseEditComponent', () => {
     //Override default mock behavior
     const exercise = new Exercise();
     exercise.id = 0;
+    exercise.publicId = EMPTY_GUID;
     exercise.name = 'Some New Exercise';
-    exercise.description = 'Ultra Mega Super Press'; 
-    exercise.setup = 'Focus!'; 
-    exercise.movement = 'Forward!'; 
+    exercise.description = 'Ultra Mega Super Press';
+    exercise.setup = 'Focus!';
+    exercise.movement = 'Forward!';
     exercise.oneSided = false;
     exercise.involvesReps = true;
     exercise.pointsToRemember = 'Form!';
@@ -221,7 +224,7 @@ describe('ExerciseEditComponent', () => {
     component.exerciseForm.controls.oneSided.setValue(exercise.oneSided);
     component.exerciseForm.controls.pointsToRemember.setValue(exercise.pointsToRemember);
     component.exerciseForm.controls.resistanceType.setValue(exercise.resistanceType);
-    component.exerciseForm.controls.targetAreas.setValue({'Chest': true, 'Biceps': false, 'Triceps': false});
+    component.exerciseForm.controls.targetAreas.setValue({ 'Chest': true, 'Biceps': false, 'Triceps': false });
 
     //ACT
     component.saveExercise();

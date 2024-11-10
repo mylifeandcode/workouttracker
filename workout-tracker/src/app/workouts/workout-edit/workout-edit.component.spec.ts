@@ -201,7 +201,7 @@ describe('WorkoutEditComponent', () => {
     //TODO: Improve this test if possible
 
     const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.params['id'] = 0;
+    activatedRoute.snapshot.params['id'] = undefined;
 
     //The form has already been created and populated with the default data.
     //We need to reset.
