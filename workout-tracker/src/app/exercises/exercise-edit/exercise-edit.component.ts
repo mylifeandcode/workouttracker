@@ -280,7 +280,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   private updateFormWithExerciseValues(): void {
     this.exerciseForm.patchValue({
       id: this._exercise.id,
-      publicId: this._exercise.publicId!,
+      publicId: this._exercise.publicId ?? undefined,
       name: this._exercise.name,
       description: this._exercise.description,
       setup: this._exercise.setup,

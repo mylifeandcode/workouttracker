@@ -76,6 +76,7 @@ namespace WorkoutTracker.Tests.Services
             );
 
             var workout = new Workout();
+            workout.PublicId = workoutPlan.WorkoutId;
             workout.CreatedByUserId = userId;
             workout.Exercises = new List<ExerciseInWorkout>(3);
             workout.Exercises.Add(
@@ -110,8 +111,9 @@ namespace WorkoutTracker.Tests.Services
             );
 
             var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
-            workoutRepo.Setup(x => x.GetWithoutTracking(It.IsAny<int>())).Returns(workout);
-            
+            //workoutRepo.Setup(x => x.GetWithoutTracking(It.IsAny<int>())).Returns(workout);
+            workoutRepo.Setup(x => x.GetWithoutTracking()).Returns(new List<Workout>([workout]).AsQueryable());
+
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
                 .Setup(x => x.Add(It.IsAny<ExecutedWorkout>(), true))
@@ -251,12 +253,13 @@ namespace WorkoutTracker.Tests.Services
         public void Should_Delete_Planned_Workout()
         {
             //ARRANGE
+            var executedWorkoutId = Guid.NewGuid();
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
                 .Setup(x => x.Delete(It.IsAny<int>()));
 
             var executedWorkouts = new List<ExecutedWorkout>(1);
-            executedWorkouts.Add(new ExecutedWorkout { Id = 100 });
+            executedWorkouts.Add(new ExecutedWorkout { Id = 100, PublicId = executedWorkoutId });
 
             executedWorkoutRepo
                 .Setup(x => x.Get())
@@ -272,10 +275,10 @@ namespace WorkoutTracker.Tests.Services
 
 
             //ACT
-            sut.DeletePlanned(Guid.NewGuid());
+            sut.DeletePlanned(executedWorkoutId);
 
             //ASSERT
-            executedWorkoutRepo.Verify(x => x.Get(), Times.Exactly(2));
+            executedWorkoutRepo.Verify(x => x.Get(), Times.Once);
             executedWorkoutRepo.Verify(x => x.Delete(100), Times.Once);
         }
 

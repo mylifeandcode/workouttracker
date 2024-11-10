@@ -24,7 +24,4 @@ export class UserOverviewComponent {
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
-
 }

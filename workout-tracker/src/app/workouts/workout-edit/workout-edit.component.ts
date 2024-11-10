@@ -171,7 +171,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   private updateFormWithWorkoutValues(workout: Workout): void {
     this.workoutForm.patchValue({
       id: workout.id,
-      publicId: workout.publicId!,
+      publicId: workout.publicId ?? undefined,
       active: workout.active,
       name: workout.name
     });
@@ -196,7 +196,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       .subscribe({
         next: (addedWorkout: Workout) => {
           //this.workout = value;
-          this.workoutId = addedWorkout.publicId!;
+          this.workoutId = addedWorkout.publicId;
           this._workout = addedWorkout; //TODO: Refactor! We have redundant variables!
           this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
           this._router.navigate([`workouts/edit/${addedWorkout.publicId}`]);

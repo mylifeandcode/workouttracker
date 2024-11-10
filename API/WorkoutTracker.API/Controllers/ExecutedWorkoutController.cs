@@ -234,7 +234,9 @@ namespace WorkoutTracker.API.Controllers
 
         private void UpdateExecutedWorkoutFromDTO(ExecutedWorkout executedWorkout, ExecutedWorkoutDTO dto)
         {
-            //The only values that change here are related to the executed exercises
+            executedWorkout.StartDateTime = dto.StartDateTime;
+            executedWorkout.EndDateTime = dto.EndDateTime;
+
             foreach (var exerciseDTO in dto.Exercises)
             {
                 var exercise = executedWorkout.Exercises.First(x => x.Sequence == exerciseDTO.Sequence);
