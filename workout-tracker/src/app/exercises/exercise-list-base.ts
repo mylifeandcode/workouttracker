@@ -1,4 +1,4 @@
-import { ExerciseService } from 'app/exercises/exercise.service';
+import { ExerciseService } from 'app/exercises/_services/exercise.service';
 import { PaginatedResults } from '../core/_models/paginated-results';
 import { finalize, map } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';

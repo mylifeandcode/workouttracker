@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormRecord, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ExerciseService } from '../exercise.service';
+import { ExerciseService } from '../_services/exercise.service';
 import { Exercise } from '../../workouts/_models/exercise';
 import { TargetArea } from '../../workouts/_models/target-area';
 import { CustomValidators } from '../../core/_validators/custom-validators';
