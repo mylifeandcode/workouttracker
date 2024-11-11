@@ -117,3 +117,9 @@ select.ng-invalid.ng-touched {
 .p-dropdown-items { //Fix for style broken by PrimeNG 17. Won't work at component level, needs to be in a higher stylesheet like this.
   padding-left: 0px !important;
 }
+
+//Here because of PrimeNG's layer addition :/
+.exercise-header {
+  justify-content: space-between;
+  flex-direction: row-reverse;
+}

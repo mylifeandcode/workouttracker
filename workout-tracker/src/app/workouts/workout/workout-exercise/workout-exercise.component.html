@@ -1,11 +1,3 @@
-@if (formGroup) { <!--TODO: Revisit the need for this if statement, given the lack of one below-->
-  <div [formGroup]="formGroup" class="row">
-    <div class="col-md-12">
-      <strong>{{formGroup.controls.exerciseName.value}}</strong>
-    </div>
-  </div>
-}
-
 <div [formGroup]="formGroup" class="row">
   <input type="hidden" formControlName="exerciseId" />
   <div class="col-md-12">

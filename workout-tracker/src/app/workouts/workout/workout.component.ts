@@ -21,6 +21,7 @@ import { DialogModule } from 'primeng/dialog';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { DurationComponent } from '../_shared/duration/duration.component';
 import { DatePipe } from '@angular/common';
+import { AccordionModule } from 'primeng/accordion';
 
 interface IWorkoutForm {
   //id: FormControl<number | null>;
@@ -45,7 +46,8 @@ interface IWorkoutForm {
     ResistanceBandSelectComponent, 
     CountdownTimerComponent, 
     DurationComponent, 
-    DatePipe
+    DatePipe, 
+    AccordionModule
   ]//,
   //providers: [MessageService]
 })
@@ -72,6 +74,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   public startDateTime: Date | null = null;
   public endDateTime: Date | null = null;
   public workoutLoaded: boolean = false;
+  public activeAccordionTab: number = 0;
   //END PUBLIC FIELDS
 
   //PRIVATE FIELDS
@@ -198,6 +201,11 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     this.formControlForDurationEdit = null;
     this.showDurationModal = false;
   }
+
+  public hasUnsavedData(): boolean {
+    return this.workoutForm.dirty;
+  }
+
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
   private getRouteParams(): void {
@@ -390,6 +398,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
             if (!this.startDateTime) this.startDateTime = this._executedWorkout.startDateTime;
             this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Progress updated!', life: 1000 });
           }
+          this.activeAccordionTab = this.getExerciseInProgress();
         },
         error: (error: any) => {
           this.setErrorInfo(error, "An error occurred saving workout information. See console for details.");
@@ -399,8 +408,8 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       });
   }
 
-  public hasUnsavedData(): boolean {
-    return this.workoutForm.dirty;
+  private getExerciseInProgress(): number {
+    return this.exercisesArray.controls.findIndex((group: FormGroup<IWorkoutFormExercise>) => group.invalid);
   }
 
 }

@@ -30,15 +30,19 @@
             }
           </p>
 
-          @for (exercise of exercisesArray.controls; track $index) {
-            <wt-workout-exercise 
-              [formGroup]="exercise" 
-              (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
-              (showTimerRequest)="showTimer($event)"
-              (rangeOfMotionEntered)="saveWorkoutInProgress()"
-              (durationEdit)="openDurationModal($event)">
-            </wt-workout-exercise>
-          }
+          <p-accordion multiple="false" [activeIndex]="activeAccordionTab">
+            @for (exercise of exercisesArray.controls; track $index) {
+              <p-accordionTab headerStyleClass="exercise-header" header="{{exercise.controls.exerciseName.value}}{{exercise.valid ? ' (DONE)' : ''}}">
+                <wt-workout-exercise 
+                  [formGroup]="exercise" 
+                  (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
+                  (showTimerRequest)="showTimer($event)"
+                  (rangeOfMotionEntered)="saveWorkoutInProgress()"
+                  (durationEdit)="openDurationModal($event)">
+                </wt-workout-exercise>
+              </p-accordionTab>
+            }
+          </p-accordion> 
   
           <div class="row">
             <div class="col-12">&nbsp;</div>
