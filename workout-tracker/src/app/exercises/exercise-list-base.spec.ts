@@ -7,7 +7,7 @@ import { TargetArea } from 'app/workouts/_models/target-area';
 import { ExerciseListBase } from './exercise-list-base';
 import { Component } from '@angular/core';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
-import { ExerciseService } from './exercise.service';
+import { ExerciseService } from './_services/exercise.service';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<ExerciseDTO>()));

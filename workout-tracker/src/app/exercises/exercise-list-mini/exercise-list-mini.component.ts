@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { ExerciseListBase } from '../exercise-list-base';
-import { ExerciseService } from '../exercise.service';
+import { ExerciseService } from '../_services/exercise.service';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { TableModule } from 'primeng/table';
 import { PrimeTemplate } from 'primeng/api';

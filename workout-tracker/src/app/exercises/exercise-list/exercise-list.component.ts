@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ExerciseService } from 'app/exercises/exercise.service';
+import { ExerciseService } from 'app/exercises/_services/exercise.service';
 import { ExerciseListBase } from '../exercise-list-base';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';

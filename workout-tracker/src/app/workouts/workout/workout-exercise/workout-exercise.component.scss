@@ -78,3 +78,16 @@ select {
 .exercise-row {
     line-height: 4em !important;
 }
+
+//Oh, PrimeNG and your destructive layer change...
+/*
+.p-accordion-header-link {
+  justify-content: space-between;
+  flex-direction: row-reverse;
+}
+
+.exercise-header {
+  justify-content: space-between !important;
+  flex-direction: row-reverse !important;
+}
+*/

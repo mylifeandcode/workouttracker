@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Exercise } from '../workouts/_models/exercise';
-import { TargetArea } from '../workouts/_models/target-area';
-import { PaginatedResults } from '../core/_models/paginated-results';
+import { Exercise } from '../../workouts/_models/exercise';
+import { TargetArea } from '../../workouts/_models/target-area';
+import { PaginatedResults } from '../../core/_models/paginated-results';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { ConfigService } from 'app/core/_services/config/config.service';
 

@@ -1,7 +1,7 @@
 @import '../../../variables.scss';
 
 .ui-table table {
-    width: 100%;
+  width: 100%;
 }
 /*
 tr:nth-child(even) {
@@ -13,10 +13,10 @@ th, td {
 }
 */
 h3 {
-    padding: 6px;
-    background-image: linear-gradient(to right, $exercise-color-one, $exercise-color-gradient-end);
-    font-style: italic;
-    color: $header-text-color-one;
+  padding: 6px;
+  background-image: linear-gradient(to right, $exercise-color-one, $exercise-color-gradient-end);
+  //font-style: italic;
+  color: $header-text-color-one;
 }
 
 .btn-add-exercise {

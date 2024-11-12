@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ExerciseListComponent } from './exercise-list.component';
-import { ExerciseService } from '../exercise.service';
+import { ExerciseService } from '../_services/exercise.service';
 import { Exercise } from 'app/workouts/_models/exercise';
 import { of } from 'rxjs';
 import { PaginatedResults } from '../../core/_models/paginated-results';

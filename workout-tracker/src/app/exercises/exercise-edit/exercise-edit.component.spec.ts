@@ -6,7 +6,7 @@ import { ActivatedRoute, ActivatedRouteSnapshot, RouterModule, UrlSegment } from
 import { of } from 'rxjs';
 
 import { ExerciseEditComponent } from './exercise-edit.component';
-import { ExerciseService } from '../exercise.service';
+import { ExerciseService } from '../_services/exercise.service';
 import { TargetArea } from 'app/workouts/_models/target-area';
 import { Exercise } from 'app/workouts/_models/exercise';
 import { ExerciseTargetAreaLink } from 'app/workouts/_models/exercise-target-area-link';
