@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 import { ResistanceBandColorPipe } from '../../../../shared/pipes/resistance-band-color.pipe';
@@ -10,6 +10,7 @@ import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';
     templateUrl: './exercise-plan-last-time.component.html',
     styleUrls: ['./exercise-plan-last-time.component.scss'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ResistanceBandColorPipe, RatingPipe, ResistanceAmountPipe]
 })
 export class ExercisePlanLastTimeComponent {

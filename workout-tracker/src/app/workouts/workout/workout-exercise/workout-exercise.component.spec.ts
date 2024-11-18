@@ -3,9 +3,9 @@ import { WorkoutExerciseComponent } from './workout-exercise.component';
 import { ReactiveFormsModule, Validators, FormBuilder, FormControl, FormArray, FormGroup } from '@angular/forms';
 import { ExecutedExerciseDTO } from '../../_models/executed-exercise-dto';
 import { Pipe, PipeTransform } from '@angular/core';
-import { ResistanceType } from '../enums/resistance-type';
-import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
-import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
+import { ResistanceType } from '../_enums/resistance-type';
+import { IWorkoutFormExercise } from '../_interfaces/i-workout-form-exercise';
+import { IWorkoutFormExerciseSet } from '../_interfaces/i-workout-form-exercise-set';
 import { SafeHtml } from '@angular/platform-browser';
 
 @Pipe({

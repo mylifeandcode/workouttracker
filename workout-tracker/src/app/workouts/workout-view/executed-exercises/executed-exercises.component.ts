@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ExecutedExerciseDTO } from '../../_models/executed-exercise-dto';
 import { NgStyle } from '@angular/common';
 import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';
@@ -13,6 +13,7 @@ import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
     templateUrl: './executed-exercises.component.html',
     styleUrls: ['./executed-exercises.component.scss'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgStyle, ResistanceBandColorPipe, RatingPipe, ResistanceTypePipe, DurationPipe, ExerciseSidePipe, ResistanceAmountPipe]
 })
 export class ExecutedExercisesComponent implements OnInit {

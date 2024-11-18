@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SetType } from '../enums/set-type';
-import { ResistanceType } from '../enums/resistance-type';
+import { SetType } from '../_enums/set-type';
+import { ResistanceType } from '../_enums/resistance-type';
 import { NgStyle } from '@angular/common';
-import { IWorkoutFormExercise } from '../interfaces/i-workout-form-exercise';
-import { IWorkoutFormExerciseSet } from '../interfaces/i-workout-form-exercise-set';
+import { IWorkoutFormExercise } from '../_interfaces/i-workout-form-exercise';
+import { IWorkoutFormExerciseSet } from '../_interfaces/i-workout-form-exercise-set';
 import { SelectOnFocusDirective } from '../../../shared/directives/select-on-focus.directive';
 import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';
 import { ResistanceTypePipe } from '../../_pipes/resistance-type.pipe';
@@ -22,6 +22,7 @@ import { ExerciseSidePipe } from 'app/workouts/_pipes/exercise-side.pipe';
     templateUrl: './workout-exercise.component.html',
     styleUrls: ['./workout-exercise.component.scss'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
       FormsModule, 
       ReactiveFormsModule, 

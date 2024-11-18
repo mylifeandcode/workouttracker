@@ -10,8 +10,8 @@ import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IWorkoutFormExercise } from './interfaces/i-workout-form-exercise';
-import { IWorkoutFormExerciseSet } from './interfaces/i-workout-form-exercise-set';
+import { IWorkoutFormExercise } from './_interfaces/i-workout-form-exercise';
+import { IWorkoutFormExerciseSet } from './_interfaces/i-workout-form-exercise-set';
 import { forEach } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -274,6 +274,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           }
 
           this.workoutLoaded = true;
+          this.activeAccordionTab = this.getExerciseInProgress();
         },
         error: (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
       });

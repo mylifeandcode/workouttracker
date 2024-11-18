@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ResistanceType } from '../workout/enums/resistance-type';
+import { ResistanceType } from '../workout/_enums/resistance-type';
 
 @Pipe({
     name: 'resistanceType',

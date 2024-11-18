@@ -1,4 +1,4 @@
-import { ExerciseSide } from "../workout/enums/exercise-side";
+import { ExerciseSide } from "../workout/_enums/exercise-side";
 
 export class ExecutedExerciseDTO {
   public id: number = 0;

@@ -1,6 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UserOverview } from 'app/core/_models/user-overview';
-//import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -8,7 +7,7 @@ import { DatePipe } from '@angular/common';
     templateUrl: './user-overview.component.html',
     styleUrls: ['./user-overview.component.scss'],
     standalone: true,
-    //imports: [ProgressSpinnerModule, DatePipe]
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [DatePipe]
 })
 export class UserOverviewComponent {
