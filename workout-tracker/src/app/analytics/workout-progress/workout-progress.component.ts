@@ -79,7 +79,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.getUserWorkouts();
+    this.getUserWorkouts(); //TODO: Specify number to get instead of default
   }
 
   public ngOnDestroy(): void {
@@ -109,8 +109,8 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
     this.resistanceChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Resistance);
   }
 
-  private getUserWorkouts(): void {
-    this._workoutService.getFilteredSubset(0, 500, true) //TODO: Page size...come up with a better solution
+  private getUserWorkouts(pageSize: number = 500): void {
+    this._workoutService.getFilteredSubset(0, pageSize, true)
       .pipe(finalize(() => { this.loadingData = false; }))
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
         this.workouts = sortBy(result.results, 'name');

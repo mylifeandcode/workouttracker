@@ -22,6 +22,8 @@ import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.co
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { DurationComponent } from '../_shared/duration/duration.component';
 import { ToastModule } from 'primeng/toast';
+import { AccordionModule } from 'primeng/accordion';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -204,7 +206,8 @@ describe('WorkoutComponent', () => {
       imports: [
         ReactiveFormsModule,
         WorkoutComponent,
-        MockResistanceBandSelectComponent
+        MockResistanceBandSelectComponent,
+        BrowserAnimationsModule
       ],
       providers: [
         {

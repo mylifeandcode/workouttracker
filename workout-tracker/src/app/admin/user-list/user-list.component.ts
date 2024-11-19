@@ -1,18 +1,18 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService } from '../../core/_services/user/user.service';
 import { User } from '../../core/_models/user';
-import { Observable } from 'rxjs';
+import { Observable, finalize } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'wt-user-list',
-    templateUrl: './user-list.component.html',
-    styleUrls: ['./user-list.component.scss'],
-    standalone: true,
-    imports: [RouterLink, AsyncPipe]
+  selector: 'wt-user-list',
+  templateUrl: './user-list.component.html',
+  styleUrls: ['./user-list.component.scss'],
+  standalone: true,
+  imports: [RouterLink, AsyncPipe]
 })
-export class UserListComponent implements OnInit, AfterViewInit {
+export class UserListComponent {
 
   public busy: boolean = true;
   public busyMsg: string = '';
@@ -20,12 +20,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
   public errorMsg: string | undefined;
 
   constructor(private _userSvc: UserService) { } //TODO: We have a caching issue! Fix it!
-  
-  public ngAfterViewInit(): void {
-  }
-
-  public ngOnInit(): void {
-  }
 
   public deleteUser(userPublicId: string): void {
     if (!window.confirm("Are you sure you want to delete this user?"))
@@ -33,17 +27,21 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
     this.busy = true;
     this.busyMsg = "Deleting...";
-    this._userSvc.deleteById(userPublicId).subscribe({
-      next:() => {
-          //const index = _.findIndex(this.users, (user: User) => user.id == userId);
-          //this.users?.splice(index, 1);
-      },
-      error: (error: any) => this.errorMsg = error,
-      complete: () => { //TODO: Replace with piped finalize()
+
+    this._userSvc.deleteById(userPublicId)
+      .pipe(
+        finalize(() => {
           this.busy = false;
           this.busyMsg = "";
-      }
-  });
+        })
+      )
+      .subscribe({
+        next: () => {
+          //const index = _.findIndex(this.users, (user: User) => user.id == userId);
+          //this.users?.splice(index, 1);
+        },
+        error: (error: any) => this.errorMsg = error
+      });
   }
 
   /*

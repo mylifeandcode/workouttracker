@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { NgStyle } from '@angular/common';
 import { ButtonDirective } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'wt-resistance-bands',
@@ -22,12 +23,11 @@ import { DialogModule } from 'primeng/dialog';
 export class ResistanceBandsComponent implements OnInit {
 
   public resistanceBands: ResistanceBand[] = [];
-  public busy: boolean = false; //TODO: Implement
-  public busyMsg: string | undefined; //TODO: Implement
+  public busy: boolean = false;
+  public busyMsg: string | undefined;
 
   //Add modal related
   public showAddDialog: boolean = false;
-  //public newResistanceBand: ResistanceBand | null = null; //TODO: Revisit. Not really a fan of this approach.
   public newResistanceBand: ResistanceBand = new ResistanceBand();
   public modalSubmitted: boolean = false;
 
@@ -101,18 +101,33 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   private getResistanceBandData(fromCache: boolean): void {
+    this.busy = true;
+    this.busyMsg = 'Getting resistance band data...';
     this._resistanceBandService
       .getAll(fromCache)
+      .pipe(
+        finalize(() => {
+          this.busy = false;
+          this.busyMsg = undefined;
+        })
+      )
       .subscribe((results: ResistanceBand[]) => {
         this.resistanceBands = results;
       });
   }
 
   private addResistanceBand(): void {
-    //if(!this.newResistanceBand) return;
+    this.busy = true;
+    this.busyMsg = 'Adding...';
 
     this._resistanceBandService
       .add(this.newResistanceBand)
+      .pipe(
+        finalize(() => { 
+          this.busy = false;
+          this.busyMsg = undefined;
+        })
+      )
       .subscribe({
         next: (band: ResistanceBand) => {
           this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Resistance Band added', life: 3000 });
@@ -125,8 +140,17 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   private updateResistanceBand(band: ResistanceBand): void {
+    this.busy = true;
+    this.busyMsg = 'Updating...';
+
     this._resistanceBandService
       .update(band)
+      .pipe(
+        finalize(() => { 
+          this.busy = false;
+          this.busyMsg = undefined;
+        })
+      )
       .subscribe({
         next: (updatedBand: ResistanceBand) => {
           this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Resistance Band updated', life: 3000 });

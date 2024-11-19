@@ -69,7 +69,6 @@ export class AnalyticsService {
       this.setupAnalyticsChartDataLabels(metrics, chartData);
 
       //Set up the datasets
-
       switch(metricsType) {
         case METRICS_TYPE.FormAndRangeOfMotion:
           chartData.datasets.push({

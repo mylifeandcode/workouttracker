@@ -5,8 +5,8 @@ import { UserService } from 'app/core/_services/user/user.service';
 import { of } from 'rxjs';
 
 import { WelcomeComponent } from './welcome.component';
-import { UserOverviewComponent } from '../user-overview/user-overview.component';
-import { QuickActionsComponent } from '../quick-actions/quick-actions.component';
+import { UserOverviewComponent } from './user-overview/user-overview.component';
+import { QuickActionsComponent } from './quick-actions/quick-actions.component';
 
 class UserServiceMock {
   getOverview =
