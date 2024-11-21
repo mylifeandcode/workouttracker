@@ -16,7 +16,6 @@ class MockUserService {
 @Component({
     selector: 'wt-blank',
     template: '',
-    standalone: true,
     imports: [ReactiveFormsModule]
 })
 class BlankComponent {}

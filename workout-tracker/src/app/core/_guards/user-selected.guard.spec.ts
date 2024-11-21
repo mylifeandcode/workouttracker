@@ -6,7 +6,9 @@ import { ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot } fro
 import { AuthService } from '../_services/auth/auth.service';
 
 
-@Component({})
+@Component({
+    standalone: false
+})
 class FakeComponent {
 
 }

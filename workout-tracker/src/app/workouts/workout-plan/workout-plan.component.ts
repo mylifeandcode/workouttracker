@@ -23,10 +23,9 @@ import { EMPTY_GUID } from 'app/shared/shared-constants';
     selector: 'wt-workout-plan',
     templateUrl: './workout-plan.component.html',
     styleUrls: ['./workout-plan.component.scss'],
-    standalone: true,
     imports: [
-      ProgressSpinnerModule, FormsModule, ReactiveFormsModule, DialogModule, 
-      ExercisePlanComponent, ResistanceBandSelectComponent
+        ProgressSpinnerModule, FormsModule, ReactiveFormsModule, DialogModule,
+        ExercisePlanComponent, ResistanceBandSelectComponent
     ]
 })
 export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implements OnInit {

@@ -6,9 +6,8 @@ import { SelectOnFocusDirective } from '../directives/select-on-focus.directive'
 //Helpful testing information found here: https://angular.io/guide/testing-attribute-directives#testing-attribute-directives
 
 @Component({
-  template: `<input wtSelectOnFocus value=""/>`,
-  standalone: true,
-  imports: [SelectOnFocusDirective]
+    template: `<input wtSelectOnFocus value=""/>`,
+    imports: [SelectOnFocusDirective]
 })
 class TestComponent { }
 

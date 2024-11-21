@@ -25,7 +25,9 @@ describe('UserSelectComponent', () => {
   let component: UserSelectComponent;
   let fixture: ComponentFixture<UserSelectComponent>;
 
-  @Component({})
+  @Component({
+    standalone: false
+})
   class FakeComponent{};
 
   beforeEach(waitForAsync(() => {

@@ -14,16 +14,16 @@ import { ExerciseListMiniComponent } from 'app/exercises/exercise-list-mini/exer
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 
 @Component({
-  selector: 'wt-exercise-list-mini',
-  template: '',
-  standalone: true,
-  imports: [ReactiveFormsModule]
+    selector: 'wt-exercise-list-mini',
+    template: '',
+    imports: [ReactiveFormsModule]
 })
 class FakeExerciseListMiniComponent { }
 
 @Component({
-  selector: 'wt-blank',
-  template: ''
+    selector: 'wt-blank',
+    template: '',
+    standalone: false
 })
 class BlankComponent { }
 

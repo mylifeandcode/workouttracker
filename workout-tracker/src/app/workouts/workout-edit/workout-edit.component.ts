@@ -35,7 +35,6 @@ interface IWorkoutEditForm {
     selector: 'wt-workout-edit',
     templateUrl: './workout-edit.component.html',
     styleUrls: ['./workout-edit.component.scss'],
-    standalone: true,
     imports: [ProgressSpinnerModule, FormsModule, ReactiveFormsModule, NgClass, SelectOnFocusDirective, InputSwitchModule, DialogModule, ExerciseListMiniComponent]
 })
 export class WorkoutEditComponent extends CheckForUnsavedDataComponent implements OnInit {

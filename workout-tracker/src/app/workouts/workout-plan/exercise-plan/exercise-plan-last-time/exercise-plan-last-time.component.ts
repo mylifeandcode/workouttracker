@@ -9,7 +9,6 @@ import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';
     selector: 'wt-exercise-plan-last-time',
     templateUrl: './exercise-plan-last-time.component.html',
     styleUrls: ['./exercise-plan-last-time.component.scss'],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ResistanceBandColorPipe, RatingPipe, ResistanceAmountPipe]
 })

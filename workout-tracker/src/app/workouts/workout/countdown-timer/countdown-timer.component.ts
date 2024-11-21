@@ -7,7 +7,6 @@ import { NgStyle } from '@angular/common';
     selector: 'wt-countdown-timer',
     templateUrl: './countdown-timer.component.html',
     styleUrls: ['./countdown-timer.component.scss'],
-    standalone: true,
     imports: [NgStyle, CountdownComponent]
 })
 export class CountdownTimerComponent implements OnInit {

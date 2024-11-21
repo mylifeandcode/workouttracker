@@ -20,7 +20,6 @@ class RouterMock {}
 @Component({
     selector: 'wt-workout-info',
     template: '',
-    standalone: true,
     imports: [DropdownModule]
 })
 class MockWorkoutInfoComponent {

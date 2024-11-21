@@ -3,15 +3,14 @@ import { ExerciseListBase } from '../exercise-list-base';
 import { ExerciseService } from '../_services/exercise.service';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { TableModule } from 'primeng/table';
-import { PrimeTemplate } from 'primeng/api';
+import { SharedModule } from 'primeng/api';
 import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
     selector: 'wt-exercise-list-mini',
     templateUrl: './exercise-list-mini.component.html', //TODO: Fix alternating row colors not working
     styleUrls: ['./exercise-list-mini.component.scss'],
-    standalone: true,
-    imports: [TableModule, PrimeTemplate, MultiSelectModule]
+    imports: [TableModule, SharedModule, MultiSelectModule]
 })
 export class ExerciseListMiniComponent extends ExerciseListBase {
 

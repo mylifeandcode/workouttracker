@@ -15,7 +15,6 @@ export interface IRepSettingsForm {
     selector: 'wt-user-rep-settings',
     templateUrl: './user-rep-settings.component.html',
     styleUrls: ['./user-rep-settings.component.scss'],
-    standalone: true,
     imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective]
 })
 export class UserRepSettingsComponent implements OnInit {

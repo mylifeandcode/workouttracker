@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ConfirmationService, MessageService, PrimeTemplate } from 'primeng/api';
+import { ConfirmationService, MessageService, SharedModule } from 'primeng/api';
 
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
@@ -17,8 +17,7 @@ import { finalize } from 'rxjs';
     selector: 'wt-resistance-bands',
     templateUrl: './resistance-bands.component.html',
     styleUrls: ['./resistance-bands.component.scss'],
-    standalone: true,
-    imports: [ToastModule, ConfirmDialogModule, TableModule, PrimeTemplate, FormsModule, NgStyle, ButtonDirective, DialogModule]
+    imports: [ToastModule, ConfirmDialogModule, TableModule, SharedModule, FormsModule, NgStyle, ButtonDirective, DialogModule]
 })
 export class ResistanceBandsComponent implements OnInit {
 

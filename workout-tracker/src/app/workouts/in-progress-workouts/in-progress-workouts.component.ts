@@ -4,7 +4,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { TableModule } from 'primeng/table';
-import { PrimeTemplate } from 'primeng/api';
+import { SharedModule } from 'primeng/api';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
@@ -12,8 +12,7 @@ import { DatePipe } from '@angular/common';
     selector: 'wt-in-progress-workouts',
     templateUrl: './in-progress-workouts.component.html',
     styleUrls: ['./in-progress-workouts.component.scss'],
-    standalone: true,
-    imports: [TableModule, PrimeTemplate, RouterLink, DatePipe]
+    imports: [TableModule, SharedModule, RouterLink, DatePipe]
 })
 export class InProgressWorkoutsComponent implements OnInit {
 

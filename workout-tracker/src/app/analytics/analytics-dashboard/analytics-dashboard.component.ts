@@ -10,7 +10,6 @@ import { ZeroIsBadPipe } from '../../shared/pipes/zero-is-bad.pipe';
     selector: 'wt-analytics-dashboard',
     templateUrl: './analytics-dashboard.component.html',
     styleUrls: ['./analytics-dashboard.component.scss'],
-    standalone: true,
     imports: [ProgressSpinnerModule, DatePipe, KeyValuePipe, ZeroIsBadPipe]
 })
 export class AnalyticsDashboardComponent implements OnInit {

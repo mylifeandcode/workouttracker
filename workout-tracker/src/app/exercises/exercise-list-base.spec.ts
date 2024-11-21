@@ -23,7 +23,6 @@ class ExerciseServiceMock {
 
 //We're testing an abstract base class, so let's create a class here that extends it
 @Component({
-    standalone: true,
     imports: [MultiSelectModule]
 })
 class ExerciseListBaseExtenderComponent extends ExerciseListBase {

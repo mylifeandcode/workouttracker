@@ -24,7 +24,9 @@ class LocalStorageServiceMock {
   get = jasmine.createSpy('get').and.returnValue(TEST_ACCESS_TOKEN);
 }
 
-@Component({})
+@Component({
+    standalone: false
+})
 class FakeComponent{};
 
 //This has to be a real token because the service decodes it

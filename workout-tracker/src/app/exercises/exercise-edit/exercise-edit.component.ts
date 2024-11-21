@@ -43,10 +43,9 @@ interface IExerciseEditForm {
     selector: 'wt-exercise-edit',
     templateUrl: './exercise-edit.component.html',
     styleUrls: ['./exercise-edit.component.scss'],
-    standalone: true,
     imports: [
-      ProgressSpinnerModule, FormsModule, ReactiveFormsModule, NgClass, TooltipModule, InputSwitchModule, 
-      KeyValuePipe, InsertSpaceBeforeCapitalPipe
+        ProgressSpinnerModule, FormsModule, ReactiveFormsModule, NgClass, TooltipModule, InputSwitchModule,
+        KeyValuePipe, InsertSpaceBeforeCapitalPipe
     ]
 })
 export class ExerciseEditComponent extends CheckForUnsavedDataComponent implements OnInit {

@@ -22,7 +22,6 @@ interface IUserEditForm {
     selector: 'wt-user-edit',
     templateUrl: './user-edit.component.html',
     styleUrls: ['./user-edit.component.scss'],
-    standalone: true,
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserEditComponent implements OnInit {

@@ -8,7 +8,6 @@ import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';
     selector: 'wt-exercise-plan-suggestions',
     templateUrl: './exercise-plan-suggestions.component.html',
     styleUrls: ['./exercise-plan-suggestions.component.scss'],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ResistanceBandColorPipe, ResistanceAmountPipe]
 })

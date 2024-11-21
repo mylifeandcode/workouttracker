@@ -6,7 +6,6 @@ import { AuthService } from 'app/core/_services/auth/auth.service';
     selector: 'wt-nav',
     templateUrl: './nav.component.html',
     styleUrls: ['./nav.component.scss'],
-    standalone: true,
     imports: [RouterLink]
 })
 export class NavComponent {

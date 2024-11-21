@@ -10,7 +10,6 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     selector: 'wt-welcome',
     templateUrl: './welcome.component.html',
     styleUrls: ['./welcome.component.scss'],
-    standalone: true,
     imports: [UserOverviewComponent, QuickActionsComponent, ProgressSpinnerModule]
 })
 export class WelcomeComponent implements OnInit {

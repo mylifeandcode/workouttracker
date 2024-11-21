@@ -9,7 +9,7 @@ import { WorkoutService } from '../_services/workout.service';
 import { sortBy } from 'lodash-es';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
-import { PrimeTemplate } from 'primeng/api';
+import { SharedModule } from 'primeng/api';
 import { NgClass } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { DurationComponent } from '../_shared/duration/duration.component';
@@ -24,8 +24,7 @@ interface ILogPastWorkoutForm {
     selector: 'wt-workout-log-past-start',
     templateUrl: './workout-log-past-start.component.html',
     styleUrls: ['./workout-log-past-start.component.scss'],
-    standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, DropdownModule, CalendarModule, PrimeTemplate, NgClass, DialogModule, DurationComponent]
+    imports: [FormsModule, ReactiveFormsModule, DropdownModule, CalendarModule, SharedModule, NgClass, DialogModule, DurationComponent]
 })
 export class WorkoutLogPastStartComponent implements OnInit {
   

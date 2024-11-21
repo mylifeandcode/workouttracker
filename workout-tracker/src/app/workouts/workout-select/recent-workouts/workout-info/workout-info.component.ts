@@ -8,7 +8,6 @@ import { TargetAreasPipe } from '../../../_pipes/target-areas.pipe';
     selector: 'wt-workout-info',
     templateUrl: './workout-info.component.html',
     styleUrls: ['./workout-info.component.scss'],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ProgressSpinnerModule, ResistanceTypePipe, TargetAreasPipe]
 })

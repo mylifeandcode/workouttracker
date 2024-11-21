@@ -4,7 +4,7 @@ import { ResistanceBandSelection } from '../../_models/resistance-band-selection
 import { sumBy, groupBy, some } from 'lodash-es';
 import { Dictionary } from 'lodash';
 import { PickListMoveToSourceEvent, PickListMoveToTargetEvent, PickListModule } from 'primeng/picklist';
-import { PrimeTemplate } from 'primeng/api';
+import { SharedModule } from 'primeng/api';
 import { NgStyle } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
 import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
@@ -13,8 +13,7 @@ import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
     selector: 'wt-resistance-band-select',
     templateUrl: './resistance-band-select.component.html',
     styleUrls: ['./resistance-band-select.component.scss'],
-    standalone: true,
-    imports: [PickListModule, PrimeTemplate, NgStyle, TooltipModule, ResistanceAmountPipe]
+    imports: [PickListModule, SharedModule, NgStyle, TooltipModule, ResistanceAmountPipe]
 })
 export class ResistanceBandSelectComponent implements OnInit, OnChanges {
 

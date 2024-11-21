@@ -5,15 +5,14 @@ import { PaginatedResults } from '../../core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
 import { Table, TableModule } from 'primeng/table';
-import { PrimeTemplate } from 'primeng/api';
 import { RouterLink } from '@angular/router';
+import { SharedModule } from 'primeng/api';
 
 @Component({
     selector: 'wt-workout-list',
     templateUrl: './workout-list.component.html',
     styleUrls: ['./workout-list.component.scss'],
-    standalone: true,
-    imports: [TableModule, PrimeTemplate, RouterLink]
+    imports: [TableModule, SharedModule, RouterLink]
 })
 export class WorkoutListComponent {
 

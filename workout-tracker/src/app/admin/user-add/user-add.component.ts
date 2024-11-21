@@ -19,7 +19,6 @@ interface IUserAddForm {
     selector: 'wt-user-add',
     templateUrl: './user-add.component.html',
     styleUrls: ['./user-add.component.scss'],
-    standalone: true,
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserAddComponent implements OnInit {

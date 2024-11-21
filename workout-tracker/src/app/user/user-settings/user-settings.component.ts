@@ -28,16 +28,14 @@ interface IToggleEvent { //TODO: Determine if PrimeNg has a type for this (proba
     selector: 'wt-user-settings',
     templateUrl: './user-settings.component.html',
     styleUrls: ['./user-settings.component.scss'],
-    standalone: true,
     imports: [
-      FormsModule, 
-      ReactiveFormsModule, 
-      InputSwitchModule, 
-      UserRepSettingsComponent, 
-      RouterLink, 
-      ToastModule
-    ],
-    //providers: [MessageService]
+        FormsModule,
+        ReactiveFormsModule,
+        InputSwitchModule,
+        UserRepSettingsComponent,
+        RouterLink,
+        ToastModule
+    ]
 })
 export class UserSettingsComponent extends CheckForUnsavedDataComponent implements OnInit {
 

@@ -18,7 +18,6 @@ interface INewUserForm {
     selector: 'wt-user-select-new',
     templateUrl: './user-select-new.component.html',
     styleUrls: ['./user-select-new.component.scss'],
-    standalone: true,
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserSelectNewComponent {

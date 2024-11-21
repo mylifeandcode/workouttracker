@@ -5,7 +5,6 @@ import { RouterLink } from '@angular/router';
     selector: 'wt-admin-home',
     templateUrl: './admin-home.component.html',
     styleUrls: ['./admin-home.component.scss'],
-    standalone: true,
     imports: [RouterLink]
 })
 export class AdminHomeComponent implements OnInit {

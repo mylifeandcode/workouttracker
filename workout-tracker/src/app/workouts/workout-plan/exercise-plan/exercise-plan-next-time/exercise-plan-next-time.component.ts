@@ -10,7 +10,6 @@ import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';
     selector: 'wt-exercise-plan-next-time',
     templateUrl: './exercise-plan-next-time.component.html',
     styleUrls: ['./exercise-plan-next-time.component.scss'],
-    standalone: true,
     //changeDetection: ChangeDetectionStrategy.OnPush, //Can't use this here due to resistance bands modal
     imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective, ResistanceBandColorPipe, ResistanceAmountPipe]
 })

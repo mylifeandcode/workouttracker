@@ -15,7 +15,6 @@ interface IChangePasswordForm {
     selector: 'wt-change-password',
     templateUrl: './change-password.component.html',
     styleUrls: ['./change-password.component.scss'],
-    standalone: true,
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class ChangePasswordComponent {

@@ -21,18 +21,17 @@ import { ExerciseSidePipe } from 'app/workouts/_pipes/exercise-side.pipe';
     selector: 'wt-workout-exercise',
     templateUrl: './workout-exercise.component.html',
     styleUrls: ['./workout-exercise.component.scss'],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-      FormsModule, 
-      ReactiveFormsModule, 
-      NgStyle, 
-      SelectOnFocusDirective, 
-      ResistanceBandColorPipe, 
-      ResistanceTypePipe, 
-      DurationPipe, 
-      ExerciseSidePipe, 
-      ResistanceAmountPipe
+        FormsModule,
+        ReactiveFormsModule,
+        NgStyle,
+        SelectOnFocusDirective,
+        ResistanceBandColorPipe,
+        ResistanceTypePipe,
+        DurationPipe,
+        ExerciseSidePipe,
+        ResistanceAmountPipe
     ]
 })
 export class WorkoutExerciseComponent implements OnInit {

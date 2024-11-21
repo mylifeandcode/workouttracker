@@ -12,7 +12,6 @@ interface IDurationForm {
     selector: 'wt-duration',
     templateUrl: './duration.component.html',
     styleUrls: ['./duration.component.scss'],
-    standalone: true,
     imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective]
 })
 export class DurationComponent implements OnChanges {;

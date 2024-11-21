@@ -13,7 +13,6 @@ interface IForgotPasswordForm {
     selector: 'wt-forgot-password',
     templateUrl: './forgot-password.component.html',
     styleUrls: ['./forgot-password.component.scss'],
-    standalone: true,
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class ForgotPasswordComponent implements OnInit {

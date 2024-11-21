@@ -3,15 +3,14 @@ import { ExerciseService } from 'app/exercises/_services/exercise.service';
 import { ExerciseListBase } from '../exercise-list-base';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TableModule } from 'primeng/table';
-import { PrimeTemplate } from 'primeng/api';
+import { SharedModule } from 'primeng/api';
 import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'wt-exercise-list',
     templateUrl: './exercise-list.component.html',
     styleUrls: ['./exercise-list.component.scss'],
-    standalone: true,
-    imports: [MultiSelectModule, TableModule, PrimeTemplate, RouterLink]
+    imports: [MultiSelectModule, TableModule, SharedModule, RouterLink]
 })
 export class ExerciseListComponent extends ExerciseListBase {
 

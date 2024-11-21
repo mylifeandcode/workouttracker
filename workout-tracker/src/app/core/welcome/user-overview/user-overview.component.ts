@@ -6,7 +6,6 @@ import { DatePipe } from '@angular/common';
     selector: 'wt-user-overview',
     templateUrl: './user-overview.component.html',
     styleUrls: ['./user-overview.component.scss'],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [DatePipe]
 })

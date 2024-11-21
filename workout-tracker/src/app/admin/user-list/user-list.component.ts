@@ -6,11 +6,10 @@ import { RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'wt-user-list',
-  templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss'],
-  standalone: true,
-  imports: [RouterLink, AsyncPipe]
+    selector: 'wt-user-list',
+    templateUrl: './user-list.component.html',
+    styleUrls: ['./user-list.component.scss'],
+    imports: [RouterLink, AsyncPipe]
 })
 export class UserListComponent {
 

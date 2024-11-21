@@ -10,11 +10,10 @@ import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.component';
 
 @Component({
-  selector: 'wt-workout-select',
-  templateUrl: './workout-select.component.html',
-  styleUrls: ['./workout-select.component.scss'],
-  standalone: true,
-  imports: [DropdownModule, RecentWorkoutsComponent]
+    selector: 'wt-workout-select',
+    templateUrl: './workout-select.component.html',
+    styleUrls: ['./workout-select.component.scss'],
+    imports: [DropdownModule, RecentWorkoutsComponent]
 })
 export class WorkoutSelectComponent implements OnInit, OnDestroy {
 

@@ -12,7 +12,6 @@ import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
     selector: 'wt-executed-exercises',
     templateUrl: './executed-exercises.component.html',
     styleUrls: ['./executed-exercises.component.scss'],
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgStyle, ResistanceBandColorPipe, RatingPipe, ResistanceTypePipe, DurationPipe, ExerciseSidePipe, ResistanceAmountPipe]
 })

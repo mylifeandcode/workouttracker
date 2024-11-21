@@ -153,10 +153,9 @@ The casting solution presented at this URL did not work: https://medium.com/angu
 Unfortunately, for now, I've had to mock each property and method. :/
 */
 @Component({
-  selector: 'wt-resistance-band-select',
-  template: '',
-  standalone: true,
-  imports: [ReactiveFormsModule]
+    selector: 'wt-resistance-band-select',
+    template: '',
+    imports: [ReactiveFormsModule]
 })
 class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 

@@ -31,25 +31,24 @@ interface IWorkoutForm {
 }
 
 @Component({
-  selector: 'wt-workout',
-  templateUrl: './workout.component.html',
-  styleUrls: ['./workout.component.scss'],
-  standalone: true,
-  imports: [
-    ProgressSpinnerModule, 
-    ToastModule, 
-    FormsModule, 
-    ReactiveFormsModule, 
-    WorkoutExerciseComponent, 
-    RouterLink, 
-    DialogModule, 
-    ResistanceBandSelectComponent, 
-    CountdownTimerComponent, 
-    DurationComponent, 
-    DatePipe, 
-    AccordionModule
-  ]//,
-  //providers: [MessageService]
+    selector: 'wt-workout',
+    templateUrl: './workout.component.html',
+    styleUrls: ['./workout.component.scss'],
+    imports: [
+        ProgressSpinnerModule,
+        ToastModule,
+        FormsModule,
+        ReactiveFormsModule,
+        WorkoutExerciseComponent,
+        RouterLink,
+        DialogModule,
+        ResistanceBandSelectComponent,
+        CountdownTimerComponent,
+        DurationComponent,
+        DatePipe,
+        AccordionModule
+    ] //,
+    //providers: [MessageService]
 })
 export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {
 

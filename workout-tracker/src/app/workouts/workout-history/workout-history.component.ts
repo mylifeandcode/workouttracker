@@ -4,7 +4,7 @@ import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { TableModule } from 'primeng/table';
-import { PrimeTemplate } from 'primeng/api';
+import { SharedModule } from 'primeng/api';
 import { RouterLink } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
@@ -17,8 +17,7 @@ import { DatePipe } from '@angular/common';
     selector: 'wt-workout-history',
     templateUrl: './workout-history.component.html',
     styleUrls: ['./workout-history.component.scss'],
-    standalone: true,
-    imports: [TableModule, PrimeTemplate, RouterLink, TooltipModule, DialogModule, ButtonDirective, DatePipe]
+    imports: [TableModule, SharedModule, RouterLink, TooltipModule, DialogModule, ButtonDirective, DatePipe]
 })
 export class WorkoutHistoryComponent {
 

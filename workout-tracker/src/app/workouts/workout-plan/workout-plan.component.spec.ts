@@ -31,10 +31,9 @@ class MockResistanceBandService {
 }
 
 @Component({
-  selector: 'wt-resistance-band-select',
-  template: '',
-  standalone: true,
-  imports: [ReactiveFormsModule]
+    selector: 'wt-resistance-band-select',
+    template: '',
+    imports: [ReactiveFormsModule]
 })
 class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 

@@ -10,7 +10,6 @@ import { ResistanceTypePipe } from '../../_pipes/resistance-type.pipe';
     selector: 'wt-exercise-plan',
     templateUrl: './exercise-plan.component.html',
     styleUrls: ['./exercise-plan.component.scss'],
-    standalone: true,
     imports: [FormsModule, ReactiveFormsModule, ExercisePlanLastTimeComponent, ExercisePlanSuggestionsComponent, ExercisePlanNextTimeComponent, ResistanceTypePipe]
 })
 export class ExercisePlanComponent {

@@ -11,7 +11,9 @@ class AuthServiceMock {
   loginRoute: string = "login";
 }
 
-@Component({})
+@Component({
+    standalone: false
+})
 class FakeComponent {
 
 }

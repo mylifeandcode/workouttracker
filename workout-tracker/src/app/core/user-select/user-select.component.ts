@@ -12,7 +12,6 @@ import { AsyncPipe } from '@angular/common';
     selector: 'wt-user-select',
     templateUrl: './user-select.component.html',
     styleUrls: ['./user-select.component.scss'],
-    standalone: true,
     imports: [RouterLink, ProgressSpinnerModule, AsyncPipe]
 })
 export class UserSelectComponent {

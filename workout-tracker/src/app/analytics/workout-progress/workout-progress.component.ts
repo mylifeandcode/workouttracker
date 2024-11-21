@@ -22,11 +22,10 @@ interface IWorkoutProgressForm {
 }
 
 @Component({
-  selector: 'wt-workout-progress',
-  templateUrl: './workout-progress.component.html',
-  styleUrls: ['./workout-progress.component.scss'],
-  standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, DropdownModule, SelectOnFocusDirective, ProgressSpinnerModule, TabViewModule, ChartModule]
+    selector: 'wt-workout-progress',
+    templateUrl: './workout-progress.component.html',
+    styleUrls: ['./workout-progress.component.scss'],
+    imports: [FormsModule, ReactiveFormsModule, DropdownModule, SelectOnFocusDirective, ProgressSpinnerModule, TabViewModule, ChartModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
 

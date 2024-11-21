@@ -14,7 +14,6 @@ interface ILoginForm {
     selector: 'wt-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
-    standalone: true,
     imports: [FormsModule, ReactiveFormsModule, RouterLink, ProgressSpinnerModule]
 })
 export class LoginComponent {

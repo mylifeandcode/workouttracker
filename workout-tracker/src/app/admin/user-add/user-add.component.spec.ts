@@ -14,10 +14,9 @@ class UserServiceMock {
 }
 
 @Component({
-  selector: 'wt-blank',
-  template: '',
-  standalone: true,
-  imports: [ReactiveFormsModule]
+    selector: 'wt-blank',
+    template: '',
+    imports: [ReactiveFormsModule]
 })
 class BlankComponent { }
 

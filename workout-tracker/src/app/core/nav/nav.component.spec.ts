@@ -15,7 +15,9 @@ class AuthServiceMock {
   
 }
 
-@Component({})
+@Component({
+    standalone: false
+})
 class FakeComponent{};
 
 describe('NavComponent', () => {

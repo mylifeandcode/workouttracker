@@ -5,7 +5,7 @@ import { ExecutedWorkoutSummaryDTO } from '../../_models/executed-workout-summar
 import { Workout } from '../../_models/workout';
 import { WorkoutService } from '../../_services/workout.service';
 import { TableModule } from 'primeng/table';
-import { PrimeTemplate } from 'primeng/api';
+import { SharedModule } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { WorkoutInfoComponent } from './workout-info/workout-info.component';
 import { DatePipe } from '@angular/common';
@@ -14,8 +14,7 @@ import { DatePipe } from '@angular/common';
     selector: 'wt-recent-workouts',
     templateUrl: './recent-workouts.component.html',
     styleUrls: ['./recent-workouts.component.scss'],
-    standalone: true,
-    imports: [TableModule, PrimeTemplate, DialogModule, WorkoutInfoComponent, DatePipe]
+    imports: [TableModule, SharedModule, DialogModule, WorkoutInfoComponent, DatePipe]
 })
 export class RecentWorkoutsComponent implements OnInit {
 

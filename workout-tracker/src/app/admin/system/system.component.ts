@@ -7,9 +7,7 @@ import { ToastModule } from 'primeng/toast';
     selector: 'wt-system',
     templateUrl: './system.component.html',
     styleUrls: ['./system.component.scss'],
-    standalone: true,
-    imports: [ToastModule],
-    //providers: [MessageService]
+    imports: [ToastModule]
 })
 export class SystemComponent {
 

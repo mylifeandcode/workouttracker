@@ -13,7 +13,6 @@ import { DatePipe, KeyValuePipe } from '@angular/common';
     selector: 'wt-workout-view',
     templateUrl: './workout-view.component.html',
     styleUrls: ['./workout-view.component.scss'],
-    standalone: true,
     imports: [ProgressSpinnerModule, ExecutedExercisesComponent, DatePipe, KeyValuePipe]
 })
 export class WorkoutViewComponent implements OnInit {
