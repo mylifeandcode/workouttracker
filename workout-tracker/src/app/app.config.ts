@@ -19,6 +19,7 @@ export const appConfig: ApplicationConfig = {
     //provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     importProvidersFrom(BrowserModule, CommonModule, MessageModule, ReactiveFormsModule),
+    //provideAppInitializer((initializeApp)(inject(ConfigService), inject(UserService), inject(AuthService), inject(HttpClient))),
     //provideAppInitializer(runInInjectionContext(injector, initializeApp(inject(ConfigService), inject(UserService), inject(AuthService), inject(HttpClient)))),
     //provideAppInitializer(() => initializeApp(inject(ConfigService), inject(UserService), inject(AuthService), inject(HttpClient))),
     //TODO: Run migration again once fix has been released for the lack of useFactory support with provideAppInitializer()
@@ -27,7 +28,7 @@ export const appConfig: ApplicationConfig = {
       useFactory: initializeApp,
       deps: [ConfigService, UserService, AuthService, HttpClient],
       multi: true
-    },    
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -44,7 +45,7 @@ function initializeApp(
   configService: ConfigService,
   userService: UserService,
   authService: AuthService,
-  http: HttpClient): () => Observable<any> {
+  http: HttpClient): () => Observable<unknown> {
   console.log("APP IS INITIALIZING...");
   return (): Observable<object> => http.get("config.json")
     .pipe(
