@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, provideZoneChangeDetection, inject, provideAppInitializer, runInInjectionContext } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection, inject, provideAppInitializer, runInInjectionContext } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
@@ -19,16 +19,10 @@ export const appConfig: ApplicationConfig = {
     //provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     importProvidersFrom(BrowserModule, CommonModule, MessageModule, ReactiveFormsModule),
-    //provideAppInitializer((initializeApp)(inject(ConfigService), inject(UserService), inject(AuthService), inject(HttpClient))),
-    //provideAppInitializer(runInInjectionContext(injector, initializeApp(inject(ConfigService), inject(UserService), inject(AuthService), inject(HttpClient)))),
-    //provideAppInitializer(() => initializeApp(inject(ConfigService), inject(UserService), inject(AuthService), inject(HttpClient))),
-    //TODO: Run migration again once fix has been released for the lack of useFactory support with provideAppInitializer()
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeApp,
-      deps: [ConfigService, UserService, AuthService, HttpClient],
-      multi: true
-    },
+    provideAppInitializer(() => {
+      const initializerFn = (initializeApp)(inject(ConfigService), inject(UserService), inject(AuthService), inject(HttpClient));
+      return initializerFn();
+    }),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
