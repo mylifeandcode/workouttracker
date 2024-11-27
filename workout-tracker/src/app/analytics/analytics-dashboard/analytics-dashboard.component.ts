@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { AnalyticsService } from '../_services/analytics.service';
 import { ExecutedWorkoutsSummary } from '../_models/executed-workouts-summary';
@@ -13,12 +13,12 @@ import { ZeroIsBadPipe } from '../../shared/pipes/zero-is-bad.pipe';
     imports: [ProgressSpinnerModule, DatePipe, KeyValuePipe, ZeroIsBadPipe]
 })
 export class AnalyticsDashboardComponent implements OnInit {
+  private _analyticsService = inject(AnalyticsService);
+
 
   public executedWorkoutsSummary: ExecutedWorkoutsSummary | undefined;
   public gettingData: boolean = true; //Default to true -- we'll get data on init
   public errorMessage: string | null = null;
-
-  constructor(private _analyticsService: AnalyticsService) { }
 
   public ngOnInit(): void {
     this._analyticsService

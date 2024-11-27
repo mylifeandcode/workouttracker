@@ -1,10 +1,10 @@
-<div [formGroup]="repSettingsFormGroup" class="row headroom">
+<div [formGroup]="repSettingsFormGroup()" class="row headroom">
     <div class="col-2">
-      <label>{{repSettingsFormGroup.controls.setType.value == 0 ? "Repetition" : "Timed"}} Sets</label> 
+      <label>{{repSettingsFormGroup().controls.setType.value == 0 ? "Repetition" : "Timed"}} Sets</label> 
     </div>
     <div class="col-1">
       <label>Duration
-        @if (repSettingsFormGroup.controls.setType.value == setTypeEnum.Timed) {
+        @if (repSettingsFormGroup().controls.setType.value == setTypeEnum.Timed) {
           <input wtSelectOnFocus formControlName="duration" type="number" />
         } @else {
           <span>N/A</span>
@@ -20,10 +20,10 @@
     </div>
     <div class="col-7">
       <br />
-      @if (repSettingsFormGroup.errors || repSettingsFormGroup.controls.duration.errors) {
+      @if (repSettingsFormGroup().errors || repSettingsFormGroup().controls.duration.errors) {
         <span class="error-text">
-          {{repSettingsFormGroup.controls.duration.errors ? 'Duration is required and must be greater than zero.' : null}}
-          {{repSettingsFormGroup.errors ? 'Min Reps must be less than or equal to Max Reps.' : null}}
+          {{repSettingsFormGroup().controls.duration.errors ? 'Duration is required and must be greater than zero.' : null}}
+          {{repSettingsFormGroup().errors ? 'Min Reps must be less than or equal to Max Reps.' : null}}
         </span>
       }
     </div>

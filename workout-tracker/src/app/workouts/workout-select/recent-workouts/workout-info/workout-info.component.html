@@ -1,9 +1,9 @@
-@if (workout === undefined) {
+@if (workout() === undefined) {
   <p-progressSpinner></p-progressSpinner>
 }
 
-@if (workout) {
-  <h5>{{workout.name}}</h5>
+@if (workout()) {
+  <h5>{{workout()!.name}}</h5> <!--Compiler somehow isn't taking into account if statement below for existance of value-->
   <table class="table table-striped">
     <thead>
       <tr>
@@ -14,7 +14,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (exercise of workout.exercises; track exercise.id) {
+      @for (exercise of workout()!.exercises; track exercise.id) {
         <tr>
           <td>{{exercise.exercise?.name}}</td>
           <td>{{exercise.numberOfSets}}</td>

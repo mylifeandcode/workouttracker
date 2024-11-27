@@ -65,7 +65,7 @@ describe('ExercisePlanSuggestionsComponent', () => {
   it('should apply suggestion values when user chooses to', () => {
 
     //ARRANGE
-    component.formGroup.patchValue({
+    component.formGroup().patchValue({
       resistanceAmountLastTime: 50, 
       resistanceMakeupLastTime: 'Mauve, Tiel', 
       resistanceAmount: 0, 
@@ -79,9 +79,9 @@ describe('ExercisePlanSuggestionsComponent', () => {
     component.useSuggestions();
 
     //ASSERT
-    expect(component.formGroup.controls.resistanceAmount.value).toBe(60);
-    expect(component.formGroup.controls.resistanceMakeup.value).toBe('Aqua');
-    expect(component.formGroup.controls.recommendedTargetRepCount.value).toBe(8);
+    expect(component.formGroup().controls.resistanceAmount.value).toBe(60);
+    expect(component.formGroup().controls.resistanceMakeup.value).toBe('Aqua');
+    expect(component.formGroup().controls.recommendedTargetRepCount.value).toBe(8);
 
   });
   

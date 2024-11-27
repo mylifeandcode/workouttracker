@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ExerciseService } from 'app/exercises/_services/exercise.service';
 import { ExerciseListBase } from '../exercise-list-base';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -13,12 +13,18 @@ import { RouterLink } from '@angular/router';
     imports: [MultiSelectModule, TableModule, SharedModule, RouterLink]
 })
 export class ExerciseListComponent extends ExerciseListBase {
+  protected _exerciseSvc: ExerciseService;
+
 
   //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
   //Turbo Table automatically makes a call to get data on initialization
 
-  constructor(protected _exerciseSvc: ExerciseService) {
+  constructor() {
+    const _exerciseSvc = inject(ExerciseService);
+
     super(_exerciseSvc);
+    this._exerciseSvc = _exerciseSvc;
+
   }
 
   public getExercisesLazy(event: any): void {

@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ConfigService } from 'app/core/_services/config/config.service';
 import { Observable } from 'rxjs';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
@@ -33,6 +33,9 @@ export enum METRICS_TYPE {
   providedIn: 'root'
 })
 export class AnalyticsService {
+  private _http = inject(HttpClient);
+  private _configService = inject(ConfigService);
+
   private readonly API_ROOT: string;
   private readonly BORDERCOLORS: string[] = 
     [
@@ -48,7 +51,7 @@ export class AnalyticsService {
       "#FF0000"  //Red
     ];
 
-  constructor(private _http: HttpClient, private _configService: ConfigService) { 
+  constructor() { 
     const apiRoot: string = this._configService.get("apiRoot");
     this.API_ROOT = apiRoot + "analytics";
   }

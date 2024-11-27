@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/_services/auth/auth.service';
@@ -18,6 +18,10 @@ interface IChangePasswordForm {
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class ChangePasswordComponent {
+  private _router = inject(Router);
+  private _authService = inject(AuthService);
+  private _formBuilder = inject(FormBuilder);
+
 
   public loading: boolean = true;
   public changePasswordForm: FormGroup<IChangePasswordForm>;
@@ -25,10 +29,7 @@ export class ChangePasswordComponent {
   public changingPassword: boolean = false;
   public passwordChanged: boolean = false;
 
-  constructor(
-    private _router: Router,
-    private _authService: AuthService,
-    private _formBuilder: FormBuilder) {
+  constructor() {
     this.changePasswordForm = this.createForm();
   }
 

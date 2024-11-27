@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../../_models/executed-workout-summary-dto';
@@ -17,20 +17,17 @@ import { DatePipe } from '@angular/common';
     imports: [TableModule, SharedModule, DialogModule, WorkoutInfoComponent, DatePipe]
 })
 export class RecentWorkoutsComponent implements OnInit {
+  private _executedWorkoutService = inject(ExecutedWorkoutService);
+  private _workoutService = inject(WorkoutService);
+  private _router = inject(Router);
+
 
   public recentWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public showExercises: boolean = false;
   public selectedWorkout: Workout = new Workout();
   public loading: boolean = true;
 
-  @Input()
-  planningForLater: boolean = false;
-
-  constructor(
-    private _executedWorkoutService: ExecutedWorkoutService, 
-    private _workoutService: WorkoutService, 
-    private _router: Router) 
-    { }
+  readonly planningForLater = input<boolean>(false);
 
   public ngOnInit(): void {
     this._executedWorkoutService

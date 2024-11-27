@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges, inject, input } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectOnFocusDirective } from '../../../shared/directives/select-on-focus.directive';
 
@@ -14,9 +14,10 @@ interface IDurationForm {
     styleUrls: ['./duration.component.scss'],
     imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective]
 })
-export class DurationComponent implements OnChanges {;
-  @Input()
-  currentDuration: number = 0;
+export class DurationComponent implements OnChanges {
+private _formBuilder = inject(FormBuilder);
+;
+  readonly currentDuration = input<number>(0);
 
   @Output()
   okClicked: EventEmitter<number> = new EventEmitter<number>();
@@ -26,7 +27,7 @@ export class DurationComponent implements OnChanges {;
 
   public form: FormGroup<IDurationForm>;
 
-  constructor(private _formBuilder: FormBuilder) { 
+  constructor() { 
     this.form = this.setupFormGroup();
   }
 
@@ -60,10 +61,10 @@ export class DurationComponent implements OnChanges {;
     if(!this.form)
       this.setupFormGroup();
 
-    const hoursDuration = Math.floor(this.currentDuration / 3600);
-    const remainingSeconds = this.currentDuration - (hoursDuration * 3600);
+    const hoursDuration = Math.floor(this.currentDuration() / 3600);
+    const remainingSeconds = this.currentDuration() - (hoursDuration * 3600);
     const minutesDuration = Math.floor(remainingSeconds / 60);
-    const secondsDuration = this.currentDuration - (hoursDuration * 3600) - (minutesDuration * 60);
+    const secondsDuration = this.currentDuration() - (hoursDuration * 3600) - (minutesDuration * 60);
 
     this.form.patchValue({
       hours: hoursDuration,

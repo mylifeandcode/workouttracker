@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Exercise } from '../../workouts/_models/exercise';
@@ -17,12 +17,15 @@ const HTTP_OPTIONS = {
     providedIn: 'root'
 })
 export class ExerciseService {
+    private _http = inject(HttpClient);
+    private _configService = inject(ConfigService);
+
 
     private readonly API_ROOT: string;
     private _resistanceTypes: Observable<Map<number, string>> | undefined;
     private readonly TARGET_AREAS_API_ROOT: string; //TODO: Create TargetAreaService
 
-    constructor(private _http: HttpClient, private _configService: ConfigService) { 
+    constructor() { 
       const apiRoot: string = this._configService.get("apiRoot");
       this.API_ROOT = apiRoot + "exercises";
       this.TARGET_AREAS_API_ROOT = apiRoot + "TargetAreas";

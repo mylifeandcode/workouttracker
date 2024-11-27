@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
@@ -16,6 +16,9 @@ import { DatePipe, KeyValuePipe } from '@angular/common';
     imports: [ProgressSpinnerModule, ExecutedExercisesComponent, DatePipe, KeyValuePipe]
 })
 export class WorkoutViewComponent implements OnInit {
+  private _activatedRoute = inject(ActivatedRoute);
+  private _executedWorkoutService = inject(ExecutedWorkoutService);
+
 
   public loading: boolean = true;
   public executedWorkout: ExecutedWorkoutDTO = new ExecutedWorkoutDTO();
@@ -27,10 +30,6 @@ export class WorkoutViewComponent implements OnInit {
   */
   //public groupedExercises: _.Dictionary<ExecutedExercise[]>;
   public groupedExercises: Map<string, ExecutedExerciseDTO[]> | undefined;
-
-  constructor(
-    private _activatedRoute: ActivatedRoute,
-    private _executedWorkoutService: ExecutedWorkoutService) { }
 
   ngOnInit(): void {
     this.subscribeToRoute();

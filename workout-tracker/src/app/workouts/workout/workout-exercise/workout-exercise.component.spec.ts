@@ -147,7 +147,7 @@ describe('WorkoutExerciseComponent', () => {
     const changedTargetReps = 500;
 
     //ACT
-    component.formGroup.controls.exerciseSets.controls[0].patchValue(
+    component.formGroup().controls.exerciseSets.controls[0].patchValue(
       {
         duration: changedDuration,
         resistance: changedResistance,
@@ -159,12 +159,12 @@ describe('WorkoutExerciseComponent', () => {
     component.applySetChangesToAll();
 
     //ASSERT
-    const arrayCount = component.formGroup.controls.exerciseSets.controls.length;
+    const arrayCount = component.formGroup().controls.exerciseSets.controls.length;
     for(let x = 1; x < arrayCount; x++) { //Start at index 1, not 0
-      expect(component.formGroup.controls.exerciseSets.controls[x].controls.duration.value).toBe(changedDuration);
-      expect(component.formGroup.controls.exerciseSets.controls[x].controls.resistance.value).toBe(changedResistance);
-      expect(component.formGroup.controls.exerciseSets.controls[x].controls.resistanceMakeup.value).toBe(changedResistanceMakeup);
-      expect(component.formGroup.controls.exerciseSets.controls[x].controls.targetReps.value).toBe(changedTargetReps);
+      expect(component.formGroup().controls.exerciseSets.controls[x].controls.duration.value).toBe(changedDuration);
+      expect(component.formGroup().controls.exerciseSets.controls[x].controls.resistance.value).toBe(changedResistance);
+      expect(component.formGroup().controls.exerciseSets.controls[x].controls.resistanceMakeup.value).toBe(changedResistanceMakeup);
+      expect(component.formGroup().controls.exerciseSets.controls[x].controls.targetReps.value).toBe(changedTargetReps);
     }
   });
 

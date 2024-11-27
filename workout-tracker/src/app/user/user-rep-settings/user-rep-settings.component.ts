@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, input } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SetType } from 'app/workouts/workout/_enums/set-type';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
@@ -19,8 +19,7 @@ export interface IRepSettingsForm {
 })
 export class UserRepSettingsComponent implements OnInit {
 
-  @Input()
-  repSettingsFormGroup!: FormGroup<IRepSettingsForm>; //WARN: use of ! -- look for a better solution
+  readonly repSettingsFormGroup = input.required<FormGroup<IRepSettingsForm>>(); //WARN: use of ! -- look for a better solution
 
   public setTypeEnum: typeof SetType = SetType;
 

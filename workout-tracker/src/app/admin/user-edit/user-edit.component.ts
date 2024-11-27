@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/_services/auth/auth.service';
@@ -25,6 +25,13 @@ interface IUserEditForm {
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserEditComponent implements OnInit {
+  private _activatedRoute = inject(ActivatedRoute);
+  private _userSvc = inject(UserService);
+  private _formBuilder = inject(FormBuilder);
+  private _router = inject(Router);
+  private _configService = inject(ConfigService);
+  private _authService = inject(AuthService);
+
 
   public loadingUserInfo: boolean = true;
   public savingUserInfo: boolean = false;
@@ -35,13 +42,7 @@ export class UserEditComponent implements OnInit {
   private _user: User | undefined;
   private _resetPasswordUrlRoot: string;
 
-  constructor(
-    private _activatedRoute: ActivatedRoute,
-    private _userSvc: UserService,
-    private _formBuilder: FormBuilder,
-    private _router: Router,
-    private _configService: ConfigService,
-    private _authService: AuthService) {
+  constructor() {
 
     this.showPasswordResetButton = !this._configService.get("smtpEnabled");
     this._resetPasswordUrlRoot = `${window.location.protocol}//${window.location.host}/user/reset-password/`;

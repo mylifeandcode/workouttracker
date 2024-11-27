@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, input } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SetType } from '../_enums/set-type';
 import { ResistanceType } from '../_enums/resistance-type';
@@ -40,8 +40,7 @@ export class WorkoutExerciseComponent implements OnInit {
    * The FormGroup containing FormControls for the Exercise Name, Type, etc, as well as
    * a FormArray for the Sets
    */
-  @Input({ required: true })
-  formGroup: FormGroup<IWorkoutFormExercise> = new FormGroup(<IWorkoutFormExercise>{}); //HACK -- kind of. Not really initialized correctly unless I'm mistaken. Value should be there though. This is just to make the compiler happy.
+  readonly formGroup = input.required<FormGroup<IWorkoutFormExercise>>(); //HACK -- kind of. Not really initialized correctly unless I'm mistaken. Value should be there though. This is just to make the compiler happy.
 
   @Output()
   resistanceBandsSelect = new EventEmitter<FormGroup<IWorkoutFormExerciseSet>>();
@@ -62,7 +61,7 @@ export class WorkoutExerciseComponent implements OnInit {
   get setsArray(): FormArray<FormGroup<IWorkoutFormExerciseSet>> { //TODO: Consider refactoring. This is a property, but functionally the same as a method -- not good for using in template expressions!
     //This property provides an easier way for the template to access this information,
     //and is used by the component code as a short-hand reference to the form array.
-    return this.formGroup.controls.exerciseSets;
+    return this.formGroup().controls.exerciseSets;
   }
 
   constructor() { }
@@ -102,14 +101,14 @@ export class WorkoutExerciseComponent implements OnInit {
   */
 
   public applySetChangesToAll(): void {
-    if (this.formGroup.controls.exerciseSets.length > 1) {
-      const source = this.formGroup.controls.exerciseSets.controls[0];
+    if (this.formGroup().controls.exerciseSets.length > 1) {
+      const source = this.formGroup().controls.exerciseSets.controls[0];
 
-      for(let x = 1; x < this.formGroup.controls.exerciseSets.length; x++) {
-        this.formGroup.controls.exerciseSets.controls[x].controls.resistance.setValue(source.controls.resistance.value);
-        this.formGroup.controls.exerciseSets.controls[x].controls.resistanceMakeup.setValue(source.controls.resistanceMakeup.value);
-        this.formGroup.controls.exerciseSets.controls[x].controls.duration.setValue(source.controls.duration.value);
-        this.formGroup.controls.exerciseSets.controls[x].controls.targetReps.setValue(source.controls.targetReps.value);
+      for(let x = 1; x < this.formGroup().controls.exerciseSets.length; x++) {
+        this.formGroup().controls.exerciseSets.controls[x].controls.resistance.setValue(source.controls.resistance.value);
+        this.formGroup().controls.exerciseSets.controls[x].controls.resistanceMakeup.setValue(source.controls.resistanceMakeup.value);
+        this.formGroup().controls.exerciseSets.controls[x].controls.duration.setValue(source.controls.duration.value);
+        this.formGroup().controls.exerciseSets.controls[x].controls.targetReps.setValue(source.controls.targetReps.value);
       }
     }
   }

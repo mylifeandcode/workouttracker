@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
@@ -18,7 +18,11 @@ import { HttpErrorResponse } from '@angular/common/http';
     styleUrls: ['./workout-select-planned.component.scss'],
     imports: [ConfirmDialogModule, TableModule, SharedModule, RouterLink, DatePipe]
 })
-export class WorkoutSelectPlannedComponent { //No ngOnInit() needed -- table will automatically get initial data due to lazy loading
+export class WorkoutSelectPlannedComponent {
+  private _executedWorkoutService = inject(ExecutedWorkoutService);
+  private _confirmationService = inject(ConfirmationService);
+  private _messageService = inject(MessageService);
+ //No ngOnInit() needed -- table will automatically get initial data due to lazy loading
 
   public plannedWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public totalCount: number = 0;
@@ -27,12 +31,7 @@ export class WorkoutSelectPlannedComponent { //No ngOnInit() needed -- table wil
   public cols: any = [
     { field: 'name', header: 'Workout Name' },
     { field: 'createdDateTime', header: 'Created' }
-  ]; //TODO: Create specific type
-
-  constructor(
-    private _executedWorkoutService: ExecutedWorkoutService,
-    private _confirmationService: ConfirmationService,
-    private _messageService: MessageService) { }
+  ];
 
   public getPlannedWorkoutsLazy(event: any): void {
     this.getPlannedWorkouts(event.first);

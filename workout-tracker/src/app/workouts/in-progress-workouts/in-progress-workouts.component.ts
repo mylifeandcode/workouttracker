@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
@@ -15,12 +15,12 @@ import { DatePipe } from '@angular/common';
     imports: [TableModule, SharedModule, RouterLink, DatePipe]
 })
 export class InProgressWorkoutsComponent implements OnInit {
+  private _executedWorkoutService = inject(ExecutedWorkoutService);
+
 
   public inProgressWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public loading: boolean = true;
   public errorMessage: string | null = null;
-
-  constructor(private _executedWorkoutService: ExecutedWorkoutService) {}
 
   ngOnInit(): void {
     this._executedWorkoutService.getInProgress()

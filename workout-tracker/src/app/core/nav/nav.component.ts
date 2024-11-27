@@ -1,4 +1,4 @@
-import { Component, Signal, computed } from '@angular/core';
+import { Component, Signal, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 
@@ -9,12 +9,13 @@ import { AuthService } from 'app/core/_services/auth/auth.service';
     imports: [RouterLink]
 })
 export class NavComponent {
+  private _authService = inject(AuthService);
+  private _router = inject(Router);
+
 
   public userName: Signal<string | null> = computed(() => this._authService.currentUserName());
   public userIsLoggedIn: Signal<boolean> = computed(() => this._authService.currentUserName() != null);
   public userIsAdmin: Signal<boolean> = computed(() => this._authService.currentUserName() != null && this._authService.isUserAdmin);
-
-  constructor(private _authService: AuthService, private _router: Router) { }
 
   public logOff(): void {
     this._authService.logOut();

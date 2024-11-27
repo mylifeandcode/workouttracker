@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { WorkoutService } from 'app/workouts/_services/workout.service';
@@ -28,6 +28,9 @@ interface IWorkoutProgressForm {
     imports: [FormsModule, ReactiveFormsModule, DropdownModule, SelectOnFocusDirective, ProgressSpinnerModule, TabViewModule, ChartModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
+  private _analyticsService = inject(AnalyticsService);
+  private _workoutService = inject(WorkoutService);
+
 
   public loadingData: boolean = true;
   public metrics: ExecutedWorkoutMetrics[] = [];
@@ -70,10 +73,9 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   private _workoutCount$: Subscription | undefined;
   private _exerciseId$: Subscription | undefined;
 
-  constructor(
-    private _analyticsService: AnalyticsService,
-    private _workoutService: WorkoutService,
-    formBuilder: FormBuilder) {
+  constructor() {
+    const formBuilder = inject(FormBuilder);
+
     this.form = this.buildForm(formBuilder);
   }
 

@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Input } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { Dictionary } from 'lodash';
@@ -58,11 +58,9 @@ class ExecutedWorkoutServiceMock {
 })
 export class MockExecutedExercisesComponent {
 
-  @Input()
-  executedExercises: ExecutedExerciseDTO[] = [];
+  readonly executedExercises = input<ExecutedExerciseDTO[]>([]);
 
-  @Input()
-  showResults: boolean = false;
+  readonly showResults = input<boolean>(false);
 
 }
 

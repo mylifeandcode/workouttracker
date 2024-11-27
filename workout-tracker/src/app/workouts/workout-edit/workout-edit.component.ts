@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
@@ -38,6 +38,11 @@ interface IWorkoutEditForm {
     imports: [ProgressSpinnerModule, FormsModule, ReactiveFormsModule, NgClass, SelectOnFocusDirective, InputSwitchModule, DialogModule, ExerciseListMiniComponent]
 })
 export class WorkoutEditComponent extends CheckForUnsavedDataComponent implements OnInit {
+  private _route = inject(ActivatedRoute);
+  private _formBuilder = inject(FormBuilder);
+  private _workoutService = inject(WorkoutService);
+  private _router = inject(Router);
+
 
   //A helfpul link for dynamic form arrays: https://codinglatte.com/posts/angular/angular-dynamic-form-fields-using-formarray/
 
@@ -60,11 +65,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     return this.workoutForm.controls.exercises;
   }
 
-  constructor(
-    private _route: ActivatedRoute,
-    private _formBuilder: FormBuilder,
-    private _workoutService: WorkoutService,
-    private _router: Router) {
+  constructor() {
     super();
     this.workoutForm = this.createForm();
   }

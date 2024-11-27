@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../_models/workout-plan';
@@ -29,6 +29,12 @@ import { EMPTY_GUID } from 'app/shared/shared-constants';
     ]
 })
 export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implements OnInit {
+  private _workoutService = inject(WorkoutService);
+  private _resistanceBandService = inject(ResistanceBandService);
+  private _activatedRoute = inject(ActivatedRoute);
+  private _router = inject(Router);
+  private _formBuilder = inject(FormBuilder);
+
 
   //PUBLIC FIELDS
   public workoutPlan: WorkoutPlan | undefined;
@@ -78,12 +84,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
   //END PUBLIC PROPERTIES
 
-  constructor(
-    private _workoutService: WorkoutService,
-    private _resistanceBandService: ResistanceBandService,
-    private _activatedRoute: ActivatedRoute,
-    private _router: Router,
-    private _formBuilder: FormBuilder) {
+  constructor() {
     super();
     this.workoutPlanForm = this.createForm();
   }

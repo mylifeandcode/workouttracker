@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { PaginatedResults } from '../../core/_models/paginated-results';
@@ -15,6 +15,8 @@ import { SharedModule } from 'primeng/api';
     imports: [TableModule, SharedModule, RouterLink]
 })
 export class WorkoutListComponent {
+  private _workoutSvc = inject(WorkoutService);
+
 
   //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
   //Turbo Table automatically makes a call to get data on initialization
@@ -31,9 +33,6 @@ export class WorkoutListComponent {
 
   private _filterByNameContains: string | null = null;
   private _filterByActiveOnly: boolean = true;
-
-  constructor(private _workoutSvc: WorkoutService) {
-  }
 
   public getWorkouts(first: number): void {
     this.totalRecords = 0;

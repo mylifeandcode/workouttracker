@@ -1,4 +1,4 @@
-@if (showHeading) {
+@if (showHeading()) {
   <h3 class="headroom">Select a Workout to {{planningForLater ? "Plan" : "Start"}}</h3>
 }
 
@@ -13,7 +13,7 @@
     </div>
   }
 
-  @if (!loading && showRecent && workouts.length == 0) {
+  @if (!loading && showRecent() && workouts.length == 0) {
     <div>
       <p>
         <br />You haven't defined any workouts yet. Please use the menu to create one.
@@ -21,7 +21,7 @@
     </div>
   }
 
-  @if (!loading && showRecent && workouts.length) {
+  @if (!loading && showRecent() && workouts.length) {
     <wt-recent-workouts [planningForLater]="planningForLater"></wt-recent-workouts>
   }
   

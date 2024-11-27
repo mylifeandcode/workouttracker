@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { ConfirmationService, MessageService, SharedModule } from 'primeng/api';
 
@@ -20,6 +20,10 @@ import { finalize } from 'rxjs';
     imports: [ToastModule, ConfirmDialogModule, TableModule, SharedModule, FormsModule, NgStyle, ButtonDirective, DialogModule]
 })
 export class ResistanceBandsComponent implements OnInit {
+  private _resistanceBandService = inject(ResistanceBandService);
+  private _messageService = inject(MessageService);
+  private _confirmationService = inject(ConfirmationService);
+
 
   public resistanceBands: ResistanceBand[] = [];
   public busy: boolean = false;
@@ -31,12 +35,7 @@ export class ResistanceBandsComponent implements OnInit {
   public modalSubmitted: boolean = false;
 
   //This is used to store the original row when we go into edit mode
-  private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {}; //TODO: Revisit. This isn't an array of ResistanceBands, but rather an object with an indexer and ResistanceBand-type property.
-
-  constructor(
-    private _resistanceBandService: ResistanceBandService,
-    private _messageService: MessageService,
-    private _confirmationService: ConfirmationService) { }
+  private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {};
 
   //Table edit code based on PrimeNg's example at https://www.primefaces.org/primeng/showcase/#/table/edit
 

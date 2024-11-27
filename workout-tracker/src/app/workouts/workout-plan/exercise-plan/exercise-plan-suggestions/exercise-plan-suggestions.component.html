@@ -11,10 +11,10 @@
       <strong>Resistance Amount</strong>
     </div>
     <div style="width: 50%">
-      <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' : formGroup.controls.recommendedResistanceAmount.value | resistanceAmount:formGroup.controls.resistanceType.value==2}}</span>
-      @if (formGroup.controls.recommendedResistanceMakeup.value) {
+      <span>{{formGroup().controls.resistanceType.value==3 ? 'Body Weight' : formGroup().controls.recommendedResistanceAmount.value | resistanceAmount:formGroup().controls.resistanceType.value==2}}</span>
+      @if (formGroup().controls.recommendedResistanceMakeup.value) {
         <span>
-          (<span [innerHTML]="formGroup.controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
+          (<span [innerHTML]="formGroup().controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
         </span>
       }
     </div>
@@ -25,8 +25,8 @@
       <strong>Target Rep Count</strong>
     </div>
     <div class="half-area">
-      @if (formGroup.controls.involvesReps.value) {
-        <span>{{formGroup.controls.recommendedTargetRepCount.value}}</span>
+      @if (formGroup().controls.involvesReps.value) {
+        <span>{{formGroup().controls.recommendedTargetRepCount.value}}</span>
       } @else {
         <span>N/A</span>
       }
@@ -38,7 +38,7 @@
       <strong>Reason(s)</strong> 
     </div>
     <div class="half-area">
-      <span>{{formGroup.controls.recommendationReason.value}}</span>
+      <span>{{formGroup().controls.recommendationReason.value}}</span>
     </div>
   </div>
 

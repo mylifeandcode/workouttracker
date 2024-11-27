@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
@@ -20,6 +20,8 @@ import { DatePipe } from '@angular/common';
     imports: [TableModule, SharedModule, RouterLink, TooltipModule, DialogModule, ButtonDirective, DatePipe]
 })
 export class WorkoutHistoryComponent {
+  private _executedWorkoutService = inject(ExecutedWorkoutService);
+
 
   //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
   //Turbo Table automatically makes a call to get data on initialization
@@ -32,12 +34,7 @@ export class WorkoutHistoryComponent {
   public notes: string = '';
   public cols: any = [
     { field: 'name', header: 'Name' }
-  ]; //TODO: Create specific type
-
-
-  constructor(
-    private _executedWorkoutService: ExecutedWorkoutService) {
-  }
+  ];
 
   public getExecutedWorkouts(first: number, nameContains: string | null): void {
 

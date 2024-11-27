@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
@@ -27,6 +27,10 @@ interface ILogPastWorkoutForm {
     imports: [FormsModule, ReactiveFormsModule, DropdownModule, CalendarModule, SharedModule, NgClass, DialogModule, DurationComponent]
 })
 export class WorkoutLogPastStartComponent implements OnInit {
+  private _formBuilder = inject(FormBuilder);
+  private _workoutService = inject(WorkoutService);
+  private _router = inject(Router);
+
   
   /*
   Properties to make accessing form controls easier, per the example at the official docs 
@@ -47,10 +51,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
   public gettingData: boolean = true;
   public showDurationModal: boolean = false;
 
-  constructor(
-    private _formBuilder: FormBuilder, 
-    private _workoutService: WorkoutService, 
-    private _router: Router) { 
+  constructor() { 
       this.formGroup = this.buildForm();
   }
 

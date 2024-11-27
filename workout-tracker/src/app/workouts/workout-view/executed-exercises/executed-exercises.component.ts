@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, input } from '@angular/core';
 import { ExecutedExerciseDTO } from '../../_models/executed-exercise-dto';
 import { NgStyle } from '@angular/common';
 import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';
@@ -17,11 +17,9 @@ import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
 })
 export class ExecutedExercisesComponent implements OnInit {
 
-  @Input()
-  executedExercises: ExecutedExerciseDTO[] | undefined;
+  readonly executedExercises = input<ExecutedExerciseDTO[]>();
 
-  @Input()
-  showResults: boolean = false;
+  readonly showResults = input<boolean>(false);
 
   constructor() { }
 

@@ -11,12 +11,12 @@
       <strong>Resistance Amount</strong>
     </div>
     <div class="half-area">
-      <span>{{formGroup.controls.resistanceType.value==3 ? 'Body Weight' :
-        formGroup.controls.resistanceAmountLastTime.value |
-        resistanceAmount:formGroup.controls.resistanceType.value==2}}</span>
-      @if (formGroup.controls.resistanceMakeupLastTime.value) {
+      <span>{{formGroup().controls.resistanceType.value==3 ? 'Body Weight' :
+        formGroup().controls.resistanceAmountLastTime.value |
+        resistanceAmount:formGroup().controls.resistanceType.value==2}}</span>
+      @if (formGroup().controls.resistanceMakeupLastTime.value) {
         <span>
-          (<span [innerHTML]="formGroup.controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
+          (<span [innerHTML]="formGroup().controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
         </span>
       }
     </div>
@@ -27,8 +27,8 @@
       <strong>Target Rep Count</strong>
     </div>
     <div class="half-area">
-      @if (formGroup.controls.involvesReps.value) {
-        <span>{{formGroup.controls.targetRepCountLastTime.value}}</span>
+      @if (formGroup().controls.involvesReps.value) {
+        <span>{{formGroup().controls.targetRepCountLastTime.value}}</span>
       } @else {
         <span>N/A</span>
       }
@@ -40,8 +40,8 @@
       <strong>Avg Actual Rep Count</strong>
     </div>
     <div class="half-area">
-      @if (formGroup.controls.involvesReps.value) {
-        <span>{{formGroup.controls.avgActualRepCountLastTime.value}}</span>
+      @if (formGroup().controls.involvesReps.value) {
+        <span>{{formGroup().controls.avgActualRepCountLastTime.value}}</span>
       } @else {
         <span>N/A</span>
       }
@@ -54,7 +54,7 @@
     </div>
 
     <div class="half-area">
-      <span>{{formGroup.controls.avgRangeOfMotionLastTime.value | rating}}</span>
+      <span>{{formGroup().controls.avgRangeOfMotionLastTime.value | rating}}</span>
     </div>
   </div>
 
@@ -63,7 +63,7 @@
       <strong>Avg Form</strong>
     </div>
     <div class="half-area">
-      <span>{{formGroup.controls.avgFormLastTime.value | rating}}</span>
+      <span>{{formGroup().controls.avgFormLastTime.value | rating}}</span>
     </div>
   </div>
 

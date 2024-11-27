@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { SoundService } from 'app/core/_services/sound/sound.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -10,12 +10,9 @@ import { ToastModule } from 'primeng/toast';
     imports: [ToastModule]
 })
 export class SystemComponent {
+  private _soundService = inject(SoundService);
+  private _messageService = inject(MessageService);
 
-  constructor(
-    private _soundService: SoundService,
-    private _messageService: MessageService) { 
-      
-    }
 
   public testSoundService(): void {
     this._soundService.playSound('../../assets/sounds/210639764.mp3');

@@ -1,5 +1,5 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ApiBaseService } from 'app/core/_services/api-base/api-base.service';
 import { ConfigService } from 'app/core/_services/config/config.service';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
@@ -15,9 +15,16 @@ import { Dictionary } from 'lodash';
   providedIn: 'root'
 })
 export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
+  private _configService: ConfigService;
 
-  constructor(private _configService: ConfigService, _http: HttpClient) {
+
+  constructor() {
+    const _configService = inject(ConfigService);
+    const _http = inject(HttpClient);
+
     super(_configService.get('apiRoot') + "executedworkout", _http);
+    this._configService = _configService;
+
   }
 
   /**

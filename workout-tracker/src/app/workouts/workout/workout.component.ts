@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
@@ -51,6 +51,13 @@ interface IWorkoutForm {
     //providers: [MessageService]
 })
 export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {
+  private _route = inject(ActivatedRoute);
+  private _formBuilder = inject(FormBuilder);
+  private _executedWorkoutService = inject(ExecutedWorkoutService);
+  private _resistanceBandService = inject(ResistanceBandService);
+  private _messageService = inject(MessageService);
+  private _router = inject(Router);
+
 
   //PUBLIC FIELDS
   public errorInfo: string | undefined = undefined;
@@ -115,13 +122,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   private _apiCallsInProgress: number = 0;
   //END PRIVATE FIELDS
 
-  constructor(
-    private _route: ActivatedRoute,
-    private _formBuilder: FormBuilder,
-    private _executedWorkoutService: ExecutedWorkoutService,
-    private _resistanceBandService: ResistanceBandService,
-    private _messageService: MessageService,
-    private _router: Router) {
+  constructor() {
     super();
     this.workoutForm = this.createForm();
   }

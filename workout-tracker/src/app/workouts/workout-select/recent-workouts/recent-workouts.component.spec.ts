@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
@@ -23,8 +23,7 @@ class RouterMock {}
     imports: [DropdownModule]
 })
 class MockWorkoutInfoComponent {
-  @Input()
-  workout: Workout | undefined;
+  readonly workout = input<Workout>();
 }
 
 describe('RecentWorkoutsComponent', () => {

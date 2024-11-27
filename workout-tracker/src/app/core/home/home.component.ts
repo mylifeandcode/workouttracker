@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 
@@ -9,8 +9,9 @@ import { AuthService } from 'app/core/_services/auth/auth.service';
     imports: [RouterLink]
 })
 export class HomeComponent implements OnInit {
+  private _router = inject(Router);
+  private _authService = inject(AuthService);
 
-  constructor(private _router: Router, private _authService: AuthService) { }
 
   public ngOnInit(): void {
   }

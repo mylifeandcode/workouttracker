@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { User } from '../../_models/user';
 import { tap } from 'rxjs/operators';
@@ -18,9 +18,16 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class UserService extends ApiBaseService<User> {
+  private _configService: ConfigService;
 
-  constructor(private _configService: ConfigService, _http: HttpClient) { 
+
+  constructor() {
+    const _configService = inject(ConfigService);
+    const _http = inject(HttpClient);
+ 
     super(_configService.get('apiRoot') + "users", _http);
+    this._configService = _configService;
+
   }
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
@@ -17,15 +17,16 @@ interface ILoginForm {
     imports: [FormsModule, ReactiveFormsModule, RouterLink, ProgressSpinnerModule]
 })
 export class LoginComponent {
+  private _formBuilder = inject(FormBuilder);
+  private _authService = inject(AuthService);
+  private _router = inject(Router);
+
 
   public loginForm: FormGroup<ILoginForm>;
   public loggingIn: boolean = false;
   public showLoginFailed: boolean = false;
 
-  constructor(
-    private _formBuilder: FormBuilder, 
-    private _authService: AuthService, 
-    private _router: Router) { 
+  constructor() { 
       this.loginForm = this.createForm();
   }
 

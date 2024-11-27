@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormRecord, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExerciseService } from '../_services/exercise.service';
@@ -49,6 +49,11 @@ interface IExerciseEditForm {
     ]
 })
 export class ExerciseEditComponent extends CheckForUnsavedDataComponent implements OnInit {
+  private _route = inject(ActivatedRoute);
+  private _formBuilder = inject(FormBuilder);
+  private _exerciseSvc = inject(ExerciseService);
+  private _router = inject(Router);
+
 
   //PUBLIC FIELDS
   public exerciseForm: FormGroup<IExerciseEditForm>;
@@ -78,11 +83,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   private _exercise: Exercise = new Exercise();
   private _exercisePublicId: string | null = null; //TODO: Refactor. We have an exercise variable. Why have this too?
 
-  constructor(
-    private _route: ActivatedRoute,
-    private _formBuilder: FormBuilder,
-    private _exerciseSvc: ExerciseService, 
-    private _router: Router) {
+  constructor() {
     super();
     this.exerciseForm = this.createForm();
     //TODO: Add subscription and unsubscribe on destroy

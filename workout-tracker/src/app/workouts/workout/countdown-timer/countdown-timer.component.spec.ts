@@ -72,8 +72,8 @@ describe('CountdownTimerComponent', () => {
     component.activatedDateTime = new Date();
 
     //ASSERT
-    expect(component.preCountdownConfig).toEqual({ demand: true, leftTime: component.secondsLeadInTime, format: 'mm:ss' });
-    expect(component.countdownConfig).toEqual({ demand: true, leftTime: component.secondsToCountdown, format: 'mm:ss' });
+    expect(component.preCountdownConfig).toEqual({ demand: true, leftTime: component.secondsLeadInTime(), format: 'mm:ss' });
+    expect(component.countdownConfig).toEqual({ demand: true, leftTime: component.secondsToCountdown(), format: 'mm:ss' });
   });
 
   it('should play sound when countdown is complete', () => {

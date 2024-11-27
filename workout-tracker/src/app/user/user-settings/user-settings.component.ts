@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 import { User } from 'app/core/_models/user';
@@ -38,22 +38,17 @@ interface IToggleEvent { //TODO: Determine if PrimeNg has a type for this (proba
     ]
 })
 export class UserSettingsComponent extends CheckForUnsavedDataComponent implements OnInit {
+  private _authService = inject(AuthService);
+  private _userService = inject(UserService);
+  private _formBuilder = inject(FormBuilder);
+  private _messageService = inject(MessageService);
+
 
   public loading: boolean = true;
   public user: User | undefined; //Undefined until retrieved from service
   public userSettingsForm: FormGroup<IUserSettingsForm> | undefined; //undefined until user info is retrieved
   public saving: boolean = false;
   public recommendationEngineEnabled: boolean = false;
-
-  constructor(
-    private _authService: AuthService, 
-    private _userService: UserService, 
-    private _formBuilder: FormBuilder,
-    private _messageService: MessageService) { 
-      
-      super();
-
-  }
 
   public ngOnInit(): void {
     if (!this._authService.userPublicId) return;

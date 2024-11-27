@@ -62,7 +62,7 @@ describe('ExercisePlanComponent', () => {
   it('should apply last resistance values when user chooses to', () => {
 
     //ARRANGE
-    component.formGroup.patchValue({
+    component.formGroup().patchValue({
       resistanceAmountLastTime: 50, 
       resistanceMakeupLastTime: 'Mauve, Tiel', 
       resistanceAmount: 0, 
@@ -73,8 +73,8 @@ describe('ExercisePlanComponent', () => {
     component.useSameResistanceAsLastTime();
 
     //ASSERT
-    expect(component.formGroup.controls.resistanceAmount.value).toBe(50);
-    expect(component.formGroup.controls.resistanceMakeup.value).toBe('Mauve, Tiel');
+    expect(component.formGroup().controls.resistanceAmount.value).toBe(50);
+    expect(component.formGroup().controls.resistanceMakeup.value).toBe('Mauve, Tiel');
 
   });
 

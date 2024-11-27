@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { User } from 'app/core/_models/user';
@@ -21,15 +21,16 @@ interface INewUserForm {
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserSelectNewComponent {
+  private _formBuilder = inject(FormBuilder);
+  private _userService = inject(UserService);
+  private _router = inject(Router);
+
 
   public newUserForm: FormGroup<INewUserForm>;
   public errorMsg: string | undefined = undefined;
   public addingUser: boolean = false;
   
-  constructor(
-    private _formBuilder: FormBuilder, 
-    private _userService: UserService,
-    private _router: Router) { 
+  constructor() { 
       this.newUserForm = this.createForm();
   }
 

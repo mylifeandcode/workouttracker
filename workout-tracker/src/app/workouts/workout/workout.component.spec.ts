@@ -11,7 +11,7 @@ import { ResistanceBandService } from 'app/shared/services/resistance-band.servi
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Output, input } from '@angular/core';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
@@ -159,8 +159,7 @@ Unfortunately, for now, I've had to mock each property and method. :/
 })
 class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
-  @Input()
-  public resistanceBandInventory: ResistanceBandIndividual[] = [];
+  public readonly resistanceBandInventory = input<ResistanceBandIndividual[]>([]);
 
   @Output()
   public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();

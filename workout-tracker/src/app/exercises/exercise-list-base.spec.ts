@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { TargetArea } from 'app/workouts/_models/target-area';
 import { ExerciseListBase } from './exercise-list-base';
-import { Component } from '@angular/core';
+import { Component, inject as inject_1 } from '@angular/core';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { ExerciseService } from './_services/exercise.service';
 
@@ -26,8 +26,14 @@ class ExerciseServiceMock {
     imports: [MultiSelectModule]
 })
 class ExerciseListBaseExtenderComponent extends ExerciseListBase {
-  constructor(private _exerciseService: ExerciseService) {
+  private _exerciseService: ExerciseService;
+
+  constructor() {
+    const _exerciseService = inject_1(ExerciseService);
+
     super(_exerciseService);
+    this._exerciseService = _exerciseService;
+
   }
 }
 

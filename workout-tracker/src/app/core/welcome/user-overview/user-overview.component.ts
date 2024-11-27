@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { UserOverview } from 'app/core/_models/user-overview';
 import { DatePipe } from '@angular/common';
 
@@ -11,8 +11,7 @@ import { DatePipe } from '@angular/common';
 })
 export class UserOverviewComponent {
 
-  @Input()
-  userOverview: UserOverview | undefined;
+  readonly userOverview = input<UserOverview>();
 
   //Replaced with @defer where this component is used :)
   /*

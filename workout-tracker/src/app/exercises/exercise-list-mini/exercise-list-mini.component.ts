@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { ExerciseListBase } from '../exercise-list-base';
 import { ExerciseService } from '../_services/exercise.service';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
@@ -13,11 +13,17 @@ import { MultiSelectModule } from 'primeng/multiselect';
     imports: [TableModule, SharedModule, MultiSelectModule]
 })
 export class ExerciseListMiniComponent extends ExerciseListBase {
+  protected _exerciseSvc: ExerciseService;
+
 
   @Output() exerciseSelected = new EventEmitter<ExerciseDTO>();
 
-  constructor(protected _exerciseSvc: ExerciseService) { 
+  constructor() {
+      const _exerciseSvc = inject(ExerciseService);
+ 
       super(_exerciseSvc);
+      this._exerciseSvc = _exerciseSvc;
+
   }
 
   public getExercisesLazy(event: any): void {

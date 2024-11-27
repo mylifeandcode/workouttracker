@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, Output } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Output, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -37,8 +37,7 @@ class MockResistanceBandService {
 })
 class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
-  @Input()
-  public resistanceBandInventory: ResistanceBandIndividual[] = [];
+  public readonly resistanceBandInventory = input<ResistanceBandIndividual[]>([]);
 
   @Output()
   public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../_services/user/user.service';
 import { User } from '../_models/user';
@@ -15,6 +15,10 @@ import { AsyncPipe } from '@angular/common';
     imports: [RouterLink, ProgressSpinnerModule, AsyncPipe]
 })
 export class UserSelectComponent {
+  private _authService = inject(AuthService);
+  private _userSvc = inject(UserService);
+  private _router = inject(Router);
+
   public errorMsg: string | null = null;
   public loggingIn: boolean = false;
   public username: string | null = null;
@@ -30,11 +34,6 @@ export class UserSelectComponent {
           return of(new Array<User>());
         })        
       );
-
-  constructor(
-    private _authService: AuthService, 
-    private _userSvc: UserService, 
-    private _router: Router) { }
 
   public selectUser(userId: number, userName: string): void {
     this.loggingIn = true;

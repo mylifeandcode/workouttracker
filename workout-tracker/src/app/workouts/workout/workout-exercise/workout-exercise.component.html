@@ -1,12 +1,12 @@
-<div [formGroup]="formGroup" class="row">
+<div [formGroup]="formGroup()" class="row">
   <input type="hidden" formControlName="exerciseId" />
   <div class="col-md-12">
-    {{formGroup.controls.setType.value == 0 ? "Repetition" : "Timed"}} Set(s) using
-    <strong>{{formGroup.controls.resistanceType.value | resistanceType:false}}</strong> resistance:
+    {{formGroup().controls.setType.value == 0 ? "Repetition" : "Timed"}} Set(s) using
+    <strong>{{formGroup().controls.resistanceType.value | resistanceType:false}}</strong> resistance:
   </div>
 </div>
 
-<div [formGroup]="formGroup" class="row">
+<div [formGroup]="formGroup()" class="row">
   <div class="col-md-12">
     <!--exerciseSets is the name of the FormArray on the FormGroup representing an Exercise which is passed in via an @Input()-->
     <div formArrayName="exerciseSets">
@@ -44,7 +44,7 @@
 
             <div class="col-1 exercise-info-div">
               {{$index + 1 }} {{exerciseSet.controls.side.value | exerciseSide}}
-              @if (formGroup.controls.setType.value == setTypeEnum.Timed) {
+              @if (formGroup().controls.setType.value == setTypeEnum.Timed) {
                 <button 
                   class="btn btn-sm btn-success"
                   (click)="showTimer(setsArray!.controls[$index])">
@@ -65,18 +65,18 @@
             <!--Resistance Amount-->
             <div class="col-4 exercise-info-div">
               
-              @if (formGroup.controls.resistanceType.value < resistanceTypeEnum.ResistanceBand || formGroup.controls.resistanceType.value == resistanceTypeEnum.Other) {
+              @if (formGroup().controls.resistanceType.value < resistanceTypeEnum.ResistanceBand || formGroup().controls.resistanceType.value == resistanceTypeEnum.Other) {
                 <input wtSelectOnFocus
                   type="number" 
                   class="form-control resistance-amount" 
                   formControlName="resistance" required />
               }
 
-              @if (formGroup.controls.resistanceType.value == resistanceTypeEnum.BodyWeight) {
+              @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.BodyWeight) {
                 <span><strong>Body Weight</strong></span>
               }
 
-              @if (formGroup.controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
+              @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
                 <span>
                   <button 
                     class="btn btn-sm btn-primary mild-margins"
@@ -97,7 +97,7 @@
 
             <!--Duration-->
             <div class="col-1">
-              @if (formGroup.controls.setType.value == setTypeEnum.Repetition) {
+              @if (formGroup().controls.setType.value == setTypeEnum.Repetition) {
                 <span class="exercise-info-span">N/A</span>
               } @else {
                 <button 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { User } from 'app/core/_models/user';
@@ -22,17 +22,18 @@ interface IUserAddForm {
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserAddComponent implements OnInit {
+  private _userSvc = inject(UserService);
+  private _formBuilder = inject(FormBuilder);
+  private _router = inject(Router);
+  private _activatedRoute = inject(ActivatedRoute);
+
 
   public errorMsg: string | undefined;
   public userAddForm: FormGroup<IUserAddForm>;
   public savingUserInfo: boolean = false;
   public showAdminControls: boolean = false;
 
-  constructor(
-    private _userSvc: UserService,
-    private _formBuilder: FormBuilder,
-    private _router: Router,
-    private _activatedRoute: ActivatedRoute) {
+  constructor() {
     this.userAddForm = this.createForm();
   }
 

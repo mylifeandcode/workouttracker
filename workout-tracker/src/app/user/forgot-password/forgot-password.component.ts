@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 import { ConfigService } from 'app/core/_services/config/config.service';
@@ -16,6 +16,10 @@ interface IForgotPasswordForm {
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class ForgotPasswordComponent implements OnInit {
+  private _configService = inject(ConfigService);
+  private _formBuilder = inject(FormBuilder);
+  private _authService = inject(AuthService);
+
 
   public smtpEnabled: boolean = false;
   public forgotPasswordForm: FormGroup<IForgotPasswordForm>;
@@ -23,10 +27,7 @@ export class ForgotPasswordComponent implements OnInit {
   public requestSuccessful: boolean = false;
   public requestInProgress: boolean = false;
 
-  constructor(
-    private _configService: ConfigService,
-    private _formBuilder: FormBuilder,
-    private _authService: AuthService) {
+  constructor() {
     this.forgotPasswordForm = this.buildForm();
   }
 

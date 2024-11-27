@@ -36,4 +36,4 @@
 }
 <button class="btn btn-warning pull-right mild-margins" (click)="cancel()">Cancel</button>
 <span style="width:100px"></span>
-<button class="btn btn-success pull-right" [disabled]="selectedBands.length == 0 || exerciseUsesBilateralResistance && showBilateralValidationFailure" (click)="ok()">OK</button>
+<button class="btn btn-success pull-right" [disabled]="selectedBands.length == 0 || exerciseUsesBilateralResistance() && showBilateralValidationFailure" (click)="ok()">OK</button>

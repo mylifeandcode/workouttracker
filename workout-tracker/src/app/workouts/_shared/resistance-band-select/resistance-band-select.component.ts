@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges, input } from '@angular/core';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ResistanceBandSelection } from '../../_models/resistance-band-selection';
 import { sumBy, groupBy, some } from 'lodash-es';
@@ -17,11 +17,9 @@ import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
 })
 export class ResistanceBandSelectComponent implements OnInit, OnChanges {
 
-  @Input()
-  public resistanceBandInventory: ResistanceBandIndividual[] = [];
+  public readonly resistanceBandInventory = input<ResistanceBandIndividual[]>([]);
 
-  @Input()
-  public exerciseUsesBilateralResistance: boolean = false;
+  public readonly exerciseUsesBilateralResistance = input<boolean>(false);
 
   @Output()
   public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
@@ -77,7 +75,7 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
 
     this._doubleMaxResistanceAmounts = doubleMaxResistanceAmounts;
     this.selectedBands = [];
-    this.availableBands = [...this.resistanceBandInventory];
+    this.availableBands = [...this.resistanceBandInventory()];
 
     const selectedBandColors: string[] = (selectedBands ? selectedBands.split(',') : []);
     //selectedBandColors.forEach((value: string) => value.trim());
@@ -130,7 +128,7 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
   }
 
   private validateForBilateralResistance(): void {
-    if (this.exerciseUsesBilateralResistance) {
+    if (this.exerciseUsesBilateralResistance()) {
       if (this.selectedBands.length == 0) {
         this.showBilateralValidationFailure = true;
       }

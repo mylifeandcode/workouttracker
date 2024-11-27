@@ -1,14 +1,14 @@
-@if (executedExercises && executedExercises.length > 0) {
+@if (executedExercises() && executedExercises()!.length > 0) {
   <div class="row headroom">
     <div class="col-12">
-      <h5>{{executedExercises[0].name}}</h5>
+      <h5>{{executedExercises()![0].name}}</h5> <!--Compiler somehow isn't taking into account if statement below for existance of value-->
     </div>
   </div>
 
   <div class="row">
     <div class="col-12 setType">
-      <strong>{{executedExercises[0].setType == 0 ? "Repetition" : "Timed"}} Set(s) using
-        <em>{{executedExercises[0].resistanceType | resistanceType:false}}</em> resistance:</strong>
+      <strong>{{executedExercises()![0].setType == 0 ? "Repetition" : "Timed"}} Set(s) using
+        <em>{{executedExercises()![0].resistanceType | resistanceType:false}}</em> resistance:</strong>
     </div>
   </div>
 
@@ -25,7 +25,7 @@
     <div class="col-1 reps-div">
       Target Reps
     </div>
-    @if (showResults) {
+    @if (showResults()) {
       <div class="col-1 reps-div">
         Actual Reps
       </div>
@@ -38,7 +38,7 @@
     }
   </div>
 
-  @for (exercise of executedExercises; track exercise.id; let i = $index) {
+  @for (exercise of executedExercises(); track exercise.id; let i = $index) {
     <div class="row" [ngStyle]="{'backgroundColor': (i % 2 === 0)?'#e9ecef':'#ffffff'}">
 
       <div class="col-1 exercise-info-div">
@@ -87,7 +87,7 @@
         }
       </div>
 
-      @if (showResults) {
+      @if (showResults()) {
         <div class="col-1">
           @if (exercise.involvesReps) {
             <span>{{exercise.actualRepCount}}</span>

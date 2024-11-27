@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject, input } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
 import { SoundService } from 'app/core/_services/sound/sound.service';
 import { NgStyle } from '@angular/common';
@@ -10,6 +10,8 @@ import { NgStyle } from '@angular/common';
     imports: [NgStyle, CountdownComponent]
 })
 export class CountdownTimerComponent implements OnInit {
+  private _soundService = inject(SoundService);
+
 
   @ViewChild('preCountdown', { static: false }) private _preCountdown: CountdownComponent | undefined;
   @ViewChild('mainCountdown', { static: false }) private _countdown: CountdownComponent | undefined;
@@ -21,23 +23,19 @@ export class CountdownTimerComponent implements OnInit {
 
   private _preCountdownHasBegun: boolean = false;
 
-  @Input()
-  secondsToCountdown: number = 0;
+  readonly secondsToCountdown = input<number>(0);
 
-  @Input()
-  secondsLeadInTime: number = 0;
+  readonly secondsLeadInTime = input<number>(0);
 
   //TODO: Revisit. Not sure I like this approach.
+  // TODO: Skipped for migration because:
+  //  Accessor inputs cannot be migrated as they are too complex.
   @Input()
   public set activatedDateTime(value: Date) {
     this.reset();
   }
 
-  @Input()
-  public targetReps: number | null = null;
-
-  constructor(private _soundService: SoundService) { 
-  }
+  public readonly targetReps = input<number | null>(null);
 
   public ngOnInit(): void {
   }
@@ -68,11 +66,11 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   private setPreCountdownConfig(): void {
-    this.preCountdownConfig = this.getCountdownConfig(this.secondsLeadInTime);
+    this.preCountdownConfig = this.getCountdownConfig(this.secondsLeadInTime());
   }
 
   private setCountdownConfig(): void {
-    this.countdownConfig = this.getCountdownConfig(this.secondsToCountdown);
+    this.countdownConfig = this.getCountdownConfig(this.secondsToCountdown());
   }
 
   private getCountdownConfig(leftTime: number): CountdownConfig {
@@ -86,7 +84,7 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   private reset(): void {
-    if (this.secondsToCountdown) {
+    if (this.secondsToCountdown()) {
       this.setPreCountdownConfig();
       this.setCountdownConfig();
       this.showPreCountdown = false;

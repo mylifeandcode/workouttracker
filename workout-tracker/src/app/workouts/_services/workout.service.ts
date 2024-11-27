@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Workout } from 'app/workouts/_models/workout';
@@ -17,10 +17,13 @@ const HTTP_OPTIONS = {
   providedIn: 'root'
 })
 export class WorkoutService {
+  private _http = inject(HttpClient);
+  private _configService = inject(ConfigService);
+
 
   private readonly API_ROOT: string;
 
-  constructor(private _http: HttpClient, private _configService: ConfigService) { 
+  constructor() { 
     this.API_ROOT = this._configService.get("apiRoot") + "workouts";
   }
 

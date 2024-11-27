@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/_services/auth/auth.service';
@@ -19,6 +19,11 @@ interface IResetPasswordForm {
     imports: [ProgressSpinnerModule, RouterLink, FormsModule, ReactiveFormsModule]
 })
 export class ResetPasswordComponent implements OnInit {
+  private _activatedRoute = inject(ActivatedRoute);
+  private _authService = inject(AuthService);
+  private _formBuilder = inject(FormBuilder);
+  private _router = inject(Router);
+
 
   public validatingResetCode: boolean = true;
   public resetCodeInvalid: boolean = false;
@@ -28,11 +33,7 @@ export class ResetPasswordComponent implements OnInit {
 
   private _resetCode: string | null = null;
 
-  constructor(
-    private _activatedRoute: ActivatedRoute,
-    private _authService: AuthService,
-    private _formBuilder: FormBuilder,
-    private _router: Router) { 
+  constructor() { 
       this.resetPasswordForm = this.createForm();
   }
 

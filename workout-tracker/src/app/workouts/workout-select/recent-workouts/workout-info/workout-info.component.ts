@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, input } from '@angular/core';
 import { Workout } from '../../../_models/workout';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ResistanceTypePipe } from '../../../_pipes/resistance-type.pipe';
@@ -13,8 +13,7 @@ import { TargetAreasPipe } from '../../../_pipes/target-areas.pipe';
 })
 export class WorkoutInfoComponent implements OnInit {
 
-  @Input()
-  workout: Workout | undefined;
+  readonly workout = input<Workout>();
 
   constructor() { }
 

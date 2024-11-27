@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UserService } from '../../core/_services/user/user.service';
 import { User } from '../../core/_models/user';
 import { Observable, finalize } from 'rxjs';
@@ -12,13 +12,13 @@ import { AsyncPipe } from '@angular/common';
     imports: [RouterLink, AsyncPipe]
 })
 export class UserListComponent {
+  private _userSvc = inject(UserService);
+
 
   public busy: boolean = true;
   public busyMsg: string = '';
   public users$: Observable<User[]> = this._userSvc.all$;
-  public errorMsg: string | undefined;
-
-  constructor(private _userSvc: UserService) { } //TODO: We have a caching issue! Fix it!
+  public errorMsg: string | undefined; //TODO: We have a caching issue! Fix it!
 
   public deleteUser(userPublicId: string): void {
     if (!window.confirm("Are you sure you want to delete this user?"))

@@ -9,20 +9,20 @@
 }
 -->
 <!--@if (!loading && userOverview) {-->
-@if (userOverview) {
+@if (userOverview()) {
   <div class="row widget">
     <div class="col-12">
-      <h5>Welcome, {{userOverview.username}}</h5>
+      <h5>Welcome, {{userOverview()!.username}}</h5> <!--Compiler somehow isn't taking into account if statement below for existance of value-->
       <div class="row">
         <div class="col-12">
-          @if (userOverview.lastWorkoutDateTime == null) {
+          @if (userOverview()!.lastWorkoutDateTime == null) {
             <span>You haven't worked out yet.</span>
           } @else {
-            <span>Your last workout was on {{userOverview.lastWorkoutDateTime | date: 'EEEE, M/d/yyyy'}}.</span>
+            <span>Your last workout was on {{userOverview()!.lastWorkoutDateTime | date: 'EEEE, M/d/yyyy'}}.</span>
           }
         </div>
         <div class="col-12">
-          You have {{userOverview.plannedWorkoutCount}} planned {{userOverview.plannedWorkoutCount == 1 ? 'workout' : 'workouts'}}.
+          You have {{userOverview()!.plannedWorkoutCount}} planned {{userOverview()!.plannedWorkoutCount == 1 ? 'workout' : 'workouts'}}.
         </div>
       </div>
     </div>

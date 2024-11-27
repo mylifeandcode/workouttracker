@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, WritableSignal, signal } from '@angular/core';
+import { Injectable, WritableSignal, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ConfigService } from '../config/config.service';
@@ -27,6 +27,11 @@ const HTTP_OPTIONS_FOR_TEXT_RESPONSE = {
   providedIn: 'root'
 })
 export class AuthService {
+  private _http = inject(HttpClient);
+  private _configService = inject(ConfigService);
+  private _localStorageService = inject(LocalStorageService);
+  private _router = inject(Router);
+
 
   //READ-ONLY FIELDS
   private readonly LOCAL_STORAGE_TOKEN_KEY = "WorkoutTrackerToken";
@@ -55,13 +60,6 @@ export class AuthService {
   private readonly ROLE_CLAIM_TYPE: string = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
   private readonly USER_ID_CLAIM_TYPE: string = "UserID";
   private readonly USER_PUBLIC_ID_CLAIM_TYPE: string = "UserPublicID";
-
-  constructor(
-    private _http: HttpClient,
-    private _configService: ConfigService,
-    private _localStorageService: LocalStorageService,
-    private _router: Router) {
-  }
 
   //PROPERTIES ////////////////////////////////////////////////////////////////
 

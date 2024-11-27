@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { ConfigService } from 'app/core/_services/config/config.service';
 
 @Pipe({
@@ -6,10 +6,10 @@ import { ConfigService } from 'app/core/_services/config/config.service';
     standalone: true
 })
 export class ResistanceAmountPipe implements PipeTransform {
+  private _configService = inject(ConfigService);
+
 
   private static _unitOfMass: string = '';
-
-  constructor(private _configService: ConfigService) {}
 
   transform(value: number | null, isResistanceBand: boolean = false): string {
     if (value == null) return '';

@@ -7,7 +7,7 @@
                 <td>{{executedWorkout.name}}</td>
                 <td><a type="button" class="button-type-link" (click)="viewExercises(executedWorkout.workoutPublicId)">View Exercises</a></td>
 
-                @if (planningForLater) {
+                @if (planningForLater()) {
                   <td><a type="button" class="button-type-link" (click)="planWorkout(executedWorkout.workoutPublicId)">Plan This Workout</a></td>
                 } @else {
                   <td><a type="button" class="button-type-link" (click)="doWorkout(executedWorkout.workoutPublicId)">Do This Workout</a></td>

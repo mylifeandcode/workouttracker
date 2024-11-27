@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { Subscription } from 'rxjs';
@@ -16,6 +16,9 @@ import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.compo
     imports: [DropdownModule, RecentWorkoutsComponent]
 })
 export class WorkoutSelectComponent implements OnInit, OnDestroy {
+  private _workoutService = inject(WorkoutService);
+  private _router = inject(Router);
+
 
   //TODO: Consider refactoring into multiple components:
   //One for the select dropdown
@@ -24,14 +27,11 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   //That way, the dropdown component can be reused without the need for the other things only meant for selecting 
   //a workout to start or plan. Sometimes we'll need to select a workout for other reasons, such as analytics.
 
-  @Input()
-  showRecent: boolean = true;
+  readonly showRecent = input<boolean>(true);
 
-  @Input()
-  showHeading: boolean = true;
+  readonly showHeading = input<boolean>(true);
 
-  @Input()
-  navigateOnSelect: boolean = true;
+  readonly navigateOnSelect = input<boolean>(true);
 
   @Output()
   workoutSelected: EventEmitter<number> = new EventEmitter<number>();
@@ -59,11 +59,6 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   //PRIVATE FIELDS
   private _apiCallsInProgress: number = 0;
   private _userSusbscription: Subscription = new Subscription();
-  //END PRIVATE FIELDS
-
-  constructor(
-    private _workoutService: WorkoutService,
-    private _router: Router) { }
 
   public ngOnInit(): void {
     this.subscribeToUser();
@@ -75,7 +70,7 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   }
 
   public workoutSelectChange(event: DropdownChangeEvent): void { //TODO: Get concrete type instead of using any
-    if (this.navigateOnSelect) {
+    if (this.navigateOnSelect()) {
       if (this.planningForLater)
         this._router.navigate([`workouts/plan-for-later/${event.value}`]);
       else
