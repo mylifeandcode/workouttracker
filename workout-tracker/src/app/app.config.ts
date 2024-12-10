@@ -13,6 +13,8 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { Observable, tap } from 'rxjs';
 import { MessageModule } from 'primeng/message';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +32,11 @@ export const appConfig: ApplicationConfig = {
     },
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
+    providePrimeNG({
+      theme: {
+        preset: Aura
+      }
+    }),
     MessageService, //Providing this here simplifies unit testing
     ConfirmationService
   ]
