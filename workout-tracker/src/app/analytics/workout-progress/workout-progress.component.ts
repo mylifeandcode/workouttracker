@@ -84,6 +84,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
+    console.log('this._workoutId$: ', this._workoutId$);
     if (this._workoutId$) this._workoutId$.unsubscribe();
     if (this._workoutCount$) this._workoutCount$.unsubscribe();
     if (this._exerciseId$) this._exerciseId$.unsubscribe();

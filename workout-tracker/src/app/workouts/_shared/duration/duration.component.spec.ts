@@ -30,7 +30,7 @@ describe('DurationComponent', () => {
     //TODO: Find a better approach to this
 
     //ARRANGE
-    component.currentDuration = 3805; //When set programmatically, does not trigger ngOnChanges()
+    fixture.componentRef.setInput('currentDuration', 3805); //When set programmatically, does not trigger ngOnChanges()
     const change = new SimpleChange(0, 3805, true); //We'll use this to call ngOnChanges(), but since the change lifecycle isn't occuring, the line above is still needed. Yeah, this is kinda kludgey.
 
     //ACT

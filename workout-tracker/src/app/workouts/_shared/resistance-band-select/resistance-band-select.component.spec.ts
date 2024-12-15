@@ -39,7 +39,7 @@ describe('ResistanceBandSelectComponent', () => {
 
   it('should not show message about bilateral resistance when exercise does not use it', () => {
     //ARRANGE
-    component.exerciseUsesBilateralResistance = false;
+    fixture.componentRef.setInput('exerciseUsesBilateralResistance', false);
 
     //ACT
     component.ngOnChanges({});
@@ -50,7 +50,7 @@ describe('ResistanceBandSelectComponent', () => {
 
   it('should show message about bilateral resistance on changes when exercise uses it', () => {
     //ARRANGE
-    component.exerciseUsesBilateralResistance = true;
+    fixture.componentRef.setInput('exerciseUsesBilateralResistance', true);
 
     //ACT
     component.ngOnChanges({});
@@ -61,7 +61,7 @@ describe('ResistanceBandSelectComponent', () => {
 
   it('should show message about bilateral resistance when exercise uses it and user selects resistance which is not equally divisible', () => {
     //ARRANGE
-    component.exerciseUsesBilateralResistance = true;
+    fixture.componentRef.setInput('exerciseUsesBilateralResistance', true);
     const selectedBands = [];
     selectedBands.push(new ResistanceBandIndividual('Red', 8));
     component.selectedBands.push(new ResistanceBandIndividual('Red', 8)); //This gets set when the selection occurs in the UI
@@ -75,7 +75,7 @@ describe('ResistanceBandSelectComponent', () => {
 
   it('should not show message about bilateral resistance when exercise uses it and user selects resistance which is equally divisible', () => {
     //ARRANGE
-    component.exerciseUsesBilateralResistance = true;
+    fixture.componentRef.setInput('exerciseUsesBilateralResistance', true);
     const selectedBands = [];
     selectedBands.push(new ResistanceBandIndividual('Red', 8));
     component.selectedBands.push(new ResistanceBandIndividual('Red', 8)); //Previously selected band

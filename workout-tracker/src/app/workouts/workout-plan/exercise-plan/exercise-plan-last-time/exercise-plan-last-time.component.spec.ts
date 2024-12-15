@@ -41,7 +41,7 @@ describe('ExercisePlanLastTimeComponent', () => {
 
   function createFormGroup(): void {
     const formBuilder = TestBed.inject(FormBuilder);
-    component.formGroup = formBuilder.group<IExercisePlanFormGroup>({
+    fixture.componentRef.setInput('formGroup', formBuilder.group<IExercisePlanFormGroup>({
       exerciseInWorkoutId: new FormControl<number>(1, { nonNullable: true, validators: Validators.required }), 
       exerciseId: new FormControl<number>(200, { nonNullable: true, validators: Validators.required }), 
       exerciseName: new FormControl<string>('Bench Press', { nonNullable: true, validators: Validators.required }),
@@ -65,6 +65,6 @@ describe('ExercisePlanLastTimeComponent', () => {
       involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
       recommendationReason: new FormControl<string | null>(null),
       usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true })
-    });
+    }));
   }
 });

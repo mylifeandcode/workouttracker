@@ -18,13 +18,13 @@ describe('UserRepSettingsComponent', () => {
     component = fixture.componentInstance;
 
     const formBuilder = new FormBuilder();
-    component.repSettingsFormGroup = formBuilder.group<IRepSettingsForm>({
+    fixture.componentRef.setInput('repSettingsFormGroup', formBuilder.group<IRepSettingsForm>({
       repSettingsId: new FormControl<number>(1, { nonNullable: true}), 
       setType: new FormControl<number>(1, { nonNullable: true }), 
       duration: new FormControl<number | null>(null), 
       minReps: new FormControl<number>(6, { nonNullable: true }), 
       maxReps: new FormControl<number>(10, { nonNullable: true })
-    });
+    }));
 
     fixture.detectChanges();
   });

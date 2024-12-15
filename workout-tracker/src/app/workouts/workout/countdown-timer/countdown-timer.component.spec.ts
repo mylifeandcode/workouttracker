@@ -63,8 +63,8 @@ describe('CountdownTimerComponent', () => {
 
   it('should reset when activatedDateTime is supplied', () => {
     //ARRANGE
-    component.secondsLeadInTime = 10;
-    component.secondsToCountdown = 60;
+    fixture.componentRef.setInput('secondsLeadInTime', 10);
+    fixture.componentRef.setInput('secondsToCountdown', 60);
     component.preCountdownConfig = { demand: false, leftTime: 0, format: 'mm:ss' };
     component.countdownConfig = component.preCountdownConfig;
 

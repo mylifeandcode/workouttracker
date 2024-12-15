@@ -18,7 +18,7 @@ describe('UserOverviewComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UserOverviewComponent);
     component = fixture.componentInstance;
-    component.userOverview = getUserOverview();
+    fixture.componentRef.setInput('userOverview', getUserOverview());
     fixture.detectChanges();
   });
 

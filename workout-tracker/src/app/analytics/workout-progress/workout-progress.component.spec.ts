@@ -10,8 +10,10 @@ import { ExecutedExerciseMetrics } from '../_models/executed-exercise-metrics';
 import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 
 import { WorkoutProgressComponent } from './workout-progress.component';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TabViewModule } from 'primeng/tabview';
 
 class AnalyticsServiceMock {
   getExerciseChartData = jasmine.createSpy('getExerciseChartData')
@@ -70,28 +72,34 @@ describe('WorkoutProgressComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    providers: [
+      providers: [
         FormBuilder,
         {
-            provide: AnalyticsService,
-            useClass: AnalyticsServiceMock
+          provide: AnalyticsService,
+          useClass: AnalyticsServiceMock
         },
         {
-            provide: WorkoutService,
-            useClass: WorkoutServiceMock
+          provide: WorkoutService,
+          useClass: WorkoutServiceMock
         }
-    ],
-    imports: [
+      ],
+      imports: [
         ReactiveFormsModule,
-        DropdownModule //CUSTOM_ELEMENTS_SCHEMA doesn't compensate for this because my ReactiveForm is using them
-        ,
-        WorkoutProgressComponent
-    ],
-    schemas: [
+        DropdownModule, //CUSTOM_ELEMENTS_SCHEMA doesn't compensate for this because my ReactiveForm is using them
+        WorkoutProgressComponent,
+        ProgressSpinnerModule
+      ],
+      schemas: [
         CUSTOM_ELEMENTS_SCHEMA //Needed for p-chart element (ChartJS)
-    ]
-})
-    .compileComponents();
+      ]
+    })
+      .overrideComponent(
+        WorkoutProgressComponent,
+        {
+          remove: { imports: [TabViewModule] },
+          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        }
+      ).compileComponents();
 
     fixture = TestBed.createComponent(WorkoutProgressComponent);
     component = fixture.componentInstance;

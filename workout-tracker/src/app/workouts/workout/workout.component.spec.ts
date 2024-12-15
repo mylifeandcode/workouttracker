@@ -241,7 +241,8 @@ describe('WorkoutComponent', () => {
               ResistanceBandSelectComponent,
               CountdownTimerComponent,
               DurationComponent,
-              ToastModule
+              ToastModule,
+              AccordionModule
             ]
           },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }

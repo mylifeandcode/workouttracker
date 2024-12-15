@@ -26,7 +26,7 @@ describe('ExercisePlanComponent', () => {
     fixture = TestBed.createComponent(ExercisePlanComponent);
     component = fixture.componentInstance;
     const formBuilder = new FormBuilder();
-    component.formGroup = formBuilder.group<IExercisePlanFormGroup>({
+    fixture.componentRef.setInput('formGroup', formBuilder.group<IExercisePlanFormGroup>({
       exerciseInWorkoutId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
       exerciseId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
       exerciseName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
@@ -50,7 +50,7 @@ describe('ExercisePlanComponent', () => {
       involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
       recommendationReason: new FormControl<string | null>(null),
       usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true })
-    });
+    }));
 
     fixture.detectChanges();
   });

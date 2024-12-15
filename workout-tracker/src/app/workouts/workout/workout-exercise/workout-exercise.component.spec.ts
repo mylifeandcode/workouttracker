@@ -82,14 +82,14 @@ describe('WorkoutExerciseComponent', () => {
     const exerciseArray: ExecutedExerciseDTO[] = getExercises();
 
     formBuilder = new FormBuilder();
-    component.formGroup = formBuilder.group<IWorkoutFormExercise>({
+    fixture.componentRef.setInput('formGroup', formBuilder.group<IWorkoutFormExercise>({
       id: new FormControl<number>(10, { nonNullable: true }),
       exerciseId: new FormControl<number>(25, { nonNullable: true }), 
       exerciseName: new FormControl<string>('Chest Press with Bands', { nonNullable: true }),
       exerciseSets: getExerciseSetsFormArray(exerciseArray), 
       setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }), 
       resistanceType: new FormControl<number>(exerciseArray[0].resistanceType, { nonNullable: true })
-    });
+    }));
     //setupExercisesFormGroup();
     fixture.detectChanges();
   });
