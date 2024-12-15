@@ -9,8 +9,8 @@
     <div class="row a-little-space">
       <div class="col-2">Select a Workout</div>
       <div class="col-3">
-        <p-dropdown [options]="workouts" formControlName="workoutPublicId" optionLabel="name" optionValue="publicId"
-          placeholder="Choose a Workout"></p-dropdown>
+        <p-select [options]="workouts" formControlName="workoutPublicId" optionLabel="name" optionValue="id"
+          placeholder="Choose a Workout"></p-select>
       </div>
       <div class="col-7">
         @if (formGroup.controls.workoutPublicId.dirty && formGroup.controls.workoutPublicId.errors) {
