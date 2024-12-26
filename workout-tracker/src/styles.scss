@@ -35,17 +35,10 @@ select.ng-invalid.ng-touched {
   background-color: white;
 }
 
-/*
-.ng-trigger {
-  z-index: 1000000 !important;
-}
-*/
-
 .wallpaper {
   height: 100vh;
   width: 100vw;
   position: relative;
-  /*top: 50px;*/
   background-image: url('./assets/images/fitness-background.jpg');
   background-size: cover;
   background-position-y: -90px;
@@ -109,7 +102,6 @@ select.ng-invalid.ng-touched {
 .section-title {
   font-weight: bolder;
   font-size: large;
-  /*font-style: italic;*/
 }
 
 .white-steel-background {

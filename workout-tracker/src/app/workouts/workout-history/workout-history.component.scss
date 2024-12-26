@@ -1,20 +1,13 @@
 @import '../../../variables.scss';
 
 tr.workout-history {
-    line-height: 10px; 
+  line-height: 10px;
 }
-
-/*
-tr:nth-child(even) {
-  background-color: lightgray;
-}
-*/
 
 h3 {
-    padding: 6px;
-    background-image: linear-gradient(to right, $history-color-one, $history-color-gradient-end);
-    //font-style: italic;
-    color: $header-text-color-one;
+  padding: 6px;
+  background-image: linear-gradient(to right, $history-color-one, $history-color-gradient-end);
+  color: $header-text-color-one;
 }
 
 span {

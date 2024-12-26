@@ -25,11 +25,6 @@ export const routes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
-    path: 'oldhome',
-    loadComponent: () => import('./core/home/home.component').then(m => m.HomeComponent),
-    canActivate: [UserSelectedGuard]
-  }, 
-  {
     path: 'login', 
     loadComponent: () => import('./core/login/login.component').then(m => m.LoginComponent),
     canActivate: [UserNotSelectedGuard]
