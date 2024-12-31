@@ -9,6 +9,8 @@ namespace WorkoutTracker.Domain.Users
     {
         public Guid PublicId { get; set; }
 
+        public Guid IdentityId { get; set; }
+
         public string EmailAddress { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]

@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,8 +57,11 @@ namespace WorkoutTracker
             //services.AddSingleton<IConfiguration>(provider => this.Configuration);
 
             var connection = Configuration.GetConnectionString("WorkoutTrackerDatabase");
-            services.AddDbContext<WorkoutsContext>(options =>
-                            options.UseLazyLoadingProxies().UseSqlServer(connection));
+            services.AddDbContext<WorkoutsContext>(options => 
+                options.UseLazyLoadingProxies().UseSqlServer(connection));
+            
+            services.AddDbContext<AuthContext>(
+                options => options.UseSqlServer(connection));
 
             services.AddControllers()
                 .AddNewtonsoftJson(
@@ -93,6 +99,10 @@ namespace WorkoutTracker
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                 };
             });
+
+            services
+                .AddIdentityApiEndpoints<IdentityUser>()
+                .AddEntityFrameworkStores<AuthContext>();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
@@ -171,12 +181,14 @@ namespace WorkoutTracker
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapIdentityApi<IdentityUser>(); //TODO: Extend -- https://github.com/dotnet/aspnetcore/issues/50303
             });
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 serviceScope.ServiceProvider.GetService<WorkoutsContext>().Database.Migrate();
                 serviceScope.ServiceProvider.GetService<WorkoutsContext>().EnsureSeedData();
+                serviceScope.ServiceProvider.GetService<AuthContext>().Database.Migrate();
             }
         }
 
