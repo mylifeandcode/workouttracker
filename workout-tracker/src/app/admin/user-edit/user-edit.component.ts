@@ -129,7 +129,7 @@ export class UserEditComponent implements OnInit {
             {
               id: this._user.id,
               publicId: this._user.publicId,
-              name: this._user.name,
+              name: this._user.userName,
               emailAddress: this._user.emailAddress,
               role: this._user.role
             });
@@ -145,7 +145,7 @@ export class UserEditComponent implements OnInit {
     user.id = this.userEditForm.controls.id.value;
     user.publicId = this.userEditForm.controls.publicId.value;
     user.emailAddress = this.userEditForm.controls.emailAddress.value;
-    user.name = this.userEditForm.controls.name.value;
+    user.userName = this.userEditForm.controls.name.value;
     user.role = this.userEditForm.controls.role.value;
 
     if (this._user?.settings) {

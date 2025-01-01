@@ -43,7 +43,7 @@ namespace WorkoutTracker.API.Controllers
             if (!IsCredentialsObjectValid(credentials))
                 return BadRequest();
 
-            var user = _userService.GetAll().FirstOrDefault(x => x.Name == credentials.Username);
+            var user = _userService.GetAll().FirstOrDefault(x => x.UserName == credentials.Username);
 
             if (user == null)
                 return new NotFoundResult();

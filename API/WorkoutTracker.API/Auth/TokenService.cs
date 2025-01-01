@@ -18,7 +18,7 @@ namespace WorkoutTracker.API.Auth
         public string BuildToken(string key, string issuer, User user)
         {
             var claims = new[] {
-                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
                 new Claim("UserID", user.Id.ToString()),
                 new Claim("UserPublicID", user.PublicId.ToString())

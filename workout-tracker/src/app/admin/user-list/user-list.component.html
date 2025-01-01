@@ -12,7 +12,7 @@
       <tbody> 
         @for (user of users; track user.id) {
         <tr>
-          <td>{{user.name}}</td>
+          <td>{{user.userName}}</td>
           <td class="text-end">
             <button type="button" routerLink="edit/{{user.publicId}}" class="btn btn-primary">Edit</button>
             &nbsp;

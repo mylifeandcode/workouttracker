@@ -119,7 +119,7 @@ namespace WorkoutTracker.API.Controllers
             if (user == null)
                 return StatusCode(500, "User not found.");
             
-            overview.Username = user.Name;
+            overview.Username = user.UserName;
 
             var mostRecentWorkout = _executedWorkoutService.GetRecent(1);
             if (mostRecentWorkout.Any())
@@ -159,7 +159,7 @@ namespace WorkoutTracker.API.Controllers
                 repSetting.CreatedByUserId = user.CreatedByUserId;
             }
 
-            user.Name = userNew.UserName;
+            user.UserName = userNew.UserName;
             user.EmailAddress = userNew.EmailAddress;
             user.Role = userNew.Role;
             user.Salt = _cryptoService.GenerateSalt();

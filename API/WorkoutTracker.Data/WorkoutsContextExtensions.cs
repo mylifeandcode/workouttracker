@@ -20,7 +20,7 @@ namespace WorkoutTracker.Data
 
         private static int CreateSystemUser(WorkoutsContext context)
         {
-            var systemUser = context.Users.FirstOrDefault(x => x.Name == "SYSTEM");
+            var systemUser = context.Users.FirstOrDefault(x => x.UserName == "SYSTEM");
 
             if (systemUser == null)
             {
@@ -30,11 +30,11 @@ namespace WorkoutTracker.Data
                         Id = 0,
                         CreatedByUserId = 0,
                         CreatedDateTime = DateTime.Now.ToUniversalTime(),
-                        Name = "SYSTEM"
+                        UserName = "SYSTEM"
                     });
 
                 context.SaveChanges();
-                systemUser = context.Users.FirstOrDefault(x => x.Name == "SYSTEM");
+                systemUser = context.Users.FirstOrDefault(x => x.UserName == "SYSTEM");
                 systemUser.CreatedByUserId = systemUser.Id;
                 context.SaveChanges();
 

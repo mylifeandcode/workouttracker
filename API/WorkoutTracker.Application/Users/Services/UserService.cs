@@ -38,7 +38,7 @@ namespace WorkoutTracker.Application.Users.Services
         public User Add(User user)
         {
             //If no users have been defined, the first one needs to be an administrator
-            if (!_repo.Any(x => x.Name != "SYSTEM")) user.Role = UserRole.Administrator;
+            if (!_repo.Any(x => x.UserName != "SYSTEM")) user.Role = UserRole.Administrator;
             return Add(user, true);
         }
 
@@ -65,12 +65,12 @@ namespace WorkoutTracker.Application.Users.Services
             client evaluation explicitly by inserting a call to either AsEnumerable(), AsAsyncEnumerable(), 
             ToList(), or ToListAsync(). See https://go.microsoft.com/fwlink/?linkid=2101038 for more information."
             */
-            return _repo.Get().Where(x => x.Name.ToUpper() != "SYSTEM");
+            return _repo.Get().Where(x => x.UserName.ToUpper() != "SYSTEM");
         }
 
         public IEnumerable<User> GetAllWithoutTracking() 
         {
-            return _repo.GetWithoutTracking().Where(x => x.Name.ToUpper() != "SYSTEM");
+            return _repo.GetWithoutTracking().Where(x => x.UserName.ToUpper() != "SYSTEM");
         }
 
         public void ChangePassword(int userId, string currentPassword, string newPassword)

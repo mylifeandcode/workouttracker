@@ -5,6 +5,7 @@ using System.Text;
 using WorkoutTracker.Data.EntitySetup.Exercises;
 using WorkoutTracker.Data.EntitySetup.Resistances;
 using WorkoutTracker.Data.EntitySetup.Sets;
+using WorkoutTracker.Data.EntitySetup.Users;
 using WorkoutTracker.Data.EntitySetup.Workouts;
 
 namespace WorkoutTracker.Data.EntitySetup

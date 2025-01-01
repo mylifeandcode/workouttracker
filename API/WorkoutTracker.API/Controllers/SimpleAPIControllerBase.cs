@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Domain.BaseClasses;
 using WorkoutTracker.Application.Shared.Interfaces;
+using WorkoutTracker.Domain.Interfaces;
 
 namespace WorkoutTracker.API.Controllers
 {
-    public abstract class SimpleAPIControllerBase<T> : UserAwareController where T: Entity
+    public abstract class SimpleAPIControllerBase<T> : UserAwareController where T: IEntity
     {
         protected ISimpleService<T> _service;
 

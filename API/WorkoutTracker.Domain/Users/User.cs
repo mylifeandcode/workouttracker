@@ -1,13 +1,20 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using WorkoutTracker.Domain.BaseClasses;
 using WorkoutTracker.Domain.Interfaces;
 
 namespace WorkoutTracker.Domain.Users
 {
-    public class User : NamedEntity, IPublicEntity
+    public class User : IdentityUser<int>, IPublicEntity, IEntity
     {
+        public int CreatedByUserId { get; set; }
+        public DateTime CreatedDateTime { get; set; }
+        public int? ModifiedByUserId { get; set; }
+        public DateTime? ModifiedDateTime { get; set; }
+
         public Guid PublicId { get; set; }
+
+        public string UserName { get; set; }
 
         public string EmailAddress { get; set; }
 

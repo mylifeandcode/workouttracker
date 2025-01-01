@@ -34,8 +34,8 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.GetAll())
                 .Returns(new List<User>(2) 
                     { 
-                        new User { Name = "Kirk", HashedPassword = "oijosidjfsgd", Salt = "iunfidnfgfd" }, 
-                        new User { Name = "Spock", HashedPassword = "njnfdgdfufgdf", Salt = " jsnkjnbfdf8" } 
+                        new User { UserName = "Kirk", HashedPassword = "oijosidjfsgd", Salt = "iunfidnfgfd" }, 
+                        new User { UserName = "Spock", HashedPassword = "njnfdgdfufgdf", Salt = " jsnkjnbfdf8" } 
                     });
             _userServiceMock
                 .Setup(x => x.ChangePassword(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()));

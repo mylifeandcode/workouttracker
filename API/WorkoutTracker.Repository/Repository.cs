@@ -7,10 +7,11 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WorkoutTracker.Data;
 using WorkoutTracker.Domain.BaseClasses;
+using WorkoutTracker.Domain.Interfaces;
 
 namespace WorkoutTracker.Repository
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
     {
         protected WorkoutsContext _context;
         protected DbSet<TEntity> _dbSet;

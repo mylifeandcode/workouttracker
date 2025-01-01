@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WorkoutTracker.Domain.BaseClasses;
+using WorkoutTracker.Domain.Interfaces;
 
 namespace WorkoutTracker.API.Controllers
 {
@@ -28,14 +29,14 @@ namespace WorkoutTracker.API.Controllers
             return userId;
         }
 
-        protected void SetCreatedAuditFields(Entity entity, int? createdByUserId = null)
+        protected void SetCreatedAuditFields(IEntity entity, int? createdByUserId = null)
         {
             int userId = createdByUserId ?? GetUserID();
             entity.CreatedByUserId = userId;
             entity.CreatedDateTime = DateTime.Now;
         }
 
-        protected void SetModifiedAuditFields(Entity entity)
+        protected void SetModifiedAuditFields(IEntity entity)
         {
             var userId = GetUserID();
             entity.ModifiedByUserId = userId;

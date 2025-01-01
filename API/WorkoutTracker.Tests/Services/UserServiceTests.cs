@@ -29,9 +29,9 @@ namespace WorkoutTracker.Tests.Services
         public UserServiceTests()
         {
             _users = new List<User>(3);
-            _users.Add(new User { Id = 1, Name = "Paul", HashedPassword = "krbIcgEUXWlOszntUzEHHTvSQy+ig63C", Salt = "MySalt", EmailAddress = "paul@here.com", PasswordResetCode = "SomePasswordResetCode" });
-            _users.Add(new User { Id = 2, Name = "System", HashedPassword = "Huh?", Salt = "SomeSalt", EmailAddress = "blahblah@gmail.com", PasswordResetCode = null });
-            _users.Add(new User { Id = 3, Name = "Frank", HashedPassword = "Garrrr!", Salt = "Yay!", EmailAddress = "gar@gar.com", PasswordResetCode = null });
+            _users.Add(new User { Id = 1, UserName = "Paul", HashedPassword = "krbIcgEUXWlOszntUzEHHTvSQy+ig63C", Salt = "MySalt", EmailAddress = "paul@here.com", PasswordResetCode = "SomePasswordResetCode" });
+            _users.Add(new User { Id = 2, UserName = "System", HashedPassword = "Huh?", Salt = "SomeSalt", EmailAddress = "blahblah@gmail.com", PasswordResetCode = null });
+            _users.Add(new User { Id = 3, UserName = "Frank", HashedPassword = "Garrrr!", Salt = "Yay!", EmailAddress = "gar@gar.com", PasswordResetCode = null });
         }
 
         [TestInitialize]
@@ -135,7 +135,7 @@ namespace WorkoutTracker.Tests.Services
             results.Any(user =>
                     //user.Name.ToUpper(System.Globalization.CultureInfo.CurrentCulture) == "SYSTEM")
                     //EF doesn't like the culture stuff! :/                    
-                    user.Name.ToUpper() == "SYSTEM")
+                    user.UserName.ToUpper() == "SYSTEM")
                 .ShouldBeFalse();
         }
 

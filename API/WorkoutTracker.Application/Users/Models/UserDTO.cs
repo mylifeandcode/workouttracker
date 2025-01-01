@@ -19,7 +19,7 @@ namespace WorkoutTracker.Application.Users.Models
             Id = user.Id;
             ModifiedByUserId = user.ModifiedByUserId;
             ModifiedDateTime = user.ModifiedDateTime;
-            Name = user.Name;
+            Name = user.UserName;
             ProfilePic = user.ProfilePic;
         }
     }

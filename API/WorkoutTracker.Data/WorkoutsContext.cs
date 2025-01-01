@@ -5,10 +5,12 @@ using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Resistances;
 using WorkoutTracker.Domain.Sets;
 using WorkoutTracker.Domain.Workouts;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutTracker.Data
 {
-    public class WorkoutsContext : DbContext
+    public class WorkoutsContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         //Workouts
         public DbSet<Workout> Workouts { get; set; }

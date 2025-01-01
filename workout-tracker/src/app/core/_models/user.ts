@@ -1,7 +1,8 @@
-import { NamedEntity } from '../../shared/models/named-entity';
+import { Entity } from 'app/shared/models/entity';
 import { UserSettings } from './user-settings';
 
-export class User extends NamedEntity {
+export class User extends Entity {
+  public userName: string = '';
   public emailAddress: string = '';
   public profilePic: string = '';
   public settings: UserSettings = new UserSettings();
