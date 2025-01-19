@@ -2,12 +2,18 @@ import { Routes } from '@angular/router';
 import { UserNotSelectedGuard } from './core/_guards/user-not-selected.guard';
 import { UserSelectedGuard } from './core/_guards/user-selected.guard';
 import { UserIsAdminGuard } from './admin/_guards/user-is-admin.guard';
+import { inject } from '@angular/core';
+import { AuthService } from './core/_services/auth/auth.service';
 
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./core/user-select/user-select.component').then(m => m.UserSelectComponent),
-    canActivate: [UserNotSelectedGuard]
+    pathMatch: 'full',
+    redirectTo: () => {
+      const authService = inject(AuthService);
+      console.log('loginRoute: ', authService.loginRoute);
+      return authService.loginRoute;
+    }
   },
   {
     path: 'user-select',

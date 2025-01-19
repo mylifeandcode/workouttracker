@@ -17,7 +17,7 @@ export class UserSelectedGuard  {
 
     if (!this._authService.isUserLoggedIn) {
       returnValue = false;
-      //console.log(`Redirecting to ${this._authService.loginRoute}`)
+      console.log(`Redirecting to ${this._authService.loginRoute}`)
       this._router.navigate([this._authService.loginRoute]);
     }
 

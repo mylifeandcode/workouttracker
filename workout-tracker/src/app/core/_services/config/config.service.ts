@@ -21,14 +21,10 @@ export class ConfigService {
   }
 
   public get(key: string): any {
-    
-    const setting = ConfigService._configValues.get(key);
-
-    if (setting)
-      return setting;
-    else
-      return null;
-      
+    if (ConfigService._configValues.has(key)) {
+      return ConfigService._configValues.get(key);
+    }
+    return null;
   }
 
 }

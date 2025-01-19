@@ -95,8 +95,12 @@ export class AuthService {
 
   public init(): void {
     //Race condition in app initializer prevents this from being done in constructor
+    console.log('apiRoot: ', this._configService.get("apiRoot"));
+    console.log('unitOfMass: ', this._configService.get("unitOfMass"));
+    console.log('smtpEnabled: ', this._configService.get("smtpEnabled"));
     this._apiRoot = this._configService.get("apiRoot") + "auth";
-    this._loginRoute = this._configService.get("loginWithUserSelect") ? "user-select" : "login";
+    console.log('loginWithUserSelect: ', this._configService.get("loginWithUserSelect"));
+    this._loginRoute = this._configService.get("loginWithUserSelect") == true ? "user-select" : "login";
   }
 
   public logIn(username: string, password: string): Observable<boolean> {
