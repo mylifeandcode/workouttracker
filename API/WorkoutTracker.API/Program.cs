@@ -3,11 +3,16 @@ using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Extensions.Hosting;
 using System.Configuration;
 using System.Reflection;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Application.Shared.Services;
@@ -24,6 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 RegisterStuff(builder);
+SetupLogging(builder);
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(
@@ -65,6 +71,11 @@ var connection = builder.Configuration.GetConnectionString("WorkoutTrackerDataba
 builder.Services.AddDbContext<WorkoutsContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(connection));
 
+builder.Services.AddIdentityApiEndpoints<User>()
+    .AddEntityFrameworkStores<WorkoutsContext>();
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -74,8 +85,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapIdentityApi<User>();
+app.UseHttpsRedirection();
+app.UseRouting();
 app.UseAuthorization();
+app.UseSerilogRequestLogging();
 app.UseCors();
+app.MapControllers();
+app.Run();
+
+
 
 /*
                 //Originally from https://www.codemag.com/Article/2105051/Implementing-JWT-Authentication-in-ASP.NET-Core-5 .
@@ -96,9 +115,7 @@ app.UseCors();
             });
 
 */
-app.MapControllers();
 
-app.Run();
 
 /*
 using Microsoft.AspNetCore;
@@ -183,6 +200,20 @@ void RegisterStuff(WebApplicationBuilder appBuilder)
 
         containerBuilder.RegisterType<UserService>().As<IUserService>()
             .WithParameter("frontEndResetPasswordUrl", appBuilder.Configuration["FrontEndResetPasswordURL"]);
-
     });
+
+    
+
+}
+
+void SetupLogging(WebApplicationBuilder appBuilder)
+{
+    appBuilder.Services.AddSingleton<DiagnosticContext>();
+
+    Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(appBuilder.Configuration)
+        .Enrich.FromLogContext()
+        .CreateLogger();
+
+    appBuilder.Host.UseSerilog();
 }

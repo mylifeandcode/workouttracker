@@ -105,7 +105,8 @@ export class AuthService {
 
   public logIn(username: string, password: string): Observable<boolean> {
     return this._http
-      .post<string>(`${this._apiRoot}/login`, { username, password }, HTTP_OPTIONS_FOR_TEXT_RESPONSE) //TODO: Create strong type for credentials object
+      //.post<string>(`${this._apiRoot}/login`, { username, password }, HTTP_OPTIONS_FOR_TEXT_RESPONSE) //TODO: Create strong type for credentials object
+      .post<string>(`/login`, { username, password }, HTTP_OPTIONS_FOR_TEXT_RESPONSE) //TODO: Create strong type for credentials object
       .pipe(
         map((token: string) => {
           //Using map() here so I can act on the result and then return a boolean.

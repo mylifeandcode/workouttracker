@@ -9,6 +9,7 @@ using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.API.Models;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Security.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace WorkoutTracker.API.Controllers
 {
@@ -21,14 +22,17 @@ namespace WorkoutTracker.API.Controllers
     {
         private readonly IExecutedWorkoutService _executedWorkoutService;
         private readonly ICryptoService _cryptoService;
+        private readonly ILookupNormalizer _lookupNormalizer;
 
         public UsersController(
             IUserService userService, 
             IExecutedWorkoutService executedWorkoutService, 
-            ICryptoService cryptoService) : base(userService)
+            ICryptoService cryptoService, 
+            ILookupNormalizer lookupNormalizer) : base(userService)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
+            _lookupNormalizer = lookupNormalizer ?? throw new ArgumentNullException(nameof(lookupNormalizer));
         }
 
         //TODO: Revisit. The below was causing a 500 response.
@@ -107,6 +111,7 @@ namespace WorkoutTracker.API.Controllers
         public ActionResult<User> Post([FromBody] UserNewDTO value)
         {
             var user = GetUserFromUserNewDTO(value);
+            //TODO: Add code to prevent duplicate usernames and email addresses
             return base.Post(user, false);
         }
 
@@ -164,6 +169,8 @@ namespace WorkoutTracker.API.Controllers
             user.Role = userNew.Role;
             user.Salt = _cryptoService.GenerateSalt();
             user.HashedPassword = _cryptoService.ComputeHash(userNew.Password, user.Salt);
+            user.NormalizedEmail = _lookupNormalizer.NormalizeEmail(user.EmailAddress);
+            user.NormalizedUserName = _lookupNormalizer.NormalizeName(user.UserName);
             return user;
         }
     }
