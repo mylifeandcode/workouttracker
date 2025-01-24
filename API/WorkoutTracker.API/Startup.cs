@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿/*
+using Autofac;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -98,15 +99,6 @@ namespace WorkoutTracker
         public void ConfigureContainer(ContainerBuilder builder)
         {
             //builder.RegisterModule(new MyApplicationModule());
-            /*
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName.StartsWith("Workout")).ToArray();
-            builder
-                .RegisterAssemblyTypes(assemblies)
-                .Where(t => t.Name.EndsWith("Service"))
-                .AsImplementedInterfaces()
-                .InstancePerLifetimeScope();
-            */
-
             var assemblies =
                 Assembly
                     .GetExecutingAssembly()
@@ -182,3 +174,4 @@ namespace WorkoutTracker
 
     }
 }
+*/
