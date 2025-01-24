@@ -73,8 +73,6 @@ var connection = builder.Configuration.GetConnectionString("WorkoutTrackerDataba
 builder.Services.AddDbContext<WorkoutsContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(connection));
 
-builder.Services.AddAuthorization();
-
 //Originally from https://www.codemag.com/Article/2105051/Implementing-JWT-Authentication-in-ASP.NET-Core-5 .
 //See also https://github.com/joydipkanjilal/jwt-aspnetcore/tree/master/jwt-aspnetcore for differences between the 
 //article's code and the code they implemented
@@ -92,6 +90,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -103,11 +103,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseSerilogRequestLogging();
 app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 using (var serviceScope = app.Services.CreateScope())
@@ -119,44 +118,6 @@ using (var serviceScope = app.Services.CreateScope())
 
 app.Run();
 
-
-
-/*
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Autofac.Extensions.DependencyInjection;
-using Serilog;
-using Microsoft.Extensions.Hosting;
-
-namespace WorkoutTracker
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .UseSerilog((hostingContext, loggerConfiguration) => {
-                    loggerConfiguration
-                        .ReadFrom.Configuration(hostingContext.Configuration)
-                        .Enrich.FromLogContext();
-                    //.Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name)
-                    //.Enrich.WithProperty("Environment", hostingContext.HostingEnvironment);
-                })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder
-                        .UseStartup<Startup>();
-                });
-
-    }
-}
-*/
 void RegisterStuff(WebApplicationBuilder appBuilder)
 {
     //https://stackoverflow.com/questions/69754985/adding-autofac-to-net-core-6-0-using-the-new-single-file-template
@@ -205,9 +166,6 @@ void RegisterStuff(WebApplicationBuilder appBuilder)
         containerBuilder.RegisterType<UserService>().As<IUserService>()
             .WithParameter("frontEndResetPasswordUrl", appBuilder.Configuration["FrontEndResetPasswordURL"]);
     });
-
-
-
 }
 
 void SetupLogging(WebApplicationBuilder appBuilder)
