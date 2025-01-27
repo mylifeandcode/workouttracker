@@ -12,7 +12,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveF
 import { DropdownModule } from 'primeng/dropdown';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TabViewModule } from 'primeng/tabview';
+import { TabsModule } from 'primeng/tabs';
 import { ChartModule } from 'primeng/chart';
 
 interface IWorkoutProgressForm {
@@ -25,7 +25,7 @@ interface IWorkoutProgressForm {
     selector: 'wt-workout-progress',
     templateUrl: './workout-progress.component.html',
     styleUrls: ['./workout-progress.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, DropdownModule, SelectOnFocusDirective, ProgressSpinnerModule, TabViewModule, ChartModule]
+    imports: [FormsModule, ReactiveFormsModule, DropdownModule, SelectOnFocusDirective, ProgressSpinnerModule, TabsModule, ChartModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
   private _analyticsService = inject(AnalyticsService);

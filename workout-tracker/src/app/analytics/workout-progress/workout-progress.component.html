@@ -44,24 +44,24 @@
       <em>No metrics exist for this workout.</em>
     } @else {
       @if (form.controls.exerciseId.value != null) {
-        <p-tabView>
+        <p-tabs>
           @if (formAndRangeOfMotionChartData) {
-            <p-tabPanel header="Form and Range of Motion">
+            <p-tabpanel header="Form and Range of Motion">
               <p-chart type="line" height="300px" [options]="formAndRangeOfMotionChartOptions"
                 [data]="formAndRangeOfMotionChartData"></p-chart>
-            </p-tabPanel>
+            </p-tabpanel>
           }
           @if (repsChartData) {
-            <p-tabPanel header="Reps">
+            <p-tabpanel header="Reps">
               <p-chart type="line" height="300px" [data]="repsChartData"></p-chart>
-            </p-tabPanel>
+            </p-tabpanel>
           }
           @if (resistanceChartData) {
-            <p-tabPanel header="Resistance">
+            <p-tabpanel header="Resistance">
               <p-chart type="line" height="300px" [data]="resistanceChartData"></p-chart>
-            </p-tabPanel>
+            </p-tabpanel>
           }
-        </p-tabView>
+        </p-tabs>
       }
     }
 
