@@ -74,7 +74,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     this.readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
     this.getWorkoutIdFromRouteParams();
     this.setupForm();
-    console.log("Workout: ", this._workout);
+    //console.log("Workout: ", this._workout);
   }
 
   public editModeToggled(event: any): void { //TODO: Get or specify a concrete type for the event param
@@ -186,7 +186,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   private addWorkout(): void {
-    console.log("ADDING WORKOUT: ", this._workout);
+    //console.log("ADDING WORKOUT: ", this._workout);
     this._workout.publicId = EMPTY_GUID;
     this._workoutService.add(this._workout)
       .pipe(finalize(() => {

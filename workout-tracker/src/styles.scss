@@ -3,7 +3,7 @@
 @import 'fonts.scss';
 @import 'variables.scss';
 
-*, .p-dropdown-label.p-placeholder {
+*, .p-select-label.p-placeholder {
   font-family: $font-one, $font-two, $font-three, $font-four;
 }
 
@@ -108,7 +108,7 @@ select.ng-invalid.ng-touched {
   background-image: url('./assets/images/white-steel.png');
 }
 
-.p-dropdown-items { //Fix for style broken by PrimeNG 17. Won't work at component level, needs to be in a higher stylesheet like this.
+.p-select-items { //Fix for style broken by PrimeNG 17. Won't work at component level, needs to be in a higher stylesheet like this.
   padding-left: 0px !important;
 }
 

@@ -10,7 +10,7 @@
         <input pInputText type="text" (input)="filterTableByInput(dt, $event, 'name', 'in')" />
       </th>
       <th>
-        <p-multiSelect appendTo="body" [style]="{'min-width': '180px'}" [options]="targetAreas" defaultLabel="All"
+        <p-multiSelect appendTo="body" [style]="{'min-width': '180px'}" [options]="targetAreas" placeholder="All"
           (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>
       </th>
     </tr>

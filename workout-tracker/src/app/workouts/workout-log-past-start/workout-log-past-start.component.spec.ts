@@ -54,9 +54,6 @@ describe('WorkoutLogPastStartComponent', () => {
       ],
       imports: [
         ReactiveFormsModule,
-        CalendarModule, //Importing this because I couldn't use CUSTOM_ELEMENTS_SCHEMA due to formControlName being used with the calendar component
-        DropdownModule //Same as above
-        ,
         WorkoutLogPastStartComponent
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

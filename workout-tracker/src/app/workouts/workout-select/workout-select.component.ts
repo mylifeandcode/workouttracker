@@ -6,16 +6,16 @@ import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../_models/workout-dto';
 import { WorkoutService } from '../_services/workout.service';
 import { sortBy } from 'lodash-es';
-import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.component';
+import { SelectModule, SelectChangeEvent } from 'primeng/select';
 
 @Component({
     selector: 'wt-workout-select',
     templateUrl: './workout-select.component.html',
     styleUrls: ['./workout-select.component.scss'],
-    imports: [DropdownModule, RecentWorkoutsComponent]
+    imports: [SelectModule, RecentWorkoutsComponent]
 })
-export class WorkoutSelectComponent implements OnInit, OnDestroy {
+export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   private _workoutService = inject(WorkoutService);
   private _router = inject(Router);
 
@@ -58,18 +58,20 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
 
   //PRIVATE FIELDS
   private _apiCallsInProgress: number = 0;
-  private _userSusbscription: Subscription = new Subscription();
+  //private _userSusbscription: Subscription = new Subscription();
 
   public ngOnInit(): void {
     this.subscribeToUser();
     this.planningForLater = this._router.url.includes("for-later");
   }
 
+  /*
   public ngOnDestroy(): void {
     this._userSusbscription.unsubscribe();
   }
+  */
 
-  public workoutSelectChange(event: DropdownChangeEvent): void { //TODO: Get concrete type instead of using any
+  public workoutSelectChange(event: SelectChangeEvent): void {
     if (this.navigateOnSelect()) {
       if (this.planningForLater)
         this._router.navigate([`workouts/plan-for-later/${event.value}`]);
@@ -84,7 +86,8 @@ export class WorkoutSelectComponent implements OnInit, OnDestroy {
   }
 
   private getUserWorkouts(): void {
-    this._userSusbscription = this._workoutService.getFilteredSubset(0, 500, true) //TODO: Page size...come up with a better solution
+    //this._userSusbscription = 
+    this._workoutService.getFilteredSubset(0, 500, true) //TODO: Page size...come up with a better solution
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
         this.workouts = sortBy(result.results, 'name');

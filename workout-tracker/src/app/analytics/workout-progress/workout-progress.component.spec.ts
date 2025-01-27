@@ -85,7 +85,6 @@ describe('WorkoutProgressComponent', () => {
       ],
       imports: [
         ReactiveFormsModule,
-        DropdownModule, //CUSTOM_ELEMENTS_SCHEMA doesn't compensate for this because my ReactiveForm is using them
         WorkoutProgressComponent,
         ProgressSpinnerModule
       ],

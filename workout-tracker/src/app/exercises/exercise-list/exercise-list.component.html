@@ -6,7 +6,7 @@
     </div>
     <div class="col-6">
       Filter by Target Areas &nbsp;<p-multiSelect appendTo="body" [style]="{'min-width': '180px'}"
-        [options]="targetAreas" defaultLabel="All"
+        [options]="targetAreas" placeholder="All"
         (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>
     </div>
   </div>

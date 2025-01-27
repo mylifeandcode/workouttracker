@@ -14,13 +14,13 @@ class ExecutedWorkoutServiceMock {
   getRecent = jasmine.createSpy('getRecent ').and.returnValue(of(new Array<ExecutedWorkoutSummaryDTO>()));
 }
 
-class WorkoutServiceMock {}
-class RouterMock {}
+class WorkoutServiceMock { }
+class RouterMock { }
 
 @Component({
-    selector: 'wt-workout-info',
-    template: '',
-    imports: [DropdownModule]
+  selector: 'wt-workout-info',
+  template: '',
+  imports: [DropdownModule]
 })
 class MockWorkoutInfoComponent {
   readonly workout = input<Workout>();
@@ -32,25 +32,28 @@ describe('RecentWorkoutsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    providers: [
+      providers: [
         {
-            provide: ExecutedWorkoutService,
-            useClass: ExecutedWorkoutServiceMock
+          provide: ExecutedWorkoutService,
+          useClass: ExecutedWorkoutServiceMock
         },
         {
-            provide: WorkoutService,
-            useClass: WorkoutServiceMock
+          provide: WorkoutService,
+          useClass: WorkoutServiceMock
         },
         {
-            provide: Router,
-            useClass: RouterMock
+          provide: Router,
+          useClass: RouterMock
         }
-    ],
-    imports: [DropdownModule, RecentWorkoutsComponent,
-        MockWorkoutInfoComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-    .compileComponents();
+      ],
+      imports: [
+        DropdownModule, 
+        RecentWorkoutsComponent,
+        MockWorkoutInfoComponent
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    })
+      .compileComponents();
   });
 
   beforeEach(() => {

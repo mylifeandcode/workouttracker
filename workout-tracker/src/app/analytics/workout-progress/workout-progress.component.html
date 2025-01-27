@@ -5,9 +5,9 @@
     <div class="row">
       <div class="col-5">
         <label>Select a Workout</label>&nbsp;
-        <p-dropdown formControlName="workoutId" placeholder="Select a Workout" [options]="workouts" optionValue="id"
+        <p-select formControlName="workoutId" placeholder="Select a Workout" [options]="workouts" optionValue="id"
           optionLabel="name">
-        </p-dropdown>
+        </p-select>
       </div>
       <div class="col-7 workout-count">
         <label># of Most Recent Workouts to Retrieve</label>&nbsp;
@@ -18,9 +18,9 @@
       @if (metrics && metrics.length > 0) {
         <div class="col-12">
           <label class="exercise-label">Exercise</label>
-          <p-dropdown formControlName="exerciseId" placeholder="Select an Exercise" [options]="metrics[0].exerciseMetrics"
+          <p-select formControlName="exerciseId" placeholder="Select an Exercise" [options]="metrics[0].exerciseMetrics"
             optionValue="exerciseId" optionLabel="name">
-          </p-dropdown>
+          </p-select>
         </div>
       }
     </div>

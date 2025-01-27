@@ -23,7 +23,7 @@
         <label for="startDateTime">Start Date/Time</label>
       </div>
       <div class="col-3">
-        <p-calendar formControlName="startDateTime" [showTime]="true" hourFormat="12" inputId="startDateTime"
+        <p-datepicker formControlName="startDateTime" [showTime]="true" hourFormat="12" inputId="startDateTime"
           [showIcon]="true" [hideOnDateTimeSelect]="false">
           <!--https://github.com/primefaces/primeng/blob/f5129d8cc90475b239ae5e3412dbe9ed23de31f8/src/app/components/calendar/calendar.ts-->
           <ng-template pTemplate="footer">
@@ -31,7 +31,7 @@
               Click/Touch outside the calendar to close it
             </div>
           </ng-template>
-        </p-calendar>
+        </p-datepicker>
       </div>
       <div class="col-7">
         @if (startDateTime.invalid && (startDateTime.touched || startDateTime.dirty) && startDateTime.errors?.required) {
@@ -57,14 +57,14 @@
         </p>
         <p>
           Enter Manually<br />
-          <p-calendar id="endDateTime" name="endDateTime" formControlName="endDateTime" [showTime]="true"
+          <p-datepicker id="endDateTime" name="endDateTime" formControlName="endDateTime" [showTime]="true"
             hourFormat="12" inputId="endDateTime" [showIcon]="true" [hideOnDateTimeSelect]="false">
             <ng-template pTemplate="footer">
               <div class="text-center">
                 Click/Touch outside the calendar to close it
               </div>
             </ng-template>
-          </p-calendar>
+          </p-datepicker>
         </p>
       </div>
       <div class="col-7">

@@ -9,11 +9,11 @@ import { AnalyticsChartData } from '../_models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 import { sortBy } from 'lodash-es';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DropdownModule } from 'primeng/dropdown';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TabsModule } from 'primeng/tabs';
 import { ChartModule } from 'primeng/chart';
+import { SelectModule } from 'primeng/select';
 
 interface IWorkoutProgressForm {
   workoutId: FormControl<string | null>,
@@ -25,7 +25,7 @@ interface IWorkoutProgressForm {
     selector: 'wt-workout-progress',
     templateUrl: './workout-progress.component.html',
     styleUrls: ['./workout-progress.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, DropdownModule, SelectOnFocusDirective, ProgressSpinnerModule, TabsModule, ChartModule]
+    imports: [FormsModule, ReactiveFormsModule, SelectModule, SelectOnFocusDirective, ProgressSpinnerModule, TabsModule, ChartModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
   private _analyticsService = inject(AnalyticsService);
@@ -84,7 +84,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    console.log('this._workoutId$: ', this._workoutId$);
+    //console.log('this._workoutId$: ', this._workoutId$);
     if (this._workoutId$) this._workoutId$.unsubscribe();
     if (this._workoutCount$) this._workoutCount$.unsubscribe();
     if (this._exerciseId$) this._exerciseId$.unsubscribe();
