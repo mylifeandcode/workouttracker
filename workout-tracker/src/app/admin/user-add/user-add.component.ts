@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveF
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { User } from 'app/core/_models/user';
 import { UserNewDTO } from 'app/core/_models/user-new-dto';
+import { AuthService } from 'app/core/_services/auth/auth.service';
 import { UserService } from 'app/core/_services/user/user.service';
 import { CustomValidators } from 'app/core/_validators/custom-validators';
 import { finalize } from 'rxjs/operators';
@@ -22,11 +23,11 @@ interface IUserAddForm {
     imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserAddComponent implements OnInit {
-  private _userSvc = inject(UserService);
+  private _userService = inject(UserService);
   private _formBuilder = inject(FormBuilder);
   private _router = inject(Router);
   private _activatedRoute = inject(ActivatedRoute);
-
+  private _authService = inject(AuthService);
 
   public errorMsg: string | undefined;
   public userAddForm: FormGroup<IUserAddForm>;
@@ -45,10 +46,15 @@ export class UserAddComponent implements OnInit {
     this.savingUserInfo = true;
     const user = this.getUserForPersist();
 
-    this._userSvc.addNew(user)
+    this._userService.addNew(user)
       .pipe(finalize(() => { this.savingUserInfo = false; }))
       .subscribe({
-        next: (savedUser: User) => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
+        next: (savedUser: User) => {
+          if (this._authService.isUserLoggedIn)
+            this._router.navigate(['admin/users']); //TODO: Find out how to make this relative, not absolute
+          else
+            this._router.navigate(['/']);
+        }, 
         error: (error: any) => {
           if (error?.status == 403)
             this.errorMsg = "You do not have permission to add users.";

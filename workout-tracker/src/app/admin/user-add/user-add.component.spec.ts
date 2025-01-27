@@ -8,9 +8,14 @@ import { UserService } from 'app/core/_services/user/user.service';
 import { of } from 'rxjs';
 
 import { UserAddComponent } from './user-add.component';
+import { AuthService } from 'app/core/_services/auth/auth.service';
 
-class UserServiceMock {
+class MockUserService {
   addNew = jasmine.createSpy('addNew').and.returnValue(of(new User()));
+}
+
+class MockAuthService {
+  isUserLoggedIn = true;
 }
 
 @Component({
@@ -36,7 +41,11 @@ describe('UserAddComponent', () => {
       providers: [
         {
           provide: UserService,
-          useClass: UserServiceMock
+          useClass: MockUserService
+        },
+        {
+          provide: AuthService,
+          useClass: MockAuthService
         },
         {
           provide: ActivatedRoute,
