@@ -3,6 +3,10 @@
 @import 'fonts.scss';
 @import 'variables.scss';
 
+body {
+  font-size: 16px;
+}
+
 *, .p-select-label.p-placeholder {
   font-family: $font-one, $font-two, $font-three, $font-four;
 }
@@ -116,4 +120,8 @@ select.ng-invalid.ng-touched {
 .exercise-header {
   justify-content: space-between;
   flex-direction: row-reverse;
+}
+
+.ant-spin-nested-loading > div > .ant-spin .ant-spin-text {
+  font-size: 16px;
 }

@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { WelcomeComponent } from './welcome.component';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
 import { QuickActionsComponent } from './quick-actions/quick-actions.component';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 class UserServiceMock {
   getOverview =
@@ -38,7 +39,7 @@ describe('WelcomeComponent', () => {
     .overrideComponent(
       WelcomeComponent,
       { 
-        remove: { imports: [UserOverviewComponent, QuickActionsComponent] }, 
+        remove: { imports: [UserOverviewComponent, QuickActionsComponent, NzSpinModule] }, 
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       },
     )

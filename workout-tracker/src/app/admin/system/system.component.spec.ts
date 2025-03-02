@@ -2,9 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SoundService } from 'app/core/_services/sound/sound.service';
 
 import { SystemComponent } from './system.component';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { MessageModule } from 'primeng/message';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 
@@ -13,7 +11,7 @@ class MockSoundService {
 }
 
 class MockMessageService {
-  add = jasmine.createSpy('add');
+  add = jasmine.createSpy('create');
 }
 
 describe('SystemComponent', () => {
@@ -23,9 +21,7 @@ describe('SystemComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        SystemComponent,
-        ToastModule,
-        MessageModule
+        SystemComponent      
       ],
       providers: [
         {
@@ -33,7 +29,7 @@ describe('SystemComponent', () => {
           useClass: MockSoundService
         },
         {
-          provide: MessageService,
+          provide: NzMessageService,
           useClass: MockMessageService
         }
       ]
@@ -41,7 +37,6 @@ describe('SystemComponent', () => {
     .overrideComponent( //Special thanks to these guys FTW: https://www.angulararchitects.io/en/blog/testing-angular-standalone-components/
       SystemComponent, 
       { 
-        remove: { imports: [ToastModule] }, //Was getting an error about an undefined object before doing this, despite importing everything the component did
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       })
     .compileComponents();
@@ -62,8 +57,8 @@ describe('SystemComponent', () => {
   });
 
   it('should test the toast', () => {
-    const messageService = TestBed.inject(MessageService);
+    const messageService = TestBed.inject(NzMessageService);
     component.testToast();
-    expect(messageService.add).toHaveBeenCalled();
+    expect(messageService.create).toHaveBeenCalled();
   });
 });

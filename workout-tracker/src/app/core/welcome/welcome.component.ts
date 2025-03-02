@@ -4,13 +4,13 @@ import { UserService } from 'app/core/_services/user/user.service';
 import { finalize } from 'rxjs/operators';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
 import { QuickActionsComponent } from './quick-actions/quick-actions.component';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
     selector: 'wt-welcome',
     templateUrl: './welcome.component.html',
     styleUrls: ['./welcome.component.scss'],
-    imports: [UserOverviewComponent, QuickActionsComponent, ProgressSpinnerModule]
+    imports: [UserOverviewComponent, QuickActionsComponent, NzSpinModule]
 })
 export class WelcomeComponent implements OnInit {
   private _userService = inject(UserService);

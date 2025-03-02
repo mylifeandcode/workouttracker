@@ -4,13 +4,15 @@ import { of } from 'rxjs';
 
 import { AnalyticsDashboardComponent } from './analytics-dashboard.component';
 import { AnalyticsService } from '../_services/analytics.service';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 class AnalyticsServiceMock {
-  getExecutedWorkoutsSummary = 
+  getExecutedWorkoutsSummary =
     jasmine.createSpy('getExecutedWorkoutsSummary')
-      .and.returnValue(of(<ExecutedWorkoutsSummary>{ 
-        totalLoggedWorkouts: 12, 
-        firstLoggedWorkoutDateTime: new Date(2022, 4, 5), 
+      .and.returnValue(of(<ExecutedWorkoutsSummary>{
+        totalLoggedWorkouts: 12,
+        firstLoggedWorkoutDateTime: new Date(2022, 4, 5),
         targetAreasWithWorkoutCounts: new Map<string, number>()
       }));
 }
@@ -21,15 +23,22 @@ describe('AnalyticsDashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [AnalyticsDashboardComponent],
-    providers: [
+      imports: [AnalyticsDashboardComponent],
+      providers: [
         {
-            provide: AnalyticsService,
-            useClass: AnalyticsServiceMock
+          provide: AnalyticsService,
+          useClass: AnalyticsServiceMock
         }
-    ]
-})
-    .compileComponents();
+      ]
+    })
+      .overrideComponent(
+        AnalyticsDashboardComponent,
+        {
+          remove: { imports: [NzSpinModule] },
+          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        }
+      )
+      .compileComponents();
   });
 
   beforeEach(() => {

@@ -4,9 +4,10 @@ import { UserSelectComponent } from './user-select.component';
 import { UserService } from '../_services/user/user.service';
 import { of } from 'rxjs';
 import { User } from 'app/core/_models/user';
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from 'app/core/_services/auth/auth.service';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 
 class UserServiceMock {
@@ -47,6 +48,12 @@ describe('UserSelectComponent', () => {
         }
     ]
 })
+  .overrideComponent(
+    UserSelectComponent, 
+    {
+      remove: { imports: [NzSpinModule] },
+      add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] } 
+    })
     .compileComponents();
   }));
 

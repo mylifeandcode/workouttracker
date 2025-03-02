@@ -5,14 +5,14 @@ import { User } from '../_models/user';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 import { catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AsyncPipe } from '@angular/common';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
     selector: 'wt-user-select',
     templateUrl: './user-select.component.html',
     styleUrls: ['./user-select.component.scss'],
-    imports: [RouterLink, ProgressSpinnerModule, AsyncPipe]
+    imports: [RouterLink, NzSpinModule, AsyncPipe]
 })
 export class UserSelectComponent {
   private _authService = inject(AuthService);

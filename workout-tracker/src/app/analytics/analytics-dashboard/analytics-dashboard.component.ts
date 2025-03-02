@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { AnalyticsService } from '../_services/analytics.service';
 import { ExecutedWorkoutsSummary } from '../_models/executed-workouts-summary';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { ZeroIsBadPipe } from '../../shared/pipes/zero-is-bad.pipe';
 
@@ -10,7 +10,7 @@ import { ZeroIsBadPipe } from '../../shared/pipes/zero-is-bad.pipe';
     selector: 'wt-analytics-dashboard',
     templateUrl: './analytics-dashboard.component.html',
     styleUrls: ['./analytics-dashboard.component.scss'],
-    imports: [ProgressSpinnerModule, DatePipe, KeyValuePipe, ZeroIsBadPipe]
+    imports: [NzSpinModule, DatePipe, KeyValuePipe, ZeroIsBadPipe]
 })
 export class AnalyticsDashboardComponent implements OnInit {
   private _analyticsService = inject(AnalyticsService);
