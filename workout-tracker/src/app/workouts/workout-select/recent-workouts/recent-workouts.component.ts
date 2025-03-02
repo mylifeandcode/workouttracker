@@ -4,7 +4,7 @@ import { ExecutedWorkoutService } from '../../_services/executed-workout.service
 import { ExecutedWorkoutSummaryDTO } from '../../_models/executed-workout-summary-dto';
 import { Workout } from '../../_models/workout';
 import { WorkoutService } from '../../_services/workout.service';
-import { TableModule } from 'primeng/table';
+import { NzTableModule } from 'ng-zorro-antd/table';
 import { SharedModule } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { WorkoutInfoComponent } from './workout-info/workout-info.component';
@@ -14,7 +14,7 @@ import { DatePipe } from '@angular/common';
     selector: 'wt-recent-workouts',
     templateUrl: './recent-workouts.component.html',
     styleUrls: ['./recent-workouts.component.scss'],
-    imports: [TableModule, SharedModule, DialogModule, WorkoutInfoComponent, DatePipe]
+    imports: [NzTableModule, SharedModule, DialogModule, WorkoutInfoComponent, DatePipe]
 })
 export class RecentWorkoutsComponent implements OnInit {
   private _executedWorkoutService = inject(ExecutedWorkoutService);
@@ -48,11 +48,11 @@ export class RecentWorkoutsComponent implements OnInit {
       });
   }
 
-  public doWorkout(workoutPublicId: number): void {
+  public doWorkout(workoutPublicId: string): void {
     this._router.navigate([`workouts/plan/${workoutPublicId}`]);
   }
 
-  public planWorkout(workoutPublicId: number): void {
+  public planWorkout(workoutPublicId: string): void {
     this._router.navigate([`workouts/plan-for-later/${workoutPublicId}`]);
   }
 }

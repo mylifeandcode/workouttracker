@@ -9,6 +9,7 @@ import { WorkoutService } from '../../_services/workout.service';
 
 import { RecentWorkoutsComponent } from './recent-workouts.component';
 import { DropdownModule } from 'primeng/dropdown';
+import { NzTableModule } from 'ng-zorro-antd/table';
 
 class ExecutedWorkoutServiceMock {
   getRecent = jasmine.createSpy('getRecent ').and.returnValue(of(new Array<ExecutedWorkoutSummaryDTO>()));
@@ -47,12 +48,19 @@ describe('RecentWorkoutsComponent', () => {
         }
       ],
       imports: [
-        DropdownModule, 
+        DropdownModule,
         RecentWorkoutsComponent,
         MockWorkoutInfoComponent
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
+      .overrideComponent(
+        RecentWorkoutsComponent,
+        {
+          remove: { imports: [NzTableModule] },
+          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        }
+      )
       .compileComponents();
   });
 

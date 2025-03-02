@@ -11,7 +11,7 @@ class MockSoundService {
 }
 
 class MockMessageService {
-  add = jasmine.createSpy('create');
+  create = jasmine.createSpy('create');
 }
 
 describe('SystemComponent', () => {
