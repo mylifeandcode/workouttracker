@@ -1,29 +1,32 @@
 import { Component, OnInit, inject } from '@angular/core';
 
-import { ConfirmationService, MessageService, SharedModule } from 'primeng/api';
+import { SharedModule } from 'primeng/api';
 
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
 import { NgStyle } from '@angular/common';
 import { ButtonDirective } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { finalize } from 'rxjs';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @Component({
-    selector: 'wt-resistance-bands',
-    templateUrl: './resistance-bands.component.html',
-    styleUrls: ['./resistance-bands.component.scss'],
-    imports: [ToastModule, ConfirmDialogModule, TableModule, SharedModule, FormsModule, NgStyle, ButtonDirective, DialogModule]
+  selector: 'wt-resistance-bands',
+  templateUrl: './resistance-bands.component.html',
+  styleUrls: ['./resistance-bands.component.scss'],
+  imports: [
+    NzTableModule, SharedModule, FormsModule, NgStyle, ButtonDirective, 
+    NzIconModule, NzModalModule, NzButtonModule]
 })
 export class ResistanceBandsComponent implements OnInit {
-  private _resistanceBandService = inject(ResistanceBandService);
-  private _messageService = inject(MessageService);
-  private _confirmationService = inject(ConfirmationService);
-
+  private readonly _resistanceBandService = inject(ResistanceBandService);
+  private readonly _messageService = inject(NzMessageService);
+  private readonly _modalService = inject(NzModalService);
 
   public resistanceBands: ResistanceBand[] = [];
   public busy: boolean = false;
@@ -35,7 +38,8 @@ export class ResistanceBandsComponent implements OnInit {
   public modalSubmitted: boolean = false;
 
   //This is used to store the original row when we go into edit mode
-  private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {};
+  //private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {};
+  public editCache: { [key: number]: { edit: boolean; data: ResistanceBand } } = {};
 
   //Table edit code based on PrimeNg's example at https://www.primefaces.org/primeng/showcase/#/table/edit
 
@@ -43,11 +47,32 @@ export class ResistanceBandsComponent implements OnInit {
     this.getResistanceBandData(true);
   }
 
+  /*
   public onRowEditInit(band: ResistanceBand): void {
     //Clone the row we're editing in case we decide to cancel. That way, we can get the original version back.
     this._clonedResistanceBands[band.id] = { ...band };
   }
+  */
 
+  public startEdit(id: number): void {
+    this.editCache[id].edit = true;
+  }
+
+  public cancelEdit(id: number): void {
+    const index = this.resistanceBands.findIndex(item => item.id === id);
+    this.editCache[id] = {
+      data: { ...this.resistanceBands[index] },
+      edit: false
+    };
+  }
+
+  public saveEdit(id: number): void {
+    const index = this.resistanceBands.findIndex(item => item.id === id);
+    Object.assign(this.resistanceBands[index], this.editCache[id].data);
+    this.editCache[id].edit = false;
+  }
+
+  /*
   public onRowEditSave(band: ResistanceBand): void {
     //Delete our cloned row, we don't need it any more.
     delete this._clonedResistanceBands[band.id];
@@ -64,6 +89,7 @@ export class ResistanceBandsComponent implements OnInit {
     //Delete the clone row, we don't need it anymore.
     delete this._clonedResistanceBands[band.id];
   }
+  */
 
   public openAddModal(): void {
     this.newResistanceBand = new ResistanceBand();
@@ -80,22 +106,33 @@ export class ResistanceBandsComponent implements OnInit {
     if (resistanceBand.publicId == null) return;
 
     const bandId = resistanceBand.publicId;
-    this._confirmationService.confirm({
-      message: 'Are you sure you want to delete this resistance band?',
-      accept: () => {
+
+    this._modalService.confirm({
+      nzTitle: 'Are You Sure?',
+      nzContent: 'Are you sure you want to delete this resistance band?',
+      nzOnOk: () =>
         this._resistanceBandService
           .deleteById(bandId)
           .subscribe((response: any) => {
-            this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Resistance Band deleted', life: 3000 });
+            this._messageService.create('success', 'Resistance band deleted.');
             this.getResistanceBandData(false);
-          });
-      }
+          })
     });
+
   }
 
   public hideModal(): void {
     this.showAddDialog = false;
     this.modalSubmitted = false;
+  }
+
+  private setupEditCache(): void {
+    this.resistanceBands.forEach(item => {
+      this.editCache[item.id] = {
+        edit: false,
+        data: { ...item }
+      };
+    });
   }
 
   private getResistanceBandData(fromCache: boolean): void {
@@ -111,6 +148,7 @@ export class ResistanceBandsComponent implements OnInit {
       )
       .subscribe((results: ResistanceBand[]) => {
         this.resistanceBands = results;
+        this.setupEditCache();
       });
   }
 
@@ -121,18 +159,18 @@ export class ResistanceBandsComponent implements OnInit {
     this._resistanceBandService
       .add(this.newResistanceBand)
       .pipe(
-        finalize(() => { 
+        finalize(() => {
           this.busy = false;
           this.busyMsg = undefined;
         })
       )
       .subscribe({
         next: (band: ResistanceBand) => {
-          this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Resistance Band added', life: 3000 });
+          this._messageService.create('success', 'Resistance band added.');
           this.getResistanceBandData(false);
         },
         error: (error: any) => {
-          this._messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add Resistance Band', sticky: true });
+          this._messageService.create('error', 'Failed to add resistance band.');
         }
       });
   }
@@ -144,17 +182,17 @@ export class ResistanceBandsComponent implements OnInit {
     this._resistanceBandService
       .update(band)
       .pipe(
-        finalize(() => { 
+        finalize(() => {
           this.busy = false;
           this.busyMsg = undefined;
         })
       )
       .subscribe({
         next: (updatedBand: ResistanceBand) => {
-          this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Resistance Band updated', life: 3000 });
+          this._messageService.create('success', 'Resistance band updated.');
         },
         error: (error: any) => {
-          this._messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update Resistance Band', sticky: true });
+          this._messageService.create('error', 'Failed to update resistance band.');
         }
       });
   }

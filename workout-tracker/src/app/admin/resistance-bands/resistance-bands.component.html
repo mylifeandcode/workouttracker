@@ -4,22 +4,52 @@
   <h3 class="pt-2">Resistance Band Inventory</h3>
 }
 
-<p-toast position="center"></p-toast>
-<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
-
 @if (!busy) {
-  <div class="container-fluid">
+<div class="container-fluid">
 
-  <p-table #dt [value]="resistanceBands" dataKey="id" editMode="row">
-    <ng-template pTemplate="header">
+  <nz-table #dt [nzData]="resistanceBands" dataKey="id" editMode="row">
+    <thead>
+      <!--TODO: Make these sortable-->
       <tr>
-        <th pSortableColumn="color">Color <p-sortIcon field="color"></p-sortIcon></th>
-        <th pSortableColumn="maxResistanceAmount">Max End-to-End Resistance <p-sortIcon
-            field="maxResistanceAmount"></p-sortIcon></th>
-        <th pSortableColumn="numberAvailable"># Available <p-sortIcon field="numberAvailable"></p-sortIcon></th>
+        <th>Color</th>
+        <th>Max End-to-End Resistance</th>
+        <th># Available</th>
         <th style="width:8rem"></th>
       </tr>
-    </ng-template>
+    </thead>
+    <tbody>
+      @for(resistanceBand of dt.data; track resistanceBand) {
+        <tr>
+          @if (!editCache[resistanceBand.id].edit) {
+            <td><span class="resistance-band" [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span></td>
+            <td>{{resistanceBand.maxResistanceAmount}}</td>
+            <td>{{resistanceBand.numberAvailable}}</td>
+            <td>
+              <button nz-button nzShape="circle" (click)="startEdit(resistanceBand.id)">
+                <nz-icon nzType="edit" nzTheme="twotone" nzTwotoneColor="#52c41a" />
+              </button>
+              &nbsp;
+              <button nz-button nzShape="circle" (click)="deleteBand(resistanceBand)">
+                <nz-icon nzType="delete" nzTheme="twotone" nzTwotoneColor="#eb2f96" />
+              </button>
+            </td>
+          } @else {
+            <td><input pInputText type="text" [(ngModel)]="resistanceBand.color" required></td>
+            <td><input pInputText type="text" [(ngModel)]="resistanceBand.maxResistanceAmount" required></td>
+            <td><input pInputText type="text" [(ngModel)]="resistanceBand.numberAvailable"></td>
+            <td>
+              <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                (click)="saveEdit(resistanceBand.id)"
+                class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+              <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                (click)="cancelEdit(resistanceBand.id)"
+                class="p-button-rounded p-button-text p-button-danger"></button>
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+    <!--
     <ng-template pTemplate="body" let-resistanceBand let-editing="editing" let-ri="rowIndex">
       <tr [pEditableRow]="resistanceBand" class="band-row">
         <td>
@@ -69,13 +99,14 @@
         </td>
       </tr>
     </ng-template>
-  </p-table>
+    -->
+  </nz-table>
 
   <p></p>
   <button pButton pRipple label="Add New" icon="pi pi-plus" class="p-button-success p-mr-2"
     (click)="openAddModal()"></button>
   <p></p>
-  </div>
+</div>
 }
 
 <!--
@@ -83,6 +114,7 @@ TODO: Consider making this dialog its own component, and have it publish an even
 than being bound to an object in this component. The current approach follows the example from the 
 PrimeNg docs and results in tight coupling.
 -->
+<!--
 <p-dialog [(visible)]="showAddDialog" [style]="{width: '450px'}" header="Resistance Band Details" [modal]="true"
   styleClass="p-fluid">
   <ng-template pTemplate="content">
@@ -91,7 +123,7 @@ PrimeNg docs and results in tight coupling.
       <input type="text" class="p-inputtext" pInputText id="color" [(ngModel)]="newResistanceBand.color" required
         autofocus />
       @if (!newResistanceBand.color) {
-        <small class="error-text">Color is required.</small>
+      <small class="error-text">Color is required.</small>
       }
     </div>
     <div class="p-field">
@@ -99,29 +131,27 @@ PrimeNg docs and results in tight coupling.
       <input type="number" class="p-inputtext" pInputText id="maxResistanceAmount"
         [(ngModel)]="newResistanceBand.maxResistanceAmount" required />
       <small>*Resistance will be 2x when band is doubled over</small>
-      @if (newResistanceBand.maxResistanceAmount <= 0) {
-        <small class="error-text">
-          Max Resistance Amount is required.
+      @if (newResistanceBand.maxResistanceAmount <= 0) { <small class="error-text">
+        Max Resistance Amount is required.
         </small>
-      }
+        }
     </div>
     <div class="p-field">
       <label for="numberAvailable"># Available</label>
       <input type="number" class="p-inputtext" pInputText id="numberAvailable"
         [(ngModel)]="newResistanceBand.numberAvailable" required />
-      @if (newResistanceBand.numberAvailable <= 0) {
-        <small class="error-text">
-          # Available is required.
+      @if (newResistanceBand.numberAvailable <= 0) { <small class="error-text">
+        # Available is required.
         </small>
-      }
+        }
     </div>
   </ng-template>
 
   <ng-template pTemplate="footer">
-    <!--TODO: Refactor when time allows. Couldn't embed form in this dialog and still have the footer. Need to find a way.-->
     <button pButton pRipple label="Save"
       [disabled]="!newResistanceBand.color || !newResistanceBand.maxResistanceAmount || !newResistanceBand.numberAvailable"
       icon="pi pi-check" class="p-button-text" (click)="saveNewBand()"></button>
     <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideModal()"></button>
   </ng-template>
 </p-dialog>
+-->

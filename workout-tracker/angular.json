@@ -21,7 +21,12 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/config.json"
+              "src/config.json",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+                "output": "/assets/"
+              }              
             ],
             "styles": [
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",               
