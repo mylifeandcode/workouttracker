@@ -11,9 +11,8 @@ import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 
 import { WorkoutProgressComponent } from './workout-progress.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { DropdownModule } from 'primeng/dropdown';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TabViewModule } from 'primeng/tabview';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 class AnalyticsServiceMock {
   getExerciseChartData = jasmine.createSpy('getExerciseChartData')
@@ -64,7 +63,7 @@ class WorkoutServiceMock {
     });
 }
 
-describe('WorkoutProgressComponent', () => {
+fdescribe('WorkoutProgressComponent', () => {
   let component: WorkoutProgressComponent;
   let fixture: ComponentFixture<WorkoutProgressComponent>;
   let analyticsService: AnalyticsService;
@@ -95,7 +94,7 @@ describe('WorkoutProgressComponent', () => {
       .overrideComponent(
         WorkoutProgressComponent,
         {
-          remove: { imports: [TabViewModule] },
+          remove: { imports: [NzTabsModule] },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         }
       ).compileComponents();

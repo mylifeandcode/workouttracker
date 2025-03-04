@@ -3,13 +3,13 @@ import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
-import { TableModule } from 'primeng/table';
 import { SharedModule } from 'primeng/api';
 import { RouterLink } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonDirective } from 'primeng/button';
 import { DatePipe } from '@angular/common';
+import { NzTableModule } from 'ng-zorro-antd/table';
 
 //TODO: This is similar to WorkoutsListComponent. Find a way to consolidate/reuse code.
 
@@ -17,14 +17,10 @@ import { DatePipe } from '@angular/common';
     selector: 'wt-workout-history',
     templateUrl: './workout-history.component.html',
     styleUrls: ['./workout-history.component.scss'],
-    imports: [TableModule, SharedModule, RouterLink, TooltipModule, DialogModule, ButtonDirective, DatePipe]
+    imports: [NzTableModule, SharedModule, RouterLink, TooltipModule, DialogModule, ButtonDirective, DatePipe]
 })
-export class WorkoutHistoryComponent {
+export class WorkoutHistoryComponent implements OnInit {
   private _executedWorkoutService = inject(ExecutedWorkoutService);
-
-
-  //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
-  //Turbo Table automatically makes a call to get data on initialization
 
   public totalRecords: number = 0;
   public loading: boolean = false;
@@ -35,6 +31,11 @@ export class WorkoutHistoryComponent {
   public cols: any = [
     { field: 'name', header: 'Name' }
   ];
+
+  public ngOnInit(): void {
+    this.loading = true;
+    this.getExecutedWorkouts(0, null);
+  }
 
   public getExecutedWorkouts(first: number, nameContains: string | null): void {
 

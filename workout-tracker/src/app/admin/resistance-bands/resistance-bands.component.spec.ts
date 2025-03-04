@@ -107,7 +107,7 @@ describe('ResistanceBandsComponent', () => {
     const band = new ResistanceBand();
 
     //ACT
-    component.onRowEditSave(band);
+    component.saveEdit(1);
 
     //ASSERT
     expect(resistanceBandService.update).toHaveBeenCalledWith(band);
@@ -192,7 +192,7 @@ describe('ResistanceBandsComponent', () => {
 
     try {
       const band = new ResistanceBand();
-      component.onRowEditInit(band);
+      component.startEdit(1);
       expect(true).toBeTrue(); //Here only to let Karma know we have an expectation
     }
     catch {
@@ -211,10 +211,10 @@ describe('ResistanceBandsComponent', () => {
     band.numberAvailable = 1;
 
     //We need to start editing a row to set this test up
-    component.onRowEditInit(band);
+    component.startEdit(1);
 
     //ACT
-    component.onRowEditCancel(band, 0);
+    component.cancelEdit(1);
 
     //ASSERT
     //Why the wacky comparison logic below? Because the clone bands are not an array, but 
@@ -268,7 +268,7 @@ describe('ResistanceBandsComponent', () => {
     const messageService = TestBed.inject(MessageService);
 
     //ACT
-    component.onRowEditSave(new ResistanceBand());
+    component.saveEdit(1);
 
     //ASSERT
     expect(messageService.add).toHaveBeenCalledWith({ severity: 'error', summary: 'Error', detail: 'Failed to update Resistance Band', sticky: true });

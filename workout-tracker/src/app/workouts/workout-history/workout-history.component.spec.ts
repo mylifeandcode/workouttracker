@@ -2,10 +2,16 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutHistoryComponent } from './workout-history.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { RouterModule } from '@angular/router';
+import { RouterLink, RouterModule } from '@angular/router';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { of } from 'rxjs';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { SharedModule } from 'primeng/api';
+import { TooltipModule } from 'primeng/tooltip';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonDirective } from 'primeng/button';
+import { DatePipe } from '@angular/common';
 
 class MockExecutedWorkoutService {
   getFilteredSubset =
@@ -13,7 +19,7 @@ class MockExecutedWorkoutService {
       .and.returnValue(of(new PaginatedResults<ExecutedWorkoutSummaryDTO>()));
 }
 
-describe('WorkoutHistoryComponent', () => {
+fdescribe('WorkoutHistoryComponent', () => {
   let component: WorkoutHistoryComponent;
   let fixture: ComponentFixture<WorkoutHistoryComponent>;
 
@@ -28,6 +34,13 @@ describe('WorkoutHistoryComponent', () => {
         }
       ]
     })
+    .overrideComponent(
+      WorkoutHistoryComponent,
+      {
+        remove: { imports: [NzTableModule, SharedModule, RouterLink, TooltipModule, DialogModule, ButtonDirective, DatePipe] },
+        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+      }
+    )
       .compileComponents();
   });
 

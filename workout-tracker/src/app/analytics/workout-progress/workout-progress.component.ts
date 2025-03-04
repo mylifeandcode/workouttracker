@@ -11,7 +11,7 @@ import { sortBy } from 'lodash-es';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TabsModule } from 'primeng/tabs';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
 
@@ -25,7 +25,8 @@ interface IWorkoutProgressForm {
     selector: 'wt-workout-progress',
     templateUrl: './workout-progress.component.html',
     styleUrls: ['./workout-progress.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, SelectModule, SelectOnFocusDirective, ProgressSpinnerModule, TabsModule, ChartModule]
+    imports: [FormsModule, ReactiveFormsModule, SelectModule, SelectOnFocusDirective, ProgressSpinnerModule, 
+      NzTabsModule, ChartModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
   private _analyticsService = inject(AnalyticsService);

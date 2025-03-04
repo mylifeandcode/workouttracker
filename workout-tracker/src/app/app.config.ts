@@ -15,6 +15,10 @@ import { MessageModule } from 'primeng/message';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
+import en from '@angular/common/locales/en';
+import { registerLocaleData } from '@angular/common';
+import { provideNzI18n, en_US } from 'ng-zorro-antd/i18n';
+registerLocaleData(en);
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -40,6 +44,7 @@ export const appConfig: ApplicationConfig = {
         }        
       }
     }),
+    provideNzI18n(en_US),
     MessageService, //Providing this here simplifies unit testing
     ConfirmationService
   ]
