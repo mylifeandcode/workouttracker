@@ -19,7 +19,7 @@ class MockExecutedWorkoutService {
       .and.returnValue(of(new PaginatedResults<ExecutedWorkoutSummaryDTO>()));
 }
 
-fdescribe('WorkoutHistoryComponent', () => {
+describe('WorkoutHistoryComponent', () => {
   let component: WorkoutHistoryComponent;
   let fixture: ComponentFixture<WorkoutHistoryComponent>;
 

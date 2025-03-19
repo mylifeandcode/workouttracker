@@ -5,108 +5,108 @@
 }
 
 @if (!busy) {
-<div class="container-fluid">
+  <div class="container-fluid">
 
-  <nz-table #dt [nzData]="resistanceBands" dataKey="id" editMode="row">
-    <thead>
-      <!--TODO: Make these sortable-->
-      <tr>
-        <th>Color</th>
-        <th>Max End-to-End Resistance</th>
-        <th># Available</th>
-        <th style="width:8rem"></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for(resistanceBand of dt.data; track resistanceBand) {
+    <nz-table #dt [nzData]="resistanceBands" dataKey="id" editMode="row">
+      <thead>
+        <!--TODO: Make these sortable-->
+        <tr>
+          <th>Color</th>
+          <th>Max End-to-End Resistance</th>
+          <th># Available</th>
+          <th style="width:8rem"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(resistanceBand of dt.data; track resistanceBand) {
         <tr>
           @if (!editCache[resistanceBand.id].edit) {
-            <td><span class="resistance-band" [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span></td>
-            <td>{{resistanceBand.maxResistanceAmount}}</td>
-            <td>{{resistanceBand.numberAvailable}}</td>
-            <td>
-              <button nz-button nzShape="circle" (click)="startEdit(resistanceBand.id)">
-                <nz-icon nzType="edit" nzTheme="twotone" nzTwotoneColor="#52c41a" />
-              </button>
-              &nbsp;
-              <button nz-button nzShape="circle" (click)="deleteBand(resistanceBand)">
-                <nz-icon nzType="delete" nzTheme="twotone" nzTwotoneColor="#eb2f96" />
-              </button>
-            </td>
+          <td><span class="resistance-band" [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
+          </td>
+          <td>{{resistanceBand.maxResistanceAmount}}</td>
+          <td>{{resistanceBand.numberAvailable}}</td>
+          <td>
+            <button nz-button nzShape="circle" (click)="startEdit(resistanceBand.id)">
+              <nz-icon nzType="edit" nzTheme="twotone" nzTwotoneColor="#52c41a" />
+            </button>
+            &nbsp;
+            <button nz-button nzShape="circle" (click)="deleteBand(resistanceBand)">
+              <nz-icon nzType="delete" nzTheme="twotone" nzTwotoneColor="#eb2f96" />
+            </button>
+          </td>
           } @else {
-            <td><input pInputText type="text" [(ngModel)]="resistanceBand.color" required></td>
-            <td><input pInputText type="text" [(ngModel)]="resistanceBand.maxResistanceAmount" required></td>
-            <td><input pInputText type="text" [(ngModel)]="resistanceBand.numberAvailable"></td>
-            <td>
-              <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
-                (click)="saveEdit(resistanceBand.id)"
-                class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-              <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
-                (click)="cancelEdit(resistanceBand.id)"
-                class="p-button-rounded p-button-text p-button-danger"></button>
-            </td>
+          <td><input pInputText type="text" [(ngModel)]="resistanceBand.color" required></td>
+          <td><input pInputText type="text" [(ngModel)]="resistanceBand.maxResistanceAmount" required></td>
+          <td><input pInputText type="text" [(ngModel)]="resistanceBand.numberAvailable"></td>
+          <td>
+            <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+              (click)="saveEdit(resistanceBand.id)"
+              class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+            <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+              (click)="cancelEdit(resistanceBand.id)" class="p-button-rounded p-button-text p-button-danger"></button>
+          </td>
           }
         </tr>
-      }
-    </tbody>
-    <!--
-    <ng-template pTemplate="body" let-resistanceBand let-editing="editing" let-ri="rowIndex">
-      <tr [pEditableRow]="resistanceBand" class="band-row">
-        <td>
-          <p-cellEditor>
-            <ng-template pTemplate="input">
-              <input pInputText type="text" [(ngModel)]="resistanceBand.color" required>
-            </ng-template>
-            <ng-template pTemplate="output">
-              <span class="resistance-band" [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
-            </ng-template>
-          </p-cellEditor>
-        </td>
-        <td>
-          <p-cellEditor>
-            <ng-template pTemplate="input">
-              <input pInputText type="text" [(ngModel)]="resistanceBand.maxResistanceAmount" required>
-            </ng-template>
-            <ng-template pTemplate="output">
-              {{resistanceBand.maxResistanceAmount}}
-            </ng-template>
-          </p-cellEditor>
-        </td>
-        <td>
-          <p-cellEditor>
-            <ng-template pTemplate="input">
-              <input pInputText type="text" [(ngModel)]="resistanceBand.numberAvailable">
-            </ng-template>
-            <ng-template pTemplate="output">
-              {{resistanceBand.numberAvailable}}
-            </ng-template>
-          </p-cellEditor>
-        </td>
-        <td style="text-align:center">
-          @if (editing) {
-          <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
-            (click)="onRowEditSave(resistanceBand)"
-            class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-          <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
-            (click)="onRowEditCancel(resistanceBand, ri)"
-            class="p-button-rounded p-button-text p-button-danger"></button>
-          } @else {
-          <button pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
-            (click)="onRowEditInit(resistanceBand)" class="p-button-rounded p-button-text"></button>
-          <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteBand(resistanceBand)"
-            class="p-button-rounded p-button-text p-button-danger"></button>
-          }
-        </td>
-      </tr>
-    </ng-template>
-    -->
-  </nz-table>
+        }
+      </tbody>
+      <!--
+      <ng-template pTemplate="body" let-resistanceBand let-editing="editing" let-ri="rowIndex">
+        <tr [pEditableRow]="resistanceBand" class="band-row">
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" [(ngModel)]="resistanceBand.color" required>
+              </ng-template>
+              <ng-template pTemplate="output">
+                <span class="resistance-band" [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" [(ngModel)]="resistanceBand.maxResistanceAmount" required>
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{resistanceBand.maxResistanceAmount}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" [(ngModel)]="resistanceBand.numberAvailable">
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{resistanceBand.numberAvailable}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          <td style="text-align:center">
+            @if (editing) {
+            <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+              (click)="onRowEditSave(resistanceBand)"
+              class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+            <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+              (click)="onRowEditCancel(resistanceBand, ri)"
+              class="p-button-rounded p-button-text p-button-danger"></button>
+            } @else {
+            <button pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+              (click)="onRowEditInit(resistanceBand)" class="p-button-rounded p-button-text"></button>
+            <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteBand(resistanceBand)"
+              class="p-button-rounded p-button-text p-button-danger"></button>
+            }
+          </td>
+        </tr>
+      </ng-template>
+      -->
+    </nz-table>
 
-  <p></p>
-  <button pButton pRipple label="Add New" icon="pi pi-plus" class="p-button-success p-mr-2"
-    (click)="openAddModal()"></button>
-  <p></p>
-</div>
+    <p></p>
+    <button pButton pRipple label="Add New" icon="pi pi-plus" class="p-button-success p-mr-2"
+      (click)="openAddModal()"></button>
+    <p></p>
+  </div>
 }
 
 <!--

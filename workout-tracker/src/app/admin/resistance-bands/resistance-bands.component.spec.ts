@@ -9,9 +9,25 @@ import { ResistanceBandService } from '../../shared/services/resistance-band.ser
 import { ResistanceBandsComponent } from './resistance-bands.component';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NgStyle } from '@angular/common';
+import { ButtonDirective } from 'primeng/button';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzMessageService } from 'ng-zorro-antd/message';
+
+const getResistanceBandInventory = () => {
+  const bands = new Array<ResistanceBand>();
+  bands.push(<ResistanceBand>{ publicId: 'someGuid1', color: 'Blue', maxResistanceAmount: 26, numberAvailable: 2, id: 1 });
+  bands.push(<ResistanceBand>{ publicId: 'someGuid2', color: 'Orange', maxResistanceAmount: 60, numberAvailable: 4, id: 2 });
+  bands.push(<ResistanceBand>{ publicId: 'someGuid3', color: 'Yellow', maxResistanceAmount: 6, numberAvailable: 2, id: 3 });
+  bands.push(<ResistanceBand>{ publicId: 'someGuid4', color: 'Onlyx', maxResistanceAmount: 80, numberAvailable: 5, id: 4 });
+  return bands;
+};
 
 class ResistanceBandServiceMock {
-  getAll = jasmine.createSpy('getAll').and.returnValue(of(new Array<ResistanceBand>()));
+  getAll = jasmine.createSpy('getAll').and.returnValue(of(getResistanceBandInventory()));
   add = jasmine.createSpy('add').and.returnValue(of(new ResistanceBand()));
   update = jasmine.createSpy('update').and.returnValue(of(new ResistanceBand()));
   deleteById = jasmine.createSpy('deleteById').and.returnValue(of(new HttpResponse<string>()));
@@ -30,7 +46,7 @@ class ConfirmationServiceMock {
   //.and.returnValue(this);
 }
 
-describe('ResistanceBandsComponent', () => {
+fdescribe('ResistanceBandsComponent', () => {
   let component: ResistanceBandsComponent;
   let fixture: ComponentFixture<ResistanceBandsComponent>;
 
@@ -49,13 +65,26 @@ describe('ResistanceBandsComponent', () => {
         {
           provide: ConfirmationService,
           useClass: ConfirmationServiceMock
+        },
+        {
+          provide: NzMessageService,
+          useValue: jasmine.createSpyObj<NzMessageService>('NzMessageService', ['create'])
+        },
+        {
+          provide: NzModalService,
+          useValue: jasmine.createSpyObj<NzModalService>('NzModalService', ['confirm'])
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).overrideComponent(
       ResistanceBandsComponent,
       {
-        remove: { imports: [ToastModule, ConfirmDialogModule] }, //To resolve error: "TypeError: Cannot read properties of undefined (reading 'subscribe')", even though all dependencies were provided
+        remove: 
+        { 
+          imports: [
+            ToastModule, NzTableModule, NzIconModule, NgStyle, ConfirmDialogModule, ButtonDirective, NzModalModule, NzButtonModule
+          ] 
+        }, //To resolve error: "TypeError: Cannot read properties of undefined (reading 'subscribe')", even though all dependencies were provided
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       }).compileComponents();
   }));
@@ -204,11 +233,7 @@ describe('ResistanceBandsComponent', () => {
   it('should cancel row editing', () => {
 
     //ARRANGE
-    const band = new ResistanceBand();
-    band.color = 'Red';
-    band.maxResistanceAmount = 16;
-    band.id = 1;
-    band.numberAvailable = 1;
+    const band = getResistanceBandInventory()[0];
 
     //We need to start editing a row to set this test up
     component.startEdit(1);
@@ -217,8 +242,6 @@ describe('ResistanceBandsComponent', () => {
     component.cancelEdit(1);
 
     //ASSERT
-    //Why the wacky comparison logic below? Because the clone bands are not an array, but 
-    //an object with an indexer and ResistanceBand-type property. This code should be revisited.
     expect(component.resistanceBands[0].color).toEqual(band.color);
     expect(component.resistanceBands[0].maxResistanceAmount).toEqual(band.maxResistanceAmount);
     expect(component.resistanceBands[0].id).toEqual(band.id);
@@ -243,19 +266,19 @@ describe('ResistanceBandsComponent', () => {
   });
   */
 
-  it('should add message to MessageService when error occurs when adding a resistance band', () => {
+  it('should add message to NzMessageService when error occurs when adding a resistance band', () => {
 
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
     resistanceBandService.add = jasmine.createSpy('add').and.returnValue(throwError(() => new Error("Something went wrong!")));
 
-    const messageService = TestBed.inject(MessageService);
+    const messageService = TestBed.inject(NzMessageService);
 
     //ACT
     component.saveNewBand();
 
     //ASSERT
-    expect(messageService.add).toHaveBeenCalledWith({ severity: 'error', summary: 'Error', detail: 'Failed to add Resistance Band', sticky: true });
+    expect(messageService.create).toHaveBeenCalledWith('error', 'Failed to add resistance band.');
 
   });
 
