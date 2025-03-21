@@ -1,7 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
 
-import { SharedModule } from 'primeng/api';
-
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { FormsModule } from '@angular/forms';
@@ -20,7 +18,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
   templateUrl: './resistance-bands.component.html',
   styleUrls: ['./resistance-bands.component.scss'],
   imports: [
-    NzTableModule, SharedModule, FormsModule, NgStyle, ButtonDirective, 
+    FormsModule, NzTableModule, NgStyle, ButtonDirective, 
     NzIconModule, NzModalModule, NzButtonModule]
 })
 export class ResistanceBandsComponent implements OnInit {
@@ -70,6 +68,7 @@ export class ResistanceBandsComponent implements OnInit {
     const index = this.resistanceBands.findIndex(item => item.id === id);
     Object.assign(this.resistanceBands[index], this.editCache[id].data);
     this.editCache[id].edit = false;
+    this.updateResistanceBand(this.editCache[id].data);
   }
 
   /*

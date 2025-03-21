@@ -13,7 +13,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NgStyle } from '@angular/common';
 import { ButtonDirective } from 'primeng/button';
-import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
@@ -46,7 +46,7 @@ class ConfirmationServiceMock {
   //.and.returnValue(this);
 }
 
-fdescribe('ResistanceBandsComponent', () => {
+describe('ResistanceBandsComponent', () => {
   let component: ResistanceBandsComponent;
   let fixture: ComponentFixture<ResistanceBandsComponent>;
 
@@ -72,7 +72,18 @@ fdescribe('ResistanceBandsComponent', () => {
         },
         {
           provide: NzModalService,
-          useValue: jasmine.createSpyObj<NzModalService>('NzModalService', ['confirm'])
+          useValue: {
+            confirm: jasmine.createSpy('confirm').and.callFake((options) => {
+              // Simulate the user clicking "OK"
+              if (options.nzOnOk) {
+                const onOkResult = options.nzOnOk();
+                if (onOkResult instanceof Promise) {
+                  return onOkResult.then(() => ({ result: 'ok' } as NzModalRef));
+                }
+              }
+              return { result: 'ok' } as NzModalRef;
+            }),
+          },
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -109,7 +120,7 @@ fdescribe('ResistanceBandsComponent', () => {
 
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
-    const messageService = TestBed.inject(MessageService);
+    const messageService = TestBed.inject(NzMessageService);
     component.openAddModal();
 
     //ACT
@@ -118,12 +129,7 @@ fdescribe('ResistanceBandsComponent', () => {
     //ASSERT
     expect(component.newResistanceBand).not.toBeNull();
     expect(resistanceBandService.add).toHaveBeenCalledWith(<ResistanceBand>component.newResistanceBand);
-    expect(messageService.add)
-      .toHaveBeenCalledWith({
-        severity: 'success',
-        summary: 'Successful',
-        detail: 'Resistance Band added', life: 3000
-      });
+    expect(messageService.create).toHaveBeenCalledWith('success', 'Resistance band added.');
     expect(resistanceBandService.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refrsh after the save
 
   });
@@ -131,21 +137,17 @@ fdescribe('ResistanceBandsComponent', () => {
   it('should update resistance band', () => {
 
     //ARRANGE
+    const band = getResistanceBandInventory()[0];
     const resistanceBandService = TestBed.inject(ResistanceBandService);
-    const messageService = TestBed.inject(MessageService);
-    const band = new ResistanceBand();
+    const messageService = TestBed.inject(NzMessageService);
 
     //ACT
     component.saveEdit(1);
 
     //ASSERT
     expect(resistanceBandService.update).toHaveBeenCalledWith(band);
-    expect(messageService.add)
-      .toHaveBeenCalledWith({
-        severity: 'success',
-        summary: 'Successful',
-        detail: 'Resistance Band updated', life: 3000
-      });
+    expect(messageService.create)
+      .toHaveBeenCalledWith('success', 'Resistance band updated.');
 
   });
 
@@ -153,21 +155,15 @@ fdescribe('ResistanceBandsComponent', () => {
 
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
-    const messageService = TestBed.inject(MessageService);
-    const band = new ResistanceBand();
-    band.publicId = '5';
+    const messageService = TestBed.inject(NzMessageService);
+    const band = getResistanceBandInventory()[2];
 
     //ACT
     component.deleteBand(band);
 
     //ASSERT
     expect(resistanceBandService.deleteById).toHaveBeenCalledWith(band.publicId);
-    expect(messageService.add)
-      .toHaveBeenCalledWith({
-        severity: 'success',
-        summary: 'Successful',
-        detail: 'Resistance Band deleted', life: 3000
-      });
+    expect(messageService.create).toHaveBeenCalledWith('success', 'Resistance band deleted.');
     expect(resistanceBandService.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refresh after deletion
 
   });
@@ -177,8 +173,8 @@ fdescribe('ResistanceBandsComponent', () => {
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
     const messageService = TestBed.inject(MessageService);
-    const confirmationService = TestBed.inject(ConfirmationService);
-    confirmationService.confirm = jasmine.createSpy('confirm').and.callFake(() => { });
+    const modalService = TestBed.inject(NzModalService);
+    modalService.confirm = jasmine.createSpy('confirm').and.callFake(() => { });
     const band = new ResistanceBand();
     band.id = 5;
 
@@ -282,19 +278,19 @@ fdescribe('ResistanceBandsComponent', () => {
 
   });
 
-  it('should add message to MessageService when error occurs when updating a resistance band', () => {
+  it('should show message when error occurs when updating a resistance band', () => {
 
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
     resistanceBandService.update = jasmine.createSpy('update').and.returnValue(throwError(() => new Error("Something went wrong!")));
 
-    const messageService = TestBed.inject(MessageService);
+    const messageService = TestBed.inject(NzMessageService);
 
     //ACT
     component.saveEdit(1);
 
     //ASSERT
-    expect(messageService.add).toHaveBeenCalledWith({ severity: 'error', summary: 'Error', detail: 'Failed to update Resistance Band', sticky: true });
+    expect(messageService.create).toHaveBeenCalledWith('error', 'Failed to update resistance band.');
 
   });
 
