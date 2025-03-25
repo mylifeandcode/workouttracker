@@ -35,15 +35,12 @@
               </button>
             </td>
           } @else {
-            <td><input pInputText type="text" [(ngModel)]="resistanceBand.color" required></td>
-            <td><input pInputText type="text" [(ngModel)]="resistanceBand.maxResistanceAmount" required></td>
-            <td><input pInputText type="text" [(ngModel)]="resistanceBand.numberAvailable"></td>
+            <td><input type="text" [(ngModel)]="resistanceBand.color" required></td>
+            <td><input type="text" [(ngModel)]="resistanceBand.maxResistanceAmount" required></td>
+            <td><input type="text" [(ngModel)]="resistanceBand.numberAvailable"></td>
             <td>
-              <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
-                (click)="saveEdit(resistanceBand.id)"
-                class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-              <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
-                (click)="cancelEdit(resistanceBand.id)" class="p-button-rounded p-button-text p-button-danger"></button>
+              <button type="button" (click)="saveEdit(resistanceBand.id)">Save</button>
+              <button type="button" (click)="cancelEdit(resistanceBand.id)">Cancel</button>
             </td>
           }
         </tr>
@@ -103,11 +100,51 @@
     </nz-table>
 
     <p></p>
-    <button pButton pRipple label="Add New" icon="pi pi-plus" class="p-button-success p-mr-2"
-      (click)="openAddModal()"></button>
+    <button class="btn btn-primary" (click)="openAddModal()"><i class="fa fa-plus"></i>Add New</button>
     <p></p>
   </div>
 }
+
+<nz-modal [(nzVisible)]="showAddDialog" nzTitle="Resistance Band Details" (nzOnCancel)="hideModal()" (nzOnOk)="saveNewBand()">
+  <ng-container *nzModalContent>
+    <div>
+      <label for="color">Color</label>
+      <input type="text" id="color" [(ngModel)]="newResistanceBand.color" required autofocus />
+      @if (!newResistanceBand.color) {
+        <small class="error-text">Color is required.</small>
+      }
+    </div>
+    <div>
+      <label for="maxResistanceAmount">Maximum End-to-End Resistance Amount *</label>
+      <input type="number" id="maxResistanceAmount" [(ngModel)]="newResistanceBand.maxResistanceAmount" required />
+      <small>*Resistance will be 2x when band is doubled over</small>
+      @if (newResistanceBand.maxResistanceAmount <= 0) { 
+        <small class="error-text">
+          Max Resistance Amount is required.
+        </small>
+      }
+    </div>
+    <div>
+      <label for="numberAvailable"># Available</label>
+      <input type="number" id="numberAvailable" [(ngModel)]="newResistanceBand.numberAvailable" required />
+      @if (newResistanceBand.numberAvailable <= 0) { 
+        <small class="error-text">
+          # Available is required.
+        </small>
+      }
+    </div>
+  </ng-container>
+
+  <!--
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Save"
+      [disabled]="!newResistanceBand.color || !newResistanceBand.maxResistanceAmount || !newResistanceBand.numberAvailable"
+      icon="pi pi-check" class="p-button-text" (click)="saveNewBand()"></button>
+    <button (click)="hideModal()"></button>
+  </ng-template>
+  -->
+</nz-modal>
+
 
 <!--
 TODO: Consider making this dialog its own component, and have it publish an event on OK, rather 

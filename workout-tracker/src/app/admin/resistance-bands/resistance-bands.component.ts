@@ -3,14 +3,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 import { NgStyle } from '@angular/common';
-import { ButtonDirective } from 'primeng/button';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { finalize } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @Component({
@@ -18,7 +17,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
   templateUrl: './resistance-bands.component.html',
   styleUrls: ['./resistance-bands.component.scss'],
   imports: [
-    FormsModule, NzTableModule, NgStyle, ButtonDirective, 
+    FormsModule, NzTableModule, NgStyle,
     NzIconModule, NzModalModule, NzButtonModule]
 })
 export class ResistanceBandsComponent implements OnInit {
