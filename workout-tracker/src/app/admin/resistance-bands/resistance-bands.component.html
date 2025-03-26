@@ -19,31 +19,36 @@
       </thead>
       <tbody>
         @for(resistanceBand of dt.data; track resistanceBand) {
-        <tr>
-          @if (!editCache[resistanceBand.id].edit) {
-            <td><span class="resistance-band" [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
-            </td>
-            <td>{{resistanceBand.maxResistanceAmount}}</td>
-            <td>{{resistanceBand.numberAvailable}}</td>
-            <td>
-              <button nz-button nzShape="circle" (click)="startEdit(resistanceBand.id)">
-                <nz-icon nzType="edit" nzTheme="twotone" nzTwotoneColor="#52c41a" />
-              </button>
-              &nbsp;
-              <button nz-button nzShape="circle" (click)="deleteBand(resistanceBand)">
-                <nz-icon nzType="delete" nzTheme="twotone" nzTwotoneColor="#eb2f96" />
-              </button>
-            </td>
-          } @else {
-            <td><input type="text" [(ngModel)]="resistanceBand.color" required></td>
-            <td><input type="text" [(ngModel)]="resistanceBand.maxResistanceAmount" required></td>
-            <td><input type="text" [(ngModel)]="resistanceBand.numberAvailable"></td>
-            <td>
-              <button type="button" (click)="saveEdit(resistanceBand.id)">Save</button>
-              <button type="button" (click)="cancelEdit(resistanceBand.id)">Cancel</button>
-            </td>
-          }
-        </tr>
+          <tr>
+            @if (!editCache[resistanceBand.id].edit) {
+              <td><span class="resistance-band" [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
+              </td>
+              <td>{{resistanceBand.maxResistanceAmount}}</td>
+              <td>{{resistanceBand.numberAvailable}}</td>
+              <td>
+                <button nz-button nzShape="circle" (click)="startEdit(resistanceBand.id)">
+                  <nz-icon nzType="edit" nzTheme="twotone" nzTwotoneColor="#52c41a" />
+                </button>
+                &nbsp;
+                <button nz-button nzShape="circle" (click)="deleteBand(resistanceBand)">
+                  <nz-icon nzType="delete" nzTheme="twotone" nzTwotoneColor="#eb2f96" />
+                </button>
+              </td>
+            } @else {
+              <td><input type="text" [(ngModel)]="editCache[resistanceBand.id].data.color" required></td>
+              <td><input type="text" [(ngModel)]="editCache[resistanceBand.id].data.maxResistanceAmount" required></td>
+              <td><input type="text" [(ngModel)]="editCache[resistanceBand.id].data.numberAvailable"></td>
+              <td>
+                <button nz-button nzShape="circle" (click)="saveEdit(resistanceBand.id)">
+                  <nz-icon nzType="save" nzTheme="twotone" nzTwotoneColor="#52c41a" />
+                </button>
+                &nbsp;
+                <button nz-button nzShape="circle" (click)="cancelEdit(resistanceBand.id)">
+                  <nz-icon nzType="close-circle" nzTheme="twotone" nzTwotoneColor="#eb2f96" />
+                </button>
+              </td>
+            }
+          </tr>
         }
       </tbody>
       <!--

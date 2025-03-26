@@ -119,7 +119,6 @@ export abstract class ApiBaseService<T extends IEntity> {
    * @param id The ID of the entity to delete.
    * @returns The response from the API to the DELETE request.
    */
-  /*
   public delete(id: number): Observable<any> { //TODO: Re-evaluate use of "any" type here, should probably be HttpResponse.
     //console.log("DELETING");
     return this._http.delete(`${this._apiRoot}/${id}`)
@@ -127,7 +126,8 @@ export abstract class ApiBaseService<T extends IEntity> {
         tap(() => this.invalidateCache()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
   }
-  */
+
+  //TODO: Replace the delete() method above with the one below, which uses the publicId instead of the id.
 
   /**
    * Deletes the specified entity and invalidates the cache.

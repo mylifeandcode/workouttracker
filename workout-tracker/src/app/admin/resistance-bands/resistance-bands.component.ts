@@ -65,7 +65,11 @@ export class ResistanceBandsComponent implements OnInit {
 
   public saveEdit(id: number): void {
     const index = this.resistanceBands.findIndex(item => item.id === id);
+    console.log('band:', this.resistanceBands[index]);
+    console.log('editCache:', this.editCache[id].data);
     Object.assign(this.resistanceBands[index], this.editCache[id].data);
+    console.log('updated band:', this.resistanceBands[index]);
+
     this.editCache[id].edit = false;
     this.updateResistanceBand(this.editCache[id].data);
   }
@@ -103,14 +107,14 @@ export class ResistanceBandsComponent implements OnInit {
   public deleteBand(resistanceBand: ResistanceBand): void {
     if (resistanceBand.publicId == null) return;
 
-    const bandId = resistanceBand.publicId;
+    const bandId = resistanceBand.id;
 
     this._modalService.confirm({
       nzTitle: 'Are You Sure?',
       nzContent: 'Are you sure you want to delete this resistance band?',
       nzOnOk: () =>
         this._resistanceBandService
-          .deleteById(bandId)
+          .delete(bandId)
           .subscribe((response: any) => {
             this._messageService.create('success', 'Resistance band deleted.');
             this.getResistanceBandData(false);
