@@ -13,7 +13,7 @@ import { finalize } from 'rxjs/operators';
 import { IWorkoutPlanForm } from '../workout/_interfaces/i-workout-plan-form';
 import { IExercisePlanFormGroup } from './exercise-plan/interfaces/i-exercise-plan-form-group';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
 import { DialogModule } from 'primeng/dialog';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
@@ -24,7 +24,7 @@ import { EMPTY_GUID } from 'app/shared/shared-constants';
     templateUrl: './workout-plan.component.html',
     styleUrls: ['./workout-plan.component.scss'],
     imports: [
-        ProgressSpinnerModule, FormsModule, ReactiveFormsModule, DialogModule,
+        NzSpinModule, FormsModule, ReactiveFormsModule, DialogModule,
         ExercisePlanComponent, ResistanceBandSelectComponent
     ]
 })

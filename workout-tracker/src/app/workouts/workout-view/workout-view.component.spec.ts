@@ -8,6 +8,7 @@ import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { WorkoutViewComponent } from './workout-view.component';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 const EXECUTED_WORKOUT_PUBLIC_ID = 'some-guid-5';
 
@@ -88,6 +89,11 @@ describe('WorkoutViewComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
+      .overrideComponent(
+        WorkoutViewComponent, {
+          remove: { imports: [ NzSpinModule] },
+          add: { schemas: [ CUSTOM_ELEMENTS_SCHEMA ] }
+        })
       .compileComponents();
   });
 

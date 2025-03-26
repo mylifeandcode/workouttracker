@@ -6,6 +6,7 @@ import { AuthService } from 'app/core/_services/auth/auth.service';
 import { of } from 'rxjs';
 
 import { LoginComponent } from './login.component';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 class AuthServiceMock {
   public get loginRoute(): string {
@@ -32,6 +33,11 @@ describe('LoginComponent', () => {
     imports: [RouterModule.forRoot([]), ReactiveFormsModule, LoginComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
+    .overrideComponent(
+      LoginComponent, {
+        remove: { imports: [ NzSpinModule ] },
+        add: { schemas: [ CUSTOM_ELEMENTS_SCHEMA ] }
+      })
     .compileComponents();
   });
 

@@ -11,8 +11,8 @@ import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 
 import { WorkoutProgressComponent } from './workout-progress.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 class AnalyticsServiceMock {
   getExerciseChartData = jasmine.createSpy('getExerciseChartData')
@@ -84,8 +84,7 @@ describe('WorkoutProgressComponent', () => {
       ],
       imports: [
         ReactiveFormsModule,
-        WorkoutProgressComponent,
-        ProgressSpinnerModule
+        WorkoutProgressComponent
       ],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA //Needed for p-chart element (ChartJS)
@@ -94,7 +93,7 @@ describe('WorkoutProgressComponent', () => {
       .overrideComponent(
         WorkoutProgressComponent,
         {
-          remove: { imports: [NzTabsModule] },
+          remove: { imports: [NzTabsModule, NzSpinModule] },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         }
       ).compileComponents();

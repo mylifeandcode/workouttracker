@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, input } from '@angular/core';
 import { Workout } from '../../../_models/workout';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ResistanceTypePipe } from '../../../_pipes/resistance-type.pipe';
 import { TargetAreasPipe } from '../../../_pipes/target-areas.pipe';
 
@@ -9,7 +9,7 @@ import { TargetAreasPipe } from '../../../_pipes/target-areas.pipe';
     templateUrl: './workout-info.component.html',
     styleUrls: ['./workout-info.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ProgressSpinnerModule, ResistanceTypePipe, TargetAreasPipe]
+    imports: [NzSpinModule, ResistanceTypePipe, TargetAreasPipe]
 })
 export class WorkoutInfoComponent implements OnInit {
 

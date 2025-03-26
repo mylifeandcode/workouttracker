@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutInfoComponent } from './workout-info.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 describe('WorkoutInfoComponent', () => {
   let component: WorkoutInfoComponent;
@@ -11,6 +12,11 @@ describe('WorkoutInfoComponent', () => {
     imports: [WorkoutInfoComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
+  .overrideComponent(
+    WorkoutInfoComponent, {
+      remove: { imports: [ NzSpinModule ] },
+      add: { schemas: [ CUSTOM_ELEMENTS_SCHEMA ] }
+    })
     .compileComponents();
   });
 

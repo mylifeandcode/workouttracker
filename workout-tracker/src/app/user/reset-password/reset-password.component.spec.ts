@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 
 import { ResetPasswordComponent } from './reset-password.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 class AuthServiceMock {
   validatePasswordResetCode = 
@@ -38,6 +39,11 @@ describe('ResetPasswordComponent', () => {
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
+    .overrideComponent(
+      ResetPasswordComponent, {
+        remove: { imports: [ NzSpinModule ] },
+        add: { schemas: [ CUSTOM_ELEMENTS_SCHEMA ] }
+      })
     .compileComponents();
 
     fixture = TestBed.createComponent(ResetPasswordComponent);

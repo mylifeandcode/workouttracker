@@ -24,6 +24,7 @@ import { DurationComponent } from '../_shared/duration/duration.component';
 import { ToastModule } from 'primeng/toast';
 import { AccordionModule } from 'primeng/accordion';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -242,7 +243,8 @@ describe('WorkoutComponent', () => {
               CountdownTimerComponent,
               DurationComponent,
               ToastModule,
-              AccordionModule
+              AccordionModule,
+              NzSpinModule
             ]
           },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }

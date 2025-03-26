@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveF
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../_services/auth/auth.service';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 interface ILoginForm {
   username: FormControl<string>;
@@ -14,7 +14,7 @@ interface ILoginForm {
     selector: 'wt-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, RouterLink, ProgressSpinnerModule]
+    imports: [FormsModule, ReactiveFormsModule, RouterLink, NzSpinModule]
 })
 export class LoginComponent {
   private _formBuilder = inject(FormBuilder);

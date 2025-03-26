@@ -14,7 +14,7 @@ import { IWorkoutFormExercise } from './_interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from './_interfaces/i-workout-form-exercise-set';
 import { forEach } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ToastModule } from 'primeng/toast';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
 import { DialogModule } from 'primeng/dialog';
@@ -35,7 +35,7 @@ interface IWorkoutForm {
     templateUrl: './workout.component.html',
     styleUrls: ['./workout.component.scss'],
     imports: [
-        ProgressSpinnerModule,
+        NzSpinModule,
         ToastModule,
         FormsModule,
         ReactiveFormsModule,

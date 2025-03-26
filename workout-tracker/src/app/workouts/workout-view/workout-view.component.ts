@@ -5,7 +5,7 @@ import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { forEach } from 'lodash-es';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 
@@ -13,7 +13,7 @@ import { DatePipe, KeyValuePipe } from '@angular/common';
     selector: 'wt-workout-view',
     templateUrl: './workout-view.component.html',
     styleUrls: ['./workout-view.component.scss'],
-    imports: [ProgressSpinnerModule, ExecutedExercisesComponent, DatePipe, KeyValuePipe]
+    imports: [NzSpinModule, ExecutedExercisesComponent, DatePipe, KeyValuePipe]
 })
 export class WorkoutViewComponent implements OnInit {
   private _activatedRoute = inject(ActivatedRoute);

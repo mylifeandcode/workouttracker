@@ -7,7 +7,7 @@ import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { ExerciseInWorkout } from '../_models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgClass } from '@angular/common';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { InputSwitchModule } from 'primeng/inputswitch';
@@ -35,7 +35,7 @@ interface IWorkoutEditForm {
     selector: 'wt-workout-edit',
     templateUrl: './workout-edit.component.html',
     styleUrls: ['./workout-edit.component.scss'],
-    imports: [ProgressSpinnerModule, FormsModule, ReactiveFormsModule, NgClass, SelectOnFocusDirective, InputSwitchModule, DialogModule, ExerciseListMiniComponent]
+    imports: [NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, SelectOnFocusDirective, InputSwitchModule, DialogModule, ExerciseListMiniComponent]
 })
 export class WorkoutEditComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);

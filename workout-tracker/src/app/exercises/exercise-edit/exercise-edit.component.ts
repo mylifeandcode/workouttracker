@@ -10,7 +10,7 @@ import { finalize } from 'rxjs/operators';
 import { some, find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { ResistanceType } from 'app/workouts/workout/_enums/resistance-type';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgClass, KeyValuePipe } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
 import { InputSwitchModule } from 'primeng/inputswitch';
@@ -44,7 +44,7 @@ interface IExerciseEditForm {
     templateUrl: './exercise-edit.component.html',
     styleUrls: ['./exercise-edit.component.scss'],
     imports: [
-        ProgressSpinnerModule, FormsModule, ReactiveFormsModule, NgClass, TooltipModule, InputSwitchModule,
+        NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, TooltipModule, InputSwitchModule,
         KeyValuePipe, InsertSpaceBeforeCapitalPipe
     ]
 })

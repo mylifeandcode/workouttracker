@@ -5,7 +5,7 @@ import { AuthService } from 'app/core/_services/auth/auth.service';
 import { CustomValidators } from 'app/core/_validators/custom-validators';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 interface IResetPasswordForm {
   password: FormControl<string>;
@@ -16,7 +16,7 @@ interface IResetPasswordForm {
     selector: 'wt-reset-password',
     templateUrl: './reset-password.component.html',
     styleUrls: ['./reset-password.component.scss'],
-    imports: [ProgressSpinnerModule, RouterLink, FormsModule, ReactiveFormsModule]
+    imports: [NzSpinModule, RouterLink, FormsModule, ReactiveFormsModule]
 })
 export class ResetPasswordComponent implements OnInit {
   private _activatedRoute = inject(ActivatedRoute);
