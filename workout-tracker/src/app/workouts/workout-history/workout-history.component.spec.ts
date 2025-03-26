@@ -10,7 +10,6 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { SharedModule } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
-import { ButtonDirective } from 'primeng/button';
 import { DatePipe } from '@angular/common';
 
 class MockExecutedWorkoutService {
@@ -37,7 +36,7 @@ describe('WorkoutHistoryComponent', () => {
     .overrideComponent(
       WorkoutHistoryComponent,
       {
-        remove: { imports: [NzTableModule, SharedModule, RouterLink, TooltipModule, DialogModule, ButtonDirective, DatePipe] },
+        remove: { imports: [NzTableModule, SharedModule, RouterLink, TooltipModule, DialogModule, DatePipe] },
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       }
     )

@@ -12,7 +12,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NgStyle } from '@angular/common';
-import { ButtonDirective } from 'primeng/button';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -93,7 +92,7 @@ describe('ResistanceBandsComponent', () => {
         remove: 
         { 
           imports: [
-            ToastModule, NzTableModule, NzIconModule, NgStyle, ConfirmDialogModule, ButtonDirective, NzModalModule, NzButtonModule
+            ToastModule, NzTableModule, NzIconModule, NgStyle, ConfirmDialogModule, NzModalModule, NzButtonModule
           ] 
         }, //To resolve error: "TypeError: Cannot read properties of undefined (reading 'subscribe')", even though all dependencies were provided
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
