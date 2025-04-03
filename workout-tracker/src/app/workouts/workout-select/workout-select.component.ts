@@ -1,19 +1,21 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
-import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../_models/workout-dto';
 import { WorkoutService } from '../_services/workout.service';
 import { sortBy } from 'lodash-es';
 import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.component';
-import { SelectModule, SelectChangeEvent } from 'primeng/select';
+import { FormsModule } from '@angular/forms';
+
+//TODO: Refactor to take the workouts as an input and emit events, because we need this in more than
+//one place
 
 @Component({
     selector: 'wt-workout-select',
     templateUrl: './workout-select.component.html',
     styleUrls: ['./workout-select.component.scss'],
-    imports: [SelectModule, RecentWorkoutsComponent]
+    imports: [FormsModule, RecentWorkoutsComponent]
 })
 export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   private _workoutService = inject(WorkoutService);
@@ -31,10 +33,10 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
 
   readonly showHeading = input<boolean>(true);
 
-  readonly navigateOnSelect = input<boolean>(true);
+  //readonly navigateOnSelect = input<boolean>(true);
 
-  @Output()
-  workoutSelected: EventEmitter<number> = new EventEmitter<number>();
+  //@Output()
+  //workoutSelected: EventEmitter<number> = new EventEmitter<number>();
 
   @Output()
   workoutsLoaded: EventEmitter<void> = new EventEmitter<void>();
@@ -54,6 +56,7 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   //PUBLIC FIELDS
   public workouts: WorkoutDTO[] = [];
   public planningForLater: boolean = true;
+  public selectedWorkout: WorkoutDTO | null = null; // This will hold the currently selected workout if any
   //END PUBLIC FIELDS
 
   //PRIVATE FIELDS
@@ -71,14 +74,18 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   }
   */
 
-  public workoutSelectChange(event: SelectChangeEvent): void {
-    if (this.navigateOnSelect()) {
-      if (this.planningForLater)
-        this._router.navigate([`workouts/plan-for-later/${event.value}`]);
-      else
-        this._router.navigate([`workouts/plan/${event.value.publicId}`]);
+  public workoutSelectChange(event: any): void {
+    //console.log("Workout selected (target.value): ", event.target.value);
+    //console.log('selectedWorkout: ', this.selectedWorkout);
+    if (this.selectedWorkout) {
+      //if (this.navigateOnSelect()) {
+        if (this.planningForLater)
+          this._router.navigate([`workouts/plan-for-later/${this.selectedWorkout.id}`]);
+        else
+          this._router.navigate([`workouts/plan/${this.selectedWorkout.id}`]);
+      //}
+      //this.workoutSelected.emit(this.selectedWorkout.id);
     }
-    this.workoutSelected.emit(event.value.publicId);
   }
 
   private subscribeToUser(): void {

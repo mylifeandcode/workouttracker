@@ -1,10 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { SoundService } from 'app/core/_services/sound/sound.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
     selector: 'wt-system',
     templateUrl: './system.component.html',
+    imports: [ NzSpinModule ],
     styleUrls: ['./system.component.scss']
 })
 export class SystemComponent {

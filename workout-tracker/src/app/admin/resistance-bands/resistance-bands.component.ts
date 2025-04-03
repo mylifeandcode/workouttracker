@@ -38,8 +38,6 @@ export class ResistanceBandsComponent implements OnInit {
   //private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {};
   public editCache: { [key: number]: { edit: boolean; data: ResistanceBand } } = {};
 
-  //Table edit code based on PrimeNg's example at https://www.primefaces.org/primeng/showcase/#/table/edit
-
   public ngOnInit(): void {
     this.getResistanceBandData(true);
   }

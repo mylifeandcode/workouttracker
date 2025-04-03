@@ -6,14 +6,14 @@ import { Dictionary } from 'lodash';
 import { PickListMoveToSourceEvent, PickListMoveToTargetEvent, PickListModule } from 'primeng/picklist';
 import { SharedModule } from 'primeng/api';
 import { NgStyle } from '@angular/common';
-import { TooltipModule } from 'primeng/tooltip';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
 
 @Component({
     selector: 'wt-resistance-band-select',
     templateUrl: './resistance-band-select.component.html',
     styleUrls: ['./resistance-band-select.component.scss'],
-    imports: [PickListModule, SharedModule, NgStyle, TooltipModule, ResistanceAmountPipe]
+    imports: [PickListModule, SharedModule, NgStyle, NzToolTipModule, ResistanceAmountPipe]
 })
 export class ResistanceBandSelectComponent implements OnInit, OnChanges {
 

@@ -4,6 +4,7 @@ import { SoundService } from 'app/core/_services/sound/sound.service';
 import { SystemComponent } from './system.component';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 
 class MockSoundService {
@@ -37,6 +38,9 @@ describe('SystemComponent', () => {
     .overrideComponent( //Special thanks to these guys FTW: https://www.angulararchitects.io/en/blog/testing-angular-standalone-components/
       SystemComponent, 
       { 
+        remove: {
+          imports: [NzSpinModule] // Remove the original imports
+        },
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       })
     .compileComponents();

@@ -3,6 +3,7 @@ import { ResistanceBandSelectComponent } from './resistance-band-select.componen
 import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { PickListMoveToTargetEvent } from 'primeng/picklist';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 @Pipe({
     name: 'resistanceAmount',
@@ -24,6 +25,10 @@ describe('ResistanceBandSelectComponent', () => {
         MockResistanceAmountPipe],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
+    .overrideComponent(ResistanceBandSelectComponent, {
+      remove: { imports: [NzToolTipModule] },
+      add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] } // This is to avoid issues with the NgStyle directive in the component template
+    })
     .compileComponents();
   });
 

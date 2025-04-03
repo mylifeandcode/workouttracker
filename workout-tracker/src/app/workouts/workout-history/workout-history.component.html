@@ -25,7 +25,7 @@
               <td>{{executedWorkout.endDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
               <td>
                 @if (executedWorkout.journal) {
-                  <span (click)="openNotesModal(executedWorkout.journal)" pTooltip="{{executedWorkout.journal}}">
+                  <span (click)="openNotesModal(executedWorkout.journal)" nz-tooltip nzTooltipTitle="{{executedWorkout.journal}}">
                     Notes
                   </span>
                 }

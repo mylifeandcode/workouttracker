@@ -8,7 +8,7 @@ import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-d
 import { of } from 'rxjs';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { SharedModule } from 'primeng/api';
-import { TooltipModule } from 'primeng/tooltip';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { DatePipe } from '@angular/common';
 
@@ -36,7 +36,7 @@ describe('WorkoutHistoryComponent', () => {
     .overrideComponent(
       WorkoutHistoryComponent,
       {
-        remove: { imports: [NzTableModule, SharedModule, RouterLink, TooltipModule, DialogModule, DatePipe] },
+        remove: { imports: [NzTableModule, SharedModule, RouterLink, NzToolTipModule , DialogModule, DatePipe] },
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       }
     )

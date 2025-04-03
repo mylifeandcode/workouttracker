@@ -5,7 +5,7 @@ import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { SharedModule } from 'primeng/api';
 import { RouterLink } from '@angular/router';
-import { TooltipModule } from 'primeng/tooltip';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { DatePipe } from '@angular/common';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -16,7 +16,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
     selector: 'wt-workout-history',
     templateUrl: './workout-history.component.html',
     styleUrls: ['./workout-history.component.scss'],
-    imports: [NzTableModule, SharedModule, RouterLink, TooltipModule, DialogModule, DatePipe]
+    imports: [NzTableModule, SharedModule, RouterLink, NzToolTipModule, DialogModule, DatePipe]
 })
 export class WorkoutHistoryComponent implements OnInit {
   private _executedWorkoutService = inject(ExecutedWorkoutService);

@@ -2,13 +2,10 @@ import { HttpResponse } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
-import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 
 import { ResistanceBandsComponent } from './resistance-bands.component';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NgStyle } from '@angular/common';
@@ -29,20 +26,8 @@ class ResistanceBandServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(getResistanceBandInventory()));
   add = jasmine.createSpy('add').and.returnValue(of(new ResistanceBand()));
   update = jasmine.createSpy('update').and.returnValue(of(new ResistanceBand()));
-  deleteById = jasmine.createSpy('deleteById').and.returnValue(of(new HttpResponse<string>()));
-}
-
-class MessageServiceMock {
-  add = jasmine.createSpy('add');
-}
-
-class ConfirmationServiceMock {
-  confirm =
-    jasmine.createSpy('confirm')
-      .and.callFake((confirmation: Confirmation) => {
-        confirmation?.accept?.(); //Because confirmation could be undefined
-      });
-  //.and.returnValue(this);
+  //deleteById = jasmine.createSpy('deleteById').and.returnValue(of(new HttpResponse<string>()));
+  delete = jasmine.createSpy('delete').and.returnValue(of(new HttpResponse<string>()));
 }
 
 describe('ResistanceBandsComponent', () => {
@@ -56,14 +41,6 @@ describe('ResistanceBandsComponent', () => {
         {
           provide: ResistanceBandService,
           useClass: ResistanceBandServiceMock
-        },
-        {
-          provide: MessageService,
-          useClass: MessageServiceMock
-        },
-        {
-          provide: ConfirmationService,
-          useClass: ConfirmationServiceMock
         },
         {
           provide: NzMessageService,
@@ -92,7 +69,7 @@ describe('ResistanceBandsComponent', () => {
         remove: 
         { 
           imports: [
-            ToastModule, NzTableModule, NzIconModule, NgStyle, ConfirmDialogModule, NzModalModule, NzButtonModule
+            NzTableModule, NzIconModule, NgStyle, NzModalModule, NzButtonModule
           ] 
         }, //To resolve error: "TypeError: Cannot read properties of undefined (reading 'subscribe')", even though all dependencies were provided
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
@@ -161,7 +138,7 @@ describe('ResistanceBandsComponent', () => {
     component.deleteBand(band);
 
     //ASSERT
-    expect(resistanceBandService.deleteById).toHaveBeenCalledWith(band.publicId);
+    expect(resistanceBandService.delete).toHaveBeenCalledWith(band.id);
     expect(messageService.create).toHaveBeenCalledWith('success', 'Resistance band deleted.');
     expect(resistanceBandService.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refresh after deletion
 
@@ -171,8 +148,8 @@ describe('ResistanceBandsComponent', () => {
 
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
-    const messageService = TestBed.inject(MessageService);
     const modalService = TestBed.inject(NzModalService);
+    const messageService = TestBed.inject(NzMessageService);
     modalService.confirm = jasmine.createSpy('confirm').and.callFake(() => { });
     const band = new ResistanceBand();
     band.id = 5;
@@ -181,10 +158,9 @@ describe('ResistanceBandsComponent', () => {
     component.deleteBand(band);
 
     //ASSERT
-    expect(resistanceBandService.deleteById).not.toHaveBeenCalled();
-    expect(messageService.add).not.toHaveBeenCalled();
+    expect(resistanceBandService.delete).not.toHaveBeenCalled();
     expect(resistanceBandService.getAll).toHaveBeenCalledTimes(1); //Just the initial call
-
+    expect(messageService.create).not.toHaveBeenCalled();
   });
 
   it('should open modal', () => {

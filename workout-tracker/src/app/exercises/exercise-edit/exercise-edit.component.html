@@ -8,7 +8,7 @@
   @if (loading) {
     <div class="row">
       <div class="offset-md-5 col-md-1">
-        <nz-spin></nz-spin>
+        <nz-spin nzSize="large"></nz-spin>
       </div>
     </div>
   } @else if(exerciseForm) {
@@ -85,9 +85,10 @@
             <div class="col-3">
               <div class="form-check end-to-end-selection">
                 <input type="checkbox" class="form-check-input" formControlName="endToEnd" id="endToEnd">
-                <label class="form-check-label" for="endToEnd">End to End</label> <small style="margin-left: 12px;"
-                  pTooltip="''End to End'' specifies that the exercise is performed with one end of the band clipped to a ring, and the other hand clipped to a handle, as opposed to looped through an anchor."
-                  tooltipPosition="right">(What's this?)</small>
+                <label class="form-check-label" for="endToEnd">End to End</label> 
+                <small style="margin-left: 12px;"
+                  nz-tooltip nzTooltipTitle="''End to End'' specifies that the exercise is performed with one end of the band clipped to a ring, and the other hand clipped to a handle, as opposed to looped through an anchor."
+                  nzTooltipPlacement="right">(What's this?)</small>
               </div>
             </div>
           }

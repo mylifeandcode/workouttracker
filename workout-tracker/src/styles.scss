@@ -134,3 +134,28 @@ select.ng-invalid.ng-touched {
 .ant-table {
   font-size: 16px;
 }
+
+select {
+  //font-size: 1.2rem; // Makes text larger for readability
+  padding: 8px 10px; // Ensures enough space inside without cutting off text
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  
+  // Prevents text from being cut off
+  line-height: 1.5; 
+  min-height: 44px; // Ensures it’s tall enough (good for touch screens)
+
+  vertical-align: middle;
+  display: inline-block;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+}
+
+
