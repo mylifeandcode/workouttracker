@@ -135,7 +135,7 @@ select.ng-invalid.ng-touched {
   font-size: 16px;
 }
 
-select {
+input, select {
   //font-size: 1.2rem; // Makes text larger for readability
   padding: 8px 10px; // Ensures enough space inside without cutting off text
   border: 2px solid #ccc;

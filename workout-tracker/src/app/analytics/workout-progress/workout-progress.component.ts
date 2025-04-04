@@ -13,7 +13,6 @@ import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ChartModule } from 'primeng/chart';
-import { SelectModule } from 'primeng/select';
 
 interface IWorkoutProgressForm {
   workoutId: FormControl<string | null>,
@@ -25,8 +24,7 @@ interface IWorkoutProgressForm {
     selector: 'wt-workout-progress',
     templateUrl: './workout-progress.component.html',
     styleUrls: ['./workout-progress.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, SelectModule, SelectOnFocusDirective, NzSpinModule, 
-      NzTabsModule, ChartModule]
+    imports: [ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule, ChartModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
   private _analyticsService = inject(AnalyticsService);
