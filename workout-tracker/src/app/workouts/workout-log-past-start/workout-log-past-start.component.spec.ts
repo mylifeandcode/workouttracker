@@ -3,13 +3,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
-import { CalendarModule } from 'primeng/calendar';
 import { of } from 'rxjs';
 import { WorkoutDTO } from '../_models/workout-dto';
 import { WorkoutService } from '../_services/workout.service';
-
 import { WorkoutLogPastStartComponent } from './workout-log-past-start.component';
-import { DropdownModule } from 'primeng/dropdown';
 
 class WorkoutServiceMock {
   getFilteredSubset = jasmine.createSpy('getFilteredSubset').and.returnValue(of(this.getWorkouts()));

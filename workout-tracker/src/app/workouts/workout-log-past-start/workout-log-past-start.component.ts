@@ -11,7 +11,6 @@ import { SharedModule } from 'primeng/api';
 import { NgClass } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { DurationComponent } from '../_shared/duration/duration.component';
-import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 
 interface ILogPastWorkoutForm {
@@ -24,7 +23,7 @@ interface ILogPastWorkoutForm {
     selector: 'wt-workout-log-past-start',
     templateUrl: './workout-log-past-start.component.html',
     styleUrls: ['./workout-log-past-start.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, SelectModule, DatePickerModule, SharedModule, NgClass, DialogModule, DurationComponent]
+    imports: [FormsModule, ReactiveFormsModule, DatePickerModule, SharedModule, NgClass, DialogModule, DurationComponent]
 })
 export class WorkoutLogPastStartComponent implements OnInit {
   private _formBuilder = inject(FormBuilder);

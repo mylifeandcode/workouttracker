@@ -9,8 +9,14 @@
     <div class="row a-little-space">
       <div class="col-2">Select a Workout</div>
       <div class="col-3">
-        <p-select [options]="workouts" formControlName="workoutPublicId" optionLabel="name" optionValue="id"
-          placeholder="Choose a Workout"></p-select>
+        <select formControlName="workoutPublicId">
+          <option value="" disabled selected>Choose a Workout</option>
+          @for(workout of workouts; track workout.id) {
+            <option [value]="workout.id">
+              {{ workout.name }}
+            </option>
+          }
+        </select>
       </div>
       <div class="col-7">
         @if (formGroup.controls.workoutPublicId.dirty && formGroup.controls.workoutPublicId.errors) {
