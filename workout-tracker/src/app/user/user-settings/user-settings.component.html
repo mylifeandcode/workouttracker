@@ -10,14 +10,14 @@
           <span class="headroom"><small><strong>IMPORTANT: </strong>By enabling suggestions, you acknowledge suggestions are followed at your own risk.</small></span>
         </div>
         <div class="col-4">
-          <p-inputSwitch id="useRecommendationEngine" formControlName="recommendationsEnabled" styleClass="align-middle" (onChange)="recommendationEngineToggled($event)"></p-inputSwitch>
+          <nz-switch formControlName="recommendationsEnabled" id="useRecommendationEngine" (ngModelChange)="recommendationEngineToggled()" class="align-middle" />
         </div>
       </div>
-      @if (recommendationEngineEnabled) {
+      @if (userSettingsForm.controls.recommendationsEnabled.value) {
         <div class="row">
           <div class="col-12">
             <h5 class="headroom">Suggestion Settings</h5>
-            @for (settings of userSettingsForm.controls.repSettings.controls; track $index) {
+            @for (settings of userSettingsForm.controls.repSettings?.controls; track $index) {
               <wt-user-rep-settings [repSettingsFormGroup]="settings"></wt-user-rep-settings>
             }
           </div>

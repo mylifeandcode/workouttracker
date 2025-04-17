@@ -8,7 +8,10 @@ import { RouterLink } from '@angular/router';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { DatePipe } from '@angular/common';
-import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTableModule, NzTableQueryParams, NzTableFilterFn } from 'ng-zorro-antd/table';
+import { FormsModule } from '@angular/forms';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 //TODO: This is similar to WorkoutsListComponent. Find a way to consolidate/reuse code.
 
@@ -16,7 +19,10 @@ import { NzTableModule } from 'ng-zorro-antd/table';
     selector: 'wt-workout-history',
     templateUrl: './workout-history.component.html',
     styleUrls: ['./workout-history.component.scss'],
-    imports: [NzTableModule, SharedModule, RouterLink, NzToolTipModule, DialogModule, DatePipe]
+    imports: [
+      SharedModule, RouterLink, DatePipe, FormsModule,
+      NzTableModule, NzDropDownModule, NzToolTipModule, NzIconModule, DialogModule 
+    ]
 })
 export class WorkoutHistoryComponent implements OnInit {
   private _executedWorkoutService = inject(ExecutedWorkoutService);
@@ -27,13 +33,16 @@ export class WorkoutHistoryComponent implements OnInit {
   public executedWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public showNotesModal: boolean = false;
   public notes: string = '';
-  public cols: any = [
-    { field: 'name', header: 'Name' }
-  ];
+  public workoutNameFilter: string = '';
+  public workoutNameFilterVisible: boolean = false;
 
   public ngOnInit(): void {
     this.loading = true;
     this.getExecutedWorkouts(0, null);
+  }
+
+  public filterByName($event: Event): void {
+    console.log('filterByName: ', $event);
   }
 
   public getExecutedWorkouts(first: number, nameContains: string | null): void {
@@ -52,8 +61,14 @@ export class WorkoutHistoryComponent implements OnInit {
       });
   }
 
-  public getExecutedWorkoutsLazy(event: any): void {
-    this.getExecutedWorkouts(event.first, null);
+  public onQueryParamsChange(params: NzTableQueryParams): void {
+    console.log(params);
+    const { pageSize, pageIndex, sort, filter } = params;
+    const currentSort = sort.find(item => item.value !== null);
+    const sortField = (currentSort && currentSort.key) || null;
+    const sortOrder = (currentSort && currentSort.value) || null;
+    //this.loadDataFromServer(pageIndex, pageSize, sortField, sortOrder, filter);
+    this.getExecutedWorkouts((pageIndex - 1) * pageSize, null);
   }
 
   public openNotesModal(notes: string): void {
@@ -65,4 +80,13 @@ export class WorkoutHistoryComponent implements OnInit {
     this.showNotesModal = false;
   }
 
+  reset(): void {
+    this.workoutNameFilter = '';
+    this.search();
+  }
+
+  search(): void {
+    this.workoutNameFilterVisible = false;
+    this.getExecutedWorkouts(0, this.workoutNameFilter);
+  }
 }

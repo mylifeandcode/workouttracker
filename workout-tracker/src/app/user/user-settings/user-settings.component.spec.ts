@@ -91,13 +91,30 @@ describe('UserSettingsComponent', () => {
   });
 
   it('should toggle recommendations setting on', () => {
-    component.recommendationEngineToggled({ originalEvent: null, checked: true });
+    //ARRANGE
+    component.userSettingsForm?.removeControl('repSettings');
+    component.userSettingsForm?.controls.recommendationsEnabled.setValue(false);
+
+    //ACT
+    component.userSettingsForm?.controls.recommendationsEnabled.setValue(true); //Kinda goofy, but let's immediately change back to true for this
+    component.recommendationEngineToggled();
+
+    //ASSERT
     expect(component.userSettingsForm?.controls.recommendationsEnabled.value).toBeTruthy();
+    expect(component.userSettingsForm?.controls.repSettings).toBeDefined();
   });
 
   it('should toggle recommendations setting off', () => {
-    component.recommendationEngineToggled({ originalEvent: null, checked: false });
+    //ARRANGE
+    //Nothing extra to do for this one
+
+    //ACT
+    component.userSettingsForm?.controls.recommendationsEnabled.setValue(false);
+    component.recommendationEngineToggled();
+
+    //ASSERT
     expect(component.userSettingsForm?.controls.recommendationsEnabled.value).toBeFalsy();
+    expect(component.userSettingsForm?.controls.repSettings).not.toBeDefined();
   });
 
   it('should save settings', () => {
@@ -111,11 +128,14 @@ describe('UserSettingsComponent', () => {
     const maxTimedSetReps = 70;
     const minRepetitionSetReps = 6;
     const maxRepetitionSetReps = 10;
-    component.userSettingsForm?.controls.repSettings.controls[0].controls.minReps.setValue(minRepetitionSetReps);
-    component.userSettingsForm?.controls.repSettings.controls[0].controls.maxReps.setValue(maxRepetitionSetReps);
-    component.userSettingsForm?.controls.repSettings.controls[1].controls.duration.setValue(duration);
-    component.userSettingsForm?.controls.repSettings.controls[1].controls.minReps.setValue(minTimedSetReps);
-    component.userSettingsForm?.controls.repSettings.controls[1].controls.maxReps.setValue(maxTimedSetReps);
+
+    //The use of ! is okay here, we know the form has been created
+    component.userSettingsForm!.controls.repSettings!.controls[0].controls.minReps.setValue(minRepetitionSetReps);
+    component.userSettingsForm!.controls.repSettings!.controls[0].controls.maxReps.setValue(maxRepetitionSetReps);
+    component.userSettingsForm!.controls.repSettings!.controls[1].controls.duration.setValue(duration);
+    component.userSettingsForm!.controls.repSettings!.controls[1].controls.minReps.setValue(minTimedSetReps);
+    component.userSettingsForm!.controls.repSettings!.controls[1].controls.maxReps.setValue(maxTimedSetReps);
+    
     expectedSavedUser.settings = new UserSettings();
     expectedSavedUser.settings.repSettings = new Array<UserMinMaxReps>();
     expectedSavedUser.settings.repSettings.push(new UserMinMaxReps());

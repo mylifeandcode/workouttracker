@@ -8,9 +8,18 @@
         [nzShowSizeChanger]="true"
         [nzTotal]="totalRecords"
         [nzPageSize]="10"
-        [nzLoading]="loading">
+        [nzLoading]="loading"
+        (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
           <tr>
+            <!--
+            <th nzCustomFilter>
+              Workout Name
+              <nz-filter-trigger [(nzVisible)]="workoutNameFilterVisible" [nzActive]="workoutNameFilter.length > 0" [nzDropdownMenu]="menu">
+                <nz-icon nzType="search" />
+              </nz-filter-trigger>              
+            </th>
+            -->
             <th>Workout Name</th>
             <th>Start Date/Time</th>
             <th>End Date/Time</th>
@@ -18,7 +27,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (executedWorkout of dt.data; track executedWorkout) {
+          @for (executedWorkout of dt.data; track executedWorkout.id) {
             <tr class="workout-history">
               <td><a routerLink="/workouts/history/view/{{executedWorkout.id}}">{{executedWorkout.name}}</a></td>
               <td>{{executedWorkout.startDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
@@ -64,3 +73,13 @@
     <button (click)="closeNotesModal()"></button>
   </ng-template>
 </p-dialog>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box">
+      <input type="text" nz-input placeholder="Workout Name" [(ngModel)]="workoutNameFilter" />
+      <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">Search</button>
+      <button nz-button nzSize="small" (click)="reset()">Reset</button>
+    </div>
+  </div>
+</nz-dropdown-menu>

@@ -25,7 +25,7 @@
           <label for="exerciseId" class="exercise-label">Exercise</label>
           <select id="exerciseId" formControlName="exerciseId">
             <option [ngValue]="null" disabled selected>Please Select</option>
-            @for(metric of metrics[0].exerciseMetrics; track metric.exerciseId) {
+            @for(metric of metrics[0].exerciseMetrics; track $index) {
               <option [ngValue]="metric.exerciseId">
                 {{ metric.name }}
               </option>

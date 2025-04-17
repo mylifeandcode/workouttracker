@@ -3,21 +3,22 @@ import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-indi
 import { ResistanceBandSelection } from '../../_models/resistance-band-selection';
 import { sumBy, groupBy, some } from 'lodash-es';
 import { Dictionary } from 'lodash';
-import { PickListMoveToSourceEvent, PickListMoveToTargetEvent, PickListModule } from 'primeng/picklist';
+import { PickListMoveToSourceEvent, PickListMoveToTargetEvent } from 'primeng/picklist';
 import { SharedModule } from 'primeng/api';
 import { NgStyle } from '@angular/common';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
 
+import { NzTransferModule, TransferItem } from 'ng-zorro-antd/transfer'
 @Component({
     selector: 'wt-resistance-band-select',
     templateUrl: './resistance-band-select.component.html',
     styleUrls: ['./resistance-band-select.component.scss'],
-    imports: [PickListModule, SharedModule, NgStyle, NzToolTipModule, ResistanceAmountPipe]
+    imports: [NzTransferModule, SharedModule, NzToolTipModule, ResistanceAmountPipe]
 })
 export class ResistanceBandSelectComponent implements OnInit, OnChanges {
 
-  public readonly resistanceBandInventory = input<ResistanceBandIndividual[]>([]);
+  public readonly resistanceBandInventory = input.required<ResistanceBandIndividual[]>();
 
   public readonly exerciseUsesBilateralResistance = input<boolean>(false);
 
@@ -30,6 +31,7 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
   public selectedBands: ResistanceBandIndividual[] = [];
   public availableBands: ResistanceBandIndividual[] = [];
   public showBilateralValidationFailure: boolean = false;
+  public allBands: TransferItem[] = [];
 
   public get maxAvailableResistance(): number {
     return sumBy(this.availableBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
@@ -47,7 +49,21 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
     this.validateForBilateralResistance();
   }
 
-  ngOnInit(): void {}
+  public ngOnInit(): void {
+    this.allBands = this.resistanceBandInventory().map((band: ResistanceBandIndividual) => {
+      return {
+        key: band,
+        title: band.color,
+        description: band.maxResistanceAmount.toString(),
+        direction: 'left',
+        disabled: false,
+        checked: false
+      };
+    });
+
+    console.log('ResistanceBandSelectComponent.ngOnInit() - this.allBands: ', this.allBands);
+    //this.setBandAllocation(this.exerciseUsesBilateralResistance() ? '' : 'Black,Blue,Green,Red,Yellow', this._doubleMaxResistanceAmounts);
+  }
 
   /**
    * Sets the arrays of selected and available bands based on a comma-separated string of 

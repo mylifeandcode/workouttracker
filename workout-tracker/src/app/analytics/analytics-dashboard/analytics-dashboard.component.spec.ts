@@ -13,7 +13,12 @@ class AnalyticsServiceMock {
       .and.returnValue(of(<ExecutedWorkoutsSummary>{
         totalLoggedWorkouts: 12,
         firstLoggedWorkoutDateTime: new Date(2022, 4, 5),
-        targetAreasWithWorkoutCounts: new Map<string, number>()
+        targetAreasWithWorkoutCounts: new Map<string, number>([
+          ['Chest', 2],
+          ['Back', 3],
+          ['Legs', 5],
+          ['Arms', 2]
+        ])
       }));
 }
 

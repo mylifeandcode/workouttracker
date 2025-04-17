@@ -11,31 +11,28 @@ import { find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { MessageService } from 'primeng/api';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { RouterLink } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 
 interface IUserSettingsForm {
   recommendationsEnabled: FormControl<boolean>;
-  repSettings: FormArray<FormGroup<IRepSettingsForm>>;
-}
-
-interface IToggleEvent { //TODO: Determine if PrimeNg has a type for this (probably not)
-  originalEvent: any; 
-  checked: boolean
+  repSettings?: FormArray<FormGroup<IRepSettingsForm>>;
 }
 
 @Component({
-    selector: 'wt-user-settings',
-    templateUrl: './user-settings.component.html',
-    styleUrls: ['./user-settings.component.scss'],
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        InputSwitchModule,
-        UserRepSettingsComponent,
-        RouterLink,
-        ToastModule
-    ]
+  selector: 'wt-user-settings',
+  templateUrl: './user-settings.component.html',
+  styleUrls: ['./user-settings.component.scss'],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    InputSwitchModule,
+    NzSwitchModule,
+    UserRepSettingsComponent,
+    RouterLink,
+    ToastModule
+  ]
 })
 export class UserSettingsComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _authService = inject(AuthService);
@@ -43,12 +40,10 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   private _formBuilder = inject(FormBuilder);
   private _messageService = inject(MessageService);
 
-
   public loading: boolean = true;
   public user: User | undefined; //Undefined until retrieved from service
   public userSettingsForm: FormGroup<IUserSettingsForm> | undefined; //undefined until user info is retrieved
   public saving: boolean = false;
-  public recommendationEngineEnabled: boolean = false;
 
   public ngOnInit(): void {
     if (!this._authService.userPublicId) return;
@@ -62,14 +57,26 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
       )
       .subscribe((user: User) => {
         this.user = user;
-        this.recommendationEngineEnabled = user.settings.recommendationsEnabled;
         this.createForm();
       });
   }
 
-  public recommendationEngineToggled(event: IToggleEvent): void { //TODO: Get or specify a concrete type for the event param
-    this.userSettingsForm?.controls.recommendationsEnabled.setValue(event.checked);
-    this.recommendationEngineEnabled = event.checked;
+  public recommendationEngineToggled(): void {
+    //TODO: Re-evaluate. May be better to just subscribe to the valueChanges Observable and use that to trigger this method.
+    if (this.userSettingsForm?.controls.recommendationsEnabled.value == true) {
+      if (this.user) {
+        if (this.user.settings.repSettings == null || this.user.settings.repSettings.length === 0) {
+          this.user.settings.repSettings = []; // Ensure it's an empty array if null or undefined
+          this.user.settings.repSettings.push(...[new UserMinMaxReps(), new UserMinMaxReps()]); // Add at least one default entry
+          this.user.settings.repSettings[0].setType = 0; // Default to Repetition for the first entry
+          this.user.settings.repSettings[1].setType = 1; // Default to Timed for the second entry
+        }
+      }
+      this.userSettingsForm.controls.repSettings = this.getRepSettingsForm();
+    }
+    else {
+      this.userSettingsForm!.removeControl('repSettings'); // Remove the repSettings control if recommendations are disabled
+    }
   }
 
   public saveSettings(): void {
@@ -79,8 +86,8 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
     this.saving = true;
     this._userService.update(this.user)
       .pipe(
-        finalize(() => { 
-          this.saving = false; 
+        finalize(() => {
+          this.saving = false;
           this.userSettingsForm?.markAsPristine();
         }),
         catchError((err) => {
@@ -89,7 +96,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
         })
       )
       .subscribe((user: User) => {
-        this._messageService.add({severity:'success', summary: 'Successful', detail: 'Settings saved.', life: 3000});
+        this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Settings saved.', life: 3000 });
       });
   }
 
@@ -109,14 +116,14 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   private getRepSettingsForm(): FormArray<FormGroup<IRepSettingsForm>> {
     const formArray = new FormArray<FormGroup<IRepSettingsForm>>([]);
     if (this.user) {
-      this.user.settings.repSettings.forEach((value: UserMinMaxReps) => { 
+      this.user.settings.repSettings.forEach((value: UserMinMaxReps) => {
         const formGroup: FormGroup<IRepSettingsForm> = this._formBuilder.group<IRepSettingsForm>({
-          repSettingsId: new FormControl<number>(value.id, { nonNullable: true}),
-          setType: new FormControl<number>(value.setType, { nonNullable: true}),
-          duration: new FormControl<number | null>(value.duration, [ Validators.min((value.setType == 1 ? 1 : 0)), isRequired((value.setType == 1)) ]),
-          minReps: new FormControl<number>(value.minReps, { nonNullable: true, validators: [ Validators.min(1), isRequired(true) ] }),
-          maxReps: new FormControl<number>(value.maxReps, { nonNullable: true, validators: [ Validators.min(1) ] })
-        }, { validators: [ firstControlValueMustBeLessThanOrEqualToSecond('minReps', 'maxReps') ] });
+          repSettingsId: new FormControl<number>(value.id, { nonNullable: true }),
+          setType: new FormControl<number>(value.setType, { nonNullable: true }),
+          duration: new FormControl<number | null>(value.duration, [Validators.min((value.setType == 1 ? 1 : 0)), isRequired((value.setType == 1))]),
+          minReps: new FormControl<number>(value.minReps, { nonNullable: true, validators: [Validators.min(1), isRequired(true)] }),
+          maxReps: new FormControl<number>(value.maxReps, { nonNullable: true, validators: [Validators.min(1)] })
+        }, { validators: [firstControlValueMustBeLessThanOrEqualToSecond('minReps', 'maxReps')] });
 
         formArray.push(formGroup);
       });
@@ -133,12 +140,12 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
     //Update rep settings
 
     this.user.settings.repSettings.forEach((value: UserMinMaxReps) => {
-      if(this.userSettingsForm !== undefined) { //Needed to keep the linter happy, despite the above check
-        const formGroup = find(this.userSettingsForm.controls.repSettings.controls, (group: FormGroup<IRepSettingsForm>) => 
+      if (this.userSettingsForm !== undefined) { //Needed to keep the linter happy, despite the above check
+        const formGroup = find(this.userSettingsForm.controls.repSettings?.controls, (group: FormGroup<IRepSettingsForm>) =>
           group.controls.repSettingsId.value == value.id
         );
 
-        if(!formGroup) { //This should never happen
+        if (!formGroup) { //This should never happen
           window.alert('Error retrieving rep settings values to save. Please contact the system administrator.');
           return;
         }
