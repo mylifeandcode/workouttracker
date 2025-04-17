@@ -5,11 +5,10 @@ import { sumBy, groupBy, some } from 'lodash-es';
 import { Dictionary } from 'lodash';
 import { PickListMoveToSourceEvent, PickListMoveToTargetEvent } from 'primeng/picklist';
 import { SharedModule } from 'primeng/api';
-import { NgStyle } from '@angular/common';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
-
 import { NzTransferModule, TransferItem } from 'ng-zorro-antd/transfer'
+
 @Component({
     selector: 'wt-resistance-band-select',
     templateUrl: './resistance-band-select.component.html',
@@ -18,8 +17,8 @@ import { NzTransferModule, TransferItem } from 'ng-zorro-antd/transfer'
 })
 export class ResistanceBandSelectComponent implements OnInit, OnChanges {
 
+  //INPUTS
   public readonly resistanceBandInventory = input.required<ResistanceBandIndividual[]>();
-
   public readonly exerciseUsesBilateralResistance = input<boolean>(false);
 
   @Output()
@@ -31,7 +30,7 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
   public selectedBands: ResistanceBandIndividual[] = [];
   public availableBands: ResistanceBandIndividual[] = [];
   public showBilateralValidationFailure: boolean = false;
-  public allBands: TransferItem[] = [];
+  public transferItems: TransferItem[] = [];
 
   public get maxAvailableResistance(): number {
     return sumBy(this.availableBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
@@ -46,13 +45,18 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('CHANGE!');
     this.validateForBilateralResistance();
   }
 
   public ngOnInit(): void {
-    this.allBands = this.resistanceBandInventory().map((band: ResistanceBandIndividual) => {
+    /*
+    console.log("INVENTORY: ", this.resistanceBandInventory());
+    this.allBands = this.resistanceBandInventory()
+      .sort((a, b) => a.maxResistanceAmount - b.maxResistanceAmount)
+      .map((band: ResistanceBandIndividual, index: number) => {
       return {
-        key: band,
+        key: index,
         title: band.color,
         description: band.maxResistanceAmount.toString(),
         direction: 'left',
@@ -60,8 +64,9 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
         checked: false
       };
     });
+    */
 
-    console.log('ResistanceBandSelectComponent.ngOnInit() - this.allBands: ', this.allBands);
+    //console.log('ResistanceBandSelectComponent.ngOnInit() - this.allBands: ', this.allBands);
     //this.setBandAllocation(this.exerciseUsesBilateralResistance() ? '' : 'Black,Blue,Green,Red,Yellow', this._doubleMaxResistanceAmounts);
   }
 
@@ -93,6 +98,8 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
     this.selectedBands = [];
     this.availableBands = [...this.resistanceBandInventory()];
 
+    console.log('allocating');
+
     const selectedBandColors: string[] = (selectedBands ? selectedBands.split(',') : []);
     //selectedBandColors.forEach((value: string) => value.trim());
 
@@ -107,6 +114,30 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
           this.availableBands.splice(indexInAvailableArray, 1);
       }
     });
+
+    this.selectedBands.forEach((band: ResistanceBandIndividual, index: number) => {
+      this.transferItems.push({
+        key: `S${index}`,
+        title: band.color,
+        description: band.maxResistanceAmount.toString(),
+        direction: 'right',
+        disabled: false,
+        checked: false
+      });
+    });
+
+    this.availableBands.forEach((band: ResistanceBandIndividual, index: number) => {
+      this.transferItems.push({
+        key: `A${index}`,
+        title: band.color,
+        description: band.maxResistanceAmount.toString(),
+        direction: 'left',
+        disabled: false,
+        checked: false
+      });
+    });
+
+    console.log('transferItems: ', this.transferItems);
 
   }
 

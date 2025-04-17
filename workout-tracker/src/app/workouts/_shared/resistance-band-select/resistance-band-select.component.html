@@ -15,8 +15,11 @@
 </p-pickList>
 -->
 <nz-transfer
-  [nzDataSource]="allBands"
+  [nzDataSource]="transferItems"
   [nzTitles]="['Available', 'Selected']"
+  nzNotFoundContent="No bands"
+  nzItemUnit="band"
+  nzItemsUnit="bands"
 ></nz-transfer>
 
 <div class="row">
