@@ -97,6 +97,7 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
     this._doubleMaxResistanceAmounts = doubleMaxResistanceAmounts;
     this.selectedBands = [];
     this.availableBands = [...this.resistanceBandInventory()];
+    const transferItemsTemp: TransferItem[] = []; //Needed because, apparently, nz-transfer uses OnPush change detection
 
     console.log('allocating');
 
@@ -116,7 +117,7 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
     });
 
     this.selectedBands.forEach((band: ResistanceBandIndividual, index: number) => {
-      this.transferItems.push({
+      transferItemsTemp.push({
         key: `S${index}`,
         title: band.color,
         description: band.maxResistanceAmount.toString(),
@@ -127,7 +128,7 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
     });
 
     this.availableBands.forEach((band: ResistanceBandIndividual, index: number) => {
-      this.transferItems.push({
+      transferItemsTemp.push({
         key: `A${index}`,
         title: band.color,
         description: band.maxResistanceAmount.toString(),
@@ -137,7 +138,7 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
       });
     });
 
-    console.log('transferItems: ', this.transferItems);
+    this.transferItems = transferItemsTemp;
 
   }
 
