@@ -1,33 +1,23 @@
-<!--
-<p-pickList 
-  [source]="availableBands" [target]="selectedBands" 
-  sourceHeader="Available" targetHeader="Selected" 
-  [showSourceControls]="false" [showTargetControls]="false"
-  (onMoveToSource)="bandDeselected($event)"
-  (onMoveToTarget)="bandSelected($event)"
-  [sourceStyle]="{'min-width':'200px', 'max-height':'200px'}" [targetStyle]="{'min-width':'200px', 'max-height':'200px'}"
-  [dragdrop]="true">
-  <ng-template let-resistanceBand pTemplate="item">
-      <div>
-        <span [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
-      </div>
-  </ng-template>
-</p-pickList>
--->
 <nz-transfer
   [nzDataSource]="transferItems"
   [nzTitles]="['Available', 'Selected']"
+  [nzRender]="bandItem"
   nzNotFoundContent="No bands"
   nzItemUnit="band"
   nzItemsUnit="bands"
-></nz-transfer>
+  (nzChange)="onTransferChange($event)">
+</nz-transfer>
+
+<ng-template #bandItem let-item>
+  <span [innerHTML]="item.title | resistanceBandColor"></span>
+</ng-template>
 
 <div class="row">
   <div class="col-6">
-    Max Available Resistance: {{maxAvailableResistance | resistanceAmount}}
+    Max Available Resistance: {{maxAvailableResistance() | resistanceAmount}}
   </div>
   <div class="col-6">
-    Max Selected Resistance: {{maxSelectedResistance | resistanceAmount}}
+    Max Selected Resistance: {{maxSelectedResistance() | resistanceAmount}}
   </div>
 </div>
 <div class="row">
@@ -46,4 +36,4 @@
 }
 <button class="btn btn-warning pull-right mild-margins" (click)="cancel()">Cancel</button>
 <span style="width:100px"></span>
-<button class="btn btn-success pull-right" [disabled]="selectedBands.length == 0 || exerciseUsesBilateralResistance() && showBilateralValidationFailure" (click)="ok()">OK</button>
+<button class="btn btn-success pull-right" [disabled]="maxSelectedResistance() == 0 || exerciseUsesBilateralResistance() && showBilateralValidationFailure" (click)="ok()">OK</button>

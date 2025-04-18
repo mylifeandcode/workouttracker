@@ -1,83 +1,90 @@
-import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges, input } from '@angular/core';
+import { Component, EventEmitter, OnChanges, Output, Signal, SimpleChanges, WritableSignal, computed, input, signal } from '@angular/core';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
-import { ResistanceBandSelection } from '../../_models/resistance-band-selection';
-import { sumBy, groupBy, some } from 'lodash-es';
 import { Dictionary } from 'lodash';
-import { PickListMoveToSourceEvent, PickListMoveToTargetEvent } from 'primeng/picklist';
-import { SharedModule } from 'primeng/api';
+import { groupBy, some } from 'lodash-es';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTransferModule, TransferChange, TransferItem } from 'ng-zorro-antd/transfer';
+import { SharedModule } from 'primeng/api';
+import { ResistanceBandColorPipe } from "../../../shared/pipes/resistance-band-color.pipe";
+import { ResistanceBandSelection } from '../../_models/resistance-band-selection';
 import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
-import { NzTransferModule, TransferItem } from 'ng-zorro-antd/transfer'
 
 @Component({
     selector: 'wt-resistance-band-select',
     templateUrl: './resistance-band-select.component.html',
     styleUrls: ['./resistance-band-select.component.scss'],
-    imports: [NzTransferModule, SharedModule, NzToolTipModule, ResistanceAmountPipe]
+    imports: [SharedModule, NzTransferModule, NzToolTipModule, ResistanceAmountPipe, ResistanceBandColorPipe]
 })
-export class ResistanceBandSelectComponent implements OnInit, OnChanges {
+export class ResistanceBandSelectComponent implements OnChanges {
 
   //INPUTS
   public readonly resistanceBandInventory = input.required<ResistanceBandIndividual[]>();
   public readonly exerciseUsesBilateralResistance = input<boolean>(false);
 
+
+  //OUTPUTS
   @Output()
   public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
 
   @Output()
   public cancelClicked: EventEmitter<void> = new EventEmitter<void>();
 
-  public selectedBands: ResistanceBandIndividual[] = [];
-  public availableBands: ResistanceBandIndividual[] = [];
+
+  //SIGNALS
+  public availableTransferItems: WritableSignal<TransferItem[]> = signal([]);
+  public selectedTransferItems: WritableSignal<TransferItem[]> = signal([]);
+  
+  public maxAvailableResistance: Signal<number> = computed(() => {
+    let total: number = 0;
+
+    this.availableTransferItems().forEach(item => {
+      total += this.resistanceBandInventory().find(band => band.color == item.title)?.maxResistanceAmount || 0;
+    });
+
+    if (this._doubleMaxResistanceAmounts) {
+      total *= 2;
+    }
+
+    return total;
+  });
+
+  public maxSelectedResistance: Signal<number> = computed(() => {
+    let total: number = 0;
+
+    this.selectedTransferItems().forEach(item => {
+      total += this.resistanceBandInventory().find(band => band.color == item.title)?.maxResistanceAmount || 0;
+    });
+
+    if (this._doubleMaxResistanceAmounts) {
+      total *= 2;
+    }
+
+    return total;
+  });
+
+
+  //PUBLIC VARIABLES
   public showBilateralValidationFailure: boolean = false;
   public transferItems: TransferItem[] = [];
 
-  public get maxAvailableResistance(): number {
-    return sumBy(this.availableBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
-  }
 
-  public get maxSelectedResistance(): number {
-    return sumBy(this.selectedBands, 'maxResistanceAmount') * (this._doubleMaxResistanceAmounts ? 2 : 1);
-  }
+  //PROTECTED VARIABLES
+  protected _doubleMaxResistanceAmounts: boolean = false;
 
-  private _doubleMaxResistanceAmounts: boolean = false;
 
-  constructor() { }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('CHANGE!');
+  //PUBLIC METHODS
+  public ngOnChanges(changes: SimpleChanges): void {
     this.validateForBilateralResistance();
-  }
-
-  public ngOnInit(): void {
-    /*
-    console.log("INVENTORY: ", this.resistanceBandInventory());
-    this.allBands = this.resistanceBandInventory()
-      .sort((a, b) => a.maxResistanceAmount - b.maxResistanceAmount)
-      .map((band: ResistanceBandIndividual, index: number) => {
-      return {
-        key: index,
-        title: band.color,
-        description: band.maxResistanceAmount.toString(),
-        direction: 'left',
-        disabled: false,
-        checked: false
-      };
-    });
-    */
-
-    //console.log('ResistanceBandSelectComponent.ngOnInit() - this.allBands: ', this.allBands);
-    //this.setBandAllocation(this.exerciseUsesBilateralResistance() ? '' : 'Black,Blue,Green,Red,Yellow', this._doubleMaxResistanceAmounts);
   }
 
   /**
    * Sets the arrays of selected and available bands based on a comma-separated string of 
    * resistance band colors
    * 
-   * @param selectedBands A string of resistance band colors currently selected
+   * @param selectedBandsDelimited A string of resistance band colors currently selected
    * @param doubleMaxResistanceAmounts Specifies whether or not band resistances should be doubled. This should be true when the exercise does not use the band end-to-end without an anchor.
    */
-  public setBandAllocation(selectedBands: string, doubleMaxResistanceAmounts: boolean): void {
+  public setBandAllocation(selectedBandsDelimited: string, doubleMaxResistanceAmounts: boolean): void {
 
     /*
     At one point, I'd gone down the path of making this private and having it called by 
@@ -95,41 +102,39 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
     */
 
     this._doubleMaxResistanceAmounts = doubleMaxResistanceAmounts;
-    this.selectedBands = [];
-    this.availableBands = [...this.resistanceBandInventory()];
+
+    const selectedBands: ResistanceBandIndividual[] = [];
+    const availableBands: ResistanceBandIndividual[] = [...this.resistanceBandInventory()];
     const transferItemsTemp: TransferItem[] = []; //Needed because, apparently, nz-transfer uses OnPush change detection
 
-    const selectedBandColors: string[] = (selectedBands ? selectedBands.split(',') : []);
-    //selectedBandColors.forEach((value: string) => value.trim());
+    const selectedBandColors: string[] = (selectedBandsDelimited ? selectedBandsDelimited.split(',') : []);
 
     selectedBandColors.forEach((bandColor: string) => {
       //Find first match in array of available bands
       bandColor = bandColor.trim();
-      const foundBand: ResistanceBandIndividual | undefined = this.availableBands.find(band => band.color == bandColor);
+      const foundBand: ResistanceBandIndividual | undefined = availableBands.find(band => band.color == bandColor);
       if (foundBand) {
-        this.selectedBands.push(foundBand);
-        const indexInAvailableArray = this.availableBands.findIndex(band => band.color == bandColor);
+        selectedBands.push(foundBand);
+        const indexInAvailableArray = availableBands.findIndex(band => band.color == bandColor);
         if (indexInAvailableArray > -1)
-          this.availableBands.splice(indexInAvailableArray, 1);
+          availableBands.splice(indexInAvailableArray, 1);
       }
     });
 
-    this.selectedBands.forEach((band: ResistanceBandIndividual, index: number) => {
+    selectedBands.forEach((band: ResistanceBandIndividual, index: number) => {
       transferItemsTemp.push({
         key: `S${index}`,
         title: band.color,
-        description: band.maxResistanceAmount.toString(),
         direction: 'right',
         disabled: false,
         checked: false
       });
     });
 
-    this.availableBands.forEach((band: ResistanceBandIndividual, index: number) => {
+    availableBands.forEach((band: ResistanceBandIndividual, index: number) => {
       transferItemsTemp.push({
         key: `A${index}`,
         title: band.color,
-        description: band.maxResistanceAmount.toString(),
         direction: 'left',
         disabled: false,
         checked: false
@@ -137,27 +142,11 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
     });
 
     this.transferItems = transferItemsTemp;
-
+    this.allocateTransferItems();
   }
 
   public ok(): void {
-
-    const selection = new ResistanceBandSelection();
-
-    selection.makeup =
-      this.selectedBands
-        .map((band: ResistanceBandIndividual) => band.color)
-        .join(',');
-
-    selection.maxResistanceAmount = this.maxSelectedResistance;
-
-    //Pretty sure the amounts have already been doubled if need be by this point
-    /*
-    if(this._doubleMaxResistanceAmounts)
-    selection.maxResistanceAmount = selection.maxResistanceAmount * 2;
-    */
-
-    this.okClicked.emit(selection);
+    this.okClicked.emit(this.getResistanceBandSelection());
   }
 
   public cancel(): void {
@@ -165,24 +154,48 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
     this.cancelClicked.emit();
   }
 
-  public bandSelected(event: PickListMoveToTargetEvent): void {
+  public onTransferChange($event: TransferChange): void {
+    this.allocateTransferItems();
     this.validateForBilateralResistance();
-  }
+  }  
 
-  public bandDeselected(event: PickListMoveToSourceEvent): void {
-    this.validateForBilateralResistance();
-  }
 
+  //PRIVATE METHODS
   private validateForBilateralResistance(): void {
     if (this.exerciseUsesBilateralResistance()) {
-      if (this.selectedBands.length == 0) {
+      //console.log('BILATERAL');
+      if (this.selectedTransferItems().length <= 1) {
         this.showBilateralValidationFailure = true;
       }
       else {
-        const bandsByColor: Dictionary<ResistanceBandIndividual[]> = groupBy(this.selectedBands, band => band.color);
+        const bandsByColor: Dictionary<TransferItem[]> = groupBy(this.selectedTransferItems(), band => band.color);
         this.showBilateralValidationFailure = some(bandsByColor, array => array.length % 2 !== 0);
       }
     }
+  }
+
+  private allocateTransferItems(): void {
+    this.availableTransferItems.set(this.transferItems.filter(item => item.direction === 'left'));
+    this.selectedTransferItems.set(this.transferItems.filter(item => item.direction === 'right'));
+    //console.log('Available: ', this.availableTransferItems());
+    //console.log('Selected: ', this.selectedTransferItems());
+  }
+
+  private getResistanceBandSelection(): ResistanceBandSelection {
+    const selection = new ResistanceBandSelection();
+    this.transferItems
+     .filter(item => item.direction === 'right')
+     .forEach(item => {
+       const band = this.resistanceBandInventory().find(band => band.color == item.title);
+       if (band) {
+         selection.makeup += `${band.color},`;
+       }
+     });
+ 
+     selection.makeup = selection.makeup.slice(0, -1); //Remove trailing comma
+     selection.maxResistanceAmount = this.maxSelectedResistance();
+
+     return selection;
   }
 
 }

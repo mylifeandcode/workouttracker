@@ -63,10 +63,10 @@ export class ResistanceBandsComponent implements OnInit {
 
   public saveEdit(id: number): void {
     const index = this.resistanceBands.findIndex(item => item.id === id);
-    console.log('band:', this.resistanceBands[index]);
-    console.log('editCache:', this.editCache[id].data);
+    //console.log('band:', this.resistanceBands[index]);
+    //console.log('editCache:', this.editCache[id].data);
     Object.assign(this.resistanceBands[index], this.editCache[id].data);
-    console.log('updated band:', this.resistanceBands[index]);
+    //console.log('updated band:', this.resistanceBands[index]);
 
     this.editCache[id].edit = false;
     this.updateResistanceBand(this.editCache[id].data);
