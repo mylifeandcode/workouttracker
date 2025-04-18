@@ -99,8 +99,6 @@ export class ResistanceBandSelectComponent implements OnInit, OnChanges {
     this.availableBands = [...this.resistanceBandInventory()];
     const transferItemsTemp: TransferItem[] = []; //Needed because, apparently, nz-transfer uses OnPush change detection
 
-    console.log('allocating');
-
     const selectedBandColors: string[] = (selectedBands ? selectedBands.split(',') : []);
     //selectedBandColors.forEach((value: string) => value.trim());
 
