@@ -9,11 +9,9 @@ import { catchError, finalize } from 'rxjs/operators';
 import { IRepSettingsForm, UserRepSettingsComponent } from '../user-rep-settings/user-rep-settings.component';
 import { find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
-import { MessageService } from 'primeng/api';
-import { InputSwitchModule } from 'primeng/inputswitch';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { RouterLink } from '@angular/router';
-import { ToastModule } from 'primeng/toast';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 interface IUserSettingsForm {
   recommendationsEnabled: FormControl<boolean>;
@@ -27,18 +25,16 @@ interface IUserSettingsForm {
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    InputSwitchModule,
     NzSwitchModule,
     UserRepSettingsComponent,
-    RouterLink,
-    ToastModule
+    RouterLink
   ]
 })
 export class UserSettingsComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _authService = inject(AuthService);
   private _userService = inject(UserService);
   private _formBuilder = inject(FormBuilder);
-  private _messageService = inject(MessageService);
+  private _messageService = inject(NzMessageService);
 
   public loading: boolean = true;
   public user: User | undefined; //Undefined until retrieved from service
@@ -96,7 +92,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
         })
       )
       .subscribe((user: User) => {
-        this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Settings saved.', life: 3000 });
+        this._messageService.success('Settings saved.');
       });
   }
 

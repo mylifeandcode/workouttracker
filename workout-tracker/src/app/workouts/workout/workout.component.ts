@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
-import { MessageService } from 'primeng/api';
 import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
 import { ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
@@ -15,7 +14,7 @@ import { IWorkoutFormExerciseSet } from './_interfaces/i-workout-form-exercise-s
 import { forEach } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { ToastModule } from 'primeng/toast';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
 import { DialogModule } from 'primeng/dialog';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
@@ -36,7 +35,6 @@ interface IWorkoutForm {
     styleUrls: ['./workout.component.scss'],
     imports: [
         NzSpinModule,
-        ToastModule,
         FormsModule,
         ReactiveFormsModule,
         WorkoutExerciseComponent,
@@ -47,15 +45,14 @@ interface IWorkoutForm {
         DurationComponent,
         DatePipe,
         AccordionModule
-    ] //,
-    //providers: [MessageService]
+    ]
 })
 export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);
   private _formBuilder = inject(FormBuilder);
   private _executedWorkoutService = inject(ExecutedWorkoutService);
   private _resistanceBandService = inject(ResistanceBandService);
-  private _messageService = inject(MessageService);
+  private _messageService = inject(NzMessageService);
   private _router = inject(Router);
 
 
@@ -212,7 +209,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     this._executedWorkoutPublicId = this._route.snapshot.params['executedWorkoutPublicId'];
 
     if (this._executedWorkoutPublicId == null) {
-      this._messageService.add({ severity: 'error', summary: 'Error', detail: 'executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.', closable: true });
+      this._messageService.error('executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.');
     }
     else {
       this.setupWorkout(this._executedWorkoutPublicId);
@@ -374,13 +371,13 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     if (!this._executedWorkout) return;
 
     this.saving = true;
-    this._messageService.add({ severity: 'info', summary: 'Saving', detail: 'Saving workout...', closable: false });
+    this._messageService.info('Saving workout...', { nzDuration: 0 });
     this._executedWorkoutService
       .update(this._executedWorkout)
       .pipe(finalize(() => { this.saving = false; }))
       .subscribe({
         next: (workout: ExecutedWorkoutDTO) => {
-          this._messageService.clear();
+          this._messageService.remove();
           this._executedWorkout = workout;
           if (completed) {
             if (this.isLoggingPastWorkout) {
@@ -391,20 +388,20 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
               this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
               this.workoutCompleted = true;
               this.endDateTime = this._executedWorkout.endDateTime;
-              this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Workout completed!', life: 5000 });
+              this._messageService.success('Workout completed!');
               this.workoutForm.markAsPristine();
             }
           }
           else {
             if (!this.startDateTime) this.startDateTime = this._executedWorkout.startDateTime;
-            this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Progress updated!', life: 1000 });
+            this._messageService.success('Progress updated!');
           }
           this.activeAccordionTab = this.getExerciseInProgress();
         },
         error: (error: any) => {
           this.setErrorInfo(error, "An error occurred saving workout information. See console for details.");
           //TODO: Fix the styling for this!
-          this._messageService.add({ severity: 'error', summary: 'Error!', detail: error.message, life: 5000 });
+          this._messageService.error(error.message);
         }
       });
   }

@@ -7,13 +7,12 @@ import { User } from 'app/core/_models/user';
 import { UserMinMaxReps } from 'app/core/_models/user-min-max-reps';
 import { UserSettings } from 'app/core/_models/user-settings';
 import { UserService } from 'app/core/_services/user/user.service';
-import { InputSwitchModule } from 'primeng/inputswitch';
 import { of } from 'rxjs';
 
 import { UserSettingsComponent } from './user-settings.component';
-import { MessageService } from 'primeng/api';
-import { RouterModule } from '@angular/router';
-import { ToastModule } from 'primeng/toast';
+import { RouterLink, RouterModule } from '@angular/router';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { UserRepSettingsComponent } from '../user-rep-settings/user-rep-settings.component';
 
 class MockAuthService {
   userId: number = 0;
@@ -39,8 +38,8 @@ class MockUserService {
   update = jasmine.createSpy('update').and.callFake((user: User) => of(user));
 }
 
-class MessageServiceMock {
-  add = jasmine.createSpy('add');
+class NzMessageServiceMock {
+  success = jasmine.createSpy('success');
 }
 
 describe('UserSettingsComponent', () => {
@@ -60,13 +59,12 @@ describe('UserSettingsComponent', () => {
           useClass: MockUserService
         },
         {
-          provide: MessageService,
-          useClass: MessageServiceMock
+          provide: NzMessageService,
+          useClass: NzMessageServiceMock
         }
       ],
       imports: [
         ReactiveFormsModule,
-        InputSwitchModule, //Importing this module because using CUSTOM_ELEMENTS_SCHEMA wasn't working due to the input switch's formControlName assignment
         UserSettingsComponent,
         RouterModule.forRoot([])
       ]
@@ -74,7 +72,12 @@ describe('UserSettingsComponent', () => {
       .overrideComponent(
         UserSettingsComponent,
         {
-          remove: { imports: [ToastModule] }, //Was getting an error about an undefined object before doing this, despite importing everything the component did
+          remove: { 
+            imports: [
+              UserRepSettingsComponent,
+              RouterLink
+            ] 
+          },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         })
       .compileComponents();
@@ -120,7 +123,7 @@ describe('UserSettingsComponent', () => {
   it('should save settings', () => {
     //ARRANGE
     const userService = TestBed.inject(UserService);
-    const messageService = TestBed.inject(MessageService);
+    const messageService = TestBed.inject(NzMessageService);
 
     const expectedSavedUser = new User();
     const duration = 240;
@@ -157,6 +160,6 @@ describe('UserSettingsComponent', () => {
 
     //ASSERT
     expect(userService.update).toHaveBeenCalledWith(expectedSavedUser);
-    expect(messageService.add).toHaveBeenCalledOnceWith({ severity: 'success', summary: 'Successful', detail: 'Settings saved.', life: 3000 });
+    expect(messageService.success).toHaveBeenCalledOnceWith('Settings saved.');
   });
 });

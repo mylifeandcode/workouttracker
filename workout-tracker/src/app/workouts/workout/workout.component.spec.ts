@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
 import { WorkoutComponent } from './workout.component';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
@@ -15,16 +14,15 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Output, input } from '
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { MessageService } from 'primeng/api';
 import { groupBy } from 'lodash-es';
 import { Dictionary } from 'lodash';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { DurationComponent } from '../_shared/duration/duration.component';
-import { ToastModule } from 'primeng/toast';
 import { AccordionModule } from 'primeng/accordion';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -142,9 +140,11 @@ class ActivatedRouteMock {
   }
 }
 
-class MessageServiceMock {
-  add = jasmine.createSpy('add');
-  clear = jasmine.createSpy('clear');
+class NzMessageServiceMock {
+  success = jasmine.createSpy('success');
+  info = jasmine.createSpy('info');
+  error = jasmine.createSpy('error');
+  remove = jasmine.createSpy('remove');
 }
 //END SERVICE MOCK CLASSES ////////////////////////////////////////////////////
 
@@ -226,8 +226,8 @@ describe('WorkoutComponent', () => {
           useClass: ActivatedRouteMock
         },
         {
-          provide: MessageService,
-          useClass: MessageServiceMock
+          provide: NzMessageService,
+          useClass: NzMessageServiceMock
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -242,7 +242,6 @@ describe('WorkoutComponent', () => {
               ResistanceBandSelectComponent,
               CountdownTimerComponent,
               DurationComponent,
-              ToastModule,
               AccordionModule,
               NzSpinModule
             ]
@@ -577,13 +576,13 @@ describe('WorkoutComponent', () => {
     const activatedRoute = TestBed.inject(ActivatedRoute);
     activatedRoute.snapshot.params['executedWorkoutPublicId'] = null;
 
-    const messageService = TestBed.inject(MessageService);
+    const messageService = TestBed.inject(NzMessageService);
 
     //ACT
     component.ngOnInit(); //Need to reinitialize due to changed mock
 
     //ASSERT
-    expect(messageService.add).toHaveBeenCalledOnceWith({ severity: 'error', summary: 'Error', detail: 'executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.', closable: true });
+    expect(messageService.error).toHaveBeenCalledOnceWith('executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.');
   });
 
 });
