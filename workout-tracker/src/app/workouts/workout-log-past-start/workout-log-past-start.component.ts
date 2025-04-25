@@ -11,7 +11,6 @@ import { SharedModule } from 'primeng/api';
 import { formatDate, NgClass } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { DurationComponent } from '../_shared/duration/duration.component';
-import { DatePickerModule } from 'primeng/datepicker';
 
 interface ILogPastWorkoutForm {
   workoutPublicId: FormControl<string | null>; 
