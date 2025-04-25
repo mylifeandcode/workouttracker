@@ -82,8 +82,8 @@ describe('WorkoutLogPastStartComponent', () => {
     component.formGroup.patchValue(
       {
         workoutPublicId: 'some-guid-1',
-        startDateTime: new Date(2022, 3, 4, 12, 0, 0),
-        endDateTime: new Date(2022, 3, 4, 12, 30, 15)
+        startDateTime: '2022-03-04T12:00',
+        endDateTime: '2022-03-04T12:30'
       }
     );
 
@@ -92,7 +92,8 @@ describe('WorkoutLogPastStartComponent', () => {
 
     //ASSERT
     expect(router.navigate)
-      .toHaveBeenCalledWith(['/workouts/plan-for-past/some-guid-1/2022-04-04T16:00:00.000Z/2022-04-04T16:30:15.000Z']);
+      //.toHaveBeenCalledWith(['/workouts/plan-for-past/some-guid-1/2022-04-04T16:00/2022-04-04T16:30']);
+      .toHaveBeenCalledWith(['/workouts/plan-for-past/some-guid-1/2022-03-04T12:00/2022-03-04T12:30']);
 
   });
 
@@ -101,7 +102,7 @@ describe('WorkoutLogPastStartComponent', () => {
     component.formGroup.patchValue(
       {
         workoutPublicId: 'some-guid-1',
-        startDateTime: new Date(2022, 3, 4, 12, 0, 0)
+        startDateTime: '2022-03-04T12:00'
       }
     );
 
@@ -109,7 +110,7 @@ describe('WorkoutLogPastStartComponent', () => {
     component.durationModalAccepted(3600);
 
     //ASSERT
-    expect(component.formGroup.controls.endDateTime.value).toEqual(new Date(2022, 3, 4, 13, 0, 0));
+    expect(component.formGroup.controls.endDateTime.value).toEqual('2022-03-04T13:00');
   });
 
 });

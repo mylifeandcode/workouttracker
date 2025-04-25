@@ -8,22 +8,22 @@ import { WorkoutDTO } from '../_models/workout-dto';
 import { WorkoutService } from '../_services/workout.service';
 import { sortBy } from 'lodash-es';
 import { SharedModule } from 'primeng/api';
-import { NgClass } from '@angular/common';
+import { formatDate, NgClass } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { DurationComponent } from '../_shared/duration/duration.component';
 import { DatePickerModule } from 'primeng/datepicker';
 
 interface ILogPastWorkoutForm {
   workoutPublicId: FormControl<string | null>; 
-  startDateTime: FormControl<Date | null>; 
-  endDateTime: FormControl<Date | null>; 
+  startDateTime: FormControl<string | null>; //The datetime-local format of the input element requires the value in a specific STRING format, so I can't use a Date here.
+  endDateTime: FormControl<string | null>; //Ditto (comment above).
 }
 
 @Component({
     selector: 'wt-workout-log-past-start',
     templateUrl: './workout-log-past-start.component.html',
     styleUrls: ['./workout-log-past-start.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, DatePickerModule, SharedModule, NgClass, DialogModule, DurationComponent]
+    imports: [FormsModule, ReactiveFormsModule, SharedModule, NgClass, DialogModule, DurationComponent]
 })
 export class WorkoutLogPastStartComponent implements OnInit {
   private _formBuilder = inject(FormBuilder);
@@ -37,11 +37,11 @@ export class WorkoutLogPastStartComponent implements OnInit {
   some strong-typing). This surprises me, as properties are essentially functions, and we should 
   avoid embedding function calls within templates.
   */
-  get startDateTime(): FormControl<Date | null> {
+  get startDateTime(): FormControl<string | null> {
     return this.formGroup.controls.startDateTime;
   } 
 
-  get endDateTime(): FormControl<Date | null> {
+  get endDateTime(): FormControl<string | null> {
     return this.formGroup.controls.endDateTime;
   } 
 
@@ -61,7 +61,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
   public proceedToWorkoutEntry(): void {
     if (this.formGroup.controls.startDateTime.value && this.formGroup.controls.endDateTime.value) {
       this._router.navigate(
-        [`/workouts/plan-for-past/${this.formGroup.controls.workoutPublicId.value}/${this.formGroup.controls.startDateTime.value.toISOString()}/${this.formGroup.controls.endDateTime.value.toISOString()}`] 
+        [`/workouts/plan-for-past/${this.formGroup.controls.workoutPublicId.value}/${this.formGroup.controls.startDateTime.value}/${this.formGroup.controls.endDateTime.value}`] 
       );
     }
   }
@@ -78,7 +78,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
     const endDate = new Date(this.formGroup.controls.startDateTime.value);
     endDate.setSeconds(duration);
 
-    this.formGroup.patchValue({ endDateTime: endDate });
+    this.formGroup.patchValue({ endDateTime: formatDate(endDate, "yyyy-MM-ddTHH:mm", "en-US") });
   }
 
   public durationModalCancelled(): void {
@@ -88,8 +88,8 @@ export class WorkoutLogPastStartComponent implements OnInit {
   private buildForm(): FormGroup<ILogPastWorkoutForm> {
     return this._formBuilder.group<ILogPastWorkoutForm>({
       workoutPublicId: new FormControl<string | null>(null, { validators: Validators.required}), 
-      startDateTime: new FormControl<Date | null>(null, { validators: Validators.required}), 
-      endDateTime: new FormControl<Date | null>(null, { validators: Validators.required})
+      startDateTime: new FormControl<string | null>(null, { validators: Validators.required}), 
+      endDateTime: new FormControl<string | null>(null, { validators: Validators.required})
     }, { validators: CustomValidators.compareDatesValidator('startDateTime', 'endDateTime', true) });
   }
 
