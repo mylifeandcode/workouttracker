@@ -19,7 +19,7 @@ export class SystemComponent {
 
   public testToast(): void {
     //this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Toasty!', life: 3000 });
-    this._messageService.create('success', 'Successful');
+    this._messageService.success('Successful', { nzDuration: 0 });
   }
 
 }

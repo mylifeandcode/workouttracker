@@ -12,7 +12,7 @@ class MockSoundService {
 }
 
 class MockMessageService {
-  create = jasmine.createSpy('create');
+  success = jasmine.createSpy('success');
 }
 
 describe('SystemComponent', () => {
@@ -63,6 +63,6 @@ describe('SystemComponent', () => {
   it('should test the toast', () => {
     const messageService = TestBed.inject(NzMessageService);
     component.testToast();
-    expect(messageService.create).toHaveBeenCalled();
+    expect(messageService.success).toHaveBeenCalled();
   });
 });

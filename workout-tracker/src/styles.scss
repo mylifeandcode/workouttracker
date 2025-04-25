@@ -122,19 +122,6 @@ select.ng-invalid.ng-touched {
   flex-direction: row-reverse;
 }
 
-.ant-spin-nested-loading > div > .ant-spin .ant-spin-text {
-  font-size: 16px;
-}
-
-.ant-table-pagination {
-  justify-content: center !important;
-  font-size: 16px;
-}
-
-.ant-table {
-  font-size: 16px;
-}
-
 input, select {
   //font-size: 1.2rem; // Makes text larger for readability
   padding: 8px 10px; // Ensures enough space inside without cutting off text

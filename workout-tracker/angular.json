@@ -29,7 +29,8 @@
               }              
             ],
             "styles": [
-              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css", 
+              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
+              "src/ant-overrides.scss", 
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",               
               "src/styles.scss", 
               "./node_modules/primeicons/primeicons.css", 

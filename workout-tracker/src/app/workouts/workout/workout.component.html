@@ -14,8 +14,6 @@
     </div>
   }
 
-  <p-toast position="center"></p-toast>
-
   @if (workoutForm && !loading) {
     <form [formGroup]="workoutForm" novalidate>
       <fieldset [disabled]="saving || (workoutCompleted && !isLoggingPastWorkout)">

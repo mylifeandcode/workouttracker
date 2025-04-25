@@ -3,8 +3,9 @@ import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
-import { ConfirmationService, MessageService, SharedModule } from 'primeng/api';
+import { ConfirmationService, SharedModule } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { TableModule } from 'primeng/table';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -21,7 +22,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class WorkoutSelectPlannedComponent {
   private _executedWorkoutService = inject(ExecutedWorkoutService);
   private _confirmationService = inject(ConfirmationService);
-  private _messageService = inject(MessageService);
+  private _messageService = inject(NzMessageService);
  //No ngOnInit() needed -- table will automatically get initial data due to lazy loading
 
   public plannedWorkouts: ExecutedWorkoutSummaryDTO[] = [];
@@ -46,7 +47,7 @@ export class WorkoutSelectPlannedComponent {
           .pipe(finalize(() => this.loading = false))
           .subscribe({
             next: () => {
-              this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000 });
+              this._messageService.success('Planned Workout deleted');
               this.getPlannedWorkouts(0);
             },
             error: (error: HttpErrorResponse) => {

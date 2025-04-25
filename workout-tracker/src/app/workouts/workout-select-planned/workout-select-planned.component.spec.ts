@@ -6,7 +6,8 @@ import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 
 import { WorkoutSelectPlannedComponent } from './workout-select-planned.component';
-import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
+import { Confirmation, ConfirmationService } from 'primeng/api';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { HttpResponse } from '@angular/common/http';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { provideRouter } from '@angular/router';
@@ -28,8 +29,8 @@ class MockExecutedWorkoutService {
       .and.returnValue(of(new HttpResponse<any>()));
 }
 
-class MockMessageService {
-  add = jasmine.createSpy('add');
+class MockNzMessageService {
+  success = jasmine.createSpy('success');
 }
 
 class MockConfirmationService {
@@ -56,8 +57,8 @@ xdescribe('WorkoutSelectPlannedComponent', () => {
           useClass: MockExecutedWorkoutService
         },
         {
-          provide: MessageService,
-          useClass: MockMessageService
+          provide: NzMessageService,
+          useClass: MockNzMessageService
         },
         {
           provide: ConfirmationService,
@@ -116,14 +117,13 @@ xdescribe('WorkoutSelectPlannedComponent', () => {
   it('should delete planned workouts', () => {
     //ARRANGE
     const confirmationService = TestBed.inject(ConfirmationService);
-    const messageService = TestBed.inject(MessageService);
+    const messageService = TestBed.inject(NzMessageService);
 
     //ACT
     component.deletePlannedWorkout('some-guid-100');
 
     //ASSERT
     expect(confirmationService.confirm).toHaveBeenCalled();
-    expect(messageService.add)
-      .toHaveBeenCalledWith({ severity: 'success', summary: 'Successful', detail: 'Planned Workout deleted', life: 3000 });
+    expect(messageService.success).toHaveBeenCalledWith('Planned Workout deleted');
   });
 });
