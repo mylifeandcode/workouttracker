@@ -4,7 +4,6 @@ import { Dictionary } from 'lodash';
 import { groupBy, some } from 'lodash-es';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTransferModule, TransferChange, TransferItem } from 'ng-zorro-antd/transfer';
-import { SharedModule } from 'primeng/api';
 import { ResistanceBandColorPipe } from "../../../shared/pipes/resistance-band-color.pipe";
 import { ResistanceBandSelection } from '../../_models/resistance-band-selection';
 import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
@@ -13,7 +12,7 @@ import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
     selector: 'wt-resistance-band-select',
     templateUrl: './resistance-band-select.component.html',
     styleUrls: ['./resistance-band-select.component.scss'],
-    imports: [SharedModule, NzTransferModule, NzToolTipModule, ResistanceAmountPipe, ResistanceBandColorPipe]
+    imports: [NzTransferModule, NzToolTipModule, ResistanceAmountPipe, ResistanceBandColorPipe]
 })
 export class ResistanceBandSelectComponent implements OnChanges {
 

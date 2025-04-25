@@ -13,4 +13,6 @@ describe('SoundService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  //TODO: Find a way to unit test the playSound method. My attempts all failed!
 });
