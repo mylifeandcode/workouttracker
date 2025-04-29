@@ -1,19 +1,24 @@
 <h3 class="headroom">Planned Workouts</h3>
-<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <p-table #dt styleClass="p-datatable-striped" [value]="plannedWorkouts" [paginator]="true" [columns]="cols" 
-        [rows]="pageSize" [lazy]="true" (onLazyLoad)="getPlannedWorkoutsLazy($event)" [totalRecords]="totalCount" 
-        [loading]="loading">
-        <ng-template pTemplate="header" let-columns>
+      <nz-table #table 
+        [nzData]="plannedWorkouts"
+        [nzFrontPagination]="false"
+        [nzShowSizeChanger]="true"
+        [nzTotal]="totalCount"
+        [nzPageSize]="10"
+        [nzLoading]="loading"
+        (nzQueryParams)="onQueryParamsChange($event)">
+        <thead>
           <tr>
             <th>Workout Name</th>
             <th>Created</th>
             <th>Actions</th>
           </tr>
-        </ng-template>
-          <ng-template pTemplate="body" let-plannedWorkout>
+        </thead>
+        <tbody>
+          @for(plannedWorkout of table.data; track plannedWorkout.id) {
             <tr>
               <td>{{plannedWorkout.name}}</td>
               <td>{{plannedWorkout.createdDateTime | date:'short'}}</td>
@@ -25,8 +30,9 @@
                 <button class="btn btn-danger" (click)="deletePlannedWorkout(plannedWorkout.id)">Delete</button>
               </td>
             </tr>
-          </ng-template>
-      </p-table>
+          }
+        </tbody>
+      </nz-table>
     </div>
   </div>
   <div class="row">

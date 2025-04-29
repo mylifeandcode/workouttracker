@@ -3,27 +3,26 @@ import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
-import { ConfirmationService, SharedModule } from 'primeng/api';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { TableModule } from 'primeng/table';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
 //TODO: This component shares similarities with WorkoutListComponent. Consolidate code.
 
 @Component({
-    selector: 'wt-workout-select-planned',
-    templateUrl: './workout-select-planned.component.html',
-    styleUrls: ['./workout-select-planned.component.scss'],
-    imports: [ConfirmDialogModule, TableModule, SharedModule, RouterLink, DatePipe]
+  selector: 'wt-workout-select-planned',
+  templateUrl: './workout-select-planned.component.html',
+  styleUrls: ['./workout-select-planned.component.scss'],
+  imports: [RouterLink, DatePipe, NzTableModule, NzModalModule]
 })
 export class WorkoutSelectPlannedComponent {
   private _executedWorkoutService = inject(ExecutedWorkoutService);
-  private _confirmationService = inject(ConfirmationService);
+  private _modalService = inject(NzModalService);
   private _messageService = inject(NzMessageService);
- //No ngOnInit() needed -- table will automatically get initial data due to lazy loading
+  //No ngOnInit() needed -- table will automatically get initial data due to lazy loading (Ajax in NG-ZORRO parlance)
 
   public plannedWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public totalCount: number = 0;
@@ -39,9 +38,10 @@ export class WorkoutSelectPlannedComponent {
   }
 
   public deletePlannedWorkout(publicId: string): void {
-    this._confirmationService.confirm({
-      message: 'Are you sure you want to delete this planned workout?',
-      accept: () => {
+    this._modalService.confirm({
+      nzTitle: 'Are You Sure?',
+      nzContent: 'Are you sure you want to delete this planned workout?',
+      nzOnOk: () => {
         this.loading = true;
         this._executedWorkoutService.deletePlanned(publicId)
           .pipe(finalize(() => this.loading = false))
@@ -67,12 +67,6 @@ export class WorkoutSelectPlannedComponent {
     this._executedWorkoutService
       .getPlanned(first, this.pageSize)
       .pipe(finalize(() => { this.loading = false; }))
-      /*      
-      .subscribe((plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-        this.plannedWorkouts = plannedWorkoutInfo.results;
-        this.totalCount = plannedWorkoutInfo.totalCount;
-      });
-      */
       .subscribe({
         next: (plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
           this.plannedWorkouts = plannedWorkoutInfo.results;
@@ -81,4 +75,8 @@ export class WorkoutSelectPlannedComponent {
       });
   }
 
+  public onQueryParamsChange(params: NzTableQueryParams): void {
+    const { pageSize, pageIndex } = params;
+    this.getPlannedWorkouts((pageIndex - 1) * pageSize);
+  }
 }

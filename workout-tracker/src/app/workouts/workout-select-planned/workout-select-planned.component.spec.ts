@@ -6,11 +6,12 @@ import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 
 import { WorkoutSelectPlannedComponent } from './workout-select-planned.component';
-import { Confirmation, ConfirmationService } from 'primeng/api';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { HttpResponse } from '@angular/common/http';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { provideRouter } from '@angular/router';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
 class MockExecutedWorkoutService {
   getPlanned =
@@ -33,17 +34,15 @@ class MockNzMessageService {
   success = jasmine.createSpy('success');
 }
 
-class MockConfirmationService {
-  confirm =
-    jasmine.createSpy('confirm')
-      .and.callFake((confirmation: Confirmation) => {
-        confirmation?.accept?.(); //Because confirmation could be undefinedd
-      });
-  //.and.returnValue(this);
+class MockNzModalService {
+  confirm = jasmine.createSpy('confirm').and.callFake((options: any) => {
+    if (options && typeof options.nzOnOk === 'function') {
+      return options.nzOnOk(); // Simulate the user confirming
+    }
+  });
 }
 
-//TODO: Need to revisit. PrimeNG lazy loading on table is affecting this.
-xdescribe('WorkoutSelectPlannedComponent', () => {
+describe('WorkoutSelectPlannedComponent', () => {
   let component: WorkoutSelectPlannedComponent;
   let fixture: ComponentFixture<WorkoutSelectPlannedComponent>;
   let executedWorkoutService: ExecutedWorkoutService;
@@ -61,8 +60,8 @@ xdescribe('WorkoutSelectPlannedComponent', () => {
           useClass: MockNzMessageService
         },
         {
-          provide: ConfirmationService,
-          useClass: MockConfirmationService
+          provide: NzModalService,
+          useClass: MockNzModalService
         },
         provideRouter([])
       ]
@@ -70,7 +69,7 @@ xdescribe('WorkoutSelectPlannedComponent', () => {
       .overrideComponent(
         WorkoutSelectPlannedComponent, 
         {
-          remove: { imports: [ConfirmDialogModule] },
+          remove: { imports: [ConfirmDialogModule, NzTableModule, NzModalModule] },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         }
       )    
@@ -116,7 +115,7 @@ xdescribe('WorkoutSelectPlannedComponent', () => {
 
   it('should delete planned workouts', () => {
     //ARRANGE
-    const confirmationService = TestBed.inject(ConfirmationService);
+    const confirmationService = TestBed.inject(NzModalService);
     const messageService = TestBed.inject(NzMessageService);
 
     //ACT
