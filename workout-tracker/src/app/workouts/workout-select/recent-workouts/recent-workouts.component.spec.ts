@@ -8,20 +8,23 @@ import { Workout } from '../../_models/workout';
 import { WorkoutService } from '../../_services/workout.service';
 
 import { RecentWorkoutsComponent } from './recent-workouts.component';
-import { DropdownModule } from 'primeng/dropdown';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
-class ExecutedWorkoutServiceMock {
+class MockExecutedWorkoutService {
   getRecent = jasmine.createSpy('getRecent ').and.returnValue(of(new Array<ExecutedWorkoutSummaryDTO>()));
 }
 
-class WorkoutServiceMock { }
-class RouterMock { }
+class MockWorkoutService { }
+class MockRouter { }
+
+class MockNzModalService {
+  create = jasmine.createSpy('create');
+}
 
 @Component({
   selector: 'wt-workout-info',
-  template: '',
-  imports: [DropdownModule]
+  template: ''
 })
 class MockWorkoutInfoComponent {
   readonly workout = input<Workout>();
@@ -36,19 +39,22 @@ describe('RecentWorkoutsComponent', () => {
       providers: [
         {
           provide: ExecutedWorkoutService,
-          useClass: ExecutedWorkoutServiceMock
+          useClass: MockExecutedWorkoutService
         },
         {
           provide: WorkoutService,
-          useClass: WorkoutServiceMock
+          useClass: MockWorkoutService
         },
         {
           provide: Router,
-          useClass: RouterMock
+          useClass: MockRouter
+        },
+        {
+          provide: NzModalService,
+          useClass: MockNzModalService
         }
       ],
       imports: [
-        DropdownModule,
         RecentWorkoutsComponent,
         MockWorkoutInfoComponent
       ],
@@ -57,7 +63,7 @@ describe('RecentWorkoutsComponent', () => {
       .overrideComponent(
         RecentWorkoutsComponent,
         {
-          remove: { imports: [NzTableModule] },
+          remove: { imports: [NzTableModule, NzModalModule] },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         }
       )

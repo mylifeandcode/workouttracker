@@ -28,6 +28,11 @@
   </div>
 </div>
 
+<!--
 <p-dialog header="Workout Info" [(visible)]="showExercises">
   <wt-workout-info [workout]="selectedWorkout"></wt-workout-info>
 </p-dialog>
+-->
+<ng-template #workoutInfo>
+  <wt-workout-info [workout]="selectedWorkout"></wt-workout-info>  
+</ng-template>
