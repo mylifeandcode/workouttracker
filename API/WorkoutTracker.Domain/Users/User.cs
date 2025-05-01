@@ -7,7 +7,7 @@ namespace WorkoutTracker.Domain.Users
 {
     public class User : NamedEntity, IPublicEntity
     {
-        public Guid PublicId { get; set; }
+        public Guid PublicId { get; set; } = Guid.NewGuid();
 
         public string EmailAddress { get; set; }
 

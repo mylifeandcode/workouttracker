@@ -1,5 +1,6 @@
 <h3 class="headroom">Workouts</h3>
 <div class="container-fluid">
+  <!--
   <div class="row">
     <div class="col-4">
       Filter by Name &nbsp;<input pInputText type="text" (input)="filterTableByInput(dt, $event, 'name')" />
@@ -8,8 +9,62 @@
       Active Workouts Only &nbsp;<input type="checkbox" checked (input)="filterTableByActive(dt, $event)" />
     </div>
   </div>
+  -->
   <div class="row">
     <div class="col-12">
+      <nz-table #dt
+      [nzData]="workouts" 
+      [nzFrontPagination]="false"
+      [nzShowSizeChanger]="true"
+      [nzTotal]="totalRecords"
+      [nzPageSize]="10"
+      [nzLoading]="loading"
+      (nzQueryParams)="onQueryParamsChange($event)"
+      >
+        <thead>
+          <tr>
+            <th nzCustomFilter>
+              Name
+              <nz-filter-trigger [(nzVisible)]="workoutNameFilterVisible" [nzActive]="_filterByNameContains != null && _filterByNameContains.length > 0" [nzDropdownMenu]="menu">
+                <nz-icon nzType="search" />
+              </nz-filter-trigger>              
+            </th>
+            <th>Target Areas</th>
+            <th nzColumnKey="status" [nzFilters]="filterStatus" [nzFilterFn]="true">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (workout of dt.data; track workout.id) {
+            <tr>
+              <td>
+                <a [routerLink]="['/workouts/view/', workout.id]">{{workout.name}}</a>
+                <a [routerLink]="['/workouts/edit/', workout.id]" style="padding-left:10px">
+                  <i class="fa fa-pencil"></i>
+                </a>
+              </td>
+              <td [style]="{'overflow': 'visible'}">{{workout.targetAreas}}</td>
+              <td>
+                {{workout.active ? 'Active' : 'Retired'}}
+                &nbsp;
+                @if (workout.active) {
+                  <button 
+                    class="btn btn-danger"
+                    (click)="retireWorkout(workout.id, workout.name)">
+                    Retire
+                  </button>
+                } @else {
+                  <button 
+                    class="btn btn-success"
+                    (click)="reactivateWorkout(workout.id, workout.name)">
+                    Reactivate
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>
+      <!--
       <p-table #dt styleClass="p-datatable-striped" [value]="workouts" [paginator]="true" [columns]="cols"
         [rows]="pageSize" [lazy]="true" (onLazyLoad)="getWorkoutsLazy($event)" [totalRecords]="totalRecords"
         [loading]="loading">
@@ -48,6 +103,7 @@
           </tr>
         </ng-template>
       </p-table>
+      -->
     </div>
   </div>
   @if (totalRecords != null) {
@@ -69,3 +125,13 @@
     </div>
   </div>
 </div>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box">
+      <input type="text" nz-input placeholder="Workout Name" [(ngModel)]="_filterByNameContains" />
+      <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">Search</button>
+      <button nz-button nzSize="small" (click)="reset()">Reset</button>
+    </div>
+  </div>
+</nz-dropdown-menu>

@@ -66,10 +66,12 @@
 
   @if (workoutHasBeenExecutedBefore() && formGroup().controls.resistanceType.value != resistanceTypeEnum.BodyWeight) {
     <div class="d-flex align-content-end little-footroom px-2">
+      <div class="w-100 text-center">
       <button 
-        class="btn btn-same-as-last-time btn-sm btn-fullWidth" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last
+        class="btn btn-same-as-last-time btn-sm" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last
         Time
       </button>
+      </div>
     </div>
   }
 

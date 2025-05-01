@@ -4,17 +4,20 @@ import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
-import { Table, TableModule } from 'primeng/table';
 import { RouterLink } from '@angular/router';
 import { SharedModule } from 'primeng/api';
+import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'wt-workout-list',
     templateUrl: './workout-list.component.html',
     styleUrls: ['./workout-list.component.scss'],
-    imports: [TableModule, SharedModule, RouterLink]
+    imports: [FormsModule, NzTableModule, NzIconModule, NzDropDownModule, SharedModule, RouterLink]
 })
-export class WorkoutListComponent {
+export class WorkoutListComponent implements OnInit {
   private _workoutSvc = inject(WorkoutService);
 
 
@@ -25,14 +28,20 @@ export class WorkoutListComponent {
   public loading: boolean = true;
   public pageSize: number = 10;
   public workouts: WorkoutDTO[] = [];
-  public cols: any = [
-    { field: 'name', header: 'Name' },
-    { field: 'targetAreas', header: 'Target Areas' },
-    { field: 'active', header: 'Status' }
-  ]; //TODO: Create specific type
 
-  private _filterByNameContains: string | null = null;
-  private _filterByActiveOnly: boolean = true;
+  public filterStatus = [
+    { text: 'Active Only', value: true }
+  ];
+
+  public workoutNameFilterVisible: boolean = false;
+
+  protected _filterByNameContains: string | null = null;
+  protected _filterByActiveOnly: boolean = true;
+
+  public ngOnInit(): void {
+    //this.loading = true;
+    //this.getWorkouts(0);
+  }
 
   public getWorkouts(first: number): void {
     this.totalRecords = 0;
@@ -91,6 +100,7 @@ export class WorkoutListComponent {
     }
   }
 
+  /*
   //TODO: Find out if I can consolidate these 2 methods into a generic one and call it from HTML (those brackets may cause problems)
   //TODO: Consolidate these into a service. These are copied from another component. :(
   public filterTableByInput(table: Table, event: Event, filterOn: string, filterType: string = 'in'): void {
@@ -101,6 +111,28 @@ export class WorkoutListComponent {
   public filterTableByActive(table: Table, event: Event): void {
     //console.log("CHECKBOX EVENT: ", event);
     table.filter((event.target as HTMLInputElement).checked, 'activeOnly', 'equals');
+  }
+  */
+
+  public onQueryParamsChange(params: NzTableQueryParams): void {
+    console.log(params);
+    const { pageSize, pageIndex, sort, filter } = params;
+    const currentSort = sort.find(item => item.value !== null);
+    const sortField = (currentSort && currentSort.key) || null;
+    const sortOrder = (currentSort && currentSort.value) || null;
+    //this._filterByActiveOnly = filter.indexOf((filterItem) => filterItem.key == 'active') > -1 ? true : false;
+    //this.loadDataFromServer(pageIndex, pageSize, sortField, sortOrder, filter);
+    this.getWorkouts((pageIndex - 1) * pageSize);
+  }  
+
+  public reset(): void {
+    this._filterByNameContains = null;
+    this.search();
+  }
+
+  public search(): void {
+    this.workoutNameFilterVisible = false;
+    this.getWorkouts(0);
   }
 
 }

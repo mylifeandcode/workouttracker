@@ -130,15 +130,6 @@ namespace WorkoutTracker.API.Controllers
             return Ok(overview);
         }
 
-        /*
-        [AllowAnonymous]
-        [HttpPost("reset-password/{emailAddress}")]
-        public void ResetPassword(string emailAddress)
-        {
-            throw new NotImplementedException();
-        }
-        */
-
         private User GetUserFromUserNewDTO(UserNewDTO userNew)
         {
             var user = new User();

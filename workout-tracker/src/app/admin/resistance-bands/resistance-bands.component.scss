@@ -1,7 +1,12 @@
 @import '../../../variables.scss';
 
 label {
-  padding-top: 18px;
+  display: block;
+  margin-top: 1em;
+}
+
+small {
+  display: block;
 }
 
 tr.band-row {
@@ -24,4 +29,20 @@ h3 {
 
 .p-button-success {
   background-color: $admin-color-one;
+}
+
+input {
+
+  &#color {
+    width: 8em;
+  }
+
+  &#maxResistanceAmount {
+    width: 5em;
+  }
+
+  &#numberAvailable {
+    width: 4em;
+  }
+  
 }
