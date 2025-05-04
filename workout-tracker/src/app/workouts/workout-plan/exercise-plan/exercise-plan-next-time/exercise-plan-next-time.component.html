@@ -59,18 +59,20 @@
 
   @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
     <div class="d-flex align-content-end little-footroom px-2">
-      <button class="btn btn-choose-resistance btn-sm btn-fullWidth"
-        (click)="selectResistanceBands(formGroup())">Choose Resistance</button>
+      <div class="w-100 text-center">
+        <button class="btn btn-choose-resistance btn-sm" (click)="selectResistanceBands(formGroup())">
+          Choose Resistance
+        </button>
+      </div>
     </div>
   }
 
   @if (workoutHasBeenExecutedBefore() && formGroup().controls.resistanceType.value != resistanceTypeEnum.BodyWeight) {
     <div class="d-flex align-content-end little-footroom px-2">
       <div class="w-100 text-center">
-      <button 
-        class="btn btn-same-as-last-time btn-sm" (click)="useSameResistanceAsLastTime()">Use Same Resistance as Last
-        Time
-      </button>
+        <button class="btn btn-same-as-last-time btn-sm" (click)="useSameResistanceAsLastTime()">
+          Use Same Resistance as Last Time
+        </button>
       </div>
     </div>
   }
