@@ -1,47 +1,55 @@
 @if (users$ | async; as users) {
   <div class="container-fluid wallpaper">
     <br />
-    <div class="row mt-4 offset-md-4 col-md-4">
-      @if (!loggingIn) {
-        <h3 class="text-center mx-auto greeting-text">Who are you?</h3>
-      } @else {
-        <h3 class="text-center mx-auto greeting-text">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
-      }
+    <div class="row mt-4">
+      <div class="offset-md-4 col-md-4">
+        @if (!loggingIn) {
+          <h3 class="text-center mx-auto greeting-text">Who are you?</h3>
+        } @else {
+          <h3 class="text-center mx-auto greeting-text">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
+        }
+      </div>
     </div>
-  
-    @if (errorMsg) {
-      <div class="offset-2 col-8 text-center">
-        <br />
-        <h4>Oops! An error occurred: {{errorMsg}}</h4>
-      </div>
-    }
-  
-    @if (!loggingIn) {
-      <div class="row offset-md-4 col-md-4 card text-center user-select">
-        <div class="list-group">
-          @for (user of users; track user.id) {
-            <div (click)="selectUser(user.id, user.name)" class="list-group-item list-group-item-action list-group-item-success user-select-panel">
-              {{user.name}}
-            </div>
-          }
-        </div>
-      </div>
-  
-      @if (users?.length == 0 && errorMsg == null) {
-        <div class="row offset-md-4 col-md-4 text-center p-1 greeting-text">
-          <p>No users have been created yet. Create one with the button below.</p>
-          <p>
-            <strong>This user will be created as an Administrator.</strong> Administrators have permissions to manage the system.
-          </p>
+
+      @if (errorMsg) {
+        <div class="row mt-4">
+          <div class="offset-2 col-8 text-center">
+            <br />
+            <h4>Oops! An error occurred: {{errorMsg}}</h4>
+          </div>
         </div>
       }
   
-      @if (!errorMsg) {
-        <div class="row offset-md-4 col-md-4 text-center">
-          <button type="button" class="btn btn-info btn-fullWidth headroom" routerLink='/new-user'>Add User</button>
+      @if (!loggingIn) {
+        <div class="row mt-4">
+
+        <div class="offset-md-4 col-md-4 card text-center user-select">
+          <div class="list-group">
+            @for (user of users; track user.id) {
+              <div (click)="selectUser(user.id, user.name)" class="list-group-item list-group-item-action list-group-item-success user-select-panel">
+                {{user.name}}
+              </div>
+            }
+          </div>
         </div>
+    
+        @if (users?.length == 0 && errorMsg == null) {
+          <div class="offset-md-4 col-md-4 text-center p-1 greeting-text">
+            <p>No users have been created yet. Create one with the button below.</p>
+            <p>
+              <strong>This user will be created as an Administrator.</strong> Administrators have permissions to manage the system.
+            </p>
+          </div>
+        }
+    
+        @if (!errorMsg) {
+          <div class="offset-md-4 col-md-4 text-center mt-4">
+            <button type="button" class="btn btn-info btn-fullWidth" routerLink='/new-user'>Add User</button>
+          </div>
+        }
+      </div>
+
       }
-    }
   </div>
 } @else {
   <div class="container-fluid wallpaper">
