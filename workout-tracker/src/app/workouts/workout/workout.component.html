@@ -86,15 +86,18 @@
 
   <p></p> 
 
-  <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal" [blockScroll]="true">
-    <wt-resistance-band-select 
-      [resistanceBandInventory]="allResistanceBands"
-      [exerciseUsesBilateralResistance]="settingResistanceForBilateralExercise"
-      (okClicked)="resistanceBandsModalAccepted($event)"
-      (cancelClicked)="resistanceBandsModalCancelled()"
-      (rangeOfMotionEntered)="saveWorkoutInProgress()">
-    </wt-resistance-band-select>
-  </p-dialog>
+  <nz-modal nzTitle="Select Resistance Bands" [(nzVisible)]="showResistanceBandsSelectModal" [nzFooter]="null">
+    <div *nzModalContent>
+      <wt-resistance-band-select 
+        [resistanceBandInventory]="allResistanceBands"
+        [exerciseUsesBilateralResistance]="settingResistanceForBilateralExercise"
+        [bandAllocation]="exerciseBandAllocation"
+        (okClicked)="resistanceBandsModalAccepted($event)"
+        (cancelClicked)="resistanceBandsModalCancelled()"
+        (rangeOfMotionEntered)="saveWorkoutInProgress()">
+      </wt-resistance-band-select>
+    </div>
+  </nz-modal>
 
   @if (formGroupForCountdownModal) {
     <p-dialog [style]="{width: '50vw'}" header="Timed Set Countdown" [(visible)]="showCountdownModal">

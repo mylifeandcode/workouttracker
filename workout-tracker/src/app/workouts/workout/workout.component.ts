@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
-import { ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
+import { IBandAllocation, ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
@@ -21,6 +21,7 @@ import { CountdownTimerComponent } from './countdown-timer/countdown-timer.compo
 import { DurationComponent } from '../_shared/duration/duration.component';
 import { DatePipe } from '@angular/common';
 import { AccordionModule } from 'primeng/accordion';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 interface IWorkoutForm {
   //id: FormControl<number | null>;
@@ -40,6 +41,7 @@ interface IWorkoutForm {
         WorkoutExerciseComponent,
         RouterLink,
         DialogModule,
+        NzModalModule,
         ResistanceBandSelectComponent,
         CountdownTimerComponent,
         DurationComponent,
@@ -78,6 +80,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   public endDateTime: Date | null = null;
   public workoutLoaded: boolean = false;
   public activeAccordionTab: number = 0;
+  public exerciseBandAllocation: IBandAllocation = { selectedBandsDelimited: '', doubleMaxResistanceAmounts: false };
   //END PUBLIC FIELDS
 
   //PRIVATE FIELDS
@@ -135,12 +138,21 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   }
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup<IWorkoutFormExerciseSet>): void {
+    this.exerciseBandAllocation = 
+      { 
+        selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value ?? '',
+        doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
+      };
     this.showResistanceBandsSelectModal = true;
+    console.log('GO!');
     this.settingResistanceForBilateralExercise = exerciseFormGroup.controls.usesBilateralResistance.value;
     this.formGroupForResistanceSelection = exerciseFormGroup;
+    /*
+    console.log('bandSelect: ', this.bandSelect);
     this.bandSelect?.setBandAllocation(
       exerciseFormGroup.controls.resistanceMakeup.value ?? '', //TODO: Revisit. This is a hack. Type is nullable but we know we'll have a value here.
       !exerciseFormGroup.controls.bandsEndToEnd.value);
+    */
   }
 
   public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {

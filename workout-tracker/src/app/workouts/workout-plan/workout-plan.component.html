@@ -69,6 +69,7 @@
       <wt-resistance-band-select 
         [resistanceBandInventory]="allResistanceBands"
         [exerciseUsesBilateralResistance]="settingResistanceForBilateralExercise"
+        [bandAllocation]="exerciseBandAllocation"
         (okClicked)="resistanceBandsModalAccepted($event)" 
         (cancelClicked)="resistanceBandsModalCancelled()">
       </wt-resistance-band-select>

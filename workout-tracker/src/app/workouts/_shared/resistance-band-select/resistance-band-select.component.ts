@@ -8,6 +8,11 @@ import { ResistanceBandColorPipe } from "../../../shared/pipes/resistance-band-c
 import { ResistanceBandSelection } from '../../_models/resistance-band-selection';
 import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
 
+export interface IBandAllocation {
+  selectedBandsDelimited: string;
+  doubleMaxResistanceAmounts: boolean;
+}
+
 @Component({
     selector: 'wt-resistance-band-select',
     templateUrl: './resistance-band-select.component.html',
@@ -19,6 +24,7 @@ export class ResistanceBandSelectComponent implements OnChanges {
   //INPUTS
   public readonly resistanceBandInventory = input.required<ResistanceBandIndividual[]>();
   public readonly exerciseUsesBilateralResistance = input<boolean>(false);
+  public readonly bandAllocation = input.required<IBandAllocation>();
 
 
   //OUTPUTS
@@ -73,6 +79,10 @@ export class ResistanceBandSelectComponent implements OnChanges {
 
   //PUBLIC METHODS
   public ngOnChanges(changes: SimpleChanges): void {
+    const bandAllocation = changes['bandAllocation'].currentValue as IBandAllocation;
+    console.log('alloction?: ', bandAllocation);
+    if (bandAllocation)
+      this.setBandAllocation(bandAllocation.selectedBandsDelimited, bandAllocation.doubleMaxResistanceAmounts);
     this.validateForBilateralResistance();
   }
 

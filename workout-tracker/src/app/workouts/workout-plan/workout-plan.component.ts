@@ -5,7 +5,7 @@ import { WorkoutPlan } from '../_models/workout-plan';
 import { WorkoutService } from '../_services/workout.service';
 import { ExercisePlan } from '../_models/exercise-plan';
 import { forEach } from 'lodash-es';
-import { ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
+import { IBandAllocation, ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
@@ -46,6 +46,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   public errorInfo: string | undefined;
   public isProcessing: boolean = false;
   public planningForLater: boolean = false;
+  public exerciseBandAllocation: IBandAllocation = { selectedBandsDelimited: '', doubleMaxResistanceAmounts: false };
   //END PUBLIC FIELDS
 
   //PUBLIC PROPERTIES
