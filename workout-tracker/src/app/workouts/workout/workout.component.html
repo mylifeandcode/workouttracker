@@ -100,23 +100,27 @@
   </nz-modal>
 
   @if (formGroupForCountdownModal) {
-    <p-dialog [style]="{width: '50vw'}" header="Timed Set Countdown" [(visible)]="showCountdownModal">
-      <wt-countdown-timer
-        [secondsToCountdown]="formGroupForCountdownModal.controls.duration!.value!"
-        [secondsLeadInTime]="10"
-        [activatedDateTime]="countdownModalActivatedDateTime"
-        [targetReps]="formGroupForCountdownModal.controls.targetReps.value">
-      </wt-countdown-timer>
-    </p-dialog>
+    <nz-modal nzTitle="Timed Set Countdown" [(nzVisible)]="showCountdownModal" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showCountdownModal = false">
+      <div *nzModalContent>
+        <wt-countdown-timer
+          [secondsToCountdown]="formGroupForCountdownModal.controls.duration!.value!"
+          [secondsLeadInTime]="10"
+          [activatedDateTime]="countdownModalActivatedDateTime"
+          [targetReps]="formGroupForCountdownModal.controls.targetReps.value">
+        </wt-countdown-timer>
+      </div>
+    </nz-modal>
   }
 
   @if (formControlForDurationEdit) {
-    <p-dialog header="Duration" [(visible)]="showDurationModal">
-      <wt-duration 
-        [currentDuration]="formControlForDurationEdit!.value!"
-        (okClicked)="durationModalAccepted($event)"
-        (cancelClicked)="durationModalCancelled()">
-      </wt-duration>
-    </p-dialog>
+    <nz-modal nzTitle="Duration" [(nzVisible)]="showDurationModal" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showDurationModal = false">
+      <div *nzModalContent>
+        <wt-duration 
+          [currentDuration]="formControlForDurationEdit!.value!"
+          (okClicked)="durationModalAccepted($event)"
+          (cancelClicked)="durationModalCancelled()">
+        </wt-duration>
+      </div>
+    </nz-modal>
   }
 </div>
