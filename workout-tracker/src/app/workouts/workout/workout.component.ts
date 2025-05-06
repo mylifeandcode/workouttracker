@@ -16,11 +16,10 @@ import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-un
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
-import { DialogModule } from 'primeng/dialog';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { DurationComponent } from '../_shared/duration/duration.component';
 import { DatePipe } from '@angular/common';
-import { AccordionModule } from 'primeng/accordion';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 
 interface IWorkoutForm {
@@ -40,13 +39,12 @@ interface IWorkoutForm {
         ReactiveFormsModule,
         WorkoutExerciseComponent,
         RouterLink,
-        DialogModule,
         NzModalModule,
         ResistanceBandSelectComponent,
         CountdownTimerComponent,
         DurationComponent,
         DatePipe,
-        AccordionModule
+        NzCollapseModule
     ]
 })
 export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {

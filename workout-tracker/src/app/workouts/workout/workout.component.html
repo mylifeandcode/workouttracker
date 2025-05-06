@@ -28,24 +28,19 @@
             }
           </p>
 
-          <p-accordion multiple="false" [value]="activeAccordionTab">
+          <nz-collapse>
             @for (exercise of exercisesArray.controls; track $index) {
-              <p-accordion-panel [value]="$index">
-                <p-accordion-header headerStyleClass="exercise-header">
-                  {{exercise.controls.exerciseName.value}}{{exercise.valid ? ' (DONE)' : ''}}
-                </p-accordion-header>
-                <p-accordion-content>
-                  <wt-workout-exercise 
+              <nz-collapse-panel [nzHeader]="exercise.valid ? exercise.controls.exerciseName.value + ' (DONE)' : exercise.controls.exerciseName.value" [nzActive]="activeAccordionTab === $index">
+                <wt-workout-exercise 
                   [formGroup]="exercise" 
                   (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
                   (showTimerRequest)="showTimer($event)"
                   (rangeOfMotionEntered)="saveWorkoutInProgress()"
                   (durationEdit)="openDurationModal($event)">
                 </wt-workout-exercise>
-                </p-accordion-content>
-              </p-accordion-panel>
+              </nz-collapse-panel>
             }
-          </p-accordion> 
+          </nz-collapse>
   
           <div class="row">
             <div class="col-12">&nbsp;</div>
@@ -79,8 +74,7 @@
   }
   
   @if (workoutCompleted && !isLoggingPastWorkout) {
-    <button class="btn btn-success" routerLink="/workouts/history">View Workout History</button>
-    &nbsp;
+    <button class="btn btn-success me-2" routerLink="/workouts/history">View Workout History</button>
     <button class="btn btn-success" routerLink="/workouts/select-for-later">Plan Next Workout</button>
   }
 

@@ -23,6 +23,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 
 const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
@@ -242,7 +243,7 @@ describe('WorkoutComponent', () => {
               ResistanceBandSelectComponent,
               CountdownTimerComponent,
               DurationComponent,
-              AccordionModule,
+              NzCollapseModule,
               NzSpinModule
             ]
           },
@@ -362,10 +363,12 @@ describe('WorkoutComponent', () => {
     //ASSERT
     expect(component.showResistanceBandsSelectModal).toBeTrue();
     expect(component.formGroupForResistanceSelection).toBe(exerciseFormGroup);
-    expect(component.bandSelect?.setBandAllocation)
-      .toHaveBeenCalledWith(
-        exerciseFormGroup.controls.resistanceMakeup.value,
-        !exerciseFormGroup.controls.bandsEndToEnd.value);
+    expect(component.exerciseBandAllocation).toEqual(      
+      { 
+        selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value,
+        doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
+      }
+    );
   });
 
   it('should accept the input from the resistance bands modal', () => {
