@@ -3,7 +3,6 @@ import { PaginatedResults } from '../core/_models/paginated-results';
 import { finalize, map } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { SelectItem } from 'primeng/api';
-import { Table } from 'primeng/table';
 
 export abstract class ExerciseListBase {
 
@@ -13,7 +12,7 @@ export abstract class ExerciseListBase {
   public loading: boolean = true;
   public pageSize: number = 10;
   public exercises: ExerciseDTO[] = [];
-  public targetAreas: SelectItem[] = [];
+  public targetAreas: string[] = [];
 
   constructor(protected _exerciseSvc: ExerciseService) {
     //TODO: Move to ngOnInit()
@@ -22,8 +21,9 @@ export abstract class ExerciseListBase {
       .pipe(map(targetAreas => targetAreas.map(targetArea => targetArea.name)))
       .subscribe({
         next: (targetAreaNames: string[]) => {
-          targetAreaNames.forEach(element => {
-            this.targetAreas.push({ label: element, value: element });
+          console.log("TARGET AREAS: ", targetAreaNames);
+          targetAreaNames.forEach(targetArea => {
+            this.targetAreas.push(targetArea);
           });
         },
         error: (error: any) => window.alert("An error occurred getting exercises: " + error)
@@ -48,6 +48,7 @@ export abstract class ExerciseListBase {
   }
 
   //TODO: Find out if I can consolidate these 2 methods into a generic one and call it from HTML (those brackets may cause problems)
+  /*
   public filterTableByInput(table: Table, filterEvent: Event, filterOn: string, filterType: string = 'in'): void {
     table.filter((filterEvent.target as HTMLInputElement).value, filterOn, filterType);
   }
@@ -55,5 +56,5 @@ export abstract class ExerciseListBase {
   public filterTableBySelect(table: Table, filterEvent: Event, filterOn: string, filterType: string = 'in'): void {
     table.filter((filterEvent.target as HTMLSelectElement).value, filterOn, filterType);
   }
-
+  */
 }

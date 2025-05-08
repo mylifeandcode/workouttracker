@@ -2,16 +2,38 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-6">
+      <!--TODO: FIX-->
+      <!--
       Filter by Name &nbsp;<input pInputText type="text" (input)="filterTableByInput(dt, $event, 'name', 'in')" />
+      -->
     </div>
     <div class="col-6">
+      <!--TODO: FIX-->
+      <!--
       Filter by Target Areas &nbsp;<p-multiSelect appendTo="body" [style]="{'min-width': '180px'}"
         [options]="targetAreas" placeholder="All"
         (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>
+    -->
+      Filter by Target Areas
+      <nz-select 
+        [nzMaxTagCount]="3"
+        nzMode="multiple"
+        [nzMaxTagPlaceholder]="tagPlaceHolder"
+        nzPlaceHolder="Please select"
+        [(ngModel)]="_selectedTargetAreas" 
+        class="ms-2"
+        (ngModelChange)="targetAreasFilterChange($event)"
+        >
+        @for (targetArea of targetAreas; track targetArea) {
+          <nz-option [nzLabel]="targetArea" [nzValue]="targetArea"></nz-option>
+        }
+      </nz-select>
+      <ng-template #tagPlaceHolder let-selectedList>and {{ selectedList.length }} more selected</ng-template>
     </div>
   </div>
   <div class="row">
     <div class="col-12">
+      <!--
       <p-table #dt styleClass="p-datatable-striped" [value]="exercises" [paginator]="true" [rows]="pageSize"
         [lazy]="true" (onLazyLoad)="getExercisesLazy($event)" [totalRecords]="totalRecords" [loading]="loading">
         <ng-template pTemplate="header" let-columns>
@@ -30,6 +52,32 @@
           </tr>
         </ng-template>
       </p-table>
+      -->
+      <nz-table #dt [nzData]="exercises"
+        [nzFrontPagination]="false"
+        [nzShowSizeChanger]="true"
+        [nzTotal]="totalRecords"
+        [nzPageSize]="10"
+        [nzLoading]="loading"
+        (nzQueryParams)="getExercisesLazy($event)">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Target Areas</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (exercise of dt.data; track exercise.id) {
+            <tr>
+              <td>
+                <a [routerLink]="['view/', exercise.publicId]">{{exercise.name}}</a>
+                <a [routerLink]="['edit/', exercise.publicId]" style="padding-left:10px"><i class="fa fa-pencil"></i></a>
+              </td>
+              <td [style]="{'overflow': 'visible'}">{{exercise.targetAreas}}</td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>
     </div>
   </div>
   <div class="row">

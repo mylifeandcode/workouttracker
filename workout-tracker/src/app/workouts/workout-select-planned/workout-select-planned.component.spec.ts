@@ -8,7 +8,6 @@ import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-d
 import { WorkoutSelectPlannedComponent } from './workout-select-planned.component';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { HttpResponse } from '@angular/common/http';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { provideRouter } from '@angular/router';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
@@ -69,7 +68,7 @@ describe('WorkoutSelectPlannedComponent', () => {
       .overrideComponent(
         WorkoutSelectPlannedComponent, 
         {
-          remove: { imports: [ConfirmDialogModule, NzTableModule, NzModalModule] },
+          remove: { imports: [NzTableModule, NzModalModule] },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         }
       )    
