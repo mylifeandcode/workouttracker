@@ -6,7 +6,7 @@ import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-d
 import { SharedModule } from 'primeng/api';
 import { RouterLink } from '@angular/router';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { DialogModule } from 'primeng/dialog';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { DatePipe } from '@angular/common';
 import { NzTableModule, NzTableQueryParams, NzTableFilterFn } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
@@ -21,7 +21,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     styleUrls: ['./workout-history.component.scss'],
     imports: [
       SharedModule, RouterLink, DatePipe, FormsModule,
-      NzTableModule, NzDropDownModule, NzToolTipModule, NzIconModule, DialogModule 
+      NzTableModule, NzDropDownModule, NzToolTipModule, NzIconModule, NzModalModule 
     ]
 })
 export class WorkoutHistoryComponent implements OnInit {

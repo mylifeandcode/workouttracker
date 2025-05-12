@@ -5,7 +5,6 @@ import { PaginatedResults } from '../../core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
-import { SharedModule } from 'primeng/api';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -15,7 +14,7 @@ import { FormsModule } from '@angular/forms';
     selector: 'wt-workout-list',
     templateUrl: './workout-list.component.html',
     styleUrls: ['./workout-list.component.scss'],
-    imports: [FormsModule, NzTableModule, NzIconModule, NzDropDownModule, SharedModule, RouterLink]
+    imports: [FormsModule, NzTableModule, NzIconModule, NzDropDownModule, RouterLink]
 })
 export class WorkoutListComponent implements OnInit {
   private _workoutSvc = inject(WorkoutService);

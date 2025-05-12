@@ -9,8 +9,8 @@ import { of } from 'rxjs';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { SharedModule } from 'primeng/api';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { DialogModule } from 'primeng/dialog';
 import { DatePipe } from '@angular/common';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 class MockExecutedWorkoutService {
   getFilteredSubset =
@@ -36,7 +36,7 @@ describe('WorkoutHistoryComponent', () => {
     .overrideComponent(
       WorkoutHistoryComponent,
       {
-        remove: { imports: [NzTableModule, SharedModule, RouterLink, NzToolTipModule , DialogModule, DatePipe] },
+        remove: { imports: [NzTableModule, SharedModule, RouterLink, NzToolTipModule, NzModalModule, DatePipe] },
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       }
     )

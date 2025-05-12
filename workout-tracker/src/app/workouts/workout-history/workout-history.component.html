@@ -64,15 +64,15 @@
   </div>
 </div>
 
-<p-dialog [(visible)]="showNotesModal" [style]="{width: '450px'}" header="Notes/Journal" [modal]="true"
+<nz-modal [(nzVisible)]="showNotesModal" [style]="{width: '450px'}" header="Notes/Journal"
   styleClass="p-fluid">
-  <ng-template pTemplate="content">
+  <div *nzModalContent>
     {{notes}}
-  </ng-template>
-  <ng-template pTemplate="footer">
+  </div>
+  <div *nzModalFooter>
     <button (click)="closeNotesModal()"></button>
-  </ng-template>
-</p-dialog>
+  </div>
+</nz-modal>
 
 <nz-dropdown-menu #menu="nzDropdownMenu">
   <div class="ant-table-filter-dropdown">
