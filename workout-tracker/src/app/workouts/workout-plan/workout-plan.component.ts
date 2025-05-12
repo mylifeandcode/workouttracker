@@ -15,8 +15,8 @@ import { IExercisePlanFormGroup } from './exercise-plan/interfaces/i-exercise-pl
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
-import { DialogModule } from 'primeng/dialog';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 
 @Component({
@@ -24,7 +24,7 @@ import { EMPTY_GUID } from 'app/shared/shared-constants';
     templateUrl: './workout-plan.component.html',
     styleUrls: ['./workout-plan.component.scss'],
     imports: [
-        NzSpinModule, FormsModule, ReactiveFormsModule, DialogModule,
+        NzSpinModule, FormsModule, ReactiveFormsModule, NzModalModule,
         ExercisePlanComponent, ResistanceBandSelectComponent
     ]
 })

@@ -12,6 +12,7 @@ import { WorkoutService } from '../_services/workout.service';
 
 import { WorkoutPlanComponent } from './workout-plan.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 class WorkoutServiceMock {
   getNewPlan = jasmine.createSpy('getNewPlan').and.returnValue(of(new WorkoutPlan()));
@@ -81,7 +82,7 @@ describe('WorkoutPlanComponent', () => {
     })
     .overrideComponent(
       WorkoutPlanComponent, {
-        remove: { imports: [ NzSpinModule ] },
+        remove: { imports: [ NzSpinModule, NzModalModule ] },
         add: { schemas: [ CUSTOM_ELEMENTS_SCHEMA ] }
       })
       .compileComponents();

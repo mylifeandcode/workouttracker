@@ -65,14 +65,16 @@
       </fieldset>
     </form>
 
-    <p-dialog header="Select Resistance Bands" [(visible)]="showResistanceBandsSelectModal" [blockScroll]="true">
-      <wt-resistance-band-select 
-        [resistanceBandInventory]="allResistanceBands"
-        [exerciseUsesBilateralResistance]="settingResistanceForBilateralExercise"
-        [bandAllocation]="exerciseBandAllocation"
-        (okClicked)="resistanceBandsModalAccepted($event)" 
-        (cancelClicked)="resistanceBandsModalCancelled()">
-      </wt-resistance-band-select>
-    </p-dialog>
+    <nz-modal nzTitle="Select Resistance Bands" [(nzVisible)]="showResistanceBandsSelectModal" [nzFooter]="null">
+      <div *nzModalContent>
+        <wt-resistance-band-select 
+          [resistanceBandInventory]="allResistanceBands"
+          [exerciseUsesBilateralResistance]="settingResistanceForBilateralExercise"
+          [bandAllocation]="exerciseBandAllocation"
+          (okClicked)="resistanceBandsModalAccepted($event)" 
+          (cancelClicked)="resistanceBandsModalCancelled()">
+        </wt-resistance-band-select>
+      </div>
+    </nz-modal>
   </div>
 }
