@@ -11,7 +11,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgClass } from '@angular/common';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { InputSwitchModule } from 'primeng/inputswitch';
-import { DialogModule } from 'primeng/dialog';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 
@@ -35,7 +35,10 @@ interface IWorkoutEditForm {
     selector: 'wt-workout-edit',
     templateUrl: './workout-edit.component.html',
     styleUrls: ['./workout-edit.component.scss'],
-    imports: [NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, SelectOnFocusDirective, InputSwitchModule, DialogModule, ExerciseListMiniComponent]
+    imports: [
+      NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, 
+      SelectOnFocusDirective, InputSwitchModule, NzModalModule, ExerciseListMiniComponent
+    ]
 })
 export class WorkoutEditComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);

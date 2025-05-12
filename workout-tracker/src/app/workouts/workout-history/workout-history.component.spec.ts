@@ -7,7 +7,6 @@ import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { of } from 'rxjs';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { SharedModule } from 'primeng/api';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { DatePipe } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
@@ -36,7 +35,7 @@ describe('WorkoutHistoryComponent', () => {
     .overrideComponent(
       WorkoutHistoryComponent,
       {
-        remove: { imports: [NzTableModule, SharedModule, RouterLink, NzToolTipModule, NzModalModule, DatePipe] },
+        remove: { imports: [NzTableModule, RouterLink, NzToolTipModule, NzModalModule, DatePipe] },
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       }
     )

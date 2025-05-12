@@ -123,9 +123,11 @@
         }
   
         <!--Select Exercise Modal-->
-        <p-dialog header="Select an Exercise" [(visible)]="showExerciseSelectModal">
-          <wt-exercise-list-mini (exerciseSelected)="addExercise($event)"></wt-exercise-list-mini>
-        </p-dialog>
+        <nz-modal header="Select an Exercise" [(nzVisible)]="showExerciseSelectModal">
+          <div *nzModalContent>
+            <wt-exercise-list-mini (exerciseSelected)="addExercise($event)" />
+          </div>
+        </nz-modal>
       </fieldset>
     </form>
   }

@@ -3,7 +3,6 @@ import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
-import { SharedModule } from 'primeng/api';
 import { RouterLink } from '@angular/router';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
@@ -20,7 +19,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     templateUrl: './workout-history.component.html',
     styleUrls: ['./workout-history.component.scss'],
     imports: [
-      SharedModule, RouterLink, DatePipe, FormsModule,
+      RouterLink, DatePipe, FormsModule,
       NzTableModule, NzDropDownModule, NzToolTipModule, NzIconModule, NzModalModule 
     ]
 })
