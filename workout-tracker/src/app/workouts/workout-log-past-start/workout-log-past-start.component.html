@@ -81,9 +81,11 @@
     </div>
   </form>
 </div>
-<p-dialog [(visible)]="showDurationModal" header="Duration">
-  <wt-duration       
-    (okClicked)="durationModalAccepted($event)"
-    (cancelClicked)="durationModalCancelled()">
-  </wt-duration>
-</p-dialog>
+<nz-modal nzTitle="Duration" [(nzVisible)]="showDurationModal" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showDurationModal = false">
+  <div *nzModalContent>
+    <wt-duration       
+      (okClicked)="durationModalAccepted($event)"
+      (cancelClicked)="durationModalCancelled()">
+    </wt-duration>
+  </div>
+</nz-modal> 

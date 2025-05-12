@@ -9,7 +9,7 @@ import { WorkoutService } from '../_services/workout.service';
 import { sortBy } from 'lodash-es';
 import { SharedModule } from 'primeng/api';
 import { formatDate, NgClass } from '@angular/common';
-import { DialogModule } from 'primeng/dialog';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { DurationComponent } from '../_shared/duration/duration.component';
 
 interface ILogPastWorkoutForm {
@@ -22,7 +22,7 @@ interface ILogPastWorkoutForm {
     selector: 'wt-workout-log-past-start',
     templateUrl: './workout-log-past-start.component.html',
     styleUrls: ['./workout-log-past-start.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, SharedModule, NgClass, DialogModule, DurationComponent]
+    imports: [FormsModule, ReactiveFormsModule, SharedModule, NgClass, NzModalModule, DurationComponent]
 })
 export class WorkoutLogPastStartComponent implements OnInit {
   private _formBuilder = inject(FormBuilder);
