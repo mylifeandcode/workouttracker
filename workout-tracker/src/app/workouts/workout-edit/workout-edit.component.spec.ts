@@ -14,6 +14,7 @@ import { ExerciseListMiniComponent } from 'app/exercises/exercise-list-mini/exer
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 @Component({
     selector: 'wt-exercise-list-mini',
@@ -95,7 +96,7 @@ describe('WorkoutEditComponent', () => {
     .overrideComponent(
       WorkoutEditComponent,
       {
-        remove: { imports: [ExerciseListMiniComponent, NzSpinModule, NzModalModule] },
+        remove: { imports: [ExerciseListMiniComponent, NzSpinModule, NzModalModule, NzSwitchModule] },
         add: { imports: [FakeExerciseListMiniComponent], schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       }
     )

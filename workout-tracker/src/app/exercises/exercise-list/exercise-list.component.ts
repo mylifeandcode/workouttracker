@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { ExerciseService } from 'app/exercises/_services/exercise.service';
 import { ExerciseListBase } from '../exercise-list-base';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { SharedModule } from 'primeng/api';
 import { RouterLink } from '@angular/router';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +10,7 @@ import { FormsModule } from '@angular/forms';
     selector: 'wt-exercise-list',
     templateUrl: './exercise-list.component.html',
     styleUrls: ['./exercise-list.component.scss'],
-    imports: [FormsModule, NzSelectModule, NzTableModule, SharedModule, RouterLink]
+    imports: [FormsModule, NzSelectModule, NzTableModule, RouterLink]
 })
 export class ExerciseListComponent extends ExerciseListBase {
   protected _exerciseSvc: ExerciseService;

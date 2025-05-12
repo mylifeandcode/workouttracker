@@ -13,6 +13,7 @@ import { ExerciseTargetAreaLink } from 'app/workouts/_models/exercise-target-are
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 //TODO: Move initialization inside beforeEach()
 const EXERCISE: Exercise = <Exercise>{
@@ -74,6 +75,9 @@ function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
   return activatedRouteSnapshot;
 }
 
+
+//TODO: FIX! This spec throws RuntimeError: NG0205: Injector has already been destroyed.
+
 describe('ExerciseEditComponent', () => {
   let component: ExerciseEditComponent;
   let fixture: ComponentFixture<ExerciseEditComponent>;
@@ -106,7 +110,7 @@ describe('ExerciseEditComponent', () => {
     })
     .overrideComponent(
       ExerciseEditComponent, {
-      remove: { imports: [ NzSpinModule, NzToolTipModule ] },
+      remove: { imports: [ NzSpinModule, NzToolTipModule, NzSwitchModule ] },
       add: { schemas: [ CUSTOM_ELEMENTS_SCHEMA ] }
     })
       .compileComponents();

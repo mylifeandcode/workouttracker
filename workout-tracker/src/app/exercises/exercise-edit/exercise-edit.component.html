@@ -186,7 +186,7 @@
           @if (fromViewRoute) {
             <div class="col-2">
               <span class="mild-right-margin align-middle">Enable Editing</span>
-              <p-inputSwitch id="editModeToggle" styleClass="align-middle" (onChange)="editModeToggled($event)"></p-inputSwitch>
+              <nz-switch id="editModeToggle" (onChange)="editModeToggled($event)" class="align-middle" />
             </div>       
           }
 

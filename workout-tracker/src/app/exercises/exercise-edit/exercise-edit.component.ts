@@ -13,7 +13,7 @@ import { ResistanceType } from 'app/workouts/workout/_enums/resistance-type';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgClass, KeyValuePipe } from '@angular/common';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 
@@ -44,7 +44,7 @@ interface IExerciseEditForm {
     templateUrl: './exercise-edit.component.html',
     styleUrls: ['./exercise-edit.component.scss'],
     imports: [
-        NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, InputSwitchModule,
+        NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, NzSwitchModule,
         KeyValuePipe, InsertSpaceBeforeCapitalPipe
     ]
 })

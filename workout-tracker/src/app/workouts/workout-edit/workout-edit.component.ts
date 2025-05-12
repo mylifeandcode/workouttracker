@@ -10,7 +10,7 @@ import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-un
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgClass } from '@angular/common';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
@@ -37,7 +37,7 @@ interface IWorkoutEditForm {
     styleUrls: ['./workout-edit.component.scss'],
     imports: [
       NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, 
-      SelectOnFocusDirective, InputSwitchModule, NzModalModule, ExerciseListMiniComponent
+      SelectOnFocusDirective, NzSwitchModule, NzModalModule, ExerciseListMiniComponent
     ]
 })
 export class WorkoutEditComponent extends CheckForUnsavedDataComponent implements OnInit {
