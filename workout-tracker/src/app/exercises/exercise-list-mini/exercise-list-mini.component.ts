@@ -3,18 +3,19 @@ import { ExerciseListBase } from '../exercise-list-base';
 import { ExerciseService } from '../_services/exercise.service';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { SharedModule } from 'primeng/api';
-import { MultiSelectModule } from 'primeng/multiselect';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'wt-exercise-list-mini',
     templateUrl: './exercise-list-mini.component.html', //TODO: Fix alternating row colors not working
     styleUrls: ['./exercise-list-mini.component.scss'],
-    imports: [NzTableModule, SharedModule, MultiSelectModule]
+    imports: [FormsModule, SharedModule, NzTableModule, NzSelectModule]
 })
 export class ExerciseListMiniComponent extends ExerciseListBase {
   protected _exerciseSvc: ExerciseService;
-
+  protected _selectedTargetAreas: string[] = [];
 
   @Output() exerciseSelected = new EventEmitter<ExerciseDTO>();
 
@@ -45,4 +46,6 @@ export class ExerciseListMiniComponent extends ExerciseListBase {
   public selectExercise(exercise: ExerciseDTO): void {
     this.exerciseSelected.emit(exercise);
   }
+
+
 }

@@ -1,8 +1,8 @@
 import { ExerciseService } from 'app/exercises/_services/exercise.service';
 import { PaginatedResults } from '../core/_models/paginated-results';
-import { finalize, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
-import { SelectItem } from 'primeng/api';
+import { Subject } from 'rxjs';
 
 export abstract class ExerciseListBase {
 
@@ -13,8 +13,23 @@ export abstract class ExerciseListBase {
   public pageSize: number = 10;
   public exercises: ExerciseDTO[] = [];
   public targetAreas: string[] = [];
+  public nameFilter: string = '';
+  protected _selectedTargetAreas: string[] = [];
+
+  private _nameFilterChanged$ = new Subject<string>();
+  private _destroy$ = new Subject<void>();
 
   constructor(protected _exerciseSvc: ExerciseService) {
+    this._nameFilterChanged$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this._destroy$)
+      )
+      .subscribe(value => {
+        this.handleFilterChange();
+      });
+
     //TODO: Move to ngOnInit()
     this._exerciseSvc
       .getTargetAreas()
@@ -57,4 +72,17 @@ export abstract class ExerciseListBase {
     table.filter((filterEvent.target as HTMLSelectElement).value, filterOn, filterType);
   }
   */
+
+  public nameFilterChange(name: string): void {
+    this._nameFilterChanged$.next(name);
+  }
+
+  public targetAreasFilterChange(selectedTargetAreas: string[]): void {
+    console.log("targetAreasFilterChange: ", selectedTargetAreas);
+    this.getExercises(0, null, selectedTargetAreas); //TODO: Add code to take name filter into account
+  }
+
+  private handleFilterChange(): void {
+    this.getExercises(0, this.nameFilter, this._selectedTargetAreas);
+  }
 }

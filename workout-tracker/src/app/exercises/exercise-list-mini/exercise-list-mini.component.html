@@ -37,6 +37,27 @@
       <th>Name</th>
       <th>Target Areas</th>
     </tr>
+    <tr>
+      <th>
+        <input type="text" [(ngModel)]="nameFilter" (ngModelChange)="nameFilterChange($event)" />
+      </th>
+      <th>
+        <nz-select 
+          [nzMaxTagCount]="3"
+          nzMode="multiple"
+          [nzMaxTagPlaceholder]="tagPlaceHolder"
+          nzPlaceHolder="Please select"
+          [(ngModel)]="_selectedTargetAreas" 
+          class="ms-2"
+          (ngModelChange)="targetAreasFilterChange($event)"
+          >
+          @for (targetArea of targetAreas; track targetArea) {
+            <nz-option [nzLabel]="targetArea" [nzValue]="targetArea"></nz-option>
+          }
+        </nz-select>
+        <ng-template #tagPlaceHolder let-selectedList>and {{ selectedList.length }} more selected</ng-template>
+      </th>
+    </tr>
   </thead>
   <tbody>
     @for (exercise of dt.data; track exercise.id) {

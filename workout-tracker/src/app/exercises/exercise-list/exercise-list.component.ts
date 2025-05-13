@@ -14,7 +14,6 @@ import { FormsModule } from '@angular/forms';
 })
 export class ExerciseListComponent extends ExerciseListBase {
   protected _exerciseSvc: ExerciseService;
-  protected _selectedTargetAreas: string[] = [];
 
   //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
   //Turbo Table automatically makes a call to get data on initialization

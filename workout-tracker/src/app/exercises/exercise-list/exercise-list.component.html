@@ -2,18 +2,9 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-6">
-      <!--TODO: FIX-->
-      <!--
-      Filter by Name &nbsp;<input pInputText type="text" (input)="filterTableByInput(dt, $event, 'name', 'in')" />
-      -->
+      Filter by Name &nbsp;<input [(ngModel)]="nameFilter" (ngModelChange)="nameFilterChange($event)" />
     </div>
     <div class="col-6">
-      <!--TODO: FIX-->
-      <!--
-      Filter by Target Areas &nbsp;<p-multiSelect appendTo="body" [style]="{'min-width': '180px'}"
-        [options]="targetAreas" placeholder="All"
-        (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>
-    -->
       Filter by Target Areas
       <nz-select 
         [nzMaxTagCount]="3"
