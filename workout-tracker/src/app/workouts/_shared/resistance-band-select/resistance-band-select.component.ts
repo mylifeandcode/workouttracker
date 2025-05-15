@@ -80,9 +80,11 @@ export class ResistanceBandSelectComponent implements OnChanges {
   //PUBLIC METHODS
   public ngOnChanges(changes: SimpleChanges): void {
     const bandAllocation = changes['bandAllocation'].currentValue as IBandAllocation;
-    console.log('alloction?: ', bandAllocation);
+    //console.log('alloction?: ', bandAllocation);
+    
     if (bandAllocation)
       this.setBandAllocation(bandAllocation.selectedBandsDelimited, bandAllocation.doubleMaxResistanceAmounts);
+    
     this.validateForBilateralResistance();
   }
 
@@ -151,6 +153,7 @@ export class ResistanceBandSelectComponent implements OnChanges {
     });
 
     this.transferItems = transferItemsTemp;
+    //console.log('Transfer items: ', this.transferItems);
     this.allocateTransferItems();
   }
 
@@ -177,8 +180,10 @@ export class ResistanceBandSelectComponent implements OnChanges {
         this.showBilateralValidationFailure = true;
       }
       else {
-        const bandsByColor: Dictionary<TransferItem[]> = groupBy(this.selectedTransferItems(), band => band.color);
+        const bandsByColor: Dictionary<TransferItem[]> = groupBy(this.selectedTransferItems(), band => band.title); //Title is color
+        //console.log('BANDS: ', bandsByColor);
         this.showBilateralValidationFailure = some(bandsByColor, array => array.length % 2 !== 0);
+        //console.log('BILATERAL VALIDATION: ', this.showBilateralValidationFailure);
       }
     }
   }

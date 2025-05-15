@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ResistanceBandSelectComponent } from './resistance-band-select.component';
-import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform, SimpleChange } from '@angular/core';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTransferModule, TransferItem } from 'ng-zorro-antd/transfer';
 import { ResistanceAmountPipe } from 'app/workouts/_pipes/resistance-amount.pipe';
@@ -60,9 +60,14 @@ describe('ResistanceBandSelectComponent', () => {
   it('should not show message about bilateral resistance when exercise does not use it', () => {
     //ARRANGE
     fixture.componentRef.setInput('exerciseUsesBilateralResistance', false);
+    const change = new SimpleChange(
+      null, {
+      selectedBandsDelimited: 'Red,Blue',
+      doubleMaxResistanceAmounts: false
+    }, true);
 
     //ACT
-    component.ngOnChanges({});
+    component.ngOnChanges({'bandAllocation': change});
 
     //ASSERT
     expect(component.showBilateralValidationFailure).toBeFalse();
@@ -71,9 +76,14 @@ describe('ResistanceBandSelectComponent', () => {
   it('should show message about bilateral resistance on changes when exercise uses it', () => {
     //ARRANGE
     fixture.componentRef.setInput('exerciseUsesBilateralResistance', true);
+    const change = new SimpleChange(
+      null, {
+      selectedBandsDelimited: 'Red,Blue',
+      doubleMaxResistanceAmounts: false
+    }, true);
 
     //ACT
-    component.ngOnChanges({});
+    component.ngOnChanges({'bandAllocation': change});
 
     //ASSERT
     expect(component.showBilateralValidationFailure).toBeTrue();
@@ -134,7 +144,7 @@ describe('ResistanceBandSelectComponent', () => {
     const band1: TransferItem = {
       key: `S1`,
       title: 'Red',
-      direction: 'left',
+      direction: 'right',
       disabled: false,
       checked: false
     };
@@ -158,7 +168,7 @@ describe('ResistanceBandSelectComponent', () => {
     const band4: TransferItem = {
       key: `S4`,
       title: 'Orange',
-      direction: 'right',
+      direction: 'left',
       disabled: false,
       checked: false
     };    

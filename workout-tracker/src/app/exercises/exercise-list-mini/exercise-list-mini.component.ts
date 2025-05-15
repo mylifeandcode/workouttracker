@@ -2,7 +2,6 @@ import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { ExerciseListBase } from '../exercise-list-base';
 import { ExerciseService } from '../_services/exercise.service';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
-import { SharedModule } from 'primeng/api';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +10,7 @@ import { FormsModule } from '@angular/forms';
     selector: 'wt-exercise-list-mini',
     templateUrl: './exercise-list-mini.component.html', //TODO: Fix alternating row colors not working
     styleUrls: ['./exercise-list-mini.component.scss'],
-    imports: [FormsModule, SharedModule, NzTableModule, NzSelectModule]
+    imports: [FormsModule, NzTableModule, NzSelectModule]
 })
 export class ExerciseListMiniComponent extends ExerciseListBase {
   protected _exerciseSvc: ExerciseService;

@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { MultiSelectModule } from 'primeng/multiselect';
 import { of } from 'rxjs';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { TargetArea } from 'app/workouts/_models/target-area';
@@ -23,7 +22,7 @@ class ExerciseServiceMock {
 
 //We're testing an abstract base class, so let's create a class here that extends it
 @Component({
-    imports: [MultiSelectModule]
+  imports: []
 })
 class ExerciseListBaseExtenderComponent extends ExerciseListBase {
   private _exerciseService: ExerciseService;
@@ -44,18 +43,17 @@ describe('ExerciseListMiniComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    providers: [
+      providers: [
         {
-            provide: ExerciseService,
-            useClass: ExerciseServiceMock
+          provide: ExerciseService,
+          useClass: ExerciseServiceMock
         }
-    ],
-    imports: [
-        MultiSelectModule,
+      ],
+      imports: [
         ExerciseListBaseExtenderComponent
-    ]
-})
-    .compileComponents();
+      ]
+    })
+      .compileComponents();
   }));
 
   beforeEach(() => {

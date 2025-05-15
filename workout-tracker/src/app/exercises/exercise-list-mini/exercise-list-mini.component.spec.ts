@@ -1,12 +1,14 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ExerciseListMiniComponent } from './exercise-list-mini.component';
-import { MultiSelectModule } from 'primeng/multiselect';
 import { ExerciseService } from '../_services/exercise.service';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { of } from 'rxjs';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { TargetArea } from 'app/workouts/_models/target-area';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { RouterLink } from '@angular/router';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<ExerciseDTO>()));
@@ -20,19 +22,29 @@ describe('ExerciseListMiniComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    providers: [
+      providers: [
         {
-            provide: ExerciseService,
-            useClass: ExerciseServiceMock
+          provide: ExerciseService,
+          useClass: ExerciseServiceMock
         }
-    ],
-    imports: [
-        MultiSelectModule,
-        ExerciseListMiniComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-    .compileComponents();
+      ],
+      imports: [
+        ExerciseListMiniComponent,
+        NoopAnimationsModule
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    })
+    .overrideComponent(ExerciseListMiniComponent,
+      {
+        remove: {
+          imports: [NzTableModule] //Some imports still required to test
+        },
+        add: {
+          schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        }
+      })
+
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -55,21 +67,21 @@ describe('ExerciseListMiniComponent', () => {
       "rows": 10,
       "sortOrder": 1,
       "filters": {
-          "targetAreas": {
-              "value": [
-                  "Chest"
-              ],
-              "matchMode": "in"
-          },
-          "name": {
-              "value": "Pre",
-              "matchMode": "in"
-          }
+        "targetAreas": {
+          "value": [
+            "Chest"
+          ],
+          "matchMode": "in"
+        },
+        "name": {
+          "value": "Pre",
+          "matchMode": "in"
+        }
       },
       "globalFilter": null
     };
 
-    const expectedParams: any[] =[0, 10, 'Pre', ['Chest']];
+    const expectedParams: any[] = [0, 10, 'Pre', ['Chest']];
 
     //ACT
     component.getExercisesLazy(lazyLoadEvent);

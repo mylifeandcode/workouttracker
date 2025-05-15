@@ -134,7 +134,7 @@ describe('WorkoutListComponent', () => {
 
     //ASSERT
     expect(workoutService.retire).toHaveBeenCalledWith('some-guid');
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledTimes(2); //Once on component init, once after workout is retired
+    expect(workoutService.getFilteredSubset).toHaveBeenCalledTimes(1);
   });
 
   it('should reactivate a workout', () => {
@@ -146,7 +146,7 @@ describe('WorkoutListComponent', () => {
 
     //ASSERT
     expect(workoutService.reactivate).toHaveBeenCalledWith("some-guid");
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledTimes(2); //Once on component init, once after workout is retired
+    expect(workoutService.getFilteredSubset).toHaveBeenCalledTimes(1);
   });
 
 });

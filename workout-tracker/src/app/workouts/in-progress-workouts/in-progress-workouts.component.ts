@@ -4,7 +4,6 @@ import { catchError, finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { SharedModule } from 'primeng/api';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
@@ -12,7 +11,7 @@ import { DatePipe } from '@angular/common';
     selector: 'wt-in-progress-workouts',
     templateUrl: './in-progress-workouts.component.html',
     styleUrls: ['./in-progress-workouts.component.scss'],
-    imports: [NzTableModule, SharedModule, RouterLink, DatePipe]
+    imports: [NzTableModule, RouterLink, DatePipe]
 })
 export class InProgressWorkoutsComponent implements OnInit {
   private _executedWorkoutService = inject(ExecutedWorkoutService);

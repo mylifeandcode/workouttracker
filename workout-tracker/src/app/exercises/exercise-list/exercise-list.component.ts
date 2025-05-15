@@ -27,38 +27,20 @@ export class ExerciseListComponent extends ExerciseListBase {
   }
 
   public getExercisesLazy(params: NzTableQueryParams): void {
-    //console.log("EVENT: ", event);
-    let nameContains: string | null = null;
     let targetAreaContains: string[] | null = null;
 
-    const { pageSize, pageIndex, sort, filter } = params;
-
-    /*
-    if (event.filters["name"])
-      nameContains = event.filters["name"].value;
-    */
+    //These are from the table. The filters are declared external to it.
+    const { pageSize, pageIndex } = params;
 
     if (this._selectedTargetAreas.length > 0) {
       targetAreaContains = this._selectedTargetAreas;
     }
 
-    this.getExercises((pageIndex - 1) * pageSize, nameContains, targetAreaContains);
+    this.getExercises((pageIndex - 1) * pageSize, this.nameFilter, targetAreaContains);
   }
 
   public targetAreasFilterChange(selectedTargetAreas: string[]): void {
     console.log("targetAreasFilterChange: ", selectedTargetAreas);
     this.getExercises(0, null, selectedTargetAreas); //TODO: Add code to take name filter into account
   }
-
-  /*
-  public onQueryParamsChange(params: NzTableQueryParams): void {
-    console.log(params);
-    const { pageSize, pageIndex, sort, filter } = params;
-    const currentSort = sort.find(item => item.value !== null);
-    const sortField = (currentSort && currentSort.key) || null;
-    const sortOrder = (currentSort && currentSort.value) || null;
-    //this.loadDataFromServer(pageIndex, pageSize, sortField, sortOrder, filter);
-    this.getExecutedWorkouts((pageIndex - 1) * pageSize, null);
-  }
-  */
 }

@@ -6,8 +6,12 @@ import { Exercise } from 'app/workouts/_models/exercise';
 import { of } from 'rxjs';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { TargetArea } from 'app/workouts/_models/target-area';
-import { RouterModule } from '@angular/router';
+import { RouterLink, RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<Exercise>()));
@@ -23,16 +27,25 @@ describe('ExerciseListComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([]),
-        ExerciseListComponent
+        ExerciseListComponent,
+        NoopAnimationsModule
       ],
       providers: [
         {
           provide: ExerciseService,
           useClass: ExerciseServiceMock
         }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      ]
     })
+    .overrideComponent(ExerciseListComponent,
+      {
+        remove: {
+          imports: [NzTableModule, RouterLink] //Some imports still required to test
+        },
+        add: {
+          schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        }
+      })
       .compileComponents();
   }));
 
@@ -49,31 +62,17 @@ describe('ExerciseListComponent', () => {
 
   it('should get exercises lazily', () => {
     //ARRANGE
-    const lazyLoadEvent: any = { //Unfortunately, the parameter of the onLazyLoad event of PrimeNg's table is declared as type "any"
-      "first": 0,
-      "rows": 10,
-      "sortOrder": 1,
-      "filters": {
-        "targetAreas": {
-          "value": [
-            "Chest"
-          ],
-          "matchMode": "in"
-        },
-        "name": {
-          "value": "Pre",
-          "matchMode": "in"
-        }
-      },
-      "globalFilter": null
-    };
-
-    const expectedParams: any[] = [0, 10, 'Pre', ['Chest']];
-
+    const queryParams = <NzTableQueryParams>{
+      pageIndex: 1,
+      pageSize: 10
+    }
+    
     //ACT
-    component.getExercisesLazy(lazyLoadEvent);
+    component.getExercisesLazy(queryParams);
 
     //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, 'Pre', ['Chest']);
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null);
   });
+
+  //TODO: Add tests for refactored filter methods
 });
