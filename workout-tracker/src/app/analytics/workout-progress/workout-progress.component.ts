@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { WorkoutService } from 'app/workouts/_services/workout.service';
@@ -8,11 +8,11 @@ import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 import { sortBy } from 'lodash-es';
-import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { ChartModule } from 'primeng/chart';
+import { Chart } from 'chart.js';
 
 interface IWorkoutProgressForm {
   workoutId: FormControl<string | null>,
@@ -24,9 +24,13 @@ interface IWorkoutProgressForm {
     selector: 'wt-workout-progress',
     templateUrl: './workout-progress.component.html',
     styleUrls: ['./workout-progress.component.scss'],
-    imports: [ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule, ChartModule]
+    imports: [ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
+  @ViewChild('formAndRangeOfMotionChart') formAndRangeOfMotionChartCanvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('repsChart') repsChartCanvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('resistanceChart') resistanceChartCanvasRef!: ElementRef<HTMLCanvasElement>;
+
   private _analyticsService = inject(AnalyticsService);
   private _workoutService = inject(WorkoutService);
 
@@ -108,6 +112,42 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
     this.formAndRangeOfMotionChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.FormAndRangeOfMotion);
     this.repsChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Reps);
     this.resistanceChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Resistance);
+
+
+    //TODO: Refactor to use a method, parameterize
+    const formAndRangeContext = this.formAndRangeOfMotionChartCanvasRef.nativeElement.getContext('2d');
+    if (formAndRangeContext) {
+      new Chart(formAndRangeContext, {
+        type: 'line',
+        data: this.formAndRangeOfMotionChartData,
+        options: {
+          responsive: true,
+        }
+      });
+    }
+
+    const repsContext = this.repsChartCanvasRef.nativeElement.getContext('2d');
+    if (repsContext) {
+      new Chart(repsContext, {
+        type: 'line',
+        data: this.repsChartData,
+        options: {
+          responsive: true,
+        }
+      });
+    }
+    
+    const resistanceContext = this.resistanceChartCanvasRef.nativeElement.getContext('2d');
+    if (resistanceContext) {
+      new Chart(resistanceContext, {
+        type: 'line',
+        data: this.resistanceChartData,
+        options: {
+          responsive: true,
+        }
+      });
+    }    
+
   }
 
   private getUserWorkouts(pageSize: number = 500): void {

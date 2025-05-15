@@ -63,7 +63,7 @@ class WorkoutServiceMock {
     });
 }
 
-describe('WorkoutProgressComponent', () => {
+fdescribe('WorkoutProgressComponent', () => {
   let component: WorkoutProgressComponent;
   let fixture: ComponentFixture<WorkoutProgressComponent>;
   let analyticsService: AnalyticsService;

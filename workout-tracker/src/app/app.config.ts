@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection, inject, provideAppInitializer, runInInjectionContext } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, inject, provideAppInitializer } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
@@ -11,10 +11,6 @@ import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromD
 import { AuthInterceptor } from './core/auth.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { Observable, tap } from 'rxjs';
-import { MessageModule } from 'primeng/message';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
 import en from '@angular/common/locales/en';
 import { registerLocaleData } from '@angular/common';
 import { provideNzI18n, en_US } from 'ng-zorro-antd/i18n';
@@ -24,7 +20,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     //provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    importProvidersFrom(BrowserModule, CommonModule, MessageModule, ReactiveFormsModule),
+    importProvidersFrom(BrowserModule, CommonModule, ReactiveFormsModule),
     provideAppInitializer(() => {
       const initializerFn = (initializeApp)(inject(ConfigService), inject(UserService), inject(AuthService), inject(HttpClient));
       return initializerFn();
@@ -36,17 +32,7 @@ export const appConfig: ApplicationConfig = {
     },
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
-    providePrimeNG({
-      theme: {
-        preset: Aura,
-        options: {
-          darkModeSelector: false || 'none'
-        }        
-      }
-    }),
-    provideNzI18n(en_US),
-    MessageService, //Providing this here simplifies unit testing
-    ConfirmationService
+    provideNzI18n(en_US)
   ]
 };
 

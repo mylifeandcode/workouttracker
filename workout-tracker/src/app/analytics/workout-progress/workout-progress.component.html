@@ -56,18 +56,23 @@
         <nz-tabset>
           @if (formAndRangeOfMotionChartData) {
             <nz-tab nzTitle="Form and Range of Motion">
-              <p-chart type="line" height="300px" [options]="formAndRangeOfMotionChartOptions"
-                [data]="formAndRangeOfMotionChartData"></p-chart>
+              <div style="height: 300px">
+                <canvas #formAndRangeOfMotionChart></canvas>
+              </div>
             </nz-tab>
           }
           @if (repsChartData) {
             <nz-tab nzTitle="Reps">
-              <p-chart type="line" height="300px" [data]="repsChartData"></p-chart>
+              <div style="height: 300px">
+                <canvas #repsChart></canvas>
+              </div>
             </nz-tab>
           }
           @if (resistanceChartData) {
             <nz-tab nzTitle="Resistance">
-              <p-chart type="line" height="300px" [data]="resistanceChartData"></p-chart>
+              <div style="height: 300px">
+                <canvas #resistanceChart></canvas>
+              </div>
             </nz-tab>
           }
         </nz-tabset>
