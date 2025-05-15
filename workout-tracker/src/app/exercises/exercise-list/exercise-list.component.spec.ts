@@ -65,7 +65,7 @@ describe('ExerciseListComponent', () => {
     const queryParams = <NzTableQueryParams>{
       pageIndex: 1,
       pageSize: 10
-    }
+    };
     
     //ACT
     component.getExercisesLazy(queryParams);

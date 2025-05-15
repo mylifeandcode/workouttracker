@@ -123,7 +123,7 @@
         "no-underscore-dangle": "off",
         "object-shorthand": "warn",
         "prefer-arrow/prefer-arrow-functions": "off", /* For APP_INITIALIZER */
-        "quote-props": "off", /* Certain objects, such as PrimeNG lazy events, seem to disqualify the use of this rule */
+        "quote-props": "off", /* Certain objects, such as Angular's route definitions, require this rule to be disabled */
         "valid-typeof": "error",
         "radix": "warn",
         "yoda": "error",

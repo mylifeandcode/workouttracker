@@ -13,7 +13,7 @@ import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
-const getResistanceBandInventory = () => {
+const getResistanceBandInventory = (): Array<ResistanceBand> => {
   const bands = new Array<ResistanceBand>();
   bands.push(<ResistanceBand>{ publicId: 'someGuid1', color: 'Blue', maxResistanceAmount: 26, numberAvailable: 2, id: 1 });
   bands.push(<ResistanceBand>{ publicId: 'someGuid2', color: 'Orange', maxResistanceAmount: 60, numberAvailable: 4, id: 2 });

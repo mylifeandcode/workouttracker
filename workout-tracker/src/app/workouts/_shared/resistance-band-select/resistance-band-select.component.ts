@@ -200,7 +200,7 @@ export class ResistanceBandSelectComponent implements OnChanges {
     this.transferItems
      .filter(item => item.direction === 'right')
      .forEach(item => {
-       const band = this.resistanceBandInventory().find(band => band.color == item.title);
+       const band = this.resistanceBandInventory().find(resistanceBand => resistanceBand.color == item.title);
        if (band) {
          selection.makeup += `${band.color},`;
        }
