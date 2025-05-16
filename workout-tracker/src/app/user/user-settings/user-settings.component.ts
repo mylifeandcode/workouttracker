@@ -71,7 +71,8 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
       this.userSettingsForm.controls.repSettings = this.getRepSettingsForm();
     }
     else {
-      this.userSettingsForm!.removeControl('repSettings'); // Remove the repSettings control if recommendations are disabled
+      //this.userSettingsForm!.removeControl('repSettings'); // Remove the repSettings control if recommendations are disabled
+      this.userSettingsForm?.removeControl('repSettings');
     }
   }
 

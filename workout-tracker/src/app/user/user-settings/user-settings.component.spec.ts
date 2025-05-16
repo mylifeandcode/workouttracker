@@ -132,12 +132,17 @@ describe('UserSettingsComponent', () => {
     const minRepetitionSetReps = 6;
     const maxRepetitionSetReps = 10;
 
-    //The use of ! is okay here, we know the form has been created
-    component.userSettingsForm!.controls.repSettings!.controls[0].controls.minReps.setValue(minRepetitionSetReps);
-    component.userSettingsForm!.controls.repSettings!.controls[0].controls.maxReps.setValue(maxRepetitionSetReps);
-    component.userSettingsForm!.controls.repSettings!.controls[1].controls.duration.setValue(duration);
-    component.userSettingsForm!.controls.repSettings!.controls[1].controls.minReps.setValue(minTimedSetReps);
-    component.userSettingsForm!.controls.repSettings!.controls[1].controls.maxReps.setValue(maxTimedSetReps);
+    if (component.userSettingsForm === undefined) {
+      fail('userSettingsForm is undefined');
+    } else if (component.userSettingsForm.controls.repSettings === undefined) {
+      fail('userSettingsForm.controls.repSettings is undefined');
+    } else {
+      component.userSettingsForm.controls.repSettings.controls[0].controls.minReps.setValue(minRepetitionSetReps);
+      component.userSettingsForm.controls.repSettings.controls[0].controls.maxReps.setValue(maxRepetitionSetReps);
+      component.userSettingsForm.controls.repSettings.controls[1].controls.duration.setValue(duration);
+      component.userSettingsForm.controls.repSettings.controls[1].controls.minReps.setValue(minTimedSetReps);
+      component.userSettingsForm.controls.repSettings.controls[1].controls.maxReps.setValue(maxTimedSetReps);
+    }
     
     expectedSavedUser.settings = new UserSettings();
     expectedSavedUser.settings.repSettings = new Array<UserMinMaxReps>();
