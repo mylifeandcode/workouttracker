@@ -22,3 +22,7 @@
 .ant-select-multiple {
   width: 300px;
 }
+
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-radius: 8px;
+}
