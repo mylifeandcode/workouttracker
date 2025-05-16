@@ -7,14 +7,6 @@ body {
   font-size: 16px;
 }
 
-*, .p-select-label.p-placeholder {
-  font-family: $font-one, $font-two, $font-three, $font-four;
-}
-
-.p-inputtext {
-  font-family: $font-one, $font-two, $font-three, $font-four !important; //Theme CSS is getting in the way
-}
-
 .btn.btn-fullWidth {
   width: 100%;
 }
@@ -108,10 +100,6 @@ select.ng-invalid.ng-touched {
   background-image: url('./assets/images/white-steel.png');
 }
 
-.p-select-items { //Fix for style broken by PrimeNG 17. Won't work at component level, needs to be in a higher stylesheet like this.
-  padding-left: 0px !important;
-}
-
 //Here because of PrimeNG's layer addition :/
 .exercise-header {
   justify-content: space-between;
@@ -140,5 +128,3 @@ input, select {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
   }
 }
-
-
