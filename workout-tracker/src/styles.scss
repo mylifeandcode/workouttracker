@@ -133,6 +133,8 @@ input[type=checkbox] {
   height: 20px;
   width: 20px;
 
+  margin-right: 4px;
+
   &:focus {
     border-color: #007bff;
     box-shadow: 0 0 rgba(0, 123, 255, 0.5);

@@ -83,9 +83,9 @@
           </div>
           @if (exerciseForm.controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
             <div class="col-3">
-              <div class="form-check end-to-end-selection">
-                <input type="checkbox" class="form-check-input" formControlName="endToEnd" id="endToEnd">
-                <label class="form-check-label" for="endToEnd">End to End</label> 
+              <div class="pt-4">
+                <input type="checkbox" formControlName="endToEnd" id="endToEnd">
+                <label for="endToEnd">End to End</label> 
                 <small style="margin-left: 12px;"
                   nz-tooltip nzTooltipTitle="''End to End'' specifies that the exercise is performed with one end of the band clipped to a ring, and the other hand clipped to a handle, as opposed to looped through an anchor."
                   nzTooltipPlacement="right">(What's this?)</small>
@@ -95,36 +95,31 @@
         </div>
         <div class="row bottom-padded">
           <div class="col-3">
-            <div class="form-check">
+            <div>
               <input type="checkbox" formControlName="oneSided" id="oneSided">
               <label for="oneSided">One Sided</label> 
-              <small style="margin-left: 12px;"></small>
-              <div class="">(What's this?)
-                <span class="tooltip-text">
-                  'One Sided' specifies that the exercise is performed on one side. For example, Dumbbell Concentration Curls is an exercise where bicep curls are performed for one arm for a set, followed by a set for the other arm."
-                </span>
-              </div>
+              <small style="margin-left: 12px;"
+                nz-tooltip nzTooltipTitle="''One Sided'' specifies that the exercise is performed on one side. For example, Dumbbell Concentration Curls is an exercise where bicep curls are performed for one arm for a set, followed by a set for the other arm."
+                nzTooltipPlacement="right">(What's this?)</small>
             </div>
           </div>
           <div class="col-3">
-            <div class="form-check">
+            <div>
               <input type="checkbox" formControlName="involvesReps" id="involvesReps">
               <label for="involvesReps">Involves Repetitions</label> <small
                 style="margin-left: 12px;"
-                pTooltip="''Involves Repetitions'' specifies that the exercise is performed using repetitions. An exercise like Bench Press involves lifting a weight for a number of repetitions, whereas Jogging is an exercise which does not."
-                tooltipPosition="right">(What's this?)</small>
+                nz-tooltip nzTooltipTitle="''Involves Repetitions'' specifies that the exercise is performed using repetitions. An exercise like Bench Press involves lifting a weight for a number of repetitions, whereas Jogging is an exercise which does not."
+                nzTooltipPlacement="right">(What's this?)</small>
             </div>
           </div>
           <div class="col-3">
-            <div class="form-check">
+            <div>
               <input type="checkbox" formControlName="usesBilateralResistance" id="usesBilateralResistance">
-              <label class="form-check-label" for="usesBilateralResistance">Uses bilateral resistance</label> 
+              <label for="usesBilateralResistance">Uses bilateral resistance</label> 
               <small 
                 style="margin-left: 12px;"
-                pTooltip="''Uses bilateral resistance'' means that the exercise requires the same amount of resistance on both sides. For example, doing dumbbell curls with two equally weighted dumbbells. This doesn't apply to exercises which use a single bar, like a bench press, but rather exercises with two weights or sources of resistance."
-                tooltipPosition="right">
-                  (What's this?)
-              </small>
+                nz-tooltip nzTooltipTitle="''Uses bilateral resistance'' means that the exercise requires the same amount of resistance on both sides. For example, doing dumbbell curls with two equally weighted dumbbells. This doesn't apply to exercises which use a single bar, like a bench press, but rather exercises with two weights or sources of resistance."
+                nzTooltipPlacement="right">(What's this?)</small>
             </div>
           </div>
         </div>
