@@ -12,7 +12,7 @@
         [nzMaxTagPlaceholder]="tagPlaceHolder"
         nzPlaceHolder="Please select"
         [(ngModel)]="_selectedTargetAreas" 
-        class="ms-2"
+        class="ms-2 mb-2"
         (ngModelChange)="targetAreasFilterChange($event)"
         >
         @for (targetArea of targetAreas; track targetArea) {
