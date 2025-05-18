@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormRecord, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExerciseService } from '../_services/exercise.service';
@@ -61,8 +61,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   public allTargetAreas: TargetArea[] = [];
   public resistanceTypes: Map<number, string> | undefined;
   public infoMsg: string | null = null;
-  public readOnlyMode: boolean = false;
-  public fromViewRoute: boolean = false;
+  public editModeEnabled = signal(false);
 
   //PUBLIC PROPERTIES
   public get isNew(): boolean {
@@ -92,7 +91,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
   public ngOnInit(): void {
-    this.readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
+    this.editModeEnabled.set(this._route.snapshot.url.join('').indexOf('view') == -1);
     //this.createForm();
 
     //TODO: Rethink the following. This can probably be done a much better way. Thinking "forkJoin()".
@@ -105,9 +104,11 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     });
   }
 
+  /*
   public editModeToggled(event: any): void { //TODO: Get or specify a concrete type for the event param
-    this.readOnlyMode = !event.checked;
+    this.editModeEnabled = !event.checked;
   }
+  */
 
   public saveExercise(): void {
     if (!this.exerciseForm.valid) return;
