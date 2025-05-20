@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { PaginatedResults } from '../../core/_models/paginated-results';
@@ -28,14 +28,18 @@ export class WorkoutListComponent implements OnInit {
   public pageSize: number = 10;
   public workouts: WorkoutDTO[] = [];
 
-  public filterStatus = [
-    { text: 'Active Only', value: true }
-  ];
 
   public workoutNameFilterVisible: boolean = false;
 
-  protected _filterByNameContains: string | null = null;
-  protected _filterByActiveOnly: boolean = true;
+  protected _nameFilter = signal('');
+  protected _filterByActiveOnly = signal(true);
+  protected _filterChange = effect(() => {
+    this.getWorkouts(0);
+  });
+
+  public filterStatus = [
+    { text: 'Active Only', value: [true], byDefault: true }
+  ];
 
   public ngOnInit(): void {
     //this.loading = true;
@@ -45,7 +49,7 @@ export class WorkoutListComponent implements OnInit {
   public getWorkouts(first: number): void {
     this.totalRecords = 0;
     this.loading = true;
-    this._workoutSvc.getFilteredSubset(first, 10, this._filterByActiveOnly, this._filterByNameContains)
+    this._workoutSvc.getFilteredSubset(first, 10, this._filterByActiveOnly(), this._nameFilter())
       .pipe(finalize(() => { this.loading = false; }))
       .subscribe({
         next: (results: PaginatedResults<WorkoutDTO>) => {
@@ -58,16 +62,17 @@ export class WorkoutListComponent implements OnInit {
 
   public getWorkoutsLazy(event: any): void {
     //console.log("GETTING WORKOUTS: ", event);
+    /*
     if (event?.filters["name"])
-      this._filterByNameContains = event.filters["name"].value;
+      this._nameFilter = event.filters["name"].value;
     else
-      this._filterByNameContains = null;
+      this._nameFilter = null;
 
     if (event?.filters["activeOnly"])
       this._filterByActiveOnly = event.filters["activeOnly"].value;
     else
       this._filterByActiveOnly = true;
-
+    */
     this.getWorkouts(event.first);
   }
 
@@ -114,7 +119,7 @@ export class WorkoutListComponent implements OnInit {
   */
 
   public onQueryParamsChange(params: NzTableQueryParams): void {
-    console.log(params);
+    console.log("Table parameters have changed: ", params);
     const { pageSize, pageIndex, sort, filter } = params;
     const currentSort = sort.find(item => item.value !== null);
     const sortField = (currentSort && currentSort.key) || null;
@@ -125,13 +130,21 @@ export class WorkoutListComponent implements OnInit {
   }  
 
   public reset(): void {
-    this._filterByNameContains = null;
+    this._nameFilter.set('');
     this.search();
   }
 
   public search(): void {
     this.workoutNameFilterVisible = false;
     this.getWorkouts(0);
+  }
+
+  public filterTableByWorkoutName(): void {
+
+  }
+
+  public filterTableByWorkoutStatus(): void {
+
   }
 
 }
