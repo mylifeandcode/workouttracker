@@ -15,7 +15,8 @@
       [nzFrontPagination]="false"
       [nzShowSizeChanger]="true"
       [nzTotal]="totalRecords"
-      [nzPageSize]="10"
+      [nzPageSize]="pageSize"
+      [nzPageIndex]="pageIndex"
       [nzLoading]="loading"
       (nzQueryParams)="onQueryParamsChange($event)"
       >
@@ -68,46 +69,6 @@
           }
         </tbody>
       </nz-table>
-      <!--
-      <p-table #dt styleClass="p-datatable-striped" [value]="workouts" [paginator]="true" [columns]="cols"
-        [rows]="pageSize" [lazy]="true" (onLazyLoad)="getWorkoutsLazy($event)" [totalRecords]="totalRecords"
-        [loading]="loading">
-        <ng-template pTemplate="header" let-columns>
-          <tr>
-            <th>Name</th>
-            <th>Target Areas</th>
-            <th>Status</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-workout>
-          <tr>
-            <td>
-              <a [routerLink]="['/workouts/view/', workout.id]">{{workout.name}}</a>
-              <a [routerLink]="['/workouts/edit/', workout.id]" style="padding-left:10px"><i
-                  class="fa fa-pencil"></i></a>
-            </td>
-            <td [style]="{'overflow': 'visible'}">{{workout.targetAreas}}</td>
-            <td>
-              {{workout.active ? 'Active' : 'Retired'}}
-              &nbsp;
-              @if (workout.active) {
-                <button 
-                  class="btn btn-danger"
-                  (click)="retireWorkout(workout.id, workout.name)">
-                  Retire
-                </button>
-              } @else {
-                <button 
-                  class="btn btn-success"
-                  (click)="reactivateWorkout(workout.id, workout.name)">
-                  Reactivate
-                </button>
-              }
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-      -->
     </div>
   </div>
   @if (totalRecords != null) {

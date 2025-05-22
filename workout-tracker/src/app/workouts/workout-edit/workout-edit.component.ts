@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
@@ -54,7 +54,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   public workoutForm: FormGroup<IWorkoutEditForm>;
   public loading: boolean = true;
   public infoMsg: string | null = null;
-  public showExerciseSelectModal: boolean = false;
+  public showExerciseSelectModal = signal(false);
   public readOnlyMode: boolean = false;
   public fromViewRoute: boolean = false;
   public errorMsg: string | null = null;
@@ -85,7 +85,11 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   public openModal(): void {
-    this.showExerciseSelectModal = true;
+    this.showExerciseSelectModal.set(true);
+  }
+
+  public closeModal(): void {
+    this.showExerciseSelectModal.set(false);
   }
 
   public hasUnsavedData(): boolean {

@@ -123,7 +123,7 @@
         }
   
         <!--Select Exercise Modal-->
-        <nz-modal header="Select an Exercise" [(nzVisible)]="showExerciseSelectModal">
+        <nz-modal nzTitle="Select an Exercise" [nzFooter]="null" nzWidth="600px" [(nzVisible)]="showExerciseSelectModal" (nzOnCancel)="closeModal()">
           <div *nzModalContent>
             <wt-exercise-list-mini (exerciseSelected)="addExercise($event)" />
           </div>

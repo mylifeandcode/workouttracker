@@ -1,35 +1,10 @@
-<!--
-<p-table #dt styleClass="p-datatable-striped" [value]="exercises" [paginator]="true" [rows]="pageSize" [lazy]="true"
-  (onLazyLoad)="getExercisesLazy($event)" [totalRecords]="totalRecords" [loading]="loading">
-  <ng-template pTemplate="header" let-columns>
-    <tr>
-      <th>Name</th>
-      <th>Target Areas</th>
-    </tr>
-    <tr>
-      <th>
-        <input pInputText type="text" (input)="filterTableByInput(dt, $event, 'name', 'in')" />
-      </th>
-      <th>
-        <p-multiSelect appendTo="body" [style]="{'min-width': '180px'}" [options]="targetAreas" placeholder="All"
-          (onChange)="dt.filter($event.value, 'targetAreas', 'in')"></p-multiSelect>
-      </th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-exercise>
-    <tr>
-      <td style="width: 40%"><a class="exerciseName" (click)="selectExercise(exercise)">{{exercise.name}}</a></td>
-      <td [style]="{'overflow': 'visible'}">{{exercise.targetAreas}}</td>
-    </tr>
-  </ng-template>
-</p-table>
--->
 <nz-table #dt 
   [nzFrontPagination]="false"
   [nzShowSizeChanger]="true"
   [nzTotal]="totalRecords"
   [nzPageSize]="10"
   [nzLoading]="loading"
+  [nzData]="exercises"
   (nzQueryParams)="getExercisesLazy($event)"
   >
   <thead>
@@ -39,7 +14,7 @@
     </tr>
     <tr>
       <th>
-        <input type="text" [(ngModel)]="nameFilter" (ngModelChange)="nameFilterChange($event)" />
+        <input type="text" [(ngModel)]="_nameFilter" />
       </th>
       <th>
         <nz-select 

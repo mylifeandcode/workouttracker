@@ -33,7 +33,6 @@
               "src/ant-overrides.scss", 
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",               
               "src/styles.scss", 
-              "./node_modules/primeicons/primeicons.css", 
               "./node_modules/font-awesome/css/font-awesome.min.css"
             ],
             "scripts": [

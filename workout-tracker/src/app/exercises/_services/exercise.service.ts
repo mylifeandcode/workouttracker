@@ -31,7 +31,11 @@ export class ExerciseService {
       this.TARGET_AREAS_API_ROOT = apiRoot + "TargetAreas";
     }
 
-    public getAll(firstRecOffset: number, pageSize: number, nameContains: string | null = null, targetAreaContains: string[] | null = null): Observable<PaginatedResults<ExerciseDTO>> {
+    public getAll(
+      firstRecOffset: number, 
+      pageSize: number, 
+      nameContains: string | null = null, 
+      targetAreaContains: string[] | null = null): Observable<PaginatedResults<ExerciseDTO>> {
         
       let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
 

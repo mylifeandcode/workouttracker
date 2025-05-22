@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class ExerciseListMiniComponent extends ExerciseListBase {
   protected _exerciseSvc: ExerciseService;
-  protected _selectedTargetAreas: string[] = [];
+  //protected _selectedTargetAreas: string[] = [];
 
   @Output() exerciseSelected = new EventEmitter<ExerciseDTO>();
 
@@ -26,25 +26,8 @@ export class ExerciseListMiniComponent extends ExerciseListBase {
 
   }
 
-  public getExercisesLazy(event: any): void {
-
-    //TODO: Revisit. Similar code exists in ExerciseListComponent.
-
-    let nameContains: string | null = null;
-    let targetAreaContains: string[] | null = null;
-
-    if (event.filters["name"])
-        nameContains = event.filters["name"].value;
-
-    if (event.filters["targetAreas"])
-        targetAreaContains = event.filters["targetAreas"].value;
-
-    this.getExercises(event.first, nameContains, targetAreaContains);
-  }
-
   public selectExercise(exercise: ExerciseDTO): void {
     this.exerciseSelected.emit(exercise);
   }
-
 
 }

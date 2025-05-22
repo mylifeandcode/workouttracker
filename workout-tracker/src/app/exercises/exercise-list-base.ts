@@ -3,6 +3,8 @@ import { PaginatedResults } from '../core/_models/paginated-results';
 import { debounceTime, distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { Subject } from 'rxjs';
+import { signal, WritableSignal } from '@angular/core';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 export abstract class ExerciseListBase {
 
@@ -13,8 +15,8 @@ export abstract class ExerciseListBase {
   public pageSize: number = 10;
   public exercises: ExerciseDTO[] = [];
   public targetAreas: string[] = [];
-  public nameFilter: string = '';
-  protected _selectedTargetAreas: string[] = [];
+  protected _nameFilter = signal('');
+  protected _selectedTargetAreas: WritableSignal<string[]> = signal([]); 
 
   private _nameFilterChanged$ = new Subject<string>();
   private _destroy$ = new Subject<void>();
@@ -82,7 +84,21 @@ export abstract class ExerciseListBase {
     this.getExercises(0, null, selectedTargetAreas); //TODO: Add code to take name filter into account
   }
 
+  public getExercisesLazy(params: NzTableQueryParams): void {
+    console.log("getExercisesLazy: ", params);
+    let targetAreaContains: string[] | null = null;
+
+    //These are from the table. The filters are declared external to it.
+    const { pageSize, pageIndex } = params;
+
+    if (this._selectedTargetAreas.length > 0) {
+      targetAreaContains = this._selectedTargetAreas();
+    }
+
+    this.getExercises((pageIndex - 1) * pageSize, this._nameFilter(), targetAreaContains);
+  }
+
   private handleFilterChange(): void {
-    this.getExercises(0, this.nameFilter, this._selectedTargetAreas);
+    this.getExercises(0, this._nameFilter(), this._selectedTargetAreas());
   }
 }

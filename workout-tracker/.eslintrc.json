@@ -103,7 +103,10 @@
         "id-blacklist": "off",
         "id-match": "off",
         "max-classes-per-file": ["error", 10], 
-        "max-len": "warn",
+        "max-len": [ "warn",
+          {
+            "code": 140
+          }],
         "new-parens": "error", 
         "no-console": ["warn", {}], 
         "no-fallthrough": ["error", {}], 

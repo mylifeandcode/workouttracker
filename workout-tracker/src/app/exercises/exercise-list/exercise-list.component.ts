@@ -26,19 +26,6 @@ export class ExerciseListComponent extends ExerciseListBase {
 
   }
 
-  public getExercisesLazy(params: NzTableQueryParams): void {
-    let targetAreaContains: string[] | null = null;
-
-    //These are from the table. The filters are declared external to it.
-    const { pageSize, pageIndex } = params;
-
-    if (this._selectedTargetAreas.length > 0) {
-      targetAreaContains = this._selectedTargetAreas;
-    }
-
-    this.getExercises((pageIndex - 1) * pageSize, this.nameFilter, targetAreaContains);
-  }
-
   public targetAreasFilterChange(selectedTargetAreas: string[]): void {
     console.log("targetAreasFilterChange: ", selectedTargetAreas);
     this.getExercises(0, null, selectedTargetAreas); //TODO: Add code to take name filter into account

@@ -2,7 +2,7 @@ import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { PaginatedResults } from '../../core/_models/paginated-results';
-import { finalize } from 'rxjs/operators';
+import { debounceTime, finalize } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -26,6 +26,7 @@ export class WorkoutListComponent implements OnInit {
   public totalRecords: number = 0;
   public loading: boolean = true;
   public pageSize: number = 10;
+  public pageIndex: number = 1;
   public workouts: WorkoutDTO[] = [];
 
 
@@ -33,9 +34,15 @@ export class WorkoutListComponent implements OnInit {
 
   protected _nameFilter = signal('');
   protected _filterByActiveOnly = signal(true);
+  /*
   protected _filterChange = effect(() => {
-    this.getWorkouts(0);
+    //Even though the signals aren't referenced here, getWorkouts() references them, 
+    //so this effect will run when they change :)
+    //debounceTime(300);
+    console.log('EFFECT!');
+    this.getWorkouts(0); 
   });
+  */
 
   public filterStatus = [
     { text: 'Active Only', value: [true], byDefault: true }
@@ -46,10 +53,11 @@ export class WorkoutListComponent implements OnInit {
     //this.getWorkouts(0);
   }
 
-  public getWorkouts(first: number): void {
+  public getWorkouts(first: number, pageSize: number = 10): void {
+    //console.log("GETTING WORKOUTS: ", first, pageSize);
     this.totalRecords = 0;
     this.loading = true;
-    this._workoutSvc.getFilteredSubset(first, 10, this._filterByActiveOnly(), this._nameFilter())
+    this._workoutSvc.getFilteredSubset(first, pageSize, this._filterByActiveOnly(), this._nameFilter())
       .pipe(finalize(() => { this.loading = false; }))
       .subscribe({
         next: (results: PaginatedResults<WorkoutDTO>) => {
@@ -58,22 +66,6 @@ export class WorkoutListComponent implements OnInit {
         },
         error: (error: any) => window.alert("An error occurred getting workouts: " + error)
       });
-  }
-
-  public getWorkoutsLazy(event: any): void {
-    //console.log("GETTING WORKOUTS: ", event);
-    /*
-    if (event?.filters["name"])
-      this._nameFilter = event.filters["name"].value;
-    else
-      this._nameFilter = null;
-
-    if (event?.filters["activeOnly"])
-      this._filterByActiveOnly = event.filters["activeOnly"].value;
-    else
-      this._filterByActiveOnly = true;
-    */
-    this.getWorkouts(event.first);
   }
 
   public retireWorkout(workoutPublicId: string, workoutName: string): void {
@@ -126,9 +118,10 @@ export class WorkoutListComponent implements OnInit {
     const sortOrder = (currentSort && currentSort.value) || null;
     //this._filterByActiveOnly = filter.indexOf((filterItem) => filterItem.key == 'active') > -1 ? true : false;
     //this.loadDataFromServer(pageIndex, pageSize, sortField, sortOrder, filter);
-    this.getWorkouts((pageIndex - 1) * pageSize);
+    this.getWorkouts((pageIndex - 1) * pageSize, pageSize);
   }  
 
+  /*
   public reset(): void {
     this._nameFilter.set('');
     this.search();
@@ -138,7 +131,8 @@ export class WorkoutListComponent implements OnInit {
     this.workoutNameFilterVisible = false;
     this.getWorkouts(0);
   }
-
+  */
+ 
   public filterTableByWorkoutName(): void {
 
   }
