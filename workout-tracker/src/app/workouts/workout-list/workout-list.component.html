@@ -11,14 +11,13 @@
   <div class="row">
     <div class="col-12">
       <nz-table #dt
-      [nzData]="workouts" 
-      [nzFrontPagination]="false"
-      [nzShowSizeChanger]="true"
-      [nzTotal]="totalRecords"
-      [nzPageSize]="pageSize"
-      [nzPageIndex]="pageIndex"
-      [nzLoading]="loading"
-      (nzQueryParams)="onQueryParamsChange($event)"
+        [nzData]="workouts" 
+        [nzFrontPagination]="false"
+        [nzShowSizeChanger]="true"
+        [nzTotal]="totalRecords"
+        [nzPageSize]="_pageSize"
+        [nzLoading]="loading"
+        (nzQueryParams)="onQueryParamsChange($event)"
       >
         <thead>
           <tr>
