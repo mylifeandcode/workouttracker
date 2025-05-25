@@ -65,7 +65,12 @@
       </fieldset>
     </form>
 
-    <nz-modal nzTitle="Select Resistance Bands" [(nzVisible)]="showResistanceBandsSelectModal" [nzFooter]="null">
+    <nz-modal 
+      nzTitle="Select Resistance Bands" 
+      [(nzVisible)]="showResistanceBandsSelectModal" 
+      [nzCancelDisabled]="false"
+      (nzOnCancel)="resistanceBandsModalCancelled()"
+      [nzFooter]="null">
       <div *nzModalContent>
         <wt-resistance-band-select 
           [resistanceBandInventory]="allResistanceBands"

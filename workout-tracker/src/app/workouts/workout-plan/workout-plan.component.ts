@@ -20,13 +20,13 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 
 
 @Component({
-    selector: 'wt-workout-plan',
-    templateUrl: './workout-plan.component.html',
-    styleUrls: ['./workout-plan.component.scss'],
-    imports: [
-        NzSpinModule, FormsModule, ReactiveFormsModule, NzModalModule,
-        ExercisePlanComponent, ResistanceBandSelectComponent
-    ]
+  selector: 'wt-workout-plan',
+  templateUrl: './workout-plan.component.html',
+  styleUrls: ['./workout-plan.component.scss'],
+  imports: [
+    NzSpinModule, FormsModule, ReactiveFormsModule, NzModalModule,
+    ExercisePlanComponent, ResistanceBandSelectComponent
+  ]
 })
 export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _workoutService = inject(WorkoutService);
@@ -144,15 +144,26 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     }
   }
 
-  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup): void {
-    if (!this.bandSelect) return;
+  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup<IExercisePlanFormGroup>): void {
+    //console.log('this.bandSelect', this.bandSelect);
+    //if (!this.bandSelect) return;
+
+    console.log('form group: ', exerciseFormGroup);
 
     this.settingResistanceForBilateralExercise = exerciseFormGroup.controls.usesBilateralResistance.value;
     this.showResistanceBandsSelectModal = true;
     this.formGroupForResistanceSelection = exerciseFormGroup;
-    this.bandSelect.setBandAllocation(
+    this.exerciseBandAllocation = 
+      { 
+        selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value ?? '',
+        doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value
+      };
+
+    /*
+    this.bandSelect?.setBandAllocation(
       exerciseFormGroup.controls.resistanceMakeup.value,
       !exerciseFormGroup.controls.bandsEndToEnd.value);
+    */
   }
 
   public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {

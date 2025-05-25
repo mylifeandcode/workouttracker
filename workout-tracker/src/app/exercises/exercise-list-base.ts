@@ -74,18 +74,7 @@ export abstract class ExerciseListBase {
         error: (error: any) => window.alert("An error occurred getting exercises: " + error)
       });
   }
-
-  //TODO: Find out if I can consolidate these 2 methods into a generic one and call it from HTML (those brackets may cause problems)
-  /*
-  public filterTableByInput(table: Table, filterEvent: Event, filterOn: string, filterType: string = 'in'): void {
-    table.filter((filterEvent.target as HTMLInputElement).value, filterOn, filterType);
-  }
-
-  public filterTableBySelect(table: Table, filterEvent: Event, filterOn: string, filterType: string = 'in'): void {
-    table.filter((filterEvent.target as HTMLSelectElement).value, filterOn, filterType);
-  }
-  */
-
+  
   public nameFilterChange(name: string): void {
     this._nameFilterChanged$.next(name);
   }

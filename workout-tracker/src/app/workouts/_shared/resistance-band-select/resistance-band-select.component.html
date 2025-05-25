@@ -1,39 +1,54 @@
-<nz-transfer
-  [nzDataSource]="transferItems"
-  [nzTitles]="['Available', 'Selected']"
-  [nzRender]="bandItem"
-  nzNotFoundContent="No bands"
-  nzItemUnit="band"
-  nzItemsUnit="bands"
-  (nzChange)="onTransferChange($event)">
-</nz-transfer>
+<div class="container">
+  <div class="row pt-3">
+    <div class="col-12 d-flex justify-content-center">
+      <nz-transfer
+        [nzDataSource]="transferItems"
+        [nzTitles]="['Available', 'Selected']"
+        [nzRender]="bandItem"
+        nzNotFoundContent="No bands"
+        nzItemUnit="band"
+        nzItemsUnit="bands"
+        (nzChange)="onTransferChange($event)">
+      </nz-transfer>
 
-<ng-template #bandItem let-item>
-  <span [innerHTML]="item.title | resistanceBandColor"></span>
-</ng-template>
+      <ng-template #bandItem let-item>
+        <span [innerHTML]="item.title | resistanceBandColor"></span>
+      </ng-template>
+    </div>
+  </div>
 
-<div class="row">
-  <div class="col-6">
-    Max Available Resistance: {{maxAvailableResistance() | resistanceAmount}}
+  <div class="row">
+    <div class="col-12">
+      &nbsp;
+    </div>
   </div>
-  <div class="col-6">
-    Max Selected Resistance: {{maxSelectedResistance() | resistanceAmount}}
+
+  @if (showBilateralValidationFailure) {
+    <div class="row">
+      <div class="col-12">
+        <span class="bilateral-warning">
+          Bilateral resistance required.
+          <small style="cursor: pointer"
+            nz-tooltip nzTooltipTitle="''Bilateral resistance'' specifies that the exercise requires two sets of equal resistance, one for each side."
+            nzTooltipPlacement="right">(What's this?)
+          </small>  
+        </span>
+      </div>
+    </div>
+  }
+
+  <div class="row pb-4">
+    <div class="col-6">
+      Max Available Resistance: {{maxAvailableResistance() | resistanceAmount}}<br />
+      Max Selected Resistance: {{maxSelectedResistance() | resistanceAmount}}
+    </div>
+    <div class="col-6">
+      <button class="btn btn-warning pull-right mild-margins" (click)="cancel()">Cancel</button>
+      <span style="width:100px"></span>
+      <button class="btn btn-success pull-right" [disabled]="maxSelectedResistance() == 0 || exerciseUsesBilateralResistance() && showBilateralValidationFailure" (click)="ok()">OK</button>  
+    </div>
   </div>
+
 </div>
-<div class="row">
-  <div class="col-12">
-    &nbsp;
-  </div>
-</div>
-@if (showBilateralValidationFailure) {
-  <span class="bilateral-warning">
-    Bilateral resistance required.
-    <small style="cursor: pointer"
-      nz-tooltip nzTooltipTitle="''Bilateral resistance'' specifies that the exercise requires two sets of equal resistance, one for each side."
-      nzTooltipPlacement="right">(What's this?)
-    </small>  
-  </span>
-}
-<button class="btn btn-warning pull-right mild-margins" (click)="cancel()">Cancel</button>
-<span style="width:100px"></span>
-<button class="btn btn-success pull-right" [disabled]="maxSelectedResistance() == 0 || exerciseUsesBilateralResistance() && showBilateralValidationFailure" (click)="ok()">OK</button>
+
+
