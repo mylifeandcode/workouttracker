@@ -1,9 +1,8 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { debounceTime, finalize } from 'rxjs/operators';
-import { combineLatest } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -78,7 +77,7 @@ export class WorkoutListComponent {
     }
   }
 
-  private getWorkouts(first: number, pageSize: number = 10, filterByActiveOnly: boolean = false, nameFilter: string = ''): void {
+  private getWorkouts(first: number, pageSize: number = 10, filterByActiveOnly: boolean = true, nameFilter: string = ''): void {
     console.log("GETTING WORKOUTS: ", first, pageSize);
     //this.totalRecords = 0; DO NOT SET THIS -- IT WILL TRIGGER THE PARAMS CHANGE HANDLER AND CALL IT ALL AGAIN WITH THE DEFAULT PARAMS!
     this.loading = true;

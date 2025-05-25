@@ -7,23 +7,21 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-    selector: 'wt-exercise-list-mini',
-    templateUrl: './exercise-list-mini.component.html', //TODO: Fix alternating row colors not working
-    styleUrls: ['./exercise-list-mini.component.scss'],
-    imports: [FormsModule, NzTableModule, NzSelectModule]
+  selector: 'wt-exercise-list-mini',
+  templateUrl: './exercise-list-mini.component.html', //TODO: Fix alternating row colors not working
+  styleUrls: ['./exercise-list-mini.component.scss'],
+  imports: [FormsModule, NzTableModule, NzSelectModule]
 })
 export class ExerciseListMiniComponent extends ExerciseListBase {
   protected _exerciseSvc: ExerciseService;
-  //protected _selectedTargetAreas: string[] = [];
 
   @Output() exerciseSelected = new EventEmitter<ExerciseDTO>();
 
   constructor() {
-      const _exerciseSvc = inject(ExerciseService);
- 
-      super(_exerciseSvc);
-      this._exerciseSvc = _exerciseSvc;
+    const _exerciseSvc = inject(ExerciseService);
 
+    super(_exerciseSvc);
+    this._exerciseSvc = _exerciseSvc;
   }
 
   public selectExercise(exercise: ExerciseDTO): void {

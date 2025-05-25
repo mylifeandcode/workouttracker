@@ -55,10 +55,12 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   public loading: boolean = true;
   public infoMsg: string | null = null;
   public showExerciseSelectModal = signal(false);
-  public readOnlyMode: boolean = false;
+  //public readOnlyMode: boolean = false;
   public fromViewRoute: boolean = false;
   public errorMsg: string | null = null;
   public saving: boolean = false;
+
+  protected editEnabled = signal(false);
 
   //Private fields
   private _workout: Workout = new Workout();
@@ -74,15 +76,18 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   public ngOnInit(): void {
-    this.readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
+    const readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
+    if (!readOnlyMode) this.editEnabled.set(true);
     this.getWorkoutIdFromRouteParams();
     this.setupForm();
     //console.log("Workout: ", this._workout);
   }
 
+  /*
   public editModeToggled(event: any): void { //TODO: Get or specify a concrete type for the event param
     this.readOnlyMode = !event.checked;
   }
+  */
 
   public openModal(): void {
     this.showExerciseSelectModal.set(true);

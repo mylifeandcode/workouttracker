@@ -1,7 +1,7 @@
-@if (readOnlyMode) {
-  <h3 class="headroom">Workout</h3>
-} @else {
+@if (editEnabled()) {
   <h3 class="headroom">Workout {{ workoutId ? 'Edit' : 'Creation' }}</h3>
+} @else {
+  <h3 class="headroom">Workout</h3>
 }
 
 <div class="container-fluid form-group">
@@ -13,7 +13,7 @@
     </div>
   } @else if (workoutForm) {
     <form [formGroup]="workoutForm" novalidate>
-      <fieldset [disabled]="readOnlyMode">
+      <fieldset [disabled]="!editEnabled()">
         <div class="row bottom-padded">
           <div class="col-12">
             <input type="hidden" formControlName="id" />
@@ -40,7 +40,7 @@
           <div class="col-6">Exercise Name</div>
           <div class="col-2">Number of Sets</div>
           <div class="col-2">Set Type</div>
-          @if (!readOnlyMode) {
+          @if (editEnabled()) {
             <div class="col-2">Move/Delete</div>
           }
         </div>
@@ -73,7 +73,7 @@
                 <span class="error-text"><br />Required</span>
               }
             </div>
-            @if (!readOnlyMode) {
+            @if (editEnabled()) {
               <div class="col-2">
                 <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp($index)" [disabled]="$index == 0">
                   <i class="fa fa-arrow-up"></i>
@@ -90,7 +90,7 @@
           </div>
         }
   
-        @if (!readOnlyMode) {
+        @if (editEnabled()) {
           <p>
             <button class="btn btn-add-exercise btn-sm" (click)="openModal()">
               <i class="fa fa-plus"></i> Add Exercise to Workout
@@ -99,14 +99,7 @@
         }
   
         <div class="row">
-          @if (fromViewRoute) {
-            <div class="col-2">
-              <span class="mild-right-margin align-middle">Enable Editing</span>
-              <nz-switch id="editModeToggle" (onChange)="editModeToggled($event)" class="align-middle" />
-            </div>
-          }
-
-          @if (!readOnlyMode) {
+          @if (editEnabled()) {
             <div class="col-8">
               <button type="submit" [disabled]="workoutForm.invalid || saving" (click)="saveWorkout()"
                 class="btn btn-save-workout">Save</button>&nbsp;<span>{{infoMsg}}</span>
@@ -116,20 +109,27 @@
             </div>
           }
         </div>
+
         @if (errorMsg) {
           <div class="offset-2 col-4 error-text">
             {{errorMsg}}
           </div>
         }
-  
-        <!--Select Exercise Modal-->
-        <nz-modal nzTitle="Select an Exercise" [nzFooter]="null" nzWidth="600px" [(nzVisible)]="showExerciseSelectModal" (nzOnCancel)="closeModal()">
-          <div *nzModalContent>
-            <wt-exercise-list-mini (exerciseSelected)="addExercise($event)" />
-          </div>
-        </nz-modal>
       </fieldset>
     </form>
+    <div class="row">
+        @if (fromViewRoute) {
+          <div class="col-2">
+            <span class="mild-right-margin align-middle">Enable Editing</span>
+            <nz-switch id="editModeToggle" [(ngModel)]="editEnabled" class="align-middle" />
+          </div>
+        }
+    </div>
   }
-
 </div>
+<!--Select Exercise Modal-->
+<nz-modal nzTitle="Select an Exercise" [nzFooter]="null" nzWidth="600px" [(nzVisible)]="showExerciseSelectModal" (nzOnCancel)="closeModal()">
+  <div *nzModalContent>
+    <wt-exercise-list-mini (exerciseSelected)="addExercise($event)" />
+  </div>
+</nz-modal>

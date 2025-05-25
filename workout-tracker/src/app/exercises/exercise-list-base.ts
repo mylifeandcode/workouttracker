@@ -3,8 +3,9 @@ import { PaginatedResults } from '../core/_models/paginated-results';
 import { debounceTime, distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { Subject } from 'rxjs';
-import { signal, WritableSignal } from '@angular/core';
+import { effect, signal, WritableSignal } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 export abstract class ExerciseListBase {
 
@@ -17,6 +18,16 @@ export abstract class ExerciseListBase {
   public targetAreas: string[] = [];
   protected _nameFilter = signal('');
   protected _selectedTargetAreas: WritableSignal<string[]> = signal([]); 
+  
+  //Signals don't have debounce natively, so we need this ugly bit of code :(
+  private _nameFilterForDebounce$ = toObservable(this._nameFilter).pipe(debounceTime(500));
+  private _nameFilterForDebounce = toSignal(this._nameFilterForDebounce$);
+
+  private _filterChange = effect(() => {
+    //Even if the signals weren't referenced here, getWorkouts() references them, 
+    //so this effect would run when they change :)
+    this.getExercises(0, this._nameFilterForDebounce() ?? null, this._selectedTargetAreas());
+  });
 
   private _nameFilterChanged$ = new Subject<string>();
   private _destroy$ = new Subject<void>();
