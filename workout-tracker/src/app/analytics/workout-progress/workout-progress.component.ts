@@ -8,11 +8,12 @@ import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 import { sortBy } from 'lodash-es';
-import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
-import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzTabChangeEvent, NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { Chart } from 'chart.js';
+import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title } from 'chart.js';
+import { CommonModule } from '@angular/common';
 
 interface IWorkoutProgressForm {
   workoutId: FormControl<string | null>,
@@ -24,7 +25,7 @@ interface IWorkoutProgressForm {
     selector: 'wt-workout-progress',
     templateUrl: './workout-progress.component.html',
     styleUrls: ['./workout-progress.component.scss'],
-    imports: [ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule]
+    imports: [CommonModule, ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
   @ViewChild('formAndRangeOfMotionChart') formAndRangeOfMotionChartCanvasRef!: ElementRef<HTMLCanvasElement>;
@@ -78,6 +79,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
 
   constructor() {
     const formBuilder = inject(FormBuilder);
+    Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title);
 
     this.form = this.buildForm(formBuilder);
   }
@@ -108,46 +110,35 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
       });
   }
 
-  private setupChartData(exerciseId: string): void {
+  private getChartData(exerciseId: string): void {
     this.formAndRangeOfMotionChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.FormAndRangeOfMotion);
     this.repsChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Reps);
     this.resistanceChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Resistance);
 
+    this.setupChart(
+      this.formAndRangeOfMotionChartCanvasRef.nativeElement.getContext('2d'), 
+      this.formAndRangeOfMotionChartData);
 
-    //TODO: Refactor to use a method, parameterize
-    const formAndRangeContext = this.formAndRangeOfMotionChartCanvasRef.nativeElement.getContext('2d');
-    if (formAndRangeContext) {
-      new Chart(formAndRangeContext, {
-        type: 'line',
-        data: this.formAndRangeOfMotionChartData,
-        options: {
-          responsive: true,
-        }
-      });
-    }
+    this.setupChart(
+      this.repsChartCanvasRef.nativeElement.getContext('2d'),
+      this.repsChartData);
 
-    const repsContext = this.repsChartCanvasRef.nativeElement.getContext('2d');
-    if (repsContext) {
-      new Chart(repsContext, {
-        type: 'line',
-        data: this.repsChartData,
-        options: {
-          responsive: true,
-        }
-      });
-    }
+    this.setupChart(
+      this.resistanceChartCanvasRef.nativeElement.getContext('2d'),
+      this.resistanceChartData);
+  }
+
+  private setupChart(canvas: CanvasRenderingContext2D | null, chartData: AnalyticsChartData | null): void {
+    if (canvas === null || chartData === null) return;
+
+    new Chart(canvas, {
+      type: 'line',
+      data: chartData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }});
     
-    const resistanceContext = this.resistanceChartCanvasRef.nativeElement.getContext('2d');
-    if (resistanceContext) {
-      new Chart(resistanceContext, {
-        type: 'line',
-        data: this.resistanceChartData,
-        options: {
-          responsive: true,
-        }
-      });
-    }    
-
   }
 
   private getUserWorkouts(pageSize: number = 500): void {
@@ -207,6 +198,6 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
 
   private exerciseChanged(id: string | null): void {
     if (!id) return;
-    this.setupChartData(id);
+    this.getChartData(id);
   }
 }

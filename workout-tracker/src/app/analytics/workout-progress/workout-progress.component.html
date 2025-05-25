@@ -51,33 +51,25 @@
     <br />
     @if (form.controls.workoutId.value && metrics.length == 0) {
       <em>No metrics exist for this workout.</em>
-    } @else {
-      @if (form.controls.exerciseId.value != null) {
-        <nz-tabset>
-          @if (formAndRangeOfMotionChartData) {
-            <nz-tab nzTitle="Form and Range of Motion">
-              <div style="height: 300px">
-                <canvas #formAndRangeOfMotionChart></canvas>
-              </div>
-            </nz-tab>
-          }
-          @if (repsChartData) {
-            <nz-tab nzTitle="Reps">
-              <div style="height: 300px">
-                <canvas #repsChart></canvas>
-              </div>
-            </nz-tab>
-          }
-          @if (resistanceChartData) {
-            <nz-tab nzTitle="Resistance">
-              <div style="height: 300px">
-                <canvas #resistanceChart></canvas>
-              </div>
-            </nz-tab>
-          }
-        </nz-tabset>
-      }
-    }
-
+    } 
+    <div style="height: 300px;" [ngClass]="{'visible': form.controls.exerciseId.value != null, 'invisible': form.controls.exerciseId.value == null}">
+      <nz-tabset>
+        <nz-tab nzTitle="Form and Range of Motion">
+          <div style="height: 300px">
+            <canvas #formAndRangeOfMotionChart></canvas>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Reps">
+          <div style="height: 300px">
+            <canvas #repsChart></canvas>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Resistance">
+          <div style="height: 300px">
+            <canvas #resistanceChart></canvas>
+          </div>
+        </nz-tab>
+      </nz-tabset>
+    </div>
   </div>
 }

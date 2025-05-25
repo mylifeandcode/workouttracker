@@ -18,3 +18,10 @@
   color: $button-text-color-one;
   background-color: $exercise-color-three;
 }
+
+.target-areas {
+  max-height: 300px; 
+  overflow-y: scroll;
+  border-style: solid;
+  border-width: 1px;
+}
