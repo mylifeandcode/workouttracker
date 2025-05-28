@@ -22,19 +22,15 @@ interface IWorkoutProgressForm {
 }
 
 @Component({
-    selector: 'wt-workout-progress',
-    templateUrl: './workout-progress.component.html',
-    styleUrls: ['./workout-progress.component.scss'],
-    imports: [CommonModule, ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule]
+  selector: 'wt-workout-progress',
+  templateUrl: './workout-progress.component.html',
+  styleUrls: ['./workout-progress.component.scss'],
+  imports: [CommonModule, ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
   @ViewChild('formAndRangeOfMotionChart') formAndRangeOfMotionChartCanvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('repsChart') repsChartCanvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('resistanceChart') resistanceChartCanvasRef!: ElementRef<HTMLCanvasElement>;
-
-  private _analyticsService = inject(AnalyticsService);
-  private _workoutService = inject(WorkoutService);
-
 
   public loadingData: boolean = true;
   public metrics: ExecutedWorkoutMetrics[] = [];
@@ -42,7 +38,23 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   public repsChartData: AnalyticsChartData | null = null;
   public resistanceChartData: AnalyticsChartData | null = null;
   public workouts: WorkoutDTO[] = [];
-  public formAndRangeOfMotionChartOptions = { //Type "any" because of ChartJS
+  public form: FormGroup<IWorkoutProgressForm>;
+  public readonly DEFAULT_WORKOUT_COUNT: number = 5;
+
+  //SERVICES
+  private _analyticsService = inject(AnalyticsService);
+  private _workoutService = inject(WorkoutService);
+
+  //PRIVATE VARIABLES
+  private _workoutId$: Subscription | undefined;
+  private _workoutCount$: Subscription | undefined;
+  private _exerciseId$: Subscription | undefined;
+
+  private _formAndRangeOfMotionChart: Chart | null = null;
+  private _repsChart: Chart | null = null;
+  private _resistanceChart: Chart | null = null;
+
+  private _formAndRangeOfMotionChartOptions = { //Type "any" because of ChartJS
     scales: {
       y: {
         ticks: {
@@ -69,13 +81,6 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
       }
     }
   };
-
-  public form: FormGroup<IWorkoutProgressForm>;
-  public readonly DEFAULT_WORKOUT_COUNT: number = 5;
-
-  private _workoutId$: Subscription | undefined;
-  private _workoutCount$: Subscription | undefined;
-  private _exerciseId$: Subscription | undefined;
 
   constructor() {
     const formBuilder = inject(FormBuilder);
@@ -111,34 +116,51 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   }
 
   private getChartData(exerciseId: string): void {
-    this.formAndRangeOfMotionChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.FormAndRangeOfMotion);
+    this.formAndRangeOfMotionChartData =
+      this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.FormAndRangeOfMotion);
     this.repsChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Reps);
     this.resistanceChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Resistance);
 
-    this.setupChart(
-      this.formAndRangeOfMotionChartCanvasRef.nativeElement.getContext('2d'), 
-      this.formAndRangeOfMotionChartData);
+    this._formAndRangeOfMotionChart = this.setupChart(
+      this.formAndRangeOfMotionChartCanvasRef.nativeElement.getContext('2d'),
+      this.formAndRangeOfMotionChartData,
+      this._formAndRangeOfMotionChart,
+      this._formAndRangeOfMotionChartOptions.scales);
 
-    this.setupChart(
+    this._repsChart = this.setupChart(
       this.repsChartCanvasRef.nativeElement.getContext('2d'),
-      this.repsChartData);
+      this.repsChartData,
+      this._repsChart);
 
-    this.setupChart(
+    this._resistanceChart = this.setupChart(
       this.resistanceChartCanvasRef.nativeElement.getContext('2d'),
-      this.resistanceChartData);
+      this.resistanceChartData, 
+      this._resistanceChart);
   }
 
-  private setupChart(canvas: CanvasRenderingContext2D | null, chartData: AnalyticsChartData | null): void {
-    if (canvas === null || chartData === null) return;
+  private setupChart(
+    canvas: CanvasRenderingContext2D | null, 
+    chartData: AnalyticsChartData | null, 
+    chartReference: Chart | null = null,
+    scales?: any | null): Chart | null {
 
-    new Chart(canvas, {
+    if (!canvas || !chartData) return null;
+
+    if(chartReference) {
+      chartReference.destroy();
+    }
+
+    const options: any = {
+      responsive: true,
+      maintainAspectRatio: false,
+      ...(scales ? { scales } : {})
+    };
+
+    return new Chart(canvas, {
       type: 'line',
       data: chartData,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false
-      }});
-    
+      options
+    });
   }
 
   private getUserWorkouts(pageSize: number = 500): void {
@@ -158,7 +180,9 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   private buildForm(builder: FormBuilder): FormGroup<IWorkoutProgressForm> {
     const form = builder.group<IWorkoutProgressForm>({
       workoutId: new FormControl<string | null>(null, Validators.required),
-      workoutCount: new FormControl<number>(this.DEFAULT_WORKOUT_COUNT, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
+      workoutCount: new FormControl<number>(
+        this.DEFAULT_WORKOUT_COUNT,
+        { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
       exerciseId: new FormControl<string | null>(null, Validators.required)
     });
 
@@ -184,6 +208,8 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
       )
       .subscribe((results: ExecutedWorkoutMetrics[]) => {
         this.metrics = results;
+        this.form.controls.exerciseId.setValue(null);
+        this.form.controls.exerciseId.markAsUntouched();
       });
   }
 

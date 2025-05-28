@@ -49,14 +49,8 @@ export const routes: Routes = [
   },
   {
     path: 'analytics',
-    //loadChildren: (): Promise<Routes> => import('./analytics/analytics.routes').then(r => r.analyticsroutes)
-    loadComponent: () => import('./core/under-construction/under-construction.component').then(m => m.UnderConstructionComponent)
+    loadChildren: (): Promise<Routes> => import('./analytics/analytics.routes').then(r => r.analyticsroutes)
   },
-  {
-    path: 'analytics/workouts',
-    //loadChildren: (): Promise<Routes> => import('./analytics/analytics.routes').then(r => r.analyticsroutes)
-    loadComponent: () => import('./core/under-construction/under-construction.component').then(m => m.UnderConstructionComponent)
-  },  
   {
     path: 'user',
     loadChildren: (): Promise<Routes> => import('./user/user.routes').then(r => r.userRoutes)
