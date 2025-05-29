@@ -1,14 +1,26 @@
-<h5>Enter Duration</h5>
-@if (form) {
-  <form [formGroup]="form">
-    <p>
-      <label for="hours">Hours</label><input wtSelectOnFocus formControlName="hours" id="hours" type="number" min="0"> 
-      <label for="minutes">Minutes</label><input wtSelectOnFocus formControlName="minutes" id="minutes" type="number" min="0"> 
-      <label for="seconds">Seconds</label><input wtSelectOnFocus formControlName="seconds" id="seconds" type="number" min="0">
-    </p>
-  </form>
-}
-<p>
-  <button class="btn btn-danger pull-right" (click)="cancel()">Cancel</button>
-  <button class="btn btn-success pull-right" (click)="ok()" [disabled]="!form.valid">OK</button>
-</p>
+<div class="container">
+  <div class="row">
+    <div class="col-12 ms-3 me-3">
+      @if (form) {
+        <form [formGroup]="form">
+          <p>
+            <label for="hours">Hours</label><input wtSelectOnFocus formControlName="hours" id="hours" type="number"
+              min="0">
+            <label for="minutes">Minutes</label><input wtSelectOnFocus formControlName="minutes" id="minutes"
+              type="number" min="0">
+            <label for="seconds">Seconds</label><input wtSelectOnFocus formControlName="seconds" id="seconds"
+              type="number" min="0">
+          </p>
+        </form>
+      }
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 mb-2">
+      <p>
+        <button class="btn btn-danger pull-right" (click)="cancel()">Cancel</button>
+        <button class="btn btn-success pull-right" (click)="ok()" [disabled]="!form.valid">OK</button>
+      </p>
+    </div>
+  </div>
+</div>
