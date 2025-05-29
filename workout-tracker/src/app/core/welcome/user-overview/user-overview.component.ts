@@ -10,15 +10,5 @@ import { DatePipe } from '@angular/common';
     imports: [DatePipe]
 })
 export class UserOverviewComponent {
-
   readonly userOverview = input<UserOverview>();
-
-  //Replaced with @defer where this component is used :)
-  /*
-  @Input()
-  public loading: boolean = true;
-  */
-
-  constructor() { }
-
 }

@@ -55,7 +55,7 @@ describe('WorkoutLogPastStartComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-      .compileComponents();
+      .compileComponents(); //TODO: Use overrideComponent() to remove unneeded imports
   });
 
   beforeEach(() => {
@@ -72,7 +72,7 @@ describe('WorkoutLogPastStartComponent', () => {
     const service = TestBed.inject(WorkoutService);
     expect(service.getFilteredSubset).toHaveBeenCalledWith(0, 500, true);
     expect(component.workouts).not.toBeNull();
-    expect(component.workouts.length).toBe(3);
+    expect(component.workouts().length).toBe(3);
   });
 
   it('should proceed to the next step via proceedToWorkoutEntry()', () => {

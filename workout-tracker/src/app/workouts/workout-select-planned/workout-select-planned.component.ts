@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
@@ -16,7 +16,8 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
   selector: 'wt-workout-select-planned',
   templateUrl: './workout-select-planned.component.html',
   styleUrls: ['./workout-select-planned.component.scss'],
-  imports: [RouterLink, DatePipe, NzTableModule, NzModalModule]
+  imports: [RouterLink, DatePipe, NzTableModule, NzModalModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutSelectPlannedComponent {
   private _executedWorkoutService = inject(ExecutedWorkoutService);
@@ -24,14 +25,10 @@ export class WorkoutSelectPlannedComponent {
   private _messageService = inject(NzMessageService);
   //No ngOnInit() needed -- table will automatically get initial data due to lazy loading (Ajax in NG-ZORRO parlance)
 
-  public plannedWorkouts: ExecutedWorkoutSummaryDTO[] = [];
-  public totalCount: number = 0;
-  public loading: boolean = true;
-  public pageSize: number = 10;
-  public cols: any = [
-    { field: 'name', header: 'Workout Name' },
-    { field: 'createdDateTime', header: 'Created' }
-  ];
+  public plannedWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
+  public totalCount = signal<number>(0);
+  public loading = signal<boolean>(true);
+  public pageSize = signal<number>(10);
 
   public getPlannedWorkoutsLazy(event: any): void {
     this.getPlannedWorkouts(event.first);
@@ -42,16 +39,16 @@ export class WorkoutSelectPlannedComponent {
       nzTitle: 'Are You Sure?',
       nzContent: 'Are you sure you want to delete this planned workout?',
       nzOnOk: () => {
-        this.loading = true;
+        this.loading.set(true);
         this._executedWorkoutService.deletePlanned(publicId)
-          .pipe(finalize(() => this.loading = false))
+          .pipe(finalize(() => this.loading.set(false)))
           .subscribe({
             next: () => {
               this._messageService.success('Planned Workout deleted');
               this.getPlannedWorkouts(0);
             },
             error: (error: HttpErrorResponse) => {
-              console.log("ERROR: ", error);
+              //console.log("ERROR: ", error);
               window.alert("Couldn't delete workout! " + error.error.errors.id.map((e: any) => e).join(', '));
             }
           }
@@ -61,16 +58,17 @@ export class WorkoutSelectPlannedComponent {
   }
 
   private getPlannedWorkouts(first: number): void {
-    this.totalCount = 0;
-    this.loading = true;
+    //this.totalCount = 0;
+    this.loading.set(true);
+    //console.log("Getting planned workouts, first: ", first);
 
     this._executedWorkoutService
-      .getPlanned(first, this.pageSize)
-      .pipe(finalize(() => { this.loading = false; }))
+      .getPlanned(first, this.pageSize())
+      .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
         next: (plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-          this.plannedWorkouts = plannedWorkoutInfo.results;
-          this.totalCount = plannedWorkoutInfo.totalCount;
+          this.plannedWorkouts.set(plannedWorkoutInfo.results);
+          this.totalCount.set(plannedWorkoutInfo.totalCount);
         }
       });
   }

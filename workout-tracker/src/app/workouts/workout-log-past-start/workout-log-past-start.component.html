@@ -5,83 +5,96 @@
       From here, you can enter information about a workout performed but not entered into Workout Tracker.
     </div>
   </div>
-  <form [formGroup]="formGroup">
-    <div class="row a-little-space">
-      <div class="col-2">Select a Workout</div>
-      <div class="col-3">
-        <select formControlName="workoutPublicId">
-          <option value="" disabled selected>Choose a Workout</option>
-          @for(workout of workouts; track workout.id) {
-            <option [value]="workout.id">
-              {{ workout.name }}
-            </option>
+  @if (gettingData()) {
+    <div class="container-fluid">
+      <br />
+      <div class="row">
+        <div class="col-12 text-center pt-4">
+          <nz-spin nzTip="Getting data..." nzSize="large"></nz-spin>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <form [formGroup]="formGroup">
+      <div class="row a-little-space">
+        <div class="col-2">Select a Workout</div>
+        <div class="col-3">
+          <select formControlName="workoutPublicId">
+            <option value="" disabled selected>Choose a Workout</option>
+            @for(workout of workouts(); track workout.id) {
+              <option [value]="workout.id">
+                {{ workout.name }}
+              </option>
+            }
+          </select>
+        </div>
+        <div class="col-7">
+          @if (formGroup.controls.workoutPublicId.dirty && formGroup.controls.workoutPublicId.errors) {
+            <span class="text-danger">Required</span>
           }
-        </select>
+        </div>
       </div>
-      <div class="col-7">
-        @if (formGroup.controls.workoutPublicId.dirty && formGroup.controls.workoutPublicId.errors) {
-          <span class="text-danger">Required</span>
-        }
+      <div class="row a-little-space">
+        <div class="col-2">
+          <label for="startDateTime">Start Date/Time</label>
+        </div>
+        <div class="col-3">
+          <input formControlName="startDateTime" type="datetime-local" />
+        </div>
+        <div class="col-7">
+          @if (startDateTime.invalid && (startDateTime.touched || startDateTime.dirty) && startDateTime.errors?.required) {
+            <span class="text-danger">
+              Start Date/Time is required.
+            </span>
+          }
+        </div>
       </div>
-    </div>
-    <div class="row a-little-space">
-      <div class="col-2">
-        <label for="startDateTime">Start Date/Time</label>
+      <div class="row a-little-space">
+        <div class="col-2">
+          <label for="endDateTime">End Date/Time</label>
+        </div>
+        <div class="col-3">
+          <p>
+            <button [disabled]="formGroup.controls.startDateTime.invalid" 
+              class="btn-sm"
+              [ngClass]="{ 'btn-duration-disabled': formGroup.controls.startDateTime.invalid, 'btn-duration': !formGroup.controls.startDateTime.invalid }" (click)="enterDuration()">
+              Get from Workout Duration
+            </button>
+          </p>
+          <p>
+            or
+          </p>
+          <p>
+            Enter Manually<br />
+            <input id="endDateTime" name="endDateTime" formControlName="endDateTime" type="datetime-local" />
+          </p>
+        </div>
+        <div class="col-7">
+          @if (endDateTime.invalid && (endDateTime.touched || endDateTime.dirty) && endDateTime.errors?.required) {
+            <span class="text-danger">
+              End Date/Time is required.
+            </span>
+          }
+        </div>
       </div>
-      <div class="col-3">
-        <input formControlName="startDateTime" type="datetime-local" />
+      <div class="row a-little-space">
+        <div class="offset-1 col-3">
+          <button [disabled]="!formGroup.valid" type="submit" (click)="proceedToWorkoutEntry()"
+            class="btn btn-enter-info">Enter Workout Information</button>
+        </div>
+        <div class="col-8">
+          @if (formGroup.invalid && (endDateTime.touched || endDateTime.dirty) && formGroup.errors?.startDateTimeVsEndDateTime) {
+            <span class="text-danger">
+              Start Date/Time must be earlier than End Date/Time
+            </span>
+          }
+        </div>
       </div>
-      <div class="col-7">
-        @if (startDateTime.invalid && (startDateTime.touched || startDateTime.dirty) && startDateTime.errors?.required) {
-          <span class="text-danger">
-            Start Date/Time is required.
-          </span>
-        }
-      </div>
-    </div>
-    <div class="row a-little-space">
-      <div class="col-2">
-        <label for="endDateTime">End Date/Time</label>
-      </div>
-      <div class="col-3">
-        <p>
-          <button [disabled]="formGroup.controls.startDateTime.invalid" 
-            [ngClass]="{ 'btn-duration-disabled': formGroup.controls.startDateTime.invalid, 'btn-duration': !formGroup.controls.startDateTime.invalid }" (click)="enterDuration()">
-            Get from Workout Duration
-          </button>
-        </p>
-        <p>
-          or
-        </p>
-        <p>
-          Enter Manually<br />
-          <input id="endDateTime" name="endDateTime" formControlName="endDateTime" type="datetime-local" />
-        </p>
-      </div>
-      <div class="col-7">
-        @if (endDateTime.invalid && (endDateTime.touched || endDateTime.dirty) && endDateTime.errors?.required) {
-          <span class="text-danger">
-            End Date/Time is required.
-          </span>
-        }
-      </div>
-    </div>
-    <div class="row a-little-space">
-      <div class="offset-1 col-3">
-        <button [disabled]="!formGroup.valid" type="submit" (click)="proceedToWorkoutEntry()"
-          class="btn btn-enter-info">Enter Workout Information</button>
-      </div>
-      <div class="col-8">
-        @if (formGroup.invalid && (endDateTime.touched || endDateTime.dirty) && formGroup.errors?.startDateTimeVsEndDateTime) {
-          <span class="text-danger">
-            Start Date/Time must be earlier than End Date/Time
-          </span>
-        }
-      </div>
-    </div>
-  </form>
+
+    </form>
+  }
 </div>
-<nz-modal nzTitle="Duration" [(nzVisible)]="showDurationModal" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showDurationModal = false">
+<nz-modal nzTitle="Duration" [(nzVisible)]="showDurationModal" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showDurationModal.set(false)">
   <div *nzModalContent>
     <wt-duration       
       (okClicked)="durationModalAccepted($event)"

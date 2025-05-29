@@ -78,7 +78,6 @@ describe('WorkoutSelectPlannedComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutSelectPlannedComponent);
     component = fixture.componentInstance;
-    component.loading = false; //HACK: Workaround for PrimeNG change that kicks off lazy loading immediately. If this value isn't defaulted to true in the component, at runtime I get https://angular.dev/errors/NG0100
     executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
     fixture.detectChanges();
   });
@@ -98,18 +97,18 @@ describe('WorkoutSelectPlannedComponent', () => {
 
   it('should get planned workouts via getPlannedLazy()', () => {
     //ARRANGE
-    component.pageSize = 50; //Let's change this
-    component.plannedWorkouts = [];
-    component.totalCount = 0;
+    component.pageSize.set(50); //Let's change this
+    component.plannedWorkouts.set([]);
+    component.totalCount.set(0);
 
     //ACT
     component.getPlannedWorkoutsLazy({ first: 100 });
 
     //ASSERT
-    expect(executedWorkoutService.getPlanned).toHaveBeenCalledWith(100, component.pageSize);
-    expect(component.plannedWorkouts.length).toBeGreaterThan(0);
-    expect(component.totalCount).toBeGreaterThan(0);
-    expect(component.loading).toBeFalse();
+    expect(executedWorkoutService.getPlanned).toHaveBeenCalledWith(100, component.pageSize());
+    expect(component.plannedWorkouts().length).toBeGreaterThan(0);
+    expect(component.totalCount()).toBeGreaterThan(0);
+    expect(component.loading()).toBeFalse();
   });
 
   it('should delete planned workouts', () => {

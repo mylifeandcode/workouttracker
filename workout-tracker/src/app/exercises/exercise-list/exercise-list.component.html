@@ -51,15 +51,18 @@
       </nz-table>
     </div>
   </div>
-  <div class="row">
-    <div class="col-12">
-      @if (totalRecords > 0) {
-        <span>{{totalRecords}} total exercises</span>
-      } @else {
-        <span>No exercises have been defined. Pleae add some using the button below.</span>
+
+  @if (totalRecords != null) {
+    <div class="row mt-2 mb-2">
+      <div class="col-3">{{totalRecords}} total exercise(s)</div>
+      @if (totalRecords == 0) {
+        <div class="col-9" style="font-style: italic">
+          No exercises have been defined. Please create one using the "Add New" button below.
+        </div>
       }
     </div>
-  </div>
+  }    
+
   <div class="row bottom-padded">
     <div class="col-12">
       <button routerLink="/exercises/new" [disabled]="loading" class="btn btn-add-exercise">

@@ -3,12 +3,12 @@
   <div class="row">
     <div class="col-12">
       <nz-table #table 
-        [nzData]="plannedWorkouts"
+        [nzData]="plannedWorkouts()"
         [nzFrontPagination]="false"
         [nzShowSizeChanger]="true"
-        [nzTotal]="totalCount"
+        [nzTotal]="totalCount()"
         [nzPageSize]="10"
-        [nzLoading]="loading"
+        [nzLoading]="loading()"
         (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
           <tr>
@@ -36,14 +36,14 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-12">{{totalCount}} total planned workouts</div>
-    @if (totalCount == 0) {
+    <div class="col-12 mb-2">{{totalCount()}} total planned workout(s)</div>
+    @if (totalCount() == 0) {
       <div class="col-12" style="font-style: italic">No workouts have been planned. You can plan one using the "Plan" button below.</div>
     }
   </div>
   <div class="row">
     <div class="col-12">
-      <button routerLink="/workouts/select-for-later" [disabled]="loading" class="btn btn-plan"><i class="fa fa-plus"></i> Plan</button>
+      <button routerLink="/workouts/select-for-later" [disabled]="loading()" class="btn btn-plan"><i class="fa fa-plus"></i> Plan</button>
     </div>
   </div>
 </div>

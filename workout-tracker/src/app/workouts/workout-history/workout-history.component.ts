@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { DatePipe } from '@angular/common';
-import { NzTableModule, NzTableQueryParams, NzTableFilterFn } from 'ng-zorro-antd/table';
+import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -40,20 +40,15 @@ export class WorkoutHistoryComponent implements OnInit {
     this.getExecutedWorkouts(0, null);
   }
 
-  public filterByName($event: Event): void {
-    console.log('filterByName: ', $event);
-  }
-
   public getExecutedWorkouts(first: number, nameContains: string | null): void {
 
     //this.totalRecords = 0;
-    //TODO: Refactor. Get user ID in API from token.
+
     this._executedWorkoutService.getFilteredSubset(first, this.pageSize)
       .pipe(finalize(() => { this.loading = false; }))
       .subscribe({
         next: (results: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
           this.executedWorkouts = results.results;
-          //console.log('executedWorkouts: ', this.executedWorkouts);
           this.totalRecords = results.totalCount;
         },
         error: (error: any) => window.alert("An error occurred getting executed workouts: " + error)
@@ -61,7 +56,7 @@ export class WorkoutHistoryComponent implements OnInit {
   }
 
   public onQueryParamsChange(params: NzTableQueryParams): void {
-    console.log(params);
+    //console.log(params);
     const { pageSize, pageIndex, sort, filter } = params;
     const currentSort = sort.find(item => item.value !== null);
     const sortField = (currentSort && currentSort.key) || null;
