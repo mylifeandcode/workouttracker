@@ -2,21 +2,22 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-4">
-      Filter by Name &nbsp;<input pInputText type="text" [(ngModel)]="_nameFilter" />
+      Filter by Name &nbsp;<input pInputText type="text" [(ngModel)]="nameFilter" />
     </div>
     <div class="col-4">
-      Active Workouts Only &nbsp;<input type="checkbox" checked [(ngModel)]="_filterByActiveOnly" />
+      Active Workouts Only &nbsp;<input type="checkbox" checked [(ngModel)]="filterByActiveOnly" />
     </div>
   </div>
   <div class="row">
     <div class="col-12">
       <nz-table #dt
-        [nzData]="workouts" 
+        [nzData]="workouts()" 
         [nzFrontPagination]="false"
         [nzShowSizeChanger]="true"
-        [nzTotal]="totalRecords"
-        [nzPageSize]="_pageSize"
-        [nzLoading]="loading"
+        [nzTotal]="totalRecords()"
+        [(nzPageSize)]="pageSize"
+        [(nzPageIndex)]="pageIndex"
+        [nzLoading]="loading()"
         (nzQueryParams)="onQueryParamsChange($event)"
       >
         <thead>
@@ -72,8 +73,8 @@
   </div>
   @if (totalRecords != null) {
     <div class="row mt-2 mb-2">
-      <div class="col-3">{{totalRecords}} total workout(s)</div>
-      @if (totalRecords == 0) {
+      <div class="col-3">{{totalRecords()}} total workout(s)</div>
+      @if (totalRecords() == 0) {
         <div class="col-9" style="font-style: italic">
           No workouts have been defined. Please create one using the "Add New" button below.
         </div>
@@ -82,7 +83,7 @@
   }
   <div class="row bottom-padded">
     <div class="col-12">
-      <button routerLink="/workouts/new" [disabled]="loading" class="btn btn-new-workout"><i class="fa fa-plus"></i>
+      <button routerLink="/workouts/new" [disabled]="loading()" class="btn btn-new-workout"><i class="fa fa-plus"></i>
         Add
         New
       </button>

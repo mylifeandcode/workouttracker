@@ -13,17 +13,15 @@ import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
     templateUrl: './executed-exercises.component.html',
     styleUrls: ['./executed-exercises.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgStyle, ResistanceBandColorPipe, RatingPipe, ResistanceTypePipe, DurationPipe, ExerciseSidePipe, ResistanceAmountPipe]
+    imports: [
+      NgStyle, ResistanceBandColorPipe, RatingPipe, ResistanceTypePipe, DurationPipe, 
+      ExerciseSidePipe, ResistanceAmountPipe
+    ]
 })
-export class ExecutedExercisesComponent implements OnInit {
+export class ExecutedExercisesComponent {
 
   readonly executedExercises = input<ExecutedExerciseDTO[]>();
 
   readonly showResults = input<boolean>(false);
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

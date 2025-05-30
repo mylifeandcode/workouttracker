@@ -76,6 +76,9 @@
           @if (exercise.duration != null) {
             <span>{{exercise.duration | duration: true}}</span>
           }
+          @else {
+            MISSING
+          }
         }
       </div>
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
@@ -13,15 +13,16 @@ import { DatePipe, KeyValuePipe } from '@angular/common';
     selector: 'wt-workout-view',
     templateUrl: './workout-view.component.html',
     styleUrls: ['./workout-view.component.scss'],
-    imports: [NzSpinModule, ExecutedExercisesComponent, DatePipe, KeyValuePipe]
+    imports: [NzSpinModule, ExecutedExercisesComponent, DatePipe, KeyValuePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutViewComponent implements OnInit {
   private _activatedRoute = inject(ActivatedRoute);
   private _executedWorkoutService = inject(ExecutedWorkoutService);
 
 
-  public loading: boolean = true;
-  public executedWorkout: ExecutedWorkoutDTO = new ExecutedWorkoutDTO();
+  public loading = signal<boolean>(true);
+  public executedWorkout = signal<ExecutedWorkoutDTO>(new ExecutedWorkoutDTO());
   
   /*
   Before setting TypeScript compiler to strict, the below variable was of type Map<string, ExecutedExercise[]>.
@@ -43,12 +44,12 @@ export class WorkoutViewComponent implements OnInit {
   }
 
   private getExecutedWorkout(publicId: string): void {
-    this.loading = true;
+    this.loading.set(true);
     this._executedWorkoutService.getById(publicId)
-      .pipe(finalize(() => { this.loading = false; }))
+      .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe((executedWorkout: ExecutedWorkoutDTO) => {
         
-        this.executedWorkout = executedWorkout;
+        this.executedWorkout.set(executedWorkout);
         
         //Make sure the exercises are in sequence order
         //const sortedExercises: ExecutedExercise[] = 
@@ -56,7 +57,7 @@ export class WorkoutViewComponent implements OnInit {
 
         //Group the exercises
         //console.log("EXERCISES: ", this.executedWorkout.exercises);
-        const groups = this._executedWorkoutService.groupExecutedExercises(this.executedWorkout.exercises);
+        const groups = this._executedWorkoutService.groupExecutedExercises(this.executedWorkout().exercises);
         
         const groupsMap = new Map<string, ExecutedExerciseDTO[]>();
 

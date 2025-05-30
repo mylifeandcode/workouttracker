@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { PaginatedResults } from '../../core/_models/paginated-results';
@@ -12,50 +12,53 @@ import { FormsModule } from '@angular/forms';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
-    selector: 'wt-workout-list',
-    templateUrl: './workout-list.component.html',
-    styleUrls: ['./workout-list.component.scss'],
-    imports: [FormsModule, NzTableModule, NzIconModule, NzDropDownModule, RouterLink]
+  selector: 'wt-workout-list',
+  templateUrl: './workout-list.component.html',
+  styleUrls: ['./workout-list.component.scss'],
+  imports: [FormsModule, NzTableModule, NzIconModule, NzDropDownModule, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutListComponent {
   private readonly _workoutSvc = inject(WorkoutService);
 
-  public totalRecords: number = 0;
-  public loading: boolean = true;
-  public pageIndex: number = 1;
-  public workouts: WorkoutDTO[] = [];
+  public totalRecords = signal<number>(0);
+  public loading = signal<boolean>(true);
+  public workouts = signal<WorkoutDTO[]>([]);
 
-  protected _nameFilter = signal('');
-  protected _filterByActiveOnly = signal(true);
-  protected _pageSize: number = 10;
+  protected nameFilter = signal('');
+  protected filterByActiveOnly = signal(true);
+  protected pageIndex = signal<number>(1);
+  protected pageSize = signal<number>(10);
 
   //Signals don't have debounce natively, so we need this ugly bit of code :(
-  private _nameFilterForDebounce$ = toObservable(this._nameFilter).pipe(debounceTime(500));
+  private _nameFilterForDebounce$ = toObservable(this.nameFilter).pipe(debounceTime(500));
   private _nameFilterForDebounce = toSignal(this._nameFilterForDebounce$);
 
   private _filterChange = effect(() => {
     //Even if the signals weren't referenced here, getWorkouts() references them, 
     //so this effect would run when they change :)
-    this.getWorkouts(0, this._pageSize, this._filterByActiveOnly(), this._nameFilterForDebounce());
+    this.pageIndex.set(1);
+    this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this._nameFilterForDebounce());
   });
 
   public onQueryParamsChange(params: NzTableQueryParams): void {
     console.log("Table parameters have changed: ", params);
     const { pageSize, pageIndex, sort, filter } = params;
-    this._pageSize = pageSize;
+    this.pageSize.set(pageSize);
     //const currentSort = sort.find(item => item.value !== null);
     //const sortField = (currentSort && currentSort.key) || null;
     //const sortOrder = (currentSort && currentSort.value) || null;
-    this.getWorkouts(((pageIndex - 1) * pageSize), pageSize);
-  }  
+    this.getWorkouts(((pageIndex - 1) * pageSize), pageSize, this.filterByActiveOnly(), this.nameFilter());
+  }
 
   public retireWorkout(workoutPublicId: string, workoutName: string): void {
     if (window.confirm(`Are you sure you want to retire workout "${workoutName}"?`)) {
-      this.loading = true;
+      this.loading.set(true);
       this._workoutSvc.retire(workoutPublicId)
-        .pipe(finalize(() => { this.loading = false; }))
+        .pipe(finalize(() => { this.loading.set(false); }))
         .subscribe({
           next: (response: HttpResponse<any>) => {
+            this.pageIndex.set(1);
             this.getWorkouts(0);
           },
           error: (error: any) => window.alert("An error occurred while retiring workout: " + error)
@@ -65,11 +68,12 @@ export class WorkoutListComponent {
 
   public reactivateWorkout(workoutPublicId: string, workoutName: string): void {
     if (window.confirm(`Are you sure you want to reactivate workout "${workoutName}"?`)) {
-      this.loading = true;
+      this.loading.set(true);
       this._workoutSvc.reactivate(workoutPublicId)
-        .pipe(finalize(() => { this.loading = false; }))
+        .pipe(finalize(() => { this.loading.set(false); }))
         .subscribe({
           next: (response: HttpResponse<any>) => {
+            this.pageIndex.set(1);
             this.getWorkouts(0);
           },
           error: (error: any) => window.alert("An error occurred while reactivating workout: " + error)
@@ -78,15 +82,15 @@ export class WorkoutListComponent {
   }
 
   private getWorkouts(first: number, pageSize: number = 10, filterByActiveOnly: boolean = true, nameFilter: string = ''): void {
-    console.log("GETTING WORKOUTS: ", first, pageSize);
+    //console.log("GETTING WORKOUTS: ", first, pageSize);
     //this.totalRecords = 0; DO NOT SET THIS -- IT WILL TRIGGER THE PARAMS CHANGE HANDLER AND CALL IT ALL AGAIN WITH THE DEFAULT PARAMS!
-    this.loading = true;
+    this.loading.set(true);
     this._workoutSvc.getFilteredSubset(first, pageSize, filterByActiveOnly, nameFilter)
-      .pipe(finalize(() => { this.loading = false; }))
+      .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
         next: (results: PaginatedResults<WorkoutDTO>) => {
-          this.workouts = results.results;
-          this.totalRecords = results.totalCount;
+          this.workouts.set(results.results);
+          this.totalRecords.set(results.totalCount);
         },
         error: (error: any) => window.alert("An error occurred getting workouts: " + error)
       });

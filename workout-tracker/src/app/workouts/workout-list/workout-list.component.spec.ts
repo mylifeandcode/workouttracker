@@ -40,7 +40,6 @@ describe('WorkoutListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutListComponent);
     component = fixture.componentInstance;
-    component.loading = false; //HACK: Workaround for PrimeNG change that kicks off lazy loading immediately. If this value isn't defaulted to true in the component, at runtime I get https://angular.dev/errors/NG0100
     workoutService = TestBed.inject(WorkoutService);
     fixture.detectChanges();
   });

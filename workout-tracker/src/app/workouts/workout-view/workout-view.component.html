@@ -1,5 +1,5 @@
 <div class="container-fluid form-group">
-  @if (loading) {
+  @if (loading()) {
     <div class="row">
       <div class="offset-md-5 col-md-1">
         <nz-spin nzSize="large" />
@@ -8,15 +8,15 @@
   } @else {
     <div class="row">
       <div class="col-12">
-        <h3 class="headroom workout-view-title">Workout: {{executedWorkout.name}}</h3>
+        <h3 class="headroom workout-view-title">Workout: {{executedWorkout().name}}</h3>
       </div>
     </div>
 
     <div class="row">
-      @if (executedWorkout.startDateTime != null) {
+      @if (executedWorkout().startDateTime != null) {
         <div class="col-12">
-          Started {{executedWorkout.startDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}, completed
-          {{executedWorkout.endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}
+          Started {{executedWorkout().startDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}, completed
+          {{executedWorkout().endDateTime | date: 'EEEE, M/d/yyyy, h:mm a'}}
         </div>
       } @else {
         <div class="col-12">
@@ -29,15 +29,15 @@
     @for (exerciseGroup of groupedExercises | keyvalue; track exerciseGroup.key) {
       <wt-executed-exercises
         [executedExercises]="exerciseGroup.value" 
-        [showResults]="executedWorkout.startDateTime != null">
+        [showResults]="executedWorkout().startDateTime != null">
       </wt-executed-exercises>
     }
 
-    @if (executedWorkout.startDateTime != null) {
+    @if (executedWorkout().startDateTime != null) {
       <div class="row headroom">
         <div class="col-12">
           <strong>Notes/Journal</strong><br />
-          {{executedWorkout.journal ?? 'None'}}
+          {{executedWorkout().journal ?? 'None'}}
         </div>
       </div>
     }
