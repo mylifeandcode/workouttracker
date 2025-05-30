@@ -12,7 +12,7 @@ import { AsyncPipe } from '@angular/common';
     imports: [RouterLink, AsyncPipe]
 })
 export class UserListComponent {
-  private _userSvc = inject(UserService);
+  private readonly _userSvc = inject(UserService);
 
 
   public busy: boolean = true;

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { SoundService } from 'app/core/_services/sound/sound.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -7,10 +7,11 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     selector: 'wt-system',
     templateUrl: './system.component.html',
     imports: [ NzSpinModule ],
-    styleUrls: ['./system.component.scss']
+    styleUrls: ['./system.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SystemComponent {
-  private _soundService = inject(SoundService);
+  private readonly _soundService = inject(SoundService);
   private readonly _messageService = inject(NzMessageService);
 
   public testSoundService(): void {
@@ -19,7 +20,7 @@ export class SystemComponent {
 
   public testToast(): void {
     //this._messageService.add({ severity: 'success', summary: 'Successful', detail: 'Toasty!', life: 3000 });
-    this._messageService.success('Successful', { nzDuration: 0 });
+    this._messageService.success('Successful', { nzDuration: 3000 });
   }
 
 }

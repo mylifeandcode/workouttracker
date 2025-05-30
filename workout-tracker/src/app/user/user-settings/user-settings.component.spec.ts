@@ -12,7 +12,7 @@ import { of } from 'rxjs';
 import { UserSettingsComponent } from './user-settings.component';
 import { RouterLink, RouterModule } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { UserRepSettingsComponent } from '../user-rep-settings/user-rep-settings.component';
+import { UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
 
 class MockAuthService {
   userId: number = 0;
@@ -99,7 +99,9 @@ describe('UserSettingsComponent', () => {
     component.userSettingsForm?.controls.recommendationsEnabled.setValue(false);
 
     //ACT
-    component.userSettingsForm?.controls.recommendationsEnabled.setValue(true); //Kinda goofy, but let's immediately change back to true for this
+    
+    //Kinda goofy, but let's immediately change back to true for this
+    component.userSettingsForm?.controls.recommendationsEnabled.setValue(true);
     component.recommendationEngineToggled();
 
     //ASSERT

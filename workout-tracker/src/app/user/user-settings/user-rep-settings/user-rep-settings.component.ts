@@ -1,7 +1,7 @@
 import { Component, OnInit, input } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SetType } from 'app/workouts/workout/_enums/set-type';
-import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
+import { SelectOnFocusDirective } from 'app/shared/directives/select-on-focus.directive';
 
 export interface IRepSettingsForm {
   repSettingsId: FormControl<number>;

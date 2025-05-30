@@ -6,7 +6,7 @@ import { UserMinMaxReps } from 'app/core/_models/user-min-max-reps';
 import { UserService } from 'app/core/_services/user/user.service';
 import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from 'app/core/_validators/custom-validators';
 import { catchError, finalize } from 'rxjs/operators';
-import { IRepSettingsForm, UserRepSettingsComponent } from '../user-rep-settings/user-rep-settings.component';
+import { IRepSettingsForm, UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
 import { find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
