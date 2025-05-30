@@ -8,6 +8,7 @@ import { WelcomeComponent } from './welcome.component';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
 import { QuickActionsComponent } from './quick-actions/quick-actions.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { StartWorkoutComponent } from './start-workout/start-workout.component';
 
 class UserServiceMock {
   getOverview =
@@ -39,7 +40,7 @@ describe('WelcomeComponent', () => {
     .overrideComponent(
       WelcomeComponent,
       { 
-        remove: { imports: [UserOverviewComponent, QuickActionsComponent, NzSpinModule] }, 
+        remove: { imports: [UserOverviewComponent, QuickActionsComponent, StartWorkoutComponent, NzSpinModule] }, 
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       },
     )

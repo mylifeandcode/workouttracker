@@ -4,7 +4,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <nz-table #dt [nzData]="inProgressWorkouts" [nzShowPagination]="false" [nzLoading]="loading">
+      <nz-table #dt [nzData]="inProgressWorkouts()" [nzShowPagination]="false" [nzLoading]="loading()">
         <thead>
           <tr>
             <th>Workout Name</th>
@@ -22,7 +22,7 @@
       </nz-table>
     </div>
   </div>
-  @if (!loading && inProgressWorkouts.length == 0) {
+  @if (!loading() && inProgressWorkouts().length == 0) {
     <div class="row">
       <div class="col-12">
         There are no in-progress workouts.

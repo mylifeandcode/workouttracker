@@ -71,8 +71,8 @@ describe('InProgressWorkoutsComponent', () => {
 
     //ASSERT
     expect(service.getInProgress).toHaveBeenCalledTimes(1);
-    expect(component.inProgressWorkouts.length).toBe(2);
-    expect(component.loading).toBeFalse();
-    expect(component.errorMessage).toBeNull();
+    expect(component.inProgressWorkouts().length).toBe(2);
+    expect(component.loading()).toBeFalse();
+    expect(component.errorMessage()).toBeNull();
   });
 });

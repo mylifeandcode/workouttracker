@@ -5,12 +5,13 @@ import { finalize } from 'rxjs/operators';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
 import { QuickActionsComponent } from './quick-actions/quick-actions.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { StartWorkoutComponent } from './start-workout/start-workout.component';
 
 @Component({
     selector: 'wt-welcome',
     templateUrl: './welcome.component.html',
     styleUrls: ['./welcome.component.scss'],
-    imports: [UserOverviewComponent, QuickActionsComponent, NzSpinModule]
+    imports: [UserOverviewComponent, QuickActionsComponent, StartWorkoutComponent, NzSpinModule]
 })
 export class WelcomeComponent implements OnInit {
   private _userService = inject(UserService);
