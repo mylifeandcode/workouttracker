@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Route, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 
-import { UserIsAdminGuard } from './user-is-admin.guard';
+import { UserIsAdminGuard } from '../user-is-admin/user-is-admin.guard';
 
 class AuthServiceMock {
   public get isUserAdmin(): boolean { return true; }

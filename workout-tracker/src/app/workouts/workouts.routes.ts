@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { UnsavedChangesGuard } from 'app/core/_guards/unsaved-changes.guard';
-import { UserSelectedGuard } from 'app/core/_guards/user-selected.guard';
+import { UnsavedChangesGuard } from 'app/core/_guards/unsaved-changes/unsaved-changes.guard';
+import { UserSelectedGuard } from 'app/core/_guards/user-selected/user-selected.guard';
 
 export const workoutsRoutes: Routes = [
   {

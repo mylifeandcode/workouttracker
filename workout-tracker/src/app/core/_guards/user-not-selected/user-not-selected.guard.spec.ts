@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot } from '@angular/router';
-import { AuthService } from '../_services/auth/auth.service';
-import { UserNotSelectedGuard } from './user-not-selected.guard';
+import { AuthService } from '../../_services/auth/auth.service';
+import { UserNotSelectedGuard } from '../user-not-selected/user-not-selected.guard';
 
 class AuthServiceMock {
   isUserLoggedIn =

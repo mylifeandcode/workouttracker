@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
+import { CheckForUnsavedDataComponent } from '../../../shared/components/check-for-unsaved-data.component';
 
 @Injectable({
   providedIn: 'root'

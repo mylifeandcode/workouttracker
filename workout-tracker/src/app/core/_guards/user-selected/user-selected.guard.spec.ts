@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
-import { UserSelectedGuard } from './user-selected.guard';
+import { UserSelectedGuard } from '../user-selected/user-selected.guard';
 import { Component } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot } from '@angular/router';
-import { AuthService } from '../_services/auth/auth.service';
+import { AuthService } from '../../_services/auth/auth.service';
 
 
 @Component({
