@@ -28,6 +28,7 @@ interface IWorkoutProgressForm {
   imports: [CommonModule, ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
+  //TODO: Replace with viewChild
   @ViewChild('formAndRangeOfMotionChart') formAndRangeOfMotionChartCanvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('repsChart') repsChartCanvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('resistanceChart') resistanceChartCanvasRef!: ElementRef<HTMLCanvasElement>;

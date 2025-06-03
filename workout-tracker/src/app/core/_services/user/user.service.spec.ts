@@ -22,17 +22,17 @@ describe('UserService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [
+      imports: [],
+      providers: [
         UserService,
         {
-            provide: ConfigService,
-            useClass: ConfigServiceMock
+          provide: ConfigService,
+          useClass: ConfigServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
-    ]
-});
+      ]
+    });
 
     service = TestBed.inject(UserService);
     http = TestBed.inject(HttpTestingController);

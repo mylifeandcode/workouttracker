@@ -85,9 +85,6 @@ describe('WorkoutProgressComponent', () => {
       imports: [
         ReactiveFormsModule,
         WorkoutProgressComponent
-      ],
-      schemas: [
-        CUSTOM_ELEMENTS_SCHEMA //Needed for p-chart element (ChartJS)
       ]
     })
       .overrideComponent(

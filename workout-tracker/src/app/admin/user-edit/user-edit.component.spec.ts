@@ -12,7 +12,7 @@ import { AuthService } from 'app/core/_services/auth/auth.service';
 const CURRENT_USER_ID = 5150;
 
 class UserServiceMock {
-  getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User({id: CURRENT_USER_ID})));
+  getCurrentUserInfo = jasmine.createSpy('getCurrentUserInfo').and.returnValue(of(new User({ id: CURRENT_USER_ID })));
   getById = jasmine.createSpy('getById').and.returnValue(of(new User()));
   add = jasmine.createSpy('add').and.returnValue(of(new User()));
   update = jasmine.createSpy('update').and.returnValue(of(new User()));
@@ -23,9 +23,9 @@ class AuthServiceMock {
 }
 
 @Component({
-    standalone: false
+  standalone: false
 })
-class FakeComponent{};
+class FakeComponent { };
 
 describe('UserEditComponent', () => {
   let component: UserEditComponent;
@@ -34,31 +34,31 @@ describe('UserEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         ReactiveFormsModule,
         RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
         UserEditComponent
-    ],
-    providers: [
+      ],
+      providers: [
         {
-            provide: UserService,
-            useClass: UserServiceMock
+          provide: UserService,
+          useClass: UserServiceMock
         },
         {
-            provide: ActivatedRoute,
-            useValue: {
-                params: of({
-                    id: 5
-                })
-            }
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({
+              id: 5
+            })
+          }
         },
         {
-            provide: AuthService,
-            useClass: AuthServiceMock
+          provide: AuthService,
+          useClass: AuthServiceMock
         }
-    ]
-})
-    .compileComponents();
+      ]
+    })
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -84,7 +84,7 @@ describe('UserEditComponent', () => {
 
   it('should update existing user', () => {
     //ARRANGE
-    const expectedUser = new User({id: 100, name: 'Big Jim Slade', role: 2});
+    const expectedUser = new User({ id: 100, name: 'Big Jim Slade', role: 2 });
     component.userEditForm.controls.id.setValue(expectedUser.id);
     component.userEditForm.controls.name.setValue(expectedUser.name);
     component.userEditForm.controls.role.setValue(2);

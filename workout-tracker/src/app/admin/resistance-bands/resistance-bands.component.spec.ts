@@ -71,7 +71,7 @@ describe('ResistanceBandsComponent', () => {
           imports: [
             NzTableModule, NzIconModule, NgStyle, NzModalModule, NzButtonModule
           ] 
-        }, //To resolve error: "TypeError: Cannot read properties of undefined (reading 'subscribe')", even though all dependencies were provided
+        }, 
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       }).compileComponents();
   }));

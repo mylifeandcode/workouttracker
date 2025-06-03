@@ -25,9 +25,9 @@ class LocalStorageServiceMock {
 }
 
 @Component({
-    standalone: false
+  standalone: false
 })
-class FakeComponent{};
+class FakeComponent { };
 
 //This has to be a real token because the service decodes it
 const TEST_ACCESS_TOKEN: string = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWxhbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmF0b3IiLCJVc2VySUQiOiIyIiwiZXhwIjoxNjU4MDE2NTY0LCJpc3MiOiJ3d3cud29ya291dHRyYWNrZXIubmV0IiwiYXVkIjoid3d3LndvcmtvdXR0cmFja2VyLm5ldCJ9.gNYFG9fAcwSfDCntFdxNpPTO5zq-zp9Rw_BrRy3Qus4";
@@ -40,20 +40,20 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [RouterModule.forRoot([{ path: 'user-select', component: FakeComponent }])],
-    providers: [
+      imports: [RouterModule.forRoot([{ path: 'user-select', component: FakeComponent }])],
+      providers: [
         {
-            provide: ConfigService,
-            useClass: ConfigServiceMock
+          provide: ConfigService,
+          useClass: ConfigServiceMock
         },
         {
-            provide: LocalStorageService,
-            useClass: LocalStorageServiceMock
+          provide: LocalStorageService,
+          useClass: LocalStorageServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
-    ]
-});
+      ]
+    });
     service = TestBed.inject(AuthService);
     configService = TestBed.inject(ConfigService);
     localStorageService = TestBed.inject(LocalStorageService);
@@ -72,7 +72,7 @@ describe('AuthService', () => {
     });
   });
   */
- 
+
   it('should initialize', () => {
     service.init();
     expect(configService.get).toHaveBeenCalledWith("apiRoot");
@@ -84,7 +84,7 @@ describe('AuthService', () => {
     //ARRANGE
     const username = "unittestuser";
     const password = "thispasswordaintreal123%^&";
-    
+
     /*
     const usernameSubscription = service.currentUserName
       .subscribe((loggedInUserName: string | null) => {
@@ -101,7 +101,7 @@ describe('AuthService', () => {
     //ASSERT
     const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
     expect(testRequest.request.method).toEqual('POST');
-    
+
     //Respond with the mock results
     testRequest.flush(TEST_ACCESS_TOKEN);
     expect(service.token).toBe(TEST_ACCESS_TOKEN);
@@ -109,7 +109,7 @@ describe('AuthService', () => {
   });
 
   it('should return value of false from login when error occurs logging user in', () => {
-    
+
     service.logIn("username", "aintarealpassword123$#@!").subscribe((result: boolean) => {
       expect(result).toBeFalse();
     });
@@ -119,7 +119,7 @@ describe('AuthService', () => {
     expect(testRequest.request.method).toEqual('POST');
 
     testRequest.flush(throwError(() => "Something bad happened!"));
-    
+
   });
 
   it('should log user out', () => {
@@ -128,7 +128,7 @@ describe('AuthService', () => {
     //We need to log in first
     const username = "unittestuser";
     const password = "thispasswordaintreal123%^&";
-    
+
     service.logIn(username, password).subscribe();
 
     /*
@@ -147,7 +147,7 @@ describe('AuthService', () => {
     //ASSERT
     const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
     expect(testRequest.request.method).toEqual('POST');
-    
+
     //Respond with the mock results
     testRequest.flush(TEST_ACCESS_TOKEN);
     //usernameSubscription.unsubscribe();
@@ -168,17 +168,17 @@ describe('AuthService', () => {
     //We need to log in first
     const username = "unittestuser";
     const password = "thispasswordaintreal123%^&";
-    
+
     service.logIn(username, password).subscribe();
 
     //ASSERT
     const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
     expect(testRequest.request.method).toEqual('POST');
-    
+
     //Respond with the mock results
     testRequest.flush(TEST_ACCESS_TOKEN);
     expect(service.isUserAdmin).toBeTrue();
-    
+
   });
 
   it('should return user-select route from loginRoute property when applicable', () => {
@@ -186,12 +186,12 @@ describe('AuthService', () => {
   });
 
   it('should return login route from loginRoute property when applicable', () => {
-    
+
     //Override default mock behavior and re-init
     configService.get = jasmine.createSpy('get').and.callFake((configKey: string) => {
       if (configKey == "apiRoot") return "http://localhost:5600/";
       if (configKey == "loginWithUserSelect") return false;
-  
+
       return "";
     });
 

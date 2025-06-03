@@ -25,24 +25,23 @@ class WidgetService extends ApiBaseService<Widget> {
 }
 
 describe('ApiBaseService', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-    imports: [],
-    providers: [
-        WidgetService,
-        provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
-    ]
-});
-  });
 
   let service: WidgetService;
   let http: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [],
+      providers: [
+        WidgetService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+      ]
+    });
+
     service = TestBed.inject(WidgetService);
     http = TestBed.inject(HttpTestingController);
+
   });
 
   it('should be created', () => {
@@ -176,7 +175,7 @@ describe('ApiBaseService', () => {
     expect(req.request.method).toEqual('GET');
     //Respond with the mock results
     req.flush(widgets);
-  
+
   });
 
   it('should clear cached data', (done: DoneFn) => {
@@ -213,7 +212,7 @@ describe('ApiBaseService', () => {
       //Respond with the mock results
       request.flush(widgets);
     });
-  
+
   });
 
 });
