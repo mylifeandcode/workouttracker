@@ -13,7 +13,6 @@ import { ExerciseTargetAreaLink } from 'app/workouts/_models/exercise-target-are
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 //TODO: Move initialization inside beforeEach()
 const EXERCISE: Exercise = <Exercise>{
@@ -105,8 +104,7 @@ describe('ExerciseEditComponent', () => {
             snapshot: getActivatedRouteSnapshot()
           }
         }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      ]
     })
     .overrideComponent(
       ExerciseEditComponent, {

@@ -7,27 +7,20 @@ import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-    selector: 'wt-exercise-list',
-    templateUrl: './exercise-list.component.html',
-    styleUrls: ['./exercise-list.component.scss'],
-    imports: [FormsModule, NzSelectModule, NzTableModule, RouterLink]
+  selector: 'wt-exercise-list',
+  templateUrl: './exercise-list.component.html',
+  styleUrls: ['./exercise-list.component.scss'],
+  imports: [FormsModule, NzSelectModule, NzTableModule, RouterLink]
 })
 export class ExerciseListComponent extends ExerciseListBase {
-  protected _exerciseSvc: ExerciseService;
-
-  //There is no ngOnInit or ngAfterViewInit here because the onLazyLoad() event of the PrimeNg
-  //Turbo Table automatically makes a call to get data on initialization
 
   constructor() {
     const _exerciseSvc = inject(ExerciseService);
-
     super(_exerciseSvc);
-    this._exerciseSvc = _exerciseSvc;
-
   }
 
   public targetAreasFilterChange(selectedTargetAreas: string[]): void {
-    console.log("targetAreasFilterChange: ", selectedTargetAreas);
+    //console.log("targetAreasFilterChange: ", selectedTargetAreas);
     this.getExercises(0, null, selectedTargetAreas); //TODO: Add code to take name filter into account
   }
 }

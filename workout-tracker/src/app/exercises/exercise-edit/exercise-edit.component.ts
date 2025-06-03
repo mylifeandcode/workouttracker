@@ -40,13 +40,13 @@ interface IExerciseEditForm {
 
 
 @Component({
-    selector: 'wt-exercise-edit',
-    templateUrl: './exercise-edit.component.html',
-    styleUrls: ['./exercise-edit.component.scss'],
-    imports: [
-        NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, NzSwitchModule,
-        KeyValuePipe, InsertSpaceBeforeCapitalPipe
-    ]
+  selector: 'wt-exercise-edit',
+  templateUrl: './exercise-edit.component.html',
+  styleUrls: ['./exercise-edit.component.scss'],
+  imports: [
+    NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, NzSwitchModule,
+    KeyValuePipe, InsertSpaceBeforeCapitalPipe
+  ]
 })
 export class ExerciseEditComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);

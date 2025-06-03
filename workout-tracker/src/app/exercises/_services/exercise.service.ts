@@ -8,77 +8,77 @@ import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { ConfigService } from 'app/core/_services/config/config.service';
 
 const HTTP_OPTIONS = {
-    headers: new HttpHeaders({
-      'Content-Type':  'application/json'
-    })
-  };
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json'
+  })
+};
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class ExerciseService {
-    private _http = inject(HttpClient);
-    private _configService = inject(ConfigService);
+  private _http = inject(HttpClient);
+  private _configService = inject(ConfigService);
 
 
-    private readonly API_ROOT: string;
-    private _resistanceTypes: Observable<Map<number, string>> | undefined;
-    private readonly TARGET_AREAS_API_ROOT: string; //TODO: Create TargetAreaService
+  private readonly API_ROOT: string;
+  private _resistanceTypes: Observable<Map<number, string>> | undefined;
+  private readonly TARGET_AREAS_API_ROOT: string; //TODO: Create TargetAreaService
 
-    constructor() { 
-      const apiRoot: string = this._configService.get("apiRoot");
-      this.API_ROOT = apiRoot + "exercises";
-      this.TARGET_AREAS_API_ROOT = apiRoot + "TargetAreas";
+  constructor() {
+    const apiRoot: string = this._configService.get("apiRoot");
+    this.API_ROOT = apiRoot + "exercises";
+    this.TARGET_AREAS_API_ROOT = apiRoot + "TargetAreas";
+  }
+
+  public getAll(
+    firstRecOffset: number,
+    pageSize: number,
+    nameContains: string | null = null,
+    targetAreaContains: string[] | null = null): Observable<PaginatedResults<ExerciseDTO>> {
+
+    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
+
+    if (nameContains)
+      url += `&nameContains=${nameContains}`;
+
+    if (targetAreaContains) {
+      const targetAreas = targetAreaContains.join(',');
+      url += `&hasTargetAreas=${targetAreas}`;
     }
 
-    public getAll(
-      firstRecOffset: number, 
-      pageSize: number, 
-      nameContains: string | null = null, 
-      targetAreaContains: string[] | null = null): Observable<PaginatedResults<ExerciseDTO>> {
-        
-      let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
+    return this._http.get<PaginatedResults<ExerciseDTO>>(url);
 
-      if(nameContains)
-        url += `&nameContains=${nameContains}`;
+  }
 
-      if(targetAreaContains) {
-        const targetAreas = targetAreaContains.join(',');
-        url += `&hasTargetAreas=${targetAreas}`;
-      }
+  /*
+  public getById(id: number): Observable<Exercise> {
+    return this._http.get<Exercise>(`${this.API_ROOT}/${id}`);
+  }
+  */
 
-      return this._http.get<PaginatedResults<ExerciseDTO>>(url);
+  public getById(publicId: string): Observable<Exercise> {
+    return this._http.get<Exercise>(`${this.API_ROOT}/${publicId}`);
+  }
 
-    }
+  public getTargetAreas(): Observable<Array<TargetArea>> {
+    //TODO: Move this into its own service
+    return this._http.get<Array<TargetArea>>(this.TARGET_AREAS_API_ROOT);
+  }
 
-    /*
-    public getById(id: number): Observable<Exercise> {
-      return this._http.get<Exercise>(`${this.API_ROOT}/${id}`);
-    }
-    */
+  public add(exercise: Exercise): Observable<Exercise> {
+    return this._http.post<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS);
+  }
 
-    public getById(publicId: string): Observable<Exercise> {
-      return this._http.get<Exercise>(`${this.API_ROOT}/${publicId}`);
-    }    
+  public update(exercise: Exercise): Observable<Exercise> {
+    return this._http.put<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS);
+  }
 
-    public getTargetAreas(): Observable<Array<TargetArea>> {
-      //TODO: Move this into its own service
-      return this._http.get<Array<TargetArea>>(this.TARGET_AREAS_API_ROOT);
-    }
+  public getResistanceTypes(): Observable<Map<number, string>> {
+    if (!this._resistanceTypes)
+      this._resistanceTypes = this._http.get<Map<number, string>>(`${this.API_ROOT}/ResistanceTypes`);
 
-    public add(exercise: Exercise): Observable<Exercise> {
-      return this._http.post<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS);
-    }
-
-    public update(exercise: Exercise): Observable<Exercise> {
-      return this._http.put<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS);
-    }
-
-    public getResistanceTypes(): Observable<Map<number, string>> {
-      if (!this._resistanceTypes)
-        this._resistanceTypes = this._http.get<Map<number, string>>(`${this.API_ROOT}/ResistanceTypes`);
-
-      return this._resistanceTypes;
-    }
+    return this._resistanceTypes;
+  }
 
 }

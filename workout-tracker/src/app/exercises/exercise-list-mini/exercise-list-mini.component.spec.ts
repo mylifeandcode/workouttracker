@@ -31,8 +31,7 @@ describe('ExerciseListMiniComponent', () => {
       imports: [
         ExerciseListMiniComponent,
         NoopAnimationsModule
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      ]
     })
     .overrideComponent(ExerciseListMiniComponent,
       {

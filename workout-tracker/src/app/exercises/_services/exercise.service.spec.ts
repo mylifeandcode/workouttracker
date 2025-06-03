@@ -16,17 +16,17 @@ class ConfigServiceMock {
 describe('ExerciseService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [
+      imports: [],
+      providers: [
         ExerciseService,
         {
-            provide: ConfigService,
-            useClass: ConfigServiceMock
+          provide: ConfigService,
+          useClass: ConfigServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
-    ]
-});
+      ]
+    });
   });
 
   afterEach(inject([HttpTestingController], (httpMock: HttpTestingController) => {

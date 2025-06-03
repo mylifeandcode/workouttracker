@@ -8,8 +8,6 @@ import { PaginatedResults } from '../../core/_models/paginated-results';
 import { TargetArea } from 'app/workouts/_models/target-area';
 import { RouterLink, RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 

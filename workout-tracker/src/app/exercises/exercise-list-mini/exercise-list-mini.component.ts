@@ -13,15 +13,13 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule, NzTableModule, NzSelectModule]
 })
 export class ExerciseListMiniComponent extends ExerciseListBase {
-  protected _exerciseSvc: ExerciseService;
 
+  //TODO: Replace with output
   @Output() exerciseSelected = new EventEmitter<ExerciseDTO>();
 
   constructor() {
     const _exerciseSvc = inject(ExerciseService);
-
     super(_exerciseSvc);
-    this._exerciseSvc = _exerciseSvc;
   }
 
   public selectExercise(exercise: ExerciseDTO): void {
