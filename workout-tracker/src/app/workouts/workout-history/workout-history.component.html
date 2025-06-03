@@ -64,9 +64,10 @@
   </div>
 </div>
 
-<nz-modal [(nzVisible)]="showNotesModal" [style]="{width: '450px'}" header="Notes/Journal"
+<nz-modal [(nzVisible)]="showNotesModal" [style]="{width: '450px'}" nzTitle="Notes/Journal" nzClosable="true"
+  (nzOnCancel)="closeNotesModal()" [nzFooter]="null"
   styleClass="p-fluid">
-  <div *nzModalContent>
+  <div *nzModalContent class="modal-content">
     {{notes}}
   </div>
   <div *nzModalFooter>
