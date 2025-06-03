@@ -28,33 +28,33 @@ describe('UserSelectComponent', () => {
 
   @Component({
     standalone: false
-})
-  class FakeComponent{};
+  })
+  class FakeComponent { };
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         RouterModule.forRoot([{ path: 'home', component: FakeComponent }]),
         UserSelectComponent
-    ],
-    providers: [
+      ],
+      providers: [
         {
-            provide: UserService,
-            useClass: UserServiceMock
+          provide: UserService,
+          useClass: UserServiceMock
         },
         {
-            provide: AuthService,
-            useClass: AuthServiceMock
+          provide: AuthService,
+          useClass: AuthServiceMock
         }
-    ]
-})
-  .overrideComponent(
-    UserSelectComponent, 
-    {
-      remove: { imports: [NzSpinModule] },
-      add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] } 
+      ]
     })
-    .compileComponents();
+      .overrideComponent(
+        UserSelectComponent,
+        {
+          remove: { imports: [NzSpinModule] },
+          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        })
+      .compileComponents();
   }));
 
   beforeEach(() => {

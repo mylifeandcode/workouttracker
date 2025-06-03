@@ -14,11 +14,11 @@ class MockUserService {
 }
 
 @Component({
-    selector: 'wt-blank',
-    template: '',
-    imports: [ReactiveFormsModule]
+  selector: 'wt-blank',
+  template: '',
+  imports: [ReactiveFormsModule]
 })
-class BlankComponent {}
+class BlankComponent { }
 
 describe('UserSelectNewComponent', () => {
   let component: UserSelectNewComponent;
@@ -27,26 +27,24 @@ describe('UserSelectNewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    providers: [
+      providers: [
         FormBuilder,
         {
-            provide: UserService,
-            useClass: MockUserService
+          provide: UserService,
+          useClass: MockUserService
         }
-    ],
-    imports: [
+      ],
+      imports: [
         RouterModule.forRoot([{ path: 'user-select', component: BlankComponent }]),
-        ReactiveFormsModule,
-        UserSelectNewComponent,
         BlankComponent
-    ]
-})
-    .compileComponents();
+      ]
+    })
+      .compileComponents();
 
     fixture = TestBed.createComponent(UserSelectNewComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
-    spyOn(router, 'navigate');    
+    spyOn(router, 'navigate');
     fixture.detectChanges();
   });
 
@@ -69,11 +67,11 @@ describe('UserSelectNewComponent', () => {
 
     expectedUser.userName = userName;
     expectedUser.emailAddress = emailAddress;
-    expectedUser.password = "No Password. User-select mode!";   
+    expectedUser.password = "No Password. User-select mode!";
 
     component.newUserForm.patchValue({
-      name: userName, 
-      emailAddress: emailAddress
+      name: userName,
+      emailAddress
     });
 
     //ACT

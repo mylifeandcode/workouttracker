@@ -10,48 +10,30 @@ class AuthServiceMock {
 }
 
 describe('AuthInterceptor', () => {
-  //This is the original boilerplate code from the CLI, which doesn't seem correct for testing an interceptor
-  /*
-  beforeEach(() => TestBed.configureTestingModule({
-    providers: [
-      AuthInterceptor, 
-      {
-        provide: AuthService, 
-        useClass: AuthServiceMock
-      }
-    ]
-  }));
 
-  it('should be created', () => {
-    const interceptor: AuthInterceptor = TestBed.inject(AuthInterceptor);
-    expect(interceptor).toBeTruthy();
-  });
-  */
-
-  //Revised setup code
   let httpTestingController: HttpTestingController;
   let httpClient: HttpClient;
 
-  beforeEach(() => { 
+  beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [
+      imports: [],
+      providers: [
         {
-            provide: HTTP_INTERCEPTORS,
-            useClass: AuthInterceptor,
-            multi: true
+          provide: HTTP_INTERCEPTORS,
+          useClass: AuthInterceptor,
+          multi: true
         },
         {
-            provide: AuthService,
-            useClass: AuthServiceMock
+          provide: AuthService,
+          useClass: AuthServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
-    ]
-});
+      ]
+    });
 
     httpClient = TestBed.inject(HttpClient);
-    httpTestingController = TestBed.inject(HttpTestingController);    
+    httpTestingController = TestBed.inject(HttpTestingController);
 
   });
 
@@ -62,7 +44,7 @@ describe('AuthInterceptor', () => {
     const testRequest: TestRequest = httpTestingController.expectOne("api/blah");
     testRequest.flush([]);
 
-    expect(testRequest.request.headers.get("Authorization")).toBeDefined();    
+    expect(testRequest.request.headers.get("Authorization")).toBeDefined();
     expect(testRequest.request.headers.get("Authorization")).toBe("Bearer someAccessToken");
   });
 
@@ -77,6 +59,6 @@ describe('AuthInterceptor', () => {
     testRequest.flush([]);
 
     expect(testRequest.request.headers.get("Authorization")).toBeNull();
-  });  
+  });
 
 });

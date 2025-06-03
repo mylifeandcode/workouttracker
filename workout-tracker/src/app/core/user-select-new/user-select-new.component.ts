@@ -15,10 +15,10 @@ interface INewUserForm {
  * This component is for new user creation when the loginWithUserSelect mode is enabled
  */
 @Component({
-    selector: 'wt-user-select-new',
-    templateUrl: './user-select-new.component.html',
-    styleUrls: ['./user-select-new.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, RouterLink]
+  selector: 'wt-user-select-new',
+  templateUrl: './user-select-new.component.html',
+  styleUrls: ['./user-select-new.component.scss'],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserSelectNewComponent {
   private _formBuilder = inject(FormBuilder);
@@ -29,14 +29,14 @@ export class UserSelectNewComponent {
   public newUserForm: FormGroup<INewUserForm>;
   public errorMsg: string | undefined = undefined;
   public addingUser: boolean = false;
-  
-  constructor() { 
-      this.newUserForm = this.createForm();
+
+  constructor() {
+    this.newUserForm = this.createForm();
   }
 
   public addUser(): void {
     const user = this.getUserForPersist();
-    
+
     this.addingUser = true;
     this._userService.addNew(user)
       .pipe(
@@ -50,7 +50,7 @@ export class UserSelectNewComponent {
   private createForm(): FormGroup<INewUserForm> {
     return this._formBuilder.group<INewUserForm>({
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-      emailAddress: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required, Validators.email ]}),
+      emailAddress: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     });
   }
 

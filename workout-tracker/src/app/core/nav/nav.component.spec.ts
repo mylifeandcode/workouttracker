@@ -12,13 +12,13 @@ class AuthServiceMock {
   currentUserName: WritableSignal<string | null> = signal('someuser');
 
   logOff = jasmine.createSpy('logOff');
-  
+
 }
 
 @Component({
-    standalone: false
+  standalone: false
 })
-class FakeComponent{};
+class FakeComponent { };
 
 describe('NavComponent', () => {
   let component: NavComponent;
@@ -26,18 +26,18 @@ describe('NavComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    imports: [
+      imports: [
         RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
         NavComponent
-    ],
-    providers: [
+      ],
+      providers: [
         {
-            provide: AuthService,
-            useClass: AuthServiceMock
+          provide: AuthService,
+          useClass: AuthServiceMock
         }
-    ]
-})
-    .compileComponents();
+      ]
+    })
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -34,8 +34,7 @@ describe('WelcomeComponent', () => {
           provide: UserService,
           useClass: UserServiceMock
         }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      ]
     })
     .overrideComponent(
       WelcomeComponent,

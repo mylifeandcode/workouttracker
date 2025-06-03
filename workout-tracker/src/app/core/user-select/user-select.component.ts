@@ -9,10 +9,10 @@ import { AsyncPipe } from '@angular/common';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
-    selector: 'wt-user-select',
-    templateUrl: './user-select.component.html',
-    styleUrls: ['./user-select.component.scss'],
-    imports: [RouterLink, NzSpinModule, AsyncPipe]
+  selector: 'wt-user-select',
+  templateUrl: './user-select.component.html',
+  styleUrls: ['./user-select.component.scss'],
+  imports: [RouterLink, NzSpinModule, AsyncPipe]
 })
 export class UserSelectComponent {
   private _authService = inject(AuthService);
@@ -25,14 +25,14 @@ export class UserSelectComponent {
 
   //TOOD: Give this a thorough read: https://sebastian-holstein.de/post/error-handling-angular-async-pipe/
 
-  public users$ = 
+  public users$ =
     this._userSvc.all$
       .pipe(
         catchError((err: any, caught: Observable<User[]>) => {
           console.log("ERROR: ", err);
           this.errorMsg = (err.message ? err.message : "An error has occurred. Please contact an administrator.");
           return of(new Array<User>());
-        })        
+        })
       );
 
   public selectUser(userId: number, userName: string): void {
@@ -41,7 +41,7 @@ export class UserSelectComponent {
 
     this._authService.logIn(userName, "")
       .subscribe((result: boolean) => {
-        if(result)
+        if (result)
           this._router.navigate(['home']);
         else
           window.alert("Login attempt failed.");

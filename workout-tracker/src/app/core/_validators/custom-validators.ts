@@ -46,7 +46,6 @@ export class CustomValidators {
       };
     };
 
-  //static compareDatesValidator(startDateControl: FormControl<Date | null>, endDateControl: FormControl<Date | null>, canBeEqual: boolean = false): ValidatorFn {
   static compareDatesValidator(startDateControlName: string, endDateControlName: string, canBeEqual: boolean = false): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const startDateControl = control.get(startDateControlName);

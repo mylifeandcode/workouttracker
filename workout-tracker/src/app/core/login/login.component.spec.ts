@@ -23,22 +23,21 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    providers: [
+      providers: [
         FormBuilder,
         {
-            provide: AuthService,
-            useClass: AuthServiceMock
+          provide: AuthService,
+          useClass: AuthServiceMock
         }
-    ],
-    imports: [RouterModule.forRoot([]), ReactiveFormsModule, LoginComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-    .overrideComponent(
-      LoginComponent, {
-        remove: { imports: [ NzSpinModule ] },
-        add: { schemas: [ CUSTOM_ELEMENTS_SCHEMA ] }
+      ],
+      imports: [RouterModule.forRoot([]), ReactiveFormsModule, LoginComponent]
+    })
+      .overrideComponent(
+        LoginComponent, {
+        remove: { imports: [NzSpinModule] },
+        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
