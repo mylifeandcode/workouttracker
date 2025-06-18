@@ -79,7 +79,7 @@ describe('WorkoutEditComponent', () => {
       ],
       providers: [
         {
-          provide: ActivatedRoute,
+          provide: ActivatedRoute, //ActivatedRoute is still needed even though we get the ID via withComponentInputBinding()
           useValue: {
             params: of({
               id: WORKOUT_PUBLIC_ID
@@ -106,16 +106,13 @@ describe('WorkoutEditComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutEditComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('id', WORKOUT_PUBLIC_ID); //Simulate the input binding from the route
     workoutService = TestBed.inject(WorkoutService);
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should get workout public ID from route params during init', () => {
-    expect(component.id()).toBe(WORKOUT_PUBLIC_ID);
   });
 
   it('should get create form during init', () => {
@@ -206,8 +203,7 @@ describe('WorkoutEditComponent', () => {
   it('should add a new workout', () => {
     //TODO: Improve this test if possible
 
-    const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.params['id'] = undefined;
+    fixture.componentRef.setInput('id', undefined); //Simulate the input binding from the route
 
     //The form has already been created and populated with the default data.
     //We need to reset.
@@ -239,8 +235,7 @@ describe('WorkoutEditComponent', () => {
   it('should not save a workout if the form is invalid', () => {
     //TODO: Improve this test if possible
 
-    const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.params['id'] = 0;
+    fixture.componentRef.setInput('id', undefined); //Simulate the input binding from the route
 
     //The form has already been created and populated with the default data.
     //We need to reset.
