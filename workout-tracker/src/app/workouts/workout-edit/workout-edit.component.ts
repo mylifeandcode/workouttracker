@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
@@ -49,8 +49,10 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   //A helfpul link for dynamic form arrays: https://codinglatte.com/posts/angular/angular-dynamic-form-fields-using-formarray/
 
+  public id = input<string | undefined>(undefined);
+
   //Public fields
-  public workoutId: string | null = null; //Public GUID Workout ID
+  //public workoutId: string | undefined = undefined; //Public GUID Workout ID
   public workoutForm: FormGroup<IWorkoutEditForm>;
   public loading: boolean = true;
   public infoMsg: string | null = null;
@@ -78,9 +80,8 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   public ngOnInit(): void {
     const readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
     if (!readOnlyMode) this.editEnabled.set(true);
-    this.getWorkoutIdFromRouteParams();
+    //this.workoutId = this.id();
     this.setupForm();
-    //console.log("Workout: ", this._workout);
   }
 
   /*
@@ -145,17 +146,13 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   //PRIVATE METHODS ///////////////////////////////////////////////////////////////////////////////
 
   private setupForm(): void {
-    if (this.workoutId != null) {
+    if (this.id() !== undefined) {
       this.loadWorkout();
     }
     else {
       this._workout = new Workout();
       this.loading = false;
     }
-  }
-
-  private getWorkoutIdFromRouteParams(): void {
-    this.workoutId = this._route.snapshot.params['id'];
   }
 
   private createForm(): FormGroup<IWorkoutEditForm> {
@@ -171,13 +168,16 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   private loadWorkout(): void {
-    if (!this.workoutId) return;
+    const workoutId = this.id();
+    if (!workoutId) return;
+
     this.loading = true;
-    this._workoutService.getById(this.workoutId).subscribe((workout: Workout) => {
+    this._workoutService.getById(workoutId).subscribe((workout: Workout) => {
       this.updateFormWithWorkoutValues(workout);
       this.loading = false;
       this._workout = workout;
     }); //TODO: Handle errors
+
   }
 
   private updateFormWithWorkoutValues(workout: Workout): void {
@@ -208,9 +208,9 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       .subscribe({
         next: (addedWorkout: Workout) => {
           //this.workout = value;
-          this.workoutId = addedWorkout.publicId;
-          this._workout = addedWorkout; //TODO: Refactor! We have redundant variables!
-          this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
+          //this.workoutId = addedWorkout.publicId ?? undefined; //Should NEVER be undefined
+          //this._workout = addedWorkout; //TODO: Refactor! We have redundant variables!
+          //this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
           this._router.navigate([`workouts/edit/${addedWorkout.publicId}`]);
         },
         error: (error: any) => {
@@ -248,12 +248,16 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     setType: number = 0,
     numberOfSets: number = 0): FormGroup<IExerciseInWorkout> {
 
-    //console.log("getExerciseFormGroup: exerciseInWorkoutId = " + exerciseInWorkoutId + ", exerciseId = " + exerciseId + ", exerciseName = " + exerciseName + ", setType = " + setType + ", numberOfSets = " + numberOfSets);
     return this._formBuilder.group<IExerciseInWorkout>({
       id: new FormControl<number>(exerciseInWorkoutId, { nonNullable: true }),
       exerciseId: new FormControl<number>(exerciseId, { nonNullable: true }),
-      exerciseName: new FormControl<string>(exerciseName, { nonNullable: true, validators: Validators.compose([Validators.required]) }),
-      numberOfSets: new FormControl<number>(numberOfSets, { nonNullable: true, validators: Validators.compose([Validators.required, Validators.min(1)]) }),
+      
+      exerciseName: new FormControl<string>(
+        exerciseName, { nonNullable: true, validators: Validators.compose([Validators.required]) }),
+      
+      numberOfSets: new FormControl<number>(
+        numberOfSets, { nonNullable: true, validators: Validators.compose([Validators.required, Validators.min(1)]) }),
+      
       setType: new FormControl<number>(setType, { nonNullable: true, validators: Validators.compose([Validators.required]) })
     });
   }

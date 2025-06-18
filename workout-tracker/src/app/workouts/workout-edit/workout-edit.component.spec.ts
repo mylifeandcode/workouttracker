@@ -115,7 +115,7 @@ describe('WorkoutEditComponent', () => {
   });
 
   it('should get workout public ID from route params during init', () => {
-    expect(component.workoutId).toBe(WORKOUT_PUBLIC_ID);
+    expect(component.id()).toBe(WORKOUT_PUBLIC_ID);
   });
 
   it('should get create form during init', () => {
@@ -166,7 +166,7 @@ describe('WorkoutEditComponent', () => {
 
     component.ngOnInit();
 
-    expect(component.workoutId).toBe('some-guid');
+    expect(component.id()).toBe('some-guid');
     expect(workoutService.getById).not.toHaveBeenCalledWith(EMPTY_GUID); //The original ngOnInit() call would've called it with WORKOUT_PUBLIC_ID
   });
 

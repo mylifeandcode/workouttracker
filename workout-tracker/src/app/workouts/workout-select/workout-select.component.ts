@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output, inject, input } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
@@ -29,9 +29,8 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   //That way, the dropdown component can be reused without the need for the other things only meant for selecting 
   //a workout to start or plan. Sometimes we'll need to select a workout for other reasons, such as analytics.
 
-  readonly showRecent = input<boolean>(true);
-
-  readonly showHeading = input<boolean>(true);
+  readonly showRecent = signal<boolean>(true);
+  readonly showHeading = signal<boolean>(true);
 
   //readonly navigateOnSelect = input<boolean>(true);
 
