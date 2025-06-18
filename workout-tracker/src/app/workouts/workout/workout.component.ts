@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, input } from '@angular/core';
 import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
@@ -81,8 +81,13 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   public exerciseBandAllocation: IBandAllocation = { selectedBandsDelimited: '', doubleMaxResistanceAmounts: false };
   //END PUBLIC FIELDS
 
+  //INPUTS (SET VIA withComponentInputBinding())
+  executedWorkoutPublicId = input<string | undefined>();
+  //END INPUTS
+
   //PRIVATE FIELDS
   private _executedWorkout: ExecutedWorkoutDTO | undefined = undefined;
+  private _apiCallsInProgress: number = 0;
   //END PRIVATE FIELDS
 
   //VIEWCHILD
@@ -115,11 +120,6 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   }
   //END PUBLIC PROPERTIES
 
-  //PRIVATE FIELDS
-  private _executedWorkoutPublicId: string = ''; //GUID
-  private _apiCallsInProgress: number = 0;
-  //END PRIVATE FIELDS
-
   constructor() {
     super();
     this.workoutForm = this.createForm();
@@ -129,8 +129,13 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
 
   public ngOnInit(): void {
+    if (this.executedWorkoutPublicId() === undefined) {
+      this._messageService.error('executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.');
+      return;
+    }
+
     this.getResistanceBands();
-    this.getRouteParams();
+    this.setupWorkout();
     this.getOptionalQueryParams(); //For optional parameters, such as pastWorkout
     this.startWorkout();
   }
@@ -142,7 +147,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
         doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
       };
     this.showResistanceBandsSelectModal = true;
-    console.log('GO!');
+
     this.settingResistanceForBilateralExercise = exerciseFormGroup.controls.usesBilateralResistance.value;
     this.formGroupForResistanceSelection = exerciseFormGroup;
     /*
@@ -215,17 +220,6 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
-  private getRouteParams(): void {
-    this._executedWorkoutPublicId = this._route.snapshot.params['executedWorkoutPublicId'];
-
-    if (this._executedWorkoutPublicId == null) {
-      this._messageService.error('executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.');
-    }
-    else {
-      this.setupWorkout(this._executedWorkoutPublicId);
-    }
-  }
-
   private getOptionalQueryParams(): void {
     if (this._route.snapshot.queryParams['pastWorkout']) //TODO: Clean up
       this.isLoggingPastWorkout = this._route.snapshot.queryParams['pastWorkout'];
@@ -254,9 +248,12 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       });
   }
 
-  private setupWorkout(executedWorkoutPublicId: string): void {
+  private setupWorkout(): void {
+    const id = this.executedWorkoutPublicId();
+    if (!id) return;
+
     this._apiCallsInProgress++;
-    this._executedWorkoutService.getById(executedWorkoutPublicId)
+    this._executedWorkoutService.getById(id)
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe({
         next: (executedWorkout: ExecutedWorkoutDTO) => {
@@ -269,7 +266,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           this.startDateTime = this._executedWorkout.startDateTime;
 
           this.workoutForm?.patchValue({
-            publicId: executedWorkoutPublicId
+            publicId: id
           });
 
           this.setupExercisesFormGroup(executedWorkout.exercises);
@@ -320,13 +317,27 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
         sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }),
         resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
         targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }),
-        actualReps: new FormControl<number>(exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, { nonNullable: true, validators: Validators.required }),
-        formRating: new FormControl<number | null>(exercises[i].formRating ? exercises[i].formRating : null, { validators: Validators.required }),
-        rangeOfMotionRating: new FormControl<number | null>(exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, { validators: Validators.required }),
+        
+        actualReps: new FormControl<number>(
+          exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, { nonNullable: true, validators: Validators.required }),
+        
+        formRating: new FormControl<number | null>(
+          exercises[i].formRating ? exercises[i].formRating : null, { validators: Validators.required }),
+        
+        rangeOfMotionRating: new FormControl<number | null>(
+          exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, { validators: Validators.required }),
+
         resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup),
-        bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd), //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
+
+        //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
+        bandsEndToEnd: new FormControl<boolean | null>(
+          exercises[i].bandsEndToEnd), 
+        
         duration: new FormControl<number | null>(120), //TODO: Get/set value from API
-        involvesReps: new FormControl<boolean>(exercises[i].involvesReps, { nonNullable: true }), //Kind of a hack, but I need to pass this value along
+        
+        involvesReps: new FormControl<boolean>(
+          exercises[i].involvesReps, { nonNullable: true }), //Kind of a hack, but I need to pass this value along
+        
         side: new FormControl<number | null>(exercises[i].side),
         usesBilateralResistance: new FormControl<boolean>(exercises[i].usesBilateralResistance, { nonNullable: true })
       });
