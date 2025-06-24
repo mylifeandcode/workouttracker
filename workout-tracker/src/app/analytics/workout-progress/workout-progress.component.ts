@@ -8,11 +8,11 @@ import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 import { sortBy } from 'lodash-es';
-import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
-import { NzTabChangeEvent, NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title } from 'chart.js';
+import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend } from 'chart.js';
 import { CommonModule } from '@angular/common';
 
 interface IWorkoutProgressForm {
@@ -85,7 +85,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
 
   constructor() {
     const formBuilder = inject(FormBuilder);
-    Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title);
+    Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend);
 
     this.form = this.buildForm(formBuilder);
   }
@@ -118,9 +118,14 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
 
   private getChartData(exerciseId: string): void {
     this.formAndRangeOfMotionChartData =
-      this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.FormAndRangeOfMotion);
-    this.repsChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Reps);
-    this.resistanceChartData = this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Resistance);
+      this._analyticsService
+        .getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.FormAndRangeOfMotion);
+
+    this.repsChartData = 
+      this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Reps);
+
+    this.resistanceChartData = 
+      this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Resistance);
 
     this._formAndRangeOfMotionChart = this.setupChart(
       this.formAndRangeOfMotionChartCanvasRef.nativeElement.getContext('2d'),
@@ -154,7 +159,13 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
     const options: any = {
       responsive: true,
       maintainAspectRatio: false,
-      ...(scales ? { scales } : {})
+      ...(scales ? { scales } : {}),
+      plugins: {
+          legend: {
+            display: true,
+            position: 'top', // 'top' is default
+          }
+        }      
     };
 
     return new Chart(canvas, {
