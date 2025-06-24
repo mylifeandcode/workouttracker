@@ -30,22 +30,22 @@ interface IWorkoutForm {
 }
 
 @Component({
-    selector: 'wt-workout',
-    templateUrl: './workout.component.html',
-    styleUrls: ['./workout.component.scss'],
-    imports: [
-        NzSpinModule,
-        FormsModule,
-        ReactiveFormsModule,
-        WorkoutExerciseComponent,
-        RouterLink,
-        NzModalModule,
-        ResistanceBandSelectComponent,
-        CountdownTimerComponent,
-        DurationComponent,
-        DatePipe,
-        NzCollapseModule
-    ]
+  selector: 'wt-workout',
+  templateUrl: './workout.component.html',
+  styleUrls: ['./workout.component.scss'],
+  imports: [
+    NzSpinModule,
+    FormsModule,
+    ReactiveFormsModule,
+    WorkoutExerciseComponent,
+    RouterLink,
+    NzModalModule,
+    ResistanceBandSelectComponent,
+    CountdownTimerComponent,
+    DurationComponent,
+    DatePipe,
+    NzCollapseModule
+  ]
 })
 export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);
@@ -130,7 +130,8 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
   public ngOnInit(): void {
     if (this.executedWorkoutPublicId() === undefined) {
-      this._messageService.error('executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.');
+      this._messageService.error(
+        `executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.`);
       return;
     }
 
@@ -141,21 +142,15 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   }
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup<IWorkoutFormExerciseSet>): void {
-    this.exerciseBandAllocation = 
-      { 
-        selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value ?? '',
-        doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
-      };
+    this.exerciseBandAllocation =
+    {
+      selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value ?? '',
+      doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
+    };
     this.showResistanceBandsSelectModal = true;
 
     this.settingResistanceForBilateralExercise = exerciseFormGroup.controls.usesBilateralResistance.value;
     this.formGroupForResistanceSelection = exerciseFormGroup;
-    /*
-    console.log('bandSelect: ', this.bandSelect);
-    this.bandSelect?.setBandAllocation(
-      exerciseFormGroup.controls.resistanceMakeup.value ?? '', //TODO: Revisit. This is a hack. Type is nullable but we know we'll have a value here.
-      !exerciseFormGroup.controls.bandsEndToEnd.value);
-    */
   }
 
   public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {
@@ -317,13 +312,13 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
         sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }),
         resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
         targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }),
-        
+
         actualReps: new FormControl<number>(
           exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, { nonNullable: true, validators: Validators.required }),
-        
+
         formRating: new FormControl<number | null>(
           exercises[i].formRating ? exercises[i].formRating : null, { validators: Validators.required }),
-        
+
         rangeOfMotionRating: new FormControl<number | null>(
           exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, { validators: Validators.required }),
 
@@ -331,13 +326,13 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
         //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
         bandsEndToEnd: new FormControl<boolean | null>(
-          exercises[i].bandsEndToEnd), 
-        
+          exercises[i].bandsEndToEnd),
+
         duration: new FormControl<number | null>(120), //TODO: Get/set value from API
-        
+
         involvesReps: new FormControl<boolean>(
           exercises[i].involvesReps, { nonNullable: true }), //Kind of a hack, but I need to pass this value along
-        
+
         side: new FormControl<number | null>(exercises[i].side),
         usesBilateralResistance: new FormControl<boolean>(exercises[i].usesBilateralResistance, { nonNullable: true })
       });

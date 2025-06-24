@@ -24,7 +24,6 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 
-const MOCK_USER_ID: number = 15;
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
 
 //HELPER FUNCTIONS ////////////////////////////////////////////////////////////
@@ -88,7 +87,6 @@ function getFakeExecutedWorkout(): ExecutedWorkoutDTO {
 }
 
 function getFirstExerciseFormGroup(component: WorkoutComponent): UntypedFormGroup {
-  //Reactive Forms can get CONFUSING!
   const firstExercise = component.exercisesArray.controls[0];
   const formGroup = <UntypedFormGroup>firstExercise;
   const exerciseSets = (<UntypedFormArray>formGroup.controls.exerciseSets).controls;
@@ -154,9 +152,9 @@ The casting solution presented at this URL did not work: https://medium.com/angu
 Unfortunately, for now, I've had to mock each property and method. :/
 */
 @Component({
-    selector: 'wt-resistance-band-select',
-    template: '',
-    imports: [ReactiveFormsModule]
+  selector: 'wt-resistance-band-select',
+  template: '',
+  imports: [ReactiveFormsModule]
 })
 class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
@@ -254,6 +252,7 @@ describe('WorkoutComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('executedWorkoutPublicId', 'someGuid');
 
     //The below line works, but bandSelect becomes undefined after detectChanges(), most likely
     //due to the HTML element not being rendered due to the visible attribute being false
@@ -362,8 +361,8 @@ describe('WorkoutComponent', () => {
     //ASSERT
     expect(component.showResistanceBandsSelectModal).toBeTrue();
     expect(component.formGroupForResistanceSelection).toBe(exerciseFormGroup);
-    expect(component.exerciseBandAllocation).toEqual(      
-      { 
+    expect(component.exerciseBandAllocation).toEqual(
+      {
         selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value,
         doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
       }
@@ -438,13 +437,11 @@ describe('WorkoutComponent', () => {
   xit('should complete a workout', () => {
     //ARRANGE
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    //component.workoutSelected(12);
     component.startWorkout();
 
     component.workoutForm.patchValue({ journal: '38 degrees, sunny. ST: TOS - \"The Omega Glory\" and YouTube' });
 
     const expectedExecutedWorkout = new ExecutedWorkoutDTO();
-    //expectedExecutedWorkout.createdByUserId = MOCK_USER_ID;
     expectedExecutedWorkout.startDateTime = component.startDateTime;
     expectedExecutedWorkout.journal = component.workoutForm.controls.journal.value;
     expectedExecutedWorkout.exercises = [];
@@ -572,11 +569,10 @@ describe('WorkoutComponent', () => {
 
   });
 
-  it('should present an error if an invalid ExecutedWorkoutId is found in the route params', () => {
+  it('should present an error if an undefined ExecutedWorkoutId is provided', () => {
     //ARRANGE
-    //Override default mock behavior
-    const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.params['executedWorkoutPublicId'] = null;
+    //Override default behavior
+    fixture.componentRef.setInput('executedWorkoutPublicId', undefined);
 
     const messageService = TestBed.inject(NzMessageService);
 
