@@ -1,7 +1,7 @@
 @if (!loading) {
   <h3 class="headroom">{{workoutName}}</h3>
-  @if (isLoggingPastWorkout) {
-    <h4>PLEASE ENTER INFORMATION FOR THIS PREVIOUSLY COMPLETED WORKOUT BELOW</h4>
+  @if (pastWorkout()) {
+    <h4>Please enter information for this previously completed workout below</h4>
   }
 }
 
@@ -16,7 +16,7 @@
 
   @if (workoutForm && !loading) {
     <form [formGroup]="workoutForm" novalidate>
-      <fieldset [disabled]="saving || (workoutCompleted && !isLoggingPastWorkout)">
+      <fieldset [disabled]="saving || (workoutCompleted && !pastWorkout())">
         @if (workoutLoaded) {
           <p>
             @if (workoutStarted) {
@@ -55,8 +55,8 @@
   
           <div class="row">
             <div class="col-12">
-              @if (!workoutCompleted || isLoggingPastWorkout) {
-                <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !isLoggingPastWorkout)" (click)="completeWorkout()">Complete Workout</button>
+              @if (!workoutCompleted || pastWorkout()) {
+                <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid || saving || (workoutCompleted && !pastWorkout())" (click)="completeWorkout()">Complete Workout</button>
               }
               
               @if (!workoutForm.valid) {
@@ -73,7 +73,7 @@
     </form>
   }
   
-  @if (workoutCompleted && !isLoggingPastWorkout) {
+  @if (workoutCompleted && !pastWorkout()) {
     <button class="btn btn-success me-2" routerLink="/workouts/history">View Workout History</button>
     <button class="btn btn-success" routerLink="/workouts/select-for-later">Plan Next Workout</button>
   }

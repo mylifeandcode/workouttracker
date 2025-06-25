@@ -11,7 +11,6 @@ import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IWorkoutFormExercise } from './_interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from './_interfaces/i-workout-form-exercise-set';
-import { forEach } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -71,7 +70,6 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   public saving: boolean = false;
   public infoMsg: string | undefined = undefined;
   public workoutCompleted: boolean = false;
-  public isLoggingPastWorkout: boolean = false;
   public showDurationModal: boolean = false;
   public formControlForDurationEdit: FormControl<number | null> | null = null;
   public startDateTime: Date | null = null;
@@ -83,12 +81,18 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
   //INPUTS (SET VIA withComponentInputBinding())
   executedWorkoutPublicId = input<string | undefined>();
+  pastWorkout = input<boolean>(false);
   //END INPUTS
 
   //PRIVATE FIELDS
   private _executedWorkout: ExecutedWorkoutDTO | undefined = undefined;
   private _apiCallsInProgress: number = 0;
   //END PRIVATE FIELDS
+
+  //PRIVATE READ-ONLY FIELDS
+  private static readonly DEFAULT_DURATION = 120;
+  private static readonly MIN_YEAR_THRESHOLD = 1;
+  //END PRIVATE READ-ONLY FIELDS
 
   //VIEWCHILD
   @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent | undefined = undefined;
@@ -137,7 +141,6 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
     this.getResistanceBands();
     this.setupWorkout();
-    this.getOptionalQueryParams(); //For optional parameters, such as pastWorkout
     this.startWorkout();
   }
 
@@ -215,11 +218,6 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
-  private getOptionalQueryParams(): void {
-    if (this._route.snapshot.queryParams['pastWorkout']) //TODO: Clean up
-      this.isLoggingPastWorkout = this._route.snapshot.queryParams['pastWorkout'];
-  }
-
   private createForm(): FormGroup<IWorkoutForm> {
     return this._formBuilder.group<IWorkoutForm>({
       //id: new FormControl<number | null>(0, Validators.required),
@@ -284,8 +282,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
     const groupedExercises = this._executedWorkoutService.groupExecutedExercises(exercises);
 
-    //TODO: Use the non-lodash version of forEach
-    forEach(groupedExercises, (exerciseArray: ExecutedExerciseDTO[]) => {
+    Object.values(groupedExercises).forEach((exerciseArray: ExecutedExerciseDTO[]) => {
 
       this.exercisesArray?.push(
         this._formBuilder.group<IWorkoutFormExercise>({
@@ -328,7 +325,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
         bandsEndToEnd: new FormControl<boolean | null>(
           exercises[i].bandsEndToEnd),
 
-        duration: new FormControl<number | null>(120), //TODO: Get/set value from API
+        duration: new FormControl<number | null>(WorkoutComponent.DEFAULT_DURATION), //TODO: Get/set value from API
 
         involvesReps: new FormControl<boolean>(
           exercises[i].involvesReps, { nonNullable: true }), //Kind of a hack, but I need to pass this value along
@@ -364,12 +361,15 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       exercises = exercises?.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
 
       if (exercises?.length != sets.length) {
-        window.alert("Exercises/FormArray length mismatch."); //TODO: Handle this a better way
+        this._messageService.error('Exercises/FormArray length mismatch');
+        //console.error('Exercises/FormArray length mismatch', { exercisesLength: exercises?.length, setsLength: sets.length });
         return;
       }
 
       for (let x = 0; x < exercises.length; x++) {
-        const setControls = (sets.at(x) as FormGroup<IWorkoutFormExerciseSet>).controls; //TODO: Revisit. Can probably simplify this.
+        const setGroup = sets.at(x);
+        if (!setGroup) continue;
+        const setControls = setGroup.controls;
         exercises[x].actualRepCount = Number(setControls.actualReps.value);
         exercises[x].duration = setControls.duration.value;
         exercises[x].resistanceAmount = setControls.resistance.value;
@@ -396,7 +396,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           this._messageService.remove();
           this._executedWorkout = workout;
           if (completed) {
-            if (this.isLoggingPastWorkout) {
+            if (this.pastWorkout()) {
               this.workoutForm.markAsPristine(); //To allow the guard to let us navigate away
               this._router.navigate(['/workouts/history']);
             }
@@ -425,5 +425,4 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   private getExerciseInProgress(): number {
     return this.exercisesArray.controls.findIndex((group: FormGroup<IWorkoutFormExercise>) => group.invalid);
   }
-
 }

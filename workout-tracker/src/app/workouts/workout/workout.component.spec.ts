@@ -499,37 +499,7 @@ describe('WorkoutComponent', () => {
     expect(component.infoMsg).toContain('Completed workout saved');
   });
 
-  it('should set isLoggingPastWorkout value to true when query param is present and true', () => {
-
-    //ARRANGE
-    //Override default mock behavior
-    const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.queryParams['pastWorkout'] = true;
-
-    //ACT
-    //We need to reinit because we changed the ActivatedRoute mock
-    component.ngOnInit();
-
-    //ASSERT
-    expect(component.isLoggingPastWorkout).toBeTrue();
-  });
-
-  it('should set isLoggingPastWorkout value to false when query param is present and false', () => {
-
-    //ARRANGE
-    //Override default mock behavior
-    const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.queryParams['pastWorkout'] = false;
-
-    //ACT
-    //We need to reinit because we changed the ActivatedRoute mock
-    component.ngOnInit();
-
-    //ASSERT
-    expect(component.isLoggingPastWorkout).toBeFalse();
-  });
-
-  it('should have values of false for isLoggingPastWorkout when query param not present', () => {
+  it('should have values of false for pastWorkout when query param not present', () => {
 
     //ARRANGE
     //Override default mock behavior
@@ -541,7 +511,7 @@ describe('WorkoutComponent', () => {
     component.ngOnInit();
 
     //ASSERT
-    expect(component.isLoggingPastWorkout).toBeFalse();
+    expect(component.pastWorkout()).toBeFalse();
   });
 
   it("should not change the end date of a workout when completing it if it already has an end date", () => {
