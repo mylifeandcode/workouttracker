@@ -47,7 +47,6 @@ interface IWorkoutForm {
   ]
 })
 export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {
-  private _route = inject(ActivatedRoute);
   private _formBuilder = inject(FormBuilder);
   private _executedWorkoutService = inject(ExecutedWorkoutService);
   private _resistanceBandService = inject(ResistanceBandService);

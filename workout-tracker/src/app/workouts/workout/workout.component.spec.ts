@@ -128,16 +128,6 @@ class ExecutedWorkoutServiceMock {
     .and.callFake((workout: ExecutedWorkoutDTO) => of(workout));
 }
 
-class ActivatedRouteMock {
-  public snapshot: ActivatedRouteSnapshot;
-
-  constructor() {
-    this.snapshot = new ActivatedRouteSnapshot();
-    this.snapshot.params = { executedWorkoutPublicId: 'someGuid' };
-    this.snapshot.queryParams = {};
-  }
-}
-
 class NzMessageServiceMock {
   success = jasmine.createSpy('success');
   info = jasmine.createSpy('info');
@@ -166,30 +156,7 @@ class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
   @Output()
   public cancelClicked: EventEmitter<void> = new EventEmitter<void>();
 
-  /*
-  public selectedBands: ResistanceBandIndividual[] = [];
-  public availableBands: ResistanceBandIndividual[] = [];
-  */
-
   setBandAllocation = jasmine.createSpy('setBandAllocation');
-
-  /*
-  ok = jasmine.createSpy('ok');
-  cancel = jasmine.createSpy('cancel');
-
-  public get maxAvailableResistance(): number {
-    return 0;
-  }
-
-  public get maxSelectedResistance(): number {
-    return 0;
-  }
-
-  //private _doubleMaxResistanceAmounts: boolean;
-
-  ngOnInit(): void {
-  }
-  */
 }
 
 //END COMPONENT MOCK CLASSES //////////////////////////////////////////////////
@@ -218,10 +185,6 @@ describe('WorkoutComponent', () => {
         {
           provide: ExecutedWorkoutService,
           useClass: ExecutedWorkoutServiceMock
-        },
-        {
-          provide: ActivatedRoute,
-          useClass: ActivatedRouteMock
         },
         {
           provide: NzMessageService,
@@ -489,21 +452,6 @@ describe('WorkoutComponent', () => {
     expect(executedWorkoutService.add).toHaveBeenCalledWith(expectedExecutedWorkout);
     expect(component.workoutCompleted).toBeTrue();
     expect(component.infoMsg).toContain('Completed workout saved');
-  });
-
-  it('should have values of false for pastWorkout when query param not present', () => {
-
-    //ARRANGE
-    //Override default mock behavior
-    const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.queryParams = {};
-
-    //ACT
-    //We need to reinit because we changed the ActivatedRoute mock
-    component.ngOnInit();
-
-    //ASSERT
-    expect(component.pastWorkout()).toBeFalse();
   });
 
   it("should not change the end date of a workout when completing it if it already has an end date", () => {
