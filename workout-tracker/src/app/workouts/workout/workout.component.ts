@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject, input } from '@angular/core';
+import { Component, OnInit, inject, input, viewChild } from '@angular/core';
 import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
@@ -93,9 +93,6 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   private static readonly DEFAULT_DURATION = 120;
   private static readonly MIN_YEAR_THRESHOLD = 1;
   //END PRIVATE READ-ONLY FIELDS
-
-  //VIEWCHILD
-  @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent | undefined = undefined;
 
   //PUBLIC PROPERTIES
   /**

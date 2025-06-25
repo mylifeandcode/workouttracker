@@ -253,15 +253,7 @@ describe('WorkoutComponent', () => {
     fixture = TestBed.createComponent(WorkoutComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('executedWorkoutPublicId', 'someGuid');
-
-    //The below line works, but bandSelect becomes undefined after detectChanges(), most likely
-    //due to the HTML element not being rendered due to the visible attribute being false
-    //component.bandSelect = TestBed.createComponent(ResistanceBandSelectComponentMock).componentInstance;
-
     fixture.detectChanges();
-
-    //IMPORTANT: Need to set this AFTER detectChanges, because otherwise it is undefined (probably due to the visible attribute being false)
-    component.bandSelect = TestBed.createComponent(MockResistanceBandSelectComponent).componentInstance;
   });
 
   it('should create', () => {
