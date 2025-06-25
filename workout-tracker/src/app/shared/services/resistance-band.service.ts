@@ -5,7 +5,7 @@ import { ConfigService } from 'app/core/_services/config/config.service';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 //TODO: Move to Core or Shared module
 //TODO: Implement caching and cache-busting
@@ -29,7 +29,6 @@ export class ResistanceBandService extends ApiBaseService<ResistanceBand> {
   public getAllIndividualBands(): Observable<ResistanceBandIndividual[]> {
     return this.getAll()
       .pipe(
-        //tap(() =>console.log("GOT THE BANDS")),
         map((bands: ResistanceBand[]) => {
           const individualBands: ResistanceBandIndividual[] = [];
           bands.map((band: ResistanceBand) => {

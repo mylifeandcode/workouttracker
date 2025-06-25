@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, inject, viewChild } from '@angular/core';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { WorkoutService } from 'app/workouts/_services/workout.service';
@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs';
 import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
-import { sortBy } from 'lodash-es';
 import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
@@ -28,10 +27,19 @@ interface IWorkoutProgressForm {
   imports: [CommonModule, ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule]
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
-  //TODO: Replace with viewChild
-  @ViewChild('formAndRangeOfMotionChart') formAndRangeOfMotionChartCanvasRef!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('repsChart') repsChartCanvasRef!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('resistanceChart') resistanceChartCanvasRef!: ElementRef<HTMLCanvasElement>;
+  // Constants for magic numbers
+  private static readonly DEFAULT_PAGE_SIZE = 500;
+  private static readonly MIN_WORKOUT_COUNT = 1;
+  private static readonly FORM_RATING_NA = 0;
+  private static readonly FORM_RATING_BAD = 1;
+  private static readonly FORM_RATING_POOR = 2;
+  private static readonly FORM_RATING_OK = 3;
+  private static readonly FORM_RATING_GOOD = 4;
+  private static readonly FORM_RATING_EXCELLENT = 5;
+
+  formAndRangeOfMotionChartCanvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('formAndRangeOfMotionChart');
+  repsChartCanvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('repsChart');
+  resistanceChartCanvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('resistanceChart');
 
   public loadingData: boolean = true;
   public metrics: ExecutedWorkoutMetrics[] = [];
@@ -62,17 +70,17 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
           callback: (value: number, index: number, ticks: number): string => {
             //TODO: Leverage RatingPipe for this
             switch (value) {
-              case 0:
+              case WorkoutProgressComponent.FORM_RATING_NA:
                 return 'N/A';
-              case 1:
+              case WorkoutProgressComponent.FORM_RATING_BAD:
                 return 'Bad';
-              case 2:
+              case WorkoutProgressComponent.FORM_RATING_POOR:
                 return 'Poor';
-              case 3:
+              case WorkoutProgressComponent.FORM_RATING_OK:
                 return 'OK';
-              case 4:
+              case WorkoutProgressComponent.FORM_RATING_GOOD:
                 return 'Good';
-              case 5:
+              case WorkoutProgressComponent.FORM_RATING_EXCELLENT:
                 return 'Excellent';
               default:
                 return '';
@@ -111,8 +119,14 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
           this.loadingData = false;
         })
       )
-      .subscribe((results: ExecutedWorkoutMetrics[]) => {
-        this.metrics = results;
+      .subscribe({
+        next: (results: ExecutedWorkoutMetrics[]) => {
+          this.metrics = results;
+        },
+        error: (error) => {
+          // TODO: Add user-friendly error notification service
+          // console.error('Error loading workout metrics:', error);
+        }
       });
   }
 
@@ -128,18 +142,18 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
       this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Resistance);
 
     this._formAndRangeOfMotionChart = this.setupChart(
-      this.formAndRangeOfMotionChartCanvasRef.nativeElement.getContext('2d'),
+      this.formAndRangeOfMotionChartCanvasRef().nativeElement.getContext('2d'),
       this.formAndRangeOfMotionChartData,
       this._formAndRangeOfMotionChart,
       this._formAndRangeOfMotionChartOptions.scales);
 
     this._repsChart = this.setupChart(
-      this.repsChartCanvasRef.nativeElement.getContext('2d'),
+      this.repsChartCanvasRef().nativeElement.getContext('2d'),
       this.repsChartData,
       this._repsChart);
 
     this._resistanceChart = this.setupChart(
-      this.resistanceChartCanvasRef.nativeElement.getContext('2d'),
+      this.resistanceChartCanvasRef().nativeElement.getContext('2d'),
       this.resistanceChartData, 
       this._resistanceChart);
   }
@@ -175,11 +189,17 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getUserWorkouts(pageSize: number = 500): void {
+  private getUserWorkouts(pageSize: number = WorkoutProgressComponent.DEFAULT_PAGE_SIZE): void {
     this._workoutService.getFilteredSubset(0, pageSize, true)
       .pipe(finalize(() => { this.loadingData = false; }))
-      .subscribe((result: PaginatedResults<WorkoutDTO>) => {
-        this.workouts = sortBy(result.results, 'name');
+      .subscribe({
+        next: (result: PaginatedResults<WorkoutDTO>) => {
+          this.workouts = result.results.sort((a, b) => a.name.localeCompare(b.name));
+        },
+        error: (error) => {
+          // TODO: Add user-friendly error notification service
+          // console.error('Error loading workouts:', error);
+        }
       });
   }
 
@@ -194,7 +214,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
       workoutId: new FormControl<string | null>(null, Validators.required),
       workoutCount: new FormControl<number>(
         this.DEFAULT_WORKOUT_COUNT,
-        { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
+        { nonNullable: true, validators: [Validators.required, Validators.min(WorkoutProgressComponent.MIN_WORKOUT_COUNT)] }),
       exerciseId: new FormControl<string | null>(null, Validators.required)
     });
 
@@ -218,10 +238,16 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
           this.loadingData = false;
         })
       )
-      .subscribe((results: ExecutedWorkoutMetrics[]) => {
-        this.metrics = results;
-        this.form.controls.exerciseId.setValue(null);
-        this.form.controls.exerciseId.markAsUntouched();
+      .subscribe({
+        next: (results: ExecutedWorkoutMetrics[]) => {
+          this.metrics = results;
+          this.form.controls.exerciseId.setValue(null);
+          this.form.controls.exerciseId.markAsUntouched();
+        },
+        error: (error) => {
+          // TODO: Add user-friendly error notification service
+          // console.error('Error loading workout metrics:', error);
+        }
       });
   }
 
