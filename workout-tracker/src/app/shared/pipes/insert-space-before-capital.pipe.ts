@@ -4,8 +4,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 //https://pintoservice.wordpress.com/2016/02/02/humanize-pipe-angular-2/
 
 @Pipe({
-    name: 'insertSpaceBeforeCapital',
-    standalone: true
+  name: 'insertSpaceBeforeCapital',
+  standalone: true
 })
 export class InsertSpaceBeforeCapitalPipe implements PipeTransform {
 
