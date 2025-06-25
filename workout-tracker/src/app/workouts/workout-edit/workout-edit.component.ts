@@ -32,19 +32,24 @@ interface IWorkoutEditForm {
 }
 
 @Component({
-    selector: 'wt-workout-edit',
-    templateUrl: './workout-edit.component.html',
-    styleUrls: ['./workout-edit.component.scss'],
-    imports: [
-      NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, 
-      SelectOnFocusDirective, NzSwitchModule, NzModalModule, ExerciseListMiniComponent
-    ]
+  selector: 'wt-workout-edit',
+  templateUrl: './workout-edit.component.html',
+  styleUrls: ['./workout-edit.component.scss'],
+  imports: [
+    NzSpinModule, FormsModule, ReactiveFormsModule, NgClass,
+    SelectOnFocusDirective, NzSwitchModule, NzModalModule, ExerciseListMiniComponent
+  ]
 })
 export class WorkoutEditComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);
   private _formBuilder = inject(FormBuilder);
   private _workoutService = inject(WorkoutService);
   private _router = inject(Router);
+
+  // Constants
+  private static readonly DEFAULT_SET_TYPE = 0;
+  private static readonly DEFAULT_NUMBER_OF_SETS = 0;
+  private static readonly MIN_SETS = 1;
 
 
   //A helfpul link for dynamic form arrays: https://codinglatte.com/posts/angular/angular-dynamic-form-fields-using-formarray/
@@ -172,12 +177,18 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     if (!workoutId) return;
 
     this.loading = true;
-    this._workoutService.getById(workoutId).subscribe((workout: Workout) => {
-      this.updateFormWithWorkoutValues(workout);
-      this.loading = false;
-      this._workout = workout;
-    }); //TODO: Handle errors
-
+    this._workoutService.getById(workoutId)
+      .pipe(finalize(() => { this.loading = false; }))
+      .subscribe({
+        next: (workout: Workout) => {
+          this.updateFormWithWorkoutValues(workout);
+          this._workout = workout;
+        },
+        error: (error: any) => {
+          this.errorMsg = error.message || 'An error occurred loading the workout.';
+          console.error('Error loading workout:', error);
+        }
+      });
   }
 
   private updateFormWithWorkoutValues(workout: Workout): void {
@@ -192,7 +203,13 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       if (exerciseInWorkout && exerciseInWorkout?.exercise?.name) {
         this.exercisesArray.push(
           this.createExerciseFormGroup(
-            exerciseInWorkout.id, exerciseInWorkout.exerciseId, exerciseInWorkout?.exercise?.name, exerciseInWorkout.setType, exerciseInWorkout.numberOfSets));
+            exerciseInWorkout.id,
+            exerciseInWorkout.exerciseId,
+            exerciseInWorkout?.exercise?.name,
+            exerciseInWorkout.setType,
+            exerciseInWorkout.numberOfSets
+          )
+        );
       }
     });
   }
@@ -245,19 +262,22 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     exerciseInWorkoutId: number,
     exerciseId: number,
     exerciseName: string,
-    setType: number = 0,
-    numberOfSets: number = 0): FormGroup<IExerciseInWorkout> {
+    setType: number = WorkoutEditComponent.DEFAULT_SET_TYPE,
+    numberOfSets: number = WorkoutEditComponent.DEFAULT_NUMBER_OF_SETS): FormGroup<IExerciseInWorkout> {
 
     return this._formBuilder.group<IExerciseInWorkout>({
       id: new FormControl<number>(exerciseInWorkoutId, { nonNullable: true }),
       exerciseId: new FormControl<number>(exerciseId, { nonNullable: true }),
-      
+
       exerciseName: new FormControl<string>(
         exerciseName, { nonNullable: true, validators: Validators.compose([Validators.required]) }),
-      
+
       numberOfSets: new FormControl<number>(
-        numberOfSets, { nonNullable: true, validators: Validators.compose([Validators.required, Validators.min(1)]) }),
-      
+        numberOfSets, {
+        nonNullable: true,
+        validators: Validators.compose([Validators.required, Validators.min(WorkoutEditComponent.MIN_SETS)])
+      }),
+
       setType: new FormControl<number>(setType, { nonNullable: true, validators: Validators.compose([Validators.required]) })
     });
   }

@@ -7,7 +7,6 @@ import { TargetArea } from '../../workouts/_models/target-area';
 import { CustomValidators } from '../../core/_validators/custom-validators';
 import { ExerciseTargetAreaLink } from '../../workouts/_models/exercise-target-area-link';
 import { finalize } from 'rxjs/operators';
-import { some, find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { ResistanceType } from 'app/workouts/workout/_enums/resistance-type';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -16,6 +15,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
+import { forkJoin } from 'rxjs';
 
 interface IExerciseEditForm {
   id: FormControl<number>;
@@ -53,6 +53,10 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   private _formBuilder = inject(FormBuilder);
   private _exerciseSvc = inject(ExerciseService);
   private _router = inject(Router);
+
+  // Constants
+  private static readonly MAX_TEXT_LENGTH = 4000;
+  private static readonly RESISTANCE_BANDS_TYPE = 2;
 
 
   //PUBLIC FIELDS
@@ -92,15 +96,14 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
   public ngOnInit(): void {
     this.editModeEnabled.set(this._route.snapshot.url.join('').indexOf('view') == -1);
-    //this.createForm();
-
-    //TODO: Rethink the following. This can probably be done a much better way. Thinking "forkJoin()".
-    this._exerciseSvc.getTargetAreas().subscribe((targetAreas: TargetArea[]) => {
+    
+    forkJoin({
+      targetAreas: this._exerciseSvc.getTargetAreas(),
+      resistanceTypes: this._exerciseSvc.getResistanceTypes()
+    }).subscribe(({ targetAreas, resistanceTypes }) => {
       this.allTargetAreas = targetAreas;
-      this._exerciseSvc.getResistanceTypes().subscribe((resistanceTypes: Map<number, string>) => {
-        this.resistanceTypes = resistanceTypes;
-        this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
-      });
+      this.resistanceTypes = resistanceTypes;
+      this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
     });
   }
 
@@ -169,7 +172,9 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     //initially, but on toggling Angular set the value to a boolean.
 
     this.allTargetAreas.forEach((targetArea: TargetArea) => {
-      const thisTargetAreaIsSelected: boolean = some(exerciseTargetAreaLinks, (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id);
+      const thisTargetAreaIsSelected: boolean = exerciseTargetAreaLinks.some(
+        (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id
+      );
       this.exerciseForm.controls.targetAreas.addControl(
         targetArea.name,
         new FormControl<boolean>(thisTargetAreaIsSelected, { nonNullable: true }));
@@ -210,16 +215,30 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
       publicId: new FormControl<string>(EMPTY_GUID, { nonNullable: true, validators: Validators.required }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-      description: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)]) }),
+      description: new FormControl<string>('', { 
+        nonNullable: true, 
+        validators: [Validators.required, Validators.maxLength(ExerciseEditComponent.MAX_TEXT_LENGTH)]
+      }),
       resistanceType: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
       oneSided: new FormControl<boolean>(false, { nonNullable: true }),
       endToEnd: new FormControl<boolean | null>(false),
       involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
       usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true }),
-      targetAreas: new FormRecord<FormControl<boolean>>({}, { validators: CustomValidators.formGroupOfBooleansRequireOneTrue }),
-      setup: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)]) }),
-      movement: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)]) }),
-      pointsToRemember: new FormControl<string>('', { nonNullable: true, validators: Validators.compose([Validators.required, Validators.maxLength(4000)]) })
+      targetAreas: new FormRecord<FormControl<boolean>>({}, { 
+        validators: CustomValidators.formGroupOfBooleansRequireOneTrue 
+      }),
+      setup: new FormControl<string>('', { 
+        nonNullable: true, 
+        validators: [Validators.required, Validators.maxLength(ExerciseEditComponent.MAX_TEXT_LENGTH)]
+      }),
+      movement: new FormControl<string>('', { 
+        nonNullable: true, 
+        validators: [Validators.required, Validators.maxLength(ExerciseEditComponent.MAX_TEXT_LENGTH)]
+      }),
+      pointsToRemember: new FormControl<string>('', { 
+        nonNullable: true, 
+        validators: [Validators.required, Validators.maxLength(ExerciseEditComponent.MAX_TEXT_LENGTH)]
+      })
     });
 
   }
@@ -246,7 +265,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     this._exercise.resistanceType = this.exerciseForm.controls.resistanceType.value;
     this._exercise.oneSided = this.exerciseForm.controls.oneSided.value;
 
-    if (this._exercise.resistanceType == 2) //TODO: Replace with constant, enum, or other non-hard-coded value!
+    if (this._exercise.resistanceType == ExerciseEditComponent.RESISTANCE_BANDS_TYPE)
       this._exercise.bandsEndToEnd = this.exerciseForm.controls.endToEnd?.value;
 
     this._exercise.involvesReps = this.exerciseForm.controls.involvesReps.value;
@@ -265,7 +284,9 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     for (const key in this.exerciseForm.value.targetAreas) {
       if (this.exerciseForm.value.targetAreas[key]) {
-        const selectedTargetArea = find(this.allTargetAreas, (targetArea: TargetArea) => targetArea.name == key);
+        const selectedTargetArea = this.allTargetAreas.find(
+          (targetArea: TargetArea) => targetArea.name == key
+        );
         if (selectedTargetArea) {
           output.push(new ExerciseTargetAreaLink(
             this._exercise.id,
