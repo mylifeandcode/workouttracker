@@ -1,4 +1,4 @@
-@if (gettingData) {
+@if (isLoading()) {
   <div class="container-fluid">
     <br />
     <div class="row">
@@ -9,12 +9,12 @@
   </div>
 }
 
-@if (!gettingData && executedWorkoutsSummary) {
+@if (hasData()) {
   <h3>Analytics</h3>
   <div class="container-fluid">
     <p>
-      You have logged {{executedWorkoutsSummary.totalLoggedWorkouts}} workouts since
-      {{executedWorkoutsSummary.firstLoggedWorkoutDateTime | date:'M/d/yyyy'}}.
+      You have logged {{totalWorkouts()}} workouts since
+      {{firstWorkoutDate() | date:'M/d/yyyy'}}.
     </p>
     <p>
       Here's the breakdown of each target area and the number of times you've completed a workout that includes it:
@@ -27,7 +27,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (workout of executedWorkoutsSummary.targetAreasWithWorkoutCounts | keyvalue; track workout.key) {
+        @for (workout of executedWorkoutsSummary()!.targetAreasWithWorkoutCounts | keyvalue; track workout.key) {
           <tr>
             <td>{{workout.key}}</td>
             <td class="text-center" [innerHTML]="workout.value | zeroIsBad"></td>
@@ -35,5 +35,18 @@
         }
       </tbody>
     </table>
+  </div>
+}
+
+@if (hasError()) {
+  <div class="container-fluid">
+    <div class="alert alert-danger" role="alert">
+      <h4 class="alert-heading">Error Loading Analytics</h4>
+      <p>{{errorMessage()}}</p>
+      <hr>
+      <button type="button" class="btn btn-outline-danger" (click)="retryLoadData()">
+        <i class="fa fa-refresh" aria-hidden="true"></i> Try Again
+      </button>
+    </div>
   </div>
 }
