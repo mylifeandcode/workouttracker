@@ -59,7 +59,7 @@ describe('AnalyticsDashboardComponent', () => {
   it('should get analytics data when initializing', () => {
     const analyticsService = TestBed.inject(AnalyticsService);
     expect(analyticsService.getExecutedWorkoutsSummary).toHaveBeenCalledTimes(1);
-    expect(component.executedWorkoutsSummary).not.toBeUndefined();
-    expect(component.gettingData).toBeFalse();
+    expect(component.executedWorkoutsSummary()).not.toBeUndefined();
+    expect(component.gettingData()).toBeFalse();
   });
 });
