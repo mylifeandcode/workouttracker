@@ -112,7 +112,6 @@ describe('UserEditComponent', () => {
 
   it('should populate error message when user does not have permissions to save user info', () => {
     //ARRANGE
-    //userService.update = jasmine.createSpy('update').and.returnValue(throwError(() => { status: 403 }));
     const error = { status: 403 };
     userService.update = jasmine.createSpy('update').and.returnValue(throwError(() => error));
     component.userEditForm.controls.id.setValue(100);

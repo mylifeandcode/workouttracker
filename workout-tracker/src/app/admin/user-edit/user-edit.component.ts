@@ -19,10 +19,10 @@ interface IUserEditForm {
 }
 
 @Component({
-    selector: 'wt-user-edit',
-    templateUrl: './user-edit.component.html',
-    styleUrls: ['./user-edit.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, RouterLink]
+  selector: 'wt-user-edit',
+  templateUrl: './user-edit.component.html',
+  styleUrls: ['./user-edit.component.scss'],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink]
 })
 export class UserEditComponent implements OnInit {
   private _activatedRoute = inject(ActivatedRoute);
@@ -135,7 +135,8 @@ export class UserEditComponent implements OnInit {
             });
         },
         error: (error: any) => this.errorMsg = error,
-        complete: () => this.loadingUserInfo = false});
+        complete: () => this.loadingUserInfo = false
+      });
 
   }
 
