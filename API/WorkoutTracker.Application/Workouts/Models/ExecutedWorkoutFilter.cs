@@ -10,5 +10,6 @@ namespace WorkoutTracker.Application.Workouts.Models
         public bool PlannedOnly { get; set; }
         public DateTime? StartDateTime { get; set; }
         public DateTime? EndDateTime { get; set; }
+        public string? WorkoutNameContains { get; set; }
     }
 }

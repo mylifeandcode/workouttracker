@@ -34,10 +34,10 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
    * @param pageSize The number of records to return. Could be less if on the final page.
    * @returns An Observable<PaginatedResults<ExecutedWorkoutDTO>> containing information about ExecutedWorkouts
    */
-  public getFilteredSubset(startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> {
+  public getFilteredSubset(startingIndex: number, pageSize: number, workoutNameContains: string | null = null): Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> {
     //TODO: Add parameters for filtering
     const result: Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> =
-      this._http.get<PaginatedResults<ExecutedWorkoutSummaryDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}`)
+      this._http.get<PaginatedResults<ExecutedWorkoutSummaryDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}${workoutNameContains ? '&workoutNameContains=' + workoutNameContains : ''}`)
         .pipe(
           //tap(() => { console.log("Got executed workouts"); }), 
           shareReplay(1) //I need to read this for a better understanding: https://dev.to/this-is-angular/how-caching-data-in-angular-with-rxjs-27mj

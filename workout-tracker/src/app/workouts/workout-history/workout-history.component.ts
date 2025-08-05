@@ -40,29 +40,13 @@ export class WorkoutHistoryComponent implements OnInit {
     this.getExecutedWorkouts(0, null);
   }
 
-  public getExecutedWorkouts(first: number, nameContains: string | null): void {
-
-    //this.totalRecords = 0;
-
-    this._executedWorkoutService.getFilteredSubset(first, this.pageSize)
-      .pipe(finalize(() => { this.loading = false; }))
-      .subscribe({
-        next: (results: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-          this.executedWorkouts = results.results;
-          this.totalRecords = results.totalCount;
-        },
-        error: (error: any) => window.alert("An error occurred getting executed workouts: " + error)
-      });
-  }
-
   public onQueryParamsChange(params: NzTableQueryParams): void {
-    //console.log(params);
     const { pageSize, pageIndex, sort, filter } = params;
     const currentSort = sort.find(item => item.value !== null);
     const sortField = (currentSort && currentSort.key) || null;
     const sortOrder = (currentSort && currentSort.value) || null;
     //this.loadDataFromServer(pageIndex, pageSize, sortField, sortOrder, filter);
-    this.getExecutedWorkouts((pageIndex - 1) * pageSize, null);
+    this.getExecutedWorkouts((pageIndex - 1) * pageSize, this.workoutNameFilter);
   }
 
   public openNotesModal(notes: string): void {
@@ -74,13 +58,27 @@ export class WorkoutHistoryComponent implements OnInit {
     this.showNotesModal = false;
   }
 
-  reset(): void {
+  public reset(): void {
     this.workoutNameFilter = '';
     this.search();
   }
 
-  search(): void {
+  public search(): void {
     this.workoutNameFilterVisible = false;
     this.getExecutedWorkouts(0, this.workoutNameFilter);
   }
+
+  private getExecutedWorkouts(first: number, nameContains: string | null): void {
+
+    this._executedWorkoutService.getFilteredSubset(first, this.pageSize, nameContains)
+      .pipe(finalize(() => { this.loading = false; }))
+      .subscribe({
+        next: (results: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
+          this.executedWorkouts = results.results;
+          this.totalRecords = results.totalCount;
+        },
+        error: (error: any) => window.alert("An error occurred getting executed workouts: " + error)
+      });
+  }
+
 }

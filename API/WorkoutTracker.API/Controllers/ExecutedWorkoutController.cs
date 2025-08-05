@@ -87,7 +87,13 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>> Get(int firstRecord, short pageSize, DateTime? startDateTime = null, DateTime? endDateTime = null, bool newestFirst = true)
+        public ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>> Get(
+            int firstRecord, 
+            short pageSize, 
+            DateTime? startDateTime = null, 
+            DateTime? endDateTime = null, 
+            bool newestFirst = true, 
+            string workoutNameContains = null)
         {
             try
             {
@@ -95,7 +101,7 @@ namespace WorkoutTracker.API.Controllers
 
                 var filter =
                     BuildExecutedWorkoutFilter(
-                        userId, startDateTime, endDateTime);
+                        userId, startDateTime, endDateTime, false, workoutNameContains);
 
                 int totalCount = _executedWorkoutService.GetTotalCount(filter);
 
@@ -213,12 +219,14 @@ namespace WorkoutTracker.API.Controllers
             int userId, 
             DateTime? startDateTime, 
             DateTime? endDateTime,
-            bool plannedOnly = false)
+            bool plannedOnly = false, 
+            string workoutNameContains = null)
         {
             var filter = new ExecutedWorkoutFilter();
 
             filter.UserId = userId;
             filter.PlannedOnly = plannedOnly;
+            filter.WorkoutNameContains = workoutNameContains;
 
             if (!plannedOnly) //TODO: Rethink. This is kind of kludgey.
             { 

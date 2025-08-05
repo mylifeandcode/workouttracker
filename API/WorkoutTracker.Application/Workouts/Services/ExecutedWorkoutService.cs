@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -245,6 +246,13 @@ namespace WorkoutTracker.Application.Workouts.Services
                 else
                     query = query.Where(x => x.EndDateTime != null);
             }
+
+            if (filter.WorkoutNameContains != null)
+            {
+                query = query.Where(x => EF.Functions.Like(x.Workout.Name,
+                    $"%{filter.WorkoutNameContains}%"));
+            }
+
         }
 
         #endregion Private Methods
