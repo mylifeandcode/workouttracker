@@ -1,6 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
 import { Dictionary } from 'lodash';
 import { groupBy } from 'lodash-es';
 import { of } from 'rxjs';
@@ -75,14 +74,6 @@ describe('WorkoutViewComponent', () => {
         MockExecutedExercisesComponent],
       providers: [
         {
-          provide: ActivatedRoute,
-          useValue: {
-            params: of({
-              id: EXECUTED_WORKOUT_PUBLIC_ID
-            })
-          }
-        },
-        {
           provide: ExecutedWorkoutService,
           useClass: ExecutedWorkoutServiceMock
         }
@@ -100,6 +91,7 @@ describe('WorkoutViewComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutViewComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('id', EXECUTED_WORKOUT_PUBLIC_ID);
     fixture.detectChanges();
   });
 
@@ -107,7 +99,7 @@ describe('WorkoutViewComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get executed workout based on route', () => {
+  it('should get executed workout based on id', () => {
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
     expect(executedWorkoutService.getById).toHaveBeenCalledOnceWith(EXECUTED_WORKOUT_PUBLIC_ID);
     expect(component.executedWorkout).toBeTruthy();
