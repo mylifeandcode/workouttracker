@@ -1,10 +1,10 @@
 <div class="container">
   <div class="row">
     <div class="pt-3">
-      @if (showAdminControls) {
-      <h3>Add User</h3>
+      @if (showAdminControls()) {
+        <h3>Add User</h3>
       } @else {
-      <h3>Register</h3>
+        <h3>Register</h3>
       }
 
       <form [formGroup]="userAddForm" novalidate>
@@ -15,7 +15,7 @@
               <input class="form-control" formControlName="name" placeholder="User Name (required)" />
             </label>
             @if (userAddForm.controls.name.touched && userAddForm.controls.name.errors?.required) {
-            <span class="text-danger pt-3">Required.</span>
+              <span class="text-danger pt-3">Required.</span>
             }
           </div>
           <div class="col-md-6 form-group">
@@ -24,10 +24,10 @@
               <input class="form-control" formControlName="emailAddress" placeholder="Email Address (required)" />
             </label>
             @if (userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.required) {
-            <span class="text-danger pt-3">Required.</span>
+              <span class="text-danger pt-3">Required.</span>
             }
             @if (userAddForm.controls.emailAddress.touched && userAddForm.controls.emailAddress.errors?.email) {
-            <span class="text-danger pt-3">Must be a valid email address.</span>
+              <span class="text-danger pt-3">Must be a valid email address.</span>
             }
           </div>
         </div>
@@ -40,10 +40,10 @@
                 placeholder="Password (required)" />
             </label>
             @if (userAddForm.controls.password.touched && userAddForm.controls.password.errors?.required) {
-            <span class="text-danger pt-3">Required.</span>
+              <span class="text-danger pt-3">Required.</span>
             }
             @if (userAddForm.controls.password.touched && userAddForm.controls.password.errors?.minlength) {
-            <span class="text-danger pt-3">Must be at least 7 characters.</span>
+              <span class="text-danger pt-3">Must be at least 7 characters.</span>
             }
           </div>
           <div class="col-md-6 form-group">
@@ -54,22 +54,22 @@
             </label>
             @if (userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.required)
             {
-            <span class="text-danger pt-3">Required.</span>
-            <!--Why does the document formatter format this one differently?-->
+              <span class="text-danger pt-3">Required.</span>
+              <!--Why does the document formatter format this one differently?-->
             }
             @if (userAddForm.controls.confirmPassword.touched && userAddForm.controls.confirmPassword.errors?.minlength)
             {
-            <span class="text-danger pt-3">Must be at least 7 characters.</span>
-            <!--Why does the document formatter format this one differently?-->
+              <span class="text-danger pt-3">Must be at least 7 characters.</span>
+              <!--Why does the document formatter format this one differently?-->
             }
             @if (userAddForm.controls.confirmPassword.touched && userAddForm.errors?.passwordsMatch) {
-            <span class="text-danger pt-3">Passwords must match.</span>
+              <span class="text-danger pt-3">Passwords must match.</span>
             }
 
           </div>
         </div>
 
-        @if (showAdminControls) {
+        @if (showAdminControls()) {
         <div class="form-group">
           <label class="center-block pt-3">
             Role:
@@ -80,7 +80,7 @@
             </select>
           </label>
           @if (userAddForm.controls.role.touched && userAddForm.controls.role.errors?.required) {
-          <span class="text-danger pt-3">Required.</span>
+            <span class="text-danger pt-3">Required.</span>
           }
         </div>
         }
@@ -90,19 +90,19 @@
             class="btn btn-success">Add</button>
           &nbsp;
           <button type="button" [disabled]="savingUserInfo" (click)="cancel()" class="btn btn-warning">Cancel</button>
-          @if (savingUserInfo) {
-          <span>Saving...</span>
+          @if (savingUserInfo()) {
+            <span>Saving...</span>
           }
-          @if (errorMsg) {
-          <span class="error-text">{{errorMsg}}</span>
+          @if (errorMsg()) {
+            <span class="error-text">{{errorMsg()}}</span>
           }
 
         </div>
       </form>
-      @if (showAdminControls) {
-      <div class="pt-3">
-        <a routerLink="/admin/users">Users List</a>
-      </div>
+      @if (showAdminControls()) {
+        <div class="pt-3">
+          <a routerLink="/admin/users">Users List</a>
+        </div>
       }
     </div>
   </div>

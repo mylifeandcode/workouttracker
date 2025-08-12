@@ -69,7 +69,8 @@ describe('CountdownTimerComponent', () => {
     component.countdownConfig = component.preCountdownConfig;
 
     //ACT
-    component.activatedDateTime = new Date();
+    fixture.componentRef.setInput('activatedDateTime', new Date());
+    fixture.detectChanges(); //Required to trigger effect(). https://github.com/angular/angular/issues/50466
 
     //ASSERT
     expect(component.preCountdownConfig).toEqual({ demand: true, leftTime: component.secondsLeadInTime(), format: 'mm:ss' });

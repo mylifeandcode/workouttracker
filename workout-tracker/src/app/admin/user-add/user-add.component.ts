@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { User } from 'app/core/_models/user';
@@ -20,7 +20,8 @@ interface IUserAddForm {
     selector: 'wt-user-add',
     templateUrl: './user-add.component.html',
     styleUrls: ['./user-add.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, RouterLink]
+    imports: [FormsModule, ReactiveFormsModule, RouterLink],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserAddComponent implements OnInit {
   private _userService = inject(UserService);
@@ -29,25 +30,26 @@ export class UserAddComponent implements OnInit {
   private _activatedRoute = inject(ActivatedRoute);
   private _authService = inject(AuthService);
 
-  public errorMsg: string | undefined;
+  public errorMsg = signal<string | undefined>(undefined);
+  public savingUserInfo = signal<boolean>(false);
+  public showAdminControls = signal<boolean>(false);
+
   public userAddForm: FormGroup<IUserAddForm>;
-  public savingUserInfo: boolean = false;
-  public showAdminControls: boolean = false;
 
   constructor() {
     this.userAddForm = this.createForm();
   }
 
   public ngOnInit(): void {
-    this.showAdminControls = (this._activatedRoute.routeConfig?.path == 'users/add');
+    this.showAdminControls.set((this._activatedRoute.routeConfig?.path == 'users/add'));
   }
 
   public addUser(): void {
-    this.savingUserInfo = true;
+    this.savingUserInfo.set(true);
     const user = this.getUserForPersist();
 
     this._userService.addNew(user)
-      .pipe(finalize(() => { this.savingUserInfo = false; }))
+      .pipe(finalize(() => { this.savingUserInfo.set(false); }))
       .subscribe({
         next: (savedUser: User) => {
           if (this._authService.isUserLoggedIn)
@@ -57,9 +59,9 @@ export class UserAddComponent implements OnInit {
         }, 
         error: (error: any) => {
           if (error?.status == 403)
-            this.errorMsg = "You do not have permission to add users.";
+            this.errorMsg.set("You do not have permission to add users.");
           else
-            this.errorMsg = error.error ? error.error : "An error has occurred. Please contact an administrator.";
+            this.errorMsg.set(error.error ? error.error : "An error has occurred. Please contact an administrator.");
         }
       });
 
@@ -69,7 +71,7 @@ export class UserAddComponent implements OnInit {
     if (this.userAddForm.dirty && !window.confirm("Cancel without saving changes?"))
       return;
 
-    if (this.showAdminControls)
+    if (this.showAdminControls())
       this._router.navigate(['/admin/users']);
     else
       this._router.navigate(['/']);
@@ -82,7 +84,9 @@ export class UserAddComponent implements OnInit {
       emailAddress: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
       password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(7)] }),
       confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(7)] }),
-      role: new FormControl<number>((this.showAdminControls ? 0 : 1), { nonNullable: true, validators: [Validators.required, Validators.min(1), Validators.max(2)] })
+      role: new FormControl<number>(
+        (this.showAdminControls() ? 0 : 1), 
+        { nonNullable: true, validators: [Validators.required, Validators.min(1), Validators.max(2)] })
     }, { validators: CustomValidators.passwordsMatch });
 
   }
