@@ -1,6 +1,6 @@
 <div class="container">
   <div class="row">
-    @if (!loadingUserInfo) {
+    @if (!loadingUserInfo()) {
     <div class="pt-3 offset-4 col-4">
       <h3>Edit User</h3>
       <form [formGroup]="userEditForm" novalidate>
@@ -43,7 +43,7 @@
           }
         </div>
 
-        @if (showPasswordResetButton) {
+        @if (showPasswordResetButton()) {
         <div class="pt-3">
           <button type="button" [disabled]="userEditForm.dirty" class="btn btn-primary" (click)="resetPassword()">Reset
             Password</button>
@@ -58,13 +58,13 @@
           <button type="submit" [disabled]="userEditForm.invalid" (click)="saveUser()"
             class="btn btn-success">Save</button>
           &nbsp;
-          <button type="button" [disabled]="savingUserInfo || loadingUserInfo" (click)="cancel()"
+          <button type="button" [disabled]="savingUserInfo() || loadingUserInfo()" (click)="cancel()"
             class="btn btn-warning">Cancel</button>
-          @if (savingUserInfo) {
+          @if (savingUserInfo()) {
           <span>Saving...</span>
           }
-          @if (errorMsg) {
-          <span class="error-text">{{errorMsg}}</span>
+          @if (errorMsg()) {
+          <span class="error-text">{{errorMsg()}}</span>
           }
 
         </div>

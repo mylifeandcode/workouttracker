@@ -107,7 +107,7 @@ describe('UserEditComponent', () => {
 
     //ASSERT
     expect(userService.update).toHaveBeenCalled();
-    expect(component.errorMsg).toBe("An error has occurred. Please contact an administrator.");
+    expect(component.errorMsg()).toBe("An error has occurred. Please contact an administrator.");
   });
 
   it('should populate error message when user does not have permissions to save user info', () => {
@@ -122,7 +122,7 @@ describe('UserEditComponent', () => {
 
     //ASSERT
     expect(userService.update).toHaveBeenCalled();
-    expect(component.errorMsg).toBe("You do not have permission to add or edit users.");
+    expect(component.errorMsg()).toBe("You do not have permission to add or edit users.");
   });
 
 });

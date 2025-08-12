@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/_services/auth/auth.service';
@@ -22,7 +22,8 @@ interface IUserEditForm {
   selector: 'wt-user-edit',
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.scss'],
-  imports: [FormsModule, ReactiveFormsModule, RouterLink]
+  imports: [FormsModule, ReactiveFormsModule, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserEditComponent implements OnInit {
   private _activatedRoute = inject(ActivatedRoute);
@@ -32,19 +33,19 @@ export class UserEditComponent implements OnInit {
   private _configService = inject(ConfigService);
   private _authService = inject(AuthService);
 
+  public loadingUserInfo = signal(true);
+  public savingUserInfo = signal(false);
+  public errorMsg = signal<string | undefined>(undefined);
+  public showPasswordResetButton = signal(false);
 
-  public loadingUserInfo: boolean = true;
-  public savingUserInfo: boolean = false;
-  public errorMsg: string | undefined;
   public userEditForm: FormGroup<IUserEditForm>;
-  public showPasswordResetButton: boolean = false;
 
   private _user: User | undefined;
   private _resetPasswordUrlRoot: string;
 
   constructor() {
 
-    this.showPasswordResetButton = !this._configService.get("smtpEnabled");
+    this.showPasswordResetButton.set(!this._configService.get("smtpEnabled"));
     this._resetPasswordUrlRoot = `${window.location.protocol}//${window.location.host}/user/reset-password/`;
     this.userEditForm = this.createForm();
   }
@@ -52,27 +53,27 @@ export class UserEditComponent implements OnInit {
   //PUBLIC METHODS
 
   public ngOnInit(): void {
-    this.loadingUserInfo = true;
+    this.loadingUserInfo.set(true);
     this.getUserInfo();
   }
 
   public saveUser(): void {
 
-    this.savingUserInfo = true;
+    this.savingUserInfo.set(true);
     const user = this.getUserForPersist();
 
     const result: Observable<User> =
       (user.id === 0 ? this._userSvc.add(user) : this._userSvc.update(user));
 
     result
-      .pipe(finalize(() => { this.savingUserInfo = false; }))
+      .pipe(finalize(() => { this.savingUserInfo.set(false); }))
       .subscribe({
         next: () => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
         error: (error: any) => {
           if (error?.status == 403)
-            this.errorMsg = "You do not have permission to add or edit users.";
+            this.errorMsg.set("You do not have permission to add or edit users.");
           else
-            this.errorMsg = error.error ? error.error : "An error has occurred. Please contact an administrator.";
+            this.errorMsg.set(error.error ? error.error : "An error has occurred. Please contact an administrator.");
         }
       });
   }
@@ -134,8 +135,8 @@ export class UserEditComponent implements OnInit {
               role: this._user.role
             });
         },
-        error: (error: any) => this.errorMsg = error,
-        complete: () => this.loadingUserInfo = false
+        error: (error: any) => this.errorMsg.set(error),
+        complete: () => this.loadingUserInfo.set(false)
       });
 
   }
