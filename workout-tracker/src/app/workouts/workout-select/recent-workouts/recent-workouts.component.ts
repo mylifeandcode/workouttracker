@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, inject, input } from '@angular/core';
+import { Component, OnInit, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../../_models/executed-workout-summary-dto';

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../_models/workout-plan';
@@ -52,9 +52,6 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   //PUBLIC PROPERTIES
   public get isForPastWorkout(): boolean { return this._pastWorkoutStartDateTime != null; }
   //END PUBLIC PROPERTIES
-
-  //VIEWCHILD
-  @ViewChild(ResistanceBandSelectComponent) bandSelect: ResistanceBandSelectComponent | undefined;
 
   //PRIVATE FIELDS
   private _apiCallsInProgress: number = 0;
