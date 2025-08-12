@@ -9,7 +9,7 @@ import { WorkoutService } from '../../_services/workout.service';
 
 import { RecentWorkoutsComponent } from './recent-workouts.component';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 class MockExecutedWorkoutService {
   getRecent = jasmine.createSpy('getRecent ').and.returnValue(of(new Array<ExecutedWorkoutSummaryDTO>()));
@@ -17,10 +17,6 @@ class MockExecutedWorkoutService {
 
 class MockWorkoutService { }
 class MockRouter { }
-
-class MockNzModalService {
-  create = jasmine.createSpy('create');
-}
 
 @Component({
   selector: 'wt-workout-info',
@@ -48,10 +44,6 @@ describe('RecentWorkoutsComponent', () => {
         {
           provide: Router,
           useClass: MockRouter
-        },
-        {
-          provide: NzModalService,
-          useClass: MockNzModalService
         }
       ],
       imports: [

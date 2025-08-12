@@ -28,11 +28,8 @@
   </div>
 </div>
 
-<!--
-<p-dialog header="Workout Info" [(visible)]="showExercises">
-  <wt-workout-info [workout]="selectedWorkout"></wt-workout-info>
-</p-dialog>
--->
-<ng-template #workoutInfo>
-  <wt-workout-info [workout]="selectedWorkout"></wt-workout-info>  
-</ng-template>
+<nz-modal [(nzVisible)]="showExercises" nzTitle="Workout Info" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showExercises = false">
+  <ng-container *nzModalContent>
+    <wt-workout-info [workout]="selectedWorkout"></wt-workout-info>  
+  </ng-container>
+</nz-modal>
