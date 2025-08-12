@@ -110,10 +110,10 @@ describe('WorkoutProgressComponent', () => {
 
   it('should get workouts on init', () => {
     expect(workoutService.getFilteredSubset).toHaveBeenCalledOnceWith(0, 500, true);
-    expect(component.workouts.length).toBe(3);
-    expect(component.workouts[0].name).toBe("Workout A");
-    expect(component.workouts[1].name).toBe("Workout B");
-    expect(component.workouts[2].name).toBe("Workout C");
+    expect(component.workouts().length).toBe(3);
+    expect(component.workouts()[0].name).toBe("Workout A");
+    expect(component.workouts()[1].name).toBe("Workout B");
+    expect(component.workouts()[2].name).toBe("Workout C");
   });
 
   it('should get workout metrics when workout selected', () => {
@@ -138,29 +138,29 @@ describe('WorkoutProgressComponent', () => {
 
     //ASSERT
     expect(analyticsService.getExerciseChartData).toHaveBeenCalledTimes(3);
-    expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(component.metrics, 'some-exercise-id', METRICS_TYPE.FormAndRangeOfMotion);
+    expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(component.metrics(), 'some-exercise-id', METRICS_TYPE.FormAndRangeOfMotion);
   });
 
   it('should clear analytics data when selected workout changes', () => {
     //ARRANGE
-    component.formAndRangeOfMotionChartData = new AnalyticsChartData();
-    component.repsChartData = new AnalyticsChartData();
-    component.resistanceChartData = new AnalyticsChartData();
+    component.formAndRangeOfMotionChartData.set(new AnalyticsChartData());
+    component.repsChartData.set(new AnalyticsChartData());
+    component.resistanceChartData.set(new AnalyticsChartData());
     fixture.detectChanges();
 
     //Let's just be sure that those analytics values aren't null
-    expect(component.formAndRangeOfMotionChartData).not.toBeNull();
-    expect(component.repsChartData).not.toBeNull();
-    expect(component.resistanceChartData).not.toBeNull();
+    expect(component.formAndRangeOfMotionChartData()).not.toBeNull();
+    expect(component.repsChartData()).not.toBeNull();
+    expect(component.resistanceChartData()).not.toBeNull();
 
     //ACT
     component.form.controls.workoutId.setValue('new value');
     fixture.detectChanges();
 
     //ASSERT
-    expect(component.formAndRangeOfMotionChartData).toBeNull();
-    expect(component.repsChartData).toBeNull();
-    expect(component.resistanceChartData).toBeNull();
+    expect(component.formAndRangeOfMotionChartData()).toBeNull();
+    expect(component.repsChartData()).toBeNull();
+    expect(component.resistanceChartData()).toBeNull();
   });
 
 });

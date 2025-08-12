@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, inject, viewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, inject, viewChild, signal, ChangeDetectionStrategy } from '@angular/core';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { WorkoutService } from 'app/workouts/_services/workout.service';
@@ -24,7 +24,8 @@ interface IWorkoutProgressForm {
   selector: 'wt-workout-progress',
   templateUrl: './workout-progress.component.html',
   styleUrls: ['./workout-progress.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule]
+  imports: [CommonModule, ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutProgressComponent implements OnInit, OnDestroy {
   // Constants for magic numbers
@@ -41,12 +42,13 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   repsChartCanvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('repsChart');
   resistanceChartCanvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('resistanceChart');
 
-  public loadingData: boolean = true;
-  public metrics: ExecutedWorkoutMetrics[] = [];
-  public formAndRangeOfMotionChartData: AnalyticsChartData | null = null;
-  public repsChartData: AnalyticsChartData | null = null;
-  public resistanceChartData: AnalyticsChartData | null = null;
-  public workouts: WorkoutDTO[] = [];
+  public loadingData = signal<boolean>(true);
+  public metrics = signal<ExecutedWorkoutMetrics[]>([]);
+  public formAndRangeOfMotionChartData = signal<AnalyticsChartData | null>(null);
+  public repsChartData = signal<AnalyticsChartData | null>(null);
+  public resistanceChartData = signal<AnalyticsChartData | null>(null);
+  public workouts = signal<WorkoutDTO[]>([]);
+  
   public form: FormGroup<IWorkoutProgressForm>;
   public readonly DEFAULT_WORKOUT_COUNT: number = 5;
 
@@ -110,18 +112,18 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   }
 
   private getMetrics(workoutPublicId: string): void {
-    this.metrics = [];
+    this.metrics.set([]);
     const count = this.form.controls.workoutCount.value;
 
     this._analyticsService.getExecutedWorkoutMetrics(workoutPublicId, count)
       .pipe(
         finalize(() => {
-          this.loadingData = false;
+          this.loadingData.set(false);
         })
       )
       .subscribe({
         next: (results: ExecutedWorkoutMetrics[]) => {
-          this.metrics = results;
+          this.metrics.set(results);
         },
         error: (error) => {
           // TODO: Add user-friendly error notification service
@@ -131,30 +133,30 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   }
 
   private getChartData(exerciseId: string): void {
-    this.formAndRangeOfMotionChartData =
+    this.formAndRangeOfMotionChartData.set(
       this._analyticsService
-        .getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.FormAndRangeOfMotion);
+        .getExerciseChartData(this.metrics(), exerciseId, METRICS_TYPE.FormAndRangeOfMotion));
 
-    this.repsChartData = 
-      this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Reps);
+    this.repsChartData.set(
+      this._analyticsService.getExerciseChartData(this.metrics(), exerciseId, METRICS_TYPE.Reps));
 
-    this.resistanceChartData = 
-      this._analyticsService.getExerciseChartData(this.metrics, exerciseId, METRICS_TYPE.Resistance);
+    this.resistanceChartData.set(
+      this._analyticsService.getExerciseChartData(this.metrics(), exerciseId, METRICS_TYPE.Resistance));
 
     this._formAndRangeOfMotionChart = this.setupChart(
       this.formAndRangeOfMotionChartCanvasRef().nativeElement.getContext('2d'),
-      this.formAndRangeOfMotionChartData,
+      this.formAndRangeOfMotionChartData(),
       this._formAndRangeOfMotionChart,
       this._formAndRangeOfMotionChartOptions.scales);
 
     this._repsChart = this.setupChart(
       this.repsChartCanvasRef().nativeElement.getContext('2d'),
-      this.repsChartData,
+      this.repsChartData(),
       this._repsChart);
 
     this._resistanceChart = this.setupChart(
       this.resistanceChartCanvasRef().nativeElement.getContext('2d'),
-      this.resistanceChartData, 
+      this.resistanceChartData(), 
       this._resistanceChart);
   }
 
@@ -191,10 +193,10 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
 
   private getUserWorkouts(pageSize: number = WorkoutProgressComponent.DEFAULT_PAGE_SIZE): void {
     this._workoutService.getFilteredSubset(0, pageSize, true)
-      .pipe(finalize(() => { this.loadingData = false; }))
+      .pipe(finalize(() => { this.loadingData.set(false); }))
       .subscribe({
         next: (result: PaginatedResults<WorkoutDTO>) => {
-          this.workouts = result.results.sort((a, b) => a.name.localeCompare(b.name));
+          this.workouts.set(result.results.sort((a, b) => a.name.localeCompare(b.name)));
         },
         error: (error) => {
           // TODO: Add user-friendly error notification service
@@ -204,9 +206,9 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   }
 
   private clearAnalyticsData(): void {
-    this.formAndRangeOfMotionChartData = null;
-    this.repsChartData = null;
-    this.resistanceChartData = null;
+    this.formAndRangeOfMotionChartData.set(null);
+    this.repsChartData.set(null);
+    this.resistanceChartData.set(null);
   }
 
   private buildForm(builder: FormBuilder): FormGroup<IWorkoutProgressForm> {
@@ -228,19 +230,19 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   private workoutIdChanged(publicId: string | null): void {
     if (!publicId) return;
 
-    this.loadingData = true;
-    this.metrics = [];
+    this.loadingData.set(true);
+    this.metrics.set([]);
     this.clearAnalyticsData();
 
     this._analyticsService.getExecutedWorkoutMetrics(publicId, this.form.controls.workoutCount.value)
       .pipe(
         finalize(() => {
-          this.loadingData = false;
+          this.loadingData.set(false);
         })
       )
       .subscribe({
         next: (results: ExecutedWorkoutMetrics[]) => {
-          this.metrics = results;
+          this.metrics.set(results);
           this.form.controls.exerciseId.setValue(null);
           this.form.controls.exerciseId.markAsUntouched();
         },
@@ -253,7 +255,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
 
   private workoutCountChanged(count: number | null): void {
     this.clearAnalyticsData();
-    this.metrics = [];
+    this.metrics.set([]);
     if (this.form.controls.workoutId.value) {
       this.getMetrics(this.form.controls.workoutId.value);
       this.form.controls.exerciseId.setValue(null);

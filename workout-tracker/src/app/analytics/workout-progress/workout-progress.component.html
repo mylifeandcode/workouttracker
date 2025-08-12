@@ -7,7 +7,7 @@
         <label for="workoutId">Select a Workout</label>&nbsp;
         <select id="workoutId" formControlName="workoutId">
           <option [ngValue]="null" disabled selected>Please Select</option>
-          @for(workout of workouts; track workout.id) {
+          @for(workout of workouts(); track workout.id) {
             <option [ngValue]="workout.id">
               {{ workout.name }}
             </option>
@@ -20,12 +20,12 @@
       </div>
     </div>
     <div class="row pt-2">
-      @if (metrics && metrics.length > 0) {
+      @if (metrics() && metrics().length > 0) {
         <div class="col-12">
           <label for="exerciseId" class="exercise-label">Exercise</label>
           <select id="exerciseId" formControlName="exerciseId">
             <option [ngValue]="null" disabled selected>Please Select</option>
-            @for(metric of metrics[0].exerciseMetrics; track $index) {
+            @for(metric of metrics()[0].exerciseMetrics; track $index) {
               <option [ngValue]="metric.exerciseId">
                 {{ metric.name }}
               </option>
@@ -37,7 +37,7 @@
   </form>
 </div>
 
-@if (loadingData) {
+@if (loadingData()) {
   <div class="container-fluid">
     <br />
     <div class="row">
@@ -49,7 +49,7 @@
 } @else {
   <div class="container-fluid">
     <br />
-    @if (form.controls.workoutId.value && metrics.length == 0) {
+    @if (form.controls.workoutId.value && metrics().length == 0) {
       <em>No metrics exist for this workout.</em>
     } 
     <div style="height: 300px;" [ngClass]="{'visible': form.controls.exerciseId.value != null, 'invisible': form.controls.exerciseId.value == null}">
