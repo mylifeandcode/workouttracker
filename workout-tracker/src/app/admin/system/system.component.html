@@ -14,7 +14,17 @@
       <button class="btn btn-info btn-fullWidth" (click)="testToast()">Test Toast</button>
     </div>
     <div class="col-4"> <!--RIGHT COLUMN-->
-      <button class="btn btn-danger btn-fullWidth">TBD</button>
+      <button class="btn btn-danger btn-fullWidth" (click)="testCountdown()">Test Countdown</button>
+      <nz-modal nzTitle="Timed Set Countdown" [(nzVisible)]="showCountdownModal" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showCountdownModal.set(false)">
+        <div *nzModalContent>
+          <wt-countdown-timer
+            [secondsToCountdown]="10"
+            [secondsLeadInTime]="10"
+            [activatedDateTime]="countdownModalActivatedDateTime()"
+            [targetReps]="40">
+          </wt-countdown-timer>
+        </div>
+      </nz-modal>
     </div>
   </div>
   <div class="row pt-3">

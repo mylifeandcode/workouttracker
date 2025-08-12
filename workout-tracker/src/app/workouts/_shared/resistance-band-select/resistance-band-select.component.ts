@@ -97,21 +97,6 @@ export class ResistanceBandSelectComponent implements OnChanges {
    */
   public setBandAllocation(selectedBandsDelimited: string, doubleMaxResistanceAmounts: boolean): void {
 
-    /*
-    At one point, I'd gone down the path of making this private and having it called by 
-    ngOnChanges() to avoid the need for this to be a ViewChild and have this method called 
-    by the parent. I liked the idea of this behaving dynamically based solely on the @Inputs.
-
-    The problem, however, was that, for ngOnChanges() to be fired, at least one of the @Inputs 
-    must have changed -- must be different. And because all of the IDs values would still be 
-    zero for a new workout, and because just the exercise ID itself wouldn't be enough, 
-    it was starting to get into an area where the amount of complexity being introduced 
-    would be greater than the benefit of not having to explicitly call this method. And since 
-    everything was already working the current way (ViewChild and explicit method call), I 
-    reverted the changes and kept things as-is. I'm still not a huge fan of using ViewChild, 
-    but the code is simpler this way.
-    */
-
     this._doubleMaxResistanceAmounts = doubleMaxResistanceAmounts;
 
     const selectedBands: ResistanceBandIndividual[] = [];
