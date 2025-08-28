@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 import { UserSelectedGuard } from '../user-selected/user-selected.guard';
 import { Component } from '@angular/core';
@@ -22,6 +23,7 @@ describe('UserSelectedGuard', () => {
       imports: [ RouterModule.forRoot(
         [{path: 'login', component: FakeComponent}]) ],
       providers: [
+  provideZonelessChangeDetection(),
         UserSelectedGuard,
         {
           provide: AuthService,

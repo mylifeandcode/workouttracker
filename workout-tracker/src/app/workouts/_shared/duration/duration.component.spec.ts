@@ -1,4 +1,4 @@
-import { SimpleChange } from '@angular/core';
+import { SimpleChange, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
@@ -10,8 +10,8 @@ describe('DurationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [ReactiveFormsModule, DurationComponent],
-    providers: [FormBuilder]
+  imports: [ReactiveFormsModule, DurationComponent],
+  providers: [FormBuilder, provideZonelessChangeDetection()]
 })
     .compileComponents();
   });
@@ -31,7 +31,9 @@ describe('DurationComponent', () => {
 
     //ARRANGE
     fixture.componentRef.setInput('currentDuration', 3805); //When set programmatically, does not trigger ngOnChanges()
-    const change = new SimpleChange(0, 3805, true); //We'll use this to call ngOnChanges(), but since the change lifecycle isn't occuring, the line above is still needed. Yeah, this is kinda kludgey.
+  // We'll use this to call ngOnChanges(), but since the change lifecycle isn't occurring,
+  // the line above is still needed. Yeah, this is kinda kludgey.
+  const change = new SimpleChange(0, 3805, true);
 
     //ACT
     //fixture.detectChanges(); 

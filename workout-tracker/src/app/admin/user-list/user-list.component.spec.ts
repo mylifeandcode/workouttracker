@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 import { UserListComponent } from './user-list.component';
 import { UserService } from '../../core/_services/user/user.service';
@@ -29,6 +30,7 @@ describe('UserListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [RouterModule.forRoot([]), UserListComponent],
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: UserService,
           useClass: UserServiceMock

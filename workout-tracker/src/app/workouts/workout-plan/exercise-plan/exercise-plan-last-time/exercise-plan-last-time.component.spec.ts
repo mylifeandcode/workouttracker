@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 import { ExercisePlanLastTimeComponent } from './exercise-plan-last-time.component';
 import { RatingPipe } from '../../../_pipes/rating.pipe';
@@ -21,13 +22,14 @@ describe('ExercisePlanLastTimeComponent', () => {
   let fixture: ComponentFixture<ExercisePlanLastTimeComponent>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-    imports: [ExercisePlanLastTimeComponent,
-        RatingPipe, //TODO: Replace with mock
-        MockResistanceAmountPipe],
-    providers: [
-        FormBuilder
-    ]
+  TestBed.configureTestingModule({
+  imports: [ExercisePlanLastTimeComponent,
+    RatingPipe, //TODO: Replace with mock
+    MockResistanceAmountPipe],
+  providers: [
+    FormBuilder,
+    provideZonelessChangeDetection()
+  ]
 });
     fixture = TestBed.createComponent(ExercisePlanLastTimeComponent);
     component = fixture.componentInstance;

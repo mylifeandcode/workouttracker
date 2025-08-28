@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { IRepSettingsForm, UserRepSettingsComponent } from './user-rep-settings.component';
@@ -10,7 +11,10 @@ describe('UserRepSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [ReactiveFormsModule, UserRepSettingsComponent]
+    imports: [ReactiveFormsModule, UserRepSettingsComponent],
+    providers: [
+        provideZonelessChangeDetection()
+    ]
 })
     .compileComponents();
 

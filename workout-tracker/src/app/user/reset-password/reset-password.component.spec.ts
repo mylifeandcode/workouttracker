@@ -5,7 +5,7 @@ import { AuthService } from 'app/core/_services/auth/auth.service';
 import { of } from 'rxjs';
 
 import { ResetPasswordComponent } from './reset-password.component';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 class AuthServiceMock {
@@ -20,7 +20,7 @@ describe('ResetPasswordComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
     imports: [RouterModule.forRoot([]), ReactiveFormsModule, ResetPasswordComponent],
-    providers: [
+  providers: [
         FormBuilder,
         {
             provide: AuthService,
@@ -35,7 +35,8 @@ describe('ResetPasswordComponent', () => {
                     })
                 }
             }
-        }
+    },
+    provideZonelessChangeDetection()
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

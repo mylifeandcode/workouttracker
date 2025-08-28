@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
@@ -80,7 +80,8 @@ describe('WorkoutProgressComponent', () => {
         {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
-        }
+  },
+  provideZonelessChangeDetection()
       ],
       imports: [
         ReactiveFormsModule,
@@ -138,7 +139,11 @@ describe('WorkoutProgressComponent', () => {
 
     //ASSERT
     expect(analyticsService.getExerciseChartData).toHaveBeenCalledTimes(3);
-    expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(component.metrics(), 'some-exercise-id', METRICS_TYPE.FormAndRangeOfMotion);
+    expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(
+      component.metrics(),
+      'some-exercise-id',
+      METRICS_TYPE.FormAndRangeOfMotion
+    );
   });
 
   it('should clear analytics data when selected workout changes', () => {

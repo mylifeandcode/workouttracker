@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterModule, UrlSegment } from '@angular/router';
 
 import { of } from 'rxjs';
@@ -90,7 +90,8 @@ describe('WorkoutEditComponent', () => {
         {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
-        }
+  },
+  provideZonelessChangeDetection()
       ]
     })
     .overrideComponent(
@@ -164,7 +165,8 @@ describe('WorkoutEditComponent', () => {
     component.ngOnInit();
 
     expect(component.id()).toBe('some-guid');
-    expect(workoutService.getById).not.toHaveBeenCalledWith(EMPTY_GUID); //The original ngOnInit() call would've called it with WORKOUT_PUBLIC_ID
+  // The original ngOnInit() call would've called it with WORKOUT_PUBLIC_ID
+  expect(workoutService.getById).not.toHaveBeenCalledWith(EMPTY_GUID);
   });
 
   //TODO: Revisit

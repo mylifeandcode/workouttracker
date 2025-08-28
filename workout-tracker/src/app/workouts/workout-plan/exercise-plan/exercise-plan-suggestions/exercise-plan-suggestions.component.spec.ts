@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 import { ExercisePlanSuggestionsComponent } from './exercise-plan-suggestions.component';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
@@ -20,9 +21,12 @@ describe('ExercisePlanSuggestionsComponent', () => {
   let fixture: ComponentFixture<ExercisePlanSuggestionsComponent>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-    imports: [ExercisePlanSuggestionsComponent,
-        MockResistanceAmountPipe]
+  TestBed.configureTestingModule({
+  imports: [ExercisePlanSuggestionsComponent,
+    MockResistanceAmountPipe],
+  providers: [
+    provideZonelessChangeDetection()
+  ]
 });
     fixture = TestBed.createComponent(ExercisePlanSuggestionsComponent);
     component = fixture.componentInstance;

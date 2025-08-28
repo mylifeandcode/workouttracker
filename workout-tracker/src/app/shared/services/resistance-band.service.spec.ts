@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ResistanceBandService } from '../services/resistance-band.service';
 import { ConfigService } from 'app/core/_services/config/config.service';
@@ -17,6 +18,7 @@ describe('ResistanceBandServiceService', () => {
     TestBed.configureTestingModule({
     imports: [],
     providers: [
+  provideZonelessChangeDetection(),
         {
             provide: ConfigService,
             useClass: ConfigServiceMock

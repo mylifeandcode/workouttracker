@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Entity } from 'app/shared/models/entity';
 import { ApiBaseService } from './api-base.service';
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { Injectable, inject as inject_1 } from '@angular/core';
+import { Injectable, inject as inject_1, provideZonelessChangeDetection } from '@angular/core';
 
 const API_ROOT = "https://someApiRoot";
 
@@ -33,6 +33,7 @@ describe('ApiBaseService', () => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
+  provideZonelessChangeDetection(),
         WidgetService,
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()

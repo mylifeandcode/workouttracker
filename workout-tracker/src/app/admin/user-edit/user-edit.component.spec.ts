@@ -6,7 +6,7 @@ import { UserService } from '../../core/_services/user/user.service';
 import { of, throwError } from 'rxjs';
 import { User } from 'app/core/_models/user';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Component } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 
 const CURRENT_USER_ID = 5150;
@@ -40,6 +40,7 @@ describe('UserEditComponent', () => {
         UserEditComponent
       ],
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: UserService,
           useClass: UserServiceMock

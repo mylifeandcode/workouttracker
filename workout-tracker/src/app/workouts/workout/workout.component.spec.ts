@@ -10,7 +10,7 @@ import { ResistanceBandService } from 'app/shared/services/resistance-band.servi
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Output, input } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Output, input, provideZonelessChangeDetection } from '@angular/core';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
@@ -19,7 +19,6 @@ import { Dictionary } from 'lodash';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { DurationComponent } from '../_shared/duration/duration.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
@@ -116,7 +115,8 @@ class ExecutedWorkoutServiceMock {
   getById = jasmine.createSpy('getById').and.returnValue(of(getFakeExecutedWorkout()));
 
   public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
-    const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
+    const sortedExercises: ExecutedExerciseDTO[] = exercises
+      .sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
 
     const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>
       exercise.exerciseId.toString() + '-' + exercise.setType.toString()
@@ -170,8 +170,7 @@ describe('WorkoutComponent', () => {
       imports: [
         ReactiveFormsModule,
         WorkoutComponent,
-        MockResistanceBandSelectComponent,
-        BrowserAnimationsModule
+  MockResistanceBandSelectComponent
       ],
       providers: [
         {
@@ -189,7 +188,8 @@ describe('WorkoutComponent', () => {
         {
           provide: NzMessageService,
           useClass: NzMessageServiceMock
-        }
+  },
+  provideZonelessChangeDetection()
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -276,7 +276,10 @@ describe('WorkoutComponent', () => {
       expect(exerciseSets).toBeDefined();
       expect(exerciseSets.length).toBeGreaterThan(0);
 
-      //const executedExercises = component._executedWorkout.exercises.filter((executedExercise: ExecutedExerciseDTO) => executedExercise.exercise.id == formGroup.controls.exerciseId.value);
+  // const executedExercises = component._executedWorkout.exercises.filter(
+  //   (executedExercise: ExecutedExerciseDTO) =>
+  //     executedExercise.exercise.id == formGroup.controls.exerciseId.value
+  // );
 
       //expect(executedExercises.length).toEqual(exerciseSets.length, "exerciseSets.length not as expected.");
 
@@ -490,7 +493,10 @@ describe('WorkoutComponent', () => {
     component.ngOnInit(); //Need to reinitialize due to changed mock
 
     //ASSERT
-    expect(messageService.error).toHaveBeenCalledOnceWith('executedWorkoutPublicId is invalid. Please exit this page and return to it from one of the pages where a workout can be selected.');
+    expect(messageService.error).toHaveBeenCalledOnceWith(
+      'executedWorkoutPublicId is invalid. Please exit this page and return to it ' +
+      'from one of the pages where a workout can be selected.'
+    );
   });
 
 });

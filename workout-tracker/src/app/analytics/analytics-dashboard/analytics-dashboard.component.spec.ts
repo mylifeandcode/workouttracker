@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { AnalyticsDashboardComponent } from './analytics-dashboard.component';
 import { AnalyticsService } from '../_services/analytics.service';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 
 class AnalyticsServiceMock {
   getExecutedWorkoutsSummary =
@@ -33,7 +33,8 @@ describe('AnalyticsDashboardComponent', () => {
         {
           provide: AnalyticsService,
           useClass: AnalyticsServiceMock
-        }
+  },
+  provideZonelessChangeDetection()
       ]
     })
       .overrideComponent(

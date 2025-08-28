@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { WorkoutService } from './workout.service';
@@ -24,6 +25,7 @@ describe('WorkoutService', () => {
     TestBed.configureTestingModule({
     imports: [],
     providers: [
+  provideZonelessChangeDetection(),
         {
             provide: ConfigService,
             useClass: MockConfigService

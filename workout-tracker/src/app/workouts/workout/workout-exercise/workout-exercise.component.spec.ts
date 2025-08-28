@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { WorkoutExerciseComponent } from './workout-exercise.component';
 import { ReactiveFormsModule, Validators, FormBuilder, FormControl, FormArray, FormGroup } from '@angular/forms';
 import { ExecutedExerciseDTO } from '../../_models/executed-exercise-dto';
@@ -70,7 +71,10 @@ describe('WorkoutExerciseComponent', () => {
         DurationPipeMock,
         ResistanceBandColorMock,
         ExerciseSidePipeMock,
-        MockResistanceAmountPipe]
+        MockResistanceAmountPipe],
+    providers: [
+        provideZonelessChangeDetection()
+    ]
 })
     .compileComponents();
   }));
@@ -178,9 +182,18 @@ describe('WorkoutExerciseComponent', () => {
         sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }), 
         resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
         targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }), 
-        actualReps: new FormControl<number>(exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, { nonNullable: true, validators: Validators.required }),
-        formRating: new FormControl<number | null>(exercises[i].formRating ? exercises[i].formRating : null, { validators: Validators.required }),
-        rangeOfMotionRating: new FormControl<number | null>(exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, { validators: Validators.required }),
+        actualReps: new FormControl<number>(
+          exercises[i].actualRepCount ? exercises[i].actualRepCount : 0,
+          { nonNullable: true, validators: Validators.required }
+        ),
+        formRating: new FormControl<number | null>(
+          exercises[i].formRating ? exercises[i].formRating : null,
+          { validators: Validators.required }
+        ),
+        rangeOfMotionRating: new FormControl<number | null>(
+          exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null,
+          { validators: Validators.required }
+        ),
         resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup), 
         bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd), 
         duration: new FormControl<number | null>(120), 

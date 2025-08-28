@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutHistoryComponent } from './workout-history.component';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { RouterLink, RouterModule } from '@angular/router';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
@@ -29,7 +29,8 @@ describe('WorkoutHistoryComponent', () => {
         {
           provide: ExecutedWorkoutService,
           useClass: MockExecutedWorkoutService
-        }
+  },
+  provideZonelessChangeDetection()
       ]
     })
     .overrideComponent(

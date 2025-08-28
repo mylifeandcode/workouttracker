@@ -1,4 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 import { UserService } from './user.service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -24,6 +25,7 @@ describe('UserService', () => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
+  provideZonelessChangeDetection(),
         UserService,
         {
           provide: ConfigService,
@@ -98,7 +100,7 @@ describe('UserService', () => {
 
   it('should update user', () => {
     const user = new User();
-    user.id = parseInt(TEST_USER_ID);
+  user.id = parseInt(TEST_USER_ID, 10);
 
     service.update(user)
       .subscribe({

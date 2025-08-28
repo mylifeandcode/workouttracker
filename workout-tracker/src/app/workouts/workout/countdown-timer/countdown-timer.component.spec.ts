@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, Output } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, Output, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SoundService } from 'app/core/_services/sound/sound.service';
 import { CountdownConfig, CountdownEvent, CountdownModule, CountdownStatus, CountdownTimer } from 'ngx-countdown';
@@ -20,6 +20,7 @@ describe('CountdownTimerComponent', () => {
     await TestBed.configureTestingModule({
     imports: [CountdownModule, CountdownTimerComponent],
     providers: [
+  provideZonelessChangeDetection(),
         {
             provide: SoundService,
             useClass: SoundServiceMock

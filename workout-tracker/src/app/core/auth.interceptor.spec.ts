@@ -1,6 +1,7 @@
 import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 import { AuthInterceptor } from './auth.interceptor';
 import { AuthService } from './_services/auth/auth.service';
@@ -18,6 +19,7 @@ describe('AuthInterceptor', () => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: HTTP_INTERCEPTORS,
           useClass: AuthInterceptor,

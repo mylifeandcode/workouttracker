@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, input } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, input, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
@@ -33,6 +33,7 @@ describe('RecentWorkoutsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: ExecutedWorkoutService,
           useClass: MockExecutedWorkoutService

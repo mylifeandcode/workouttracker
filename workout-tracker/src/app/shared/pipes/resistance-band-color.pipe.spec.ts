@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ResistanceBandColorPipe } from './resistance-band-color.pipe';
 
@@ -13,7 +14,8 @@ describe('ResistanceBandColorPipe', () => {
           useValue: {
             bypassSecurityTrustHtml: (value: string): string => value //Thanks to Zakary Keck for the solution for this
           }
-        }
+        },
+        provideZonelessChangeDetection()
       ]
     })
     .compileComponents();
@@ -34,7 +36,11 @@ describe('ResistanceBandColorPipe', () => {
     const output = pipe.transform(input);
 
     //ASSERT
-    expect(output).toBe("<span style='color: Red; text-shadow: 1px 1px #000000;'>Red</span>, <span style='color: Purple; text-shadow: 1px 1px #000000;'>Purple</span>, <span style='color: Blue; text-shadow: 1px 1px #000000;'>Blue</span>");
+    expect(output).toBe(
+      "<span style='color: Red; text-shadow: 1px 1px #000000;'>Red</span>, " +
+      "<span style='color: Purple; text-shadow: 1px 1px #000000;'>Purple</span>, " +
+      "<span style='color: Blue; text-shadow: 1px 1px #000000;'>Blue</span>"
+    );
 
   });
 

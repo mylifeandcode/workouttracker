@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutInfoComponent } from './workout-info.component';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 describe('WorkoutInfoComponent', () => {
@@ -10,7 +10,10 @@ describe('WorkoutInfoComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
     imports: [WorkoutInfoComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    providers: [
+        provideZonelessChangeDetection()
+    ]
 })
   .overrideComponent(
     WorkoutInfoComponent, {

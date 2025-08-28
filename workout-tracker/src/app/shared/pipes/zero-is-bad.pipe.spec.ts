@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ZeroIsBadPipe } from './zero-is-bad.pipe';
 
@@ -13,7 +14,8 @@ describe('ZeroIsBadPipe', () => {
           useValue: {
             bypassSecurityTrustHtml: (value: string): string => value //Thanks to Zakary Keck for the solution for this
           }
-        }
+        },
+        provideZonelessChangeDetection()
       ]
     });
   });

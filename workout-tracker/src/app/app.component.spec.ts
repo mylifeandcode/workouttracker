@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { AppComponent } from './app.component';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { NavComponent } from './core/nav/nav.component';
 
@@ -22,7 +22,8 @@ describe('AppComponent', () => {
         AppComponent
       ],
       providers: [
-        provideRouter([])
+  provideZonelessChangeDetection(),
+  provideRouter([])
       ]
     }).overrideComponent(
       AppComponent,

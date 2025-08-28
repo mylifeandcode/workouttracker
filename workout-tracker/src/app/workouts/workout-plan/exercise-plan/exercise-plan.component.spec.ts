@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { IExercisePlanFormGroup } from './interfaces/i-exercise-plan-form-group';
 
@@ -16,6 +17,9 @@ describe('ExercisePlanComponent', () => {
         ReactiveFormsModule, 
         ExercisePlanComponent,
         ResistanceTypePipe //TODO: Replace with mock 
+      ],
+      providers: [
+        provideZonelessChangeDetection()
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

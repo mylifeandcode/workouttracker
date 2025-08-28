@@ -1,5 +1,5 @@
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { throwError } from 'rxjs';
 
@@ -30,7 +30,12 @@ class LocalStorageServiceMock {
 class FakeComponent { };
 
 //This has to be a real token because the service decodes it
-const TEST_ACCESS_TOKEN: string = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWxhbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmF0b3IiLCJVc2VySUQiOiIyIiwiZXhwIjoxNjU4MDE2NTY0LCJpc3MiOiJ3d3cud29ya291dHRyYWNrZXIubmV0IiwiYXVkIjoid3d3LndvcmtvdXR0cmFja2VyLm5ldCJ9.gNYFG9fAcwSfDCntFdxNpPTO5zq-zp9Rw_BrRy3Qus4";
+const TEST_ACCESS_TOKEN: string =
+  'eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.' +
+  'eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWxhbiIsImh0dHA6Ly9z' +
+  'Y2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmF0b3IiLCJVc2VySUQi' +
+  'OiIyIiwiZXhwIjoxNjU4MDE2NTY0LCJpc3MiOiJ3d3cud29ya291dHRyYWNrZXIubmV0IiwiYXVkIjoid3d3LndvcmtvdXR0cmFja2Vy' +
+  'Lm5ldCJ9.gNYFG9fAcwSfDCntFdxNpPTO5zq-zp9Rw_BrRy3Qus4';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -42,6 +47,7 @@ describe('AuthService', () => {
     TestBed.configureTestingModule({
       imports: [RouterModule.forRoot([{ path: 'user-select', component: FakeComponent }])],
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: ConfigService,
           useClass: ConfigServiceMock

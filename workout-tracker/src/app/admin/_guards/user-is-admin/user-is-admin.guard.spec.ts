@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Route, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 
 import { UserIsAdminGuard } from '../user-is-admin/user-is-admin.guard';
@@ -18,6 +19,7 @@ describe('UserIsAdminGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: AuthService,
           useClass: AuthServiceMock

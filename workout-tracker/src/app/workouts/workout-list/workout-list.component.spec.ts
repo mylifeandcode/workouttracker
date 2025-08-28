@@ -6,7 +6,7 @@ import { PaginatedResults } from '../../core/_models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { HttpResponse } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 
 
 class WorkoutServiceMock {
@@ -27,6 +27,7 @@ describe('WorkoutListComponent', () => {
         WorkoutListComponent
       ],
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: WorkoutService,
           useClass: WorkoutServiceMock

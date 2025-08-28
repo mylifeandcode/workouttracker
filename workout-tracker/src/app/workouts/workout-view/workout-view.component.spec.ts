@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, input } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, input, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Dictionary } from 'lodash';
 import { groupBy } from 'lodash-es';
@@ -41,7 +41,9 @@ class ExecutedWorkoutServiceMock {
   }
 
   public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
-    const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
+    const sortedExercises: ExecutedExerciseDTO[] = exercises.sort(
+      (a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence
+    );
 
     const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>
       exercise.exerciseId.toString() + '-' + exercise.setType.toString()
@@ -73,6 +75,7 @@ describe('WorkoutViewComponent', () => {
       imports: [WorkoutViewComponent,
         MockExecutedExercisesComponent],
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: ExecutedWorkoutService,
           useClass: ExecutedWorkoutServiceMock

@@ -7,9 +7,8 @@ import { of } from 'rxjs';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { TargetArea } from 'app/workouts/_models/target-area';
 import { RouterLink, RouterModule } from '@angular/router';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<Exercise>()));
@@ -25,14 +24,14 @@ describe('ExerciseListComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([]),
-        ExerciseListComponent,
-        NoopAnimationsModule
+  ExerciseListComponent
       ],
       providers: [
         {
           provide: ExerciseService,
           useClass: ExerciseServiceMock
-        }
+  },
+  provideZonelessChangeDetection()
       ]
     })
     .overrideComponent(ExerciseListComponent,

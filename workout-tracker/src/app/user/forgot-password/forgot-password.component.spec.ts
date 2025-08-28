@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 
@@ -11,15 +12,16 @@ describe('ForgotPasswordComponent', () => {
   let fixture: ComponentFixture<ForgotPasswordComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-    imports: [ForgotPasswordComponent],
-    providers: [
-        FormBuilder,
-        {
-            provide: AuthService,
-            useClass: AuthServiceMock
-        }
-    ]
+  await TestBed.configureTestingModule({
+  imports: [ForgotPasswordComponent],
+  providers: [
+    FormBuilder,
+    {
+      provide: AuthService,
+      useClass: AuthServiceMock
+    },
+    provideZonelessChangeDetection()
+  ]
 })
     .compileComponents();
 

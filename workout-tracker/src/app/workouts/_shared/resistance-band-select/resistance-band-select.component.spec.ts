@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ResistanceBandSelectComponent } from './resistance-band-select.component';
 import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform, SimpleChange } from '@angular/core';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
@@ -30,7 +31,8 @@ describe('ResistanceBandSelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ResistanceBandSelectComponent]
+  imports: [ResistanceBandSelectComponent],
+  providers: [provideZonelessChangeDetection()]
     })
     .overrideComponent(ResistanceBandSelectComponent, {
       remove: 
@@ -89,7 +91,9 @@ describe('ResistanceBandSelectComponent', () => {
     expect(component.showBilateralValidationFailure).toBeTrue();
   });
 
-  it('should show message about bilateral resistance when exercise uses it and user selects resistance which is not equally divisible', () => {
+  it(
+    'should show message about bilateral resistance when exercise uses it and user selects resistance which is not equally divisible',
+    () => {
     //ARRANGE
     fixture.componentRef.setInput('exerciseUsesBilateralResistance', true);
 
@@ -138,7 +142,9 @@ describe('ResistanceBandSelectComponent', () => {
     expect(component.showBilateralValidationFailure).toBeTrue();
   });  
 
-  it('should not show message about bilateral resistance when exercise uses it and user selects resistance which is equally divisible', () => {
+  it(
+    'should not show message about bilateral resistance when exercise uses it and user selects resistance which is equally divisible',
+    () => {
     //ARRANGE
     fixture.componentRef.setInput('exerciseUsesBilateralResistance', true);
     const band1: TransferItem = {

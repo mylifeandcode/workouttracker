@@ -1,4 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ExerciseService } from './exercise.service';
 import { PaginatedResults } from '../../core/_models/paginated-results';
@@ -18,6 +19,7 @@ describe('ExerciseService', () => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
+  provideZonelessChangeDetection(),
         ExerciseService,
         {
           provide: ConfigService,
@@ -37,7 +39,11 @@ describe('ExerciseService', () => {
     expect(service).toBeTruthy();
   }));
 
-  it('should retrieve exercises', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
+  it(
+    'should retrieve exercises',
+    inject(
+      [HttpTestingController, ExerciseService],
+      (httpMock: HttpTestingController, service: ExerciseService) => {
 
     const expectedResults = new PaginatedResults<ExerciseDTO>();
 
@@ -53,7 +59,9 @@ describe('ExerciseService', () => {
     // Respond with the mock results
     req.flush(expectedResults);
 
-  }));
+      }
+    )
+  );
 
   it('should retrieve exercises with the nameContains param', () => {
 
@@ -97,7 +105,11 @@ describe('ExerciseService', () => {
 
   });
 
-  it('should retrieve exercise by ID', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
+  it(
+    'should retrieve exercise by ID',
+    inject(
+      [HttpTestingController, ExerciseService],
+      (httpMock: HttpTestingController, service: ExerciseService) => {
 
     const expectedExercise = new Exercise();
 
@@ -113,9 +125,15 @@ describe('ExerciseService', () => {
     // Respond with the mock results
     req.flush(expectedExercise);
 
-  }));
+      }
+    )
+  );
 
-  it('should create new exercise', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
+  it(
+    'should create new exercise',
+    inject(
+      [HttpTestingController, ExerciseService],
+      (httpMock: HttpTestingController, service: ExerciseService) => {
 
     const exercise = new Exercise();
 
@@ -132,9 +150,15 @@ describe('ExerciseService', () => {
     // Respond with the mock results
     req.flush(exercise);
 
-  }));
+      }
+    )
+  );
 
-  it('should update existing exercise', inject([HttpTestingController, ExerciseService], (httpMock: HttpTestingController, service: ExerciseService) => {
+  it(
+    'should update existing exercise',
+    inject(
+      [HttpTestingController, ExerciseService],
+      (httpMock: HttpTestingController, service: ExerciseService) => {
 
     const exercise = new Exercise();
     exercise.id = 6;
@@ -152,6 +176,8 @@ describe('ExerciseService', () => {
     // Respond with the mock results
     req.flush(exercise);
 
-  }));
+      }
+    )
+  );
 
 });

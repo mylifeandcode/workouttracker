@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'app/core/_services/auth/auth.service';
@@ -61,7 +61,8 @@ describe('UserSettingsComponent', () => {
         {
           provide: NzMessageService,
           useClass: NzMessageServiceMock
-        }
+  },
+  provideZonelessChangeDetection()
       ],
       imports: [
         ReactiveFormsModule,

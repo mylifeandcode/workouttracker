@@ -5,10 +5,9 @@ import { PaginatedResults } from '../../core/_models/paginated-results';
 import { of } from 'rxjs';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { TargetArea } from 'app/workouts/_models/target-area';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { RouterLink } from '@angular/router';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<ExerciseDTO>()));
@@ -26,11 +25,11 @@ describe('ExerciseListMiniComponent', () => {
         {
           provide: ExerciseService,
           useClass: ExerciseServiceMock
-        }
+  },
+  provideZonelessChangeDetection()
       ],
       imports: [
-        ExerciseListMiniComponent,
-        NoopAnimationsModule
+  ExerciseListMiniComponent
       ]
     })
     .overrideComponent(ExerciseListMiniComponent,

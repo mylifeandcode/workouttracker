@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 import { of } from 'rxjs';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
@@ -48,7 +49,7 @@ describe('ExerciseListMiniComponent', () => {
           provide: ExerciseService,
           useClass: ExerciseServiceMock
         }
-      ],
+  , provideZonelessChangeDetection()],
       imports: [
         ExerciseListBaseExtenderComponent
       ]

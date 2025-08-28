@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 import { ExecutedExercisesComponent } from './executed-exercises.component';
 
@@ -8,7 +9,8 @@ describe('ExecutedExercisesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [ExecutedExercisesComponent]
+  imports: [ExecutedExercisesComponent],
+  providers: [provideZonelessChangeDetection()]
 })
     .compileComponents();
   });

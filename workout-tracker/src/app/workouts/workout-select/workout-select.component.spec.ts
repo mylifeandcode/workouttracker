@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
@@ -30,6 +30,7 @@ describe('WorkoutSelectComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: WorkoutService,
           useClass: WorkoutServiceMock

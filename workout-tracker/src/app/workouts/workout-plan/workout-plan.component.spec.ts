@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Output, input } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Output, input, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -70,7 +70,8 @@ describe('WorkoutPlanComponent', () => {
           provide: ActivatedRoute,
           useValue: { params: of({}) }
         },
-        UntypedFormBuilder //TODO: Determine if this is kosher or if there's a preferred mocking approach
+  UntypedFormBuilder, //TODO: Determine if this is kosher or if there's a preferred mocking approach
+  provideZonelessChangeDetection()
       ],
       imports: [
         RouterModule.forRoot([]),
@@ -188,7 +189,9 @@ describe('WorkoutPlanComponent', () => {
     component.submitPlanForPast();
 
     //ASSERT
-    let workoutPlan: WorkoutPlan = new WorkoutPlan(); //Compiler was being goofy about this, saying the value was being used before being assigned, even though that was not the case!
+  // Compiler was being goofy about this, saying the value was being used
+  // before being assigned, even though that was not the case!
+  let workoutPlan: WorkoutPlan = new WorkoutPlan();
     if (component.workoutPlan == null)
       fail("component.workoutPlan is null.");
     else

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 
@@ -7,7 +8,9 @@ import { Router, RouterModule } from '@angular/router';
 import { of } from 'rxjs';
 
 class AuthServiceMock {
-  changePassword = jasmine.createSpy('changePassword').and.returnValue(of(undefined)); //Apparently, this is the way to represent a void Observable.
+  // Apparently, this is the way to represent a void Observable.
+  changePassword = jasmine.createSpy('changePassword')
+    .and.returnValue(of(undefined));
 }
 
 describe('ChangePasswordComponent', () => {
@@ -15,15 +18,16 @@ describe('ChangePasswordComponent', () => {
   let fixture: ComponentFixture<ChangePasswordComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-    imports: [RouterModule.forRoot([]), ReactiveFormsModule, ChangePasswordComponent],
-    providers: [
-        FormBuilder,
-        {
-            provide: AuthService,
-            useClass: AuthServiceMock
-        }
-    ]
+  await TestBed.configureTestingModule({
+  imports: [RouterModule.forRoot([]), ReactiveFormsModule, ChangePasswordComponent],
+  providers: [
+    FormBuilder,
+    {
+      provide: AuthService,
+      useClass: AuthServiceMock
+    },
+    provideZonelessChangeDetection()
+  ]
 })
     .compileComponents();
 

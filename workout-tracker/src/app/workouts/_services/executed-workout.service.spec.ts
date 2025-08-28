@@ -6,6 +6,7 @@ import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 const API_ROOT_URL: string = "http://localhost:5600/api/";
 
@@ -21,6 +22,7 @@ describe('ExecutedWorkoutService', () => {
     TestBed.configureTestingModule({
     imports: [],
     providers: [
+  provideZonelessChangeDetection(),
         ExecutedWorkoutService,
         {
             provide: ConfigService,

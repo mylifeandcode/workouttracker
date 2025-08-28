@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 import { ExercisePlanNextTimeComponent } from './exercise-plan-next-time.component';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -20,9 +21,12 @@ describe('ExercisePlanNextTimeComponent', () => {
   let fixture: ComponentFixture<ExercisePlanNextTimeComponent>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-    imports: [ReactiveFormsModule, ExercisePlanNextTimeComponent,
-        MockResistanceAmountPipe]
+  TestBed.configureTestingModule({
+  imports: [ReactiveFormsModule, ExercisePlanNextTimeComponent,
+    MockResistanceAmountPipe],
+  providers: [
+    provideZonelessChangeDetection()
+  ]
 });
     fixture = TestBed.createComponent(ExercisePlanNextTimeComponent);
     component = fixture.componentInstance;

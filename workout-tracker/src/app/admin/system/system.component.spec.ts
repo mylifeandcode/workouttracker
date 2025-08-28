@@ -3,6 +3,7 @@ import { SoundService } from 'app/core/_services/sound/sound.service';
 
 import { SystemComponent } from './system.component';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
@@ -25,6 +26,7 @@ describe('SystemComponent', () => {
         SystemComponent      
       ],
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: SoundService,
           useClass: MockSoundService

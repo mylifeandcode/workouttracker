@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -47,7 +47,10 @@ describe('WorkoutLogPastStartComponent', () => {
           provide: Router,
           useClass: RouterMock
         },
-        FormBuilder //TODO: Find out what the proper ettiquite is for components which use a FormBuilder -- should we mock it like other dependencies?
+  // TODO: What is proper etiquette for components using a FormBuilder?
+  // Should we mock it like other dependencies?
+  FormBuilder,
+  provideZonelessChangeDetection()
       ],
       imports: [
         ReactiveFormsModule,

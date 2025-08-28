@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../../_services/auth/auth.service';
@@ -28,6 +28,7 @@ describe('UserNotSelectedGuard', () => {
           [{path: 'home', component: FakeComponent}])
       ],
       providers: [
+  provideZonelessChangeDetection(),
         {
           provide: AuthService,
           useClass: AuthServiceMock

@@ -1,4 +1,4 @@
-import { Component, DebugElement } from '@angular/core';
+import { Component, DebugElement, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { SelectOnFocusDirective } from '../directives/select-on-focus.directive';
@@ -17,7 +17,8 @@ describe('SelectOnFocusDirective', () => {
 
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({
-      imports: [SelectOnFocusDirective, TestComponent]
+      imports: [SelectOnFocusDirective, TestComponent],
+      providers: [provideZonelessChangeDetection()]
     }).createComponent(TestComponent);
 
     fixture.detectChanges(); //Initial binding
