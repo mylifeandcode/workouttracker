@@ -9,12 +9,12 @@ import { ExecutedExerciseMetrics } from '../_models/executed-exercise-metrics';
 import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 import { ExecutedWorkoutsSummary } from '../_models/executed-workouts-summary';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 
 class ConfigServiceMock {
   get = jasmine.createSpy('get').and.returnValue('http://localhost:5600/api/');
 }
-
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
 
@@ -22,6 +22,7 @@ describe('AnalyticsService', () => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
+        provideZonelessChangeDetection(),
         {
           provide: ConfigService,
           useClass: ConfigServiceMock

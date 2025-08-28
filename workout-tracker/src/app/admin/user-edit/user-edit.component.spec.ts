@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserEditComponent } from './user-edit.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -32,8 +32,8 @@ describe('UserEditComponent', () => {
   let fixture: ComponentFixture<UserEditComponent>;
   let userService: UserService;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
         RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
@@ -59,7 +59,7 @@ describe('UserEditComponent', () => {
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UserEditComponent);

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserListComponent } from './user-list.component';
 import { UserService } from '../../core/_services/user/user.service';
@@ -25,8 +25,8 @@ describe('UserListComponent', () => {
   let fixture: ComponentFixture<UserListComponent>;
   let userService: UserService;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [RouterModule.forRoot([]), UserListComponent],
       providers: [
         {
@@ -36,7 +36,7 @@ describe('UserListComponent', () => {
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UserListComponent);

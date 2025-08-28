@@ -1,14 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UnderConstructionComponent } from './under-construction.component';
-
+import { provideZonelessChangeDetection } from '@angular/core';
 describe('UnderConstructionComponent', () => {
   let component: UnderConstructionComponent;
   let fixture: ComponentFixture<UnderConstructionComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UnderConstructionComponent]
+      imports: [UnderConstructionComponent],
+      providers: [provideZonelessChangeDetection()]
     })
     .compileComponents();
 

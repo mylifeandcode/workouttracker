@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StartWorkoutComponent } from './start-workout.component';
 import { provideRouter } from '@angular/router';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 describe('StartWorkoutComponent', () => {
   let component: StartWorkoutComponent;
@@ -11,6 +12,7 @@ describe('StartWorkoutComponent', () => {
     await TestBed.configureTestingModule({
       imports: [StartWorkoutComponent],
       providers: [
+        provideZonelessChangeDetection(),
         provideRouter([])
       ]
     })

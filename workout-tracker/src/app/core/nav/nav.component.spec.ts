@@ -1,7 +1,6 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavComponent } from './nav.component';
-import { Observable, of } from 'rxjs';
-import { Component, signal, WritableSignal } from '@angular/core';
+import { Component, provideZonelessChangeDetection, signal, WritableSignal } from '@angular/core';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 import { RouterModule } from '@angular/router';
 
@@ -24,13 +23,14 @@ describe('NavComponent', () => {
   let component: NavComponent;
   let fixture: ComponentFixture<NavComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
         NavComponent
       ],
       providers: [
+        provideZonelessChangeDetection(),
         {
           provide: AuthService,
           useClass: AuthServiceMock
@@ -38,7 +38,7 @@ describe('NavComponent', () => {
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NavComponent);

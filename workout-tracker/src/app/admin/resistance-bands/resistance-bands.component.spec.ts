@@ -1,6 +1,6 @@
 import { HttpResponse } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { of, throwError } from 'rxjs';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
@@ -34,10 +34,11 @@ describe('ResistanceBandsComponent', () => {
   let component: ResistanceBandsComponent;
   let fixture: ComponentFixture<ResistanceBandsComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [ResistanceBandsComponent],
       providers: [
+        provideZonelessChangeDetection(),
         {
           provide: ResistanceBandService,
           useClass: ResistanceBandServiceMock
@@ -74,7 +75,7 @@ describe('ResistanceBandsComponent', () => {
         }, 
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ResistanceBandsComponent);

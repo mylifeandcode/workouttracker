@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserOverview } from 'app/core/_models/user-overview';
 import { UserService } from 'app/core/_services/user/user.service';
@@ -30,6 +30,7 @@ describe('WelcomeComponent', () => {
     await TestBed.configureTestingModule({
       imports: [WelcomeComponent],
       providers: [
+        provideZonelessChangeDetection(),
         {
           provide: UserService,
           useClass: UserServiceMock

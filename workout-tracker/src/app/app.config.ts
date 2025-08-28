@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, inject, provideAppInitializer } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
@@ -18,7 +18,6 @@ registerLocaleData(en);
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    //provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding()),
     importProvidersFrom(BrowserModule, CommonModule, ReactiveFormsModule),
     provideAppInitializer(() => {
@@ -31,6 +30,7 @@ export const appConfig: ApplicationConfig = {
       multi: true
     },
     provideHttpClient(withInterceptorsFromDi()),
+    provideZonelessChangeDetection(),
     provideAnimations(),
     provideNzI18n(en_US)
   ]

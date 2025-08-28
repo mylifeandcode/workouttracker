@@ -46,7 +46,8 @@ import 'core-js/es/reflect';
 /***************************************************************************************************
  * Zone JS is required by Angular itself.
  */
-import 'zone.js';  // Included with Angular CLI.
+//Removed for Zoneless Change Detection -- TODO: Remove this section entirely once proven stable
+//import 'zone.js';  // Included with Angular CLI.
 
 
 
