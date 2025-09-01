@@ -7,7 +7,6 @@ import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { TargetArea } from 'app/workouts/_models/target-area';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { RouterLink } from '@angular/router';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<ExerciseDTO>()));
@@ -19,31 +18,30 @@ describe('ExerciseListMiniComponent', () => {
   let fixture: ComponentFixture<ExerciseListMiniComponent>;
   let exerciseService: ExerciseService;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       providers: [
         {
           provide: ExerciseService,
           useClass: ExerciseServiceMock
-  },
-  provideZonelessChangeDetection()
+        },
+        provideZonelessChangeDetection()
       ],
       imports: [
-  ExerciseListMiniComponent
+        ExerciseListMiniComponent
       ]
     })
-    .overrideComponent(ExerciseListMiniComponent,
-      {
-        remove: {
-          imports: [NzTableModule] //Some imports still required to test
-        },
-        add: {
-          schemas: [CUSTOM_ELEMENTS_SCHEMA]
-        }
-      })
-
+      .overrideComponent(ExerciseListMiniComponent,
+        {
+          remove: {
+            imports: [NzTableModule] //Some imports still required to test
+          },
+          add: {
+            schemas: [CUSTOM_ELEMENTS_SCHEMA]
+          }
+        })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ExerciseListMiniComponent);

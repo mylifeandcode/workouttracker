@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 
 import { of } from 'rxjs';
@@ -37,25 +37,25 @@ class ExerciseListBaseExtenderComponent extends ExerciseListBase {
   }
 }
 
-describe('ExerciseListMiniComponent', () => {
+describe('ExerciseListBaseComponent', () => {
   let component: ExerciseListBaseExtenderComponent;
   let fixture: ComponentFixture<ExerciseListBaseExtenderComponent>;
   let exerciseService: ExerciseService;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       providers: [
         {
           provide: ExerciseService,
           useClass: ExerciseServiceMock
         }
-  , provideZonelessChangeDetection()],
+        ,provideZonelessChangeDetection()],
       imports: [
         ExerciseListBaseExtenderComponent
       ]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ExerciseListBaseExtenderComponent);

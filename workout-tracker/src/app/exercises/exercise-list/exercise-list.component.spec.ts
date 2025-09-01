@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExerciseListComponent } from './exercise-list.component';
 import { ExerciseService } from '../_services/exercise.service';
@@ -9,6 +9,7 @@ import { TargetArea } from 'app/workouts/_models/target-area';
 import { RouterLink, RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<Exercise>()));
@@ -20,31 +21,32 @@ describe('ExerciseListComponent', () => {
   let fixture: ComponentFixture<ExerciseListComponent>;
   let exerciseService: ExerciseService;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([]),
-  ExerciseListComponent
+        ExerciseListComponent,
+        NoopAnimationsModule
       ],
       providers: [
         {
           provide: ExerciseService,
           useClass: ExerciseServiceMock
-  },
-  provideZonelessChangeDetection()
+        },
+        provideZonelessChangeDetection()
       ]
     })
-    .overrideComponent(ExerciseListComponent,
-      {
-        remove: {
-          imports: [NzTableModule, RouterLink] //Some imports still required to test
-        },
-        add: {
-          schemas: [CUSTOM_ELEMENTS_SCHEMA]
-        }
-      })
+      .overrideComponent(ExerciseListComponent,
+        {
+          remove: {
+            imports: [NzTableModule, RouterLink] //Some imports still required to test
+          },
+          add: {
+            schemas: [CUSTOM_ELEMENTS_SCHEMA]
+          }
+        })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ExerciseListComponent);
@@ -63,7 +65,7 @@ describe('ExerciseListComponent', () => {
       pageIndex: 1,
       pageSize: 10
     };
-    
+
     //ACT
     component.getExercisesLazy(queryParams);
 

@@ -165,14 +165,15 @@ describe('WorkoutComponent', () => {
   let component: WorkoutComponent;
   let fixture: ComponentFixture<WorkoutComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
         WorkoutComponent,
-  MockResistanceBandSelectComponent
+        MockResistanceBandSelectComponent
       ],
       providers: [
+        provideZonelessChangeDetection(),
         {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
@@ -188,8 +189,7 @@ describe('WorkoutComponent', () => {
         {
           provide: NzMessageService,
           useClass: NzMessageServiceMock
-  },
-  provideZonelessChangeDetection()
+        }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -210,7 +210,7 @@ describe('WorkoutComponent', () => {
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutComponent);
@@ -276,10 +276,10 @@ describe('WorkoutComponent', () => {
       expect(exerciseSets).toBeDefined();
       expect(exerciseSets.length).toBeGreaterThan(0);
 
-  // const executedExercises = component._executedWorkout.exercises.filter(
-  //   (executedExercise: ExecutedExerciseDTO) =>
-  //     executedExercise.exercise.id == formGroup.controls.exerciseId.value
-  // );
+      // const executedExercises = component._executedWorkout.exercises.filter(
+      //   (executedExercise: ExecutedExerciseDTO) =>
+      //     executedExercise.exercise.id == formGroup.controls.exerciseId.value
+      // );
 
       //expect(executedExercises.length).toEqual(exerciseSets.length, "exerciseSets.length not as expected.");
 

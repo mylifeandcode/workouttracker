@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutListComponent } from './workout-list.component';
 import { WorkoutService } from '../_services/workout.service';
 import { of } from 'rxjs';
@@ -20,14 +20,14 @@ describe('WorkoutListComponent', () => {
   let fixture: ComponentFixture<WorkoutListComponent>;
   let workoutService: WorkoutService;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([]),
         WorkoutListComponent
       ],
       providers: [
-  provideZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
@@ -36,7 +36,7 @@ describe('WorkoutListComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutListComponent);
