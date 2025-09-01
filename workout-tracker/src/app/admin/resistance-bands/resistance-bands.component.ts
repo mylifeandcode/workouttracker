@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 
 import { ResistanceBand } from 'app/shared/models/resistance-band';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
@@ -18,7 +18,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
   styleUrls: ['./resistance-bands.component.scss'],
   imports: [
     FormsModule, NzTableModule, NgStyle,
-    NzIconModule, NzModalModule, NzButtonModule]
+    NzIconModule, NzModalModule, NzButtonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResistanceBandsComponent implements OnInit {
   private readonly _resistanceBandService = inject(ResistanceBandService);
@@ -26,28 +27,20 @@ export class ResistanceBandsComponent implements OnInit {
   private readonly _modalService = inject(NzModalService);
 
   public resistanceBands: ResistanceBand[] = [];
-  public busy: boolean = false;
-  public busyMsg: string | undefined;
+  public busy = signal<boolean>(false);
+  public busyMsg = signal<string | undefined>(undefined);
 
   //Add modal related
-  public showAddDialog: boolean = false;
+  public showAddDialog = signal<boolean>(false);
   public newResistanceBand: ResistanceBand = new ResistanceBand();
-  public modalSubmitted: boolean = false;
+  public modalSubmitted = signal<boolean>(false);
 
   //This is used to store the original row when we go into edit mode
-  //private _clonedResistanceBands: { [id: number]: ResistanceBand; } = {};
   public editCache: { [key: number]: { edit: boolean; data: ResistanceBand } } = {};
 
   public ngOnInit(): void {
     this.getResistanceBandData(true);
   }
-
-  /*
-  public onRowEditInit(band: ResistanceBand): void {
-    //Clone the row we're editing in case we decide to cancel. That way, we can get the original version back.
-    this._clonedResistanceBands[band.id] = { ...band };
-  }
-  */
 
   public startEdit(id: number): void {
     this.editCache[id].edit = true;
@@ -63,42 +56,20 @@ export class ResistanceBandsComponent implements OnInit {
 
   public saveEdit(id: number): void {
     const index = this.resistanceBands.findIndex(item => item.id === id);
-    //console.log('band:', this.resistanceBands[index]);
-    //console.log('editCache:', this.editCache[id].data);
     Object.assign(this.resistanceBands[index], this.editCache[id].data);
-    //console.log('updated band:', this.resistanceBands[index]);
 
     this.editCache[id].edit = false;
     this.updateResistanceBand(this.editCache[id].data);
   }
 
-  /*
-  public onRowEditSave(band: ResistanceBand): void {
-    //Delete our cloned row, we don't need it any more.
-    delete this._clonedResistanceBands[band.id];
-    this.updateResistanceBand(band);
-  }
-
-  public onRowEditCancel(band: ResistanceBand, index: number): void {
-    //if (!this.resistanceBands) return;
-
-    //Replace the row we were editing with the clone, so in case we made any changes we'll get the original
-    //version back.
-    this.resistanceBands[index] = this._clonedResistanceBands[band.id];
-
-    //Delete the clone row, we don't need it anymore.
-    delete this._clonedResistanceBands[band.id];
-  }
-  */
-
   public openAddModal(): void {
     this.newResistanceBand = new ResistanceBand();
-    this.modalSubmitted = false;
-    this.showAddDialog = true;
+    this.modalSubmitted.set(false);
+    this.showAddDialog.set(true);
   }
 
   public saveNewBand(): void {
-    this.showAddDialog = false;
+    this.showAddDialog.set(false);
     this.addResistanceBand();
   }
 
@@ -122,8 +93,8 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   public hideModal(): void {
-    this.showAddDialog = false;
-    this.modalSubmitted = false;
+    this.showAddDialog.set(false);
+    this.modalSubmitted.set(false);
   }
 
   private setupEditCache(): void {
@@ -136,14 +107,14 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   private getResistanceBandData(fromCache: boolean): void {
-    this.busy = true;
-    this.busyMsg = 'Getting resistance band data...';
+    this.busy.set(true);
+    this.busyMsg.set('Getting resistance band data...');
     this._resistanceBandService
       .getAll(fromCache)
       .pipe(
         finalize(() => {
-          this.busy = false;
-          this.busyMsg = undefined;
+          this.busy.set(false);
+          this.busyMsg.set(undefined);
         })
       )
       .subscribe((results: ResistanceBand[]) => {
@@ -153,15 +124,15 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   private addResistanceBand(): void {
-    this.busy = true;
-    this.busyMsg = 'Adding...';
+    this.busy.set(true);
+    this.busyMsg.set('Adding...');
 
     this._resistanceBandService
       .add(this.newResistanceBand)
       .pipe(
         finalize(() => {
-          this.busy = false;
-          this.busyMsg = undefined;
+          this.busy.set(false);
+          this.busyMsg.set(undefined);
         })
       )
       .subscribe({
@@ -176,15 +147,15 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   private updateResistanceBand(band: ResistanceBand): void {
-    this.busy = true;
-    this.busyMsg = 'Updating...';
+    this.busy.set(true);
+    this.busyMsg.set('Updating...');
 
     this._resistanceBandService
       .update(band)
       .pipe(
         finalize(() => {
-          this.busy = false;
-          this.busyMsg = undefined;
+          this.busy.set(false);
+          this.busyMsg.set(undefined);
         })
       )
       .subscribe({

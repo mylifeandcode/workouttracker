@@ -1,11 +1,11 @@
 @if (!editModeEnabled()) {
   <h3 class="headroom header">Exercise</h3>  
-} @else if (!loading) {
+} @else if (!loading()) {
   <h3 class="headroom header">Exercise {{ isNew ? 'Creation' : 'Edit' }}</h3>
 }
 
 <div class="container-fluid">
-  @if (loading) {
+  @if (loading()) {
     <div class="row">
       <div class="offset-md-5 col-md-1">
         <nz-spin nzSize="large"></nz-spin>
@@ -195,8 +195,8 @@
 
       @if (editModeEnabled()) {
         <div class="col-10">
-          <button type="submit" [disabled]="exerciseForm.invalid || saving" (click)="saveExercise()"
-            class="btn btn-save-exercise">Save</button>&nbsp;<span>{{infoMsg}}</span>
+          <button type="submit" [disabled]="exerciseForm.invalid || saving()" (click)="saveExercise()"
+            class="btn btn-save-exercise">Save</button>&nbsp;<span>{{infoMsg()}}</span>
             @if (exerciseForm.invalid) {
               <span class="error-text">Please enter all required information above to enable saving.</span>
             }
@@ -204,9 +204,9 @@
       }
     </div>
     <div class="row">
-      @if (errorMsg) {
+      @if (errorMsg()) {
         <div class="col-4 error-text">
-          {{errorMsg}}
+          {{errorMsg()}}
         </div>
       }
     </div>

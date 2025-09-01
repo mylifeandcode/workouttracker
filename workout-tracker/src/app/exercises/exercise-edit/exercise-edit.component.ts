@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormRecord, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExerciseService } from '../_services/exercise.service';
@@ -46,7 +46,8 @@ interface IExerciseEditForm {
   imports: [
     NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, NzSwitchModule,
     KeyValuePipe, InsertSpaceBeforeCapitalPipe
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExerciseEditComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);
@@ -61,10 +62,10 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   //PUBLIC FIELDS
   public exerciseForm: FormGroup<IExerciseEditForm>;
-  public loading: boolean = true;
+  public loading = signal<boolean>(true);
   public allTargetAreas: TargetArea[] = [];
   public resistanceTypes: Map<number, string> | undefined;
-  public infoMsg: string | null = null;
+  public infoMsg = signal<string | null>(null);
   public editModeEnabled = signal(false);
 
   //PUBLIC PROPERTIES
@@ -77,8 +78,8 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   }
 
   //PUBLIC FIELDS
-  public saving: boolean = false;
-  public errorMsg: string | null = null;
+  public saving = signal<boolean>(false);
+  public errorMsg = signal<string | null>(null);
 
   public resistanceTypeEnum: typeof ResistanceType = ResistanceType; //Needed for template to reference enum
 
@@ -107,52 +108,46 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     });
   }
 
-  /*
-  public editModeToggled(event: any): void { //TODO: Get or specify a concrete type for the event param
-    this.editModeEnabled = !event.checked;
-  }
-  */
-
   public saveExercise(): void {
     if (!this.exerciseForm.valid) return;
 
     //Called by Save button
-    this.saving = true;
-    this.infoMsg = "Saving...";
+    this.saving.set(true);
+    this.infoMsg.set("Saving...");
     this.updateExerciseForPersisting();
 
     //TODO: Refactor to use a pointer to the service method, as both signatures and return types are the same
     if (!this._exercisePublicId)
       this._exerciseSvc.add(this._exercise)
         .pipe(finalize(() => {
-          this.saving = false;
+          this.saving.set(false);
           this.exerciseForm.markAsPristine();
         }))
         .subscribe({
           next: (addedExercise: Exercise) => {
             this._exercise = addedExercise;
             this._exercisePublicId = this._exercise.publicId;
-            this.infoMsg = "Exercise created at " + new Date().toLocaleTimeString();
+            this.infoMsg.set("Exercise created at " + new Date().toLocaleTimeString());
             this._router.navigate([`exercises/edit/${this._exercise.publicId}`]);
           },
           error: (error: any) => {
-            this.errorMsg = error.message;
+            this.errorMsg.set(error.message);
           }
         });
     else
       this._exerciseSvc.update(this._exercise)
         .pipe(finalize(() => {
-          this.saving = false;
+          this.saving.set(false);
           this.exerciseForm.markAsPristine();
         }))
         .subscribe({
           next: (updatedExercise: Exercise) => {
             this._exercise = updatedExercise;
-            this.saving = false;
-            this.infoMsg = "Exercise updated at " + new Date().toLocaleTimeString();
+            this.saving.set(false);
+            this.infoMsg.set("Exercise updated at " + new Date().toLocaleTimeString());
           },
           error: (error: any) => {
-            this.errorMsg = error.message;
+            this.errorMsg.set(error.message);
           }
         });
   }
@@ -183,6 +178,17 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     //checkboxesFormGroup.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);
   }
 
+  private loadExercise(): void {
+    if (!this._exercisePublicId) return;
+    this.loading.set(true);
+
+    this._exerciseSvc.getById(this._exercisePublicId).subscribe((value: Exercise) => {
+      this._exercise = value;
+      this.updateFormWithExerciseValues();
+      this.loading.set(false);
+    }); //TODO: Handle errors
+  }
+
   private subscribeToRouteParamsToSetupFormOnExerciseIdChange(): void {
 
     //TODO: Re-evaluate. Do I really need to do this? I think a better solution might be to just look at the snapshot.
@@ -203,7 +209,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
       this._exercise = new Exercise();
       this._exercise.id = 0;
-      this.loading = false;
+      this.loading.set(false);
     }
     //}
 
@@ -241,17 +247,6 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       })
     });
 
-  }
-
-  private loadExercise(): void {
-    if (!this._exercisePublicId) return;
-    this.loading = true;
-
-    this._exerciseSvc.getById(this._exercisePublicId).subscribe((value: Exercise) => {
-      this._exercise = value;
-      this.updateFormWithExerciseValues();
-      this.loading = false;
-    }); //TODO: Handle errors
   }
 
   private updateExerciseForPersisting(): void {

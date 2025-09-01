@@ -15,7 +15,7 @@
         class="ms-2 mb-2"
         (ngModelChange)="targetAreasFilterChange($event)"
         >
-        @for (targetArea of targetAreas; track targetArea) {
+        @for (targetArea of targetAreas(); track targetArea) {
           <nz-option [nzLabel]="targetArea" [nzValue]="targetArea"></nz-option>
         }
       </nz-select>
@@ -24,10 +24,10 @@
   </div>
   <div class="row">
     <div class="col-12">
-      <nz-table #dt [nzData]="exercises"
+      <nz-table #dt [nzData]="exercises()"
         [nzFrontPagination]="false"
         [nzShowSizeChanger]="true"
-        [nzTotal]="totalRecords"
+        [nzTotal]="totalRecords()"
         [nzPageSize]="10"
         [nzLoading]="loading"
         (nzQueryParams)="getExercisesLazy($event)">
@@ -55,7 +55,7 @@
   @if (totalRecords != null) {
     <div class="row mt-2 mb-2">
       <div class="col-3">{{totalRecords}} total exercise(s)</div>
-      @if (totalRecords == 0) {
+      @if (totalRecords() == 0) {
         <div class="col-9" style="font-style: italic">
           No exercises have been defined. Please create one using the "Add New" button below.
         </div>

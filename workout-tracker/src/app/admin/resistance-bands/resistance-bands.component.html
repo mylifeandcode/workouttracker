@@ -1,10 +1,10 @@
-@if (busy) {
-  <span>{{busyMsg}}</span>
+@if (busy()) {
+  <span>{{busyMsg()}}</span>
 } @else {
   <h3 class="pt-2">Resistance Band Inventory</h3>
 }
 
-@if (!busy) {
+@if (!busy()) {
   <div class="container-fluid">
 
     <nz-table #dt [nzData]="resistanceBands" dataKey="id" editMode="row">

@@ -1,16 +1,17 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ExerciseService } from 'app/exercises/_services/exercise.service';
 import { ExerciseListBase } from '../exercise-list-base';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { RouterLink } from '@angular/router';
-import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
+import { NzTableModule } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'wt-exercise-list',
   templateUrl: './exercise-list.component.html',
   styleUrls: ['./exercise-list.component.scss'],
-  imports: [FormsModule, NzSelectModule, NzTableModule, RouterLink]
+  imports: [FormsModule, NzSelectModule, NzTableModule, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExerciseListComponent extends ExerciseListBase {
 
@@ -20,7 +21,6 @@ export class ExerciseListComponent extends ExerciseListBase {
   }
 
   public targetAreasFilterChange(selectedTargetAreas: string[]): void {
-    //console.log("targetAreasFilterChange: ", selectedTargetAreas);
     this.getExercises(0, null, selectedTargetAreas); //TODO: Add code to take name filter into account
   }
 }

@@ -87,6 +87,13 @@ describe('ResistanceBandsComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should initialize signals with default values', () => {
+    expect(component.busy()).toBe(false);
+    expect(component.busyMsg()).toBeUndefined();
+    expect(component.showAddDialog()).toBe(false);
+    expect(component.modalSubmitted()).toBe(false);
+  });
+
   it('should get resistance band data on init', () => {
     const resistanceBandService: ResistanceBandService = TestBed.inject(ResistanceBandService);
     expect(resistanceBandService.getAll).toHaveBeenCalledTimes(1);
@@ -165,26 +172,22 @@ describe('ResistanceBandsComponent', () => {
   });
 
   it('should open modal', () => {
-
     //ACT
     component.openAddModal();
 
     //ASSERT
     expect(component.newResistanceBand).not.toBeNull();
-    expect(component.modalSubmitted).toBeFalse();
-    expect(component.showAddDialog).toBeTrue();
-
+    expect(component.modalSubmitted()).toBeFalse();
+    expect(component.showAddDialog()).toBeTrue();
   });
 
   it('should hide modal', () => {
-
     //ACT
     component.hideModal();
 
     //ASSERT
-    expect(component.showAddDialog).toBeFalse();
-    expect(component.modalSubmitted).toBeFalse();
-
+    expect(component.showAddDialog()).toBeFalse();
+    expect(component.modalSubmitted()).toBeFalse();
   });
 
   it('should initialize row editing', () => {

@@ -6,7 +6,7 @@
   </div>
   @if (loginForm != null) {
     <form [formGroup]="loginForm">
-      <fieldset [disabled]="loggingIn">
+      <fieldset [disabled]="loggingIn()">
         <div class="row bump-it-down">
           <div class="offset-4 col-4">
             <label for="username">Username</label><br>      
@@ -41,14 +41,14 @@
     </form>
   }
   
-  @if (loggingIn) {
+  @if (loggingIn()) {
     <div class="row">
       <div class="offset-4 col-4 text-center">
         <nz-spin nzSize="large"></nz-spin>
       </div>
     </div>
   }
-  @if (showLoginFailed) {
+  @if (showLoginFailed()) {
     <div class="row">
       <div class="offset-4 col-4 text-center login-failed">
         Login failed. Please check your username and password and try again.

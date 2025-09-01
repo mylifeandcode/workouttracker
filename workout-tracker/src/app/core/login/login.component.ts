@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
@@ -14,7 +14,8 @@ interface ILoginForm {
     selector: 'wt-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, RouterLink, NzSpinModule]
+    imports: [FormsModule, ReactiveFormsModule, RouterLink, NzSpinModule],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
   private _formBuilder = inject(FormBuilder);
@@ -23,24 +24,24 @@ export class LoginComponent {
 
 
   public loginForm: FormGroup<ILoginForm>;
-  public loggingIn: boolean = false;
-  public showLoginFailed: boolean = false;
+  public loggingIn = signal<boolean>(false);
+  public showLoginFailed = signal<boolean>(false);
 
   constructor() { 
       this.loginForm = this.createForm();
   }
 
   public login(): void {
-    this.showLoginFailed = false;
-    this.loggingIn = true;
+    this.showLoginFailed.set(false);
+    this.loggingIn.set(true);
     this._authService
       .logIn(this.loginForm.controls.username.value, this.loginForm.controls.password.value)
-      .pipe(finalize(() => { this.loggingIn = false; }))
+      .pipe(finalize(() => { this.loggingIn.set(false); }))
       .subscribe((success: boolean) => {
         if(success)
           this._router.navigate(['home']);
         else
-          this.showLoginFailed = true;
+          this.showLoginFailed.set(true);
       });
   }
 

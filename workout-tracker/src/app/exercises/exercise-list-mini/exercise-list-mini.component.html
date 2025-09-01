@@ -1,10 +1,10 @@
 <nz-table #dt 
   [nzFrontPagination]="false"
   [nzShowSizeChanger]="true"
-  [nzTotal]="totalRecords"
+  [nzTotal]="totalRecords()"
   [nzPageSize]="10"
   [nzLoading]="loading"
-  [nzData]="exercises"
+  [nzData]="exercises()"
   (nzQueryParams)="getExercisesLazy($event)"
   >
   <thead>
@@ -26,7 +26,7 @@
           class="ms-2"
           (ngModelChange)="targetAreasFilterChange($event)"
           >
-          @for (targetArea of targetAreas; track targetArea) {
+          @for (targetArea of targetAreas(); track targetArea) {
             <nz-option [nzLabel]="targetArea" [nzValue]="targetArea"></nz-option>
           }
         </nz-select>

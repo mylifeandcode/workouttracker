@@ -61,8 +61,12 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should login a user', () => {
+  it('should initialize signals with default values', () => {
+    expect(component.loggingIn()).toBe(false);
+    expect(component.showLoginFailed()).toBe(false);
+  });
 
+  it('should login a user', () => {
     //ARRANGE
 
     //ACT
@@ -70,13 +74,11 @@ describe('LoginComponent', () => {
 
     //ASSERT
     expect(router.navigate).toHaveBeenCalledWith(['home']);
-    expect(component.showLoginFailed).toBeFalse();
-    expect(component.loggingIn).toBeFalse();
-
+    expect(component.showLoginFailed()).toBeFalse();
+    expect(component.loggingIn()).toBeFalse();
   });
 
   it('should show login failed message when login fails', () => {
-
     //ARRANGE
     //Overide default mock implementation
     const authService = TestBed.inject(AuthService);
@@ -87,9 +89,7 @@ describe('LoginComponent', () => {
 
     //ASSERT
     expect(router.navigate).not.toHaveBeenCalled();
-    expect(component.showLoginFailed).toBeTrue();
-    expect(component.loggingIn).toBeFalse();
-
+    expect(component.showLoginFailed()).toBeTrue();
+    expect(component.loggingIn()).toBeFalse();
   });
-
 });

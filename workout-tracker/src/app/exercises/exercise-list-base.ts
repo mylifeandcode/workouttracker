@@ -3,7 +3,7 @@ import { PaginatedResults } from '../core/_models/paginated-results';
 import { debounceTime, distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { Subject } from 'rxjs';
-import { effect, signal, WritableSignal } from '@angular/core';
+import { effect, signal } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
@@ -11,13 +11,13 @@ export abstract class ExerciseListBase {
 
   //TODO: Clean up this class (specifically the differing access modifiers below)
 
-  public totalRecords: number = 0;
-  public loading: boolean = true;
-  public pageSize: number = 10;
-  public exercises: ExerciseDTO[] = [];
-  public targetAreas: string[] = [];
-  protected _nameFilter = signal('');
-  protected _selectedTargetAreas: WritableSignal<string[]> = signal([]); 
+  public totalRecords = signal<number>(0);
+  public loading = signal<boolean>(true);
+  public pageSize = signal<number>(10);
+  public exercises = signal<ExerciseDTO[]>([]);
+  public targetAreas = signal<string[]>([]);
+  protected _nameFilter = signal<string>('');
+  protected _selectedTargetAreas = signal<string[]>([]); 
   
   //Signals don't have debounce natively, so we need this ugly bit of code :(
   private _nameFilterForDebounce$ = toObservable(this._nameFilter).pipe(debounceTime(500));
@@ -46,29 +46,32 @@ export abstract class ExerciseListBase {
     //TODO: Move to ngOnInit()
     this._exerciseSvc
       .getTargetAreas()
-      .pipe(map(targetAreas => targetAreas.map(targetArea => targetArea.name)))
+      .pipe(map(areas => areas.map(targetArea => targetArea.name)))
       .subscribe({
         next: (targetAreaNames: string[]) => {
           console.log("TARGET AREAS: ", targetAreaNames);
+          /*
           targetAreaNames.forEach(targetArea => {
             this.targetAreas.push(targetArea);
           });
+          */
+         this.targetAreas.set(targetAreaNames);
         },
         error: (error: any) => window.alert("An error occurred getting exercises: " + error)
       });
   }
 
   public getExercises(first: number, nameContains: string | null, targetAreaContains: string[] | null): void {
-    this.loading = true;
+    this.loading.set(true);
     this._exerciseSvc
-      .getAll(first, this.pageSize, nameContains, targetAreaContains)
+      .getAll(first, this.pageSize(), nameContains, targetAreaContains)
       .pipe(finalize(() => {
-        setTimeout(() => { this.loading = false; }, 500); //TODO: Revisit. Why am I using setTimeout() here?
+        setTimeout(() => { this.loading.set(false); }, 500); //TODO: Revisit. Why am I using setTimeout() here?
       }))
       .subscribe({
         next: (exercises: PaginatedResults<ExerciseDTO>) => {
-          this.exercises = exercises.results;
-          this.totalRecords = exercises.totalCount;
+          this.exercises.set(exercises.results);
+          this.totalRecords.set(exercises.totalCount);
           //console.log("TOTAL: ", exercises.totalCount);
         },
         error: (error: any) => window.alert("An error occurred getting exercises: " + error)

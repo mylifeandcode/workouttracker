@@ -126,6 +126,13 @@ describe('ExerciseEditComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should initialize signals with default values', () => {
+    expect(component.loading()).toBe(false); // Will be false after ngOnInit completes
+    expect(component.infoMsg()).toBeNull();
+    expect(component.saving()).toBe(false);
+    expect(component.errorMsg()).toBeNull();
+  });
+
   it('should create form', () => {
     expect(component.exerciseForm).toBeTruthy();
     expect(component.exerciseForm.controls.id).toBeTruthy();
@@ -248,8 +255,8 @@ describe('ExerciseEditComponent', () => {
 
     //ASSERT
     expect(exerciseService.add).toHaveBeenCalledWith(exercise);
-    expect(component.saving).toBeFalse();
-    expect(component.infoMsg).toContain("Exercise created at ");
+    expect(component.saving()).toBeFalse();
+    expect(component.infoMsg()).toContain("Exercise created at ");
 
   });
 
@@ -258,8 +265,8 @@ describe('ExerciseEditComponent', () => {
     //console.log("component.exerciseForm: ", component.exerciseForm);
     component.saveExercise();
     expect(exerciseService.update).toHaveBeenCalledWith(EXERCISE);
-    expect(component.saving).toBeFalse();
-    expect(component.infoMsg).toContain("Exercise updated at ");
+    expect(component.saving()).toBeFalse();
+    expect(component.infoMsg()).toContain("Exercise updated at ");
 
   });
 

@@ -72,7 +72,7 @@ describe('ExerciseListBaseComponent', () => {
     //This currently happens in the constructor, but should be moved to ngOnInit
     //TODO: Expand this test, make it better
     expect(exerciseService.getTargetAreas).toHaveBeenCalled();
-    expect(component.targetAreas.length).toBe(3);
+    expect(component.targetAreas().length).toBe(3);
   });
 
   it('should get exercises', () => {
@@ -83,7 +83,7 @@ describe('ExerciseListBaseComponent', () => {
     component.getExercises(10, "blah", ["Chest"]);
 
     //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(10, component.pageSize, "blah", ["Chest"]);
+    expect(exerciseService.getAll).toHaveBeenCalledWith(10, component.pageSize(), "blah", ["Chest"]);
 
   });
 });
