@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform, provideZonelessChangeDetection } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterModule, UrlSegment } from '@angular/router';
@@ -82,7 +82,7 @@ describe('ExerciseEditComponent', () => {
   let fixture: ComponentFixture<ExerciseEditComponent>;
   let exerciseService: ExerciseService;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
@@ -103,17 +103,17 @@ describe('ExerciseEditComponent', () => {
             }),
             snapshot: getActivatedRouteSnapshot()
           }
-  },
-  provideZonelessChangeDetection()
+        },
+        provideZonelessChangeDetection()
       ]
     })
-    .overrideComponent(
-      ExerciseEditComponent, {
-      remove: { imports: [ NzSpinModule, NzToolTipModule ] }, //NzSwitchModule needs to remain as we use ngModel with it
-      add: { schemas: [ CUSTOM_ELEMENTS_SCHEMA ] }
-    })
+      .overrideComponent(
+        ExerciseEditComponent, {
+        remove: { imports: [NzSpinModule, NzToolTipModule] }, //NzSwitchModule needs to remain as we use ngModel with it
+        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+      })
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ExerciseEditComponent);
@@ -135,12 +135,12 @@ describe('ExerciseEditComponent', () => {
     expect(component.exerciseForm.controls.description).toBeTruthy();
 
     //TODO: Determine why this check fails
-  // TODO: Determine why this check fails
-  // expect(component.exerciseForm.controls.description
-  //   .hasValidator(Validators.compose([
-  //     Validators.required,
-  //     Validators.maxLength(4000)
-  //   ]))).toBeTrue();
+    // TODO: Determine why this check fails
+    // expect(component.exerciseForm.controls.description
+    //   .hasValidator(Validators.compose([
+    //     Validators.required,
+    //     Validators.maxLength(4000)
+    //   ]))).toBeTrue();
 
     expect(component.exerciseForm.controls.resistanceType).toBeTruthy();
     expect(component.exerciseForm.controls.oneSided).toBeTruthy();

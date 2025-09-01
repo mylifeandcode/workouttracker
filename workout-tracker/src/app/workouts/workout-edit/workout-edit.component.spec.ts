@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterModule, UrlSegment } from '@angular/router';
@@ -17,16 +17,16 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 @Component({
-    selector: 'wt-exercise-list-mini',
-    template: '',
-    imports: [ReactiveFormsModule]
+  selector: 'wt-exercise-list-mini',
+  template: '',
+  imports: [ReactiveFormsModule]
 })
 class FakeExerciseListMiniComponent { }
 
 @Component({
-    selector: 'wt-blank',
-    template: '',
-    standalone: false
+  selector: 'wt-blank',
+  template: '',
+  standalone: false
 })
 class BlankComponent { }
 
@@ -67,8 +67,8 @@ describe('WorkoutEditComponent', () => {
 
   //Thanks to Mike Gallagher for the link: https://www.joshuacolvin.net/mocking-activated-route-data-in-angular/
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
         RouterModule.forRoot([
@@ -90,19 +90,19 @@ describe('WorkoutEditComponent', () => {
         {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
-  },
-  provideZonelessChangeDetection()
+        },
+        provideZonelessChangeDetection()
       ]
     })
-    .overrideComponent(
-      WorkoutEditComponent,
-      {
-        remove: { imports: [ExerciseListMiniComponent, NzSpinModule, NzModalModule, NzSwitchModule] },
-        add: { imports: [FakeExerciseListMiniComponent], schemas: [CUSTOM_ELEMENTS_SCHEMA] }
-      }
-    )
+      .overrideComponent(
+        WorkoutEditComponent,
+        {
+          remove: { imports: [ExerciseListMiniComponent, NzSpinModule, NzModalModule, NzSwitchModule] },
+          add: { imports: [FakeExerciseListMiniComponent], schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        }
+      )
       .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutEditComponent);
@@ -165,8 +165,8 @@ describe('WorkoutEditComponent', () => {
     component.ngOnInit();
 
     expect(component.id()).toBe('some-guid');
-  // The original ngOnInit() call would've called it with WORKOUT_PUBLIC_ID
-  expect(workoutService.getById).not.toHaveBeenCalledWith(EMPTY_GUID);
+    // The original ngOnInit() call would've called it with WORKOUT_PUBLIC_ID
+    expect(workoutService.getById).not.toHaveBeenCalledWith(EMPTY_GUID);
   });
 
   //TODO: Revisit

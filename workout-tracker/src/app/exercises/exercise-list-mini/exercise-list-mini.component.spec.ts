@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ExerciseListMiniComponent } from './exercise-list-mini.component';
 import { ExerciseService } from '../_services/exercise.service';
 import { PaginatedResults } from '../../core/_models/paginated-results';
@@ -7,6 +7,7 @@ import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { TargetArea } from 'app/workouts/_models/target-area';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 class ExerciseServiceMock {
   getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<ExerciseDTO>()));
@@ -28,7 +29,8 @@ describe('ExerciseListMiniComponent', () => {
         provideZonelessChangeDetection()
       ],
       imports: [
-        ExerciseListMiniComponent
+        ExerciseListMiniComponent,
+        NoopAnimationsModule
       ]
     })
       .overrideComponent(ExerciseListMiniComponent,

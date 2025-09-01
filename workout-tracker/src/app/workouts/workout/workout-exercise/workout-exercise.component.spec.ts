@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { WorkoutExerciseComponent } from './workout-exercise.component';
 import { ReactiveFormsModule, Validators, FormBuilder, FormControl, FormArray, FormGroup } from '@angular/forms';
@@ -10,8 +10,8 @@ import { IWorkoutFormExerciseSet } from '../_interfaces/i-workout-form-exercise-
 import { SafeHtml } from '@angular/platform-browser';
 
 @Pipe({
-    name: 'resistanceType',
-    standalone: true
+  name: 'resistanceType',
+  standalone: true
 })
 class ResistanceTypePipeMock implements PipeTransform {
   transform(value: ResistanceType, capitalizeEachWord: boolean = true): string {
@@ -20,8 +20,8 @@ class ResistanceTypePipeMock implements PipeTransform {
 }
 
 @Pipe({
-    name: 'duration',
-    standalone: true
+  name: 'duration',
+  standalone: true
 })
 class DurationPipeMock implements PipeTransform {
   transform(value: number, precise: boolean = false): number {
@@ -30,8 +30,8 @@ class DurationPipeMock implements PipeTransform {
 }
 
 @Pipe({
-    name: 'resistanceBandColor',
-    standalone: true
+  name: 'resistanceBandColor',
+  standalone: true
 })
 class ResistanceBandColorMock implements PipeTransform {
   transform(value: string | null): SafeHtml {
@@ -40,8 +40,8 @@ class ResistanceBandColorMock implements PipeTransform {
 }
 
 @Pipe({
-    name: 'exerciseSide',
-    standalone: true
+  name: 'exerciseSide',
+  standalone: true
 })
 class ExerciseSidePipeMock implements PipeTransform {
   transform(value: number | null): string {
@@ -50,8 +50,8 @@ class ExerciseSidePipeMock implements PipeTransform {
 }
 
 @Pipe({
-    name: 'resistanceAmount',
-    standalone: true
+  name: 'resistanceAmount',
+  standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
   transform(value: number | null): string {
@@ -64,20 +64,23 @@ describe('WorkoutExerciseComponent', () => {
   let fixture: ComponentFixture<WorkoutExerciseComponent>;
   let formBuilder: FormBuilder;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
-    imports: [ReactiveFormsModule, WorkoutExerciseComponent,
+      imports: [
+        WorkoutExerciseComponent,
+        ReactiveFormsModule,
         ResistanceTypePipeMock,
         DurationPipeMock,
         ResistanceBandColorMock,
         ExerciseSidePipeMock,
-        MockResistanceAmountPipe],
-    providers: [
+        MockResistanceAmountPipe
+      ],
+      providers: [
         provideZonelessChangeDetection()
-    ]
-})
-    .compileComponents();
-  }));
+      ]
+    })
+      .compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutExerciseComponent);
@@ -88,10 +91,10 @@ describe('WorkoutExerciseComponent', () => {
     formBuilder = new FormBuilder();
     fixture.componentRef.setInput('formGroup', formBuilder.group<IWorkoutFormExercise>({
       id: new FormControl<number>(10, { nonNullable: true }),
-      exerciseId: new FormControl<number>(25, { nonNullable: true }), 
+      exerciseId: new FormControl<number>(25, { nonNullable: true }),
       exerciseName: new FormControl<string>('Chest Press with Bands', { nonNullable: true }),
-      exerciseSets: getExerciseSetsFormArray(exerciseArray), 
-      setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }), 
+      exerciseSets: getExerciseSetsFormArray(exerciseArray),
+      setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }),
       resistanceType: new FormControl<number>(exerciseArray[0].resistanceType, { nonNullable: true })
     }));
     //setupExercisesFormGroup();
@@ -164,7 +167,7 @@ describe('WorkoutExerciseComponent', () => {
 
     //ASSERT
     const arrayCount = component.formGroup().controls.exerciseSets.controls.length;
-    for(let x = 1; x < arrayCount; x++) { //Start at index 1, not 0
+    for (let x = 1; x < arrayCount; x++) { //Start at index 1, not 0
       expect(component.formGroup().controls.exerciseSets.controls[x].controls.duration.value).toBe(changedDuration);
       expect(component.formGroup().controls.exerciseSets.controls[x].controls.resistance.value).toBe(changedResistance);
       expect(component.formGroup().controls.exerciseSets.controls[x].controls.resistanceMakeup.value).toBe(changedResistanceMakeup);
@@ -177,11 +180,11 @@ describe('WorkoutExerciseComponent', () => {
     const formArray = new FormArray<FormGroup<IWorkoutFormExerciseSet>>([]);
 
     //Each member of the array is a FormGroup
-    for(let i = 0; i < exercises.length; i++) {
+    for (let i = 0; i < exercises.length; i++) {
       const formGroup = formBuilder.group<IWorkoutFormExerciseSet>({
-        sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }), 
+        sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }),
         resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
-        targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }), 
+        targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }),
         actualReps: new FormControl<number>(
           exercises[i].actualRepCount ? exercises[i].actualRepCount : 0,
           { nonNullable: true, validators: Validators.required }
@@ -194,12 +197,12 @@ describe('WorkoutExerciseComponent', () => {
           exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null,
           { validators: Validators.required }
         ),
-        resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup), 
-        bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd), 
-        duration: new FormControl<number | null>(120), 
+        resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup),
+        bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd),
+        duration: new FormControl<number | null>(120),
         involvesReps: new FormControl<boolean>(exercises[i].involvesReps, { nonNullable: true }),
         side: new FormControl<number | null>(null),
-        usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true})
+        usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true })
       });
 
       formArray.push(formGroup);
@@ -211,7 +214,7 @@ describe('WorkoutExerciseComponent', () => {
   function getExercises(): ExecutedExerciseDTO[] {
     const exercises: ExecutedExerciseDTO[] = [];
 
-    for(let i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
       const exercise = new ExecutedExerciseDTO();
       exercise.actualRepCount = 0;
       exercise.bandsEndToEnd = false;
