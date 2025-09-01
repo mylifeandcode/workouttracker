@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { UserOverview } from 'app/core/_models/user-overview';
 import { UserService } from 'app/core/_services/user/user.service';
 import { finalize } from 'rxjs/operators';
@@ -11,7 +11,8 @@ import { StartWorkoutComponent } from './start-workout/start-workout.component';
     selector: 'wt-welcome',
     templateUrl: './welcome.component.html',
     styleUrls: ['./welcome.component.scss'],
-    imports: [UserOverviewComponent, QuickActionsComponent, StartWorkoutComponent, NzSpinModule]
+    imports: [UserOverviewComponent, QuickActionsComponent, StartWorkoutComponent, NzSpinModule],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WelcomeComponent implements OnInit {
   private _userService = inject(UserService);
