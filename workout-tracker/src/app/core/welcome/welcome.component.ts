@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { UserOverview } from 'app/core/_models/user-overview';
 import { UserService } from 'app/core/_services/user/user.service';
 import { finalize } from 'rxjs/operators';
@@ -17,8 +17,8 @@ export class WelcomeComponent implements OnInit {
   private _userService = inject(UserService);
 
 
-  public loading: boolean = true;
-  public userOverview: UserOverview | undefined;
+  public loading = signal<boolean>(true);
+  public userOverview = signal<UserOverview | undefined>(undefined);
 
   public ngOnInit(): void {
     this.getUserOverview();
@@ -26,9 +26,9 @@ export class WelcomeComponent implements OnInit {
 
   private getUserOverview(): void {
     this._userService.getOverview()
-      .pipe(finalize(() => { this.loading = false; }))
+      .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe((userOverview: UserOverview) => {
-        this.userOverview = userOverview;
+        this.userOverview.set(userOverview);
       });
   }
 

@@ -7,8 +7,8 @@
   </div>
   <div class="row">
     <div class="col-4"> <!--LEFT COLUMN-->
-      @defer(when !loading) {
-        <wt-user-overview [userOverview]="userOverview" />
+      @defer(when !loading()) {
+        <wt-user-overview [userOverview]="userOverview()" />
       } @placeholder {
         <div class="row widget">
           <div class="col-12">
