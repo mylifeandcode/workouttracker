@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { User } from 'app/core/_models/user';
@@ -18,7 +18,8 @@ interface INewUserForm {
   selector: 'wt-user-select-new',
   templateUrl: './user-select-new.component.html',
   styleUrls: ['./user-select-new.component.scss'],
-  imports: [FormsModule, ReactiveFormsModule, RouterLink]
+  imports: [FormsModule, ReactiveFormsModule, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserSelectNewComponent {
   private _formBuilder = inject(FormBuilder);
@@ -27,8 +28,8 @@ export class UserSelectNewComponent {
 
 
   public newUserForm: FormGroup<INewUserForm>;
-  public errorMsg: string | undefined = undefined;
-  public addingUser: boolean = false;
+  public errorMsg = signal<string | undefined>(undefined);
+  public addingUser = signal<boolean>(false);
 
   constructor() {
     this.newUserForm = this.createForm();
@@ -37,10 +38,10 @@ export class UserSelectNewComponent {
   public addUser(): void {
     const user = this.getUserForPersist();
 
-    this.addingUser = true;
+    this.addingUser.set(true);
     this._userService.addNew(user)
       .pipe(
-        finalize(() => { this.addingUser = false; })
+        finalize(() => { this.addingUser.set(false); })
       )
       .subscribe((addedUser: User) => {
         this._router.navigate(['/user-select']);

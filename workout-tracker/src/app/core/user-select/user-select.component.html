@@ -3,24 +3,24 @@
     <br />
     <div class="row mt-4">
       <div class="offset-md-4 col-md-4">
-        @if (!loggingIn) {
+        @if (!loggingIn()) {
           <h3 class="text-center mx-auto greeting-text">Who are you?</h3>
         } @else {
-          <h3 class="text-center mx-auto greeting-text">Welcome {{username}}...</h3> <!--TODO: Add spinner graphic-->
+          <h3 class="text-center mx-auto greeting-text">Welcome {{username()}}...</h3> <!--TODO: Add spinner graphic-->
         }
       </div>
     </div>
 
-      @if (errorMsg) {
+      @if (errorMsg()) {
         <div class="row mt-4">
           <div class="offset-2 col-8 text-center">
             <br />
-            <h4>Oops! An error occurred: {{errorMsg}}</h4>
+            <h4>Oops! An error occurred: {{errorMsg()}}</h4>
           </div>
         </div>
       }
   
-      @if (!loggingIn) {
+      @if (!loggingIn()) {
         <div class="row mt-4">
 
         <div class="offset-md-4 col-md-4 card text-center user-select">
@@ -33,7 +33,7 @@
           </div>
         </div>
     
-        @if (users?.length == 0 && errorMsg == null) {
+        @if (users?.length == 0 && errorMsg() == null) {
           <div class="offset-md-4 col-md-4 text-center p-1 greeting-text">
             <p>No users have been created yet. Create one with the button below.</p>
             <p>
@@ -42,7 +42,7 @@
           </div>
         }
     
-        @if (!errorMsg) {
+        @if (!errorMsg()) {
           <div class="offset-md-4 col-md-4 text-center mt-4">
             <button type="button" class="btn btn-info btn-fullWidth" routerLink='/new-user'>Add User</button>
           </div>
@@ -56,7 +56,7 @@
     <br />
     <div class="row">
       
-      @if (!errorMsg) {
+      @if (!errorMsg()) {
         <div class="col-12 text-center pt-4">
           <nz-spin nzTip="Loading users..." nzSize="large"></nz-spin>
         </div>

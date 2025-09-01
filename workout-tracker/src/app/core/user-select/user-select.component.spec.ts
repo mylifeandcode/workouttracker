@@ -82,7 +82,7 @@ describe('UserSelectComponent', () => {
 
     //ASSERT
     expect(authService.logIn).toHaveBeenCalledOnceWith(userName, '');
-    expect(component.username).toBe(userName);
+    expect(component.username()).toBe(userName);
     expect(router.navigate).toHaveBeenCalledOnceWith(['home']);
 
   });

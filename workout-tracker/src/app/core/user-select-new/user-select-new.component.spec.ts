@@ -59,6 +59,11 @@ describe('UserSelectNewComponent', () => {
     expect(component.newUserForm.controls.name).not.toBeNull();
   });
 
+  it('should initialize signals with default values', () => {
+    expect(component.errorMsg()).toBeUndefined();
+    expect(component.addingUser()).toBe(false);
+  });
+
   it('should add a user', () => {
     //ARRANGE
     const userService = TestBed.inject(UserService);
@@ -82,4 +87,5 @@ describe('UserSelectNewComponent', () => {
     expect(userService.addNew).toHaveBeenCalledWith(expectedUser);
     expect(router.navigate).toHaveBeenCalledWith(['/user-select']);
   });
+
 });
