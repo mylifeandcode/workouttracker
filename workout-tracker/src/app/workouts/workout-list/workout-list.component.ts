@@ -45,6 +45,7 @@ export class WorkoutListComponent {
     console.log("Table parameters have changed: ", params);
     const { pageSize, pageIndex, sort, filter } = params;
     this.pageSize.set(pageSize);
+    this.pageIndex.set(pageIndex); // Add this line - you're not updating pageIndex from the table
     //const currentSort = sort.find(item => item.value !== null);
     //const sortField = (currentSort && currentSort.key) || null;
     //const sortOrder = (currentSort && currentSort.value) || null;

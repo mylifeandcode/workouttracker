@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
@@ -38,7 +38,8 @@ interface IWorkoutEditForm {
   imports: [
     NzSpinModule, FormsModule, ReactiveFormsModule, NgClass,
     SelectOnFocusDirective, NzSwitchModule, NzModalModule, ExerciseListMiniComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutEditComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);
@@ -56,23 +57,22 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   public id = input<string | undefined>(undefined);
 
-  //Public fields
-  //public workoutId: string | undefined = undefined; //Public GUID Workout ID
+  //PUBLIC FIELDS
   public workoutForm: FormGroup<IWorkoutEditForm>;
-  public loading: boolean = true;
-  public infoMsg: string | null = null;
-  public showExerciseSelectModal = signal(false);
-  //public readOnlyMode: boolean = false;
-  public fromViewRoute: boolean = false;
-  public errorMsg: string | null = null;
-  public saving: boolean = false;
+  public loading = signal<boolean>(true);
+  public infoMsg = signal<string | null>(null);
+  public showExerciseSelectModal = signal<boolean>(false);
+
+  public fromViewRoute = signal<boolean>(false);
+  public errorMsg = signal<string | null>(null);
+  public saving = signal<boolean>(false);
 
   protected editEnabled = signal(false);
 
-  //Private fields
+  //PRIVATE FIELDS
   private _workout: Workout = new Workout();
 
-  //Properties
+  //PROPERTIES
   get exercisesArray(): FormArray<FormGroup<IExerciseInWorkout>> {
     return this.workoutForm.controls.exercises;
   }
@@ -83,17 +83,14 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   public ngOnInit(): void {
-    const readOnlyMode = this.fromViewRoute = this._route.snapshot.url.join('').indexOf('view') > -1;
-    if (!readOnlyMode) this.editEnabled.set(true);
-    //this.workoutId = this.id();
+    this.fromViewRoute.set(this._route.snapshot.url.join('').indexOf('view') > -1);
+
+    if (!this.fromViewRoute()) {
+      this.editEnabled.set(true);
+    }
+      
     this.setupForm();
   }
-
-  /*
-  public editModeToggled(event: any): void { //TODO: Get or specify a concrete type for the event param
-    this.readOnlyMode = !event.checked;
-  }
-  */
 
   public openModal(): void {
     this.showExerciseSelectModal.set(true);
@@ -137,8 +134,8 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     if (!this.workoutForm.invalid) {
       this.updateWorkoutFromFormValues();
 
-      this.saving = true;
-      this.infoMsg = "Saving...";
+      this.saving.set(true);
+      this.infoMsg.set("Saving...");
 
       if (!this._workout.publicId)
         this.addWorkout();
@@ -156,7 +153,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     }
     else {
       this._workout = new Workout();
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
@@ -176,9 +173,9 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     const workoutId = this.id();
     if (!workoutId) return;
 
-    this.loading = true;
+    this.loading.set(true);
     this._workoutService.getById(workoutId)
-      .pipe(finalize(() => { this.loading = false; }))
+      .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
         next: (workout: Workout) => {
           this.updateFormWithWorkoutValues(workout);
@@ -219,7 +216,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     this._workout.publicId = EMPTY_GUID;
     this._workoutService.add(this._workout)
       .pipe(finalize(() => {
-        this.saving = false;
+        this.saving.set(false);
         this.workoutForm.markAsPristine();
       }))
       .subscribe({
@@ -232,7 +229,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
         },
         error: (error: any) => {
           this.errorMsg = error.message;
-          this.infoMsg = null;
+          this.infoMsg.set(null);
         }
       });
   }
@@ -241,18 +238,18 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     //console.log("UPDATING WORKOUT: ", this._workout);
     this._workoutService.update(this._workout)
       .pipe(finalize(() => {
-        this.saving = false;
+        this.saving.set(false);
         this.workoutForm.markAsPristine();
       }))
       .subscribe({
         next: (updatedWorkout: Workout) => {
-          this.saving = false;
-          this.infoMsg = "Workout updated at " + new Date().toLocaleTimeString();
+          this.saving.set(false);
+          this.infoMsg.set("Workout updated at " + new Date().toLocaleTimeString());
         },
         error: (error: any) => {
           //console.log("ERROR: ", error);
-          this.errorMsg = error.message;
-          this.infoMsg = null;
+          this.errorMsg.set(error.message);
+          this.infoMsg.set(null);
         }
       });
 

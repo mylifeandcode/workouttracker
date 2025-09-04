@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
@@ -21,22 +21,23 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     imports: [
       RouterLink, DatePipe, FormsModule,
       NzTableModule, NzDropDownModule, NzToolTipModule, NzIconModule, NzModalModule 
-    ]
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutHistoryComponent implements OnInit {
   private _executedWorkoutService = inject(ExecutedWorkoutService);
 
-  public totalRecords: number = 0;
-  public loading: boolean = false;
-  public pageSize: number = 10;
-  public executedWorkouts: ExecutedWorkoutSummaryDTO[] = [];
-  public showNotesModal: boolean = false;
-  public notes: string = '';
-  public workoutNameFilter: string = '';
-  public workoutNameFilterVisible: boolean = false;
+  public totalRecords = signal(0);
+  public loading = signal(false);
+  public pageSize = signal(10);
+  public executedWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
+  public showNotesModal = signal(false);
+  public notes = signal('');
+  public workoutNameFilter = signal('');
+  public workoutNameFilterVisible = signal(false);
 
   public ngOnInit(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.getExecutedWorkouts(0, null);
   }
 
@@ -46,36 +47,36 @@ export class WorkoutHistoryComponent implements OnInit {
     const sortField = (currentSort && currentSort.key) || null;
     const sortOrder = (currentSort && currentSort.value) || null;
     //this.loadDataFromServer(pageIndex, pageSize, sortField, sortOrder, filter);
-    this.getExecutedWorkouts((pageIndex - 1) * pageSize, this.workoutNameFilter);
+    this.getExecutedWorkouts((pageIndex - 1) * pageSize, this.workoutNameFilter());
   }
 
   public openNotesModal(notes: string): void {
-    this.notes = notes;
-    this.showNotesModal = true;
+    this.notes.set(notes);
+    this.showNotesModal.set(true);
   }
 
   public closeNotesModal(): void {
-    this.showNotesModal = false;
+    this.showNotesModal.set(false);
   }
 
   public reset(): void {
-    this.workoutNameFilter = '';
+    this.workoutNameFilter.set('');
     this.search();
   }
 
   public search(): void {
-    this.workoutNameFilterVisible = false;
-    this.getExecutedWorkouts(0, this.workoutNameFilter);
+    this.workoutNameFilterVisible.set(false);
+    this.getExecutedWorkouts(0, this.workoutNameFilter());
   }
 
   private getExecutedWorkouts(first: number, nameContains: string | null): void {
 
-    this._executedWorkoutService.getFilteredSubset(first, this.pageSize, nameContains)
-      .pipe(finalize(() => { this.loading = false; }))
+    this._executedWorkoutService.getFilteredSubset(first, this.pageSize(), nameContains)
+      .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
         next: (results: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-          this.executedWorkouts = results.results;
-          this.totalRecords = results.totalCount;
+          this.executedWorkouts.set(results.results);
+          this.totalRecords.set(results.totalCount);
         },
         error: (error: any) => window.alert("An error occurred getting executed workouts: " + error)
       });

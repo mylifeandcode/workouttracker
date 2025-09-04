@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../_models/workout-plan';
@@ -26,7 +26,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
   imports: [
     NzSpinModule, FormsModule, ReactiveFormsModule, NzModalModule,
     ExercisePlanComponent, ResistanceBandSelectComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _workoutService = inject(WorkoutService);
@@ -37,16 +38,17 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
 
 
   //PUBLIC FIELDS
-  public workoutPlan: WorkoutPlan | undefined;
+  public workoutPlan = signal<WorkoutPlan | undefined>(undefined);
   public workoutPlanForm: FormGroup<IWorkoutPlanForm>;
-  public showResistanceBandsSelectModal: boolean = false;
-  public settingResistanceForBilateralExercise: boolean = false;
-  public allResistanceBands: ResistanceBandIndividual[] = [];
   public formGroupForResistanceSelection: FormGroup | undefined;
-  public errorInfo: string | undefined;
-  public isProcessing: boolean = false;
-  public planningForLater: boolean = false;
-  public exerciseBandAllocation: IBandAllocation = { selectedBandsDelimited: '', doubleMaxResistanceAmounts: false };
+
+  public showResistanceBandsSelectModal = signal(false);
+  public settingResistanceForBilateralExercise = signal(false);
+  public allResistanceBands = signal<ResistanceBandIndividual[]>([]);
+  public errorInfo = signal<string | undefined>(undefined);
+  public isProcessing = signal(false);
+  public planningForLater = signal(false);
+  public exerciseBandAllocation = signal<IBandAllocation>({ selectedBandsDelimited: '', doubleMaxResistanceAmounts: false });
   //END PUBLIC FIELDS
 
   //PUBLIC PROPERTIES
@@ -90,19 +92,18 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   //PUBLIC METHODS
   public ngOnInit(): void {
     this.getResistanceBandInventory();
-    //this.createForm();
     this.subscribeToRoute();
-    this.planningForLater = this._router.url.includes("for-later");
+    this.planningForLater.set(this._router.url.includes("for-later"));
   }
 
   public startWorkout(): void {
     if (!this.workoutPlanForm) return;
 
-    if (this.workoutPlan) {
+    if (this.workoutPlan()) {
       this.setupDataForPlanSubmission();
-      this._workoutService.submitPlan(this.workoutPlan)
+      this._workoutService.submitPlan(this.workoutPlan()!)
         .pipe(finalize(() => {
-          this.isProcessing = false;
+          this.isProcessing.set(false);
           this.workoutPlanForm.markAsPristine();
         }))
         .subscribe((executedWorkoutPublicId: string) => {
@@ -114,11 +115,11 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   public submitPlanForLater(): void {
     if (!this.workoutPlanForm) return;
 
-    if (this.workoutPlan) {
+    if (this.workoutPlan()) {
       this.setupDataForPlanSubmission();
-      this._workoutService.submitPlanForLater(this.workoutPlan)
+      this._workoutService.submitPlanForLater(this.workoutPlan()!)
         .pipe(finalize(() => {
-          this.isProcessing = false;
+          this.isProcessing.set(false);
           this.workoutPlanForm.markAsPristine();
         }))
         .subscribe((executedWorkoutPublicId: string) => {
@@ -128,11 +129,11 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   public submitPlanForPast(): void {
-    if (this.workoutPlan && this.workoutPlanForm && this._pastWorkoutStartDateTime && this._pastWorkoutEndDateTime) {
+    if (this.workoutPlan() && this.workoutPlanForm && this._pastWorkoutStartDateTime && this._pastWorkoutEndDateTime) {
       this.setupDataForPlanSubmission();
-      this._workoutService.submitPlanForPast(this.workoutPlan, this._pastWorkoutStartDateTime, this._pastWorkoutEndDateTime)
+      this._workoutService.submitPlanForPast(this.workoutPlan()!, this._pastWorkoutStartDateTime, this._pastWorkoutEndDateTime)
         .pipe(finalize(() => {
-          this.isProcessing = false;
+          this.isProcessing.set(false);
           this.workoutPlanForm.markAsPristine();
         }))
         .subscribe((executedWorkoutPublicId: string) => {
@@ -142,25 +143,15 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup<IExercisePlanFormGroup>): void {
-    //console.log('this.bandSelect', this.bandSelect);
-    //if (!this.bandSelect) return;
-
     console.log('form group: ', exerciseFormGroup);
 
-    this.settingResistanceForBilateralExercise = exerciseFormGroup.controls.usesBilateralResistance.value;
-    this.showResistanceBandsSelectModal = true;
+    this.settingResistanceForBilateralExercise.set(exerciseFormGroup.controls.usesBilateralResistance.value);
+    this.showResistanceBandsSelectModal.set(true);
     this.formGroupForResistanceSelection = exerciseFormGroup;
-    this.exerciseBandAllocation = 
-      { 
-        selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value ?? '',
-        doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value
-      };
-
-    /*
-    this.bandSelect?.setBandAllocation(
-      exerciseFormGroup.controls.resistanceMakeup.value,
-      !exerciseFormGroup.controls.bandsEndToEnd.value);
-    */
+    this.exerciseBandAllocation.set({ 
+      selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value ?? '',
+      doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value
+    });
   }
 
   public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {
@@ -170,11 +161,11 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
       resistanceMakeup: selectedBands.makeup,
       resistanceAmount: selectedBands.maxResistanceAmount
     });
-    this.showResistanceBandsSelectModal = false;
+    this.showResistanceBandsSelectModal.set(false);
   }
 
   public resistanceBandsModalCancelled(): void {
-    this.showResistanceBandsSelectModal = false;
+    this.showResistanceBandsSelectModal.set(false);
   }
 
   //END PUBLIC METHODS
@@ -182,7 +173,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   //PRIVATE METHODS
   private subscribeToRoute(): void { //TODO: Refactor. Use snapshot instead.
     this._activatedRoute.params.subscribe((params: Params) => {
-      this.workoutPlan = undefined;
+      this.workoutPlan.set(undefined);
       const workoutId = params["id"];
 
       if (params["start"])
@@ -195,9 +186,8 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
       this._workoutService.getNewPlan(workoutId)
         .pipe(finalize(() => { this._apiCallsInProgress--; }))
         .subscribe((result: WorkoutPlan) => {
-          this.workoutPlan = result;
+          this.workoutPlan.set(result);
           this.workoutPlanForm.patchValue({
-            //workoutId: workoutId,
             workoutPublicId: result.workoutId,
             workoutName: result.workoutName,
             hasBeenExecutedBefore: result.hasBeenExecutedBefore
@@ -209,7 +199,6 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
 
   private createForm(): FormGroup<IWorkoutPlanForm> {
     return this._formBuilder.group<IWorkoutPlanForm>({
-      //workoutId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
       workoutPublicId: new FormControl<string>(EMPTY_GUID, { nonNullable: true, validators: Validators.required }),
       workoutName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       hasBeenExecutedBefore: new FormControl<boolean>(false, { nonNullable: true }),
@@ -256,12 +245,11 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   private updateWorkoutPlanFromForm(): void {
-    if (this.workoutPlan && this.exercisesArray) {
+    if (this.workoutPlan() && this.exercisesArray) {
       this.exercisesArray.controls.forEach((exerciseFormGroup: FormGroup<IExercisePlanFormGroup>, index: number) => {
 
         //TODO: Revisit. Maybe can be made simpler now that we have Typed Forms. :)
-
-        const exercisePlan = this.workoutPlan?.exercises[index];
+        const exercisePlan = this.workoutPlan()?.exercises[index];
         if (exercisePlan) {
           exercisePlan.targetRepCount = exerciseFormGroup.controls.targetRepCount.value;
           exercisePlan.resistanceAmount = exerciseFormGroup.controls.resistanceAmount.value;
@@ -277,7 +265,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe({
         next: (bands: ResistanceBandIndividual[]) => {
-          this.allResistanceBands = bands;
+          this.allResistanceBands.set(bands);
         },
         error: (error: any) => {
           this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
@@ -287,18 +275,16 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
 
   private setErrorInfo(error: any, defaultMessage: string): void {
     if (error.message)
-      this.errorInfo = error.message;
+      this.errorInfo.set(error.message);
     else
-      this.errorInfo = defaultMessage;
+      this.errorInfo.set(defaultMessage);
   }
 
   private setupDataForPlanSubmission(): void {
-    if (this.workoutPlan) {
+    if (this.workoutPlan()) {
       this.updateWorkoutPlanFromForm();
-      this.workoutPlan.submittedDateTime = new Date();
-      //this.workoutPlan.pastWorkoutStartDateTime = this._pastWorkoutStartDateTime;
-      //this.workoutPlan.pastWorkoutEndDateTime = this._pastWorkoutEndDateTime;
-      this.isProcessing = true;
+      this.workoutPlan()!.submittedDateTime = new Date();
+      this.isProcessing.set(true);
     }
   }
 

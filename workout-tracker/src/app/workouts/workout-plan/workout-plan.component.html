@@ -6,7 +6,7 @@
   </div>
 }
 
-@if (workoutPlan) {
+@if (workoutPlan()) {
   @if (isForPastWorkout) {
     <h3 class="headroom">What Was Your Plan For This Workout?</h3>
   } @else {
@@ -16,7 +16,7 @@
   <div class="container-fluid form-group">
     <div class="row"></div>
     <form [formGroup]="workoutPlanForm" novalidate>
-      <fieldset [disabled]="isProcessing">
+      <fieldset [disabled]="isProcessing()">
         <div class="row">
           <div class="col-12">
             <input type="hidden" formControlName="workoutPublicId" />
@@ -24,7 +24,7 @@
           </div>
         </div>
 
-        @if (!workoutPlan.hasBeenExecutedBefore) {
+        @if (!workoutPlan()!.hasBeenExecutedBefore) {
           <div class="row">
             <div class="col-12">
               <h4 class="no-last-time">This workout hasn't been done before, so no "Last Time" information is shown.</h4>
@@ -34,26 +34,26 @@
 
         @for (exercise of exercisesArray.controls; track $index) {
           <wt-exercise-plan [formGroup]="exercise"
-            [workoutHasBeenExecutedBefore]="workoutPlan.hasBeenExecutedBefore"
+            [workoutHasBeenExecutedBefore]="workoutPlan()!.hasBeenExecutedBefore"
             (resistanceBandsModalRequested)="resistanceBandsModalEnabled($event)">
           </wt-exercise-plan>
         }
 
         <div class="row submit-row">
           <div class="col-12 bottom-padded">
-            @if (!planningForLater && !isForPastWorkout) {
+            @if (!planningForLater() && !isForPastWorkout) {
               <button type="submit" class="btn btn-primary"
-                (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing">Start Workout</button>
-            } @else if (planningForLater) {
+                (click)="startWorkout()" [disabled]="workoutPlanForm.invalid || isProcessing()">Start Workout</button>
+            } @else if (planningForLater()) {
               <button type="submit" class="btn btn-primary" (click)="submitPlanForLater()"
-                [disabled]="workoutPlanForm.invalid || isProcessing">Save Workout Plan</button>
+                [disabled]="workoutPlanForm.invalid || isProcessing()">Save Workout Plan</button>
             } @else if (isForPastWorkout) {
               <button type="submit" class="btn btn-primary" (click)="submitPlanForPast()"
-              [disabled]="workoutPlanForm.invalid || isProcessing">Log Past Workout</button>
+              [disabled]="workoutPlanForm.invalid || isProcessing()">Log Past Workout</button>
             }
 
             &nbsp; <!--Get rid of this, use a margin or padding instead-->
-            @if (isProcessing) {
+            @if (isProcessing()) {
               <span>Processing...</span>
             }
             
@@ -73,9 +73,9 @@
       [nzFooter]="null">
       <div *nzModalContent>
         <wt-resistance-band-select 
-          [resistanceBandInventory]="allResistanceBands"
-          [exerciseUsesBilateralResistance]="settingResistanceForBilateralExercise"
-          [bandAllocation]="exerciseBandAllocation"
+          [resistanceBandInventory]="allResistanceBands()"
+          [exerciseUsesBilateralResistance]="settingResistanceForBilateralExercise()"
+          [bandAllocation]="exerciseBandAllocation()"
           (okClicked)="resistanceBandsModalAccepted($event)" 
           (cancelClicked)="resistanceBandsModalCancelled()">
         </wt-resistance-band-select>

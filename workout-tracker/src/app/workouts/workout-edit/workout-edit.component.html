@@ -5,7 +5,7 @@
 }
 
 <div class="container-fluid form-group">
-  @if (loading) {
+  @if (loading()) {
     <div class="row">
       <div class="offset-5 col-1">
         <nz-spin nzSize="large" />
@@ -110,15 +110,15 @@
           }
         </div>
 
-        @if (errorMsg) {
+        @if (errorMsg()) {
           <div class="offset-2 col-4 error-text">
-            {{errorMsg}}
+            {{errorMsg()}}
           </div>
         }
       </fieldset>
     </form>
     <div class="row">
-        @if (fromViewRoute) {
+        @if (fromViewRoute()) {
           <div class="col-2">
             <span class="mild-right-margin align-middle">Enable Editing</span>
             <nz-switch id="editModeToggle" [(ngModel)]="editEnabled" class="align-middle" />

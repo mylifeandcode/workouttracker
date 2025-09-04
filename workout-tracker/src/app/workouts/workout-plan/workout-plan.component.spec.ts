@@ -111,10 +111,10 @@ describe('WorkoutPlanComponent', () => {
 
     //ASSERT
     let workoutPlan: WorkoutPlan = new WorkoutPlan(); //To keep the compiler happy
-    if (component.workoutPlan == null)
+    if (component.workoutPlan() == null)
       fail("component.workoutPlan is null.");
     else
-      workoutPlan = component.workoutPlan;
+      workoutPlan = component.workoutPlan()!;
 
     expect(workoutService.submitPlan).toHaveBeenCalledWith(workoutPlan);
     expect(router.navigate).toHaveBeenCalledWith(['workouts/start/5']);
@@ -133,10 +133,10 @@ describe('WorkoutPlanComponent', () => {
 
     //ASSERT
     let workoutPlan: WorkoutPlan = new WorkoutPlan(); //To keep the compiler happy
-    if (component.workoutPlan == null)
+    if (component.workoutPlan() == null)
       fail("component.workoutPlan is null.");
     else
-      workoutPlan = component.workoutPlan;
+      workoutPlan = component.workoutPlan()!;
 
     expect(workoutService.submitPlanForLater).toHaveBeenCalledWith(workoutPlan);
     expect(router.navigate).toHaveBeenCalledWith(['workouts/select-planned']);
@@ -189,17 +189,13 @@ describe('WorkoutPlanComponent', () => {
     component.submitPlanForPast();
 
     //ASSERT
-  // Compiler was being goofy about this, saying the value was being used
-  // before being assigned, even though that was not the case!
-  let workoutPlan: WorkoutPlan = new WorkoutPlan();
-    if (component.workoutPlan == null)
+    let workoutPlan: WorkoutPlan = new WorkoutPlan();
+    if (component.workoutPlan() == null)
       fail("component.workoutPlan is null.");
     else
-      workoutPlan = component.workoutPlan;
+      workoutPlan = component.workoutPlan()!;
 
-    //expect(workoutPlan.pastWorkoutStartDateTime).toEqual(startDate);
-    //expect(workoutPlan.pastWorkoutEndDateTime).toEqual(endDate);
-    expect(component.workoutPlan).not.toBeNull();
+    expect(component.workoutPlan()).not.toBeNull();
     expect(workoutService.submitPlanForPast).toHaveBeenCalledWith(workoutPlan, startDate, endDate);
     expect(router.navigate).toHaveBeenCalledWith(["workouts/start/12"], { queryParams: { pastWorkout: true } });
 

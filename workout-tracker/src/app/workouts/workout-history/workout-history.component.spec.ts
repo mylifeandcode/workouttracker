@@ -52,4 +52,29 @@ describe('WorkoutHistoryComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should initialize with loading state', () => {
+    expect(component.loading()).toBeFalse(); // Should be false after ngOnInit completes
+    expect(component.totalRecords()).toBe(0);
+    expect(component.executedWorkouts()).toEqual([]);
+  });
+
+  it('should open and close notes modal', () => {
+    const testNotes = 'Test workout notes';
+    
+    component.openNotesModal(testNotes);
+    expect(component.showNotesModal()).toBeTrue();
+    expect(component.notes()).toBe(testNotes);
+    
+    component.closeNotesModal();
+    expect(component.showNotesModal()).toBeFalse();
+  });
+
+  it('should reset filter', () => {
+    component.workoutNameFilter.set('test filter');
+    
+    component.reset();
+    
+    expect(component.workoutNameFilter()).toBe('');
+  });
 });

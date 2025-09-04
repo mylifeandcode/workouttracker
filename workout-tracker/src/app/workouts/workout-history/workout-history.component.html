@@ -3,18 +3,18 @@
   <div class="row">
     <div class="col-12">
       <nz-table #dt
-        [nzData]="executedWorkouts" 
+        [nzData]="executedWorkouts()" 
         [nzFrontPagination]="false"
         [nzShowSizeChanger]="true"
-        [nzTotal]="totalRecords"
+        [nzTotal]="totalRecords()"
         [nzPageSize]="10"
-        [nzLoading]="loading"
+        [nzLoading]="loading()"
         (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
           <tr>
             <th nzCustomFilter>
               Workout Name
-              <nz-filter-trigger [(nzVisible)]="workoutNameFilterVisible" [nzActive]="workoutNameFilter.length > 0" [nzDropdownMenu]="menu">
+              <nz-filter-trigger [(nzVisible)]="workoutNameFilterVisible" [nzActive]="workoutNameFilter().length > 0" [nzDropdownMenu]="menu">
                 <nz-icon nzType="search" />
               </nz-filter-trigger>              
             </th>
@@ -42,10 +42,10 @@
       </nz-table>
     </div>
   </div>
-  @if (totalRecords != null) {
+  @if (totalRecords() != null) {
     <div class="row">
-      @if (totalRecords > 0) {
-        <div class="col-12">{{totalRecords}} total workouts</div>
+      @if (totalRecords() > 0) {
+        <div class="col-12">{{totalRecords()}} total workouts</div>
       } @else {
         <div class="col-12" style="font-style: italic">No workouts have been executed yet.</div>
       }
@@ -53,7 +53,7 @@
   }
   <div class="row">
     <div class="col-12 bottom-padded">
-      <button routerLink="/workouts/select" [disabled]="loading" class="btn btn-start-workout me-2"><i
+      <button routerLink="/workouts/select" [disabled]="loading()" class="btn btn-start-workout me-2"><i
           class="fa fa-plus"></i> Start a Workout</button>
       <button routerLink="/workouts/log-past-start" class="btn btn-log-past-workout"><i class="fa fa-pencil"></i> Log a
         Past Workout</button>
@@ -65,7 +65,7 @@
   (nzOnCancel)="closeNotesModal()" [nzFooter]="null"
   styleClass="p-fluid">
   <div *nzModalContent class="modal-content">
-    {{notes}}
+    {{notes()}}
   </div>
   <div *nzModalFooter>
     <button (click)="closeNotesModal()"></button>
