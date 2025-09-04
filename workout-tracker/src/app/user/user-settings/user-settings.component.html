@@ -30,7 +30,7 @@
           }
         </div>
         <div class="col-4">
-          <button class="btn btn-save-settings" [disabled]="userSettingsForm.pristine || userSettingsForm.invalid" (click)="saveSettings()">Save Settings</button>
+          <button class="btn btn-save-settings" [disabled]="userSettingsForm.pristine || userSettingsForm.invalid || saving()" (click)="saveSettings()">Save Settings</button>
         </div>
       </div>
     </form>

@@ -237,7 +237,7 @@ describe('WorkoutComponent', () => {
 
     //ASSERT
     expect(resistanceBandService.getAllIndividualBands).toHaveBeenCalledTimes(1);
-    expect(component.allResistanceBands).toEqual(expectedResults);
+    expect(component.allResistanceBands()).toEqual(expectedResults);
   });
 
   //TODO: Fix
@@ -317,9 +317,9 @@ describe('WorkoutComponent', () => {
     component.resistanceBandsModalEnabled(exerciseFormGroup);
 
     //ASSERT
-    expect(component.showResistanceBandsSelectModal).toBeTrue();
+    expect(component.showResistanceBandsSelectModal()).toBeTrue();
     expect(component.formGroupForResistanceSelection).toBe(exerciseFormGroup);
-    expect(component.exerciseBandAllocation).toEqual(
+    expect(component.exerciseBandAllocation()).toEqual(
       {
         selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value,
         doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
@@ -342,7 +342,7 @@ describe('WorkoutComponent', () => {
     component.resistanceBandsModalAccepted(selection);
 
     //ASSERT
-    expect(component.showResistanceBandsSelectModal).toBeFalse();
+    expect(component.showResistanceBandsSelectModal()).toBeFalse();
     expect(component.formGroupForResistanceSelection?.controls.resistanceMakeup.value)
       .toEqual(selection.makeup);
     expect(component.formGroupForResistanceSelection?.controls.resistance.value)
@@ -359,7 +359,7 @@ describe('WorkoutComponent', () => {
     component.resistanceBandsModalCancelled();
 
     //ASSERT
-    expect(component.showResistanceBandsSelectModal).toBeFalse();
+    expect(component.showResistanceBandsSelectModal()).toBeFalse();
     expect(component.formGroupForResistanceSelection?.controls.resistanceMakeup.value)
       .toBe(exerciseFormGroup.controls.resistanceMakeup.value);
     expect(component.formGroupForResistanceSelection?.controls.resistance.value)
@@ -376,7 +376,7 @@ describe('WorkoutComponent', () => {
 
     //ASSERT
     expect(component.formGroupForCountdownModal).toBe(exerciseFormGroup);
-    expect(component.showCountdownModal).toBeTrue();
+    expect(component.showCountdownModal()).toBeTrue();
   });
 
   it('should start a workout', () => {
@@ -400,7 +400,7 @@ describe('WorkoutComponent', () => {
     component.workoutForm.patchValue({ journal: '38 degrees, sunny. ST: TOS - \"The Omega Glory\" and YouTube' });
 
     const expectedExecutedWorkout = new ExecutedWorkoutDTO();
-    expectedExecutedWorkout.startDateTime = component.startDateTime;
+    expectedExecutedWorkout.startDateTime = component.startDateTime();
     expectedExecutedWorkout.journal = component.workoutForm.controls.journal.value;
     expectedExecutedWorkout.exercises = [];
 
@@ -449,7 +449,7 @@ describe('WorkoutComponent', () => {
 
     //ACT
     component.completeWorkout();
-    expectedExecutedWorkout.endDateTime = component.endDateTime;
+    expectedExecutedWorkout.endDateTime = component.endDateTime();
 
     //ASSERT
     expect(executedWorkoutService.add).toHaveBeenCalledWith(expectedExecutedWorkout);
@@ -477,7 +477,7 @@ describe('WorkoutComponent', () => {
     component.completeWorkout();
 
     //ASSERT
-    expect(component.endDateTime).toBe(expectedEndDateTime); //Service mock returns the same object
+    expect(component.endDateTime()).toEqual(expectedEndDateTime); //Service mock returns the same object
     expect(executedWorkoutService.update).toHaveBeenCalledWith(workout);
 
   });

@@ -43,8 +43,8 @@ describe('CountdownTimerComponent', () => {
 
   it('should begin pre-countdown', () => {
     component.startCountdown();
-    expect(component.showPreCountdown).toBeTrue();
-    expect(component.countdownHasBegun).toBeFalse();
+    expect(component.showPreCountdown()).toBeTrue();
+    expect(component.countdownHasBegun()).toBeFalse();
   });
 
   it('should start countdown on final pre-countdown event', () => {
@@ -57,8 +57,8 @@ describe('CountdownTimerComponent', () => {
     component.handlePreCountdownEvent(preCountdownEvent);
 
     //ASSERT
-    expect(component.countdownHasBegun).toBe(true, "component.countdownHasBegun should be true");
-    expect(component.showPreCountdown).toBe(false, "component.showPreCountdown should be false");
+    expect(component.countdownHasBegun()).toBe(true, "component.countdownHasBegun should be true");
+    expect(component.showPreCountdown()).toBe(false, "component.showPreCountdown should be false");
     expect(soundService.playSound).toHaveBeenCalledWith('../../assets/sounds/210639764.mp3');
   });
 
@@ -90,8 +90,8 @@ describe('CountdownTimerComponent', () => {
     component.handleCountdownEvent(countdownEvent);
 
     //ASSERT
-    expect(component.countdownHasBegun).toBe(true, "component.countdownHasBegun should be true");
-    expect(component.showPreCountdown).toBe(false, "component.showPreCountdown should be false");
+    expect(component.countdownHasBegun()).toBe(true, "component.countdownHasBegun should be true");
+    expect(component.showPreCountdown()).toBe(false, "component.showPreCountdown should be false");
     expect(soundService.playSound).toHaveBeenCalledWith('../../assets/sounds/210639764.mp3');
   });
 });

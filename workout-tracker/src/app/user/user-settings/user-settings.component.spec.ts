@@ -169,5 +169,6 @@ describe('UserSettingsComponent', () => {
     //ASSERT
     expect(userService.update).toHaveBeenCalledWith(expectedSavedUser);
     expect(messageService.success).toHaveBeenCalledOnceWith('Settings saved.');
+    expect(component.saving()).toBeFalse();
   });
 });

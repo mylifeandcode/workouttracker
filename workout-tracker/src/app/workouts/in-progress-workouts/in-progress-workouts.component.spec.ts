@@ -48,8 +48,8 @@ describe('InProgressWorkoutsComponent', () => {
           provide: ExecutedWorkoutService,
           useClass: MockExeceutedWorkoutService
         },
-  provideRouter([]),
-  provideZonelessChangeDetection()
+        provideRouter([]),
+        provideZonelessChangeDetection()
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

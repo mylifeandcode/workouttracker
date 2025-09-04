@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, input } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SetType } from '../_enums/set-type';
 import { ResistanceType } from '../_enums/resistance-type';
@@ -34,7 +34,7 @@ import { ExerciseSidePipe } from 'app/workouts/_pipes/exercise-side.pipe';
         ResistanceAmountPipe
     ]
 })
-export class WorkoutExerciseComponent implements OnInit {
+export class WorkoutExerciseComponent {
 
   /**
    * The FormGroup containing FormControls for the Exercise Name, Type, etc, as well as
@@ -62,11 +62,6 @@ export class WorkoutExerciseComponent implements OnInit {
     //This property provides an easier way for the template to access this information,
     //and is used by the component code as a short-hand reference to the form array.
     return this.formGroup().controls.exerciseSets;
-  }
-
-  constructor() { }
-
-  public ngOnInit(): void {
   }
 
   public selectResistanceBands(formGroup: FormGroup<IWorkoutFormExerciseSet>): void {

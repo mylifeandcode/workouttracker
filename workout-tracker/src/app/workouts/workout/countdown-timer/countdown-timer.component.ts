@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, effect, inject, input } from '@angular/core';
+import { Component, OnInit, ViewChild, effect, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
 import { SoundService } from 'app/core/_services/sound/sound.service';
 import { NgStyle } from '@angular/common';
@@ -7,27 +7,26 @@ import { NgStyle } from '@angular/common';
   selector: 'wt-countdown-timer',
   templateUrl: './countdown-timer.component.html',
   styleUrls: ['./countdown-timer.component.scss'],
-  imports: [NgStyle, CountdownComponent]
+  imports: [NgStyle, CountdownComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CountdownTimerComponent implements OnInit {
   private _soundService = inject(SoundService);
-
 
   @ViewChild('preCountdown', { static: false }) private _preCountdown: CountdownComponent | undefined;
   @ViewChild('mainCountdown', { static: false }) private _countdown: CountdownComponent | undefined;
 
   public countdownConfig: CountdownConfig = this.getCountdownConfig(0);
   public preCountdownConfig: CountdownConfig = this.getCountdownConfig(0);
-  public showPreCountdown: boolean = false;
-  public countdownHasBegun: boolean = false;
+  public showPreCountdown = signal(false);
+  public countdownHasBegun = signal(false);
 
-  private _preCountdownHasBegun: boolean = false;
+  private _preCountdownHasBegun = signal(false);
 
   readonly secondsToCountdown = input<number>(0);
-
   readonly secondsLeadInTime = input<number>(0);
-
   activatedDateTime = input<Date | null>(null);
+  public readonly targetReps = input<number | null>(null);
   
   constructor() {
     effect(() => {
@@ -37,30 +36,28 @@ export class CountdownTimerComponent implements OnInit {
     });
   }
   
-  public readonly targetReps = input<number | null>(null);
-
   public ngOnInit(): void {
   }
 
   public startCountdown(): void {
-    this.showPreCountdown = true;
-    this._preCountdownHasBegun = true;
+    this.showPreCountdown.set(true);
+    this._preCountdownHasBegun.set(true);
     this._preCountdown?.begin();
   }
 
   //TODO: Add ability to pause
 
   public handlePreCountdownEvent(countdownEvent: CountdownEvent): void {
-    if (this._preCountdownHasBegun && countdownEvent.action == 'done') {
-      this.showPreCountdown = false;
+    if (this._preCountdownHasBegun() && countdownEvent.action == 'done') {
+      this.showPreCountdown.set(false);
       this.playSound();
-      this.countdownHasBegun = true;
+      this.countdownHasBegun.set(true);
       this._countdown?.begin();
     }
   }
 
   public handleCountdownEvent(countdownEvent: CountdownEvent): void {
-    if (this.countdownHasBegun) { //If statement added because the 'done' event was firing on init, before countdown even began
+    if (this.countdownHasBegun()) { //If statement added because the 'done' event was firing on init, before countdown even began
       if (countdownEvent.action == 'done') {
         this.playSound();
       }
@@ -89,14 +86,13 @@ export class CountdownTimerComponent implements OnInit {
     if (this.secondsToCountdown()) {
       this.setPreCountdownConfig();
       this.setCountdownConfig();
-      this.showPreCountdown = false;
-      this.countdownHasBegun = false;
-      this._preCountdownHasBegun = false;
+      this.showPreCountdown.set(false);
+      this.countdownHasBegun.set(false);
+      this._preCountdownHasBegun.set(false);
     }
   }
 
   private playSound(): void {
     this._soundService.playSound('../../assets/sounds/210639764.mp3');
   }
-
 }

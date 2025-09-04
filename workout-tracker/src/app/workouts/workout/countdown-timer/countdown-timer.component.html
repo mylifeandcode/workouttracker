@@ -9,11 +9,11 @@ that the newly-rendered countdown is null.
     Target Reps: {{targetReps()}}
   </div>
 }
-<div [ngStyle]="{'text-align': 'center', 'display': (showPreCountdown)?'inline-block':'none'}" class="text-center timer-text">
+<div [ngStyle]="{'text-align': 'center', 'display': (showPreCountdown())?'inline-block':'none'}" class="text-center timer-text">
   Get ready: 
   <countdown #preCountdown [config]="preCountdownConfig" (event)="handlePreCountdownEvent($event)"></countdown>
 </div>
-@if (countdownHasBegun) {
+@if (countdownHasBegun()) {
   <div class="text-center timer-text">
     GO!
   </div>
@@ -23,7 +23,7 @@ that the newly-rendered countdown is null.
 </div>
 <p></p>
 <div class="text-center">
-  @if (!showPreCountdown && !countdownHasBegun) {
+  @if (!showPreCountdown() && !countdownHasBegun()) {
     <button class="btn btn-success" (click)="startCountdown()">Begin</button>
   }
 </div>

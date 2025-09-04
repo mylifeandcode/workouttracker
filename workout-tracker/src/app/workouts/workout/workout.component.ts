@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input, viewChild } from '@angular/core';
+import { Component, OnInit, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
@@ -8,7 +8,7 @@ import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { IWorkoutFormExercise } from './_interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from './_interfaces/i-workout-form-exercise-set';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
@@ -44,7 +44,8 @@ interface IWorkoutForm {
     DurationComponent,
     DatePipe,
     NzCollapseModule
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _formBuilder = inject(FormBuilder);
@@ -55,27 +56,28 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
 
   //PUBLIC FIELDS
-  public errorInfo: string | undefined = undefined;
   public workoutForm: FormGroup<IWorkoutForm>;
-  public workoutName: string | null = null;
-
-  public showResistanceBandsSelectModal: boolean = false;
-  public settingResistanceForBilateralExercise: boolean = false;
-  public showCountdownModal: boolean = false;
-  public allResistanceBands: ResistanceBandIndividual[] = [];
   public formGroupForResistanceSelection: FormGroup<IWorkoutFormExerciseSet> | undefined = undefined;
   public formGroupForCountdownModal: FormGroup<IWorkoutFormExerciseSet> | undefined = undefined;
-  public countdownModalActivatedDateTime: Date = new Date();
-  public saving: boolean = false;
-  public infoMsg: string | undefined = undefined;
-  public workoutCompleted: boolean = false;
-  public showDurationModal: boolean = false;
   public formControlForDurationEdit: FormControl<number | null> | null = null;
-  public startDateTime: Date | null = null;
-  public endDateTime: Date | null = null;
-  public workoutLoaded: boolean = false;
-  public activeAccordionTab: number = 0;
-  public exerciseBandAllocation: IBandAllocation = { selectedBandsDelimited: '', doubleMaxResistanceAmounts: false };
+
+  public errorInfo = signal<string | undefined>(undefined);
+  public workoutName = signal<string | null>(null);
+
+  public showResistanceBandsSelectModal = signal(false);
+  public settingResistanceForBilateralExercise = signal(false);
+  public showCountdownModal = signal(false);
+  public allResistanceBands = signal<ResistanceBandIndividual[]>([]);
+  public countdownModalActivatedDateTime = signal(new Date());
+  public saving = signal(false);
+  public infoMsg = signal<string | undefined>(undefined);
+  public workoutCompleted = signal(false);
+  public showDurationModal = signal(false);
+  public startDateTime = signal<Date | null>(null);
+  public endDateTime = signal<Date | null>(null);
+  public workoutLoaded = signal(false);
+  public activeAccordionTab = signal(0);
+  public exerciseBandAllocation = signal<IBandAllocation>({ selectedBandsDelimited: '', doubleMaxResistanceAmounts: false });
   //END PUBLIC FIELDS
 
   //INPUTS (SET VIA withComponentInputBinding())
@@ -141,14 +143,13 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   }
 
   public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup<IWorkoutFormExerciseSet>): void {
-    this.exerciseBandAllocation =
-    {
+    this.exerciseBandAllocation.set({
       selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value ?? '',
       doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
-    };
-    this.showResistanceBandsSelectModal = true;
+    });
+    this.showResistanceBandsSelectModal.set(true);
 
-    this.settingResistanceForBilateralExercise = exerciseFormGroup.controls.usesBilateralResistance.value;
+    this.settingResistanceForBilateralExercise.set(exerciseFormGroup.controls.usesBilateralResistance.value);
     this.formGroupForResistanceSelection = exerciseFormGroup;
   }
 
@@ -159,17 +160,17 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     });
     this.formGroupForResistanceSelection?.controls.resistanceMakeup.markAsDirty();
     this.formGroupForResistanceSelection?.controls.resistance.markAsDirty();
-    this.showResistanceBandsSelectModal = false;
+    this.showResistanceBandsSelectModal.set(false);
   }
 
   public resistanceBandsModalCancelled(): void {
-    this.showResistanceBandsSelectModal = false;
+    this.showResistanceBandsSelectModal.set(false);
   }
 
   public showTimer(exerciseFormGroup: FormGroup): void {
     this.formGroupForCountdownModal = exerciseFormGroup;
-    this.countdownModalActivatedDateTime = new Date();
-    this.showCountdownModal = true;
+    this.countdownModalActivatedDateTime.set(new Date());
+    this.showCountdownModal.set(true);
   }
 
   public startWorkout(): void {
@@ -195,17 +196,17 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
   public openDurationModal(formControl: FormControl<number | null>): void {
     this.formControlForDurationEdit = formControl;
-    this.showDurationModal = true;
+    this.showDurationModal.set(true);
   }
 
   public durationModalAccepted(duration: number): void {
     this.formControlForDurationEdit?.setValue(duration);
-    this.showDurationModal = false;
+    this.showDurationModal.set(false);
   }
 
   public durationModalCancelled(): void {
     this.formControlForDurationEdit = null;
-    this.showDurationModal = false;
+    this.showDurationModal.set(false);
   }
 
   public hasUnsavedData(): boolean {
@@ -229,7 +230,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       .pipe(finalize(() => { this._apiCallsInProgress--; }))
       .subscribe({
         next: (bands: ResistanceBandIndividual[]) => {
-          this.allResistanceBands = bands;
+          this.allResistanceBands.set(bands);
         },
         error: (error: any) => {
           this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
@@ -247,12 +248,12 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       .subscribe({
         next: (executedWorkout: ExecutedWorkoutDTO) => {
           this._executedWorkout = executedWorkout;
-          this.workoutName = executedWorkout.name;
+          this.workoutName.set(executedWorkout.name);
 
           if (this._executedWorkout.startDateTime == null)
             this._executedWorkout.startDateTime = new Date();
 
-          this.startDateTime = this._executedWorkout.startDateTime;
+          this.startDateTime.set(this._executedWorkout.startDateTime);
 
           this.workoutForm?.patchValue({
             publicId: id
@@ -260,14 +261,14 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
           this.setupExercisesFormGroup(executedWorkout.exercises);
 
-          this.workoutCompleted = (this._executedWorkout.endDateTime != null);
+          this.workoutCompleted.set(this._executedWorkout.endDateTime != null);
 
           if (executedWorkout.journal) {
             this.workoutForm?.controls.journal.setValue(executedWorkout.journal);
           }
 
-          this.workoutLoaded = true;
-          this.activeAccordionTab = this.getExerciseInProgress();
+          this.workoutLoaded.set(true);
+          this.activeAccordionTab.set(this.getExerciseInProgress());
         },
         error: (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
       });
@@ -338,9 +339,9 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
   private setErrorInfo(error: any, defaultMessage: string): void {
     if (error.message)
-      this.errorInfo = error.message;
+      this.errorInfo.set(error.message);
     else
-      this.errorInfo = defaultMessage;
+      this.errorInfo.set(defaultMessage);
   }
 
   private setWorkoutValuesFromFormGroup(): void {
@@ -382,11 +383,11 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   private save(completed: boolean): void {
     if (!this._executedWorkout) return;
 
-    this.saving = true;
+    this.saving.set(true);
     this._messageService.info('Saving workout...', { nzDuration: 0 });
     this._executedWorkoutService
       .update(this._executedWorkout)
-      .pipe(finalize(() => { this.saving = false; }))
+      .pipe(finalize(() => { this.saving.set(false); }))
       .subscribe({
         next: (workout: ExecutedWorkoutDTO) => {
           this._messageService.remove();
@@ -397,18 +398,18 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
               this._router.navigate(['/workouts/history']);
             }
             else {
-              this.infoMsg = "Completed workout saved at " + new Date().toLocaleTimeString();
-              this.workoutCompleted = true;
-              this.endDateTime = this._executedWorkout.endDateTime;
+              this.infoMsg.set("Completed workout saved at " + new Date().toLocaleTimeString());
+              this.workoutCompleted.set(true);
+              this.endDateTime.set(this._executedWorkout.endDateTime);
               this._messageService.success('Workout completed!');
               this.workoutForm.markAsPristine();
             }
           }
           else {
-            if (!this.startDateTime) this.startDateTime = this._executedWorkout.startDateTime;
+            if (!this.startDateTime()) this.startDateTime.set(this._executedWorkout.startDateTime);
             this._messageService.success('Progress updated!');
           }
-          this.activeAccordionTab = this.getExerciseInProgress();
+          this.activeAccordionTab.set(this.getExerciseInProgress());
         },
         error: (error: any) => {
           this.setErrorInfo(error, "An error occurred saving workout information. See console for details.");
