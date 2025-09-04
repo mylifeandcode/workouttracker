@@ -60,10 +60,12 @@ describe('ChangePasswordComponent', () => {
     });
 
     //ACT
+    component.changingPassword.set(true); //Set to true to ensure it gets set to false when operation completes
     component.changePassword();
 
     //ASSERT
     expect(authService.changePassword).toHaveBeenCalledOnceWith('somePassword', 'someNewPassword');
+    expect(component.changingPassword()).toBeFalse(); //Should be false because operation has completed
   });
 
   it('should redirect on cancel', () => {

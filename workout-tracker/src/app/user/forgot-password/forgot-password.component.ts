@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 import { ConfigService } from 'app/core/_services/config/config.service';
@@ -13,38 +13,38 @@ interface IForgotPasswordForm {
     selector: 'wt-forgot-password',
     templateUrl: './forgot-password.component.html',
     styleUrls: ['./forgot-password.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, RouterLink]
+    imports: [FormsModule, ReactiveFormsModule, RouterLink],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ForgotPasswordComponent implements OnInit {
   private _configService = inject(ConfigService);
   private _formBuilder = inject(FormBuilder);
   private _authService = inject(AuthService);
 
-
-  public smtpEnabled: boolean = false;
   public forgotPasswordForm: FormGroup<IForgotPasswordForm>;
-  public errorMessage: string | null = null;
-  public requestSuccessful: boolean = false;
-  public requestInProgress: boolean = false;
+  public smtpEnabled = signal(false);
+  public errorMessage = signal<string | null>(null);
+  public requestSuccessful = signal(false);
+  public requestInProgress = signal(false);
 
   constructor() {
     this.forgotPasswordForm = this.buildForm();
   }
 
   public ngOnInit(): void {
-    this.smtpEnabled = this._configService.get("smtpEnabled");
+    this.smtpEnabled.set(this._configService.get("smtpEnabled"));
   }
 
   public submitPasswordResetRequest(): void {
-    this.requestInProgress = true;
-    this.requestSuccessful = false;
-    this.errorMessage = null;
+    this.requestInProgress.set(true);
+    this.requestSuccessful.set(false);
+    this.errorMessage.set(null);
     this._authService
       .requestPasswordReset(this.forgotPasswordForm.controls.emailAddress.value)
-      .pipe(finalize(() => { this.requestInProgress = false; }))
+      .pipe(finalize(() => { this.requestInProgress.set(false); }))
       .subscribe({
-        next: () => { this.requestSuccessful = true; },
-        error: (error: any) => { this.errorMessage = error?.error ?? "Password reset request failed. Please try again later."; }
+        next: () => { this.requestSuccessful.set(true); },
+        error: (error: any) => { this.errorMessage.set(error?.error ?? "Password reset request failed. Please try again later."); }
       });
   }
 
