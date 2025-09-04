@@ -18,7 +18,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
   styleUrls: ['./resistance-bands.component.scss'],
   imports: [
     FormsModule, NzTableModule, NgStyle,
-    NzIconModule, NzModalModule, NzButtonModule],
+    NzIconModule, NzModalModule, NzButtonModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResistanceBandsComponent implements OnInit {

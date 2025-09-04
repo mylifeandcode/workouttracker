@@ -17,11 +17,11 @@ interface IUserAddForm {
 }
 
 @Component({
-    selector: 'wt-user-add',
-    templateUrl: './user-add.component.html',
-    styleUrls: ['./user-add.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, RouterLink],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'wt-user-add',
+  templateUrl: './user-add.component.html',
+  styleUrls: ['./user-add.component.scss'],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserAddComponent implements OnInit {
   private _userService = inject(UserService);
@@ -56,7 +56,7 @@ export class UserAddComponent implements OnInit {
             this._router.navigate(['admin/users']); //TODO: Find out how to make this relative, not absolute
           else
             this._router.navigate(['/']);
-        }, 
+        },
         error: (error: any) => {
           if (error?.status == 403)
             this.errorMsg.set("You do not have permission to add users.");
@@ -85,7 +85,7 @@ export class UserAddComponent implements OnInit {
       password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(7)] }),
       confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(7)] }),
       role: new FormControl<number>(
-        (this.showAdminControls() ? 0 : 1), 
+        (this.showAdminControls() ? 0 : 1),
         { nonNullable: true, validators: [Validators.required, Validators.min(1), Validators.max(2)] })
     }, { validators: CustomValidators.passwordsMatch });
 

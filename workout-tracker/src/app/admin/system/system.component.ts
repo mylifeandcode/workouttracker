@@ -6,16 +6,16 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
-    selector: 'wt-system',
-    templateUrl: './system.component.html',
-    imports: [ NzSpinModule, NzModalModule, CountdownTimerComponent ],
-    styleUrls: ['./system.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'wt-system',
+  templateUrl: './system.component.html',
+  imports: [NzSpinModule, NzModalModule, CountdownTimerComponent],
+  styleUrls: ['./system.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SystemComponent {
   private readonly _soundService = inject(SoundService);
   private readonly _messageService = inject(NzMessageService);
-  
+
   showCountdownModal = signal<boolean>(false);
   countdownModalActivatedDateTime = signal<Date | null>(null);
 

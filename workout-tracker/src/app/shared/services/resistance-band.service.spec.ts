@@ -16,17 +16,17 @@ describe('ResistanceBandServiceService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [
-  provideZonelessChangeDetection(),
+      imports: [],
+      providers: [
+        provideZonelessChangeDetection(),
         {
-            provide: ConfigService,
-            useClass: ConfigServiceMock
+          provide: ConfigService,
+          useClass: ConfigServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
-    ]
-});
+      ]
+    });
     service = TestBed.inject(ResistanceBandService);
   });
 

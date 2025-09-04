@@ -18,18 +18,18 @@ describe('ChangePasswordComponent', () => {
   let fixture: ComponentFixture<ChangePasswordComponent>;
 
   beforeEach(async () => {
-  await TestBed.configureTestingModule({
-  imports: [RouterModule.forRoot([]), ReactiveFormsModule, ChangePasswordComponent],
-  providers: [
-    FormBuilder,
-    {
-      provide: AuthService,
-      useClass: AuthServiceMock
-    },
-    provideZonelessChangeDetection()
-  ]
-})
-    .compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [RouterModule.forRoot([]), ReactiveFormsModule, ChangePasswordComponent],
+      providers: [
+        FormBuilder,
+        {
+          provide: AuthService,
+          useClass: AuthServiceMock
+        },
+        provideZonelessChangeDetection()
+      ]
+    })
+      .compileComponents();
 
     fixture = TestBed.createComponent(ChangePasswordComponent);
     component = fixture.componentInstance;
