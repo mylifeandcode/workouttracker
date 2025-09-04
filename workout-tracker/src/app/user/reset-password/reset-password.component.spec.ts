@@ -19,33 +19,33 @@ describe('ResetPasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [RouterModule.forRoot([]), ReactiveFormsModule, ResetPasswordComponent],
-  providers: [
+      imports: [RouterModule.forRoot([]), ReactiveFormsModule, ResetPasswordComponent],
+      providers: [
         FormBuilder,
         {
-            provide: AuthService,
-            useClass: AuthServiceMock
+          provide: AuthService,
+          useClass: AuthServiceMock
         },
         {
-            provide: ActivatedRoute,
-            useValue: {
-                snapshot: {
-                    params: of({
-                        resetCode: 'gar145'
-                    })
-                }
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              params: {
+                resetCode: 'gar145'
+              }
             }
-    },
-    provideZonelessChangeDetection()
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-    .overrideComponent(
-      ResetPasswordComponent, {
-        remove: { imports: [ NzSpinModule ] },
-        add: { schemas: [ CUSTOM_ELEMENTS_SCHEMA ] }
-      })
-    .compileComponents();
+          }
+        },
+        provideZonelessChangeDetection()
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    })
+      .overrideComponent(
+        ResetPasswordComponent, {
+          remove: { imports: [NzSpinModule] },
+          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        })
+      .compileComponents();
 
     fixture = TestBed.createComponent(ResetPasswordComponent);
     component = fixture.componentInstance;
@@ -54,5 +54,12 @@ describe('ResetPasswordComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should validate reset code on init', () => {
+    const authService = TestBed.inject(AuthService);
+    expect(authService.validatePasswordResetCode).toHaveBeenCalledWith('gar145');
+    expect(component.validatingResetCode()).toBeFalse();
+    expect(component.resetCodeInvalid()).toBeFalse();
   });
 });

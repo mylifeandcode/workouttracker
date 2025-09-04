@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 import { User } from 'app/core/_models/user';
@@ -28,7 +28,8 @@ interface IUserSettingsForm {
     NzSwitchModule,
     UserRepSettingsComponent,
     RouterLink
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserSettingsComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _authService = inject(AuthService);
@@ -36,23 +37,23 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   private _formBuilder = inject(FormBuilder);
   private _messageService = inject(NzMessageService);
 
-  public loading: boolean = true;
-  public user: User | undefined; //Undefined until retrieved from service
+  public loading = signal(true);
+  public user = signal<User | undefined>(undefined);
   public userSettingsForm: FormGroup<IUserSettingsForm> | undefined; //undefined until user info is retrieved
-  public saving: boolean = false;
+  public saving = signal(false);
 
   public ngOnInit(): void {
     if (!this._authService.userPublicId) return;
     this._userService.getById(this._authService.userPublicId)
       .pipe(
-        finalize(() => { this.loading = false; }),
+        finalize(() => { this.loading.set(false); }),
         catchError((err) => {
           window.alert("ERROR: " + err.message);
           throw err.message;
         })
       )
       .subscribe((user: User) => {
-        this.user = user;
+        this.user.set(user);
         this.createForm();
       });
   }
@@ -60,12 +61,12 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   public recommendationEngineToggled(): void {
     //TODO: Re-evaluate. May be better to just subscribe to the valueChanges Observable and use that to trigger this method.
     if (this.userSettingsForm?.controls.recommendationsEnabled.value == true) {
-      if (this.user) {
-        if (this.user.settings.repSettings == null || this.user.settings.repSettings.length === 0) {
-          this.user.settings.repSettings = []; // Ensure it's an empty array if null or undefined
-          this.user.settings.repSettings.push(...[new UserMinMaxReps(), new UserMinMaxReps()]); // Add at least one default entry
-          this.user.settings.repSettings[0].setType = 0; // Default to Repetition for the first entry
-          this.user.settings.repSettings[1].setType = 1; // Default to Timed for the second entry
+      if (this.user()) {
+        if (this.user()!.settings.repSettings == null || this.user()!.settings.repSettings.length === 0) {
+          this.user()!.settings.repSettings = []; // Ensure it's an empty array if null or undefined
+          this.user()!.settings.repSettings.push(...[new UserMinMaxReps(), new UserMinMaxReps()]); // Add at least one default entry
+          this.user()!.settings.repSettings[0].setType = 0; // Default to Repetition for the first entry
+          this.user()!.settings.repSettings[1].setType = 1; // Default to Timed for the second entry
         }
       }
       this.userSettingsForm.controls.repSettings = this.getRepSettingsForm();
@@ -77,14 +78,14 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   }
 
   public saveSettings(): void {
-    if (!this.user) return;
+    if (!this.user()) return;
 
     this.updateSettingsForPersist();
-    this.saving = true;
-    this._userService.update(this.user)
+    this.saving.set(true);
+    this._userService.update(this.user()!)
       .pipe(
         finalize(() => {
-          this.saving = false;
+          this.saving.set(false);
           this.userSettingsForm?.markAsPristine();
         }),
         catchError((err) => {
@@ -103,17 +104,17 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   }
 
   private createForm(): void {
-    if (!this.user) return;
+    if (!this.user()) return;
     this.userSettingsForm = this._formBuilder.group<IUserSettingsForm>({
-      recommendationsEnabled: new FormControl<boolean>(this.user.settings.recommendationsEnabled, { nonNullable: true }),
+      recommendationsEnabled: new FormControl<boolean>(this.user()!.settings.recommendationsEnabled, { nonNullable: true }),
       repSettings: this.getRepSettingsForm()
     });
   }
 
   private getRepSettingsForm(): FormArray<FormGroup<IRepSettingsForm>> {
     const formArray = new FormArray<FormGroup<IRepSettingsForm>>([]);
-    if (this.user) {
-      this.user.settings.repSettings.forEach((value: UserMinMaxReps) => {
+    if (this.user()) {
+      this.user()!.settings.repSettings.forEach((value: UserMinMaxReps) => {
         const formGroup: FormGroup<IRepSettingsForm> = this._formBuilder.group<IRepSettingsForm>({
           repSettingsId: new FormControl<number>(value.id, { nonNullable: true }),
           setType: new FormControl<number>(value.setType, { nonNullable: true }),
@@ -129,14 +130,14 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   }
 
   private updateSettingsForPersist(): void {
-    if (!this.user) return;
+    if (!this.user()) return;
     if (!this.userSettingsForm) return;
 
-    this.user.settings.recommendationsEnabled = this.userSettingsForm.controls.recommendationsEnabled.value;
+    this.user()!.settings.recommendationsEnabled = this.userSettingsForm.controls.recommendationsEnabled.value;
 
     //Update rep settings
 
-    this.user.settings.repSettings.forEach((value: UserMinMaxReps) => {
+    this.user()!.settings.repSettings.forEach((value: UserMinMaxReps) => {
       if (this.userSettingsForm !== undefined) { //Needed to keep the linter happy, despite the above check
         const formGroup = find(this.userSettingsForm.controls.repSettings?.controls, (group: FormGroup<IRepSettingsForm>) =>
           group.controls.repSettingsId.value == value.id
