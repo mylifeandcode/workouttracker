@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, input, signal, ChangeDetectionStrategy, computed } from '@angular/core';
 import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
@@ -87,7 +87,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
   //PRIVATE FIELDS
   private _executedWorkout: ExecutedWorkoutDTO | undefined = undefined;
-  private _apiCallsInProgress: number = 0;
+  private _apiCallsInProgress = signal<number>(0);
   //END PRIVATE FIELDS
 
   //PRIVATE READ-ONLY FIELDS
@@ -99,9 +99,12 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   /**
    * A property indicating whether or not the component is loading information it requires
    */
+  /*
   public get loading(): boolean {
     return this._apiCallsInProgress > 0;
   }
+  */
+  public loading = computed(() => this._apiCallsInProgress() > 0);
 
   /**
    * A property representing all of the Exercises which are part of the Workout
@@ -225,9 +228,11 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   }
 
   private getResistanceBands(): void {
-    this._apiCallsInProgress++;
+    this._apiCallsInProgress.update(n => n + 1);
     this._resistanceBandService.getAllIndividualBands()
-      .pipe(finalize(() => { this._apiCallsInProgress--; }))
+      .pipe(finalize(() => { 
+        this._apiCallsInProgress.update(n => n - 1);
+      }))
       .subscribe({
         next: (bands: ResistanceBandIndividual[]) => {
           this.allResistanceBands.set(bands);
@@ -242,9 +247,11 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     const id = this.executedWorkoutPublicId();
     if (!id) return;
 
-    this._apiCallsInProgress++;
+    this._apiCallsInProgress.update(n => n + 1);
     this._executedWorkoutService.getById(id)
-      .pipe(finalize(() => { this._apiCallsInProgress--; }))
+      .pipe(finalize(() => { 
+        this._apiCallsInProgress.update(n => n - 1);
+      }))
       .subscribe({
         next: (executedWorkout: ExecutedWorkoutDTO) => {
           this._executedWorkout = executedWorkout;

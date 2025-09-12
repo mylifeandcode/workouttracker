@@ -1,4 +1,4 @@
-@if (!loading) {
+@if (!loading()) {
   <h3 class="headroom">{{workoutName()}}</h3>
   @if (pastWorkout()) {
     <h4>Please enter information for this previously completed workout below</h4>
@@ -6,7 +6,7 @@
 }
 
 <div class="container-fluid">
-  @if (loading) {
+  @if (loading()) {
     <div class="row">
       <div class="offset-md-5 col-md-1">
         <nz-spin nzSize="large" />
@@ -14,7 +14,7 @@
     </div>
   }
 
-  @if (workoutForm && !loading) {
+  @if (workoutForm && !loading()) {
     <form [formGroup]="workoutForm" novalidate>
       <fieldset [disabled]="saving() || (workoutCompleted() && !pastWorkout())">
         @if (workoutLoaded()) {

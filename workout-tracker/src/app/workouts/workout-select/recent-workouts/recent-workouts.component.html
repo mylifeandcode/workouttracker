@@ -1,7 +1,7 @@
 <h5 class="micro-widget-opaque">Recent Workouts</h5>
 <div class="row">
   <div class="col-12">
-    <nz-table #dt styleClass="p-datatable-striped" [nzData]="recentWorkouts" [nzLoading]="loading">
+    <nz-table #dt styleClass="p-datatable-striped" [nzData]="recentWorkouts" [nzLoading]="loading()">
       <thead>
         <tr>
           <th>Workout Name</th>
