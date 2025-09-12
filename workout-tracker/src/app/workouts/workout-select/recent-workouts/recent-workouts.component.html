@@ -28,8 +28,8 @@
   </div>
 </div>
 
-<nz-modal [(nzVisible)]="showExercises" nzTitle="Workout Info" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showExercises = false">
+<nz-modal [(nzVisible)]="showExercises" nzTitle="Workout Info" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showExercises.set(false)">
   <ng-container *nzModalContent>
-    <wt-workout-info [workout]="selectedWorkout"></wt-workout-info>  
+    <wt-workout-info [workout]="selectedWorkout()!"></wt-workout-info>  
   </ng-container>
 </nz-modal>

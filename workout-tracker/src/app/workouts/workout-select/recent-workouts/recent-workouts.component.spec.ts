@@ -10,6 +10,8 @@ import { WorkoutService } from '../../_services/workout.service';
 import { RecentWorkoutsComponent } from './recent-workouts.component';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { WorkoutInfoComponent } from './workout-info/workout-info.component';
+import { DatePipe } from '@angular/common';
 
 class MockExecutedWorkoutService {
   getRecent = jasmine.createSpy('getRecent ').and.returnValue(of(new Array<ExecutedWorkoutSummaryDTO>()));
@@ -33,7 +35,7 @@ describe('RecentWorkoutsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [
-  provideZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         {
           provide: ExecutedWorkoutService,
           useClass: MockExecutedWorkoutService
@@ -56,7 +58,7 @@ describe('RecentWorkoutsComponent', () => {
       .overrideComponent(
         RecentWorkoutsComponent,
         {
-          remove: { imports: [NzTableModule, NzModalModule] },
+          remove: { imports: [NzTableModule, NzModalModule, WorkoutInfoComponent, DatePipe] },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         }
       )

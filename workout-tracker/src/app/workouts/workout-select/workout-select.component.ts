@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
@@ -12,10 +12,11 @@ import { FormsModule } from '@angular/forms';
 //one place
 
 @Component({
-    selector: 'wt-workout-select',
-    templateUrl: './workout-select.component.html',
-    styleUrls: ['./workout-select.component.scss'],
-    imports: [FormsModule, RecentWorkoutsComponent]
+  selector: 'wt-workout-select',
+  templateUrl: './workout-select.component.html',
+  styleUrls: ['./workout-select.component.scss'],
+  imports: [FormsModule, RecentWorkoutsComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   private _workoutService = inject(WorkoutService);
@@ -32,11 +33,6 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   readonly showRecent = signal<boolean>(true);
   readonly showHeading = signal<boolean>(true);
 
-  //readonly navigateOnSelect = input<boolean>(true);
-
-  //@Output()
-  //workoutSelected: EventEmitter<number> = new EventEmitter<number>();
-
   @Output()
   workoutsLoaded: EventEmitter<void> = new EventEmitter<void>();
 
@@ -44,46 +40,27 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   /**
    * A property indicating whether or not the component is loading information it requires
    */
-  public get loading(): boolean {
-    if (this._apiCallsInProgress > 0)
-      return true;
-    else
-      return false;
-    //return this._apiCallsInProgress > 0; 
-  }
+
+  protected loading = signal<boolean>(false);
 
   //PUBLIC FIELDS
-  public workouts: WorkoutDTO[] = [];
-  public planningForLater: boolean = true;
-  public selectedWorkout: WorkoutDTO | null = null; // This will hold the currently selected workout if any
+  public workouts = signal<WorkoutDTO[]>([]);
+  public planningForLater: boolean = false; //No need for a signal, doesn't change
+  public selectedWorkout = signal<WorkoutDTO | null>(null); // This will hold the currently selected workout if any
   //END PUBLIC FIELDS
-
-  //PRIVATE FIELDS
-  private _apiCallsInProgress: number = 0;
-  //private _userSusbscription: Subscription = new Subscription();
 
   public ngOnInit(): void {
     this.subscribeToUser();
     this.planningForLater = this._router.url.includes("for-later");
   }
 
-  /*
-  public ngOnDestroy(): void {
-    this._userSusbscription.unsubscribe();
-  }
-  */
 
   public workoutSelectChange(event: any): void {
-    //console.log("Workout selected (target.value): ", event.target.value);
-    //console.log('selectedWorkout: ', this.selectedWorkout);
     if (this.selectedWorkout) {
-      //if (this.navigateOnSelect()) {
-        if (this.planningForLater)
-          this._router.navigate([`workouts/plan-for-later/${this.selectedWorkout.id}`]);
-        else
-          this._router.navigate([`workouts/plan/${this.selectedWorkout.id}`]);
-      //}
-      //this.workoutSelected.emit(this.selectedWorkout.id);
+      if (this.planningForLater)
+        this._router.navigate([`workouts/plan-for-later/${this.selectedWorkout()?.id}`]);
+      else
+        this._router.navigate([`workouts/plan/${this.selectedWorkout()?.id}`]);
     }
   }
 
@@ -92,11 +69,11 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   }
 
   private getUserWorkouts(): void {
-    //this._userSusbscription = 
+    this.loading.set(true);
     this._workoutService.getFilteredSubset(0, 500, true) //TODO: Page size...come up with a better solution
-      .pipe(finalize(() => { this._apiCallsInProgress--; }))
+      .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
-        this.workouts = sortBy(result.results, 'name');
+        this.workouts.set(sortBy(result.results, 'name'));
         this.workoutsLoaded.emit();
       });
   }

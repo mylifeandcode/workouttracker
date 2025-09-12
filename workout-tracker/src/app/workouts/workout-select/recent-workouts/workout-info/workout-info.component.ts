@@ -11,13 +11,8 @@ import { TargetAreasPipe } from '../../../_pipes/target-areas.pipe';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NzSpinModule, ResistanceTypePipe, TargetAreasPipe]
 })
-export class WorkoutInfoComponent implements OnInit {
+export class WorkoutInfoComponent {
 
   readonly workout = input<Workout>();
-
-  constructor() { }
-
-  public ngOnInit(): void {
-  }
 
 }

@@ -8,6 +8,8 @@ import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { WorkoutViewComponent } from './workout-view.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';
+import { DatePipe, KeyValuePipe } from '@angular/common';
 
 const EXECUTED_WORKOUT_PUBLIC_ID = 'some-guid-5';
 
@@ -72,22 +74,23 @@ describe('WorkoutViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [WorkoutViewComponent,
-        MockExecutedExercisesComponent],
+      imports: [
+        WorkoutViewComponent,
+        MockExecutedExercisesComponent
+      ],
       providers: [
-  provideZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         {
           provide: ExecutedWorkoutService,
           useClass: ExecutedWorkoutServiceMock
         }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      ]
     })
       .overrideComponent(
         WorkoutViewComponent, {
-          remove: { imports: [ NzSpinModule] },
-          add: { schemas: [ CUSTOM_ELEMENTS_SCHEMA ] }
-        })
+        remove: { imports: [NzSpinModule, ExecutedExercisesComponent, DatePipe] },
+        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+      })
       .compileComponents();
   });
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../../_models/executed-workout-summary-dto';
@@ -13,7 +13,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     selector: 'wt-recent-workouts',
     templateUrl: './recent-workouts.component.html',
     styleUrls: ['./recent-workouts.component.scss'],
-    imports: [NzTableModule, NzModalModule, WorkoutInfoComponent, DatePipe]
+    imports: [NzTableModule, NzModalModule, WorkoutInfoComponent, DatePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecentWorkoutsComponent implements OnInit {
   private _executedWorkoutService = inject(ExecutedWorkoutService);
@@ -21,9 +22,9 @@ export class RecentWorkoutsComponent implements OnInit {
   private _router = inject(Router);
 
   public recentWorkouts: ExecutedWorkoutSummaryDTO[] = [];
-  public showExercises: boolean = false;
-  public selectedWorkout: Workout = new Workout();
-  public loading: boolean = true;
+  public showExercises = signal<boolean>(false);
+  public selectedWorkout = signal<Workout | null>(null);
+  public loading = signal<boolean>(true);
 
   readonly planningForLater = input<boolean>(false);
 
@@ -32,17 +33,16 @@ export class RecentWorkoutsComponent implements OnInit {
       .getRecent() //TODO: Add code to exclude any workouts which have since been retired!
       .subscribe((workouts: ExecutedWorkoutSummaryDTO[]) => {
         this.recentWorkouts = workouts;
-        this.loading = false; //TODO: Use finalize and set this there instead.
+        this.loading.set(false); //TODO: Use finalize and set this there instead.
       });
   }
 
   public viewExercises(workoutPublicId: string): void { //TODO: Refactor to use a DTO or summary object
-    //this.selectedWorkout = null;
     this._workoutService
       .getById(workoutPublicId)
       .subscribe((result: Workout) => {
-        this.selectedWorkout = result;
-        this.showExercises = true;
+        this.selectedWorkout.set(result);
+        this.showExercises.set(true);
       });
   }
 

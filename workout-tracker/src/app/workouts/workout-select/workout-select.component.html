@@ -3,23 +3,23 @@
 }
 
 <div class="container-fluid">
-  @if (!loading && workouts.length) {
+  @if (!loading() && workouts().length) {
     <div class="row select-row">
       <div class="col-12">
         <label>Select a Workout</label>&nbsp;
         <select [(ngModel)]="selectedWorkout" (change)="workoutSelectChange($event)">
-          <option [ngValue]="null" disabled [selected]="!selectedWorkout">Please Select</option>
-          @for(workout of workouts; track workout.id) {
+          <option [ngValue]="null" disabled [selected]="!selectedWorkout()">Please Select</option>
+          @for(workout of workouts(); track workout.id) {
             <option [ngValue]="workout">
               {{ workout.name }}
             </option>
           }
-        </select> <!--SELECTED: {{selectedWorkoutId}}-->
+        </select>
       </div>
     </div>
   }
 
-  @if (!loading && showRecent() && workouts.length == 0) {
+  @if (!loading() && showRecent() && workouts().length == 0) {
     <div>
       <p>
         <br />You haven't defined any workouts yet. Please use the menu to create one.
@@ -27,7 +27,7 @@
     </div>
   }
 
-  @if (!loading && showRecent() && workouts.length) {
+  @if (!loading() && showRecent() && workouts().length) {
     <wt-recent-workouts [planningForLater]="planningForLater"></wt-recent-workouts>
   }
   

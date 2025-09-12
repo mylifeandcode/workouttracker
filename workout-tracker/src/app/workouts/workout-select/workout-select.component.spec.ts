@@ -30,7 +30,7 @@ describe('WorkoutSelectComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [
-  provideZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         {
           provide: WorkoutService,
           useClass: WorkoutServiceMock
@@ -47,7 +47,7 @@ describe('WorkoutSelectComponent', () => {
     })
       .overrideComponent(
         WorkoutSelectComponent,
-        { 
+        {
           remove: { imports: [RecentWorkoutsComponent] },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         }
