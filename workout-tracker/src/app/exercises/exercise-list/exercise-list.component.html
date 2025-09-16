@@ -29,7 +29,7 @@
         [nzShowSizeChanger]="true"
         [nzTotal]="totalRecords()"
         [nzPageSize]="10"
-        [nzLoading]="loading"
+        [nzLoading]="loading()"
         (nzQueryParams)="getExercisesLazy($event)">
         <thead>
           <tr>
@@ -65,7 +65,7 @@
 
   <div class="row bottom-padded">
     <div class="col-12">
-      <button routerLink="/exercises/new" [disabled]="loading" class="btn btn-add-exercise">
+      <button routerLink="/exercises/new" [disabled]="loading()" class="btn btn-add-exercise">
         <i class="fa fa-plus"></i> Add New
       </button>
     </div>

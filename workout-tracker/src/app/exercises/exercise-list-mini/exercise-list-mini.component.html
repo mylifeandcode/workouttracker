@@ -3,7 +3,7 @@
   [nzShowSizeChanger]="true"
   [nzTotal]="totalRecords()"
   [nzPageSize]="10"
-  [nzLoading]="loading"
+  [nzLoading]="loading()"
   [nzData]="exercises()"
   (nzQueryParams)="getExercisesLazy($event)"
   >

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy, computed } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../_models/workout-plan';
@@ -49,6 +49,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   public isProcessing = signal(false);
   public planningForLater = signal(false);
   public exerciseBandAllocation = signal<IBandAllocation>({ selectedBandsDelimited: '', doubleMaxResistanceAmounts: false });
+  public loading = computed(() => this._apiCallsInProgress() > 0);
   //END PUBLIC FIELDS
 
   //PUBLIC PROPERTIES
@@ -56,7 +57,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   //END PUBLIC PROPERTIES
 
   //PRIVATE FIELDS
-  private _apiCallsInProgress: number = 0;
+  private _apiCallsInProgress = signal<number>(0);
   private _pastWorkoutStartDateTime: Date | null = null;
   private _pastWorkoutEndDateTime: Date | null = null;
   //END PRIVATE FIELDS
@@ -79,9 +80,6 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   /**
    * A property indicating whether or not the component is still loading information
    */
-  public get loading(): boolean {
-    return this._apiCallsInProgress > 0;
-  }
   //END PUBLIC PROPERTIES
 
   constructor() {
@@ -182,9 +180,9 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
       if (params["end"])
         this._pastWorkoutEndDateTime = new Date(params["end"]);
 
-      this._apiCallsInProgress++;
+      this._apiCallsInProgress.update(n => n + 1);
       this._workoutService.getNewPlan(workoutId)
-        .pipe(finalize(() => { this._apiCallsInProgress--; }))
+        .pipe(finalize(() => { this._apiCallsInProgress.update(n => n - 1); }))
         .subscribe((result: WorkoutPlan) => {
           this.workoutPlan.set(result);
           this.workoutPlanForm.patchValue({
@@ -260,9 +258,9 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   }
 
   private getResistanceBandInventory(): void {
-    this._apiCallsInProgress++;
+    this._apiCallsInProgress.update(n => n + 1);
     this._resistanceBandService.getAllIndividualBands()
-      .pipe(finalize(() => { this._apiCallsInProgress--; }))
+      .pipe(finalize(() => { this._apiCallsInProgress.update(n => n - 1); }))
       .subscribe({
         next: (bands: ResistanceBandIndividual[]) => {
           this.allResistanceBands.set(bands);

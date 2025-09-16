@@ -2,7 +2,7 @@ import { Component, HostListener } from "@angular/core";
 
 @Component({
     template: '',
-    standalone: false
+    standalone: true
 })
 export abstract class CheckForUnsavedDataComponent {
 
