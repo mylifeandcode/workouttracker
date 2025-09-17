@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { ConfigService } from 'app/core/_services/config/config.service';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
 import { ExecutedExerciseMetrics } from '../_models/executed-exercise-metrics';
 import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
@@ -57,11 +57,30 @@ export class AnalyticsService {
   }
 
   public getExecutedWorkoutsSummary(): Observable<ExecutedWorkoutsSummary> {
-    return this._http.get<ExecutedWorkoutsSummary>(`${this.API_ROOT}/executed-workouts`);
+    return this._http
+      .get<ExecutedWorkoutsSummary>(`${this.API_ROOT}/executed-workouts`)
+      .pipe(
+        map((summary: ExecutedWorkoutsSummary) => {
+          if(summary.firstLoggedWorkoutDateTime) {
+            summary.firstLoggedWorkoutDateTime = new Date(summary.firstLoggedWorkoutDateTime);
+          }
+          return summary;
+        })
+      );
   }
 
   public getExecutedWorkoutMetrics(workoutPublicId: string, count: number = 10): Observable<ExecutedWorkoutMetrics[]> {
-    return this._http.get<ExecutedWorkoutMetrics[]>(`${this.API_ROOT}/workout-metrics/${workoutPublicId}/${count}`);
+    return this._http
+      .get<ExecutedWorkoutMetrics[]>(`${this.API_ROOT}/workout-metrics/${workoutPublicId}/${count}`)
+      .pipe(
+        map((metrics: ExecutedWorkoutMetrics[]) => {
+          metrics.forEach((metric: ExecutedWorkoutMetrics) => {
+            metric.startDateTime = new Date(metric.startDateTime);
+            metric.endDateTime = new Date(metric.endDateTime);
+          });
+          return metrics;
+        })
+      );
   }
 
   public getExerciseChartData(metrics: ExecutedWorkoutMetrics[], exerciseId: string, metricsType: METRICS_TYPE): AnalyticsChartData {

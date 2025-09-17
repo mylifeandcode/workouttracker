@@ -140,6 +140,56 @@ describe('AnalyticsService', () => {
 
   });
 
+  it('should convert date strings to Date objects when getting executed workout metrics', (done: DoneFn) => {
+    const httpMock = TestBed.inject(HttpTestingController);
+    const mockResponse = [
+      {
+        startDateTime: "2022-04-04T12:00:00Z",
+        endDateTime: "2022-04-04T13:00:00Z"
+      },
+      {
+        startDateTime: "2022-04-11T14:00:00Z",
+        endDateTime: "2022-04-11T15:30:00Z"
+      }
+    ];
+
+    service.getExecutedWorkoutMetrics('some-id', 50)
+      .subscribe((results: ExecutedWorkoutMetrics[]) => {
+        expect(results.length).toBe(2);
+        expect(results[0].startDateTime instanceof Date).toBeTrue();
+        expect(results[0].startDateTime).toEqual(new Date("2022-04-04T12:00:00Z"));
+        expect(results[0].endDateTime instanceof Date).toBeTrue();
+        expect(results[0].endDateTime).toEqual(new Date("2022-04-04T13:00:00Z"));
+        expect(results[1].startDateTime instanceof Date).toBeTrue();
+        expect(results[1].startDateTime).toEqual(new Date("2022-04-11T14:00:00Z"));
+        expect(results[1].endDateTime instanceof Date).toBeTrue();
+        expect(results[1].endDateTime).toEqual(new Date("2022-04-11T15:30:00Z"));
+        done();
+      });
+
+    const req = httpMock.expectOne("http://localhost:5600/api/analytics/workout-metrics/some-id/50");
+    expect(req.request.method).toEqual('GET');
+    req.flush(mockResponse);
+  });
+
+  it('should convert date string to Date object when getting executed workouts summary', (done: DoneFn) => {
+    const httpMock = TestBed.inject(HttpTestingController);
+    const mockResponse = {
+      firstLoggedWorkoutDateTime: "2022-04-04T12:00:00Z"
+    };
+
+    service.getExecutedWorkoutsSummary()
+      .subscribe((results: ExecutedWorkoutsSummary) => {
+        expect(results.firstLoggedWorkoutDateTime instanceof Date).toBeTrue();
+        expect(results.firstLoggedWorkoutDateTime).toEqual(new Date("2022-04-04T12:00:00Z"));
+        done();
+      });
+
+    const req = httpMock.expectOne("http://localhost:5600/api/analytics/executed-workouts");
+    expect(req.request.method).toEqual('GET');
+    req.flush(mockResponse);
+  });
+
   const getMetricsForTest = (): ExecutedWorkoutMetrics[] => {
     //TODO: Create builders for these
     const metrics: ExecutedWorkoutMetrics[] = [];
