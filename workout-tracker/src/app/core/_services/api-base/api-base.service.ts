@@ -1,11 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { IEntity } from 'app/shared/interfaces/i-entity';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { mergeMap, shareReplay, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, mergeMap, shareReplay, take, tap } from 'rxjs/operators';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
-    'Content-Type':  'application/json'
+    'Content-Type': 'application/json'
   })
 };
 
@@ -18,7 +18,10 @@ export abstract class ApiBaseService<T extends IEntity> {
   */
   protected _refreshGetAll$ = new BehaviorSubject<void>(undefined);
 
-  constructor(protected _apiRoot: string, protected _http: HttpClient) {}
+  //Would rather use an interface for this. Kind of a hack.
+  protected readonly _knownDateTimeAuditFields: string[] = ['createdDateTime', 'modifiedDateTime', 'startDateTime', 'endDateTime'];
+
+  constructor(protected _apiRoot: string, protected _http: HttpClient) { }
 
   //PUBLIC FIELDS /////////////////////////////////////////////////////////////
   /*
@@ -106,7 +109,7 @@ export abstract class ApiBaseService<T extends IEntity> {
    * @param value The entity to update.
    * @returns An Observable containing the updated entity which completes after its value is emitted.
    */
-   public update(value: T): Observable<T> {
+  public update(value: T): Observable<T> {
     return this._http.put<T>(`${this._apiRoot}/${value.id}`, value, HTTP_OPTIONS)
       .pipe(
         tap(() => this.invalidateCache()) //Because we've updated an object, we need to trigger a change to invalidate the cached Observable of all of the objects
@@ -141,7 +144,7 @@ export abstract class ApiBaseService<T extends IEntity> {
       .pipe(
         tap(() => this.invalidateCache()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
-  }  
+  }
 
   /**
    * Invalidates cached data
@@ -159,23 +162,24 @@ export abstract class ApiBaseService<T extends IEntity> {
    * @returns An Observable containing all of the entities which completes after the value is emitted.
    */
   private getAllFromAPI(): Observable<T[]> {
-    return this._http.get<T[]>(this._apiRoot)
-      //.pipe(tap(item => console.log(`Got data from API: ${this._apiRoot}: `, item)))
-      ;
+    return this._http
+      .get<T[]>(this._apiRoot)
+      .pipe(
+        map((items: T[]) => {
+          items.forEach(item => this.convertKnownDateFields(item));
+          return items;
+        })
+      );
   }
 
-  /**
-   * Handles an error.
-   * 
-   * @param err The error.
-   * @returns An Observable that emits no items to the Observer and immediately emits an error notification.
-   */
-  /*
-  private handleError(err: any): Observable<never> {
-    //TODO: Implement this to do something meaningful/useful
-    //console.log("Error in ApiBaseService: ", err);
-    return throwError(() => err);
+  private convertKnownDateFields(entity: T): T {
+    this._knownDateTimeAuditFields.forEach(field => {
+      if ((entity as any)[field]) {
+        (entity as any)[field] = new Date((entity as any)[field]);
+      }
+    });
+    
+    return entity;
   }
-  */
   //END PRIVATE METHODS ///////////////////////////////////////////////////////
 }

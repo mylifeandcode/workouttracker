@@ -33,7 +33,7 @@ describe('ApiBaseService', () => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
-  provideZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         WidgetService,
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()

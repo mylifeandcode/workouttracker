@@ -8,6 +8,7 @@ import { ConfigService } from '../config/config.service';
 import { UserOverview } from '../../_models/user-overview';
 import { UserNewDTO } from '../../_models/user-new-dto';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { last } from 'lodash';
 
 const TEST_USER_ID: string = "1";
 
@@ -25,7 +26,7 @@ describe('UserService', () => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
-  provideZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         UserService,
         {
           provide: ConfigService,
@@ -100,7 +101,7 @@ describe('UserService', () => {
 
   it('should update user', () => {
     const user = new User();
-  user.id = parseInt(TEST_USER_ID, 10);
+    user.id = parseInt(TEST_USER_ID, 10);
 
     service.update(user)
       .subscribe({
@@ -150,6 +151,23 @@ describe('UserService', () => {
     //TODO: Revisit/complete
     request.flush(userOverview);
 
+  });
+
+  it('should convert lastWorkoutDateTime to Date object when getting user overview', (done: DoneFn) => {
+
+    const userOverview = { lastWorkoutDateTime: "2024-01-01T12:00:00Z" };
+
+    service.getOverview().subscribe((overview: UserOverview) => {
+      expect(overview).toBeTruthy();
+      expect(overview.lastWorkoutDateTime).toBeInstanceOf(Date);
+      expect(overview.lastWorkoutDateTime?.toISOString()).toBe("2024-01-01T12:00:00.000Z");
+      done();
+    });
+    const request = http.expectOne(`http://localhost:5600/api/users/overview`);
+    expect(request.request.method).toEqual('GET');
+
+    // Respond with the mock results
+    request.flush(userOverview);
   });
 
 });

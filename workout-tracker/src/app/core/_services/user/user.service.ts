@@ -1,18 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { User } from '../../_models/user';
-import { tap } from 'rxjs/operators';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { map, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 import { ConfigService } from '../config/config.service';
 import { UserOverview } from '../../_models/user-overview';
 import { ApiBaseService } from '../api-base/api-base.service';
 import { UserNewDTO } from '../../_models/user-new-dto';
 
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Content-Type':  'application/json'
-  })
-};
 
 @Injectable({
   providedIn: 'root',
@@ -20,13 +15,12 @@ const httpOptions = {
 export class UserService extends ApiBaseService<User> {
   private _configService: ConfigService;
 
-
   constructor() {
-    const _configService = inject(ConfigService);
+    const configService = inject(ConfigService); //This looks goofy, but needs to be injected this way due to super()/this constraint.
     const _http = inject(HttpClient);
  
-    super(_configService.get('apiRoot') + "users", _http);
-    this._configService = _configService;
+    super(configService.get('apiRoot') + "users", _http);
+    this._configService = configService;
 
   }
 
@@ -38,7 +32,16 @@ export class UserService extends ApiBaseService<User> {
   }
 
   public getOverview(): Observable<UserOverview> {
-    return this._http.get<UserOverview>(`${this._apiRoot}/overview`);
+    return this._http
+      .get<UserOverview>(`${this._apiRoot}/overview`)
+      .pipe(
+        map((overview: UserOverview) => {
+          if (overview.lastWorkoutDateTime) { 
+            overview.lastWorkoutDateTime = new Date(overview.lastWorkoutDateTime);
+          }
+          return overview;
+        })
+      );
   }
 
   public addNew(user: UserNewDTO): Observable<User> {
