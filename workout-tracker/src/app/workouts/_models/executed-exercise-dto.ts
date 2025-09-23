@@ -1,4 +1,3 @@
-import { IMightHaveAuditDates } from "app/shared/interfaces/i-might-have-audit-dates";
 import { ExerciseSide } from "../workout/_enums/exercise-side";
 import { IHasAuditDates } from "app/shared/interfaces/i-has-audit-dates";
 

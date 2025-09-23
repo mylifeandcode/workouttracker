@@ -1,11 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Exercise } from '../../workouts/_models/exercise';
 import { TargetArea } from '../../workouts/_models/target-area';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { ConfigService } from 'app/core/_services/config/config.service';
+import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -19,6 +21,7 @@ const HTTP_OPTIONS = {
 export class ExerciseService {
   private _http = inject(HttpClient);
   private _configService = inject(ConfigService);
+  private _dateService = inject(DateSerializationService);
 
 
   private readonly API_ROOT: string;
@@ -47,8 +50,16 @@ export class ExerciseService {
       url += `&hasTargetAreas=${targetAreas}`;
     }
 
-    return this._http.get<PaginatedResults<ExerciseDTO>>(url);
-
+    return this._http
+      .get<PaginatedResults<ExerciseDTO>>(url)
+      .pipe(
+        map((paginatedResults) => {
+          paginatedResults.results.forEach(exercise => {
+            this._dateService.convertAuditDateStringsToDates(exercise);
+          });
+          return paginatedResults;
+        })
+      );
   }
 
   /*
@@ -58,20 +69,50 @@ export class ExerciseService {
   */
 
   public getById(publicId: string): Observable<Exercise> {
-    return this._http.get<Exercise>(`${this.API_ROOT}/${publicId}`);
+    return this._http
+      .get<Exercise>(`${this.API_ROOT}/${publicId}`)
+      .pipe(
+        map((exercise) => {
+          this._dateService.convertAuditDateStringsToDates(exercise);
+          return exercise;
+        })
+      );
   }
 
   public getTargetAreas(): Observable<Array<TargetArea>> {
     //TODO: Move this into its own service
-    return this._http.get<Array<TargetArea>>(this.TARGET_AREAS_API_ROOT);
+    return this._http
+      .get<Array<TargetArea>>(this.TARGET_AREAS_API_ROOT)
+      .pipe(
+        map((targetAreas) => {
+          targetAreas.forEach(targetArea => {
+            this._dateService.convertAuditDateStringsToDates(targetArea);
+          });
+          return targetAreas;
+        })
+      );
   }
 
   public add(exercise: Exercise): Observable<Exercise> {
-    return this._http.post<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS);
+    return this._http
+      .post<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS)
+      .pipe(
+        map((newExercise) => {
+          this._dateService.convertAuditDateStringsToDates(newExercise);
+          return newExercise;
+        })
+      );
   }
 
   public update(exercise: Exercise): Observable<Exercise> {
-    return this._http.put<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS);
+    return this._http
+      .put<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS)
+      .pipe(
+        map((updatedExercise) => {
+          this._dateService.convertAuditDateStringsToDates(updatedExercise);
+          return updatedExercise;
+        })
+      );
   }
 
   public getResistanceTypes(): Observable<Map<number, string>> {

@@ -19,6 +19,47 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
     super("executedworkout");
   }
 
+  /*
+  THESE 4 OVERRIDES AREN'T NECESSARY NOW, BUT KEEPING THEM HERE IN CASE I NEED THEM LATER.
+  public override getAll(): Observable<ExecutedWorkoutDTO[]> {
+    return super.getAll().pipe(
+      map((workouts: ExecutedWorkoutDTO[]) => {
+        workouts.forEach((workout: ExecutedWorkoutDTO) => 
+            workout.exercises.forEach((exercise: ExecutedExerciseDTO) => this._dateService.convertAuditDateStringsToDates(exercise)));
+        return workouts;
+      })
+    );
+  }
+
+  public override getById(publicId: string): Observable<ExecutedWorkoutDTO> {
+    return super.getById(publicId).pipe(
+      map((workout: ExecutedWorkoutDTO) => {
+        workout.exercises.forEach((exercise: ExecutedExerciseDTO) => this._dateService.convertAuditDateStringsToDates(exercise));
+        return workout;
+      })
+    );
+  }
+
+  public override add(entity: ExecutedWorkoutDTO): Observable<ExecutedWorkoutDTO> {
+    return super.add(entity).pipe(
+      map((workout: ExecutedWorkoutDTO) => {
+        workout.exercises.forEach((exercise: ExecutedExerciseDTO) => this._dateService.convertAuditDateStringsToDates(exercise));
+        return workout;
+      })
+    );
+  }
+
+  public override update(entity: ExecutedWorkoutDTO): Observable<ExecutedWorkoutDTO> {
+    return super.update(entity).pipe( 
+      map((workout: ExecutedWorkoutDTO) => {
+        workout.exercises.forEach((exercise: ExecutedExerciseDTO) => this._dateService.convertAuditDateStringsToDates(exercise));
+        return workout;
+      })
+    );
+  }
+  */
+
+  
   /**
    * Gets a subset of ExecutedWorkoutDTOs
    *

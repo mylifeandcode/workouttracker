@@ -1,4 +1,6 @@
-export class ExerciseDTO {
+import { IMightHaveAuditDates } from "app/shared/interfaces/i-might-have-audit-dates";
+
+export class ExerciseDTO implements IMightHaveAuditDates {
   id: number = 0;
   publicId: string = '';
   createdDateTime: Date = new Date();
