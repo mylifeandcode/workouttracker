@@ -16,10 +16,7 @@ import { map } from 'rxjs/operators';
 export class ResistanceBandService extends ApiBaseService<ResistanceBand> {
 
   constructor() {
-    const _configService = inject(ConfigService);
-    const _http = inject(HttpClient);
-
-    super(_configService.get('apiRoot') + "resistancebands", _http);
+    super("resistancebands");
   }
 
   /**

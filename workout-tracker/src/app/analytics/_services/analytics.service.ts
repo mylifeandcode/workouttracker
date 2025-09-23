@@ -6,6 +6,7 @@ import { AnalyticsChartData } from '../_models/analytics-chart-data';
 import { ExecutedExerciseMetrics } from '../_models/executed-exercise-metrics';
 import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 import { ExecutedWorkoutsSummary } from '../_models/executed-workouts-summary';
+import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
 
 //TODO: This service doesn't fit the normal API service pattern due to different types, not just 
 //a single entity type. Find a way to eliminate duplicate setup code and allow for caching.
@@ -35,6 +36,7 @@ export enum METRICS_TYPE {
 export class AnalyticsService {
   private _http = inject(HttpClient);
   private _configService = inject(ConfigService);
+  private _dateService = inject(DateSerializationService);
 
   private readonly API_ROOT: string;
   private readonly BORDERCOLORS: string[] = 
@@ -74,10 +76,7 @@ export class AnalyticsService {
       .get<ExecutedWorkoutMetrics[]>(`${this.API_ROOT}/workout-metrics/${workoutPublicId}/${count}`)
       .pipe(
         map((metrics: ExecutedWorkoutMetrics[]) => {
-          metrics.forEach((metric: ExecutedWorkoutMetrics) => {
-            metric.startDateTime = new Date(metric.startDateTime);
-            metric.endDateTime = new Date(metric.endDateTime);
-          });
+          metrics.forEach((metric: ExecutedWorkoutMetrics) => this._dateService.convertDateRangeStringsToDates(metric));
           return metrics;
         })
       );

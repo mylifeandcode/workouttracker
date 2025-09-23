@@ -7,11 +7,28 @@ import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
+import { start } from 'repl';
 
 const API_ROOT_URL: string = "http://localhost:5600/api/";
 
-class ConfigServiceMock {
+class MockConfigService {
   get = jasmine.createSpy('get').and.returnValue(API_ROOT_URL);
+}
+
+class MockDateSerializationService {
+  convertDateRangeStringsToDates =
+    jasmine.createSpy('convertDateRangeStringsToDates').and.callFake((obj: ExecutedWorkoutSummaryDTO) => {
+      if (obj.startDateTime && typeof obj.startDateTime === 'string') {
+        obj.startDateTime = new Date(obj.startDateTime);
+      }
+
+      if (obj.endDateTime && typeof obj.endDateTime === 'string') {
+        obj.endDateTime = new Date(obj.endDateTime);
+      }
+
+      return obj;
+    });
 }
 
 describe('ExecutedWorkoutService', () => {
@@ -20,18 +37,21 @@ describe('ExecutedWorkoutService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [
-  provideZonelessChangeDetection(),
-        ExecutedWorkoutService,
+      imports: [],
+      providers: [
+        provideZonelessChangeDetection(),
         {
-            provide: ConfigService,
-            useClass: ConfigServiceMock
+          provide: ConfigService,
+          useClass: MockConfigService
+        },
+        {
+          provide: DateSerializationService,
+          useClass: MockDateSerializationService
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
-    ]
-});
+      ]
+    });
     service = TestBed.inject(ExecutedWorkoutService);
     httpMock = TestBed.inject(HttpTestingController);
   });
@@ -66,6 +86,39 @@ describe('ExecutedWorkoutService', () => {
     req.flush(expectedResults);
   });
 
+  it('should convert date strings to dates when getting filtered subset', (done: DoneFn) => {
+    //ARRANGE
+    const mockResults = {
+      results: [
+        {
+          startDateTime: "2024-06-01T10:00:00.000Z",
+          endDateTime: "2024-06-01T11:00:00.000Z"
+        }
+      ]
+    };
+
+    //ACT
+    service.getFilteredSubset(0, 5)
+      .subscribe({
+        next: (response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
+          //ASSERT
+          expect(response.results[0].startDateTime instanceof Date).toBeTrue();
+          expect(response.results[0].startDateTime.toISOString()).toBe("2024-06-01T10:00:00.000Z");
+          expect(response.results[0].endDateTime instanceof Date).toBeTrue();
+          expect(response.results[0].endDateTime.toISOString()).toBe("2024-06-01T11:00:00.000Z");
+          done();
+        },
+        error: fail
+      });
+
+    //ASSERT
+    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5`);
+    expect(req.request.method).toEqual('GET');
+
+    //Respond with the mock results
+    req.flush(mockResults);
+  });
+
   it('should get planned workouts', (done: DoneFn) => {
     //ARRANGE
     const expectedResults = new PaginatedResults<ExecutedWorkoutSummaryDTO>();
@@ -94,6 +147,39 @@ describe('ExecutedWorkoutService', () => {
     req.flush(expectedResults);
   });
 
+  it('should convert date strings to dates when getting planned workouts', (done: DoneFn) => {
+    //ARRANGE
+    const mockResults = {
+      results: [
+        {
+          startDateTime: "2024-06-01T10:00:00.000Z",
+          endDateTime: "2024-06-01T11:00:00.000Z"
+        }
+      ]
+    };
+
+    //ACT
+    service.getPlanned(0, 5)
+      .subscribe({
+        next: (response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
+          //ASSERT
+          expect(response.results[0].startDateTime instanceof Date).toBeTrue();
+          expect(response.results[0].startDateTime.toISOString()).toBe("2024-06-01T10:00:00.000Z");
+          expect(response.results[0].endDateTime instanceof Date).toBeTrue();
+          expect(response.results[0].endDateTime.toISOString()).toBe("2024-06-01T11:00:00.000Z");
+          done();
+        },
+        error: fail
+      });
+
+    //ASSERT
+    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout/planned?firstRecord=0&pageSize=5`);
+    expect(req.request.method).toEqual('GET');
+
+    //Respond with the mock results
+    req.flush(mockResults);
+  });
+
   it('should get recent executed workouts', (done: DoneFn) => {
     //ARRANGE
     const expectedResults = new PaginatedResults<ExecutedWorkoutSummaryDTO>();
@@ -119,6 +205,38 @@ describe('ExecutedWorkoutService', () => {
     req.flush(expectedResults);
   });
 
+  it('should convert date strings to dates when getting recent executed workouts', (done: DoneFn) => {
+    //ARRANGE
+    const mockResults = {
+      results: [
+        {
+          startDateTime: "2024-06-01T10:00:00.000Z",
+          endDateTime: "2024-06-01T11:00:00.000Z"
+        }
+      ]
+    };
+
+    //ACT
+    service.getRecent().subscribe({
+      next: (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
+        //ASSERT
+        expect(recentWorkouts[0].startDateTime instanceof Date).toBeTrue();
+        expect(recentWorkouts[0].startDateTime.toISOString()).toBe("2024-06-01T10:00:00.000Z");
+        expect(recentWorkouts[0].endDateTime instanceof Date).toBeTrue();
+        expect(recentWorkouts[0].endDateTime.toISOString()).toBe("2024-06-01T11:00:00.000Z");
+        done();
+      },
+      error: fail
+    });
+
+    //ASSERT
+    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5`);
+    expect(req.request.method).toEqual('GET');
+
+    //Respond with the mock results
+    req.flush(mockResults);
+  });
+
   it('should get in-progress workouts', (done: DoneFn) => {
     //ARRANGE
     const expectedResults: ExecutedWorkoutSummaryDTO[] = [];
@@ -140,6 +258,36 @@ describe('ExecutedWorkoutService', () => {
 
     //Respond with the mock results
     req.flush(expectedResults);
+  });
+
+  it('should convert date strings to dates when getting in-progress workouts', (done: DoneFn) => {
+    //ARRANGE
+    const mockResults = [
+      {
+        startDateTime: "2024-06-01T10:00:00.000Z",
+        endDateTime: "2024-06-01T11:00:00.000Z"
+      }
+    ];
+
+    //ACT
+    service.getInProgress().subscribe({
+      next: (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
+        //ASSERT
+        expect(recentWorkouts[0].startDateTime instanceof Date).toBeTrue();
+        expect(recentWorkouts[0].startDateTime.toISOString()).toBe("2024-06-01T10:00:00.000Z");
+        expect(recentWorkouts[0].endDateTime instanceof Date).toBeTrue();
+        expect(recentWorkouts[0].endDateTime.toISOString()).toBe("2024-06-01T11:00:00.000Z");
+        done();
+      },
+      error: fail
+    });
+
+    //ASSERT
+    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout/in-progress`);
+    expect(req.request.method).toEqual('GET');
+
+    //Respond with the mock results
+    req.flush(mockResults);
   });
 
 });

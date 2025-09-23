@@ -1,7 +1,8 @@
 import { NamedEntityDTO } from "./named-entity-dto";
 import { ExecutedExerciseDTO } from "./executed-exercise-dto";
+import { IMightHaveDateRange } from "app/shared/interfaces/i-might-have-date-range";
 
-export class ExecutedWorkoutDTO extends NamedEntityDTO {
+export class ExecutedWorkoutDTO extends NamedEntityDTO implements IMightHaveDateRange {
   public workoutId: string = '';
   public startDateTime: Date | null = null;
   public endDateTime: Date | null = null;

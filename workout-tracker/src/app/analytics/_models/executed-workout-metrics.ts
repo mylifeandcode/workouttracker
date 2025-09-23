@@ -1,6 +1,7 @@
+import { IHasDateRange } from "app/shared/interfaces/i-has-date-range";
 import { ExecutedExerciseMetrics } from "./executed-exercise-metrics";
 
-export class ExecutedWorkoutMetrics {
+export class ExecutedWorkoutMetrics implements IHasDateRange {
   public name: string = '';
   public startDateTime: Date = new Date();
   public endDateTime: Date = new Date();

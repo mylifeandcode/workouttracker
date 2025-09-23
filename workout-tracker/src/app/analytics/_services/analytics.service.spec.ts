@@ -10,11 +10,28 @@ import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 import { ExecutedWorkoutsSummary } from '../_models/executed-workouts-summary';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
 
 
-class ConfigServiceMock {
+class MockConfigService {
   get = jasmine.createSpy('get').and.returnValue('http://localhost:5600/api/');
 }
+
+class MockDateSerializationService {
+  convertDateRangeStringsToDates =
+    jasmine.createSpy('convertDateRangeStringsToDates').and.callFake((obj: ExecutedWorkoutMetrics) => {
+      if (obj.startDateTime && typeof obj.startDateTime === 'string') {
+        obj.startDateTime = new Date(obj.startDateTime);
+      }
+
+      if (obj.endDateTime && typeof obj.endDateTime === 'string') {
+        obj.endDateTime = new Date(obj.endDateTime);
+      }
+
+      return obj;
+    });
+}
+
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
 
@@ -25,7 +42,11 @@ describe('AnalyticsService', () => {
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useClass: ConfigServiceMock
+          useClass: MockConfigService
+        },
+        {
+          provide: DateSerializationService,
+          useClass: MockDateSerializationService
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()

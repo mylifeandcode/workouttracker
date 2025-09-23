@@ -2,6 +2,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { IEntity } from 'app/shared/interfaces/i-entity';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, mergeMap, shareReplay, take, tap } from 'rxjs/operators';
+import { DateSerializationService } from '../date-serialization/date-serialization.service';
+import { inject } from '@angular/core';
+import { IMightHaveAuditDates } from 'app/shared/interfaces/i-might-have-audit-dates';
+import { ConfigService } from '../config/config.service';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -9,7 +13,7 @@ const HTTP_OPTIONS = {
   })
 };
 
-export abstract class ApiBaseService<T extends IEntity> {
+export abstract class ApiBaseService<T extends IEntity & IMightHaveAuditDates> {
 
   /*
   This BehaviorSubject is here for us to call next() on, which will trigger a new call to 
@@ -17,11 +21,14 @@ export abstract class ApiBaseService<T extends IEntity> {
   any of the objects (add, update, delete) so that we can invalidate the cached Observable.
   */
   protected _refreshGetAll$ = new BehaviorSubject<void>(undefined);
+  protected _dateService = inject(DateSerializationService);
+  protected _http = inject(HttpClient);
+  protected _configService = inject(ConfigService);
+  protected _apiRoot: string;
 
-  //Would rather use an interface for this. Kind of a hack.
-  protected readonly _knownDateTimeAuditFields: string[] = ['createdDateTime', 'modifiedDateTime', 'startDateTime', 'endDateTime'];
-
-  constructor(protected _apiRoot: string, protected _http: HttpClient) { }
+  constructor(apiRootSuffix: string) { 
+    this._apiRoot = this._configService.get('apiRoot') + apiRootSuffix;
+  }
 
   //PUBLIC FIELDS /////////////////////////////////////////////////////////////
   /*
@@ -67,19 +74,6 @@ export abstract class ApiBaseService<T extends IEntity> {
   }
 
   /**
-   * Gets the specified entity by ID.
-   * 
-   * @param id The ID of the entity to retrieve.
-   * @returns An Observable containing the specified entity which completes after the value is 
-   * emitted. This value is not cached.
-   */
-  /*
-  public getById(id: number): Observable<T> {
-    return this._http.get<T>(`${this._apiRoot}/${id}`);
-  }
-  */
-
-  /**
    * Gets the specified entity by public ID.
    * 
    * @param publicId The public ID of the entity to retrieve.
@@ -87,7 +81,14 @@ export abstract class ApiBaseService<T extends IEntity> {
    * emitted. This value is not cached.
    */
   public getById(publicId: string): Observable<T> {
-    return this._http.get<T>(`${this._apiRoot}/${publicId}`);
+    return this._http
+      .get<T>(`${this._apiRoot}/${publicId}`)
+      .pipe(
+        map((item: T) => {
+          this._dateService.convertAuditDateStringsToDates(item);
+          return item;
+        })
+      );
   }
 
   /**
@@ -99,7 +100,11 @@ export abstract class ApiBaseService<T extends IEntity> {
   public add(value: T): Observable<T> {
     return this._http.post<T>(this._apiRoot, value, HTTP_OPTIONS)
       .pipe(
-        tap(() => this.invalidateCache()) //Because we've added an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+        tap(() => this.invalidateCache()), //Because we've added an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+        map((item: T) => {
+          this._dateService.convertAuditDateStringsToDates(item);
+          return item;
+        })
       );
   }
 
@@ -112,7 +117,11 @@ export abstract class ApiBaseService<T extends IEntity> {
   public update(value: T): Observable<T> {
     return this._http.put<T>(`${this._apiRoot}/${value.id}`, value, HTTP_OPTIONS)
       .pipe(
-        tap(() => this.invalidateCache()) //Because we've updated an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+        tap(() => this.invalidateCache()), //Because we've updated an object, we need to trigger a change to invalidate the cached Observable of all of the objects
+        map((item: T) => {
+          this._dateService.convertAuditDateStringsToDates(item);
+          return item;
+        })
       );
   }
 
@@ -166,20 +175,10 @@ export abstract class ApiBaseService<T extends IEntity> {
       .get<T[]>(this._apiRoot)
       .pipe(
         map((items: T[]) => {
-          items.forEach(item => this.convertKnownDateFields(item));
+          items.forEach(item => this._dateService.convertAuditDateStringsToDates(item));
           return items;
         })
       );
-  }
-
-  private convertKnownDateFields(entity: T): T {
-    this._knownDateTimeAuditFields.forEach(field => {
-      if ((entity as any)[field]) {
-        (entity as any)[field] = new Date((entity as any)[field]);
-      }
-    });
-    
-    return entity;
   }
   //END PRIVATE METHODS ///////////////////////////////////////////////////////
 }

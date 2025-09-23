@@ -13,15 +13,9 @@ import { UserNewDTO } from '../../_models/user-new-dto';
   providedIn: 'root',
 })
 export class UserService extends ApiBaseService<User> {
-  private _configService: ConfigService;
 
   constructor() {
-    const configService = inject(ConfigService); //This looks goofy, but needs to be injected this way due to super()/this constraint.
-    const _http = inject(HttpClient);
- 
-    super(configService.get('apiRoot') + "users", _http);
-    this._configService = configService;
-
+    super("users");
   }
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////

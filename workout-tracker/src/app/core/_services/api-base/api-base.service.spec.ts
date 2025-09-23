@@ -2,10 +2,15 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Entity } from 'app/shared/models/entity';
 import { ApiBaseService } from './api-base.service';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { Injectable, inject as inject_1, provideZonelessChangeDetection } from '@angular/core';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { Injectable, provideZonelessChangeDetection } from '@angular/core';
+import { ConfigService } from '../config/config.service';
 
-const API_ROOT = "https://someApiRoot";
+const API_ROOT = "https://someUrl/api/";
+
+class MockConfigService {
+  get = jasmine.createSpy('get').and.returnValue(API_ROOT);
+}
 
 class Widget extends Entity {
 
@@ -18,9 +23,7 @@ class Widget extends Entity {
 })
 class WidgetService extends ApiBaseService<Widget> {
   constructor() {
-    const http = inject_1(HttpClient);
-
-    super(API_ROOT, http);
+    super("widgets");
   }
 }
 
@@ -36,7 +39,11 @@ describe('ApiBaseService', () => {
         provideZonelessChangeDetection(),
         WidgetService,
         provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        {
+          provide: ConfigService,
+          useClass: MockConfigService
+        }
       ]
     });
 
@@ -49,7 +56,7 @@ describe('ApiBaseService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should get all', () => {
+  it('should get all', (done: DoneFn) => {
 
     //ARRANGE
     const widgets = new Array<Widget>();
@@ -58,17 +65,18 @@ describe('ApiBaseService', () => {
     const result = service.all$;
     result.subscribe((widgetResults: Widget[]) => {
       expect(widgetResults).toBe(widgets, fail);
+      done();
     });
 
     //ASSERT
-    const req = http.expectOne(API_ROOT);
+    const req = http.expectOne(`${API_ROOT}widgets`);
     expect(req.request.method).toEqual('GET');
     //Respond with the mock results
     req.flush(widgets);
 
   });
 
-  it('should get by ID', () => {
+  it('should get by ID', (done: DoneFn) => {
 
     //ARRANGE
     const widget = new Widget();
@@ -78,17 +86,18 @@ describe('ApiBaseService', () => {
     const result = service.getById(WIDGET_ID);
     result.subscribe((widgetResult: Widget) => {
       expect(widgetResult).toBe(widget, fail);
+      done();
     });
 
     //ASSERT
-    const req = http.expectOne(`${API_ROOT}/${WIDGET_ID}`);
+    const req = http.expectOne(`${API_ROOT}widgets/${WIDGET_ID}`);
     expect(req.request.method).toEqual('GET');
     //Respond with the mock results
     req.flush(widget);
 
   });
 
-  it('should add', () => {
+  it('should add', (done: DoneFn) => {
 
     //ARRANGE
     const widget = new Widget();
@@ -97,17 +106,18 @@ describe('ApiBaseService', () => {
     const result = service.add(widget);
     result.subscribe((widgetResult: Widget) => {
       expect(widgetResult).toBe(widget, fail);
+      done();
     });
 
     //ASSERT
-    const req = http.expectOne(API_ROOT);
+    const req = http.expectOne(`${API_ROOT}widgets`);
     expect(req.request.method).toEqual('POST');
     //Respond with the mock results
     req.flush(widget);
 
   });
 
-  it('should update', () => {
+  it('should update', (done: DoneFn) => {
 
     //ARRANGE
     const widget = new Widget();
@@ -118,17 +128,18 @@ describe('ApiBaseService', () => {
     const result = service.update(widget);
     result.subscribe((widgetResult: Widget) => {
       expect(widgetResult).toBe(widget, fail);
+      done();
     });
 
     //ASSERT
-    const req = http.expectOne(`${API_ROOT}/${WIDGET_ID}`);
+    const req = http.expectOne(`${API_ROOT}widgets/${WIDGET_ID}`);
     expect(req.request.method).toEqual('PUT');
     //Respond with the mock results
     req.flush(widget);
 
   });
 
-  it('should delete', () => {
+  it('should delete', (done: DoneFn) => {
 
     //ARRANGE
     const WIDGET_ID: string = '1';
@@ -137,10 +148,11 @@ describe('ApiBaseService', () => {
     const result = service.deleteById(WIDGET_ID);
     result.subscribe((serviceEntity: any) => { //TODO: Re-evaluate return type to use here!
       expect(serviceEntity).toBeTruthy(fail);
+      done();
     });
 
     //ASSERT
-    const req = http.expectOne(`${API_ROOT}/${WIDGET_ID}`);
+    const req = http.expectOne(`${API_ROOT}widgets/${WIDGET_ID}`);
     expect(req.request.method).toEqual('DELETE');
     //Respond with the mock results
     req.flush(new Object());
@@ -156,13 +168,11 @@ describe('ApiBaseService', () => {
     const result1 = service.all$;
     result1.subscribe((widgetResults: Widget[]) => {
       expect(widgetResults).toBe(widgets, fail);
-      done();
     });
 
     const result2 = service.all$;
     result2.subscribe((widgetResults: Widget[]) => {
       expect(widgetResults).toBe(widgets, fail);
-      done();
     });
 
     const result3 = service.all$;
@@ -172,7 +182,7 @@ describe('ApiBaseService', () => {
     });
 
     //ASSERT
-    const req = http.expectOne(API_ROOT);
+    const req = http.expectOne(`${API_ROOT}widgets`);
     expect(req.request.method).toEqual('GET');
     //Respond with the mock results
     req.flush(widgets);
@@ -188,13 +198,11 @@ describe('ApiBaseService', () => {
     const result1 = service.all$;
     result1.subscribe((widgetResults: Widget[]) => {
       expect(widgetResults).toBe(widgets, fail);
-      done();
     });
 
     const result2 = service.all$;
     result2.subscribe((widgetResults: Widget[]) => {
       expect(widgetResults).toBe(widgets, fail);
-      done();
     });
 
     service.invalidateCache();
@@ -206,7 +214,7 @@ describe('ApiBaseService', () => {
     });
 
     //ASSERT
-    const requests = http.match(API_ROOT);
+    const requests = http.match(`${API_ROOT}widgets`);
     expect(requests.length).toBe(2);
     requests.forEach(request => {
       expect(request.request.method).toEqual('GET');

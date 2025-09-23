@@ -102,7 +102,7 @@
           @if (editEnabled()) {
             <div class="col-8">
               <button type="submit" [disabled]="workoutForm.invalid || saving" (click)="saveWorkout()"
-                class="btn btn-save-workout">Save</button>&nbsp;<span>{{infoMsg}}</span>
+                class="btn btn-save-workout">Save</button>&nbsp;<span>{{infoMsg()}}</span>
               @if (workoutForm.touched && workoutForm.invalid) {
                 <span class="error-text">Please enter required information</span>
               }
