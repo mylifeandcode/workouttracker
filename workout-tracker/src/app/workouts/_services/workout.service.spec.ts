@@ -23,17 +23,17 @@ let httpMock: HttpTestingController;
 describe('WorkoutService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [
-  provideZonelessChangeDetection(),
+      imports: [],
+      providers: [
+        provideZonelessChangeDetection(),
         {
-            provide: ConfigService,
-            useClass: MockConfigService
+          provide: ConfigService,
+          useClass: MockConfigService
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
-    ]
-});
+      ]
+    });
     service = TestBed.inject(WorkoutService);
     httpMock = TestBed.inject(HttpTestingController);
   });
@@ -218,6 +218,45 @@ describe('WorkoutService', () => {
 
   });
 
+  it('should get new workout plan', (done: DoneFn) => {
+    const workoutPublicId: string = "some-guid-123";
+    const expectedPlan = new WorkoutPlan();
+    expectedPlan.workoutId = workoutPublicId;
+    expectedPlan.submittedDateTime = new Date();
+
+    service.getNewPlan(workoutPublicId).subscribe({
+      next: (plan: WorkoutPlan) => {
+        expect(plan).toEqual(expectedPlan);
+        done();
+      },
+      error: fail
+    });
+
+    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPublicId}/plan`);
+    expect(req.request.method).toEqual('GET');
+
+    req.flush(expectedPlan);
+  });
+
+  it('should convert date string to date object when getting new workout plan', (done: DoneFn) => {
+    const workoutPublicId: string = "some-guid-123";
+    const expectedResults = {
+      submittedDateTime: "2024-01-22T14:30:00.000Z"
+    };
+
+    service.getNewPlan(workoutPublicId).subscribe({
+      next: (plan: WorkoutPlan) => {
+        expect(plan.submittedDateTime).toEqual(new Date(expectedResults.submittedDateTime));
+        done();
+      },
+      error: fail
+    });
+
+    const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPublicId}/plan`);
+    expect(req.request.method).toEqual('GET');
+
+    req.flush(expectedResults); 
+  });
 });
 
 

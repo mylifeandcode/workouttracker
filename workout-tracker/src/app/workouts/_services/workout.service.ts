@@ -1,11 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Workout } from 'app/workouts/_models/workout';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { WorkoutPlan } from '../_models/workout-plan';
 import { ConfigService } from 'app/core/_services/config/config.service';
+import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -19,7 +21,6 @@ const HTTP_OPTIONS = {
 export class WorkoutService {
   private _http = inject(HttpClient);
   private _configService = inject(ConfigService);
-
 
   private readonly API_ROOT: string;
 
@@ -50,7 +51,16 @@ export class WorkoutService {
   }
 
   public getNewPlan(workoutPublicId: string): Observable<WorkoutPlan> {
-    return this._http.get<WorkoutPlan>(`${this.API_ROOT}/${workoutPublicId}/plan`);
+    return this._http
+      .get<WorkoutPlan>(`${this.API_ROOT}/${workoutPublicId}/plan`)
+      .pipe(
+        map((plan) => {
+          if (plan.submittedDateTime) {
+            plan.submittedDateTime = new Date(plan.submittedDateTime);
+          }
+          return plan;
+        })
+      );
   }
 
   public submitPlan(plan: WorkoutPlan): Observable<string> {

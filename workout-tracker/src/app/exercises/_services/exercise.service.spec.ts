@@ -29,7 +29,7 @@ class MockDateSerializationService {
 }
 
 
-fdescribe('ExerciseService', () => {
+describe('ExerciseService', () => {
   let service: ExerciseService;
   let http: HttpTestingController;
 
