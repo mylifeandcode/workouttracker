@@ -15,9 +15,7 @@
         formGroup().controls.resistanceAmountLastTime.value |
         resistanceAmount:formGroup().controls.resistanceType.value==2}}</span>
       @if (formGroup().controls.resistanceMakeupLastTime.value) {
-        <span>
-          (<span [innerHTML]="formGroup().controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
-        </span>
+        <br />(<span [innerHTML]="formGroup().controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
       }
     </div>
   </div>

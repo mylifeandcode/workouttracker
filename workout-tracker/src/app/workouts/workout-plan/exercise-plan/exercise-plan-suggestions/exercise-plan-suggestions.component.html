@@ -13,9 +13,7 @@
     <div style="width: 50%">
       <span>{{formGroup().controls.resistanceType.value==3 ? 'Body Weight' : formGroup().controls.recommendedResistanceAmount.value | resistanceAmount:formGroup().controls.resistanceType.value==2}}</span>
       @if (formGroup().controls.recommendedResistanceMakeup.value) {
-        <span>
-          (<span [innerHTML]="formGroup().controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
-        </span>
+        <br />(<span [innerHTML]="formGroup().controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
       }
     </div>
   </div>

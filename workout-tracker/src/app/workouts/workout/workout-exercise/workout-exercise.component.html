@@ -1,4 +1,4 @@
-<div [formGroup]="formGroup()" class="row">
+<div [formGroup]="formGroup()" class="row set-type-row">
   <input type="hidden" formControlName="exerciseId" />
   <div class="col-md-12">
     {{formGroup().controls.setType.value == 0 ? "Repetition" : "Timed"}} Set(s) using
@@ -12,7 +12,7 @@
     <div formArrayName="exerciseSets">
 
       <!--Set Header Row-->
-      <div class="row">
+      <div class="row mt-2">
         <div class="col-1">
           Set
         </div>
@@ -20,7 +20,7 @@
           Resistance
         </div>
         <div class="col-1 duration-div">
-          Duration (click to edit)
+          Duration
         </div>
         <div class="col-1 reps-div">
           Target Reps

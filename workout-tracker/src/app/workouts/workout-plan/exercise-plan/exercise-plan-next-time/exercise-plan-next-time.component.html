@@ -14,15 +14,13 @@
     @if (formGroup()) {
       <div class="half-area" [formGroup]="formGroup()">
 
-        <!--TODO: Create a child component for this-->
         @if (formGroup().controls.resistanceType.value != resistanceTypeEnum.ResistanceBand && formGroup().controls.resistanceType.value !=resistanceTypeEnum.BodyWeight) {
           <input wtSelectOnFocus type="number" class="amount trail-space" formControlName="resistanceAmount" required />
         } @else if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
           <span class="no-input-value">
             @if (formGroup().controls.resistanceAmount.value) {
               {{formGroup().controls.resistanceAmount.value | resistanceAmount:true}}
-              <span class="trail-space">(<span
-                  [innerHTML]="formGroup().controls.resistanceMakeup.value | resistanceBandColor"></span>)</span>
+              <br />(<span [innerHTML]="formGroup().controls.resistanceMakeup.value | resistanceBandColor"></span>)
             }
           </span>
         } @else if (formGroup().controls.resistanceType.value == resistanceTypeEnum.BodyWeight) {
@@ -57,24 +55,19 @@
     }
   </div>
 
-  @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
-    <div class="d-flex align-content-end little-footroom px-2">
-      <div class="w-100 text-center">
-        <button class="btn btn-choose-resistance btn-sm" (click)="selectResistanceBands(formGroup())">
+  <div class="d-flex align-content-end little-footroom px-2">
+    <div class="w-100 text-center">
+      @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
+        <button class="btn btn-choose-resistance btn-sm me-1" (click)="selectResistanceBands(formGroup())">
           Choose Resistance
         </button>
-      </div>
-    </div>
-  }
+      }
 
-  @if (workoutHasBeenExecutedBefore() && formGroup().controls.resistanceType.value != resistanceTypeEnum.BodyWeight) {
-    <div class="d-flex align-content-end little-footroom px-2">
-      <div class="w-100 text-center">
-        <button class="btn btn-same-as-last-time btn-sm" (click)="useSameResistanceAsLastTime()">
+      @if (workoutHasBeenExecutedBefore() && formGroup().controls.resistanceType.value != resistanceTypeEnum.BodyWeight) {
+        <button class="btn btn-same-as-last-time btn-sm ms-1" (click)="useSameResistanceAsLastTime()">
           Use Same Resistance as Last Time
         </button>
-      </div>
+      }
     </div>
-  }
-
+  </div>
 </div>
