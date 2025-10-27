@@ -10,12 +10,24 @@ import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { ResistanceType } from 'app/workouts/workout/_enums/resistance-type';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NgClass, KeyValuePipe } from '@angular/common';
+import { NgClass, KeyValuePipe, JsonPipe } from '@angular/common';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 import { forkJoin } from 'rxjs';
+import {
+  form,
+  required,
+  maxLength,
+  minLength,
+  validate,
+  submit,
+  Control,
+  schema,
+} from '@angular/forms/signals';
+import { ValidationErrorsComponent } from 'app/shared/components/validation-errors/validation-errors.component';
+import { ExerciseViewModel } from '../_models/exercise-view-model';
 
 interface IExerciseEditForm {
   id: FormControl<number>;
@@ -45,7 +57,7 @@ interface IExerciseEditForm {
   styleUrls: ['./exercise-edit.component.scss'],
   imports: [
     NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, NzSwitchModule,
-    KeyValuePipe, InsertSpaceBeforeCapitalPipe
+    KeyValuePipe, InsertSpaceBeforeCapitalPipe, Control, JsonPipe, ValidationErrorsComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -62,11 +74,33 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   //PUBLIC FIELDS
   public exerciseForm: FormGroup<IExerciseEditForm>;
+
   public loading = signal<boolean>(true);
   public allTargetAreas: TargetArea[] = [];
   public resistanceTypes: Map<number, string> | undefined;
   public infoMsg = signal<string | null>(null);
   public editModeEnabled = signal(false);
+
+  //SIGNAL FORMS
+  private _exerciseModel = signal<ExerciseViewModel>(new ExerciseViewModel()); //Signal Forms
+  public form = form<ExerciseViewModel>(this._exerciseModel, (path) => {
+    required(path.exercise.id);
+    required(path.exercise.publicId);
+    required(path.exercise.name);
+    required(path.exercise.description);
+    maxLength(path.exercise.description, ExerciseEditComponent.MAX_TEXT_LENGTH);
+    required(path.exercise.resistanceType);
+    required(path.exercise.oneSided);
+    required(path.exercise.involvesReps);
+    required(path.exercise.usesBilateralResistance);
+    validate(path.exercise.resistanceType, (ctx) => {
+      const value = ctx.value();
+      if (ctx.value() === ExerciseEditComponent.RESISTANCE_BANDS_TYPE) {
+        required(path.exercise.bandsEndToEnd)
+      };
+    });
+  }
+  );
 
   //PUBLIC PROPERTIES
   public get isNew(): boolean {
@@ -85,6 +119,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   //PRIVATE FIELDS
   private _exercise: Exercise = new Exercise();
+
   private _exercisePublicId: string | null = null; //TODO: Refactor. We have an exercise variable. Why have this too?
 
   constructor() {
@@ -97,13 +132,21 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
   public ngOnInit(): void {
     this.editModeEnabled.set(this._route.snapshot.url.join('').indexOf('view') == -1);
-    
+
     forkJoin({
       targetAreas: this._exerciseSvc.getTargetAreas(),
       resistanceTypes: this._exerciseSvc.getResistanceTypes()
     }).subscribe(({ targetAreas, resistanceTypes }) => {
       this.allTargetAreas = targetAreas;
       this.resistanceTypes = resistanceTypes;
+      this._exerciseModel.update((vm) => {
+        vm.allTargetAreas = schema<TargetArea[]>((path) => {
+          return this.allTargetAreas;
+        });
+        vm.resistanceTypes = resistanceTypes;
+        return vm;
+      });
+      console.log('VIEW MODEL', this._exerciseModel());
       this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
     });
   }
@@ -184,6 +227,10 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     this._exerciseSvc.getById(this._exercisePublicId).subscribe((value: Exercise) => {
       this._exercise = value;
+      this._exerciseModel.update(vm => {
+        vm.exercise = value;
+        return vm;
+      }); //Signal Forms
       this.updateFormWithExerciseValues();
       this.loading.set(false);
     }); //TODO: Handle errors
@@ -221,8 +268,8 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
       publicId: new FormControl<string>(EMPTY_GUID, { nonNullable: true, validators: Validators.required }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-      description: new FormControl<string>('', { 
-        nonNullable: true, 
+      description: new FormControl<string>('', {
+        nonNullable: true,
         validators: [Validators.required, Validators.maxLength(ExerciseEditComponent.MAX_TEXT_LENGTH)]
       }),
       resistanceType: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
@@ -230,19 +277,19 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       endToEnd: new FormControl<boolean | null>(false),
       involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
       usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true }),
-      targetAreas: new FormRecord<FormControl<boolean>>({}, { 
-        validators: CustomValidators.formGroupOfBooleansRequireOneTrue 
+      targetAreas: new FormRecord<FormControl<boolean>>({}, {
+        validators: CustomValidators.formGroupOfBooleansRequireOneTrue
       }),
-      setup: new FormControl<string>('', { 
-        nonNullable: true, 
+      setup: new FormControl<string>('', {
+        nonNullable: true,
         validators: [Validators.required, Validators.maxLength(ExerciseEditComponent.MAX_TEXT_LENGTH)]
       }),
-      movement: new FormControl<string>('', { 
-        nonNullable: true, 
+      movement: new FormControl<string>('', {
+        nonNullable: true,
         validators: [Validators.required, Validators.maxLength(ExerciseEditComponent.MAX_TEXT_LENGTH)]
       }),
-      pointsToRemember: new FormControl<string>('', { 
-        nonNullable: true, 
+      pointsToRemember: new FormControl<string>('', {
+        nonNullable: true,
         validators: [Validators.required, Validators.maxLength(ExerciseEditComponent.MAX_TEXT_LENGTH)]
       })
     });

@@ -1,0 +1,7 @@
+@if (errorMessages().length > 0) {
+  <div class="error-text">
+    @for(message of errorMessages(); track message) {
+      <div>{{ message }}</div>
+    }
+  </div>
+}

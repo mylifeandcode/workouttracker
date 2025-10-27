@@ -11,7 +11,63 @@
         <nz-spin nzSize="large"></nz-spin>
       </div>
     </div>
-  } @else if(exerciseForm) {
+  } @else if(form()) {
+    <form>
+      <fieldset [disabled]="!editModeEnabled()">
+        <div class="row bottom-padded">
+          <div class="col-9">
+            <input [control]="form.exercise.id" type="hidden" />
+
+            <label class="center-block"
+              [ngClass]="{'has-error': form.exercise.name().touched() && form.exercise.name().errors()}">
+              Name
+            </label>
+            <input class="form-control" [control]="form.exercise.name" placeholder="Exercise Name (required)" />
+
+            @if (form.exercise.name().touched() && form.exercise.name().errors()) {
+              <span class="error-text">Required</span>
+            }
+            
+            <br />
+
+            <label class="center-block"
+              [ngClass]="{'has-error': form.exercise.description().touched() && form.exercise.description().errors()}">
+              Description
+            </label>
+            <textarea class="form-control" rows="6" [control]="form.exercise.description" placeholder="Exercise Description (required)"></textarea>
+            @if (form.exercise.description().touched() && form.exercise.description().errors()) {
+              <wt-validation-errors [errors]="form.exercise.description().errors()" />
+            }
+
+          </div>
+          @if (form.allTargetAreas()) {
+            <div class="col-3 target-areas">
+              <strong>Target Areas</strong>
+              @if (form.allTargetAreas().dirty() && form.allTargetAreas().errors()) {
+                <span class="error-text">At least one Target Area is required</span>
+              }
+
+              @for (area of form.allTargetAreas; track area) {
+                X
+                <div [ngClass]="{'has-error': form.allTargetAreas().touched() && form.allTargetAreas().errors()}">
+                  <input type="checkbox" [control]="area" [value]="area.id" /> {{area.name()}}
+                </div>
+              }
+
+              @if (form.allTargetAreas().dirty() && form.allTargetAreas().errors()) {
+                <span class="error-text">At least one Target Area is required</span>
+              }
+
+            </div>
+          } @else {
+            <div class="col-3">
+              Loading Target Areas...
+            </div>
+          }
+        </div>
+      </fieldset>
+    </form>
+    <!--
     <form [formGroup]="exerciseForm" novalidate>
       <fieldset [disabled]="!editModeEnabled()">
         <div class="row bottom-padded">
@@ -187,6 +243,7 @@
         </div>
       </fieldset>
     </form>
+    -->
     <div class="row bottom-padded">
       <div class="col-2">
         <span class="mild-right-margin align-middle">Enable Editing</span>
