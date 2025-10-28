@@ -10,7 +10,7 @@ import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { ResistanceType } from 'app/workouts/workout/_enums/resistance-type';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NgClass, KeyValuePipe, JsonPipe } from '@angular/common';
+import { NgClass, KeyValuePipe } from '@angular/common';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
@@ -27,7 +27,6 @@ import {
   schema,
 } from '@angular/forms/signals';
 import { ValidationErrorsComponent } from 'app/shared/components/validation-errors/validation-errors.component';
-import { ExerciseViewModel } from '../_models/exercise-view-model';
 
 interface IExerciseEditForm {
   id: FormControl<number>;
@@ -57,7 +56,7 @@ interface IExerciseEditForm {
   styleUrls: ['./exercise-edit.component.scss'],
   imports: [
     NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, NzSwitchModule,
-    KeyValuePipe, InsertSpaceBeforeCapitalPipe, Control, JsonPipe, ValidationErrorsComponent
+    KeyValuePipe, InsertSpaceBeforeCapitalPipe, Control, ValidationErrorsComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -76,31 +75,30 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   public exerciseForm: FormGroup<IExerciseEditForm>;
 
   public loading = signal<boolean>(true);
-  public allTargetAreas: TargetArea[] = [];
-  public resistanceTypes: Map<number, string> | undefined;
+  public allTargetAreas = signal<TargetArea[]>([]);
+  public resistanceTypes = signal<Map<number, string> | undefined>(undefined);
   public infoMsg = signal<string | null>(null);
   public editModeEnabled = signal(false);
 
   //SIGNAL FORMS
-  private _exerciseModel = signal<ExerciseViewModel>(new ExerciseViewModel()); //Signal Forms
-  public form = form<ExerciseViewModel>(this._exerciseModel, (path) => {
-    required(path.exercise.id);
-    required(path.exercise.publicId);
-    required(path.exercise.name);
-    required(path.exercise.description);
-    maxLength(path.exercise.description, ExerciseEditComponent.MAX_TEXT_LENGTH);
-    required(path.exercise.resistanceType);
-    required(path.exercise.oneSided);
-    required(path.exercise.involvesReps);
-    required(path.exercise.usesBilateralResistance);
-    validate(path.exercise.resistanceType, (ctx) => {
+  private _exerciseModel = signal<Exercise>(new Exercise()); //Signal Forms
+  public form = form<Exercise>(this._exerciseModel, (path) => {
+    required(path.id);
+    required(path.publicId);
+    required(path.name);
+    required(path.description);
+    maxLength(path.description, ExerciseEditComponent.MAX_TEXT_LENGTH);
+    required(path.resistanceType);
+    required(path.oneSided);
+    required(path.involvesReps);
+    required(path.usesBilateralResistance);
+    validate(path.resistanceType, (ctx) => {
       const value = ctx.value();
       if (ctx.value() === ExerciseEditComponent.RESISTANCE_BANDS_TYPE) {
-        required(path.exercise.bandsEndToEnd)
+        required(path.bandsEndToEnd)
       };
     });
-  }
-  );
+  });
 
   //PUBLIC PROPERTIES
   public get isNew(): boolean {
@@ -136,19 +134,14 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     forkJoin({
       targetAreas: this._exerciseSvc.getTargetAreas(),
       resistanceTypes: this._exerciseSvc.getResistanceTypes()
-    }).subscribe(({ targetAreas, resistanceTypes }) => {
-      this.allTargetAreas = targetAreas;
-      this.resistanceTypes = resistanceTypes;
-      this._exerciseModel.update((vm) => {
-        vm.allTargetAreas = schema<TargetArea[]>((path) => {
-          return this.allTargetAreas;
-        });
-        vm.resistanceTypes = resistanceTypes;
-        return vm;
+    })
+      .subscribe(({ targetAreas, resistanceTypes }) => {
+        this.allTargetAreas.set(targetAreas);
+        this.resistanceTypes.set(resistanceTypes);
       });
-      console.log('VIEW MODEL', this._exerciseModel());
-      this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
-    });
+
+    console.log('VIEW MODEL', this._exerciseModel());
+    this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
   }
 
   public saveExercise(): void {
@@ -209,7 +202,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     //I wanted to set the value of each checkbox to the ID of the target area, which was fine 
     //initially, but on toggling Angular set the value to a boolean.
 
-    this.allTargetAreas.forEach((targetArea: TargetArea) => {
+    this.allTargetAreas().forEach((targetArea: TargetArea) => {
       const thisTargetAreaIsSelected: boolean = exerciseTargetAreaLinks.some(
         (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id
       );
@@ -227,10 +220,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     this._exerciseSvc.getById(this._exercisePublicId).subscribe((value: Exercise) => {
       this._exercise = value;
-      this._exerciseModel.update(vm => {
-        vm.exercise = value;
-        return vm;
-      }); //Signal Forms
+      this._exerciseModel.set(value); //Signal Forms
       this.updateFormWithExerciseValues();
       this.loading.set(false);
     }); //TODO: Handle errors
@@ -326,7 +316,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     for (const key in this.exerciseForm.value.targetAreas) {
       if (this.exerciseForm.value.targetAreas[key]) {
-        const selectedTargetArea = this.allTargetAreas.find(
+        const selectedTargetArea = this.allTargetAreas().find(
           (targetArea: TargetArea) => targetArea.name == key
         );
         if (selectedTargetArea) {

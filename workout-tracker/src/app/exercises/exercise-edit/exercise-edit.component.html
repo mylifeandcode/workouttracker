@@ -16,47 +16,51 @@
       <fieldset [disabled]="!editModeEnabled()">
         <div class="row bottom-padded">
           <div class="col-9">
-            <input [control]="form.exercise.id" type="hidden" />
+            <input [control]="form.id" type="hidden" />
 
             <label class="center-block"
-              [ngClass]="{'has-error': form.exercise.name().touched() && form.exercise.name().errors()}">
+              [ngClass]="{'has-error': form.name().touched() && form.name().errors()}">
               Name
             </label>
-            <input class="form-control" [control]="form.exercise.name" placeholder="Exercise Name (required)" />
+            <input class="form-control" [control]="form.name" placeholder="Exercise Name (required)" />
 
-            @if (form.exercise.name().touched() && form.exercise.name().errors()) {
+            @if (form.name().touched() && form.name().errors()) {
               <span class="error-text">Required</span>
             }
             
             <br />
 
             <label class="center-block"
-              [ngClass]="{'has-error': form.exercise.description().touched() && form.exercise.description().errors()}">
+              [ngClass]="{'has-error': form.description().touched() && form.description().errors()}">
               Description
             </label>
-            <textarea class="form-control" rows="6" [control]="form.exercise.description" placeholder="Exercise Description (required)"></textarea>
-            @if (form.exercise.description().touched() && form.exercise.description().errors()) {
-              <wt-validation-errors [errors]="form.exercise.description().errors()" />
+            <textarea class="form-control" rows="6" [control]="form.description" placeholder="Exercise Description (required)"></textarea>
+            @if (form.description().touched() && form.description().errors()) {
+              <wt-validation-errors [errors]="form.description().errors()" />
             }
 
           </div>
-          @if (form.allTargetAreas()) {
+          @if (allTargetAreas()) {
             <div class="col-3 target-areas">
               <strong>Target Areas</strong>
+              <!--
               @if (form.allTargetAreas().dirty() && form.allTargetAreas().errors()) {
                 <span class="error-text">At least one Target Area is required</span>
               }
+              -->
 
-              @for (area of form.allTargetAreas; track area) {
-                X
-                <div [ngClass]="{'has-error': form.allTargetAreas().touched() && form.allTargetAreas().errors()}">
-                  <input type="checkbox" [control]="area" [value]="area.id" /> {{area.name()}}
+              @for (area of allTargetAreas(); track area) {
+                <!--<div [ngClass]="{'has-error': form.allTargetAreas().touched() && form.allTargetAreas().errors()}">-->
+                <div>
+                  <input type="checkbox" [value]="area.id" /> {{area.name}}
                 </div>
               }
 
+              <!--
               @if (form.allTargetAreas().dirty() && form.allTargetAreas().errors()) {
                 <span class="error-text">At least one Target Area is required</span>
               }
+              -->
 
             </div>
           } @else {
@@ -65,6 +69,37 @@
             </div>
           }
         </div>
+
+        <div class="row bottom-padded">
+          <div class="col-3">
+            @if (resistanceTypes()) {
+              <label class="center-block" for="resistanceType">
+                Resistance Type
+              </label>
+              <select [control]="form.resistanceType" id="resistanceType" class="form-select">
+                @for (resistanceType of resistanceTypes() | keyvalue; track $index) {
+                  <option [value]="resistanceType.key">
+                    {{resistanceType.value | insertSpaceBeforeCapital}}
+                  </option>
+                }
+              </select>
+            }
+          </div>
+          <!--
+          @if (exerciseForm.controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
+            <div class="col-3">
+              <div class="pt-4">
+                <input type="checkbox" formControlName="endToEnd" id="endToEnd">
+                <label for="endToEnd">End to End</label> 
+                <small style="margin-left: 12px;"
+                  nz-tooltip nzTooltipTitle="''End to End'' specifies that the exercise is performed with one end of the band clipped to a ring, and the other hand clipped to a handle, as opposed to looped through an anchor."
+                  nzTooltipPlacement="right">(What's this?)</small>
+              </div>
+            </div>
+          }
+        -->
+        </div>
+
       </fieldset>
     </form>
     <!--
