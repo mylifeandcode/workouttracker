@@ -30,8 +30,9 @@ function toErrorMessages(
   });
 }
 
-function toFieldName(error: ValidationError) {
-  return error.field().name().split('.').at(-1);
+function toFieldName(error: ValidationError) : string | undefined {
+  //return error.field().name().split('.').at(-1);
+  return error.message;
 }
 
 function toMessage(error: ValidationError): string {

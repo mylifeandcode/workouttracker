@@ -23,8 +23,8 @@ import {
   minLength,
   validate,
   submit,
-  Control,
   schema,
+  Field,
 } from '@angular/forms/signals';
 import { ValidationErrorsComponent } from 'app/shared/components/validation-errors/validation-errors.component';
 
@@ -56,7 +56,7 @@ interface IExerciseEditForm {
   styleUrls: ['./exercise-edit.component.scss'],
   imports: [
     NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, NzSwitchModule,
-    KeyValuePipe, InsertSpaceBeforeCapitalPipe, Control, ValidationErrorsComponent
+    KeyValuePipe, InsertSpaceBeforeCapitalPipe, Field, ValidationErrorsComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

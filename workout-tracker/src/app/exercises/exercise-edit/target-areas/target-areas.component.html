@@ -1,0 +1,19 @@
+<strong>Target Areas</strong>
+<!--
+@if (form.allTargetAreas().dirty() && form.allTargetAreas().errors()) {
+  <span class="error-text">At least one Target Area is required</span>
+}
+-->
+
+@for (area of allTargetAreas(); track area) {
+<!--<div [ngClass]="{'has-error': form.allTargetAreas().touched() && form.allTargetAreas().errors()}">-->
+<div>
+  <input type="checkbox" (click)="toggleTargetArea(area)" [value]="area.id" /> {{area.name}}
+</div>
+}
+
+<!--
+@if (form.allTargetAreas().dirty() && form.allTargetAreas().errors()) {
+  <span class="error-text">At least one Target Area is required</span>
+}
+-->
