@@ -1,7 +1,8 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, computed, input, model, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ExerciseTargetAreaLink } from 'app/workouts/_models/exercise-target-area-link';
 import { TargetArea } from 'app/workouts/_models/target-area';
+import { effect } from '@angular/core';
 
 @Component({
   selector: 'wt-target-areas',
@@ -19,15 +20,22 @@ import { TargetArea } from 'app/workouts/_models/target-area';
 export class TargetAreasComponent implements ControlValueAccessor {
 
   allTargetAreas = input.required<TargetArea[]>();
-  selectedTargetAreas = signal<TargetArea[]>([]);
-
-  private _selectedAreas: ExerciseTargetAreaLink[] = [];
+  //selectedTargetAreas = model.required<TargetArea[]>();
+  exerciseId = input.required<number>();
 
   onChange = (areaLinks: ExerciseTargetAreaLink[]) => {};
   onTouched = () => {};
 
+  touched: boolean = false;
+  disabled: boolean = false;
+
+  selectedAreaIds = computed(() => this._selectedAreas().map(link => link.targetAreaId));
+
+  private _selectedAreas = signal<ExerciseTargetAreaLink[]>([]);
+
+  //ControlValueAccessor methods
   writeValue(areaLinks: ExerciseTargetAreaLink[]): void {
-    this._selectedAreas = areaLinks;
+    this._selectedAreas.set(areaLinks);
   }
 
   registerOnChange(fn: any): void {
@@ -39,16 +47,18 @@ export class TargetAreasComponent implements ControlValueAccessor {
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    throw new Error('Method not implemented.');
+    this.disabled = isDisabled;
   }
+  //End ControlValueAccessor methods
 
   toggleTargetArea(targetArea: TargetArea): void {
-    if (this.selectedTargetAreas().includes(targetArea)) { 
-      this.selectedTargetAreas.update(areas => areas.filter(a => a !== targetArea));
+    if (this._selectedAreas().some(link => link.targetAreaId === targetArea.id)) { 
+      this._selectedAreas.update(areas => areas.filter(link => link.targetAreaId !== targetArea.id));
     } else {
-      this.selectedTargetAreas.update(areas => [...areas, targetArea]);
+      this._selectedAreas.update(areas => [...areas, new ExerciseTargetAreaLink(this.exerciseId(), targetArea.id)]);
     }
-    this.onChange(this.selectedTargetAreas);
+
+    this.onChange(this._selectedAreas());
   }
   
 }

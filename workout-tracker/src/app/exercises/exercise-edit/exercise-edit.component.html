@@ -49,12 +49,16 @@
               }
               -->
 
+              <wt-target-areas [allTargetAreas]="allTargetAreas()" [exerciseId]="exerciseId" [field]="form.exerciseTargetAreaLinks" />
+
+              <!--
               @for (area of allTargetAreas(); track area) {
-                <!--<div [ngClass]="{'has-error': form.allTargetAreas().touched() && form.allTargetAreas().errors()}">-->
+                <div [ngClass]="{'has-error': form.allTargetAreas().touched() && form.allTargetAreas().errors()}">
                 <div>
                   <input type="checkbox" [value]="area.id" /> {{area.name}}
                 </div>
               }
+              -->
 
               <!--
               @if (form.allTargetAreas().dirty() && form.allTargetAreas().errors()) {
@@ -71,6 +75,7 @@
         </div>
 
         <div class="row bottom-padded">
+          <!--
           <div class="col-3">
             @if (resistanceTypes()) {
               <label class="center-block" for="resistanceType">
@@ -85,6 +90,7 @@
               </select>
             }
           </div>
+          -->
           <!--
           @if (exerciseForm.controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
             <div class="col-3">

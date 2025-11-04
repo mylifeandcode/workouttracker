@@ -8,7 +8,10 @@
 @for (area of allTargetAreas(); track area) {
 <!--<div [ngClass]="{'has-error': form.allTargetAreas().touched() && form.allTargetAreas().errors()}">-->
 <div>
-  <input type="checkbox" (click)="toggleTargetArea(area)" [value]="area.id" /> {{area.name}}
+  <input type="checkbox" 
+    (click)="toggleTargetArea(area)" 
+    [value]="area.id" 
+    [checked]="selectedAreaIds().includes(area.id)" /> {{area.name}}
 </div>
 }
 

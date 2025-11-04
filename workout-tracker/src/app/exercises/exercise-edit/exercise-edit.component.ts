@@ -27,6 +27,7 @@ import {
   Field,
 } from '@angular/forms/signals';
 import { ValidationErrorsComponent } from 'app/shared/components/validation-errors/validation-errors.component';
+import { TargetAreasComponent } from './target-areas/target-areas.component';
 
 interface IExerciseEditForm {
   id: FormControl<number>;
@@ -56,7 +57,7 @@ interface IExerciseEditForm {
   styleUrls: ['./exercise-edit.component.scss'],
   imports: [
     NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, NzSwitchModule,
-    KeyValuePipe, InsertSpaceBeforeCapitalPipe, Field, ValidationErrorsComponent
+    KeyValuePipe, InsertSpaceBeforeCapitalPipe, Field, ValidationErrorsComponent, TargetAreasComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
