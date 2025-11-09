@@ -13,39 +13,37 @@ export class ValidationErrorsComponent {
   showFieldNames = input(false);
 
   errorMessages = computed(() =>
-    toErrorMessages(this.errors(), this.showFieldNames())
+    this.toErrorMessages(this.errors(), this.showFieldNames())
   );
-}
 
-function toErrorMessages(
-  errors: ValidationError[],
-  showFieldNames: boolean
-): string[] {
-  return errors.map((error) => {
-    const prefix = showFieldNames ? toFieldName(error) + ': ' : '';
-    // const prefix = showFieldNames ? error.field().name() + ': ' : '';
+  private toErrorMessages(
+    errors: ValidationError[],
+    showFieldNames: boolean
+  ): string[] {
+    return errors.map((error) => {
+      const prefix = showFieldNames ? this.toFieldName(error) + ': ' : '';
+      const message = error.message ?? this.toMessage(error);
+      console.log('Validation error message:', prefix + message);
+      return prefix + message;
+    });
+  }
 
-    const message = error.message ?? toMessage(error);
-    return prefix + message;
-  });
-}
+  private toFieldName(error: ValidationError): string | undefined {
+    return error.message;
+  }
 
-function toFieldName(error: ValidationError) : string | undefined {
-  //return error.field().name().split('.').at(-1);
-  return error.message;
-}
-
-function toMessage(error: ValidationError): string {
-  switch (error.kind) {
-    case 'required':
-      return 'Required';
-    case 'min':
-      const minError = error as MinValidationError;
-      return `Minimum length: ${minError.min}`;
-    case 'max':
-      const maxError = error as MaxValidationError;
-      return `Maximum length: ${maxError.max}`;
-    default:
-      return error.kind ?? 'Validation Error';
+  private toMessage(error: ValidationError): string {
+    switch (error.kind) {
+      case 'required':
+        return 'Required';
+      case 'min':
+        const minError = error as MinValidationError;
+        return `Minimum length: ${minError.min}`;
+      case 'max':
+        const maxError = error as MaxValidationError;
+        return `Maximum length: ${maxError.max}`;
+      default:
+        return error.kind ?? 'Validation Error';
+    }
   }
 }

@@ -20,10 +20,7 @@ import {
   form,
   required,
   maxLength,
-  minLength,
   validate,
-  submit,
-  schema,
   Field,
 } from '@angular/forms/signals';
 import { ValidationErrorsComponent } from 'app/shared/components/validation-errors/validation-errors.component';
@@ -93,12 +90,21 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     required(path.oneSided);
     required(path.involvesReps);
     required(path.usesBilateralResistance);
+    //TODO: Fix!
+    /*
     validate(path.resistanceType, (ctx) => {
       const value = ctx.value();
       if (ctx.value() === ExerciseEditComponent.RESISTANCE_BANDS_TYPE) {
         required(path.bandsEndToEnd)
       };
     });
+    */
+    required(path.setup);
+    maxLength(path.setup, ExerciseEditComponent.MAX_TEXT_LENGTH);
+    required(path.movement);
+    maxLength(path.movement, ExerciseEditComponent.MAX_TEXT_LENGTH);
+    required(path.pointsToRemember);
+    maxLength(path.pointsToRemember, ExerciseEditComponent.MAX_TEXT_LENGTH);
   });
 
   //PUBLIC PROPERTIES
@@ -123,6 +129,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   constructor() {
     super();
+    const x = this.form().invalid;
     this.exerciseForm = this.createForm();
     //TODO: Add subscription and unsubscribe on destroy
     this.exerciseForm.controls.oneSided.valueChanges.subscribe((value: boolean) => this.checkForBilateral(value));
