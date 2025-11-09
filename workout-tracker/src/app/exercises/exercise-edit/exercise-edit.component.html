@@ -49,16 +49,10 @@
               }
               -->
 
-              <wt-target-areas [allTargetAreas]="allTargetAreas()" [exerciseId]="exerciseId" [field]="form.exerciseTargetAreaLinks" />
-
-              <!--
-              @for (area of allTargetAreas(); track area) {
-                <div [ngClass]="{'has-error': form.allTargetAreas().touched() && form.allTargetAreas().errors()}">
-                <div>
-                  <input type="checkbox" [value]="area.id" /> {{area.name}}
-                </div>
-              }
-              -->
+              <wt-target-areas 
+                [allTargetAreas]="allTargetAreas()" 
+                [exerciseId]="exerciseId" 
+                [field]="form.exerciseTargetAreaLinks" />
 
               <!--
               @if (form.allTargetAreas().dirty() && form.allTargetAreas().errors()) {
@@ -75,7 +69,6 @@
         </div>
 
         <div class="row bottom-padded">
-          <!--
           <div class="col-3">
             @if (resistanceTypes()) {
               <label class="center-block" for="resistanceType">
@@ -90,12 +83,11 @@
               </select>
             }
           </div>
-          -->
-          <!--
-          @if (exerciseForm.controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
+
+          @if (form.resistanceType().value() == resistanceTypeEnum.ResistanceBand) {
             <div class="col-3">
               <div class="pt-4">
-                <input type="checkbox" formControlName="endToEnd" id="endToEnd">
+                <input type="checkbox" [field]="form.bandsEndToEnd" id="endToEnd">
                 <label for="endToEnd">End to End</label> 
                 <small style="margin-left: 12px;"
                   nz-tooltip nzTooltipTitle="''End to End'' specifies that the exercise is performed with one end of the band clipped to a ring, and the other hand clipped to a handle, as opposed to looped through an anchor."
@@ -103,7 +95,7 @@
               </div>
             </div>
           }
-        -->
+
         </div>
 
       </fieldset>
