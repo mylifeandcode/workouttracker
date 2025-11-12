@@ -1,8 +1,7 @@
-import { Component, computed, input, model, signal } from '@angular/core';
+import { Component, computed, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ExerciseTargetAreaLink } from 'app/workouts/_models/exercise-target-area-link';
 import { TargetArea } from 'app/workouts/_models/target-area';
-import { effect } from '@angular/core';
 
 @Component({
   selector: 'wt-target-areas',
@@ -15,15 +14,15 @@ import { effect } from '@angular/core';
       multi: true,
       useExisting: TargetAreasComponent,
     }
-  ]
+  ], 
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TargetAreasComponent implements ControlValueAccessor {
 
   allTargetAreas = input.required<TargetArea[]>();
-  //selectedTargetAreas = model.required<TargetArea[]>();
   exerciseId = input.required<number>();
 
-  onChange = (areaLinks: ExerciseTargetAreaLink[]) => {};
+  onChange = (areaLinks: ExerciseTargetAreaLink[]) => {}
   onTouched = () => {};
 
   touched: boolean = false;
@@ -35,6 +34,7 @@ export class TargetAreasComponent implements ControlValueAccessor {
 
   //ControlValueAccessor methods
   writeValue(areaLinks: ExerciseTargetAreaLink[]): void {
+    console.log('writeValue called with:', areaLinks);
     this._selectedAreas.set(areaLinks);
   }
 
@@ -45,6 +45,13 @@ export class TargetAreasComponent implements ControlValueAccessor {
   registerOnTouched(fn: any): void {
     this.onTouched = fn;
   }
+
+  markAsTouched() {
+    if (!this.touched) {
+      this.onTouched();
+      this.touched = true;
+    }
+  }  
 
   setDisabledState?(isDisabled: boolean): void {
     this.disabled = isDisabled;
@@ -59,6 +66,7 @@ export class TargetAreasComponent implements ControlValueAccessor {
     }
 
     this.onChange(this._selectedAreas());
+    console.log('Selected Areas:', this._selectedAreas());
   }
   
 }

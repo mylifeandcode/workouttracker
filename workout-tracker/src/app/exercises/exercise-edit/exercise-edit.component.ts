@@ -22,6 +22,7 @@ import {
   maxLength,
   validate,
   Field,
+  customError,
 } from '@angular/forms/signals';
 import { ValidationErrorsComponent } from 'app/shared/components/validation-errors/validation-errors.component';
 import { TargetAreasComponent } from './target-areas/target-areas.component';
@@ -70,7 +71,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
 
   //PUBLIC FIELDS
-  public exerciseForm: FormGroup<IExerciseEditForm>;
+  //public exerciseForm: FormGroup<IExerciseEditForm>;
 
   public loading = signal<boolean>(true);
   public allTargetAreas = signal<TargetArea[]>([]);
@@ -85,6 +86,16 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     required(path.publicId);
     required(path.name);
     required(path.description);
+    validate(path.exerciseTargetAreaLinks, (ctx) => {
+      const value = ctx.value();
+      if (value.length > 0) {
+        return null;
+      }
+      return customError({
+        kind: 'atLeastOneRequired',
+        message: 'At least one Target Area is required'
+      });
+    });
     maxLength(path.description, ExerciseEditComponent.MAX_TEXT_LENGTH);
     required(path.resistanceType);
     required(path.oneSided);
@@ -130,9 +141,9 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   constructor() {
     super();
     const x = this.form().invalid;
-    this.exerciseForm = this.createForm();
+    //this.exerciseForm = this.createForm();
     //TODO: Add subscription and unsubscribe on destroy
-    this.exerciseForm.controls.oneSided.valueChanges.subscribe((value: boolean) => this.checkForBilateral(value));
+    //this.exerciseForm.controls.oneSided.valueChanges.subscribe((value: boolean) => this.checkForBilateral(value));
   }
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
@@ -153,19 +164,19 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   }
 
   public saveExercise(): void {
-    if (!this.exerciseForm.valid) return;
+    if (!this.form().valid) return;
 
     //Called by Save button
     this.saving.set(true);
     this.infoMsg.set("Saving...");
-    this.updateExerciseForPersisting();
+    //this.updateExerciseForPersisting();
 
     //TODO: Refactor to use a pointer to the service method, as both signatures and return types are the same
     if (!this._exercisePublicId)
       this._exerciseSvc.add(this._exercise)
         .pipe(finalize(() => {
           this.saving.set(false);
-          this.exerciseForm.markAsPristine();
+          this.form().reset();
         }))
         .subscribe({
           next: (addedExercise: Exercise) => {
@@ -182,7 +193,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       this._exerciseSvc.update(this._exercise)
         .pipe(finalize(() => {
           this.saving.set(false);
-          this.exerciseForm.markAsPristine();
+          this.form().reset();
         }))
         .subscribe({
           next: (updatedExercise: Exercise) => {
@@ -197,11 +208,12 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   }
 
   public hasUnsavedData(): boolean {
-    return this.exerciseForm.dirty;
+    return this.form().dirty();
   }
 
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
+  /*
   private setupTargetAreas(exerciseTargetAreaLinks: ExerciseTargetAreaLink[]): void {
     //Original approach was using information from
     //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
@@ -221,7 +233,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     //checkboxesFormGroup.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);
   }
-
+  */
   private loadExercise(): void {
     if (!this._exercisePublicId) return;
     this.loading.set(true);
@@ -229,7 +241,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     this._exerciseSvc.getById(this._exercisePublicId).subscribe((value: Exercise) => {
       this._exercise = value;
       this._exerciseModel.set(value); //Signal Forms
-      this.updateFormWithExerciseValues();
+      //this.updateFormWithExerciseValues();
       this.loading.set(false);
     }); //TODO: Handle errors
   }
@@ -244,6 +256,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     }
     else {
       //Creating a new exercise
+      /*
       this.setupTargetAreas([]);
       this.exerciseForm.reset();
       this.exerciseForm.controls.id.setValue(0);
@@ -251,7 +264,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       this.exerciseForm.controls.oneSided.setValue(false);
       this.exerciseForm.controls.endToEnd.setValue(false);
       this.exerciseForm.controls.involvesReps.setValue(true);
-
+      */
       this._exercise = new Exercise();
       this._exercise.id = 0;
       this.loading.set(false);
@@ -260,6 +273,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   }
 
+  /*
   private createForm(): FormGroup<IExerciseEditForm> {
 
     return this._formBuilder.group<IExerciseEditForm>({
@@ -293,7 +307,9 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     });
 
   }
+  */
 
+  /*
   private updateExerciseForPersisting(): void {
 
     this._exercise.publicId = this.exerciseForm.controls.publicId.value;
@@ -313,7 +329,9 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     this._exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
   }
+  */
 
+  /*
   private getExerciseTargetAreaLinksForPersist(): ExerciseTargetAreaLink[] {
     //Original approach using FormArray found at:
     //https://coryrylan.com/blog/creating-a-dynamic-checkbox-list-in-angular
@@ -338,7 +356,9 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     return output;
   }
+  */
 
+  /*
   private updateFormWithExerciseValues(): void {
     this.exerciseForm.patchValue({
       id: this._exercise.id,
@@ -360,7 +380,9 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     this.exerciseForm.controls.involvesReps.setValue(this._exercise.involvesReps);
     this.exerciseForm.controls.usesBilateralResistance.setValue(this._exercise.usesBilateralResistance);
   }
+  */
 
+  /*
   private checkForBilateral(oneSided: boolean): void {
     if (oneSided) {
       if (this.exerciseForm.controls.usesBilateralResistance.value)
@@ -371,5 +393,6 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     else
       this.exerciseForm.controls.usesBilateralResistance.enable();
   }
+  */
 
 }
