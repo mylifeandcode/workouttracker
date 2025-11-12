@@ -23,41 +23,29 @@
               Name
             </label>
             <input class="form-control" [field]="form.name" placeholder="Exercise Name (required)" />
-
-            @if (form.name().touched() && form.name().errors()) {
-              <span class="error-text">Required</span>
-            }
-            
+            @if(form.name().touched()) {
+              <wt-validation-errors [errors]="form.name().errors()" />
+            } 
             <br />
 
             <label class="center-block"
-              [ngClass]="{'has-error': form.description().touched() && form.description().errors()}">
+              [ngClass]="{'has-error': form.description().touched() && form.description().errors().length > 0}">
               Description
             </label>
             <textarea class="form-control" rows="6" [field]="form.description" placeholder="Exercise Description (required)"></textarea>
-            @if (form.description().touched() && form.description().errors()) {
+            @if(form.description().touched()) {
               <wt-validation-errors [errors]="form.description().errors()" />
             }
-
           </div>
           @if (allTargetAreas()) {
             <div class="col-3 target-areas">
               <strong>Target Areas</strong>
-
               <wt-validation-errors [errors]="form.exerciseTargetAreaLinks().errors()" />
-              
               <wt-target-areas 
                 [allTargetAreas]="allTargetAreas()" 
                 [exerciseId]="exerciseId" 
                 [field]="form.exerciseTargetAreaLinks" />
-
-              <!--
-              @if (form.allTargetAreas().dirty() && form.allTargetAreas().errors()) {
-                <span class="error-text">At least one Target Area is required</span>
-              }
-              -->
               <wt-validation-errors [errors]="form.exerciseTargetAreaLinks().errors()" />
-
             </div>
           } @else {
             <div class="col-3">
@@ -140,9 +128,7 @@
               class="form-control" rows="12" [field]="form.setup"
               placeholder="How to prepare for this exercise (required)">
             </textarea>
-            @if (form.setup().touched() && form.setup().errors()) {
-              <wt-validation-errors [errors]="form.setup().errors()" />
-            }
+            <wt-validation-errors [errors]="form.setup().errors()" />
           </div>
 
           <div class="col-4">
