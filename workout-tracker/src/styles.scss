@@ -100,11 +100,13 @@ select.ng-invalid.ng-touched {
   background-image: url('./assets/images/white-steel.png');
 }
 
+/*
 //Here because of PrimeNG's layer addition :/
 .exercise-header {
   justify-content: space-between;
   flex-direction: row-reverse;
 }
+*/
 
 input, select {
   //font-size: 1.2rem; // Makes text larger for readability
@@ -139,4 +141,10 @@ input[type=checkbox] {
     border-color: #007bff;
     box-shadow: 0 0 rgba(0, 123, 255, 0.5);
   }  
+}
+
+//Signal Forms isn't currently applying the styling we get out-of-the-box with Reactive Forms
+.error-field {
+  border-color: red;
+  border-width: 2px
 }

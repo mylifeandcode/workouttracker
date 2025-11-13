@@ -56,38 +56,6 @@ describe('ExerciseListMiniComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  //TODO: Revisit
-  xit('should get exercises lazily', () => {
-    //TODO: Consolidate the method we're testing: it exists in 2 different classes.
-
-    //ARRANGE
-    const lazyLoadEvent: any = { //Unfortunately, the parameter of the onLazyLoad event of PrimeNg's table is declared as type "any"
-      "first": 0,
-      "rows": 10,
-      "sortOrder": 1,
-      "filters": {
-        "targetAreas": {
-          "value": [
-            "Chest"
-          ],
-          "matchMode": "in"
-        },
-        "name": {
-          "value": "Pre",
-          "matchMode": "in"
-        }
-      },
-      "globalFilter": null
-    };
-
-    const expectedParams: any[] = [0, 10, 'Pre', ['Chest']];
-
-    //ACT
-    component.getExercisesLazy(lazyLoadEvent);
-
-    //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, 'Pre', ['Chest']);
-  });
 
   it('should emit event when exercise is selected', () => {
     //ARRANGE

@@ -1,20 +1,17 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy, input, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Validators, FormControl, FormGroup, FormRecord, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExerciseService } from '../_services/exercise.service';
 import { Exercise } from '../../workouts/_models/exercise';
 import { TargetArea } from '../../workouts/_models/target-area';
-import { CustomValidators } from '../../core/_validators/custom-validators';
-import { ExerciseTargetAreaLink } from '../../workouts/_models/exercise-target-area-link';
 import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { ResistanceType } from 'app/workouts/workout/_enums/resistance-type';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NgClass, KeyValuePipe } from '@angular/common';
+import { NgClass, KeyValuePipe, JsonPipe } from '@angular/common';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
-import { EMPTY_GUID } from 'app/shared/shared-constants';
 import { forkJoin } from 'rxjs';
 import {
   form,
@@ -27,27 +24,6 @@ import {
 import { ValidationErrorsComponent } from 'app/shared/components/validation-errors/validation-errors.component';
 import { TargetAreasComponent } from './target-areas/target-areas.component';
 
-interface IExerciseEditForm {
-  id: FormControl<number>;
-  publicId: FormControl<string>; //Will be EMPTY_GUID for a new Exercise
-  name: FormControl<string>;
-  description: FormControl<string>;
-  resistanceType: FormControl<number>;
-  oneSided: FormControl<boolean>;
-  endToEnd: FormControl<boolean | null>;
-  involvesReps: FormControl<boolean>;
-  usesBilateralResistance: FormControl<boolean>;
-
-  //targetAreas: this._formBuilder.group({}, CustomValidators.formGroupOfBooleansRequireOneTrue),
-  //Because our target area keys aren't known until run time, we need to us a FormRecord instead of a FormGroup
-  //https://angular.io/guide/typed-forms#formrecord
-  targetAreas: FormRecord<FormControl<boolean>>;
-
-  setup: FormControl<string>;
-  movement: FormControl<string>;
-  pointsToRemember: FormControl<string>;
-}
-
 
 @Component({
   selector: 'wt-exercise-edit',
@@ -55,24 +31,22 @@ interface IExerciseEditForm {
   styleUrls: ['./exercise-edit.component.scss'],
   imports: [
     NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, NzSwitchModule,
-    KeyValuePipe, InsertSpaceBeforeCapitalPipe, Field, ValidationErrorsComponent, TargetAreasComponent
+    KeyValuePipe, InsertSpaceBeforeCapitalPipe, Field, ValidationErrorsComponent, TargetAreasComponent, JsonPipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExerciseEditComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);
-  private _formBuilder = inject(FormBuilder);
   private _exerciseSvc = inject(ExerciseService);
   private _router = inject(Router);
 
-  // Constants
+  //CONSTANTS
   private static readonly MAX_TEXT_LENGTH = 4000;
   private static readonly RESISTANCE_BANDS_TYPE = 2;
 
+  id = input<string | undefined>();
 
-  //PUBLIC FIELDS
-  //public exerciseForm: FormGroup<IExerciseEditForm>;
-
+  //SIGNALS
   public loading = signal<boolean>(true);
   public allTargetAreas = signal<TargetArea[]>([]);
   public resistanceTypes = signal<Map<number, string> | undefined>(undefined);
@@ -98,10 +72,6 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     });
     maxLength(path.description, ExerciseEditComponent.MAX_TEXT_LENGTH);
     required(path.resistanceType);
-    required(path.oneSided);
-    required(path.involvesReps);
-    required(path.usesBilateralResistance);
-    //TODO: Fix!
     /*
     validate(path.resistanceType, (ctx) => {
       const value = ctx.value();
@@ -120,11 +90,11 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   //PUBLIC PROPERTIES
   public get isNew(): boolean {
-    return !(this._exercise.id > 0);
+    return !(this.form().value().id > 0);
   }
 
   public get exerciseId(): number {
-    return this._exercise?.id;
+    return this.form().value().id;
   }
 
   //PUBLIC FIELDS
@@ -133,18 +103,17 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   public resistanceTypeEnum: typeof ResistanceType = ResistanceType; //Needed for template to reference enum
 
-  //PRIVATE FIELDS
-  private _exercise: Exercise = new Exercise();
-
-  private _exercisePublicId: string | null = null; //TODO: Refactor. We have an exercise variable. Why have this too?
-
   constructor() {
     super();
-    const x = this.form().invalid;
-    //this.exerciseForm = this.createForm();
-    //TODO: Add subscription and unsubscribe on destroy
-    //this.exerciseForm.controls.oneSided.valueChanges.subscribe((value: boolean) => this.checkForBilateral(value));
   }
+
+  /*
+  effect((): void => {
+    if (this.id() != undefined) {
+      this.loadExercise();
+    }
+  });
+  */
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
   public ngOnInit(): void {
@@ -153,14 +122,13 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     forkJoin({
       targetAreas: this._exerciseSvc.getTargetAreas(),
       resistanceTypes: this._exerciseSvc.getResistanceTypes()
-    })
-      .subscribe(({ targetAreas, resistanceTypes }) => {
-        this.allTargetAreas.set(targetAreas);
-        this.resistanceTypes.set(resistanceTypes);
-      });
+    }).subscribe(({ targetAreas, resistanceTypes }) => {
+      this.allTargetAreas.set(targetAreas);
+      this.resistanceTypes.set(resistanceTypes);
+    });
 
-    console.log('VIEW MODEL', this._exerciseModel());
-    this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
+    //console.log('VIEW MODEL', this._exerciseModel());
+    //this.subscribeToRouteParamsToSetupFormOnExerciseIdChange();
   }
 
   public saveExercise(): void {
@@ -172,32 +140,30 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     //this.updateExerciseForPersisting();
 
     //TODO: Refactor to use a pointer to the service method, as both signatures and return types are the same
-    if (!this._exercisePublicId)
-      this._exerciseSvc.add(this._exercise)
+    if (this._exerciseModel().id === 0)
+      this._exerciseSvc.add(this.form().value())
         .pipe(finalize(() => {
           this.saving.set(false);
           this.form().reset();
         }))
         .subscribe({
           next: (addedExercise: Exercise) => {
-            this._exercise = addedExercise;
-            this._exercisePublicId = this._exercise.publicId;
             this.infoMsg.set("Exercise created at " + new Date().toLocaleTimeString());
-            this._router.navigate([`exercises/edit/${this._exercise.publicId}`]);
+            this._router.navigate([`exercises/edit/${addedExercise.publicId}`]);
           },
           error: (error: any) => {
             this.errorMsg.set(error.message);
           }
         });
     else
-      this._exerciseSvc.update(this._exercise)
+      this._exerciseSvc.update(this.form().value())
         .pipe(finalize(() => {
           this.saving.set(false);
           this.form().reset();
         }))
         .subscribe({
           next: (updatedExercise: Exercise) => {
-            this._exercise = updatedExercise;
+            this._exerciseModel.set(updatedExercise);
             this.saving.set(false);
             this.infoMsg.set("Exercise updated at " + new Date().toLocaleTimeString());
           },
@@ -213,39 +179,21 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
-  /*
-  private setupTargetAreas(exerciseTargetAreaLinks: ExerciseTargetAreaLink[]): void {
-    //Original approach was using information from
-    //https://stackoverflow.com/questions/40927167/angular-reactiveforms-producing-an-array-of-checkbox-values
-    //This has since been updated for Typed Forms, which is nicer. :)
-
-    //I wanted to set the value of each checkbox to the ID of the target area, which was fine 
-    //initially, but on toggling Angular set the value to a boolean.
-
-    this.allTargetAreas().forEach((targetArea: TargetArea) => {
-      const thisTargetAreaIsSelected: boolean = exerciseTargetAreaLinks.some(
-        (link: ExerciseTargetAreaLink) => link.targetAreaId == targetArea.id
-      );
-      this.exerciseForm.controls.targetAreas.addControl(
-        targetArea.name,
-        new FormControl<boolean>(thisTargetAreaIsSelected, { nonNullable: true }));
-    });
-
-    //checkboxesFormGroup.setValidators(CustomValidators.formGroupOfBooleansRequireOneTrue);
-  }
-  */
   private loadExercise(): void {
-    if (!this._exercisePublicId) return;
-    this.loading.set(true);
-
-    this._exerciseSvc.getById(this._exercisePublicId).subscribe((value: Exercise) => {
-      this._exercise = value;
-      this._exerciseModel.set(value); //Signal Forms
-      //this.updateFormWithExerciseValues();
-      this.loading.set(false);
-    }); //TODO: Handle errors
+    const exerciseId = this.id();
+    if (!exerciseId) {
+      return;
+    }
+    else {
+      this.loading.set(true);
+      this._exerciseSvc.getById(exerciseId).subscribe((value: Exercise) => {
+        this._exerciseModel.set(value); //Signal Forms
+        this.loading.set(false);
+      }); //TODO: Handle errors
+    }
   }
 
+  /*
   private subscribeToRouteParamsToSetupFormOnExerciseIdChange(): void {
 
     //TODO: Re-evaluate. Do I really need to do this? I think a better solution might be to just look at the snapshot.
@@ -256,7 +204,6 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     }
     else {
       //Creating a new exercise
-      /*
       this.setupTargetAreas([]);
       this.exerciseForm.reset();
       this.exerciseForm.controls.id.setValue(0);
@@ -264,14 +211,15 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       this.exerciseForm.controls.oneSided.setValue(false);
       this.exerciseForm.controls.endToEnd.setValue(false);
       this.exerciseForm.controls.involvesReps.setValue(true);
-      */
       this._exercise = new Exercise();
       this._exercise.id = 0;
+      this._exerciseModel.set(this._exercise); //Signal Forms
       this.loading.set(false);
     }
     //}
 
   }
+  */
 
   /*
   private createForm(): FormGroup<IExerciseEditForm> {

@@ -19,10 +19,10 @@
             <input [field]="form.id" type="hidden" />
 
             <label class="center-block"
-              [ngClass]="{'has-error': form.name().touched() && form.name().errors()}">
+              [ngClass]="{'has-error': form.name().touched() && form.name().errors().length > 0}">
               Name
             </label>
-            <input class="form-control" [field]="form.name" placeholder="Exercise Name (required)" />
+            <input class="form-control" [field]="form.name" placeholder="Exercise Name (required)" [ngClass]="{'error-field': form.name().touched() && form.name().errors().length > 0}" />
             @if(form.name().touched()) {
               <wt-validation-errors [errors]="form.name().errors()" />
             } 
@@ -32,20 +32,24 @@
               [ngClass]="{'has-error': form.description().touched() && form.description().errors().length > 0}">
               Description
             </label>
-            <textarea class="form-control" rows="6" [field]="form.description" placeholder="Exercise Description (required)"></textarea>
+            <textarea class="form-control" rows="6" [field]="form.description" placeholder="Exercise Description (required)" [ngClass]="{'error-field': form.description().touched() && form.description().errors().length > 0}"></textarea>
             @if(form.description().touched()) {
               <wt-validation-errors [errors]="form.description().errors()" />
             }
           </div>
           @if (allTargetAreas()) {
-            <div class="col-3 target-areas">
+            <div class="col-3 target-areas" [ngClass]="{'error-field': form.exerciseTargetAreaLinks().touched() && form.exerciseTargetAreaLinks().errors().length > 0}">
               <strong>Target Areas</strong>
-              <wt-validation-errors [errors]="form.exerciseTargetAreaLinks().errors()" />
+              @if(form.exerciseTargetAreaLinks().touched()) {
+                <wt-validation-errors [errors]="form.exerciseTargetAreaLinks().errors()" />
+              }
               <wt-target-areas 
                 [allTargetAreas]="allTargetAreas()" 
                 [exerciseId]="exerciseId" 
                 [field]="form.exerciseTargetAreaLinks" />
-              <wt-validation-errors [errors]="form.exerciseTargetAreaLinks().errors()" />
+              @if(form.exerciseTargetAreaLinks().touched()) {
+                <wt-validation-errors [errors]="form.exerciseTargetAreaLinks().errors()" />
+              }
             </div>
           } @else {
             <div class="col-3">
@@ -126,9 +130,12 @@
             </label>
             <textarea 
               class="form-control" rows="12" [field]="form.setup"
+              [ngClass]="{'error-field': form.setup().touched() && form.setup().errors().length > 0}"
               placeholder="How to prepare for this exercise (required)">
             </textarea>
-            <wt-validation-errors [errors]="form.setup().errors()" />
+            @if(form.setup().touched()) {
+              <wt-validation-errors [errors]="form.setup().errors()" />
+            }
           </div>
 
           <div class="col-4">
@@ -137,9 +144,10 @@
               Movement
             </label>
             <textarea class="form-control" rows="12" [field]="form.movement"
+              [ngClass]="{'error-field': form.movement().touched() && form.movement().errors().length > 0}"
               placeholder="How to perform the exercise (required)">
             </textarea>
-            @if (form.movement().touched() && form.movement().errors()) {
+            @if (form.movement().touched()) {
               <wt-validation-errors [errors]="form.movement().errors()" />
             }
           </div>
@@ -150,9 +158,10 @@
               Points to Remember
             </label>
             <textarea class="form-control" rows="12" [field]="form.pointsToRemember"
+              [ngClass]="{'error-field': form.pointsToRemember().touched() && form.pointsToRemember().errors().length > 0}"
               placeholder="Points to remember (required)">
             </textarea>
-            @if (form.pointsToRemember().touched() && form.pointsToRemember().errors()) {
+            @if (form.pointsToRemember().touched()) {
               <wt-validation-errors [errors]="form.pointsToRemember().errors()" />
             }
           </div>
@@ -162,23 +171,22 @@
     </form>
 
     <div class="row bottom-padded">
-      <div class="col-2">
+      <div class="col-12">
         <span class="mild-right-margin align-middle">Enable Editing</span>
         <nz-switch id="editModeToggle" [(ngModel)]="editModeEnabled" class="align-middle" />
-      </div>       
 
-      @if (editModeEnabled()) {
-        <div class="col-10">
+        @if (editModeEnabled()) {
           <button type="submit" [disabled]="!form().valid() || saving()" (click)="saveExercise()"
-            class="btn btn-save-exercise">Save</button>&nbsp;<span>{{infoMsg()}}</span>
+            class="btn btn-save-exercise">Save</button>&nbsp;<span>{{infoMsg()}} Valid? {{form().valid()}}</span>
             @if (!form().valid()) {
               <span class="error-text">Please enter all required information above to enable saving.</span>
             }
             <wt-validation-errors [errors]="form().errors()" />
-        </div>
-      }
+        }
+      </div>
     </div>
     <div class="row">
+      <!--{{form().errorSummary() | json}}-->
       @if (errorMsg()) {
         <div class="col-4 error-text">
           {{errorMsg()}}

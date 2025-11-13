@@ -34,7 +34,7 @@ export class TargetAreasComponent implements ControlValueAccessor {
 
   //ControlValueAccessor methods
   writeValue(areaLinks: ExerciseTargetAreaLink[]): void {
-    console.log('writeValue called with:', areaLinks);
+    //console.log('writeValue called with:', areaLinks);
     this._selectedAreas.set(areaLinks);
   }
 
@@ -48,8 +48,11 @@ export class TargetAreasComponent implements ControlValueAccessor {
 
   markAsTouched() {
     if (!this.touched) {
+      console.log('markAsTouched called');
       this.onTouched();
       this.touched = true;
+    } else {
+      console.log('markAsTouched called but already touched');
     }
   }  
 
@@ -66,6 +69,7 @@ export class TargetAreasComponent implements ControlValueAccessor {
     }
 
     this.onChange(this._selectedAreas());
+    this.markAsTouched();
     console.log('Selected Areas:', this._selectedAreas());
   }
   
