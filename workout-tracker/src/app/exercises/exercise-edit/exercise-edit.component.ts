@@ -125,6 +125,10 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     }).subscribe(({ targetAreas, resistanceTypes }) => {
       this.allTargetAreas.set(targetAreas);
       this.resistanceTypes.set(resistanceTypes);
+
+      if (this.id() != undefined) {
+        this.loadExercise();
+      }
     });
 
     //console.log('VIEW MODEL', this._exerciseModel());
@@ -187,7 +191,9 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     else {
       this.loading.set(true);
       this._exerciseSvc.getById(exerciseId).subscribe((value: Exercise) => {
+        console.log('LOADED EXERCISE', value);
         this._exerciseModel.set(value); //Signal Forms
+        console.log('EXERCISE MODEL', this._exerciseModel());
         this.loading.set(false);
       }); //TODO: Handle errors
     }
