@@ -4,7 +4,6 @@ import { PaginatedResults } from 'app/core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../_models/workout-dto';
 import { WorkoutService } from '../_services/workout.service';
-import { sortBy } from 'lodash-es';
 import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.component';
 import { FormsModule } from '@angular/forms';
 
@@ -73,7 +72,7 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
     this._workoutService.getFilteredSubset(0, 500, true) //TODO: Page size...come up with a better solution
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
-        this.workouts.set(sortBy(result.results, 'name'));
+        this.workouts.set(result.results.sort((a, b) => a.name.localeCompare(b.name)));
         this.workoutsLoaded.emit();
       });
   }

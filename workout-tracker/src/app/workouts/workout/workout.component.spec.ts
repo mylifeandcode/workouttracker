@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutComponent } from './workout.component';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
@@ -13,9 +13,6 @@ import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Output, input, provideZonelessChangeDetection } from '@angular/core';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
-import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { groupBy } from 'lodash-es';
-import { Dictionary } from 'lodash';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { DurationComponent } from '../_shared/duration/duration.component';
@@ -114,13 +111,24 @@ class ExecutedWorkoutServiceMock {
   add = jasmine.createSpy('add').and.callFake((workout: ExecutedWorkoutDTO) => of(workout));
   getById = jasmine.createSpy('getById').and.returnValue(of(getFakeExecutedWorkout()));
 
-  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
+  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Record<string, ExecutedExerciseDTO[]> {
     const sortedExercises: ExecutedExerciseDTO[] = exercises
       .sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
 
+    /*
     const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>
       exercise.exerciseId.toString() + '-' + exercise.setType.toString()
     );
+    */
+    const groupedExercises = sortedExercises.reduce((groups, exercise) => {
+      const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(exercise);
+      return groups;
+    }, {} as Record<string, ExecutedExerciseDTO[]>);
+
     return groupedExercises;
   }
 

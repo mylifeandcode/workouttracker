@@ -1,7 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, input, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Dictionary } from 'lodash';
-import { groupBy } from 'lodash-es';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
@@ -9,7 +7,7 @@ import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { WorkoutViewComponent } from './workout-view.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';
-import { DatePipe, KeyValuePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 
 const EXECUTED_WORKOUT_PUBLIC_ID = 'some-guid-5';
 
@@ -42,14 +40,22 @@ class ExecutedWorkoutServiceMock {
     return executedWorkout;
   }
 
-  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
+  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Record<string, ExecutedExerciseDTO[]> {
     const sortedExercises: ExecutedExerciseDTO[] = exercises.sort(
       (a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence
     );
 
-    const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>
-      exercise.exerciseId.toString() + '-' + exercise.setType.toString()
-    );
+    const groupedExercises = sortedExercises.reduce((groups, exercise) => {
+      const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
+      
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(exercise);
+      
+      return groups;
+    }, {} as Record<string, ExecutedExerciseDTO[]>);
+
     return groupedExercises;
   }
 

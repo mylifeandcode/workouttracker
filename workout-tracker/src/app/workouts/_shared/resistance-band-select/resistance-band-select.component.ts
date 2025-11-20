@@ -1,7 +1,5 @@
 import { Component, EventEmitter, OnChanges, Output, Signal, SimpleChanges, WritableSignal, computed, input, signal } from '@angular/core';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
-import { Dictionary } from 'lodash';
-import { groupBy, some } from 'lodash-es';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTransferModule, TransferChange, TransferItem } from 'ng-zorro-antd/transfer';
 import { ResistanceBandColorPipe } from "../../../shared/pipes/resistance-band-color.pipe";
@@ -165,9 +163,20 @@ export class ResistanceBandSelectComponent implements OnChanges {
         this.showBilateralValidationFailure = true;
       }
       else {
-        const bandsByColor: Dictionary<TransferItem[]> = groupBy(this.selectedTransferItems(), band => band.title); //Title is color
+        // Replace groupBy with native reduce
+        const bandsByColor: Record<string, TransferItem[]> = this.selectedTransferItems().reduce((groups, band) => {
+          const color = band.title;
+          if (!groups[color]) {
+            groups[color] = [];
+          }
+          groups[color].push(band);
+          return groups;
+        }, {} as Record<string, TransferItem[]>);
+        
         //console.log('BANDS: ', bandsByColor);
-        this.showBilateralValidationFailure = some(bandsByColor, array => array.length % 2 !== 0);
+        
+        // Replace some() with Object.values().some()
+        this.showBilateralValidationFailure = Object.values(bandsByColor).some(array => array.length % 2 !== 0);
         //console.log('BILATERAL VALIDATION: ', this.showBilateralValidationFailure);
       }
     }

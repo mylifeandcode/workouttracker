@@ -4,7 +4,6 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WorkoutPlan } from '../_models/workout-plan';
 import { WorkoutService } from '../_services/workout.service';
 import { ExercisePlan } from '../_models/exercise-plan';
-import { forEach } from 'lodash-es';
 import { IBandAllocation, ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
@@ -208,7 +207,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     if (!this.exercisesArray) return;
 
     this.exercisesArray.clear();
-    forEach(exercises, (exercise: ExercisePlan) => {
+    exercises.forEach((exercise: ExercisePlan) => {
 
       this.exercisesArray.push(
         this._formBuilder.group<IExercisePlanFormGroup>({

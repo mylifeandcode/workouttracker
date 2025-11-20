@@ -7,7 +7,6 @@ import { UserService } from 'app/core/_services/user/user.service';
 import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from 'app/core/_validators/custom-validators';
 import { catchError, finalize } from 'rxjs/operators';
 import { IRepSettingsForm, UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
-import { find } from 'lodash-es';
 import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { RouterLink } from '@angular/router';
@@ -136,10 +135,9 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
     this.user()!.settings.recommendationsEnabled = this.userSettingsForm.controls.recommendationsEnabled.value;
 
     //Update rep settings
-
     this.user()!.settings.repSettings.forEach((value: UserMinMaxReps) => {
       if (this.userSettingsForm !== undefined) { //Needed to keep the linter happy, despite the above check
-        const formGroup = find(this.userSettingsForm.controls.repSettings?.controls, (group: FormGroup<IRepSettingsForm>) =>
+        const formGroup = this.userSettingsForm.controls.repSettings?.controls.find((group: FormGroup<IRepSettingsForm>) =>
           group.controls.repSettingsId.value == value.id
         );
 

@@ -8,7 +8,6 @@ import { ConfigService } from '../config/config.service';
 import { UserOverview } from '../../_models/user-overview';
 import { UserNewDTO } from '../../_models/user-new-dto';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { last } from 'lodash';
 
 const TEST_USER_ID: string = "1";
 

@@ -7,8 +7,6 @@ import { map, shareReplay } from 'rxjs/operators';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
-import { groupBy } from 'lodash-es';
-import { Dictionary } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -120,13 +118,20 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
       }));
   }
 
-  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Dictionary<ExecutedExerciseDTO[]> {
+  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Record<string, ExecutedExerciseDTO[]> {
     const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
 
-    //const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>
-    const groupedExercises = groupBy(sortedExercises, (exercise: ExecutedExerciseDTO) =>
-      exercise.exerciseId.toString() + '-' + exercise.setType.toString()
-    );
+    const groupedExercises = sortedExercises.reduce((groups, exercise) => {
+      const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
+      
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(exercise);
+      
+      return groups;
+    }, {} as Record<string, ExecutedExerciseDTO[]>);
+
     return groupedExercises;
   }
 

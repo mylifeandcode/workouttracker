@@ -3,7 +3,6 @@ import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
-import { forEach } from 'lodash-es';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';
 import { DatePipe, KeyValuePipe } from '@angular/common';
@@ -24,12 +23,6 @@ export class WorkoutViewComponent {
 
   id = input<string>("id");
 
-  /*
-  Before setting TypeScript compiler to strict, the below variable was of type Map<string, ExecutedExercise[]>.
-  But the compiler complained and I had to install @types/lodash, which defined the return type of 
-  the _.groupBy() function as _.Dictionary. And this caused other problems, particularly with the unit test.
-  */
-  //public groupedExercises: _.Dictionary<ExecutedExercise[]>;
   public groupedExercises: Map<string, ExecutedExerciseDTO[]> | undefined;
 
   constructor() {
@@ -57,7 +50,7 @@ export class WorkoutViewComponent {
         const groupsMap = new Map<string, ExecutedExerciseDTO[]>();
 
         let x: number = 0;
-        forEach(groups, (exerciseArray: ExecutedExerciseDTO[]) => {
+        Object.values(groups).forEach((exerciseArray: ExecutedExerciseDTO[]) => {
           groupsMap.set(
             x.toString(), exerciseArray);
           x++;

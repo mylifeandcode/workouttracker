@@ -6,7 +6,6 @@ import { CustomValidators } from 'app/core/_validators/custom-validators';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../_models/workout-dto';
 import { WorkoutService } from '../_services/workout.service';
-import { sortBy } from 'lodash-es';
 import { formatDate, NgClass } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { DurationComponent } from '../_shared/duration/duration.component';
@@ -103,7 +102,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
     this._workoutService.getFilteredSubset(0, 500, true)
       .pipe(finalize(() => { this.gettingData.set(false); }))
       .subscribe((result: PaginatedResults<WorkoutDTO>) => {
-        this.workouts.set(sortBy(result.results, 'name'));
+        this.workouts.set(result.results.sort((a, b) => a.name.localeCompare(b.name)));
       });
   }
 
