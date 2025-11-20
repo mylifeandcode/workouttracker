@@ -12,21 +12,15 @@
         (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
           <tr>
-            <th>Workout Name</th>
-            <th>Start Date/Time</th>
-            <th>End Date/Time</th>
-            <th>Notes/Journal</th>
-          </tr>
-          <tr>
             <th nzCustomFilter>
               Workout Name
               <nz-filter-trigger [(nzVisible)]="workoutNameFilterVisible" [nzActive]="workoutNameFilter().length > 0" [nzDropdownMenu]="menu">
                 <nz-icon nzType="search" />
               </nz-filter-trigger>              
             </th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th>Start Date/Time</th>
+            <th>End Date/Time</th>
+            <th>Notes/Journal</th>
           </tr>
         </thead>
         <tbody>
