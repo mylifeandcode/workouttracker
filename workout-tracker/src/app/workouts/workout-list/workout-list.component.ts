@@ -34,22 +34,24 @@ export class WorkoutListComponent {
   private _nameFilterForDebounce$ = toObservable(this.nameFilter).pipe(debounceTime(500));
   private _nameFilterForDebounce = toSignal(this._nameFilterForDebounce$);
 
+  /*
   private _filterChange = effect(() => {
     //Even if the signals weren't referenced here, getWorkouts() references them, 
     //so this effect would run when they change :)
     this.pageIndex.set(1);
     this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this._nameFilterForDebounce());
   });
+  */
 
   public onQueryParamsChange(params: NzTableQueryParams): void {
     console.log("Table parameters have changed: ", params);
+
     const { pageSize, pageIndex, sort, filter } = params;
     this.pageSize.set(pageSize);
-    this.pageIndex.set(pageIndex); // Add this line - you're not updating pageIndex from the table
-    //const currentSort = sort.find(item => item.value !== null);
-    //const sortField = (currentSort && currentSort.key) || null;
-    //const sortOrder = (currentSort && currentSort.value) || null;
-    this.getWorkouts(((pageIndex - 1) * pageSize), pageSize, this.filterByActiveOnly(), this.nameFilter());
+    this.pageIndex.set(pageIndex); 
+
+    //We're currently only sorting on name, so we can use the first sort index's value directly
+    this.getWorkouts(((pageIndex - 1) * pageSize), pageSize, this.filterByActiveOnly(), sort[0]?.value !== 'descend', this.nameFilter());
   }
 
   public retireWorkout(workoutPublicId: string, workoutName: string): void {
@@ -82,11 +84,11 @@ export class WorkoutListComponent {
     }
   }
 
-  private getWorkouts(first: number, pageSize: number = 10, filterByActiveOnly: boolean = true, nameFilter: string = ''): void {
-    //console.log("GETTING WORKOUTS: ", first, pageSize);
+  private getWorkouts(first: number, pageSize: number = 10, filterByActiveOnly: boolean = true, sortAscending: boolean = true, nameFilter: string = ''): void {
+    console.log("GETTING WORKOUTS: ", first, pageSize);
     //this.totalRecords = 0; DO NOT SET THIS -- IT WILL TRIGGER THE PARAMS CHANGE HANDLER AND CALL IT ALL AGAIN WITH THE DEFAULT PARAMS!
     this.loading.set(true);
-    this._workoutSvc.getFilteredSubset(first, pageSize, filterByActiveOnly, nameFilter)
+    this._workoutSvc.getFilteredSubset(first, pageSize, filterByActiveOnly, sortAscending, nameFilter)
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
         next: (results: PaginatedResults<WorkoutDTO>) => {

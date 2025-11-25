@@ -37,7 +37,7 @@ namespace WorkoutTracker.API.Controllers
 
         // GET: api/Workouts
         [HttpGet]
-        public ActionResult<PaginatedResults<WorkoutDTO>> Get(int firstRecord, short pageSize, bool activeOnly, string nameContains = null)
+        public ActionResult<PaginatedResults<WorkoutDTO>> Get(int firstRecord, short pageSize, bool activeOnly, bool sortAscending = true, string nameContains = null)
         {
             try
             {
@@ -47,13 +47,10 @@ namespace WorkoutTracker.API.Controllers
 
                 int totalCount = _workoutService.GetTotalCount(filter);
 
-                //Blows up after upgrading to EF Core 3.1 from 2.2!
-                //More info at https://stackoverflow.com/questions/59677609/problem-with-ef-core-after-migrating-from-2-2-to-3-1
-                //Had to add .ToList() to the call below.
-                var workouts = 
-                    _workoutService
-                        .Get(firstRecord, pageSize, filter)
-                        .OrderBy(x => x.Name);
+                var workoutsQuery = _workoutService.Get(firstRecord, pageSize, filter);
+                var workouts = sortAscending
+                    ? workoutsQuery.OrderBy(x => x.Name)
+                    : workoutsQuery.OrderByDescending(x => x.Name);
 
                 var results = workouts.Select((workout) =>
                 {

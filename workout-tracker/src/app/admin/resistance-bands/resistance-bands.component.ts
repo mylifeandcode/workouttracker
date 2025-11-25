@@ -98,6 +98,18 @@ export class ResistanceBandsComponent implements OnInit {
     this.modalSubmitted.set(false);
   }
 
+  public sortColumnByColor(a: ResistanceBand, b: ResistanceBand): number {
+    return a.color.localeCompare(b.color);
+  }
+
+  public sortColumnByMaxResistance(a: ResistanceBand, b: ResistanceBand): number {
+    return a.maxResistanceAmount - b.maxResistanceAmount;
+  }
+
+  public sortColumnByNumberAvailable(a: ResistanceBand, b: ResistanceBand): number {
+    return a.numberAvailable - b.numberAvailable;
+  }
+
   private setupEditCache(): void {
     this.resistanceBands.forEach(item => {
       this.editCache[item.id] = {

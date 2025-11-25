@@ -7,7 +7,6 @@ import { PaginatedResults } from '../../core/_models/paginated-results';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { WorkoutPlan } from '../_models/workout-plan';
 import { ConfigService } from 'app/core/_services/config/config.service';
-import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -28,9 +27,14 @@ export class WorkoutService {
     this.API_ROOT = this._configService.get("apiRoot") + "workouts";
   }
 
-  public getFilteredSubset(firstRecOffset: number, pageSize: number, activeOnly: boolean, nameContains: string | null = null): Observable<PaginatedResults<WorkoutDTO>> {
+  public getFilteredSubset(
+    firstRecOffset: number, 
+    pageSize: number, 
+    activeOnly: boolean, 
+    sortAscending: boolean = true, 
+    nameContains: string | null = null): Observable<PaginatedResults<WorkoutDTO>> {
         
-    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&activeOnly=${activeOnly}`;
+    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&activeOnly=${activeOnly}&sortAscending=${sortAscending}`;
 
     if(nameContains)
         url += `&nameContains=${nameContains}`;

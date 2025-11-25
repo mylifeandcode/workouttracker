@@ -273,4 +273,42 @@ describe('ResistanceBandsComponent', () => {
 
   });
 
+  it('should sort column by color', () => {
+    //ARRANGE
+    const bands = getResistanceBandInventory();
+    const bandA = bands[2]; //Yellow
+    const bandB = bands[3]; //Onyx
+
+    //ACT
+    const result = component.sortColumnByColor(bandA, bandB);
+
+    //ASSERT
+    expect(result).toBe(1); //Y > O
+  });
+
+  it('should sort column by max resistance amount', () => {
+    //ARRANGE
+    const bands = getResistanceBandInventory();
+    const bandA = bands[1]; //60
+    const bandB = bands[2]; //6
+
+    //ACT
+    const result = component.sortColumnByMaxResistance(bandA, bandB);
+
+    //ASSERT
+    expect(result).toBe(54);
+  });
+
+  it('should sort column by number available', () => {
+    //ARRANGE
+    const bands = getResistanceBandInventory();
+    const bandA = bands[0]; //2
+    const bandB = bands[3]; //5
+
+    //ACT
+    const result = component.sortColumnByNumberAvailable(bandA, bandB);
+
+    //ASSERT
+    expect(result).toBe(-3);
+  });
 });

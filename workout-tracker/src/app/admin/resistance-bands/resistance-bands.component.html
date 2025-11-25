@@ -7,14 +7,13 @@
 @if (!busy()) {
   <div class="container-fluid">
 
-    <nz-table #dt [nzData]="resistanceBands" dataKey="id" editMode="row">
+    <nz-table #dt [nzData]="resistanceBands" [nzShowPagination]="false" dataKey="id" editMode="row">
       <thead>
-        <!--TODO: Make these sortable-->
         <tr>
-          <th>Color</th>
-          <th>Max End-to-End Resistance</th>
-          <th># Available</th>
-          <th style="width:8rem"></th>
+          <th [nzSortFn]="sortColumnByColor">Color</th>
+          <th [nzSortFn]="sortColumnByMaxResistance">Max End-to-End Resistance</th>
+          <th [nzSortFn]="sortColumnByNumberAvailable"># Available</th>
+          <th style="width:8rem">Actions</th>
         </tr>
       </thead>
       <tbody>

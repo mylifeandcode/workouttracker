@@ -57,7 +57,7 @@ describe('WorkoutService', () => {
       error: fail
     });
 
-    const req = httpMock.expectOne(`${API_ROOT_URL}?firstRecord=10&pageSize=25&activeOnly=false`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}?firstRecord=10&pageSize=25&activeOnly=false&sortAscending=true`);
     expect(req.request.method).toEqual('GET');
 
     // Respond with the mock results
