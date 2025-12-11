@@ -13,7 +13,7 @@ import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-indi
   standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
-  transform(value: number | null): string {
+  transform(): string {
     return 'Fake Resistance Amount';
   }
 }
@@ -108,7 +108,7 @@ describe('ResistanceBandSelectComponent', () => {
     component.transferItems.push(band);
 
     //ACT
-    component.onTransferChange({ from: 'left', to: 'right', list: [band] });
+    component.onTransferChange();
 
     //ASSERT
     expect(component.showBilateralValidationFailure).toBeTrue();
@@ -136,7 +136,7 @@ describe('ResistanceBandSelectComponent', () => {
     component.transferItems.push(...[band1, band2]);
 
     //ACT
-    component.onTransferChange({ from: 'left', to: 'right', list: [band2] });
+    component.onTransferChange();
 
     //ASSERT
     expect(component.showBilateralValidationFailure).toBeTrue();
@@ -182,7 +182,7 @@ describe('ResistanceBandSelectComponent', () => {
     component.transferItems.push(...[band1, band2, band3, band4]);
 
     //ACT
-    component.onTransferChange({ from: 'left', to: 'right', list: [band2, band4] });
+    component.onTransferChange();
 
     //ASSERT
     expect(component.showBilateralValidationFailure).toBeFalse();

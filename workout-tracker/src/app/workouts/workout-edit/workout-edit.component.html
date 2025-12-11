@@ -20,21 +20,23 @@
             <input type="hidden" formControlName="publicId" />
             <input type="hidden" formControlName="active" />
   
-            <label class="center-block"
-              [ngClass]="{'has-error': workoutForm.controls.name.touched && workoutForm.controls.name.errors}">
-              Name:
-            </label>
-            <input class="form-control" formControlName="name" placeholder="Workout Name (required)" />
+            <label for="workoutName" class="form-label">Name</label>
+            <input id="workoutName" 
+              class="form-control" 
+              [ngClass]="{'has-error': workoutForm.controls.name.touched && workoutForm.controls.name.errors}"
+              formControlName="name" placeholder="Workout Name (required)" 
+            />
             @if (workoutForm.controls.name.touched && workoutForm.controls.name.errors) {
               <span class="error-text">Required</span>
             }
           </div>
         </div>
   
-        <label class="center-block bottom-padded">
-          <!--Sets (Repetition vs Timed vs Super)-->
-          Exercises
-        </label>
+        <div class="row center-block bottom-padded">
+          <div class="col-2">
+            Exercises
+          </div>
+        </div>
   
         <div class="row">
           <div class="col-6">Exercise Name</div>

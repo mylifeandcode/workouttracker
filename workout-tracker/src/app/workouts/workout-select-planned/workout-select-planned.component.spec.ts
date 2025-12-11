@@ -10,7 +10,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { HttpResponse } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { ModalOptions, NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
 class MockExecutedWorkoutService {
   getPlanned =
@@ -26,7 +26,7 @@ class MockExecutedWorkoutService {
 
   deletePlanned =
     jasmine.createSpy('deletePlanned')
-      .and.returnValue(of(new HttpResponse<any>()));
+      .and.returnValue(of(new HttpResponse<void>()));
 }
 
 class MockNzMessageService {
@@ -34,7 +34,7 @@ class MockNzMessageService {
 }
 
 class MockNzModalService {
-  confirm = jasmine.createSpy('confirm').and.callFake((options: any) => {
+  confirm = jasmine.createSpy('confirm').and.callFake((options: any) => { //Need to revisit for concrete type, having issues implementing
     if (options && typeof options.nzOnOk === 'function') {
       return options.nzOnOk(); // Simulate the user confirming
     }
@@ -44,7 +44,6 @@ class MockNzModalService {
 describe('WorkoutSelectPlannedComponent', () => {
   let component: WorkoutSelectPlannedComponent;
   let fixture: ComponentFixture<WorkoutSelectPlannedComponent>;
-  let executedWorkoutService: ExecutedWorkoutService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -62,24 +61,23 @@ describe('WorkoutSelectPlannedComponent', () => {
           provide: NzModalService,
           useClass: MockNzModalService
         },
-  provideRouter([]),
-  provideZonelessChangeDetection()
+        provideRouter([]),
+        provideZonelessChangeDetection()
       ]
     })
       .overrideComponent(
-        WorkoutSelectPlannedComponent, 
+        WorkoutSelectPlannedComponent,
         {
           remove: { imports: [NzTableModule, NzModalModule] },
           add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         }
-      )    
+      )
       .compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutSelectPlannedComponent);
     component = fixture.componentInstance;
-    executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
     fixture.detectChanges();
   });
 
@@ -95,22 +93,6 @@ describe('WorkoutSelectPlannedComponent', () => {
     expect(component.loading).toBeFalse();
   });
   */
-
-  it('should get planned workouts via getPlannedLazy()', () => {
-    //ARRANGE
-    component.pageSize.set(50); //Let's change this
-    component.plannedWorkouts.set([]);
-    component.totalCount.set(0);
-
-    //ACT
-    component.getPlannedWorkoutsLazy({ first: 100 });
-
-    //ASSERT
-    expect(executedWorkoutService.getPlanned).toHaveBeenCalledWith(100, component.pageSize());
-    expect(component.plannedWorkouts().length).toBeGreaterThan(0);
-    expect(component.totalCount()).toBeGreaterThan(0);
-    expect(component.loading()).toBeFalse();
-  });
 
   it('should delete planned workouts', () => {
     //ARRANGE

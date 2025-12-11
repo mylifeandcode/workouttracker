@@ -31,7 +31,7 @@
               <td>{{executedWorkout.endDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
               <td>
                 @if (executedWorkout.journal) {
-                  <span (click)="openNotesModal(executedWorkout.journal)" nz-tooltip nzTooltipTitle="{{executedWorkout.journal}}">
+                  <span (click)="openNotesModal(executedWorkout.journal)" (keypress.enter)="openNotesModal(executedWorkout.journal)" nz-tooltip nzTooltipTitle="{{executedWorkout.journal}}">
                     Notes
                   </span>
                 }
@@ -68,7 +68,7 @@
     {{notes()}}
   </div>
   <div *nzModalFooter>
-    <button (click)="closeNotesModal()"></button>
+    <button (click)="closeNotesModal()">Close</button>
   </div>
 </nz-modal>
 

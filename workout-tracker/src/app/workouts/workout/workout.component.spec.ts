@@ -249,6 +249,7 @@ describe('WorkoutComponent', () => {
   });
 
   //TODO: Fix
+  /*
   xit('should set up workout when selected', () => {
     //ARRANGE
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
@@ -315,6 +316,7 @@ describe('WorkoutComponent', () => {
     });
 
   });
+  */
 
   it('should enable the resistance bands selection modal', () => {
     //ARRANGE
@@ -405,7 +407,7 @@ describe('WorkoutComponent', () => {
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
     component.startWorkout();
 
-    component.workoutForm.patchValue({ journal: '38 degrees, sunny. ST: TOS - \"The Omega Glory\" and YouTube' });
+    component.workoutForm.patchValue({ journal: '38 degrees, sunny. ST: TOS - "The Omega Glory" and YouTube' });
 
     const expectedExecutedWorkout = new ExecutedWorkoutDTO();
     expectedExecutedWorkout.startDateTime = component.startDateTime();

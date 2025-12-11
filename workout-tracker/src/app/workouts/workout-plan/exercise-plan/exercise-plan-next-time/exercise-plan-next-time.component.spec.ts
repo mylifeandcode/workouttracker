@@ -11,7 +11,7 @@ import { Pipe, PipeTransform } from '@angular/core';
     standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
-  transform(value: number | null): string {
+  transform(): string {
     return 'Fake Resistance Amount';
   }
 }

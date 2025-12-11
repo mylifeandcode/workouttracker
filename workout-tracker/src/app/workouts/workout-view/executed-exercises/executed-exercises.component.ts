@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ExecutedExerciseDTO } from '../../_models/executed-exercise-dto';
 import { NgStyle } from '@angular/common';
 import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';

@@ -16,6 +16,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
@@ -119,7 +120,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
           this.isProcessing.set(false);
           this.workoutPlanForm.markAsPristine();
         }))
-        .subscribe((executedWorkoutPublicId: string) => {
+        .subscribe(() => {
           this._router.navigate([`workouts/select-planned`]);
         });
     }
@@ -264,13 +265,13 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
         next: (bands: ResistanceBandIndividual[]) => {
           this.allResistanceBands.set(bands);
         },
-        error: (error: any) => {
+        error: (error: HttpErrorResponse) => {
           this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
         }
       });
   }
 
-  private setErrorInfo(error: any, defaultMessage: string): void {
+  private setErrorInfo(error: HttpErrorResponse, defaultMessage: string): void {
     if (error.message)
       this.errorInfo.set(error.message);
     else

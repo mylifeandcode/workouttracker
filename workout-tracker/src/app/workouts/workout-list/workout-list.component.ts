@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { debounceTime, finalize } from 'rxjs/operators';
-import { HttpResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -46,7 +46,7 @@ export class WorkoutListComponent {
   public onQueryParamsChange(params: NzTableQueryParams): void {
     console.log("Table parameters have changed: ", params);
 
-    const { pageSize, pageIndex, sort, filter } = params;
+    const { pageSize, pageIndex, sort } = params;
     this.pageSize.set(pageSize);
     this.pageIndex.set(pageIndex); 
 
@@ -60,11 +60,11 @@ export class WorkoutListComponent {
       this._workoutSvc.retire(workoutPublicId)
         .pipe(finalize(() => { this.loading.set(false); }))
         .subscribe({
-          next: (response: HttpResponse<any>) => {
+          next: () => {
             this.pageIndex.set(1);
             this.getWorkouts(0);
           },
-          error: (error: any) => window.alert("An error occurred while retiring workout: " + error)
+          error: (error: HttpErrorResponse) => window.alert("An error occurred while retiring workout: " + error.message)
         });
     }
   }
@@ -75,11 +75,11 @@ export class WorkoutListComponent {
       this._workoutSvc.reactivate(workoutPublicId)
         .pipe(finalize(() => { this.loading.set(false); }))
         .subscribe({
-          next: (response: HttpResponse<any>) => {
+          next: () => {
             this.pageIndex.set(1);
             this.getWorkouts(0);
           },
-          error: (error: any) => window.alert("An error occurred while reactivating workout: " + error)
+          error: (error: HttpErrorResponse) => window.alert("An error occurred while reactivating workout: " + error.message)
         });
     }
   }
@@ -95,7 +95,7 @@ export class WorkoutListComponent {
           this.workouts.set(results.results);
           this.totalRecords.set(results.totalCount);
         },
-        error: (error: any) => window.alert("An error occurred getting workouts: " + error)
+        error: (error: HttpErrorResponse) => window.alert("An error occurred getting workouts: " + error.message)
       });
   }
 }

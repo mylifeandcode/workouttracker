@@ -79,11 +79,11 @@ export class WorkoutService {
     return this._http.post<string>(`${this.API_ROOT}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`, plan);
   }
 
-  public retire(publicId: string): Observable<HttpResponse<any>> {
-    return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${publicId}/retire`, null);
+  public retire(publicId: string): Observable<HttpResponse<void>> {
+    return this._http.put<HttpResponse<void>>(`${this.API_ROOT}/${publicId}/retire`, null);
   }
 
-  public reactivate(publicId: string): Observable<HttpResponse<any>> {
-    return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${publicId}/reactivate`, null);
+  public reactivate(publicId: string): Observable<HttpResponse<void>> {
+    return this._http.put<HttpResponse<void>>(`${this.API_ROOT}/${publicId}/reactivate`, null);
   }  
 }

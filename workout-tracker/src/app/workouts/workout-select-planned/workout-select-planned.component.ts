@@ -30,10 +30,6 @@ export class WorkoutSelectPlannedComponent {
   public loading = signal<boolean>(true);
   public pageSize = signal<number>(10);
 
-  public getPlannedWorkoutsLazy(event: any): void {
-    this.getPlannedWorkouts(event.first);
-  }
-
   public deletePlannedWorkout(publicId: string): void {
     this._modalService.confirm({
       nzTitle: 'Are You Sure?',
@@ -48,8 +44,7 @@ export class WorkoutSelectPlannedComponent {
               this.getPlannedWorkouts(0);
             },
             error: (error: HttpErrorResponse) => {
-              //console.log("ERROR: ", error);
-              window.alert("Couldn't delete workout! " + error.error.errors.id.map((e: any) => e).join(', '));
+              window.alert("Couldn't delete workout! " + error.error.errors.id.map((e: string) => e).join(', '));
             }
           }
           );

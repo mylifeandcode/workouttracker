@@ -144,7 +144,7 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
       }));
   }
 
-  public deletePlanned(publicId: string): Observable<HttpResponse<any>> {
-    return this._http.delete<HttpResponse<any>>(`${this._apiRoot}/planned/${publicId}`);
+  public deletePlanned(publicId: string): Observable<HttpResponse<void>> {
+    return this._http.delete<HttpResponse<void>>(`${this._apiRoot}/planned/${publicId}`);
   }
 }

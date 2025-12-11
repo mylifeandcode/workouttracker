@@ -10,10 +10,10 @@ describe('DurationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-  imports: [ReactiveFormsModule, DurationComponent],
-  providers: [FormBuilder, provideZonelessChangeDetection()]
-})
-    .compileComponents();
+      imports: [ReactiveFormsModule, DurationComponent],
+      providers: [FormBuilder, provideZonelessChangeDetection()]
+    })
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -31,15 +31,15 @@ describe('DurationComponent', () => {
 
     //ARRANGE
     fixture.componentRef.setInput('currentDuration', 3805); //When set programmatically, does not trigger ngOnChanges()
-  // We'll use this to call ngOnChanges(), but since the change lifecycle isn't occurring,
-  // the line above is still needed. Yeah, this is kinda kludgey.
-  const change = new SimpleChange(0, 3805, true);
+    // We'll use this to call ngOnChanges(), but since the change lifecycle isn't occurring,
+    // the line above is still needed. Yeah, this is kinda kludgey.
+    //const change = new SimpleChange(0, 3805, true);
 
     //ACT
     //fixture.detectChanges(); 
     //NOPE! This won't pick up that we've changed currentDuration programmatically.
     //We could create a host component, but that's overkill for this scenario.
-    component.ngOnChanges({currentDuration: change});
+    component.ngOnChanges();
 
     //ASSERT
     expect(component.form.controls.hours.value).toBe(1);

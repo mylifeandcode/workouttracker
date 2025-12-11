@@ -8,7 +8,6 @@ import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-d
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
-import { start } from 'repl';
 
 const API_ROOT_URL: string = "http://localhost:5600/api/";
 

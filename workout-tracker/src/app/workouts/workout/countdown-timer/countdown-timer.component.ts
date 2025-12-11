@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, effect, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ViewChild, effect, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
 import { SoundService } from 'app/core/_services/sound/sound.service';
 import { NgStyle } from '@angular/common';
@@ -10,7 +10,7 @@ import { NgStyle } from '@angular/common';
   imports: [NgStyle, CountdownComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CountdownTimerComponent implements OnInit {
+export class CountdownTimerComponent {
   private _soundService = inject(SoundService);
 
   @ViewChild('preCountdown', { static: false }) private _preCountdown: CountdownComponent | undefined;
@@ -36,9 +36,6 @@ export class CountdownTimerComponent implements OnInit {
     });
   }
   
-  public ngOnInit(): void {
-  }
-
   public startCountdown(): void {
     this.showPreCountdown.set(true);
     this._preCountdownHasBegun.set(true);

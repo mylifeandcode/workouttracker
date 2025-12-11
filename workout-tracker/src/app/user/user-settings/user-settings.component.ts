@@ -92,7 +92,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
           throw err.message;
         })
       )
-      .subscribe((user: User) => {
+      .subscribe(() => {
         this._messageService.success('Settings saved.');
       });
   }

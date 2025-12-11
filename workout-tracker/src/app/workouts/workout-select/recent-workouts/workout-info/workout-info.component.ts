@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { Workout } from '../../../_models/workout';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ResistanceTypePipe } from '../../../_pipes/resistance-type.pipe';

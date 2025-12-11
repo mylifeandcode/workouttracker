@@ -4,7 +4,6 @@ import { WorkoutExerciseComponent } from './workout-exercise.component';
 import { ReactiveFormsModule, Validators, FormBuilder, FormControl, FormArray, FormGroup } from '@angular/forms';
 import { ExecutedExerciseDTO } from '../../_models/executed-exercise-dto';
 import { Pipe, PipeTransform } from '@angular/core';
-import { ResistanceType } from '../_enums/resistance-type';
 import { IWorkoutFormExercise } from '../_interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../_interfaces/i-workout-form-exercise-set';
 import { SafeHtml } from '@angular/platform-browser';
@@ -14,7 +13,7 @@ import { SafeHtml } from '@angular/platform-browser';
   standalone: true
 })
 class ResistanceTypePipeMock implements PipeTransform {
-  transform(value: ResistanceType, capitalizeEachWord: boolean = true): string {
+  transform(): string {
     return 'whatever';
   }
 }
@@ -24,7 +23,7 @@ class ResistanceTypePipeMock implements PipeTransform {
   standalone: true
 })
 class DurationPipeMock implements PipeTransform {
-  transform(value: number, precise: boolean = false): number {
+  transform(): number {
     return 0;
   }
 }
@@ -34,7 +33,7 @@ class DurationPipeMock implements PipeTransform {
   standalone: true
 })
 class ResistanceBandColorMock implements PipeTransform {
-  transform(value: string | null): SafeHtml {
+  transform(): SafeHtml {
     return "<span style='color: red'>Red</span>";
   }
 }
@@ -44,7 +43,7 @@ class ResistanceBandColorMock implements PipeTransform {
   standalone: true
 })
 class ExerciseSidePipeMock implements PipeTransform {
-  transform(value: number | null): string {
+  transform(): string {
     return "";
   }
 }
@@ -54,7 +53,7 @@ class ExerciseSidePipeMock implements PipeTransform {
   standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
-  transform(value: number | null): string {
+  transform(): string {
     return 'Fake Resistance Amount';
   }
 }

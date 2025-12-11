@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'wt-in-progress-workouts',
@@ -25,7 +26,7 @@ export class InProgressWorkoutsComponent implements OnInit {
     this._executedWorkoutService.getInProgress()
       .pipe(
         finalize(() => { this.loading.set(false); }),
-        catchError((err: any, caught: Observable<ExecutedWorkoutSummaryDTO[]>) => {
+        catchError((err: HttpErrorResponse) => {
           this.errorMessage = (err.error ? err.error : "An error has occurred. Please contact an administrator.");
           return of(new Array<ExecutedWorkoutSummaryDTO>());
         })

@@ -11,8 +11,8 @@ import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular
 
 class WorkoutServiceMock {
   getFilteredSubset = jasmine.createSpy('getFilteredSubset').and.returnValue(of(new PaginatedResults<WorkoutDTO>()));
-  retire = jasmine.createSpy('retire').and.returnValue(of(new HttpResponse<any>()));
-  reactivate = jasmine.createSpy('reactivate').and.returnValue(of(new HttpResponse<any>()));
+  retire = jasmine.createSpy('retire').and.returnValue(of(new HttpResponse<void>()));
+  reactivate = jasmine.createSpy('reactivate').and.returnValue(of(new HttpResponse<void>()));
 }
 
 describe('WorkoutListComponent', () => {

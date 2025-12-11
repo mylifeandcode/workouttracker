@@ -1,7 +1,7 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, Output, provideZonelessChangeDetection } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SoundService } from 'app/core/_services/sound/sound.service';
-import { CountdownConfig, CountdownEvent, CountdownModule, CountdownStatus, CountdownTimer } from 'ngx-countdown';
+import { CountdownEvent, CountdownModule, CountdownStatus } from 'ngx-countdown';
 
 import { CountdownTimerComponent } from './countdown-timer.component';
 
