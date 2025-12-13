@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -57,11 +58,11 @@ export class UserAddComponent implements OnInit {
           else
             this._router.navigate(['/']);
         },
-        error: (error: any) => {
+        error: (error: HttpErrorResponse) => {
           if (error?.status == 403)
             this.errorMsg.set("You do not have permission to add users.");
           else
-            this.errorMsg.set(error.error ? error.error : "An error has occurred. Please contact an administrator.");
+            this.errorMsg.set(error.message ? error.message : "An error has occurred. Please contact an administrator.");
         }
       });
 

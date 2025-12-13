@@ -1,7 +1,7 @@
 <h3 class="headroom">User Settings</h3>
 <div class="container-fluid">
   <h4>Settings</h4>
-  @if (userSettingsForm) {
+  @if (userSettingsLoaded() && userSettingsForm) {
     <form [formGroup]="userSettingsForm" novalidate>
       <div class="row">
         <div class="col-4">

@@ -25,8 +25,7 @@ class FakeExerciseListMiniComponent { }
 
 @Component({
   selector: 'wt-blank',
-  template: '',
-  standalone: false
+  template: ''
 })
 class BlankComponent { }
 

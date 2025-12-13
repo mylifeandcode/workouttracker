@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/_services/auth/auth.service';
@@ -44,8 +45,8 @@ export class ChangePasswordComponent {
         .pipe(finalize(() => { this.changingPassword.set(false); }))
         .subscribe({
           next: () => { this.passwordChanged.set(true); },
-          error: (error: any) => {
-            this.errorMessage.set("Couldn't change password: " + (error?.error ?? "An error occurred."));
+          error: (error: HttpErrorResponse) => {
+            this.errorMessage.set("Couldn't change password: " + (error?.message ?? "An error occurred."));
           }
         });
     }

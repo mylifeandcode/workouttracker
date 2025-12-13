@@ -27,7 +27,7 @@ export class InProgressWorkoutsComponent implements OnInit {
       .pipe(
         finalize(() => { this.loading.set(false); }),
         catchError((err: HttpErrorResponse) => {
-          this.errorMessage = (err.error ? err.error : "An error has occurred. Please contact an administrator.");
+          this.errorMessage.set(err.message ? err.message : "An error has occurred. Please contact an administrator.");
           return of(new Array<ExecutedWorkoutSummaryDTO>());
         })
       )

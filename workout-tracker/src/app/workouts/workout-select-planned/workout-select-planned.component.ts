@@ -44,10 +44,9 @@ export class WorkoutSelectPlannedComponent {
               this.getPlannedWorkouts(0);
             },
             error: (error: HttpErrorResponse) => {
-              window.alert("Couldn't delete workout! " + error.error.errors.id.map((e: string) => e).join(', '));
+              window.alert("Couldn't delete workout! " + error.message);
             }
-          }
-          );
+          });
       }
     });
   }

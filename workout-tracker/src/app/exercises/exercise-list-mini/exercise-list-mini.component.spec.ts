@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
 import { TargetArea } from 'app/workouts/_models/target-area';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
-import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 class ExerciseServiceMock {
@@ -61,29 +61,15 @@ describe('ExerciseListMiniComponent', () => {
     //TODO: Consolidate the method we're testing: it exists in 2 different classes.
 
     //ARRANGE
-    const lazyLoadEvent: any = { //Unfortunately, the parameter of the onLazyLoad event of PrimeNg's table is declared as type "any"
-      "first": 0,
-      "rows": 10,
-      "sortOrder": 1,
-      "filters": {
-        "targetAreas": {
-          "value": [
-            "Chest"
-          ],
-          "matchMode": "in"
-        },
-        "name": {
-          "value": "Pre",
-          "matchMode": "in"
-        }
-      },
-      "globalFilter": null
+    const lazyLoadEvent: Partial<NzTableQueryParams> = {
+      "pageIndex": 1,
+      "pageSize": 10
     };
 
     const expectedParams: any[] = [0, 10, 'Pre', ['Chest']];
 
     //ACT
-    component.getExercisesLazy(lazyLoadEvent);
+    component.getExercisesLazy(lazyLoadEvent as NzTableQueryParams);
 
     //ASSERT
     expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, 'Pre', ['Chest']);

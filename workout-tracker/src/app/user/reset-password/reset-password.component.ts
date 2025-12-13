@@ -3,9 +3,10 @@ import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveF
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 import { CustomValidators } from 'app/core/_validators/custom-validators';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface IResetPasswordForm {
   password: FormControl<string>;
@@ -48,8 +49,8 @@ export class ResetPasswordComponent implements OnInit {
       this._authService.validatePasswordResetCode(this._resetCode)
         .pipe(
           finalize(() => { this.validatingResetCode.set(false); }),
-          catchError((err: any, caught: Observable<boolean>) => {
-            this.errorMessage.set(err.error ? err.error : "An error has occurred. Please contact an administrator.");
+          catchError((err: HttpErrorResponse) => {
+            this.errorMessage.set(err.message ? err.message : "An error has occurred. Please contact an administrator.");
             return of(false);
           })        
         )
@@ -66,8 +67,8 @@ export class ResetPasswordComponent implements OnInit {
       this._authService.resetPassword(this._resetCode, this.resetPasswordForm.controls.password.value)
         .pipe(
           finalize(() => { this.resettingPassword.set(false); }),
-          catchError((err: any, caught: Observable<void>) => {
-            this.errorMessage.set(err.error ? err.error : "An error has occurred. Please contact an administrator.");
+          catchError((err: HttpErrorResponse) => {
+            this.errorMessage.set(err.message ? err.message : "An error has occurred. Please contact an administrator.");
             return of();
           })
         )

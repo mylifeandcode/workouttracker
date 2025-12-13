@@ -40,6 +40,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   public user = signal<User | undefined>(undefined);
   public userSettingsForm: FormGroup<IUserSettingsForm> | undefined; //undefined until user info is retrieved
   public saving = signal(false);
+  public userSettingsLoaded = signal(false);
 
   public ngOnInit(): void {
     if (!this._authService.userPublicId) return;
@@ -54,6 +55,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
       .subscribe((user: User) => {
         this.user.set(user);
         this.createForm();
+        this.userSettingsLoaded.set(true);
       });
   }
 

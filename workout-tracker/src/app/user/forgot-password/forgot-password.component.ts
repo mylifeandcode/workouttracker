@@ -4,6 +4,7 @@ import { AuthService } from 'app/core/_services/auth/auth.service';
 import { ConfigService } from 'app/core/_services/config/config.service';
 import { finalize } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface IForgotPasswordForm {
   emailAddress: FormControl<string>;
@@ -44,7 +45,7 @@ export class ForgotPasswordComponent implements OnInit {
       .pipe(finalize(() => { this.requestInProgress.set(false); }))
       .subscribe({
         next: () => { this.requestSuccessful.set(true); },
-        error: (error: any) => { this.errorMessage.set(error?.error ?? "Password reset request failed. Please try again later."); }
+        error: (error: HttpErrorResponse) => { this.errorMessage.set(error?.message ?? "Password reset request failed. Please try again later."); }
       });
   }
 

@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { UserService } from '../../core/_services/user/user.service';
 import { EMPTY_GUID } from 'app/shared/shared-constants';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 interface IUserEditForm {
@@ -69,11 +70,11 @@ export class UserEditComponent implements OnInit {
       .pipe(finalize(() => { this.savingUserInfo.set(false); }))
       .subscribe({
         next: () => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
-        error: (error: any) => {
+        error: (error: HttpErrorResponse) => {
           if (error?.status == 403)
             this.errorMsg.set("You do not have permission to add or edit users.");
           else
-            this.errorMsg.set(error.error ? error.error : "An error has occurred. Please contact an administrator.");
+            this.errorMsg.set(error.message ? error.message : "An error has occurred. Please contact an administrator.");
         }
       });
   }

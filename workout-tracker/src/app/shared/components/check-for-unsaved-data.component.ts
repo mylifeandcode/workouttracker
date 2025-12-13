@@ -14,7 +14,7 @@ export abstract class CheckForUnsavedDataComponent {
   public abstract hasUnsavedData(): boolean;
 
   @HostListener('window:beforeunload', ['$event'])
-  unloadNotification($event: any): void {
+  unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedData()) {
       $event.returnValue = true;
     }
