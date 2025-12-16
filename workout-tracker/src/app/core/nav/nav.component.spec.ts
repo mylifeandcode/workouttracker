@@ -15,7 +15,6 @@ class AuthServiceMock {
 }
 
 @Component({
-  standalone: false
 })
 class FakeComponent { };
 
@@ -53,7 +52,7 @@ describe('NavComponent', () => {
   it('should determine if user is logged in', () => {
 
     //ARRANGE
-    const authService = TestBed.inject(AuthService);
+    //Nothing else to do here
 
     //ACT
     //Nothing else to do here

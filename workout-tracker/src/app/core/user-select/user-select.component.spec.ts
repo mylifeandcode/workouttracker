@@ -27,7 +27,6 @@ describe('UserSelectComponent', () => {
   let fixture: ComponentFixture<UserSelectComponent>;
 
   @Component({
-    standalone: false
   })
   class FakeComponent { };
 

@@ -4,9 +4,10 @@ import { UserService } from '../_services/user/user.service';
 import { User } from '../_models/user';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 import { catchError } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'wt-user-select',
@@ -29,8 +30,8 @@ export class UserSelectComponent {
   public users$ =
     this._userSvc.all$
       .pipe(
-        catchError((err: any, caught: Observable<User[]>) => {
-          console.log("ERROR: ", err);
+        catchError((err: HttpErrorResponse) => {
+          console.log("ERROR: ", err.message);
           this.errorMsg.set(err.message ? err.message : "An error has occurred. Please contact an administrator.");
           return of(new Array<User>());
         })

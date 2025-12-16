@@ -39,7 +39,7 @@ export abstract class ExerciseListBase {
         distinctUntilChanged(),
         takeUntil(this._destroy$)
       )
-      .subscribe(value => {
+      .subscribe(() => {
         this.handleFilterChange();
       });
 

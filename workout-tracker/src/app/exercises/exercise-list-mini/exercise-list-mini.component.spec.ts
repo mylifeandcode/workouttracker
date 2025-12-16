@@ -66,8 +66,6 @@ describe('ExerciseListMiniComponent', () => {
       "pageSize": 10
     };
 
-    const expectedParams: any[] = [0, 10, 'Pre', ['Chest']];
-
     //ACT
     component.getExercisesLazy(lazyLoadEvent as NzTableQueryParams);
 

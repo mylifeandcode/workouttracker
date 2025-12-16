@@ -22,9 +22,8 @@
             <label class="center-block"
               [ngClass]="{'has-error': exerciseForm.controls.name.touched && exerciseForm.controls.name.errors}">
               Name
+              <input class="form-control" formControlName="name" placeholder="Exercise Name (required)" />
             </label>
-            <input class="form-control" formControlName="name" placeholder="Exercise Name (required)" />
-
             @if (exerciseForm.controls.name.touched && exerciseForm.controls.name.errors) {
               <span class="error-text">Required</span>
             }
@@ -34,9 +33,9 @@
             <label class="center-block"
               [ngClass]="{'has-error': exerciseForm.controls.description.touched && exerciseForm.controls.description.errors}">
               Description
+              <textarea class="form-control" rows="6" formControlName="description"
+                placeholder="Exercise Description (required)"></textarea>
             </label>
-            <textarea class="form-control" rows="6" formControlName="description"
-              placeholder="Exercise Description (required)"></textarea>
 
             @if (exerciseForm.controls.description.touched) {
               @if (exerciseForm.controls.description.errors?.required) {
@@ -132,11 +131,11 @@
         </div>
         <div class="row bottom-padded">
           <div class="col-4">
-            <label class="center-block"
+            <label class="center-block" for="howToPrepare"
               [ngClass]="{'has-error': exerciseForm.controls['setup'].touched && exerciseForm.controls['setup'].errors}">
               Setup
             </label>
-            <textarea class="form-control" rows="12" formControlName="setup"
+            <textarea id="howToPrepare" class="form-control" rows="12" formControlName="setup"
               placeholder="How to prepare for this exercise (required)"></textarea>
             @if (exerciseForm.controls.setup.touched) {
               @if (exerciseForm.controls.setup.errors?.required) {
@@ -149,11 +148,11 @@
             }
           </div>
           <div class="col-4">
-            <label class="center-block"
+            <label class="center-block" for="howToPerform"
               [ngClass]="{'has-error': exerciseForm.controls.movement.touched && exerciseForm.controls.movement.errors}">
               Movement
             </label>
-            <textarea class="form-control" rows="12" formControlName="movement"
+            <textarea id="howToPerform" class="form-control" rows="12" formControlName="movement"
               placeholder="How to perform the exercise (required)"></textarea>
             @if (exerciseForm.controls.movement.touched) {
               
@@ -168,11 +167,11 @@
             }
           </div>
           <div class="col-4">
-            <label class="center-block"
+            <label class="center-block" for="pointsToRemember"
               [ngClass]="{'has-error': exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember'].errors}">
               Points to Remember
             </label>
-            <textarea class="form-control" rows="12" formControlName="pointsToRemember"
+            <textarea id="pointsToRemember" class="form-control" rows="12" formControlName="pointsToRemember"
               placeholder="Points to remember (required)"></textarea>
             @if (exerciseForm.controls.pointsToRemember.touched) {
               @if (exerciseForm.controls.pointsToRemember.errors?.required) {

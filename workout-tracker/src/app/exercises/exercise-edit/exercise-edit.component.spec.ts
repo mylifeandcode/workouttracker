@@ -63,7 +63,9 @@ class ExerciseServiceMock {
   standalone: true
 })
 class InsertSpaceBeforeCapitalPipeMock implements PipeTransform {
-  transform(value: string): string { return "I'm just a mock!"; }
+  transform(): string { 
+    return "I'm just a mock!"; 
+  }
 }
 
 function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
