@@ -108,7 +108,7 @@ describe('UserEditComponent', () => {
 
     //ASSERT
     expect(userService.update).toHaveBeenCalled();
-    expect(component.errorMsg()).toBe("An error has occurred. Please contact an administrator.");
+    expect(component.errorMsg()).toBe("Something bad happened.");
   });
 
   it('should populate error message when user does not have permissions to save user info', () => {
