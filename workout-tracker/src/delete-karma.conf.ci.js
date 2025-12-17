@@ -8,7 +8,7 @@
 // See this URL for more info on this approach: 
 // https://stackoverflow.com/questions/47266951/karma-config-including-other-config-files
 
-const baseConfig = require('./karma.conf.js');
+const baseConfig = require('./delete-karma.conf.js');
 
 // Import settings from default config file
 var properties = null;

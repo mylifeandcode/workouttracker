@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthService } from 'app/core/_services/auth/auth.service';
-import { ConfigService } from 'app/core/_services/config/config.service';
-import { User } from 'app/core/_models/user';
+import { AuthService } from '../../core/_services/auth/auth.service';
+import { ConfigService } from '../../core/_services/config/config.service';
+import { User } from '../../core/_models/user';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { UserService } from '../../core/_services/user/user.service';
-import { EMPTY_GUID } from 'app/shared/shared-constants';
+import { EMPTY_GUID } from '../../shared/shared-constants';
 import { HttpErrorResponse } from '@angular/common/http';
 
 

@@ -11,130 +11,131 @@ import { UserAddComponent } from './user-add.component';
 import { AuthService } from 'app/core/_services/auth/auth.service';
 
 class MockUserService {
-  addNew = jasmine.createSpy('addNew').and.returnValue(of(new User()));
+    addNew = vi.fn().mockReturnValue(of(new User()));
 }
 
 class MockAuthService {
-  isUserLoggedIn = true;
+    isUserLoggedIn = true;
 }
 
 @Component({
-  selector: 'wt-blank',
-  template: '',
-  imports: [ReactiveFormsModule]
+    selector: 'wt-blank',
+    template: '',
+    imports: [ReactiveFormsModule]
 })
-class BlankComponent { }
+class BlankComponent {
+}
 
 describe('UserAddComponent', () => {
-  let component: UserAddComponent;
-  let fixture: ComponentFixture<UserAddComponent>;
-  let userService: UserService;
-  let router: Router;
+    let component: UserAddComponent;
+    let fixture: ComponentFixture<UserAddComponent>;
+    let userService: UserService;
+    let router: Router;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,
-        RouterModule.forRoot([{ path: 'admin/users', component: BlankComponent }]),
-        UserAddComponent, BlankComponent
-      ],
-      providers: [
-  provideZonelessChangeDetection(),
-        {
-          provide: UserService,
-          useClass: MockUserService
-        },
-        {
-          provide: AuthService,
-          useClass: MockAuthService
-        },
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            routeConfig: {
-              path: '/user/register'
-            }
-          }
-        }
-      ]
-    })
-      .compileComponents();
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [
+                ReactiveFormsModule,
+                RouterModule.forRoot([{ path: 'admin/users', component: BlankComponent }]),
+                UserAddComponent, BlankComponent
+            ],
+            providers: [
+                provideZonelessChangeDetection(),
+                {
+                    provide: UserService,
+                    useClass: MockUserService
+                },
+                {
+                    provide: AuthService,
+                    useClass: MockAuthService
+                },
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        routeConfig: {
+                            path: '/user/register'
+                        }
+                    }
+                }
+            ]
+        })
+            .compileComponents();
 
-    fixture = TestBed.createComponent(UserAddComponent);
-    component = fixture.componentInstance;
-    userService = TestBed.inject(UserService);
-    router = TestBed.inject(Router);
-    spyOn(router, 'navigate');
-    fixture.detectChanges();
-  });
+        fixture = TestBed.createComponent(UserAddComponent);
+        component = fixture.componentInstance;
+        userService = TestBed.inject(UserService);
+        router = TestBed.inject(Router);
+        vi.spyOn(router, 'navigate');
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
-  it('should add user', () => {
+    it('should add user', () => {
 
-    //ARRANGE
-    const expectedUser = new UserNewDTO();
-    expectedUser.userName = "NewUser";
-    expectedUser.emailAddress = "newuser@workouttracker.com";
-    expectedUser.password = "gargargar123";
-    expectedUser.role = 1;
+        //ARRANGE
+        const expectedUser = new UserNewDTO();
+        expectedUser.userName = "NewUser";
+        expectedUser.emailAddress = "newuser@workouttracker.com";
+        expectedUser.password = "gargargar123";
+        expectedUser.role = 1;
 
-    component.userAddForm.controls.name.setValue(expectedUser.userName);
-    component.userAddForm.controls.emailAddress.setValue(expectedUser.emailAddress);
-    component.userAddForm.controls.password.setValue(expectedUser.password);
-    component.userAddForm.controls.confirmPassword.setValue(expectedUser.password);
-    component.userAddForm.controls.role.setValue(expectedUser.role);
+        component.userAddForm.controls.name.setValue(expectedUser.userName);
+        component.userAddForm.controls.emailAddress.setValue(expectedUser.emailAddress);
+        component.userAddForm.controls.password.setValue(expectedUser.password);
+        component.userAddForm.controls.confirmPassword.setValue(expectedUser.password);
+        component.userAddForm.controls.role.setValue(expectedUser.role);
 
-    //ACT
-    component.addUser();
+        //ACT
+        component.addUser();
 
-    //ASSERT
-    expect(userService.addNew).toHaveBeenCalledWith(expectedUser);
-    expect(router.navigate).toHaveBeenCalledWith(['admin/users']);
-  });
+        //ASSERT
+        expect(userService.addNew).toHaveBeenCalledWith(expectedUser);
+        expect(router.navigate).toHaveBeenCalledWith(['admin/users']);
+    });
 
-  //TODO: Revisit! Having a hard time overriding that routeConfig!
-  xit('should allow the user to cancel adding a new user in admin mode', () => {
+    //TODO: Revisit! Having a hard time overriding that routeConfig!
+    it.skip('should allow the user to cancel adding a new user in admin mode', () => {
 
-    //ARRANGE
-    //Need to override default activated route and re-init for this one
-    const activatedRoute = TestBed.inject(ActivatedRoute);
-    spyOnProperty(activatedRoute, "routeConfig", "get").and.returnValue({ path: '/users/add' });
+        //ARRANGE
+        //Need to override default activated route and re-init for this one
+        const activatedRoute = TestBed.inject(ActivatedRoute);
+        vi.spyOn(activatedRoute, "routeConfig", "get").mockReturnValue({ path: '/users/add' });
 
-    //ACT
-    component.ngOnInit();
-    component.cancel();
+        //ACT
+        component.ngOnInit();
+        component.cancel();
 
-    //ASSERT
-    expect(router.navigate).toHaveBeenCalledWith(['/admin/users']);
+        //ASSERT
+        expect(router.navigate).toHaveBeenCalledWith(['/admin/users']);
 
-  });
+    });
 
-  it('should allow the user to cancel adding a new user in non-admin mode', () => {
+    it('should allow the user to cancel adding a new user in non-admin mode', () => {
 
-    //ACT
-    component.cancel();
+        //ACT
+        component.cancel();
 
-    //ASSERT
-    expect(router.navigate).toHaveBeenCalledWith(['/']);
+        //ASSERT
+        expect(router.navigate).toHaveBeenCalledWith(['/']);
 
-  });
+    });
 
-  it('should abort cancellation when form is dirty and user presses cancel on confirm dialog', () => {
+    it('should abort cancellation when form is dirty and user presses cancel on confirm dialog', () => {
 
-    //ARRANGE
-    spyOn(window, 'confirm').and.returnValue(false);
-    component.userAddForm.controls.name.setValue("Jane");
-    component.userAddForm.controls.name.markAsDirty(); //Controls are only marked as dirty if changed via the UI
+        //ARRANGE
+        vi.spyOn(window, 'confirm').mockReturnValue(false);
+        component.userAddForm.controls.name.setValue("Jane");
+        component.userAddForm.controls.name.markAsDirty(); //Controls are only marked as dirty if changed via the UI
 
-    //ACT
-    component.cancel();
+        //ACT
+        component.cancel();
 
-    //ASSERT
-    expect(router.navigate).not.toHaveBeenCalled();
+        //ASSERT
+        expect(router.navigate).not.toHaveBeenCalled();
 
-  });
+    });
 
 });

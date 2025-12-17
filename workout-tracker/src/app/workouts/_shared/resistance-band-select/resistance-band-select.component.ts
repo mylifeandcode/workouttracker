@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnChanges, Output, Signal, SimpleChanges, WritableSignal, computed, input, signal } from '@angular/core';
-import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
+import { ResistanceBandIndividual } from '../../../shared/models/resistance-band-individual';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTransferModule, TransferItem } from 'ng-zorro-antd/transfer';
 import { ResistanceBandColorPipe } from "../../../shared/pipes/resistance-band-color.pipe";

@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ApiBaseService } from 'app/core/_services/api-base/api-base.service';
-import { PaginatedResults } from 'app/core/_models/paginated-results';
+import { ApiBaseService } from '../../core/_services/api-base/api-base.service';
+import { PaginatedResults } from '../../core/_models/paginated-results';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
-import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
+import { WorkoutDTO } from '../../workouts/_models/workout-dto';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { debounceTime, finalize } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';

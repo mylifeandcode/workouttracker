@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, inject, viewChild, signal, ChangeDetectionStrategy } from '@angular/core';
-import { PaginatedResults } from 'app/core/_models/paginated-results';
-import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
-import { WorkoutService } from 'app/workouts/_services/workout.service';
+import { PaginatedResults } from '../../core/_models/paginated-results';
+import { WorkoutDTO } from '../../workouts/_models/workout-dto';
+import { WorkoutService } from '../../workouts/_services/workout.service';
 import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';

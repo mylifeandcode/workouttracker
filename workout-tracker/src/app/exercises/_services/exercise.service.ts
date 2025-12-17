@@ -5,9 +5,9 @@ import { map } from 'rxjs/operators';
 import { Exercise } from '../../workouts/_models/exercise';
 import { TargetArea } from '../../workouts/_models/target-area';
 import { PaginatedResults } from '../../core/_models/paginated-results';
-import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
-import { ConfigService } from 'app/core/_services/config/config.service';
-import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
+import { ExerciseDTO } from '../../workouts/_models/exercise-dto';
+import { ConfigService } from '../../core/_services/config/config.service';
+import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({

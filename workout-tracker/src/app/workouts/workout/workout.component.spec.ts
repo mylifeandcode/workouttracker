@@ -4,9 +4,9 @@ import { AbstractControl, UntypedFormArray, UntypedFormGroup, ReactiveFormsModul
 import { WorkoutService } from '../_services/workout.service';
 import { of } from 'rxjs';
 import { PaginatedResults } from '../../core/_models/paginated-results';
-import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
-import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
-import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
+import { WorkoutDTO } from '../_models/workout-dto';
+import { ResistanceBandIndividual } from '../../shared/models/resistance-band-individual';
+import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
@@ -24,123 +24,119 @@ const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
 
 //HELPER FUNCTIONS ////////////////////////////////////////////////////////////
 const getFakeUserWorkouts = (): PaginatedResults<WorkoutDTO> => {
-  const workouts = new PaginatedResults<WorkoutDTO>();
-  workouts.totalCount = 3;
-  for (let x = 0; x < workouts.totalCount; x++) {
-    workouts.results = new Array<WorkoutDTO>();
-    workouts.results.push(new WorkoutDTO());
-  }
-  return workouts;
+    const workouts = new PaginatedResults<WorkoutDTO>();
+    workouts.totalCount = 3;
+    for (let x = 0; x < workouts.totalCount; x++) {
+        workouts.results = new Array<WorkoutDTO>();
+        workouts.results.push(new WorkoutDTO());
+    }
+    return workouts;
 };
 
 function getResistanceBands(): ResistanceBandIndividual[] {
-  const bands: ResistanceBandIndividual[] = [];
-  bands.push(new ResistanceBandIndividual('Orange', 30));
-  bands.push(new ResistanceBandIndividual('Purple', 23));
-  bands.push(new ResistanceBandIndividual('Black', 19));
-  return bands;
+    const bands: ResistanceBandIndividual[] = [];
+    bands.push(new ResistanceBandIndividual('Orange', 30));
+    bands.push(new ResistanceBandIndividual('Purple', 23));
+    bands.push(new ResistanceBandIndividual('Black', 19));
+    return bands;
 }
 
 function getFakeExecutedWorkout(): ExecutedWorkoutDTO {
-  const executedWorkout = new ExecutedWorkoutDTO();
+    const executedWorkout = new ExecutedWorkoutDTO();
 
-  executedWorkout.name = "Fake Workout";
-  executedWorkout.exercises = [];
-  for (let x = 0; x < NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT; x++) {
-    const exercise = new ExecutedExerciseDTO();
+    executedWorkout.name = "Fake Workout";
+    executedWorkout.exercises = [];
+    for (let x = 0; x < NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT; x++) {
+        const exercise = new ExecutedExerciseDTO();
 
-    exercise.bandsEndToEnd = (x % 2 > 0);
-    exercise.exerciseId = x + 1;
-    exercise.name = "Exercise " + x.toString();
-    exercise.resistanceType = x;
-    exercise.resistanceAmount = x * 10;
-    exercise.resistanceMakeup = exercise.resistanceAmount.toString();
-    exercise.targetRepCount = x * 5;
-    exercise.setType = ((x + 1) % 2);
-    exercise.sequence = x;
-    executedWorkout.exercises.push(exercise);
-  }
+        exercise.bandsEndToEnd = (x % 2 > 0);
+        exercise.exerciseId = x + 1;
+        exercise.name = "Exercise " + x.toString();
+        exercise.resistanceType = x;
+        exercise.resistanceAmount = x * 10;
+        exercise.resistanceMakeup = exercise.resistanceAmount.toString();
+        exercise.targetRepCount = x * 5;
+        exercise.setType = ((x + 1) % 2);
+        exercise.sequence = x;
+        executedWorkout.exercises.push(exercise);
+    }
 
-  /*
-  Duplicate the last exercise so we can verify the grouping works.
-  For example, a workout can have 1 set of push ups and 2 sets of bicep curls.
-  In this case, there are 2 DISTINCT exercises in the workout (and 3 executed exercises).
-  */
-  const lastExercise = executedWorkout.exercises[executedWorkout.exercises.length - 1];
-  const oneMoreExercise = new ExecutedExerciseDTO();
+    /*
+    Duplicate the last exercise so we can verify the grouping works.
+    For example, a workout can have 1 set of push ups and 2 sets of bicep curls.
+    In this case, there are 2 DISTINCT exercises in the workout (and 3 executed exercises).
+    */
+    const lastExercise = executedWorkout.exercises[executedWorkout.exercises.length - 1];
+    const oneMoreExercise = new ExecutedExerciseDTO();
 
-  oneMoreExercise.bandsEndToEnd = lastExercise.bandsEndToEnd;
-  oneMoreExercise.exerciseId = lastExercise.exerciseId;
-  oneMoreExercise.name = lastExercise.name;
-  oneMoreExercise.resistanceType = lastExercise.resistanceType;
-  oneMoreExercise.resistanceAmount = lastExercise.resistanceAmount;
-  oneMoreExercise.resistanceMakeup = lastExercise.resistanceMakeup;
-  oneMoreExercise.targetRepCount = lastExercise.targetRepCount;
-  oneMoreExercise.setType = lastExercise.setType;
-  oneMoreExercise.sequence = lastExercise.sequence + 1;
-  executedWorkout.exercises.push(oneMoreExercise);
-  return executedWorkout;
+    oneMoreExercise.bandsEndToEnd = lastExercise.bandsEndToEnd;
+    oneMoreExercise.exerciseId = lastExercise.exerciseId;
+    oneMoreExercise.name = lastExercise.name;
+    oneMoreExercise.resistanceType = lastExercise.resistanceType;
+    oneMoreExercise.resistanceAmount = lastExercise.resistanceAmount;
+    oneMoreExercise.resistanceMakeup = lastExercise.resistanceMakeup;
+    oneMoreExercise.targetRepCount = lastExercise.targetRepCount;
+    oneMoreExercise.setType = lastExercise.setType;
+    oneMoreExercise.sequence = lastExercise.sequence + 1;
+    executedWorkout.exercises.push(oneMoreExercise);
+    return executedWorkout;
 }
 
 function getFirstExerciseFormGroup(component: WorkoutComponent): UntypedFormGroup {
-  const firstExercise = component.exercisesArray.controls[0];
-  const formGroup = <UntypedFormGroup>firstExercise;
-  const exerciseSets = (<UntypedFormArray>formGroup.controls.exerciseSets).controls;
-  return <UntypedFormGroup>exerciseSets[0];
+    const firstExercise = component.exercisesArray.controls[0];
+    const formGroup = <UntypedFormGroup>firstExercise;
+    const exerciseSets = (<UntypedFormArray>formGroup.controls.exerciseSets).controls;
+    return <UntypedFormGroup>exerciseSets[0];
 }
 
 function getRandomInt(max: number): number {
-  return Math.floor(Math.random() * Math.floor(max));
+    return Math.floor(Math.random() * Math.floor(max));
 }
 //END HELPER FUNCTIONS ////////////////////////////////////////////////////////
 
 //SERVICE MOCK CLASSES ////////////////////////////////////////////////////////
 class WorkoutServiceMock {
-  getFilteredSubset = jasmine.createSpy('getFilteredSubset')
-    .and.returnValue(of(getFakeUserWorkouts()));
+    getFilteredSubset = vi.fn().mockReturnValue(of(getFakeUserWorkouts()));
 }
 
 class ResistanceBandServiceMock {
-  getAllIndividualBands =
-    jasmine.createSpy('getAllIndividualBands')
-      .and.returnValue(of(getResistanceBands()));
+    getAllIndividualBands = vi.fn().mockReturnValue(of(getResistanceBands()));
 }
 
 class ExecutedWorkoutServiceMock {
-  //getNew = jasmine.createSpy('getNew').and.returnValue(of(getFakeExecutedWorkout()));
-  add = jasmine.createSpy('add').and.callFake((workout: ExecutedWorkoutDTO) => of(workout));
-  getById = jasmine.createSpy('getById').and.returnValue(of(getFakeExecutedWorkout()));
+    //getNew = jasmine.createSpy('getNew').and.returnValue(of(getFakeExecutedWorkout()));
+    add = vi.fn().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout));
+    getById = vi.fn().mockReturnValue(of(getFakeExecutedWorkout()));
 
-  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Record<string, ExecutedExerciseDTO[]> {
-    const sortedExercises: ExecutedExerciseDTO[] = exercises
-      .sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
+    public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Record<string, ExecutedExerciseDTO[]> {
+        const sortedExercises: ExecutedExerciseDTO[] = exercises
+            .sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
 
-    /*
-    const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>
-      exercise.exerciseId.toString() + '-' + exercise.setType.toString()
-    );
-    */
-    const groupedExercises = sortedExercises.reduce((groups, exercise) => {
-      const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
-      if (!groups[key]) {
-        groups[key] = [];
-      }
-      groups[key].push(exercise);
-      return groups;
-    }, {} as Record<string, ExecutedExerciseDTO[]>);
+        /*
+        const groupedExercises = groupBy(exercises, (exercise: ExecutedExerciseDTO) =>
+          exercise.exerciseId.toString() + '-' + exercise.setType.toString()
+        );
+        */
+        const groupedExercises = sortedExercises.reduce((groups, exercise) => {
+            const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
+            if (!groups[key]) {
+                groups[key] = [];
+            }
+            groups[key].push(exercise);
+            return groups;
+        }, {} as Record<string, ExecutedExerciseDTO[]>);
 
-    return groupedExercises;
-  }
+        return groupedExercises;
+    }
 
-  update = jasmine.createSpy('update')
-    .and.callFake((workout: ExecutedWorkoutDTO) => of(workout));
+    update = vi.fn().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout));
 }
 
 class NzMessageServiceMock {
-  success = jasmine.createSpy('success');
-  info = jasmine.createSpy('info');
-  error = jasmine.createSpy('error');
-  remove = jasmine.createSpy('remove');
+    success = vi.fn();
+    info = vi.fn();
+    error = vi.fn();
+    remove = vi.fn();
 }
 //END SERVICE MOCK CLASSES ////////////////////////////////////////////////////
 
@@ -150,363 +146,360 @@ The casting solution presented at this URL did not work: https://medium.com/angu
 Unfortunately, for now, I've had to mock each property and method. :/
 */
 @Component({
-  selector: 'wt-resistance-band-select',
-  template: '',
-  imports: [ReactiveFormsModule]
+    selector: 'wt-resistance-band-select',
+    template: '',
+    imports: [ReactiveFormsModule]
 })
 class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
-  public readonly resistanceBandInventory = input<ResistanceBandIndividual[]>([]);
+    public override readonly resistanceBandInventory = input<ResistanceBandIndividual[]>([]);
 
-  @Output()
-  public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
+    @Output()
+    public override okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
 
-  @Output()
-  public cancelClicked: EventEmitter<void> = new EventEmitter<void>();
+    @Output()
+    public override cancelClicked: EventEmitter<void> = new EventEmitter<void>();
 
-  setBandAllocation = jasmine.createSpy('setBandAllocation');
+    override setBandAllocation = vi.fn();
 }
 
 //END COMPONENT MOCK CLASSES //////////////////////////////////////////////////
 //TODO: Repair and augment -- refactoring the component destroyed this spec! :O
 describe('WorkoutComponent', () => {
-  let component: WorkoutComponent;
-  let fixture: ComponentFixture<WorkoutComponent>;
+    let component: WorkoutComponent;
+    let fixture: ComponentFixture<WorkoutComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,
-        WorkoutComponent,
-        MockResistanceBandSelectComponent
-      ],
-      providers: [
-        provideZonelessChangeDetection(),
-        {
-          provide: WorkoutService,
-          useClass: WorkoutServiceMock
-        },
-        {
-          provide: ResistanceBandService,
-          useClass: ResistanceBandServiceMock
-        },
-        {
-          provide: ExecutedWorkoutService,
-          useClass: ExecutedWorkoutServiceMock
-        },
-        {
-          provide: NzMessageService,
-          useClass: NzMessageServiceMock
-        }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .overrideComponent(
-        WorkoutComponent,
-        {
-          remove:
-          {
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
             imports: [
-              WorkoutExerciseComponent,
-              ResistanceBandSelectComponent,
-              CountdownTimerComponent,
-              DurationComponent,
-              NzCollapseModule,
-              NzSpinModule
-            ]
-          },
-          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+                ReactiveFormsModule,
+                WorkoutComponent,
+                MockResistanceBandSelectComponent
+            ],
+            providers: [
+                provideZonelessChangeDetection(),
+                {
+                    provide: WorkoutService,
+                    useClass: WorkoutServiceMock
+                },
+                {
+                    provide: ResistanceBandService,
+                    useClass: ResistanceBandServiceMock
+                },
+                {
+                    provide: ExecutedWorkoutService,
+                    useClass: ExecutedWorkoutServiceMock
+                },
+                {
+                    provide: NzMessageService,
+                    useClass: NzMessageServiceMock
+                }
+            ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA]
         })
-      .compileComponents();
-  });
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(WorkoutComponent);
-    component = fixture.componentInstance;
-    fixture.componentRef.setInput('executedWorkoutPublicId', 'someGuid');
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should create FormGroup on init', () => {
-    expect(component.workoutForm).toBeDefined();
-    expect(component.workoutForm.controls.publicId.value).toEqual('someGuid');
-    expect(component.workoutForm.controls.exercises).toBeDefined();
-    expect(component.workoutForm.controls.journal.value).toBe('');
-  });
-
-  it('should get resistance bancs on init', () => {
-    //ARRANGE
-    const resistanceBandService = TestBed.inject(ResistanceBandService);
-    const expectedResults = getResistanceBands();
-
-    //ASSERT
-    expect(resistanceBandService.getAllIndividualBands).toHaveBeenCalledTimes(1);
-    expect(component.allResistanceBands()).toEqual(expectedResults);
-  });
-
-  //TODO: Fix
-  /*
-  xit('should set up workout when selected', () => {
-    //ARRANGE
-    const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    const expectedExecutedWorkout = getFakeExecutedWorkout();
-
-    //ACT
-    //component.workoutSelected(12);
-
-    //ASSERT
-    //expect(executedWorkoutService.getNew).toHaveBeenCalledTimes(1);
-    //expect(component._executedWorkout).toEqual(expectedExecutedWorkout);
-    expect(component.workoutForm.controls.publicId.value).toBe('someGuid');
-
-    expect(component.exercisesArray.controls.length).toBe(NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT);
-
-    component.exercisesArray.controls.forEach((value: AbstractControl) => {
-      const formGroup = <UntypedFormGroup>value;
-      expect(formGroup).toBeDefined();
-      expect(formGroup.controls.id).toBeDefined();
-      //expect(formGroup.controls.id.value).toBe(0); //TODO: Revisit -- similar comment in component
-      expect(formGroup.controls.exerciseId).toBeDefined();
-      expect(formGroup.controls.exerciseId.value).toBeGreaterThan(0);
-      expect(formGroup.controls.exerciseName).toBeDefined();
-      expect(formGroup.controls.setType).toBeDefined();
-      expect(formGroup.controls.resistanceType).toBeDefined();
-
-      //let exerciseSets = <FormArray>formGroup.controls.exerciseSets.value;
-      //IMPORTANT DISTINCTION:
-      //The above approach only gets any values which were set.
-      //The *below* approach gets the controls we've defined.
-      const exerciseSets = (<UntypedFormArray>formGroup.controls.exerciseSets).controls;
-
-      expect(exerciseSets).toBeDefined();
-      expect(exerciseSets.length).toBeGreaterThan(0);
-
-      // const executedExercises = component._executedWorkout.exercises.filter(
-      //   (executedExercise: ExecutedExerciseDTO) =>
-      //     executedExercise.exercise.id == formGroup.controls.exerciseId.value
-      // );
-
-      //expect(executedExercises.length).toEqual(exerciseSets.length, "exerciseSets.length not as expected.");
-
-      //Make sure each set was initialized correctly
-      for (let x = 0; x < exerciseSets.length; x++) {
-        const exerciseSetFormGroup = <UntypedFormGroup>exerciseSets[x];
-
-        expect(exerciseSetFormGroup.controls.actualReps).toBeDefined();
-        expect(exerciseSetFormGroup.controls.bandsEndToEnd).toBeDefined();
-
-        expect(exerciseSetFormGroup.controls.duration).toBeDefined();
-        expect(exerciseSetFormGroup.controls.duration.value).toBe(120); //TODO: Refactor required (comment in component)
-        expect(exerciseSetFormGroup.controls.resistance).toBeDefined();
-        expect(exerciseSetFormGroup.controls.resistanceMakeup).toBeDefined();
-        expect(exerciseSetFormGroup.controls.sequence).toBeDefined();
-        expect(exerciseSetFormGroup.controls.targetReps).toBeDefined();
-
-        //We can reference [0] for these, as the exercise should be the same if more than one in the group
-        //expect(exerciseSetFormGroup.controls.bandsEndToEnd.value).toBe(executedExercises[0].bandsEndToEnd);
-        //expect(exerciseSetFormGroup.controls.resistance.value).toBe(executedExercises[0].resistanceAmount);
-        //expect(exerciseSetFormGroup.controls.resistanceMakeup.value).toBe(executedExercises[0].resistanceMakeup);
-        //expect(exerciseSetFormGroup.controls.targetReps.value).toBe(executedExercises[0].targetRepCount);
-      }
-
+            .overrideComponent(WorkoutComponent, {
+            remove: {
+                imports: [
+                    WorkoutExerciseComponent,
+                    ResistanceBandSelectComponent,
+                    CountdownTimerComponent,
+                    DurationComponent,
+                    NzCollapseModule,
+                    NzSpinModule
+                ]
+            },
+            add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        })
+            .compileComponents();
     });
 
-  });
-  */
+    beforeEach(() => {
+        fixture = TestBed.createComponent(WorkoutComponent);
+        component = fixture.componentInstance;
+        fixture.componentRef.setInput('executedWorkoutPublicId', 'someGuid');
+        fixture.detectChanges();
+    });
 
-  it('should enable the resistance bands selection modal', () => {
-    //ARRANGE
-    //component.workoutSelected(12);
-    const exerciseFormGroup = getFirstExerciseFormGroup(component);
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
-    //ACT
-    component.resistanceBandsModalEnabled(exerciseFormGroup);
+    it('should create FormGroup on init', () => {
+        expect(component.workoutForm).toBeDefined();
+        expect(component.workoutForm.controls.publicId.value).toEqual('someGuid');
+        expect(component.workoutForm.controls.exercises).toBeDefined();
+        expect(component.workoutForm.controls.journal.value).toBe('');
+    });
 
-    //ASSERT
-    expect(component.showResistanceBandsSelectModal()).toBeTrue();
-    expect(component.formGroupForResistanceSelection).toBe(exerciseFormGroup);
-    expect(component.exerciseBandAllocation()).toEqual(
-      {
-        selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value,
-        doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
-      }
-    );
-  });
+    it('should get resistance bancs on init', () => {
+        //ARRANGE
+        const resistanceBandService = TestBed.inject(ResistanceBandService);
+        const expectedResults = getResistanceBands();
 
-  it('should accept the input from the resistance bands modal', () => {
-    //ARRANGE
-    //component.workoutSelected(12);
-    const exerciseFormGroup = getFirstExerciseFormGroup(component);
+        //ASSERT
+        expect(resistanceBandService.getAllIndividualBands).toHaveBeenCalledTimes(1);
+        expect(component.allResistanceBands()).toEqual(expectedResults);
+    });
 
-    component.resistanceBandsModalEnabled(exerciseFormGroup);
+    //TODO: Fix
+    /*
+    xit('should set up workout when selected', () => {
+      //ARRANGE
+      const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
+      const expectedExecutedWorkout = getFakeExecutedWorkout();
 
-    const selection = new ResistanceBandSelection();
-    selection.maxResistanceAmount = 60;
-    selection.makeup = "Orange, Orange";
+      //ACT
+      //component.workoutSelected(12);
 
-    //ACT
-    component.resistanceBandsModalAccepted(selection);
+      //ASSERT
+      //expect(executedWorkoutService.getNew).toHaveBeenCalledTimes(1);
+      //expect(component._executedWorkout).toEqual(expectedExecutedWorkout);
+      expect(component.workoutForm.controls.publicId.value).toBe('someGuid');
 
-    //ASSERT
-    expect(component.showResistanceBandsSelectModal()).toBeFalse();
-    expect(component.formGroupForResistanceSelection?.controls.resistanceMakeup.value)
-      .toEqual(selection.makeup);
-    expect(component.formGroupForResistanceSelection?.controls.resistance.value)
-      .toEqual(selection.maxResistanceAmount);
-  });
+      expect(component.exercisesArray.controls.length).toBe(NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT);
 
-  it('should hide the resistance bands select modal when cancelled and not do anything else', () => {
-    //ARRANGE
-    const exerciseFormGroup = getFirstExerciseFormGroup(component);
+      component.exercisesArray.controls.forEach((value: AbstractControl) => {
+        const formGroup = <UntypedFormGroup>value;
+        expect(formGroup).toBeDefined();
+        expect(formGroup.controls.id).toBeDefined();
+        //expect(formGroup.controls.id.value).toBe(0); //TODO: Revisit -- similar comment in component
+        expect(formGroup.controls.exerciseId).toBeDefined();
+        expect(formGroup.controls.exerciseId.value).toBeGreaterThan(0);
+        expect(formGroup.controls.exerciseName).toBeDefined();
+        expect(formGroup.controls.setType).toBeDefined();
+        expect(formGroup.controls.resistanceType).toBeDefined();
 
-    component.resistanceBandsModalEnabled(exerciseFormGroup);
+        //let exerciseSets = <FormArray>formGroup.controls.exerciseSets.value;
+        //IMPORTANT DISTINCTION:
+        //The above approach only gets any values which were set.
+        //The *below* approach gets the controls we've defined.
+        const exerciseSets = (<UntypedFormArray>formGroup.controls.exerciseSets).controls;
 
-    //ACT
-    component.resistanceBandsModalCancelled();
+        expect(exerciseSets).toBeDefined();
+        expect(exerciseSets.length).toBeGreaterThan(0);
 
-    //ASSERT
-    expect(component.showResistanceBandsSelectModal()).toBeFalse();
-    expect(component.formGroupForResistanceSelection?.controls.resistanceMakeup.value)
-      .toBe(exerciseFormGroup.controls.resistanceMakeup.value);
-    expect(component.formGroupForResistanceSelection?.controls.resistance.value)
-      .toBe(exerciseFormGroup.controls.resistance.value);
-  });
+        // const executedExercises = component._executedWorkout.exercises.filter(
+        //   (executedExercise: ExecutedExerciseDTO) =>
+        //     executedExercise.exercise.id == formGroup.controls.exerciseId.value
+        // );
 
-  it('should show the timer', () => {
-    //ARRANGE
-    //component.workoutSelected(12);
-    const exerciseFormGroup = getFirstExerciseFormGroup(component);
+        //expect(executedExercises.length).toEqual(exerciseSets.length, "exerciseSets.length not as expected.");
 
-    //ACT
-    component.showTimer(exerciseFormGroup);
+        //Make sure each set was initialized correctly
+        for (let x = 0; x < exerciseSets.length; x++) {
+          const exerciseSetFormGroup = <UntypedFormGroup>exerciseSets[x];
 
-    //ASSERT
-    expect(component.formGroupForCountdownModal).toBe(exerciseFormGroup);
-    expect(component.showCountdownModal()).toBeTrue();
-  });
+          expect(exerciseSetFormGroup.controls.actualReps).toBeDefined();
+          expect(exerciseSetFormGroup.controls.bandsEndToEnd).toBeDefined();
 
-  it('should start a workout', () => {
-    //ARRANGE
-    //component.workoutSelected(12);
+          expect(exerciseSetFormGroup.controls.duration).toBeDefined();
+          expect(exerciseSetFormGroup.controls.duration.value).toBe(120); //TODO: Refactor required (comment in component)
+          expect(exerciseSetFormGroup.controls.resistance).toBeDefined();
+          expect(exerciseSetFormGroup.controls.resistanceMakeup).toBeDefined();
+          expect(exerciseSetFormGroup.controls.sequence).toBeDefined();
+          expect(exerciseSetFormGroup.controls.targetReps).toBeDefined();
 
-    //ACT
-    component.startWorkout();
+          //We can reference [0] for these, as the exercise should be the same if more than one in the group
+          //expect(exerciseSetFormGroup.controls.bandsEndToEnd.value).toBe(executedExercises[0].bandsEndToEnd);
+          //expect(exerciseSetFormGroup.controls.resistance.value).toBe(executedExercises[0].resistanceAmount);
+          //expect(exerciseSetFormGroup.controls.resistanceMakeup.value).toBe(executedExercises[0].resistanceMakeup);
+          //expect(exerciseSetFormGroup.controls.targetReps.value).toBe(executedExercises[0].targetRepCount);
+        }
 
-    //ASSERT
-    expect(component.workoutForm.controls.journal.enabled).toBeTrue();
-    expect(component.workoutForm.controls.exercises.enabled).toBeTrue();
-  });
+      });
 
-  //TODO: Fix
-  xit('should complete a workout', () => {
-    //ARRANGE
-    const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    component.startWorkout();
+    });
+    */
 
-    component.workoutForm.patchValue({ journal: '38 degrees, sunny. ST: TOS - "The Omega Glory" and YouTube' });
+    it('should enable the resistance bands selection modal', () => {
+        //ARRANGE
+        //component.workoutSelected(12);
+        const exerciseFormGroup = getFirstExerciseFormGroup(component);
 
-    const expectedExecutedWorkout = new ExecutedWorkoutDTO();
-    expectedExecutedWorkout.startDateTime = component.startDateTime();
-    expectedExecutedWorkout.journal = component.workoutForm.controls.journal.value;
-    expectedExecutedWorkout.exercises = [];
+        //ACT
+        component.resistanceBandsModalEnabled(exerciseFormGroup);
 
-    //Loop through exercises FormArray and patch values into the controls to simulate the info
-    //the user has entered
-    component.exercisesArray.controls.forEach((value: AbstractControl) => {
-      //Remember, each control in the exercises array is a FormGroup
-      const formGroup = <UntypedFormGroup>value;
+        //ASSERT
+        expect(component.showResistanceBandsSelectModal()).toBe(true);
+        expect(component.formGroupForResistanceSelection).toBe(exerciseFormGroup);
+        expect(component.exerciseBandAllocation()).toEqual({
+            selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value,
+            doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
+        });
+    });
 
-      //Each exercise has a FormArray of exercise sets
-      const sets = <UntypedFormArray>formGroup.controls.exerciseSets;
-      //sets.controls.forEach(set => {
-      for (let x = 0; x < sets.controls.length; x++) {
+    it('should accept the input from the resistance bands modal', () => {
+        //ARRANGE
+        //component.workoutSelected(12);
+        const exerciseFormGroup = getFirstExerciseFormGroup(component);
 
-        const setGroup = <UntypedFormGroup>sets.controls[x];
-        setGroup.patchValue({
-          actualReps: getRandomInt(10),
-          duration: getRandomInt(240),
-          formRating: getRandomInt(5),
-          rangeOfMotionRating: getRandomInt(5),
-          resistance: getRandomInt(200),
-          resistanceMakeup: getRandomInt(1000).toString(),
-          sequence: x
+        component.resistanceBandsModalEnabled(exerciseFormGroup);
+
+        const selection = new ResistanceBandSelection();
+        selection.maxResistanceAmount = 60;
+        selection.makeup = "Orange, Orange";
+
+        //ACT
+        component.resistanceBandsModalAccepted(selection);
+
+        //ASSERT
+        expect(component.showResistanceBandsSelectModal()).toBe(false);
+        expect(component.formGroupForResistanceSelection?.controls.resistanceMakeup.value)
+            .toEqual(selection.makeup);
+        expect(component.formGroupForResistanceSelection?.controls.resistance.value)
+            .toEqual(selection.maxResistanceAmount);
+    });
+
+    it('should hide the resistance bands select modal when cancelled and not do anything else', () => {
+        //ARRANGE
+        const exerciseFormGroup = getFirstExerciseFormGroup(component);
+
+        component.resistanceBandsModalEnabled(exerciseFormGroup);
+
+        //ACT
+        component.resistanceBandsModalCancelled();
+
+        //ASSERT
+        expect(component.showResistanceBandsSelectModal()).toBe(false);
+        expect(component.formGroupForResistanceSelection?.controls.resistanceMakeup.value)
+            .toBe(exerciseFormGroup.controls.resistanceMakeup.value);
+        expect(component.formGroupForResistanceSelection?.controls.resistance.value)
+            .toBe(exerciseFormGroup.controls.resistance.value);
+    });
+
+    it('should show the timer', () => {
+        //ARRANGE
+        //component.workoutSelected(12);
+        const exerciseFormGroup = getFirstExerciseFormGroup(component);
+
+        //ACT
+        component.showTimer(exerciseFormGroup);
+
+        //ASSERT
+        expect(component.formGroupForCountdownModal).toBe(exerciseFormGroup);
+        expect(component.showCountdownModal()).toBe(true);
+    });
+
+    it('should start a workout', () => {
+        //ARRANGE
+        //component.workoutSelected(12);
+
+        //ACT
+        component.startWorkout();
+
+        //ASSERT
+        expect(component.workoutForm.controls.journal.enabled).toBe(true);
+        expect(component.workoutForm.controls.exercises.enabled).toBe(true);
+    });
+
+    //TODO: Fix
+    it.skip('should complete a workout', () => {
+        //ARRANGE
+        const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
+        component.startWorkout();
+
+        component.workoutForm.patchValue({ journal: '38 degrees, sunny. ST: TOS - "The Omega Glory" and YouTube' });
+
+        const expectedExecutedWorkout = new ExecutedWorkoutDTO();
+        expectedExecutedWorkout.startDateTime = component.startDateTime();
+        expectedExecutedWorkout.journal = component.workoutForm.controls.journal.value;
+        expectedExecutedWorkout.exercises = [];
+
+        //Loop through exercises FormArray and patch values into the controls to simulate the info
+        //the user has entered
+        component.exercisesArray.controls.forEach((value: AbstractControl) => {
+            //Remember, each control in the exercises array is a FormGroup
+            const formGroup = <UntypedFormGroup>value;
+
+            //Each exercise has a FormArray of exercise sets
+            const sets = <UntypedFormArray>formGroup.controls.exerciseSets;
+            //sets.controls.forEach(set => {
+            for (let x = 0; x < sets.controls.length; x++) {
+
+                const setGroup = <UntypedFormGroup>sets.controls[x];
+                setGroup.patchValue({
+                    actualReps: getRandomInt(10),
+                    duration: getRandomInt(240),
+                    formRating: getRandomInt(5),
+                    rangeOfMotionRating: getRandomInt(5),
+                    resistance: getRandomInt(200),
+                    resistanceMakeup: getRandomInt(1000).toString(),
+                    sequence: x
+                });
+
+                const executedExercise = new ExecutedExerciseDTO();
+                executedExercise.actualRepCount = setGroup.controls.actualReps.value;
+                executedExercise.targetRepCount = setGroup.controls.targetReps.value;
+
+                executedExercise.exerciseId = formGroup.controls.exerciseId.value;
+                executedExercise.bandsEndToEnd = setGroup.controls.bandsEndToEnd.value;
+                executedExercise.name = formGroup.controls.exerciseName.value;
+                executedExercise.resistanceType = formGroup.controls.resistanceType.value;
+                executedExercise.duration = setGroup.controls.duration.value;
+                executedExercise.formRating = setGroup.controls.formRating.value;
+                executedExercise.rangeOfMotionRating = setGroup.controls.rangeOfMotionRating.value;
+                executedExercise.resistanceAmount = setGroup.controls.resistance.value;
+                executedExercise.resistanceMakeup = setGroup.controls.resistanceMakeup.value;
+                executedExercise.setType = formGroup.controls.setType.value;
+                executedExercise.sequence = setGroup.controls.sequence.value;
+                expectedExecutedWorkout.exercises.push(executedExercise);
+
+            }
+            ;
+
         });
 
-        const executedExercise = new ExecutedExerciseDTO();
-        executedExercise.actualRepCount = setGroup.controls.actualReps.value;
-        executedExercise.targetRepCount = setGroup.controls.targetReps.value;
+        //ACT
+        component.completeWorkout();
+        expectedExecutedWorkout.endDateTime = component.endDateTime();
 
-        executedExercise.exerciseId = formGroup.controls.exerciseId.value;
-        executedExercise.bandsEndToEnd = setGroup.controls.bandsEndToEnd.value;
-        executedExercise.name = formGroup.controls.exerciseName.value;
-        executedExercise.resistanceType = formGroup.controls.resistanceType.value;
-        executedExercise.duration = setGroup.controls.duration.value;
-        executedExercise.formRating = setGroup.controls.formRating.value;
-        executedExercise.rangeOfMotionRating = setGroup.controls.rangeOfMotionRating.value;
-        executedExercise.resistanceAmount = setGroup.controls.resistance.value;
-        executedExercise.resistanceMakeup = setGroup.controls.resistanceMakeup.value;
-        executedExercise.setType = formGroup.controls.setType.value;
-        executedExercise.sequence = setGroup.controls.sequence.value;
-        expectedExecutedWorkout.exercises.push(executedExercise);
+        //ASSERT
+        expect(executedWorkoutService.add).toHaveBeenCalledWith(expectedExecutedWorkout);
+        expect(component.workoutCompleted).toBe(true);
+        expect(component.infoMsg).toContain('Completed workout saved');
+    });
 
-      };
+    it("should not change the end date of a workout when completing it if it already has an end date", () => {
+
+        //ARRANGE
+        const expectedEndDateTime = new Date(2022, 1, 2, 13, 45, 0);
+        const workout = new ExecutedWorkoutDTO();
+        workout.exercises = [];
+        workout.startDateTime = new Date(2022, 1, 2, 12, 30, 0);
+        workout.endDateTime = expectedEndDateTime;
+
+        //component._executedWorkout = workout;
+
+        const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
+        executedWorkoutService.getById =
+            vi.fn().mockReturnValue(of(workout));
+
+        //ACT
+        component.ngOnInit(); //Need to reinitialize due to changed mock
+        component.completeWorkout();
+
+        //ASSERT
+        expect(component.endDateTime()).toEqual(expectedEndDateTime); //Service mock returns the same object
+        expect(executedWorkoutService.update).toHaveBeenCalledWith(workout);
 
     });
 
-    //ACT
-    component.completeWorkout();
-    expectedExecutedWorkout.endDateTime = component.endDateTime();
+    it('should present an error if an undefined ExecutedWorkoutId is provided', () => {
+        //ARRANGE
+        //Override default behavior
+        fixture.componentRef.setInput('executedWorkoutPublicId', undefined);
 
-    //ASSERT
-    expect(executedWorkoutService.add).toHaveBeenCalledWith(expectedExecutedWorkout);
-    expect(component.workoutCompleted).toBeTrue();
-    expect(component.infoMsg).toContain('Completed workout saved');
-  });
+        const messageService = TestBed.inject(NzMessageService);
 
-  it("should not change the end date of a workout when completing it if it already has an end date", () => {
+        //ACT
+        component.ngOnInit(); //Need to reinitialize due to changed mock
 
-    //ARRANGE
-    const expectedEndDateTime = new Date(2022, 1, 2, 13, 45, 0);
-    const workout = new ExecutedWorkoutDTO();
-    workout.exercises = [];
-    workout.startDateTime = new Date(2022, 1, 2, 12, 30, 0);
-    workout.endDateTime = expectedEndDateTime;
+        //ASSERT
+        expect(messageService.error).toHaveBeenCalledTimes(1);
 
-    //component._executedWorkout = workout;
-
-    const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    executedWorkoutService.getById =
-      jasmine.createSpy('getById').and.returnValue(of(workout));
-
-    //ACT
-    component.ngOnInit(); //Need to reinitialize due to changed mock
-    component.completeWorkout();
-
-    //ASSERT
-    expect(component.endDateTime()).toEqual(expectedEndDateTime); //Service mock returns the same object
-    expect(executedWorkoutService.update).toHaveBeenCalledWith(workout);
-
-  });
-
-  it('should present an error if an undefined ExecutedWorkoutId is provided', () => {
-    //ARRANGE
-    //Override default behavior
-    fixture.componentRef.setInput('executedWorkoutPublicId', undefined);
-
-    const messageService = TestBed.inject(NzMessageService);
-
-    //ACT
-    component.ngOnInit(); //Need to reinitialize due to changed mock
-
-    //ASSERT
-    expect(messageService.error).toHaveBeenCalledOnceWith(
-      'executedWorkoutPublicId is invalid. Please exit this page and return to it ' +
-      'from one of the pages where a workout can be selected.'
-    );
-  });
+        //ASSERT
+        expect(messageService.error).toHaveBeenCalledWith('executedWorkoutPublicId is invalid. Please exit this page and return to it ' +
+            'from one of the pages where a workout can be selected.');
+    });
 
 });

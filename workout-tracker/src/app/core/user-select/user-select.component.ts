@@ -2,7 +2,7 @@ import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/cor
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../_services/user/user.service';
 import { User } from '../_models/user';
-import { AuthService } from 'app/core/_services/auth/auth.service';
+import { AuthService } from '../../core/_services/auth/auth.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { AsyncPipe } from '@angular/common';

@@ -1,5 +1,5 @@
-import { Entity } from "app/shared/models/entity";
-import { SetType } from "app/workouts/workout/_enums/set-type";
+import { Entity } from "../../shared/models/entity";
+import { SetType } from "../../workouts/workout/_enums/set-type";
 
 export class UserMinMaxReps extends Entity {
   public userSettingsId: number = 0;

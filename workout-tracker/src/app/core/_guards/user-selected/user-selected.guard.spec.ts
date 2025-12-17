@@ -11,48 +11,51 @@ import { AuthService } from '../../_services/auth/auth.service';
     standalone: false
 })
 class FakeComponent {
-
 }
 
 
 describe('UserSelectedGuard', () => {
-  let guard: UserSelectedGuard;
+    let guard: UserSelectedGuard;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [ RouterModule.forRoot(
-        [{path: 'login', component: FakeComponent}]) ],
-      providers: [
-  provideZonelessChangeDetection(),
-        UserSelectedGuard,
-        {
-          provide: AuthService,
-          useValue: jasmine.createSpyObj("AuthService", {}, { isUserLoggedIn: false, loginRoute: 'login' })
-        },
-        {
-          provide: RouterStateSnapshot,
-          useFactory: jasmine.createSpyObj<RouterStateSnapshot>("RouterStateSnapshot", ['toString'])
-        }
-      ]
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [RouterModule.forRoot([{ path: 'login', component: FakeComponent }])],
+            providers: [
+                provideZonelessChangeDetection(),
+                UserSelectedGuard,
+                {
+                    provide: AuthService,
+                    useValue: {
+                        isUserLoggedIn: false, loginRoute: 'login'
+                    }
+                },
+                {
+                    provide: RouterStateSnapshot,
+                    useFactory: {
+                        toString: vi.fn().mockName("RouterStateSnapshot.toString")
+                    }
+                }
+            ]
+        });
+        guard = TestBed.inject(UserSelectedGuard);
     });
-    guard = TestBed.inject(UserSelectedGuard);
-  });
 
-  it('should be created', () => {
-    expect(guard).toBeTruthy();
-  });
+    it('should be created', () => {
+        expect(guard).toBeTruthy();
+    });
 
-  it('should return false from canActivate() and redirect to login route when no user is logged in', () => {
-    //ARRANGE
-    const router = TestBed.inject(Router);
-    spyOn(router, 'navigate').and.callThrough();
-    const state = <RouterStateSnapshot>{ url: "login" };
+    it('should return false from canActivate() and redirect to login route when no user is logged in', () => {
+        //ARRANGE
+        const router = TestBed.inject(Router);
+        vi.spyOn(router, 'navigate');
+        const state = <RouterStateSnapshot>{ url: "login" };
 
-    //ACT
-    const result = guard.canActivate(new ActivatedRouteSnapshot(), state);
+        //ACT
+        const result = guard.canActivate(new ActivatedRouteSnapshot(), state);
 
-    //ASSERT
-    expect(result).toBeFalse();
-    expect(router.navigate).toHaveBeenCalledOnceWith(['login']);
-  });
+        //ASSERT
+        expect(result).toBe(false);
+        expect(router.navigate).toHaveBeenCalledTimes(1);
+        expect(router.navigate).toHaveBeenCalledWith(['login']);
+    });
 });

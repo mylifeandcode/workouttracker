@@ -11,37 +11,39 @@
       </div>
     </div>
 
-      @if (errorMsg()) {
-        <div class="row mt-4">
-          <div class="offset-2 col-8 text-center">
-            <br />
-            <h4>Oops! An error occurred: {{errorMsg()}}</h4>
-          </div>
+    @if (errorMsg()) {
+      <div class="row mt-4">
+        <div class="offset-2 col-8 text-center">
+          <br />
+          <h4>Oops! An error occurred: {{errorMsg()}}</h4>
         </div>
-      }
-  
-      @if (!loggingIn()) {
-        <div class="row mt-4">
+      </div>
+    }
+
+    @if (!loggingIn()) {
+      <div class="row mt-4">
 
         <div class="offset-md-4 col-md-4 card text-center user-select">
           <div class="list-group">
             @for (user of users; track user.id) {
-              <div (click)="selectUser(user.id, user.name)" class="list-group-item list-group-item-action list-group-item-success user-select-panel">
+              <div (click)="selectUser(user.id, user.name)"
+                class="list-group-item list-group-item-action list-group-item-success user-select-panel">
                 {{user.name}}
               </div>
             }
           </div>
         </div>
-    
+
         @if (users?.length == 0 && errorMsg() == null) {
           <div class="offset-md-4 col-md-4 text-center p-1 greeting-text">
             <p>No users have been created yet. Create one with the button below.</p>
             <p>
-              <strong>This user will be created as an Administrator.</strong> Administrators have permissions to manage the system.
+              <strong>This user will be created as an Administrator.</strong> Administrators have permissions to manage
+              the system.
             </p>
           </div>
         }
-    
+
         @if (!errorMsg()) {
           <div class="offset-md-4 col-md-4 text-center mt-4">
             <button type="button" class="btn btn-info btn-fullWidth" routerLink='/new-user'>Add User</button>
@@ -49,13 +51,13 @@
         }
       </div>
 
-      }
+    }
   </div>
 } @else {
   <div class="container-fluid wallpaper">
     <br />
     <div class="row">
-      
+
       @if (!errorMsg()) {
         <div class="col-12 text-center pt-4">
           <nz-spin nzTip="Loading users..." nzSize="large"></nz-spin>

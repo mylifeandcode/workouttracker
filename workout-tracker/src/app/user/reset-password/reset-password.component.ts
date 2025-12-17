@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthService } from 'app/core/_services/auth/auth.service';
-import { CustomValidators } from 'app/core/_validators/custom-validators';
+import { AuthService } from '../../core/_services/auth/auth.service';
+import { CustomValidators } from '../../core/_validators/custom-validators';
 import { of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { NzSpinModule } from 'ng-zorro-antd/spin';

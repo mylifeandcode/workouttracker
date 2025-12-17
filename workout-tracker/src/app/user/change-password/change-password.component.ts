@@ -2,8 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from 'app/core/_services/auth/auth.service';
-import { CustomValidators } from 'app/core/_validators/custom-validators';
+import { AuthService } from '../../core/_services/auth/auth.service';
+import { CustomValidators } from '../../core/_validators/custom-validators';
 import { finalize } from 'rxjs/operators';
 
 interface IChangePasswordForm {

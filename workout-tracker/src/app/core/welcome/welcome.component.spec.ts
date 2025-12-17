@@ -11,49 +11,42 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { StartWorkoutComponent } from './start-workout/start-workout.component';
 
 class UserServiceMock {
-  getOverview =
-    jasmine.createSpy('getOverview')
-      .and.returnValue(
-        of(<UserOverview>{
-          lastWorkoutDateTime: new Date(2022, 2, 26, 15, 20),
-          plannedWorkoutCount: 3,
-          username: 'Tyson'
-        }
-        ));
+    getOverview = vi.fn().mockReturnValue(of(<UserOverview>{
+        lastWorkoutDateTime: new Date(2022, 2, 26, 15, 20),
+        plannedWorkoutCount: 3,
+        username: 'Tyson'
+    }));
 }
 
 describe('WelcomeComponent', () => {
-  let component: WelcomeComponent;
-  let fixture: ComponentFixture<WelcomeComponent>;
+    let component: WelcomeComponent;
+    let fixture: ComponentFixture<WelcomeComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [WelcomeComponent],
-      providers: [
-        provideZonelessChangeDetection(),
-        {
-          provide: UserService,
-          useClass: UserServiceMock
-        }
-      ]
-    })
-    .overrideComponent(
-      WelcomeComponent,
-      { 
-        remove: { imports: [UserOverviewComponent, QuickActionsComponent, StartWorkoutComponent, NzSpinModule] }, 
-        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
-      },
-    )
-      .compileComponents();
-  });
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [WelcomeComponent],
+            providers: [
+                provideZonelessChangeDetection(),
+                {
+                    provide: UserService,
+                    useClass: UserServiceMock
+                }
+            ]
+        })
+            .overrideComponent(WelcomeComponent, {
+            remove: { imports: [UserOverviewComponent, QuickActionsComponent, StartWorkoutComponent, NzSpinModule] },
+            add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        })
+            .compileComponents();
+    });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(WelcomeComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(WelcomeComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

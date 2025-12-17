@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { PaginatedResults } from 'app/core/_models/paginated-results';
+import { PaginatedResults } from '../../core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../_models/workout-dto';
 import { WorkoutService } from '../_services/workout.service';

@@ -3,29 +3,28 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ExerciseService } from './exercise.service';
 import { PaginatedResults } from '../../core/_models/paginated-results';
-import { Exercise } from 'app/workouts/_models/exercise';
-import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
-import { ConfigService } from 'app/core/_services/config/config.service';
+import { Exercise } from '../../workouts/_models/exercise';
+import { ExerciseDTO } from '../../workouts/_models/exercise-dto';
+import { ConfigService } from '../../core/_services/config/config.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
+import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
 
 class MockConfigService {
-  get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
+  get = vi.fn().mockReturnValue("http://localhost:5600/api/");
 }
 
 class MockDateSerializationService {
-  convertAuditDateStringsToDates =
-    jasmine.createSpy('convertAuditDateStringsToDates').and.callFake((obj: Exercise) => {
-      if (obj.createdDateTime && typeof obj.createdDateTime === 'string') {
-        obj.createdDateTime = new Date(obj.createdDateTime);
-      }
+  convertAuditDateStringsToDates = vi.fn().mockImplementation((obj: Exercise) => {
+    if (obj.createdDateTime && typeof obj.createdDateTime === 'string') {
+      obj.createdDateTime = new Date(obj.createdDateTime);
+    }
 
-      if (obj.modifiedDateTime && typeof obj.modifiedDateTime === 'string') {
-        obj.modifiedDateTime = new Date(obj.modifiedDateTime);
-      }
+    if (obj.modifiedDateTime && typeof obj.modifiedDateTime === 'string') {
+      obj.modifiedDateTime = new Date(obj.modifiedDateTime);
+    }
 
-      return obj;
-    });
+    return obj;
+  });
 }
 
 
@@ -63,15 +62,15 @@ describe('ExerciseService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should retrieve exercises', (done: DoneFn) => {
+  it('should retrieve exercises', async () => {
     const expectedResults = new PaginatedResults<ExerciseDTO>();
 
     service.getAll(0, 10).subscribe({
       next: exercises => {
-        expect(exercises).toEqual(expectedResults, 'should return expected results');
-        done();
+        expect(exercises).toEqual(expectedResults);
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10");
@@ -80,7 +79,7 @@ describe('ExerciseService', () => {
     req.flush(expectedResults);
   });
 
-  it('should convert date strings to Date objects when getting all exercises', (done: DoneFn) => {
+  it('should convert date strings to Date objects when getting all exercises', async () => {
     const mockResults = [
       {
         createdDateTime: "2024-01-01T12:00:00Z",
@@ -95,9 +94,9 @@ describe('ExerciseService', () => {
         expect(exercises.results[0].createdDateTime?.toISOString()).toBe("2024-01-01T12:00:00.000Z");
         expect(exercises.results[0].modifiedDateTime).toBeInstanceOf(Date);
         expect(exercises.results[0].modifiedDateTime?.toISOString()).toBe("2024-01-02T12:00:00.000Z");
-        done();
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10");
@@ -106,15 +105,15 @@ describe('ExerciseService', () => {
     req.flush({ results: mockResults, totalRecords: 1 });
   });
 
-  it('should retrieve exercises with the nameContains param', (done: DoneFn) => {
+  it('should retrieve exercises with the nameContains param', async () => {
     const expectedResults = new PaginatedResults<ExerciseDTO>();
 
     service.getAll(0, 10, 'Press').subscribe({
       next: exercises => {
-        expect(exercises).toEqual(expectedResults, 'should return expected results');
-        done();
+        expect(exercises).toEqual(expectedResults);
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     // ExerciseService should have made one request to GET exercises from expected URL
@@ -124,15 +123,15 @@ describe('ExerciseService', () => {
     req.flush(expectedResults);
   });
 
-  it('should retrieve exercises with the targetAreaContains param', (done: DoneFn) => {
+  it('should retrieve exercises with the targetAreaContains param', async () => {
     const expectedResults = new PaginatedResults<ExerciseDTO>();
 
     service.getAll(0, 10, null, ['Chest']).subscribe({
       next: exercises => {
-        expect(exercises).toEqual(expectedResults, 'should return expected results');
-        done();
+        expect(exercises).toEqual(expectedResults);
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&hasTargetAreas=Chest");
@@ -141,16 +140,16 @@ describe('ExerciseService', () => {
     req.flush(expectedResults);
   });
 
-  it('should retrieve exercise by ID', (done: DoneFn) => {
+  it('should retrieve exercise by ID', async () => {
 
     const expectedExercise = new Exercise();
 
     service.getById('5').subscribe({
       next: exercise => {
-        expect(exercise).toEqual(expectedExercise, 'should return expected results');
-        done();
+        expect(exercise).toEqual(expectedExercise);
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = http.expectOne("http://localhost:5600/api/exercises/5"); //TODO: Refactor
@@ -159,7 +158,7 @@ describe('ExerciseService', () => {
     req.flush(expectedExercise);
   });
 
-  it('should convert date strings to Date objects when getting exercise by ID', (done: DoneFn) => {
+  it('should convert date strings to Date objects when getting exercise by ID', async () => {
     const mockExercise = {
       createdDateTime: "2024-01-01T12:00:00Z",
       modifiedDateTime: "2024-01-02T12:00:00Z"
@@ -171,9 +170,9 @@ describe('ExerciseService', () => {
         expect(exercise.createdDateTime?.toISOString()).toBe("2024-01-01T12:00:00.000Z");
         expect(exercise.modifiedDateTime).toBeInstanceOf(Date);
         expect(exercise.modifiedDateTime?.toISOString()).toBe("2024-01-02T12:00:00.000Z");
-        done();
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = http.expectOne("http://localhost:5600/api/exercises/5");
@@ -182,15 +181,15 @@ describe('ExerciseService', () => {
     req.flush(mockExercise);
   });
 
-  it('should create new exercise', (done: DoneFn) => {
+  it('should create new exercise', async () => {
     const exercise = new Exercise();
 
     service.add(exercise).subscribe({
       next: (result: Exercise) => {
-        expect(result).toEqual(exercise, 'should return newly created exercise');
-        done();
+        expect(result).toEqual(exercise);
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = http.expectOne("http://localhost:5600/api/exercises"); //TODO: Refactor
@@ -200,7 +199,7 @@ describe('ExerciseService', () => {
     req.flush(exercise);
   });
 
-  xit('should convert date strings to Date objects when creating new exercise', (done: DoneFn) => {
+  it.skip('should convert date strings to Date objects when creating new exercise', (done: DoneFn) => {
     const mockExercise = {
       createdDateTime: "2024-01-01T12:00:00Z",
       modifiedDateTime: "2024-01-02T12:00:00Z"
@@ -214,7 +213,7 @@ describe('ExerciseService', () => {
         expect(exercise.modifiedDateTime?.toISOString()).toBe("2024-01-02T12:00:00.000Z");
         done();
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = http.expectOne("http://localhost:5600/api/exercises");
@@ -224,16 +223,16 @@ describe('ExerciseService', () => {
     req.flush(mockExercise);
   });
 
-  it('should update existing exercise', (done: DoneFn) => {
+  it('should update existing exercise', async () => {
     const exercise = new Exercise();
     exercise.id = 6;
 
     service.update(exercise).subscribe({
       next: (result: Exercise) => {
-        expect(result).toEqual(exercise, 'should return updated exercise');
-        done();
+        expect(result).toEqual(exercise);
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = http.expectOne(`http://localhost:5600/api/exercises`);

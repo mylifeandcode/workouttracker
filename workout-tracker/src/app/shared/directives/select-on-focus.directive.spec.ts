@@ -9,34 +9,35 @@ import { SelectOnFocusDirective } from '../directives/select-on-focus.directive'
     template: `<input wtSelectOnFocus value=""/>`,
     imports: [SelectOnFocusDirective]
 })
-class TestComponent { }
+class TestComponent {
+}
 
 describe('SelectOnFocusDirective', () => {
-  let fixture: ComponentFixture<TestComponent>;
-  let inputElement: DebugElement;
+    let fixture: ComponentFixture<TestComponent>;
+    let inputElement: DebugElement;
 
-  beforeEach(() => {
-    fixture = TestBed.configureTestingModule({
-      imports: [SelectOnFocusDirective, TestComponent],
-      providers: [provideZonelessChangeDetection()]
-    }).createComponent(TestComponent);
+    beforeEach(() => {
+        fixture = TestBed.configureTestingModule({
+            imports: [SelectOnFocusDirective, TestComponent],
+            providers: [provideZonelessChangeDetection()]
+        }).createComponent(TestComponent);
 
-    fixture.detectChanges(); //Initial binding
+        fixture.detectChanges(); //Initial binding
 
-    //Get the element with an attached SelectOnFocusDirective
-    inputElement = fixture.debugElement.query(By.directive(SelectOnFocusDirective));
-    expect(inputElement).toBeTruthy();
-  });
+        //Get the element with an attached SelectOnFocusDirective
+        inputElement = fixture.debugElement.query(By.directive(SelectOnFocusDirective));
+        expect(inputElement).toBeTruthy();
+    });
 
-  it('should select input value on focus', () => {
-    //ARRANGE
-    spyOn(inputElement.nativeElement, 'select');
+    it('should select input value on focus', () => {
+        //ARRANGE
+        vi.spyOn(inputElement.nativeElement, 'select');
 
-    //ACT
-    inputElement.nativeElement.dispatchEvent(new Event('focus'));
-    //No fixture.detectChanges() needed here. There's no DOM change.
+        //ACT
+        inputElement.nativeElement.dispatchEvent(new Event('focus'));
+        //No fixture.detectChanges() needed here. There's no DOM change.
 
-    //ASSERT
-    expect(inputElement.nativeElement.select).toHaveBeenCalledTimes(1);
-  });
+        //ASSERT
+        expect(inputElement.nativeElement.select).toHaveBeenCalledTimes(1);
+    });
 });

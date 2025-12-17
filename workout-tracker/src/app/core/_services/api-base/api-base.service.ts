@@ -1,10 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { IEntity } from 'app/shared/interfaces/i-entity';
+import { IEntity } from '../../../shared/interfaces/i-entity';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, mergeMap, shareReplay, take, tap } from 'rxjs/operators';
 import { DateSerializationService } from '../date-serialization/date-serialization.service';
 import { inject } from '@angular/core';
-import { IMightHaveAuditDates } from 'app/shared/interfaces/i-might-have-audit-dates';
+import { IMightHaveAuditDates } from '../../../shared/interfaces/i-might-have-audit-dates';
 import { ConfigService } from '../config/config.service';
 
 const HTTP_OPTIONS = {

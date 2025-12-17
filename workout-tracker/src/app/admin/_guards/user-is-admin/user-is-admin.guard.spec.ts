@@ -6,63 +6,63 @@ import { AuthService } from 'app/core/_services/auth/auth.service';
 import { UserIsAdminGuard } from '../user-is-admin/user-is-admin.guard';
 
 class AuthServiceMock {
-  public get isUserAdmin(): boolean { return true; }
+    public get isUserAdmin(): boolean { return true; }
 }
 
 class RouterMock {
-  navigate = jasmine.createSpy('navigate').and.returnValue(Promise.resolve(true));
+    navigate = vi.fn().mockReturnValue(Promise.resolve(true));
 }
 
 describe('UserIsAdminGuard', () => {
-  let guard: UserIsAdminGuard;
+    let guard: UserIsAdminGuard;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-  provideZonelessChangeDetection(),
-        {
-          provide: AuthService,
-          useClass: AuthServiceMock
-        }, 
-        {
-          provide: Router, 
-          useClass: RouterMock
-        }
-      ]
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            providers: [
+                provideZonelessChangeDetection(),
+                {
+                    provide: AuthService,
+                    useClass: AuthServiceMock
+                },
+                {
+                    provide: Router,
+                    useClass: RouterMock
+                }
+            ]
+        });
+        guard = TestBed.inject(UserIsAdminGuard);
     });
-    guard = TestBed.inject(UserIsAdminGuard);
-  });
 
-  it('should be created', () => {
-    expect(guard).toBeTruthy();
-  });
+    it('should be created', () => {
+        expect(guard).toBeTruthy();
+    });
 
-  it('should return true from canActivate() when user is an admin', () => {
-    const state = <RouterStateSnapshot>{ url: "login" };
-    expect(guard.canActivate(new ActivatedRouteSnapshot(), state)).toBeTrue();
-  });
+    it('should return true from canActivate() when user is an admin', () => {
+        const state = <RouterStateSnapshot>{ url: "login" };
+        expect(guard.canActivate(new ActivatedRouteSnapshot(), state)).toBe(true);
+    });
 
-  it('should return false from canActivate() when user is NOT an admin', () => {
-    const authService = TestBed.inject(AuthService);
-    spyOnProperty(authService, 'isUserAdmin').and.returnValue(false);
-    const state = <RouterStateSnapshot>{ url: "login" };
-    expect(guard.canActivate(new ActivatedRouteSnapshot(), state)).toBeFalse();
-  });
+    it('should return false from canActivate() when user is NOT an admin', () => {
+        const authService = TestBed.inject(AuthService);
+        vi.spyOn(authService, 'isUserAdmin').mockReturnValue(false);
+        const state = <RouterStateSnapshot>{ url: "login" };
+        expect(guard.canActivate(new ActivatedRouteSnapshot(), state)).toBe(false);
+    });
 
-  it('should return true from canLoad() when user is an admin', () => {
-    const path = '/';
-    const fakeRoute: Route = { path };
-    const fakeUrlSegment = { path } as UrlSegment;
-    expect(guard.canLoad(fakeRoute, [fakeUrlSegment])).toBeTrue();
-  });
+    it('should return true from canLoad() when user is an admin', () => {
+        const path = '/';
+        const fakeRoute: Route = { path };
+        const fakeUrlSegment = { path } as UrlSegment;
+        expect(guard.canLoad(fakeRoute, [fakeUrlSegment])).toBe(true);
+    });
 
-  it('should return false from canLoad() when user is NOT an admin', () => {
-    const authService = TestBed.inject(AuthService);
-    spyOnProperty(authService, 'isUserAdmin').and.returnValue(false);
-    const path = '/';
-    const fakeRoute: Route = { path };
-    const fakeUrlSegment = { path } as UrlSegment;
-    expect(guard.canLoad(fakeRoute, [fakeUrlSegment])).toBeFalse();
-  });
+    it('should return false from canLoad() when user is NOT an admin', () => {
+        const authService = TestBed.inject(AuthService);
+        vi.spyOn(authService, 'isUserAdmin').mockReturnValue(false);
+        const path = '/';
+        const fakeRoute: Route = { path };
+        const fakeUrlSegment = { path } as UrlSegment;
+        expect(guard.canLoad(fakeRoute, [fakeUrlSegment])).toBe(false);
+    });
 
 });

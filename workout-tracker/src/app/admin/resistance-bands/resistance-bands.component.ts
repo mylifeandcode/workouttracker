@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 
-import { ResistanceBand } from 'app/shared/models/resistance-band';
+import { ResistanceBand } from '../../shared/models/resistance-band';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';

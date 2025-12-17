@@ -1,12 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { ConfigService } from 'app/core/_services/config/config.service';
+import { ConfigService } from '../../core/_services/config/config.service';
 import { map, Observable } from 'rxjs';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
 import { ExecutedExerciseMetrics } from '../_models/executed-exercise-metrics';
 import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 import { ExecutedWorkoutsSummary } from '../_models/executed-workouts-summary';
-import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
+import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
 
 //TODO: This service doesn't fit the normal API service pattern due to different types, not just 
 //a single entity type. Find a way to eliminate duplicate setup code and allow for caching.

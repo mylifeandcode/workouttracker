@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { UnsavedChangesGuard } from 'app/core/_guards/unsaved-changes/unsaved-changes.guard';
-import { UserSelectedGuard } from 'app/core/_guards/user-selected/user-selected.guard';
+import { UnsavedChangesGuard } from '../core/_guards/unsaved-changes/unsaved-changes.guard';
+import { UserSelectedGuard } from '../core/_guards/user-selected/user-selected.guard';
 
 export const userRoutes: Routes = [
     {
@@ -24,7 +24,7 @@ export const userRoutes: Routes = [
     },
     {
       path: 'register',
-      loadComponent: () => import('app/admin/user-add/user-add.component').then(m => m.UserAddComponent)
+      loadComponent: () => import('../admin/user-add/user-add.component').then(m => m.UserAddComponent)
     },
   ];
   

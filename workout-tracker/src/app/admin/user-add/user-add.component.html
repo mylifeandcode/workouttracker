@@ -89,7 +89,7 @@
           <button type="submit" [disabled]="userAddForm.invalid" (click)="addUser()"
             class="btn btn-success">Add</button>
           &nbsp;
-          <button type="button" [disabled]="savingUserInfo" (click)="cancel()" class="btn btn-warning">Cancel</button>
+          <button type="button" [disabled]="savingUserInfo()" (click)="cancel()" class="btn btn-warning">Cancel</button>
           @if (savingUserInfo()) {
             <span>Saving...</span>
           }

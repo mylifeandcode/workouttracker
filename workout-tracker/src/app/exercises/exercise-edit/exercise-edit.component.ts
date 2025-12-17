@@ -7,14 +7,14 @@ import { TargetArea } from '../../workouts/_models/target-area';
 import { CustomValidators } from '../../core/_validators/custom-validators';
 import { ExerciseTargetAreaLink } from '../../workouts/_models/exercise-target-area-link';
 import { finalize } from 'rxjs/operators';
-import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
-import { ResistanceType } from 'app/workouts/workout/_enums/resistance-type';
+import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
+import { ResistanceType } from '../../workouts/workout/_enums/resistance-type';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgClass, KeyValuePipe } from '@angular/common';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
-import { EMPTY_GUID } from 'app/shared/shared-constants';
+import { EMPTY_GUID } from '../../shared/shared-constants';
 import { forkJoin } from 'rxjs';
 
 interface IExerciseEditForm {

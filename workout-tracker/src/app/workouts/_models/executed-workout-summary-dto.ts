@@ -1,4 +1,4 @@
-import { IHasDateRange } from "app/shared/interfaces/i-has-date-range";
+import { IHasDateRange } from "../../shared/interfaces/i-has-date-range";
 import { NamedEntityDTO } from "./named-entity-dto";
 
 export class ExecutedWorkoutSummaryDTO extends NamedEntityDTO implements IHasDateRange {

@@ -1,4 +1,4 @@
-import { Entity } from "app/shared/models/entity";
+import { Entity } from "../../shared/models/entity";
 import { UserMinMaxReps } from "./user-min-max-reps";
 
 export class UserSettings extends Entity {

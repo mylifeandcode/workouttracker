@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { UserOverview } from 'app/core/_models/user-overview';
-import { UserService } from 'app/core/_services/user/user.service';
+import { UserOverview } from '../_models/user-overview';
+import { UserService } from '../_services/user/user.service';
 import { finalize } from 'rxjs/operators';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
 import { QuickActionsComponent } from './quick-actions/quick-actions.component';

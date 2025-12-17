@@ -1,6 +1,6 @@
 import { Component, ViewChild, effect, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
-import { SoundService } from 'app/core/_services/sound/sound.service';
+import { SoundService } from '../../../core/_services/sound/sound.service';
 import { NgStyle } from '@angular/common';
 
 @Component({

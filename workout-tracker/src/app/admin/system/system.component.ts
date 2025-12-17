@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { SoundService } from 'app/core/_services/sound/sound.service';
-import { CountdownTimerComponent } from 'app/workouts/workout/countdown-timer/countdown-timer.component';
+import { SoundService } from '../../core/_services/sound/sound.service';
+import { CountdownTimerComponent } from '../../workouts/workout/countdown-timer/countdown-timer.component';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSpinModule } from 'ng-zorro-antd/spin';

@@ -2,27 +2,27 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 
 import { of } from 'rxjs';
-import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
-import { TargetArea } from 'app/workouts/_models/target-area';
+import { ExerciseDTO } from '../workouts/_models/exercise-dto';
+import { TargetArea } from '../workouts/_models/target-area';
 import { ExerciseListBase } from './exercise-list-base';
 import { Component, inject as inject_1 } from '@angular/core';
-import { PaginatedResults } from 'app/core/_models/paginated-results';
+import { PaginatedResults } from '../core/_models/paginated-results';
 import { ExerciseService } from './_services/exercise.service';
 
 class ExerciseServiceMock {
-  getAll = jasmine.createSpy('getAll').and.returnValue(of(new PaginatedResults<ExerciseDTO>()));
-  getTargetAreas = jasmine.createSpy('getTargetAreas')
-    .and.callFake(() => {
-      const targetAreas = new Array<TargetArea>();
-      targetAreas.push(new TargetArea(1, "Chest", 1, new Date(), null, null, false));
-      targetAreas.push(new TargetArea(2, "Biceps", 1, new Date(), null, null, false));
-      targetAreas.push(new TargetArea(3, "Triceps", 1, new Date(), null, null, false));
-      return of(targetAreas);
-    });
+  getAll = vi.fn().mockReturnValue(of(new PaginatedResults<ExerciseDTO>()));
+  getTargetAreas = vi.fn().mockImplementation(() => {
+    const targetAreas = new Array<TargetArea>();
+    targetAreas.push(new TargetArea(1, "Chest", 1, new Date(), null, null, false));
+    targetAreas.push(new TargetArea(2, "Biceps", 1, new Date(), null, null, false));
+    targetAreas.push(new TargetArea(3, "Triceps", 1, new Date(), null, null, false));
+    return of(targetAreas);
+  });
 }
 
 //We're testing an abstract base class, so let's create a class here that extends it
 @Component({
+  template: '',
   imports: []
 })
 class ExerciseListBaseExtenderComponent extends ExerciseListBase {
@@ -48,8 +48,9 @@ describe('ExerciseListBaseComponent', () => {
         {
           provide: ExerciseService,
           useClass: ExerciseServiceMock
-        }
-        ,provideZonelessChangeDetection()],
+        },
+        provideZonelessChangeDetection()
+      ],
       imports: [
         ExerciseListBaseExtenderComponent
       ]

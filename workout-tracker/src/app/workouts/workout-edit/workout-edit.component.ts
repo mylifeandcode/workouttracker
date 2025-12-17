@@ -2,18 +2,18 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } fro
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
-import { Workout } from 'app/workouts/_models/workout';
-import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
+import { Workout } from '../_models/workout';
+import { ExerciseDTO } from '../_models/exercise-dto';
 import { ExerciseInWorkout } from '../_models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
-import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
+import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgClass } from '@angular/common';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
-import { EMPTY_GUID } from 'app/shared/shared-constants';
+import { EMPTY_GUID } from '../../shared/shared-constants';
 import { HttpErrorResponse } from '@angular/common/http';
 
 interface IExerciseInWorkout {

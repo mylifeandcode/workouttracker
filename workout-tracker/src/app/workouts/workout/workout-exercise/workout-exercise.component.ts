@@ -8,9 +8,10 @@ import { IWorkoutFormExerciseSet } from '../_interfaces/i-workout-form-exercise-
 import { SelectOnFocusDirective } from '../../../shared/directives/select-on-focus.directive';
 import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';
 import { ResistanceTypePipe } from '../../_pipes/resistance-type.pipe';
-import { ResistanceAmountPipe } from 'app/workouts/_pipes/resistance-amount.pipe';
-import { DurationPipe } from 'app/workouts/_pipes/duration.pipe';
-import { ExerciseSidePipe } from 'app/workouts/_pipes/exercise-side.pipe';
+import { ResistanceAmountPipe } from '../../../workouts/_pipes/resistance-amount.pipe';
+import { DurationPipe } from '../../..//workouts/_pipes/duration.pipe';
+import { ExerciseSidePipe } from '../../_pipes/exercise-side.pipe';
+
 
 /**
  * A component representing an Exercise as part of a Workout instance,
