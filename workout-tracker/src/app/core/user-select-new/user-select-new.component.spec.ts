@@ -2,9 +2,9 @@ import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { User } from 'app/core/_models/user';
-import { UserNewDTO } from 'app/core/_models/user-new-dto';
-import { UserService } from 'app/core/_services/user/user.service';
+import { User } from '../../core/_models/user';
+import { UserNewDTO } from '../../core/_models/user-new-dto';
+import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
 
 import { UserSelectNewComponent } from './user-select-new.component';

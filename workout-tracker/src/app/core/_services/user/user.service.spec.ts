@@ -1,9 +1,9 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 
 import { UserService } from './user.service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { User } from 'app/core/_models/user';
+import { User } from '../../../core/_models/user';
 import { ConfigService } from '../config/config.service';
 import { UserOverview } from '../../_models/user-overview';
 import { UserNewDTO } from '../../_models/user-new-dto';
@@ -50,7 +50,7 @@ describe('UserService', () => {
 
         service.all$.subscribe({
             next: (users: Array<User>) => expect(users).toEqual(expectedResults),
-            error: fail
+            error: () => assert.fail()
         });
 
         const req = http.expectOne("http://localhost:5600/api/users");
@@ -68,7 +68,7 @@ describe('UserService', () => {
 
         service.getById(userId).subscribe({
             next: (user: User) => expect(user).toEqual(expectedResults),
-            error: fail
+            error: () => assert.fail()
         });
 
         const req = http.expectOne(`http://localhost:5600/api/users/${TEST_USER_ID}`);
@@ -86,7 +86,7 @@ describe('UserService', () => {
         service.addNew(userNew)
             .subscribe({
             next: (result: User) => expect(result).toEqual(userSaved),
-            error: fail
+            error: () => assert.fail()
         });
 
         const request = http.expectOne('http://localhost:5600/api/users/new');
@@ -105,7 +105,7 @@ describe('UserService', () => {
         service.update(user)
             .subscribe({
             next: (result: User) => expect(result).toEqual(user),
-            error: fail
+            error: () => assert.fail()
         });
 
         const request = http.expectOne(`http://localhost:5600/api/users/${user.id}`);
@@ -123,7 +123,7 @@ describe('UserService', () => {
         service.deleteById('7')
             .subscribe({
             next: (result: any) => expect(result).toBeNull(),
-            error: fail
+            error: () => assert.fail()
         });
 
         const request = http.expectOne(`http://localhost:5600/api/users/${userId}`);

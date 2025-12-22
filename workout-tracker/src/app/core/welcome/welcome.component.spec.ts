@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UserOverview } from 'app/core/_models/user-overview';
-import { UserService } from 'app/core/_services/user/user.service';
+import { UserOverview } from '../../core/_models/user-overview';
+import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
 
 import { WelcomeComponent } from './welcome.component';

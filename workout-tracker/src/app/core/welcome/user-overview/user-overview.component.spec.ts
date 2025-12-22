@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UserOverview } from 'app/core/_models/user-overview';
+import { UserOverview } from '../../../core/_models/user-overview';
 import { UserOverviewComponent } from './user-overview.component';
 import { provideZonelessChangeDetection } from '@angular/core';
 

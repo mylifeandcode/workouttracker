@@ -4,7 +4,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { UserListComponent } from './user-list.component';
 import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
-import { User } from 'app/core/_models/user';
+import { User } from '../../core/_models/user';
 import { RouterModule } from '@angular/router';
 
 class UserServiceMock {

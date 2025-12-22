@@ -3,10 +3,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserSelectComponent } from './user-select.component';
 import { UserService } from '../_services/user/user.service';
 import { of } from 'rxjs';
-import { User } from 'app/core/_models/user';
+import { User } from '../../core/_models/user';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from 'app/core/_services/auth/auth.service';
+import { AuthService } from '../../core/_services/auth/auth.service';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 
@@ -26,7 +26,9 @@ describe('UserSelectComponent', () => {
     let component: UserSelectComponent;
     let fixture: ComponentFixture<UserSelectComponent>;
 
-    @Component({})
+    @Component({
+      template: ''
+    })
     class FakeComponent {
     }
     ;

@@ -8,7 +8,7 @@ import { AuthService } from '../../_services/auth/auth.service';
 
 
 @Component({
-    standalone: false
+  template: ''
 })
 class FakeComponent {
 }

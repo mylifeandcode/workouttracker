@@ -16,7 +16,6 @@
             "outputPath": "dist/workout-tracker",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
@@ -107,6 +106,7 @@
         },
         "test": {
           "builder": "@angular/build:unit-test",
+          "options": {"runnerConfig": "src/vitest.config.ts"}
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",

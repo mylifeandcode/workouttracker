@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavComponent } from './nav.component';
 import { Component, provideZonelessChangeDetection, signal, WritableSignal } from '@angular/core';
-import { AuthService } from 'app/core/_services/auth/auth.service';
+import { AuthService } from '../../core/_services/auth/auth.service';
 import { RouterModule } from '@angular/router';
 
 const username = 'someuser';
@@ -13,7 +13,9 @@ class AuthServiceMock {
     logOff = vi.fn();
 }
 
-@Component({})
+@Component({
+  template: ''
+})
 class FakeComponent {
 }
 ;

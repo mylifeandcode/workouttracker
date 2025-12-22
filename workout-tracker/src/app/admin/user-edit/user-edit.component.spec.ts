@@ -4,10 +4,10 @@ import { UserEditComponent } from './user-edit.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../core/_services/user/user.service';
 import { of, throwError } from 'rxjs';
-import { User } from 'app/core/_models/user';
+import { User } from '../../core/_models/user';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Component, provideZonelessChangeDetection } from '@angular/core';
-import { AuthService } from 'app/core/_services/auth/auth.service';
+import { AuthService } from '../../core/_services/auth/auth.service';
 
 const CURRENT_USER_ID = 5150;
 
@@ -22,11 +22,10 @@ class AuthServiceMock {
 }
 
 @Component({
-    standalone: false
+  template: ''
 })
 class FakeComponent {
 }
-;
 
 describe('UserEditComponent', () => {
     let component: UserEditComponent;

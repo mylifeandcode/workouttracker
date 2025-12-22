@@ -49,7 +49,6 @@ export abstract class ExerciseListBase {
       .pipe(map(areas => areas.map(targetArea => targetArea.name)))
       .subscribe({
         next: (targetAreaNames: string[]) => {
-          console.log("TARGET AREAS: ", targetAreaNames);
           /*
           targetAreaNames.forEach(targetArea => {
             this.targetAreas.push(targetArea);
@@ -88,7 +87,6 @@ export abstract class ExerciseListBase {
   }
 
   public getExercisesLazy(params: NzTableQueryParams): void {
-    console.log("getExercisesLazy: ", params);
     let targetAreaContains: string[] | null = null;
 
     //These are from the table. The filters are declared external to it.

@@ -11,7 +11,7 @@ class AuthServiceMock {
 }
 
 @Component({
-    standalone: false
+  template: ''
 })
 class FakeComponent {
 }

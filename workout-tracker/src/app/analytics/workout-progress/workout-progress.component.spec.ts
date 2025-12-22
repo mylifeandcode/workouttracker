@@ -1,8 +1,8 @@
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PaginatedResults } from 'app/core/_models/paginated-results';
-import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
-import { WorkoutService } from 'app/workouts/_services/workout.service';
+import { PaginatedResults } from '../../core/_models/paginated-results';
+import { WorkoutDTO } from '../../workouts/_models/workout-dto';
+import { WorkoutService } from '../../workouts/_services/workout.service';
 import { of } from 'rxjs';
 import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';

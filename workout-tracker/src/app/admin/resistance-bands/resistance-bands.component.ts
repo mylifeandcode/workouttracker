@@ -4,7 +4,7 @@ import { ResistanceBand } from '../../shared/models/resistance-band';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { NgStyle } from '@angular/common';
+import { CommonModule, NgStyle } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -18,7 +18,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
   styleUrls: ['./resistance-bands.component.scss'],
   imports: [
     FormsModule, NzTableModule, NgStyle,
-    NzIconModule, NzModalModule, NzButtonModule
+    NzIconModule, NzModalModule, NzButtonModule,
+    CommonModule //For ngStyle
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

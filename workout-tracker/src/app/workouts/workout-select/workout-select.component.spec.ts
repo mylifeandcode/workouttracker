@@ -16,8 +16,10 @@ class WorkoutServiceMock {
         fakeResponse.results = [];
         fakeResponse.results.push(new WorkoutDTO());
         fakeResponse.results[0].name = "Workout 1";
+        fakeResponse.results[0].id = "1";
         fakeResponse.results.push(new WorkoutDTO());
         fakeResponse.results[1].name = "Workout 2";
+        fakeResponse.results[1].id = "2";
         fakeResponse.totalCount = 2;
         return of(fakeResponse);
     });

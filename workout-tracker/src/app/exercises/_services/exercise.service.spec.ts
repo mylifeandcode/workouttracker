@@ -199,19 +199,17 @@ describe('ExerciseService', () => {
     req.flush(exercise);
   });
 
-  it.skip('should convert date strings to Date objects when creating new exercise', (done: DoneFn) => {
+  it.skip('should convert date strings to Date objects when creating new exercise', () => {
     const mockExercise = {
       createdDateTime: "2024-01-01T12:00:00Z",
       modifiedDateTime: "2024-01-02T12:00:00Z"
     };
 
+    let result: Exercise = new Exercise();
+
     service.add(new Exercise()).subscribe({
       next: exercise => {
-        expect(exercise.createdDateTime).toBeInstanceOf(Date);
-        expect(exercise.createdDateTime?.toISOString()).toBe("2024-01-01T12:00:00.000Z");
-        expect(exercise.modifiedDateTime).toBeInstanceOf(Date);
-        expect(exercise.modifiedDateTime?.toISOString()).toBe("2024-01-02T12:00:00.000Z");
-        done();
+        result = exercise;
       },
       error: () => { throw new Error('Test failed'); }
     });
@@ -221,6 +219,12 @@ describe('ExerciseService', () => {
     expect(req.request.body).toEqual(mockExercise);
 
     req.flush(mockExercise);
+
+    expect(result.createdDateTime).toBeInstanceOf(Date);
+    expect(result.createdDateTime?.toISOString()).toBe("2024-01-01T12:00:00.000Z");
+    expect(result.modifiedDateTime).toBeInstanceOf(Date);
+    expect(result.modifiedDateTime?.toISOString()).toBe("2024-01-02T12:00:00.000Z");
+
   });
 
   it('should update existing exercise', async () => {
