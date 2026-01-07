@@ -16,6 +16,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
 import { EMPTY_GUID } from '../../shared/shared-constants';
 import { forkJoin } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface IExerciseEditForm {
   id: FormControl<number>;
@@ -130,7 +131,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
             this.infoMsg.set("Exercise created at " + new Date().toLocaleTimeString());
             this._router.navigate([`exercises/edit/${this._exercise.publicId}`]);
           },
-          error: (error: any) => {
+          error: (error: HttpErrorResponse) => {
             this.errorMsg.set(error.message);
           }
         });
@@ -146,7 +147,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
             this.saving.set(false);
             this.infoMsg.set("Exercise updated at " + new Date().toLocaleTimeString());
           },
-          error: (error: any) => {
+          error: (error: HttpErrorResponse) => {
             this.errorMsg.set(error.message);
           }
         });

@@ -125,7 +125,7 @@ export class AuthService {
   }
 
   public restoreUserSessionIfApplicable(): void {
-    const token: string = this._localStorageService.get(this.LOCAL_STORAGE_TOKEN_KEY);
+    const token: string | null = (this._localStorageService.get(this.LOCAL_STORAGE_TOKEN_KEY) as string | null);
 
     if (token) {
       const decodedToken = jwtDecode<JwtPayload>(token);

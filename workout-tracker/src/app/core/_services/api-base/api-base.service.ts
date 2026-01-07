@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { IEntity } from '../../../shared/interfaces/i-entity';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, mergeMap, shareReplay, take, tap } from 'rxjs/operators';
@@ -131,9 +131,9 @@ export abstract class ApiBaseService<T extends IEntity & IMightHaveAuditDates> {
    * @param id The ID of the entity to delete.
    * @returns The response from the API to the DELETE request.
    */
-  public delete(id: number): Observable<any> { //TODO: Re-evaluate use of "any" type here, should probably be HttpResponse.
+  public delete(id: number): Observable<HttpResponse<void>> { //TODO: Re-evaluate use of "any" type here, should probably be HttpResponse.
     //console.log("DELETING");
-    return this._http.delete(`${this._apiRoot}/${id}`)
+    return this._http.delete<HttpResponse<void>>(`${this._apiRoot}/${id}`)
       .pipe(
         tap(() => this.invalidateCache()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );
@@ -147,9 +147,9 @@ export abstract class ApiBaseService<T extends IEntity & IMightHaveAuditDates> {
    * @param publicId The public ID of the entity to delete.
    * @returns The response from the API to the DELETE request.
    */
-  public deleteById(publicId: string): Observable<any> { //TODO: Re-evaluate use of "any" type here, should probably be HttpResponse.
+  public deleteById(publicId: string): Observable<HttpResponse<void>> { 
     //console.log("DELETING");
-    return this._http.delete(`${this._apiRoot}/${publicId}`)
+    return this._http.delete<HttpResponse<void>>(`${this._apiRoot}/${publicId}`)
       .pipe(
         tap(() => this.invalidateCache()) //Because we've deleted an object, we need to trigger a change to invalidate the cached Observable of all of the objects
       );

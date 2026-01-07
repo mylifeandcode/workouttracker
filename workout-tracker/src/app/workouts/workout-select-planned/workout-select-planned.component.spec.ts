@@ -10,7 +10,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { HttpResponse } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { ModalOptions, NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
 class MockExecutedWorkoutService {
     getPlanned = vi.fn().mockImplementation(() => {
@@ -30,9 +30,10 @@ class MockNzMessageService {
 }
 
 class MockNzModalService {
-    confirm = vi.fn().mockImplementation((options: any) => {
+    confirm = vi.fn().mockImplementation((options: ModalOptions) => {
         if (options && typeof options.nzOnOk === 'function') {
-            return options.nzOnOk(); // Simulate the user confirming
+            //return options.nzOnOk(); // Simulate the user confirming
+            return (options.nzOnOk as () => void)();
         }
     });
 }
