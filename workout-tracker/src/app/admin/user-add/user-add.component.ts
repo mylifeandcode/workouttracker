@@ -2,7 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { User } from '../../core/_models/user';
 import { UserNewDTO } from '../../core/_models/user-new-dto';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { UserService } from '../../core/_services/user/user.service';
@@ -52,7 +51,7 @@ export class UserAddComponent implements OnInit {
     this._userService.addNew(user)
       .pipe(finalize(() => { this.savingUserInfo.set(false); }))
       .subscribe({
-        next: (savedUser: User) => {
+        next: () => {
           if (this._authService.isUserLoggedIn)
             this._router.navigate(['admin/users']); //TODO: Find out how to make this relative, not absolute
           else

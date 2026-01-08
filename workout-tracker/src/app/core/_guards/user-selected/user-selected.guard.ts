@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../_services/auth/auth.service';
 
@@ -11,7 +11,8 @@ export class UserSelectedGuard  {
   private _router = inject(Router);
 
 
-  public canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+  //public canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+  public canActivate(): Observable<boolean> | Promise<boolean> | boolean {
 
     let returnValue: boolean = true;
 

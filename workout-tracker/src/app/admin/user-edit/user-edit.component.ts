@@ -136,7 +136,7 @@ export class UserEditComponent implements OnInit {
               role: this._user.role
             });
         },
-        error: (error: any) => this.errorMsg.set(error),
+        error: (error: HttpErrorResponse) => this.errorMsg.set(error.message),
         complete: () => this.loadingUserInfo.set(false)
       });
 

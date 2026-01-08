@@ -86,7 +86,7 @@ export class ResistanceBandsComponent implements OnInit {
       nzOnOk: () =>
         this._resistanceBandService
           .delete(bandId)
-          .subscribe((response: any) => {
+          .subscribe(() => {
             this._messageService.create('success', 'Resistance band deleted.');
             this.getResistanceBandData(false);
           })
@@ -150,11 +150,11 @@ export class ResistanceBandsComponent implements OnInit {
         })
       )
       .subscribe({
-        next: (band: ResistanceBand) => {
+        next: () => {
           this._messageService.create('success', 'Resistance band added.');
           this.getResistanceBandData(false);
         },
-        error: (error: any) => {
+        error: () => {
           this._messageService.create('error', 'Failed to add resistance band.');
         }
       });
@@ -173,10 +173,10 @@ export class ResistanceBandsComponent implements OnInit {
         })
       )
       .subscribe({
-        next: (updatedBand: ResistanceBand) => {
+        next: () => {
           this._messageService.create('success', 'Resistance band updated.');
         },
-        error: (error: any) => {
+        error: () => {
           this._messageService.create('error', 'Failed to update resistance band.');
         }
       });

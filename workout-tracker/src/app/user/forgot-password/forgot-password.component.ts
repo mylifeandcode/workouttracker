@@ -33,7 +33,7 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.smtpEnabled.set(this._configService.get("smtpEnabled"));
+    this.smtpEnabled.set((this._configService.get("smtpEnabled") as boolean) ?? false);
   }
 
   public submitPasswordResetRequest(): void {

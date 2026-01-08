@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Entity } from '../../../shared/models/entity';
 import { ApiBaseService } from './api-base.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpResponse, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { Injectable, provideZonelessChangeDetection } from '@angular/core';
 import { ConfigService } from '../config/config.service';
 
@@ -138,8 +138,8 @@ describe('ApiBaseService', () => {
 
     //ACT
     const result = service.deleteById(WIDGET_ID);
-    result.subscribe((serviceEntity: any) => {
-      expect(serviceEntity).toBeTruthy();
+    result.subscribe((response: HttpResponse<void>) => {
+      expect(response).toBeTruthy();
     });
 
     //ASSERT

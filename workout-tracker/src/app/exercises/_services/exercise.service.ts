@@ -29,7 +29,7 @@ export class ExerciseService {
   private readonly TARGET_AREAS_API_ROOT: string; //TODO: Create TargetAreaService
 
   constructor() {
-    const apiRoot: string = this._configService.get("apiRoot");
+    const apiRoot: string = (this._configService.get("apiRoot") as string);
     this.API_ROOT = apiRoot + "exercises";
     this.TARGET_AREAS_API_ROOT = apiRoot + "TargetAreas";
   }

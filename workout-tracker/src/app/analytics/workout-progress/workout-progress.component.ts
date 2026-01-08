@@ -11,7 +11,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } 
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend } from 'chart.js';
+import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, ChartOptions } from 'chart.js';
 import { CommonModule } from '@angular/common';
 
 interface IWorkoutProgressForm {
@@ -69,7 +69,8 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
     scales: {
       y: {
         ticks: {
-          callback: (value: number, index: number, ticks: number): string => {
+          //callback: (value: number, index: number, ticks: number): string => {
+          callback: (value: number): string => {
             //TODO: Leverage RatingPipe for this
             switch (value) {
               case WorkoutProgressComponent.FORM_RATING_NA:
@@ -124,11 +125,11 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (results: ExecutedWorkoutMetrics[]) => {
           this.metrics.set(results);
-        },
+        }/*,
         error: (error) => {
           // TODO: Add user-friendly error notification service
           // console.error('Error loading workout metrics:', error);
-        }
+        }*/
       });
   }
 
@@ -172,7 +173,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
       chartReference.destroy();
     }
 
-    const options: any = {
+    const options: ChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
       ...(scales ? { scales } : {}),
@@ -197,11 +198,11 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result: PaginatedResults<WorkoutDTO>) => {
           this.workouts.set(result.results.sort((a, b) => a.name.localeCompare(b.name)));
-        },
+        }/*,
         error: (error) => {
           // TODO: Add user-friendly error notification service
           // console.error('Error loading workouts:', error);
-        }
+        }*/
       });
   }
 
@@ -221,7 +222,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
     });
 
     this._workoutId$ = form.controls.workoutId.valueChanges.subscribe(value => this.workoutIdChanged(value));
-    this._workoutCount$ = form.controls.workoutCount.valueChanges.subscribe(value => this.workoutCountChanged(value));
+    this._workoutCount$ = form.controls.workoutCount.valueChanges.subscribe(() => this.workoutCountChanged());
     this._exerciseId$ = form.controls.exerciseId.valueChanges.subscribe(value => this.exerciseChanged(value));
 
     return form;
@@ -245,15 +246,15 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
           this.metrics.set(results);
           this.form.controls.exerciseId.setValue(null);
           this.form.controls.exerciseId.markAsUntouched();
-        },
+        }/*,
         error: (error) => {
           // TODO: Add user-friendly error notification service
           // console.error('Error loading workout metrics:', error);
-        }
+        }*/
       });
   }
 
-  private workoutCountChanged(count: number | null): void {
+  private workoutCountChanged(): void {
     this.clearAnalyticsData();
     this.metrics.set([]);
     if (this.form.controls.workoutId.value) {

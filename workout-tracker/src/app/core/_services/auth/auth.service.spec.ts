@@ -42,7 +42,6 @@ const TEST_ACCESS_TOKEN: string = 'eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L
 describe('AuthService', () => {
   let service: AuthService;
   let configService: ConfigService;
-  let localStorageService: LocalStorageService;
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
@@ -64,7 +63,6 @@ describe('AuthService', () => {
     });
     service = TestBed.inject(AuthService);
     configService = TestBed.inject(ConfigService);
-    localStorageService = TestBed.inject(LocalStorageService);
     httpTestingController = TestBed.inject(HttpTestingController);
     service.init(); //Required because APP_INITIALIZER does this due to a race condition
   });

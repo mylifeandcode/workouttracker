@@ -50,10 +50,11 @@ describe('UserNotSelectedGuard', () => {
         //ARRANGE
         const router = TestBed.inject(Router);
         vi.spyOn(router, 'navigate');
-        const state = <RouterStateSnapshot>{ url: "login" };
+        //const state = <RouterStateSnapshot>{ url: "login" };
 
         //ACT
-        const result = guard.canActivate(new ActivatedRouteSnapshot(), state);
+        //const result = guard.canActivate(new ActivatedRouteSnapshot(), state);
+        const result = guard.canActivate();
 
         //ASSERT
         expect(result).toBe(false);

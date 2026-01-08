@@ -15,7 +15,7 @@ export class ResistanceAmountPipe implements PipeTransform {
     if (value == null) return '';
     
     if (ResistanceAmountPipe._unitOfMass == '') {
-      ResistanceAmountPipe._unitOfMass = this._configService.get('unitOfMass') ?? 'lb';
+      ResistanceAmountPipe._unitOfMass = (this._configService.get('unitOfMass') as string) ?? 'lb';
     }
 
     if (value == 1)

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router, ActivatedRoute } from '@angular/router';
+import { UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../_services/auth/auth.service';
 
@@ -11,10 +11,12 @@ export class UserNotSelectedGuard  {
   private _router = inject(Router);
 
 
+  /*
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-
+  */
+  canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       let returnValue: boolean = true;
 
       if(this._authService.isUserLoggedIn) {

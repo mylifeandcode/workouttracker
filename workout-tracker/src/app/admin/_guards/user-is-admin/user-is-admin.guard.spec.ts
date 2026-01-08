@@ -38,31 +38,35 @@ describe('UserIsAdminGuard', () => {
   });
 
   it('should return true from canActivate() when user is an admin', () => {
-    const state = <RouterStateSnapshot>{ url: "login" };
-    expect(guard.canActivate(new ActivatedRouteSnapshot(), state)).toBe(true);
+    //const state = <RouterStateSnapshot>{ url: "login" };
+    //expect(guard.canActivate(new ActivatedRouteSnapshot(), state)).toBe(true);
+    expect(guard.canActivate()).toBe(true);
   });
 
   it('should return false from canActivate() when user is NOT an admin', () => {
     const authService = TestBed.inject(AuthService);
     vi.spyOn(authService, 'isUserAdmin', 'get').mockReturnValue(false);
-    const state = <RouterStateSnapshot>{ url: "login" };
-    expect(guard.canActivate(new ActivatedRouteSnapshot(), state)).toBe(false);
+    //const state = <RouterStateSnapshot>{ url: "login" };
+    //expect(guard.canActivate(new ActivatedRouteSnapshot(), state)).toBe(false);
+    expect(guard.canActivate()).toBe(false);
   });
 
   it('should return true from canLoad() when user is an admin', () => {
-    const path = '/';
-    const fakeRoute: Route = { path };
-    const fakeUrlSegment = { path } as UrlSegment;
-    expect(guard.canLoad(fakeRoute, [fakeUrlSegment])).toBe(true);
+    //const path = '/';
+    //const fakeRoute: Route = { path };
+    //const fakeUrlSegment = { path } as UrlSegment;
+    //expect(guard.canLoad(fakeRoute, [fakeUrlSegment])).toBe(true);
+    expect(guard.canLoad()).toBe(true);
   });
 
   it('should return false from canLoad() when user is NOT an admin', () => {
     const authService = TestBed.inject(AuthService);
     vi.spyOn(authService, 'isUserAdmin', 'get').mockReturnValue(false);
-    const path = '/';
-    const fakeRoute: Route = { path };
-    const fakeUrlSegment = { path } as UrlSegment;
-    expect(guard.canLoad(fakeRoute, [fakeUrlSegment])).toBe(false);
+    //const path = '/';
+    //const fakeRoute: Route = { path };
+    //const fakeUrlSegment = { path } as UrlSegment;
+    //expect(guard.canLoad(fakeRoute, [fakeUrlSegment])).toBe(false);
+    expect(guard.canLoad()).toBe(false);
   });
 
 });

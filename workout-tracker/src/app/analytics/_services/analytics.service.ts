@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { map, Observable } from 'rxjs';
@@ -10,12 +10,6 @@ import { DateSerializationService } from '../../core/_services/date-serializatio
 
 //TODO: This service doesn't fit the normal API service pattern due to different types, not just 
 //a single entity type. Find a way to eliminate duplicate setup code and allow for caching.
-
-const HTTP_OPTIONS = { 
-  headers: new HttpHeaders({
-    'Content-Type':  'application/json'
-  })
-};
 
 enum CHART_DATA_TYPE {
   Form,
@@ -54,7 +48,7 @@ export class AnalyticsService {
     ];
 
   constructor() { 
-    const apiRoot: string = this._configService.get("apiRoot");
+    const apiRoot: string = (this._configService.get("apiRoot") as string);
     this.API_ROOT = apiRoot + "analytics";
   }
 

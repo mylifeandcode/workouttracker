@@ -6,7 +6,6 @@ import { of, throwError } from 'rxjs';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 
 import { ResistanceBandsComponent } from './resistance-bands.component';
-import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NgStyle } from '@angular/common';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -159,7 +158,7 @@ describe('ResistanceBandsComponent', () => {
     const resistanceBandService = TestBed.inject(ResistanceBandService);
     const modalService = TestBed.inject(NzModalService);
     const messageService = TestBed.inject(NzMessageService);
-    modalService.confirm = vi.fn().mockImplementation(() => { });
+    modalService.confirm = vi.fn().mockImplementation(() => void 0); //Simulate user not confirming
     const band = new ResistanceBand();
     band.id = 5;
 
@@ -196,7 +195,7 @@ describe('ResistanceBandsComponent', () => {
     //it doesn't throw an exception
 
     try {
-      const band = new ResistanceBand();
+      //const band = new ResistanceBand();
       component.startEdit(1);
       expect(true).toBe(true); //Here only to let Karma know we have an expectation
     }
