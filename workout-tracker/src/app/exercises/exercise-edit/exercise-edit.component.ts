@@ -11,7 +11,7 @@ import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-
 import { ResistanceType } from '../../workouts/workout/_enums/resistance-type';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgClass, KeyValuePipe } from '@angular/common';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
 import { EMPTY_GUID } from '../../shared/shared-constants';
@@ -45,7 +45,7 @@ interface IExerciseEditForm {
   templateUrl: './exercise-edit.component.html',
   styleUrls: ['./exercise-edit.component.scss'],
   imports: [
-    NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzToolTipModule, NzSwitchModule,
+    NzSpinModule, FormsModule, ReactiveFormsModule, NgClass, NzTooltipModule, NzSwitchModule,
     KeyValuePipe, InsertSpaceBeforeCapitalPipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush

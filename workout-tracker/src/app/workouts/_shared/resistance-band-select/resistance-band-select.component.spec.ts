@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ResistanceBandSelectComponent } from './resistance-band-select.component';
 import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform, SimpleChange } from '@angular/core';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzTransferModule, TransferItem } from 'ng-zorro-antd/transfer';
 import { ResistanceAmountPipe } from '../../../workouts/_pipes/resistance-amount.pipe';
 import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';
@@ -36,7 +36,7 @@ describe('ResistanceBandSelectComponent', () => {
         })
             .overrideComponent(ResistanceBandSelectComponent, {
             remove: {
-                imports: [NzTransferModule, NzToolTipModule, ResistanceAmountPipe, ResistanceBandColorPipe]
+                imports: [NzTransferModule, NzTooltipModule, ResistanceAmountPipe, ResistanceBandColorPipe]
             },
             add: {
                 imports: [MockResistanceAmountPipe],

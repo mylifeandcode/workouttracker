@@ -12,7 +12,7 @@ import { Exercise } from '../../workouts/_models/exercise';
 import { ExerciseTargetAreaLink } from '../../workouts/_models/exercise-target-area-link';
 import { EMPTY_GUID } from '../../shared/shared-constants';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 //TODO: Move initialization inside beforeEach()
 const EXERCISE: Exercise = <Exercise>{
@@ -107,7 +107,7 @@ describe('ExerciseEditComponent', () => {
             ]
         })
             .overrideComponent(ExerciseEditComponent, {
-            remove: { imports: [NzSpinModule, NzToolTipModule] }, //NzSwitchModule needs to remain as we use ngModel with it
+            remove: { imports: [NzSpinModule, NzTooltipModule] }, //NzSwitchModule needs to remain as we use ngModel with it
             add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
         })
             .compileComponents();

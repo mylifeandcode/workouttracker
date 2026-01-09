@@ -7,7 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { FormsModule } from '@angular/forms';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
@@ -15,7 +15,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
   selector: 'wt-workout-list',
   templateUrl: './workout-list.component.html',
   styleUrls: ['./workout-list.component.scss'],
-  imports: [FormsModule, NzTableModule, NzIconModule, NzDropDownModule, RouterLink],
+  imports: [FormsModule, NzTableModule, NzIconModule, NzDropdownModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutListComponent {

@@ -4,12 +4,12 @@ import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { RouterLink } from '@angular/router';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { DatePipe } from '@angular/common';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -21,7 +21,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     styleUrls: ['./workout-history.component.scss'],
     imports: [
       RouterLink, DatePipe, FormsModule,
-      NzTableModule, NzDropDownModule, NzToolTipModule, NzIconModule, NzModalModule 
+      NzTableModule, NzDropdownModule, NzTooltipModule, NzIconModule, NzModalModule 
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
