@@ -3,7 +3,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 
 import { UserSelectedGuard } from '../user-selected/user-selected.guard';
 import { Component } from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot } from '@angular/router';
+import { Router, RouterModule, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../../_services/auth/auth.service';
 
 

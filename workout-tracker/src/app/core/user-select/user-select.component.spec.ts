@@ -17,8 +17,9 @@ class UserServiceMock {
 
 class AuthServiceMock {
     logIn = vi.fn().mockReturnValue(of(true));
+    private readonly route = "user-select"; //readonly to satisfy linter rule
     public get loginRoute(): string {
-        return "user-select";
+        return this.route;
     }
 }
 

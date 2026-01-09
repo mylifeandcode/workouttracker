@@ -38,7 +38,7 @@ export class ResistanceBandsComponent implements OnInit {
   public modalSubmitted = signal<boolean>(false);
 
   //This is used to store the original row when we go into edit mode
-  public editCache: { [key: number]: { edit: boolean; data: ResistanceBand } } = {};
+  public editCache: Record<number, { edit: boolean; data: ResistanceBand }> = {}; //TODO: Create interface for record type
 
   public ngOnInit(): void {
     this.getResistanceBandData(true);

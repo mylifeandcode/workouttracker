@@ -1,6 +1,6 @@
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot } from '@angular/router';
+import { Router, RouterModule, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../../_services/auth/auth.service';
 import { UserNotSelectedGuard } from '../user-not-selected/user-not-selected.guard';
 

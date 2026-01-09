@@ -9,8 +9,9 @@ import { LoginComponent } from './login.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 class AuthServiceMock {
+    private readonly route = "login"; //readonly to satisfy linter rule
     public get loginRoute(): string {
-        return "login";
+        return this.route;
     }
 
     logIn = vi.fn().mockReturnValue(of(true));

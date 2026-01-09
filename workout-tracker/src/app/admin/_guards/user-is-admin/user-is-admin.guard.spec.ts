@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, Route, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
+import { Router } from '@angular/router';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { AuthService } from '../../../core/_services/auth/auth.service';
 
 import { UserIsAdminGuard } from '../user-is-admin/user-is-admin.guard';
 
 class AuthServiceMock {
-  public get isUserAdmin(): boolean { return true; }
+  private readonly adminStatus = true; //readonly to satisfy linter rule
+  public get isUserAdmin(): boolean { return this.adminStatus; }
 }
 
 class RouterMock {

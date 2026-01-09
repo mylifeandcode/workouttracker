@@ -65,14 +65,13 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   private _repsChart: Chart | null = null;
   private _resistanceChart: Chart | null = null;
 
-  private _formAndRangeOfMotionChartOptions = { //Type "any" because of ChartJS
+  private _formAndRangeOfMotionChartOptions: Partial<ChartOptions> = {
     scales: {
       y: {
         ticks: {
-          //callback: (value: number, index: number, ticks: number): string => {
-          callback: (value: number): string => {
+          callback: (tickValue) => {
             //TODO: Leverage RatingPipe for this
-            switch (value) {
+            switch (Number(tickValue)) {
               case WorkoutProgressComponent.FORM_RATING_NA:
                 return 'N/A';
               case WorkoutProgressComponent.FORM_RATING_BAD:
@@ -165,7 +164,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
     canvas: CanvasRenderingContext2D | null, 
     chartData: AnalyticsChartData | null, 
     chartReference: Chart | null = null,
-    scales?: any | null): Chart | null {
+    scales?: Partial<ChartOptions>['scales']): Chart | null {
 
     if (!canvas || !chartData) return null;
 
