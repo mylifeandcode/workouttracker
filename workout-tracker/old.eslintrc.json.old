@@ -1,7 +1,9 @@
 {
   "root": true,
   "ignorePatterns": [
-    "projects/**/*"
+    "projects/**/*",
+    "node_modules/",
+    "dist/"
   ],
   "overrides": [
     {
@@ -10,8 +12,7 @@
       ],
       "parserOptions": {
         "project": [
-          "tsconfig.json",
-          "e2e/tsconfig.e2e.json"
+          "tsconfig.json"
         ],
         "createDefaultProgram": true
       },
@@ -67,6 +68,7 @@
             }
           }
         ],
+        /*
         "@typescript-eslint/member-ordering": [
           "off",
           null
@@ -79,11 +81,12 @@
           "off",
           null
         ],
-        "@typescript-eslint/prefer-for-of": "off", /* Could not always be used. Weird rule. https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-for-of.md */
+        "@typescript-eslint/prefer-for-of": "off", // Could not always be used. Weird rule. https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-for-of.md 
         "@typescript-eslint/quotes": [
           "off",
           null
         ],
+        */
         "@typescript-eslint/semi": "error",
         "brace-style": [
           "off",

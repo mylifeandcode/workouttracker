@@ -1,63 +1,64 @@
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, Router, RouterModule, RouterStateSnapshot } from '@angular/router';
+import { Router, RouterModule, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../../_services/auth/auth.service';
 import { UserNotSelectedGuard } from '../user-not-selected/user-not-selected.guard';
 
 class AuthServiceMock {
-  isUserLoggedIn =
-    jasmine.createSpy('isUserLoggedIn').and.returnValue(true);
+    isUserLoggedIn = vi.fn().mockReturnValue(true);
 
-  loginRoute: string = "login";
+    loginRoute: string = "login";
 }
 
 @Component({
-    standalone: false
+  template: ''
 })
 class FakeComponent {
-
 }
 
 describe('UserNotSelectedGuard', () => {
-  let guard: UserNotSelectedGuard;
+    let guard: UserNotSelectedGuard;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot(
-          [{path: 'home', component: FakeComponent}])
-      ],
-      providers: [
-  provideZonelessChangeDetection(),
-        {
-          provide: AuthService,
-          useClass: AuthServiceMock
-        },
-        {
-          provide: RouterStateSnapshot,
-          useFactory: jasmine.createSpyObj<RouterStateSnapshot>("RouterStateSnapshot", ['toString'])
-        }
-      ]
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [
+                RouterModule.forRoot([{ path: 'home', component: FakeComponent }])
+            ],
+            providers: [
+                provideZonelessChangeDetection(),
+                {
+                    provide: AuthService,
+                    useClass: AuthServiceMock
+                },
+                {
+                    provide: RouterStateSnapshot,
+                    useFactory: {
+                        toString: vi.fn().mockName("RouterStateSnapshot.toString")
+                    }
+                }
+            ]
+        });
+        guard = TestBed.inject(UserNotSelectedGuard);
     });
-    guard = TestBed.inject(UserNotSelectedGuard);
-  });
 
-  it('should be created', () => {
-    expect(guard).toBeTruthy();
-  });
+    it('should be created', () => {
+        expect(guard).toBeTruthy();
+    });
 
-  it('should return false from canActivate() and redirect to home when user is not null', () => {
+    it('should return false from canActivate() and redirect to home when user is not null', () => {
 
-    //ARRANGE
-    const router = TestBed.inject(Router);
-    spyOn(router, 'navigate').and.callThrough();
-    const state = <RouterStateSnapshot>{ url: "login" };
+        //ARRANGE
+        const router = TestBed.inject(Router);
+        vi.spyOn(router, 'navigate');
+        //const state = <RouterStateSnapshot>{ url: "login" };
 
-    //ACT
-    const result = guard.canActivate(new ActivatedRouteSnapshot(), state);
+        //ACT
+        //const result = guard.canActivate(new ActivatedRouteSnapshot(), state);
+        const result = guard.canActivate();
 
-    //ASSERT
-    expect(result).toBeFalse();
-    expect(router.navigate).toHaveBeenCalledOnceWith(['home']);
-  });
+        //ASSERT
+        expect(result).toBe(false);
+        expect(router.navigate).toHaveBeenCalledTimes(1);
+        expect(router.navigate).toHaveBeenCalledWith(['home']);
+    });
 });

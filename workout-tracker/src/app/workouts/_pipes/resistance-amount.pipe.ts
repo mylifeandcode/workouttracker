@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform, inject } from '@angular/core';
-import { ConfigService } from 'app/core/_services/config/config.service';
+import { ConfigService } from '../../core/_services/config/config.service';
 
 @Pipe({
     name: 'resistanceAmount',
@@ -15,7 +15,7 @@ export class ResistanceAmountPipe implements PipeTransform {
     if (value == null) return '';
     
     if (ResistanceAmountPipe._unitOfMass == '') {
-      ResistanceAmountPipe._unitOfMass = this._configService.get('unitOfMass') ?? 'lb';
+      ResistanceAmountPipe._unitOfMass = (this._configService.get('unitOfMass') as string) ?? 'lb';
     }
 
     if (value == 1)

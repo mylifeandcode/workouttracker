@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutInfoComponent } from './workout-info.component';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { ResistanceTypePipe } from 'app/workouts/_pipes/resistance-type.pipe';
-import { TargetAreasPipe } from 'app/workouts/_pipes/target-areas.pipe';
+import { ResistanceTypePipe } from '../../../../workouts/_pipes/resistance-type.pipe';
+import { TargetAreasPipe } from '../../../../workouts/_pipes/target-areas.pipe';
 
 describe('WorkoutInfoComponent', () => {
   let component: WorkoutInfoComponent;

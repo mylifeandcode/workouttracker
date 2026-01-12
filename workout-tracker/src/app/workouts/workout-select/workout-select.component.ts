@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { PaginatedResults } from 'app/core/_models/paginated-results';
+import { PaginatedResults } from '../../core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO } from '../_models/workout-dto';
 import { WorkoutService } from '../_services/workout.service';
@@ -54,7 +54,7 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   }
 
 
-  public workoutSelectChange(event: any): void {
+  public workoutSelectChange(): void {
     if (this.selectedWorkout) {
       if (this.planningForLater)
         this._router.navigate([`workouts/plan-for-later/${this.selectedWorkout()?.id}`]);

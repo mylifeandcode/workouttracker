@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { IHasAuditDates } from 'app/shared/interfaces/i-has-audit-dates';
-import { IMightHaveAuditDates } from 'app/shared/interfaces/i-might-have-audit-dates';
-import { IHasDateRange } from 'app/shared/interfaces/i-has-date-range';
-import { IMightHaveDateRange } from 'app/shared/interfaces/i-might-have-date-range';
+import { IHasAuditDates } from '../../../shared/interfaces/i-has-audit-dates';
+import { IMightHaveAuditDates } from '../../../shared/interfaces/i-might-have-audit-dates';
+import { IHasDateRange } from '../../../shared/interfaces/i-has-date-range';
+import { IMightHaveDateRange } from '../../../shared/interfaces/i-might-have-date-range';
 
 @Injectable({
   providedIn: 'root'

@@ -1,5 +1,5 @@
 ﻿//From https://stackoverflow.com/questions/42038099/validation-on-a-list-of-checkboxes-angular-2
-import { AbstractControl, FormControl, FormGroup, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 //TODO: Refactor this file to ditch the class/static methods and just export the validator functions
 

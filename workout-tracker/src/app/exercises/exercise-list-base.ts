@@ -1,11 +1,12 @@
-import { ExerciseService } from 'app/exercises/_services/exercise.service';
+import { ExerciseService } from './_services/exercise.service';
 import { PaginatedResults } from '../core/_models/paginated-results';
 import { debounceTime, distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
-import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
+import { ExerciseDTO } from '../workouts/_models/exercise-dto';
 import { Subject } from 'rxjs';
 import { effect, signal } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export abstract class ExerciseListBase {
 
@@ -39,7 +40,7 @@ export abstract class ExerciseListBase {
         distinctUntilChanged(),
         takeUntil(this._destroy$)
       )
-      .subscribe(value => {
+      .subscribe(() => {
         this.handleFilterChange();
       });
 
@@ -49,7 +50,6 @@ export abstract class ExerciseListBase {
       .pipe(map(areas => areas.map(targetArea => targetArea.name)))
       .subscribe({
         next: (targetAreaNames: string[]) => {
-          console.log("TARGET AREAS: ", targetAreaNames);
           /*
           targetAreaNames.forEach(targetArea => {
             this.targetAreas.push(targetArea);
@@ -57,7 +57,7 @@ export abstract class ExerciseListBase {
           */
          this.targetAreas.set(targetAreaNames);
         },
-        error: (error: any) => window.alert("An error occurred getting exercises: " + error)
+        error: (error: HttpErrorResponse) => window.alert("An error occurred getting exercises: " + error.message)
       });
   }
 
@@ -74,7 +74,7 @@ export abstract class ExerciseListBase {
           this.totalRecords.set(exercises.totalCount);
           //console.log("TOTAL: ", exercises.totalCount);
         },
-        error: (error: any) => window.alert("An error occurred getting exercises: " + error)
+        error: (error: HttpErrorResponse) => window.alert("An error occurred getting exercises: " + error.message)
       });
   }
   
@@ -88,7 +88,6 @@ export abstract class ExerciseListBase {
   }
 
   public getExercisesLazy(params: NzTableQueryParams): void {
-    console.log("getExercisesLazy: ", params);
     let targetAreaContains: string[] | null = null;
 
     //These are from the table. The filters are declared external to it.

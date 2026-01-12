@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ApiBaseService } from 'app/core/_services/api-base/api-base.service';
-import { PaginatedResults } from 'app/core/_models/paginated-results';
+import { ApiBaseService } from '../../core/_services/api-base/api-base.service';
+import { PaginatedResults } from '../../core/_models/paginated-results';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
@@ -144,7 +144,7 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
       }));
   }
 
-  public deletePlanned(publicId: string): Observable<HttpResponse<any>> {
-    return this._http.delete<HttpResponse<any>>(`${this._apiRoot}/planned/${publicId}`);
+  public deletePlanned(publicId: string): Observable<HttpResponse<void>> {
+    return this._http.delete<HttpResponse<void>>(`${this._apiRoot}/planned/${publicId}`);
   }
 }

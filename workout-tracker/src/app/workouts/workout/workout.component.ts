@@ -1,9 +1,9 @@
 import { Component, OnInit, inject, input, signal, ChangeDetectionStrategy, computed } from '@angular/core';
 import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
-import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
+import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { IBandAllocation, ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
-import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
+import { ResistanceBandIndividual } from '../../shared/models/resistance-band-individual';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
@@ -11,7 +11,7 @@ import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { Router, RouterLink } from '@angular/router';
 import { IWorkoutFormExercise } from './_interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from './_interfaces/i-workout-form-exercise-set';
-import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
+import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
@@ -20,6 +20,7 @@ import { DurationComponent } from '../_shared/duration/duration.component';
 import { DatePipe } from '@angular/common';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface IWorkoutForm {
   //id: FormControl<number | null>;
@@ -237,7 +238,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
         next: (bands: ResistanceBandIndividual[]) => {
           this.allResistanceBands.set(bands);
         },
-        error: (error: any) => {
+        error: (error: HttpErrorResponse) => {
           this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
         }
       });
@@ -277,7 +278,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           this.workoutLoaded.set(true);
           this.activeAccordionTab.set(this.getExerciseInProgress());
         },
-        error: (error: any) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
+        error: (error: HttpErrorResponse) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
       });
   }
 
@@ -344,7 +345,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     return formArray;
   }
 
-  private setErrorInfo(error: any, defaultMessage: string): void {
+  private setErrorInfo(error: HttpErrorResponse, defaultMessage: string): void {
     if (error.message)
       this.errorInfo.set(error.message);
     else
@@ -418,7 +419,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           }
           this.activeAccordionTab.set(this.getExerciseInProgress());
         },
-        error: (error: any) => {
+        error: (error: HttpErrorResponse) => {
           this.setErrorInfo(error, "An error occurred saving workout information. See console for details.");
           //TODO: Fix the styling for this!
           this._messageService.error(error.message);

@@ -7,282 +7,280 @@ import { of } from 'rxjs';
 
 import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../_services/exercise.service';
-import { TargetArea } from 'app/workouts/_models/target-area';
-import { Exercise } from 'app/workouts/_models/exercise';
-import { ExerciseTargetAreaLink } from 'app/workouts/_models/exercise-target-area-link';
-import { EMPTY_GUID } from 'app/shared/shared-constants';
+import { TargetArea } from '../../workouts/_models/target-area';
+import { Exercise } from '../../workouts/_models/exercise';
+import { ExerciseTargetAreaLink } from '../../workouts/_models/exercise-target-area-link';
+import { EMPTY_GUID } from '../../shared/shared-constants';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 
 //TODO: Move initialization inside beforeEach()
 const EXERCISE: Exercise = <Exercise>{
-  id: 2,
-  publicId: 'some-guid',
-  name: 'Some Exercise',
-  description: 'This is a nice exercise. Blah, blah, blah.',
-  setup: 'Get ready',
-  movement: 'Whatever',
-  pointsToRemember: 'Be careful',
-  resistanceType: 1,
-  exerciseTargetAreaLinks: [
-    <ExerciseTargetAreaLink>{
-      exerciseId: 2,
-      targetAreaId: 1
-    }
-  ]
+    id: 2,
+    publicId: 'some-guid',
+    name: 'Some Exercise',
+    description: 'This is a nice exercise. Blah, blah, blah.',
+    setup: 'Get ready',
+    movement: 'Whatever',
+    pointsToRemember: 'Be careful',
+    resistanceType: 1,
+    exerciseTargetAreaLinks: [
+        <ExerciseTargetAreaLink>{
+            exerciseId: 2,
+            targetAreaId: 1
+        }
+    ]
 };
 
 class ExerciseServiceMock {
-  resistanceTypes: Map<number, string> = new Map<number, string>();
+    resistanceTypes: Map<number, string> = new Map<number, string>();
 
-  constructor() {
-    this.resistanceTypes.set(0, 'Free Weight');
-    this.resistanceTypes.set(1, 'Resistance Band');
-  }
+    constructor() {
+        this.resistanceTypes.set(0, 'Free Weight');
+        this.resistanceTypes.set(1, 'Resistance Band');
+    }
 
-  getTargetAreas = jasmine.createSpy('getTargetAreas')
-    .and.callFake(() => {
-      const targetAreas = new Array<TargetArea>();
-      targetAreas.push(new TargetArea(1, "Chest", 1, new Date(), null, null, false));
-      targetAreas.push(new TargetArea(2, "Biceps", 1, new Date(), null, null, false));
-      targetAreas.push(new TargetArea(3, "Triceps", 1, new Date(), null, null, false));
-      return of(targetAreas);
+    getTargetAreas = vi.fn().mockImplementation(() => {
+        const targetAreas = new Array<TargetArea>();
+        targetAreas.push(new TargetArea(1, "Chest", 1, new Date(), null, null, false));
+        targetAreas.push(new TargetArea(2, "Biceps", 1, new Date(), null, null, false));
+        targetAreas.push(new TargetArea(3, "Triceps", 1, new Date(), null, null, false));
+        return of(targetAreas);
     });
 
-  getById = jasmine.createSpy('getById').and.returnValue(of(EXERCISE));
-  getResistanceTypes =
-    jasmine.createSpy('getResistanceTypes')
-      .and.returnValue(of(this.resistanceTypes));
+    getById = vi.fn().mockReturnValue(of(EXERCISE));
+    getResistanceTypes = vi.fn().mockReturnValue(of(this.resistanceTypes));
 
-  add = jasmine.createSpy('add').and.callFake((exercise: Exercise) => of(exercise));
-  update = jasmine.createSpy('update').and.callFake((exercise: Exercise) => of(exercise));
+    add = vi.fn().mockImplementation((exercise: Exercise) => of(exercise));
+    update = vi.fn().mockImplementation((exercise: Exercise) => of(exercise));
 }
 
 @Pipe({
-  name: 'insertSpaceBeforeCapital',
-  standalone: true
+    name: 'insertSpaceBeforeCapital',
+    standalone: true
 })
 class InsertSpaceBeforeCapitalPipeMock implements PipeTransform {
-  transform(value: string): string { return "I'm just a mock!"; }
+    transform(): string {
+        return "I'm just a mock!";
+    }
 }
 
 function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
-  const activatedRouteSnapshot = new ActivatedRouteSnapshot();
-  activatedRouteSnapshot.url = [];
-  activatedRouteSnapshot.url.push(new UrlSegment('edit', {}));
-  activatedRouteSnapshot.params = { 'id': 'some-guid' };
-  return activatedRouteSnapshot;
+    const activatedRouteSnapshot = new ActivatedRouteSnapshot();
+    activatedRouteSnapshot.url = [];
+    activatedRouteSnapshot.url.push(new UrlSegment('edit', {}));
+    activatedRouteSnapshot.params = { 'id': 'some-guid' };
+    return activatedRouteSnapshot;
 }
 
 
 //TODO: FIX! This spec throws RuntimeError: NG0205: Injector has already been destroyed.
 
 describe('ExerciseEditComponent', () => {
-  let component: ExerciseEditComponent;
-  let fixture: ComponentFixture<ExerciseEditComponent>;
-  let exerciseService: ExerciseService;
+    let component: ExerciseEditComponent;
+    let fixture: ComponentFixture<ExerciseEditComponent>;
+    let exerciseService: ExerciseService;
 
-  beforeEach(async () => {
-    TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,
-        RouterModule.forRoot([]),
-        ExerciseEditComponent,
-        InsertSpaceBeforeCapitalPipeMock
-      ],
-      providers: [
-        {
-          provide: ExerciseService,
-          useClass: ExerciseServiceMock
-        },
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            params: of({
-              id: 'some-guid',
-            }),
-            snapshot: getActivatedRouteSnapshot()
-          }
-        },
-        provideZonelessChangeDetection()
-      ]
-    })
-      .overrideComponent(
-        ExerciseEditComponent, {
-        remove: { imports: [NzSpinModule, NzToolTipModule] }, //NzSwitchModule needs to remain as we use ngModel with it
-        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
-      })
-      .compileComponents();
-  });
+    beforeEach(async () => {
+        TestBed.configureTestingModule({
+            imports: [
+                ReactiveFormsModule,
+                RouterModule.forRoot([]),
+                ExerciseEditComponent,
+                InsertSpaceBeforeCapitalPipeMock
+            ],
+            providers: [
+                {
+                    provide: ExerciseService,
+                    useClass: ExerciseServiceMock
+                },
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        params: of({
+                            id: 'some-guid',
+                        }),
+                        snapshot: getActivatedRouteSnapshot()
+                    }
+                },
+                provideZonelessChangeDetection()
+            ]
+        })
+            .overrideComponent(ExerciseEditComponent, {
+            remove: { imports: [NzSpinModule, NzTooltipModule] }, //NzSwitchModule needs to remain as we use ngModel with it
+            add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        })
+            .compileComponents();
+    });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ExerciseEditComponent);
-    component = fixture.componentInstance;
-    exerciseService = TestBed.inject(ExerciseService);
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(ExerciseEditComponent);
+        component = fixture.componentInstance;
+        exerciseService = TestBed.inject(ExerciseService);
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
-  it('should initialize signals with default values', () => {
-    expect(component.loading()).toBe(false); // Will be false after ngOnInit completes
-    expect(component.infoMsg()).toBeNull();
-    expect(component.saving()).toBe(false);
-    expect(component.errorMsg()).toBeNull();
-  });
+    it('should initialize signals with default values', () => {
+        expect(component.loading()).toBe(false); // Will be false after ngOnInit completes
+        expect(component.infoMsg()).toBeNull();
+        expect(component.saving()).toBe(false);
+        expect(component.errorMsg()).toBeNull();
+    });
 
-  it('should create form', () => {
-    expect(component.exerciseForm).toBeTruthy();
-    expect(component.exerciseForm.controls.id).toBeTruthy();
-    expect(component.exerciseForm.controls.id.hasValidator(Validators.required)).toBeTrue();
-    expect(component.exerciseForm.controls.name).toBeTruthy();
-    expect(component.exerciseForm.controls.name.hasValidator(Validators.required)).toBeTrue();
-    expect(component.exerciseForm.controls.description).toBeTruthy();
+    it('should create form', () => {
+        expect(component.exerciseForm).toBeTruthy();
+        expect(component.exerciseForm.controls.id).toBeTruthy();
+        expect(component.exerciseForm.controls.id.hasValidator(Validators.required)).toBe(true);
+        expect(component.exerciseForm.controls.name).toBeTruthy();
+        expect(component.exerciseForm.controls.name.hasValidator(Validators.required)).toBe(true);
+        expect(component.exerciseForm.controls.description).toBeTruthy();
 
-    //TODO: Determine why this check fails
-    // TODO: Determine why this check fails
-    // expect(component.exerciseForm.controls.description
-    //   .hasValidator(Validators.compose([
-    //     Validators.required,
-    //     Validators.maxLength(4000)
-    //   ]))).toBeTrue();
+        //TODO: Determine why this check fails
+        // TODO: Determine why this check fails
+        // expect(component.exerciseForm.controls.description
+        //   .hasValidator(Validators.compose([
+        //     Validators.required,
+        //     Validators.maxLength(4000)
+        //   ]))).toBeTrue();
 
-    expect(component.exerciseForm.controls.resistanceType).toBeTruthy();
-    expect(component.exerciseForm.controls.oneSided).toBeTruthy();
-    expect(component.exerciseForm.controls.targetAreas).toBeTruthy();
-    expect(component.exerciseForm.controls.setup).toBeTruthy();
-    expect(component.exerciseForm.controls.movement).toBeTruthy();
-    expect(component.exerciseForm.controls.pointsToRemember).toBeTruthy();
-  });
+        expect(component.exerciseForm.controls.resistanceType).toBeTruthy();
+        expect(component.exerciseForm.controls.oneSided).toBeTruthy();
+        expect(component.exerciseForm.controls.targetAreas).toBeTruthy();
+        expect(component.exerciseForm.controls.setup).toBeTruthy();
+        expect(component.exerciseForm.controls.movement).toBeTruthy();
+        expect(component.exerciseForm.controls.pointsToRemember).toBeTruthy();
+    });
 
-  it('should have default values for form if no exercise loaded', () => {
-    //ARRANGE
-    const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.snapshot.params = { id: 0 };
+    it('should have default values for form if no exercise loaded', () => {
+        //ARRANGE
+        const activatedRoute = TestBed.inject(ActivatedRoute);
+        activatedRoute.snapshot.params = { id: 0 };
 
-    //ACT
-    component.ngOnInit(); //Because we changed ActivatedRoute
+        //ACT
+        component.ngOnInit(); //Because we changed ActivatedRoute
 
-    //ASSERT
-    expect(component.exerciseForm.controls.id.value).toEqual(0);
+        //ASSERT
+        expect(component.exerciseForm.controls.id.value).toEqual(0);
 
-  });
+    });
 
-  it('should get all target areas', () => {
-    expect(component.allTargetAreas).toBeTruthy();
-    expect(exerciseService.getTargetAreas).toHaveBeenCalledTimes(1);
-  });
+    it('should get all target areas', () => {
+        expect(component.allTargetAreas).toBeTruthy();
+        expect(exerciseService.getTargetAreas).toHaveBeenCalledTimes(1);
+    });
 
-  it('should load exercise when editing', () => {
-    //Our default route mock includes a value for exercise ID
-    expect(exerciseService.getById).toHaveBeenCalledWith('some-guid');
-    //expect(component._exercise).toEqual(EXERCISE);
-    expect(component.exerciseForm).not.toBeNull();
-    expect(component.exerciseForm).toBeTruthy();
-    expect(component.exerciseForm.controls.id.value).toEqual(EXERCISE.id);
-    expect(component.exerciseForm.controls.id.validator).toBeTruthy();
-    expect(component.exerciseForm.controls.name.value).toEqual(EXERCISE.name);
-    expect(component.exerciseForm.controls.description.value).toEqual(EXERCISE.description);
-    expect(component.exerciseForm.controls.setup.value).toEqual(EXERCISE.setup);
-    expect(component.exerciseForm.controls.movement.value).toEqual(EXERCISE.movement);
-    expect(component.exerciseForm.controls.pointsToRemember.value).toEqual(EXERCISE.pointsToRemember);
-  });
+    it('should load exercise when editing', () => {
+        //Our default route mock includes a value for exercise ID
+        expect(exerciseService.getById).toHaveBeenCalledWith('some-guid');
+        //expect(component._exercise).toEqual(EXERCISE);
+        expect(component.exerciseForm).not.toBeNull();
+        expect(component.exerciseForm).toBeTruthy();
+        expect(component.exerciseForm.controls.id.value).toEqual(EXERCISE.id);
+        expect(component.exerciseForm.controls.id.validator).toBeTruthy();
+        expect(component.exerciseForm.controls.name.value).toEqual(EXERCISE.name);
+        expect(component.exerciseForm.controls.description.value).toEqual(EXERCISE.description);
+        expect(component.exerciseForm.controls.setup.value).toEqual(EXERCISE.setup);
+        expect(component.exerciseForm.controls.movement.value).toEqual(EXERCISE.movement);
+        expect(component.exerciseForm.controls.pointsToRemember.value).toEqual(EXERCISE.pointsToRemember);
+    });
 
-  it('should get resistance types', () => {
-    expect(component.resistanceTypes).toBeTruthy();
-    expect(exerciseService.getResistanceTypes).toHaveBeenCalledTimes(1);
-  });
+    it('should get resistance types', () => {
+        expect(component.resistanceTypes).toBeTruthy();
+        expect(exerciseService.getResistanceTypes).toHaveBeenCalledTimes(1);
+    });
 
-  it('should return exercise ID via exerciseId property', () => {
-    expect(component.exerciseId).toBe(EXERCISE.id);
-  });
+    it('should return exercise ID via exerciseId property', () => {
+        expect(component.exerciseId).toBe(EXERCISE.id);
+    });
 
-  /*
-  it('should enable edit mode', () => {
-    component.editModeToggled({ checked: false });
-    expect(component.editModeEnabled).toBeTrue();
-  });
+    /*
+    it('should enable edit mode', () => {
+      component.editModeToggled({ checked: false });
+      expect(component.editModeEnabled).toBeTrue();
+    });
 
-  it('should disable edit mode', () => {
-    component.editModeToggled({ checked: true });
-    expect(component.editModeEnabled).toBeFalse();
-  });
-  */
+    it('should disable edit mode', () => {
+      component.editModeToggled({ checked: true });
+      expect(component.editModeEnabled).toBeFalse();
+    });
+    */
 
-  it('should add exercise', () => {
+    it('should add exercise', () => {
 
-    //ARRANGE
-    //Override default mock behavior
-    const exercise = new Exercise();
-    exercise.id = 0;
-    exercise.publicId = EMPTY_GUID;
-    exercise.name = 'Some New Exercise';
-    exercise.description = 'Ultra Mega Super Press';
-    exercise.setup = 'Focus!';
-    exercise.movement = 'Forward!';
-    exercise.oneSided = false;
-    exercise.involvesReps = true;
-    exercise.pointsToRemember = 'Form!';
-    exercise.resistanceType = 1;
-    exercise.exerciseTargetAreaLinks = [];
-    exercise.exerciseTargetAreaLinks.push(new ExerciseTargetAreaLink(0, 1));
+        //ARRANGE
+        //Override default mock behavior
+        const exercise = new Exercise();
+        exercise.id = 0;
+        exercise.publicId = EMPTY_GUID;
+        exercise.name = 'Some New Exercise';
+        exercise.description = 'Ultra Mega Super Press';
+        exercise.setup = 'Focus!';
+        exercise.movement = 'Forward!';
+        exercise.oneSided = false;
+        exercise.involvesReps = true;
+        exercise.pointsToRemember = 'Form!';
+        exercise.resistanceType = 1;
+        exercise.exerciseTargetAreaLinks = [];
+        exercise.exerciseTargetAreaLinks.push(new ExerciseTargetAreaLink(0, 1));
 
-    //exerciseService.getById = jasmine.createSpy('getById').and.returnValue(of(exercise));
-    exerciseService.add = jasmine.createSpy('add').and.returnValue(of(exercise));
+        //exerciseService.getById = jasmine.createSpy('getById').and.returnValue(of(exercise));
+        exerciseService.add = vi.fn().mockReturnValue(of(exercise));
 
-    const route = TestBed.inject(ActivatedRoute);
-    route.snapshot.params['id'] = 0;
+        const route = TestBed.inject(ActivatedRoute);
+        route.snapshot.params['id'] = 0;
 
-    //Need to re-init because service mock has changed
-    component.ngOnInit();
+        //Need to re-init because service mock has changed
+        component.ngOnInit();
 
-    //TODO: Revisit and confirm. The default values of the FormControls didn't seem to take in this test.
-    component.exerciseForm.controls.id.setValue(0);
-    component.exerciseForm.controls.name.setValue(exercise.name);
-    component.exerciseForm.controls.description.setValue(exercise.description);
-    component.exerciseForm.controls.setup.setValue(exercise.setup);
-    component.exerciseForm.controls.movement.setValue(exercise.movement);
-    component.exerciseForm.controls.involvesReps.setValue(exercise.involvesReps);
-    component.exerciseForm.controls.oneSided.setValue(exercise.oneSided);
-    component.exerciseForm.controls.pointsToRemember.setValue(exercise.pointsToRemember);
-    component.exerciseForm.controls.resistanceType.setValue(exercise.resistanceType);
-    component.exerciseForm.controls.targetAreas.setValue({ 'Chest': true, 'Biceps': false, 'Triceps': false });
+        //TODO: Revisit and confirm. The default values of the FormControls didn't seem to take in this test.
+        component.exerciseForm.controls.id.setValue(0);
+        component.exerciseForm.controls.name.setValue(exercise.name);
+        component.exerciseForm.controls.description.setValue(exercise.description);
+        component.exerciseForm.controls.setup.setValue(exercise.setup);
+        component.exerciseForm.controls.movement.setValue(exercise.movement);
+        component.exerciseForm.controls.involvesReps.setValue(exercise.involvesReps);
+        component.exerciseForm.controls.oneSided.setValue(exercise.oneSided);
+        component.exerciseForm.controls.pointsToRemember.setValue(exercise.pointsToRemember);
+        component.exerciseForm.controls.resistanceType.setValue(exercise.resistanceType);
+        component.exerciseForm.controls.targetAreas.setValue({ 'Chest': true, 'Biceps': false, 'Triceps': false });
 
-    //ACT
-    component.saveExercise();
+        //ACT
+        component.saveExercise();
 
-    //ASSERT
-    expect(exerciseService.add).toHaveBeenCalledWith(exercise);
-    expect(component.saving()).toBeFalse();
-    expect(component.infoMsg()).toContain("Exercise created at ");
+        //ASSERT
+        expect(exerciseService.add).toHaveBeenCalledWith(exercise);
+        expect(component.saving()).toBe(false);
+        expect(component.infoMsg()).toContain("Exercise created at ");
 
-  });
+    });
 
-  it('should update exercise', () => {
+    it('should update exercise', () => {
 
-    //console.log("component.exerciseForm: ", component.exerciseForm);
-    component.saveExercise();
-    expect(exerciseService.update).toHaveBeenCalledWith(EXERCISE);
-    expect(component.saving()).toBeFalse();
-    expect(component.infoMsg()).toContain("Exercise updated at ");
+        //console.log("component.exerciseForm: ", component.exerciseForm);
+        component.saveExercise();
+        expect(exerciseService.update).toHaveBeenCalledWith(EXERCISE);
+        expect(component.saving()).toBe(false);
+        expect(component.infoMsg()).toContain("Exercise updated at ");
 
-  });
+    });
 
-  it('should disable and clear bilateral option when one sided is chosen', () => {
-    component.exerciseForm.controls.usesBilateralResistance.setValue(true);
-    expect(component.exerciseForm.controls.usesBilateralResistance.value).toBeTrue();
-    component.exerciseForm.controls.oneSided.setValue(true);
-    expect(component.exerciseForm.controls.usesBilateralResistance.value).toBeFalse();
-    expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBeFalse();
-  });
+    it('should disable and clear bilateral option when one sided is chosen', () => {
+        component.exerciseForm.controls.usesBilateralResistance.setValue(true);
+        expect(component.exerciseForm.controls.usesBilateralResistance.value).toBe(true);
+        component.exerciseForm.controls.oneSided.setValue(true);
+        expect(component.exerciseForm.controls.usesBilateralResistance.value).toBe(false);
+        expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBe(false);
+    });
 
-  it('should enable bilateral option when one sided option is cleared', () => {
-    component.exerciseForm.controls.oneSided.setValue(true);
-    expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBeFalse();
-    component.exerciseForm.controls.oneSided.setValue(false);
-    expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBeTrue();
-  });
+    it('should enable bilateral option when one sided option is cleared', () => {
+        component.exerciseForm.controls.oneSided.setValue(true);
+        expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBe(false);
+        component.exerciseForm.controls.oneSided.setValue(false);
+        expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBe(true);
+    });
 
 });

@@ -1,10 +1,10 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 
-import { ResistanceBand } from 'app/shared/models/resistance-band';
+import { ResistanceBand } from '../../shared/models/resistance-band';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { NgStyle } from '@angular/common';
+import { CommonModule, NgStyle } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -18,7 +18,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
   styleUrls: ['./resistance-bands.component.scss'],
   imports: [
     FormsModule, NzTableModule, NgStyle,
-    NzIconModule, NzModalModule, NzButtonModule
+    NzIconModule, NzModalModule, NzButtonModule,
+    CommonModule //For ngStyle
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -37,7 +38,7 @@ export class ResistanceBandsComponent implements OnInit {
   public modalSubmitted = signal<boolean>(false);
 
   //This is used to store the original row when we go into edit mode
-  public editCache: { [key: number]: { edit: boolean; data: ResistanceBand } } = {};
+  public editCache: Record<number, { edit: boolean; data: ResistanceBand }> = {}; //TODO: Create interface for record type
 
   public ngOnInit(): void {
     this.getResistanceBandData(true);
@@ -85,7 +86,7 @@ export class ResistanceBandsComponent implements OnInit {
       nzOnOk: () =>
         this._resistanceBandService
           .delete(bandId)
-          .subscribe((response: any) => {
+          .subscribe(() => {
             this._messageService.create('success', 'Resistance band deleted.');
             this.getResistanceBandData(false);
           })
@@ -149,11 +150,11 @@ export class ResistanceBandsComponent implements OnInit {
         })
       )
       .subscribe({
-        next: (band: ResistanceBand) => {
+        next: () => {
           this._messageService.create('success', 'Resistance band added.');
           this.getResistanceBandData(false);
         },
-        error: (error: any) => {
+        error: () => {
           this._messageService.create('error', 'Failed to add resistance band.');
         }
       });
@@ -172,10 +173,10 @@ export class ResistanceBandsComponent implements OnInit {
         })
       )
       .subscribe({
-        next: (updatedBand: ResistanceBand) => {
+        next: () => {
           this._messageService.create('success', 'Resistance band updated.');
         },
-        error: (error: any) => {
+        error: () => {
           this._messageService.create('error', 'Failed to update resistance band.');
         }
       });

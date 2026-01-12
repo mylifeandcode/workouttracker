@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SoundService } from 'app/core/_services/sound/sound.service';
+import { SoundService } from '../../core/_services/sound/sound.service';
 
 import { SystemComponent } from './system.component';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -9,11 +9,11 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 
 class MockSoundService {
-  playSound = jasmine.createSpy('playSound');
+  playSound = vi.fn();
 }
 
 class MockMessageService {
-  success = jasmine.createSpy('success');
+  success = vi.fn();
 }
 
 describe('SystemComponent', () => {
@@ -23,10 +23,10 @@ describe('SystemComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        SystemComponent      
+        SystemComponent
       ],
       providers: [
-  provideZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         {
           provide: SoundService,
           useClass: MockSoundService
@@ -37,15 +37,14 @@ describe('SystemComponent', () => {
         }
       ]
     })
-    .overrideComponent( //Special thanks to these guys FTW: https://www.angulararchitects.io/en/blog/testing-angular-standalone-components/
-      SystemComponent, 
-      { 
+      .overrideComponent(//Special thanks to these guys FTW: https://www.angulararchitects.io/en/blog/testing-angular-standalone-components/
+        SystemComponent, {
         remove: {
           imports: [NzSpinModule] // Remove the original imports
         },
         add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
       })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(SystemComponent);
     component = fixture.componentInstance;

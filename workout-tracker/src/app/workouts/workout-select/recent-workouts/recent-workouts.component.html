@@ -14,11 +14,11 @@
         @for(executedWorkout of dt.data; track executedWorkout.id) {
           <tr>
             <td>{{executedWorkout.name}}</td>
-            <td><a type="button" class="button-type-link" (click)="viewExercises(executedWorkout.workoutPublicId)">View Exercises</a></td>
+            <td><button class="btn-sm btn-info" (click)="viewExercises(executedWorkout.workoutPublicId)" (keydown.enter)="viewExercises(executedWorkout.workoutPublicId)">View Exercises</button></td>
             @if (planningForLater()) {
-              <td><a type="button" class="button-type-link" (click)="planWorkout(executedWorkout.workoutPublicId)">Plan This Workout</a></td>
+              <td><button class="btn-sm btn-info" (click)="planWorkout(executedWorkout.workoutPublicId)" (keydown.enter)="planWorkout(executedWorkout.workoutPublicId)">Plan This Workout</button></td>
             } @else {
-              <td><a type="button" class="button-type-link" (click)="doWorkout(executedWorkout.workoutPublicId)">Do This Workout</a></td>
+              <td><button class="btn-sm btn-info" (click)="doWorkout(executedWorkout.workoutPublicId)" (keydown.enter)="doWorkout(executedWorkout.workoutPublicId)">Do This Workout</button></td>
             }
             <td>{{executedWorkout.startDateTime | date:'EEE, M/d/yyyy, h:mm a'}}</td>
           </tr>

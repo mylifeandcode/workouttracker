@@ -1,7 +1,7 @@
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ConfigService } from 'app/core/_services/config/config.service';
-import { SetType } from 'app/workouts/workout/_enums/set-type';
+import { ConfigService } from '../../core/_services/config/config.service';
+import { SetType } from '../../workouts/workout/_enums/set-type';
 
 import { AnalyticsService, METRICS_TYPE } from './analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
@@ -10,26 +10,25 @@ import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
 import { ExecutedWorkoutsSummary } from '../_models/executed-workouts-summary';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { DateSerializationService } from 'app/core/_services/date-serialization/date-serialization.service';
+import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
 
 
 class MockConfigService {
-  get = jasmine.createSpy('get').and.returnValue('http://localhost:5600/api/');
+  get = vi.fn().mockReturnValue('http://localhost:5600/api/');
 }
 
 class MockDateSerializationService {
-  convertDateRangeStringsToDates =
-    jasmine.createSpy('convertDateRangeStringsToDates').and.callFake((obj: ExecutedWorkoutMetrics) => {
-      if (obj.startDateTime && typeof obj.startDateTime === 'string') {
-        obj.startDateTime = new Date(obj.startDateTime);
-      }
+  convertDateRangeStringsToDates = vi.fn().mockImplementation((obj: ExecutedWorkoutMetrics) => {
+    if (obj.startDateTime && typeof obj.startDateTime === 'string') {
+      obj.startDateTime = new Date(obj.startDateTime);
+    }
 
-      if (obj.endDateTime && typeof obj.endDateTime === 'string') {
-        obj.endDateTime = new Date(obj.endDateTime);
-      }
+    if (obj.endDateTime && typeof obj.endDateTime === 'string') {
+      obj.endDateTime = new Date(obj.endDateTime);
+    }
 
-      return obj;
-    });
+    return obj;
+  });
 }
 
 describe('AnalyticsService', () => {
@@ -161,7 +160,7 @@ describe('AnalyticsService', () => {
 
   });
 
-  it('should convert date strings to Date objects when getting executed workout metrics', (done: DoneFn) => {
+  it('should convert date strings to Date objects when getting executed workout metrics', async () => {
     const httpMock = TestBed.inject(HttpTestingController);
     const mockResponse = [
       {
@@ -177,15 +176,15 @@ describe('AnalyticsService', () => {
     service.getExecutedWorkoutMetrics('some-id', 50)
       .subscribe((results: ExecutedWorkoutMetrics[]) => {
         expect(results.length).toBe(2);
-        expect(results[0].startDateTime instanceof Date).toBeTrue();
+        expect(results[0].startDateTime instanceof Date).toBe(true);
         expect(results[0].startDateTime).toEqual(new Date("2022-04-04T12:00:00Z"));
-        expect(results[0].endDateTime instanceof Date).toBeTrue();
+        expect(results[0].endDateTime instanceof Date).toBe(true);
         expect(results[0].endDateTime).toEqual(new Date("2022-04-04T13:00:00Z"));
-        expect(results[1].startDateTime instanceof Date).toBeTrue();
+        expect(results[1].startDateTime instanceof Date).toBe(true);
         expect(results[1].startDateTime).toEqual(new Date("2022-04-11T14:00:00Z"));
-        expect(results[1].endDateTime instanceof Date).toBeTrue();
+        expect(results[1].endDateTime instanceof Date).toBe(true);
         expect(results[1].endDateTime).toEqual(new Date("2022-04-11T15:30:00Z"));
-        done();
+        ;
       });
 
     const req = httpMock.expectOne("http://localhost:5600/api/analytics/workout-metrics/some-id/50");
@@ -193,7 +192,7 @@ describe('AnalyticsService', () => {
     req.flush(mockResponse);
   });
 
-  it('should convert date string to Date object when getting executed workouts summary', (done: DoneFn) => {
+  it('should convert date string to Date object when getting executed workouts summary', async () => {
     const httpMock = TestBed.inject(HttpTestingController);
     const mockResponse = {
       firstLoggedWorkoutDateTime: "2022-04-04T12:00:00Z"
@@ -201,9 +200,9 @@ describe('AnalyticsService', () => {
 
     service.getExecutedWorkoutsSummary()
       .subscribe((results: ExecutedWorkoutsSummary) => {
-        expect(results.firstLoggedWorkoutDateTime instanceof Date).toBeTrue();
+        expect(results.firstLoggedWorkoutDateTime instanceof Date).toBe(true);
         expect(results.firstLoggedWorkoutDateTime).toEqual(new Date("2022-04-04T12:00:00Z"));
-        done();
+        ;
       });
 
     const req = httpMock.expectOne("http://localhost:5600/api/analytics/executed-workouts");

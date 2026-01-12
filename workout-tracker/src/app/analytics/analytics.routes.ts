@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { UserSelectedGuard } from 'app/core/_guards/user-selected/user-selected.guard';
+import { UserSelectedGuard } from '../core/_guards/user-selected/user-selected.guard';
 
 export const analyticsroutes: Routes = [
     {

@@ -13,7 +13,8 @@ export class LocalStorageService {
     this._localStorage = window.localStorage;
   }
 
-  public get(key: string): any {
+  //TODO: Revisit, make generic
+  public get(key: string): string |number | boolean | object | null {
     if (this.isLocalStorageSupported) {
       const localStorageItem: string | null = this._localStorage.getItem(key);
       if (localStorageItem)
@@ -25,7 +26,7 @@ export class LocalStorageService {
     return null;
   }
 
-  public set(key: string, value: any): boolean {
+  public set(key: string, value: string |number | boolean | object): boolean {
     if (this.isLocalStorageSupported) {
       this._localStorage.setItem(key, JSON.stringify(value));
 

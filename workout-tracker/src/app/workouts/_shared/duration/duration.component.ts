@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges, inject, input } from '@angular/core';
+import { Component, EventEmitter, OnChanges, Output, inject, input } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectOnFocusDirective } from '../../../shared/directives/select-on-focus.directive';
 
@@ -31,7 +31,7 @@ private _formBuilder = inject(FormBuilder);
     this.form = this.setupFormGroup();
   }
 
-  public ngOnChanges(changes: SimpleChanges): void {
+  public ngOnChanges(): void {
     this.setFormControlsFromDuration();
   }
 

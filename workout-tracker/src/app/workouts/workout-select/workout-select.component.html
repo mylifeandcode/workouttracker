@@ -6,8 +6,8 @@
   @if (!loading() && workouts().length) {
     <div class="row select-row">
       <div class="col-12">
-        <label>Select a Workout</label>&nbsp;
-        <select [(ngModel)]="selectedWorkout" (change)="workoutSelectChange($event)">
+        <label for="selectedWorkout">Select a Workout</label>&nbsp;
+        <select id="selectedWorkout" [(ngModel)]="selectedWorkout" (change)="workoutSelectChange()">
           <option [ngValue]="null" disabled [selected]="!selectedWorkout()">Please Select</option>
           @for(workout of workouts(); track workout.id) {
             <option [ngValue]="workout">

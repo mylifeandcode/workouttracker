@@ -1,4 +1,4 @@
-import { Entity } from 'app/shared/models/entity';
+import { Entity } from '../../shared/models/entity';
 import { Exercise } from './exercise';
 
 export class ExerciseInWorkout extends Entity {

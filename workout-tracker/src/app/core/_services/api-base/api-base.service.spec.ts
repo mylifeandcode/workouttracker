@@ -1,19 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Entity } from 'app/shared/models/entity';
+import { Entity } from '../../../shared/models/entity';
 import { ApiBaseService } from './api-base.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpResponse, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { Injectable, provideZonelessChangeDetection } from '@angular/core';
 import { ConfigService } from '../config/config.service';
 
 const API_ROOT = "https://someUrl/api/";
 
 class MockConfigService {
-  get = jasmine.createSpy('get').and.returnValue(API_ROOT);
+  get = vi.fn().mockReturnValue(API_ROOT);
 }
 
 class Widget extends Entity {
-
 }
 
 //Because ApiBaseService<T> is (and should be) abstract, we'll create a class local
@@ -56,7 +55,7 @@ describe('ApiBaseService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should get all', (done: DoneFn) => {
+  it('should get all', async () => {
 
     //ARRANGE
     const widgets = new Array<Widget>();
@@ -64,8 +63,8 @@ describe('ApiBaseService', () => {
     //ACT
     const result = service.all$;
     result.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets, fail);
-      done();
+      expect(widgetResults).toBe(widgets);
+      ;
     });
 
     //ASSERT
@@ -73,10 +72,9 @@ describe('ApiBaseService', () => {
     expect(req.request.method).toEqual('GET');
     //Respond with the mock results
     req.flush(widgets);
-
   });
 
-  it('should get by ID', (done: DoneFn) => {
+  it('should get by ID', async () => {
 
     //ARRANGE
     const widget = new Widget();
@@ -85,8 +83,7 @@ describe('ApiBaseService', () => {
     //ACT
     const result = service.getById(WIDGET_ID);
     result.subscribe((widgetResult: Widget) => {
-      expect(widgetResult).toBe(widget, fail);
-      done();
+      expect(widgetResult).toBe(widget);
     });
 
     //ASSERT
@@ -94,10 +91,9 @@ describe('ApiBaseService', () => {
     expect(req.request.method).toEqual('GET');
     //Respond with the mock results
     req.flush(widget);
-
   });
 
-  it('should add', (done: DoneFn) => {
+  it('should add', async () => {
 
     //ARRANGE
     const widget = new Widget();
@@ -105,8 +101,7 @@ describe('ApiBaseService', () => {
     //ACT
     const result = service.add(widget);
     result.subscribe((widgetResult: Widget) => {
-      expect(widgetResult).toBe(widget, fail);
-      done();
+      expect(widgetResult).toBe(widget);
     });
 
     //ASSERT
@@ -114,10 +109,9 @@ describe('ApiBaseService', () => {
     expect(req.request.method).toEqual('POST');
     //Respond with the mock results
     req.flush(widget);
-
   });
 
-  it('should update', (done: DoneFn) => {
+  it('should update', async () => {
 
     //ARRANGE
     const widget = new Widget();
@@ -127,8 +121,7 @@ describe('ApiBaseService', () => {
     //ACT
     const result = service.update(widget);
     result.subscribe((widgetResult: Widget) => {
-      expect(widgetResult).toBe(widget, fail);
-      done();
+      expect(widgetResult).toBe(widget);
     });
 
     //ASSERT
@@ -136,19 +129,17 @@ describe('ApiBaseService', () => {
     expect(req.request.method).toEqual('PUT');
     //Respond with the mock results
     req.flush(widget);
-
   });
 
-  it('should delete', (done: DoneFn) => {
+  it('should delete', async () => {
 
     //ARRANGE
     const WIDGET_ID: string = '1';
 
     //ACT
     const result = service.deleteById(WIDGET_ID);
-    result.subscribe((serviceEntity: any) => { //TODO: Re-evaluate return type to use here!
-      expect(serviceEntity).toBeTruthy(fail);
-      done();
+    result.subscribe((response: HttpResponse<void>) => {
+      expect(response).toBeTruthy();
     });
 
     //ASSERT
@@ -156,10 +147,9 @@ describe('ApiBaseService', () => {
     expect(req.request.method).toEqual('DELETE');
     //Respond with the mock results
     req.flush(new Object());
-
   });
 
-  it('should cache data', (done: DoneFn) => {
+  it('should cache data', () => {
 
     //ARRANGE
     const widgets = new Array<Widget>();
@@ -167,18 +157,17 @@ describe('ApiBaseService', () => {
     //ACT
     const result1 = service.all$;
     result1.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets, fail);
+      expect(widgetResults).toBe(widgets);
     });
 
     const result2 = service.all$;
     result2.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets, fail);
+      expect(widgetResults).toBe(widgets);
     });
 
     const result3 = service.all$;
     result3.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets, fail);
-      done();
+      expect(widgetResults).toBe(widgets);
     });
 
     //ASSERT
@@ -186,10 +175,9 @@ describe('ApiBaseService', () => {
     expect(req.request.method).toEqual('GET');
     //Respond with the mock results
     req.flush(widgets);
-
   });
 
-  it('should clear cached data', (done: DoneFn) => {
+  it('should clear cached data', () => {
 
     //ARRANGE
     const widgets = new Array<Widget>();
@@ -197,20 +185,19 @@ describe('ApiBaseService', () => {
     //ACT
     const result1 = service.all$;
     result1.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets, fail);
+      expect(widgetResults).toBe(widgets);
     });
 
     const result2 = service.all$;
     result2.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets, fail);
+      expect(widgetResults).toBe(widgets);
     });
 
     service.invalidateCache();
 
     const result3 = service.all$;
     result3.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets, fail);
-      done();
+      expect(widgetResults).toBe(widgets);
     });
 
     //ASSERT
@@ -221,7 +208,6 @@ describe('ApiBaseService', () => {
       //Respond with the mock results
       request.flush(widgets);
     });
-
   });
 
 });

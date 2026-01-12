@@ -2,11 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Workout } from 'app/workouts/_models/workout';
+import { Workout } from '../../workouts/_models/workout';
 import { PaginatedResults } from '../../core/_models/paginated-results';
-import { WorkoutDTO } from 'app/workouts/_models/workout-dto';
+import { WorkoutDTO } from '../../workouts/_models/workout-dto';
 import { WorkoutPlan } from '../_models/workout-plan';
-import { ConfigService } from 'app/core/_services/config/config.service';
+import { ConfigService } from '../../core/_services/config/config.service';
 
 const HTTP_OPTIONS = {
   headers: new HttpHeaders({
@@ -79,11 +79,11 @@ export class WorkoutService {
     return this._http.post<string>(`${this.API_ROOT}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`, plan);
   }
 
-  public retire(publicId: string): Observable<HttpResponse<any>> {
-    return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${publicId}/retire`, null);
+  public retire(publicId: string): Observable<HttpResponse<void>> {
+    return this._http.put<HttpResponse<void>>(`${this.API_ROOT}/${publicId}/retire`, null);
   }
 
-  public reactivate(publicId: string): Observable<HttpResponse<any>> {
-    return this._http.put<HttpResponse<any>>(`${this.API_ROOT}/${publicId}/reactivate`, null);
+  public reactivate(publicId: string): Observable<HttpResponse<void>> {
+    return this._http.put<HttpResponse<void>>(`${this.API_ROOT}/${publicId}/reactivate`, null);
   }  
 }

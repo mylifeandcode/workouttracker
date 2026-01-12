@@ -1,18 +1,18 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 
 import { UserService } from './user.service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { User } from 'app/core/_models/user';
+import { User } from '../../../core/_models/user';
 import { ConfigService } from '../config/config.service';
 import { UserOverview } from '../../_models/user-overview';
 import { UserNewDTO } from '../../_models/user-new-dto';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpResponse, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 const TEST_USER_ID: string = "1";
 
 class ConfigServiceMock {
-  get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
+  get = vi.fn().mockReturnValue("http://localhost:5600/api/");
 }
 
 //TODO: Refactor this spec to use service values initialized before each test rather than injection everywhere
@@ -50,7 +50,7 @@ describe('UserService', () => {
 
     service.all$.subscribe({
       next: (users: Array<User>) => expect(users).toEqual(expectedResults),
-      error: fail
+      error: () => assert.fail()
     });
 
     const req = http.expectOne("http://localhost:5600/api/users");
@@ -68,7 +68,7 @@ describe('UserService', () => {
 
     service.getById(userId).subscribe({
       next: (user: User) => expect(user).toEqual(expectedResults),
-      error: fail
+      error: () => assert.fail()
     });
 
     const req = http.expectOne(`http://localhost:5600/api/users/${TEST_USER_ID}`);
@@ -86,7 +86,7 @@ describe('UserService', () => {
     service.addNew(userNew)
       .subscribe({
         next: (result: User) => expect(result).toEqual(userSaved),
-        error: fail
+        error: () => assert.fail()
       });
 
     const request = http.expectOne('http://localhost:5600/api/users/new');
@@ -105,7 +105,7 @@ describe('UserService', () => {
     service.update(user)
       .subscribe({
         next: (result: User) => expect(result).toEqual(user),
-        error: fail
+        error: () => assert.fail()
       });
 
     const request = http.expectOne(`http://localhost:5600/api/users/${user.id}`);
@@ -122,8 +122,8 @@ describe('UserService', () => {
 
     service.deleteById('7')
       .subscribe({
-        next: (result: any) => expect(result).toBeNull(),
-        error: fail
+        next: (result: HttpResponse<void>) => expect(result).toBeNull(),
+        error: () => assert.fail()
       });
 
     const request = http.expectOne(`http://localhost:5600/api/users/${userId}`);
@@ -152,7 +152,7 @@ describe('UserService', () => {
 
   });
 
-  it('should convert lastWorkoutDateTime to Date object when getting user overview', (done: DoneFn) => {
+  it('should convert lastWorkoutDateTime to Date object when getting user overview', async () => {
 
     const userOverview = { lastWorkoutDateTime: "2024-01-01T12:00:00Z" };
 
@@ -160,7 +160,7 @@ describe('UserService', () => {
       expect(overview).toBeTruthy();
       expect(overview.lastWorkoutDateTime).toBeInstanceOf(Date);
       expect(overview.lastWorkoutDateTime?.toISOString()).toBe("2024-01-01T12:00:00.000Z");
-      done();
+      ;
     });
     const request = http.expectOne(`http://localhost:5600/api/users/overview`);
     expect(request.request.method).toEqual('GET');

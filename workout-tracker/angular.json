@@ -16,8 +16,7 @@
             "outputPath": "dist/workout-tracker",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["src/polyfills.ts"],
-            "tsConfig": "src/tsconfig.app.json",
+            "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
               "src/assets",
@@ -106,22 +105,8 @@
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
-          "options": {
-            "main": "src/test.ts",
-            "polyfills": ["src/polyfills.ts"],
-            "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
-            "styles": [
-              "src/styles.scss"
-            ],
-            "scripts": [],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ], 
-            "codeCoverage": true
-          }
+          "builder": "@angular/build:unit-test",
+          "options": {"runnerConfig": "src/vitest.config.ts"}
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",

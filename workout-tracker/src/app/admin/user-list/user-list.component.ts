@@ -4,6 +4,7 @@ import { User } from '../../core/_models/user';
 import { Observable, finalize } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'wt-user-list',
@@ -40,7 +41,7 @@ export class UserListComponent {
           //const index = _.findIndex(this.users, (user: User) => user.id == userId);
           //this.users?.splice(index, 1);
         },
-        error: (error: any) => this.errorMsg.set(error)
+        error: (error: HttpErrorResponse) => this.errorMsg.set(error.message)
       });
   }
 

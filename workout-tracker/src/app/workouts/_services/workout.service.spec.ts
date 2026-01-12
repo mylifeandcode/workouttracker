@@ -3,10 +3,10 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { WorkoutService } from './workout.service';
-import { Workout } from 'app/workouts/_models/workout';
-import { ConfigService } from 'app/core/_services/config/config.service';
+import { Workout } from '../_models/workout';
+import { ConfigService } from '../../core/_services/config/config.service';
 import { WorkoutPlan } from '../_models/workout-plan';
-import { PaginatedResults } from 'app/core/_models/paginated-results';
+import { PaginatedResults } from '../../core/_models/paginated-results';
 import { WorkoutDTO } from '../_models/workout-dto';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
@@ -14,7 +14,7 @@ const TEST_WORKOUT_ID = "some-fake-guid";
 const API_ROOT_URL = "http://localhost:5600/api/workouts";
 
 class MockConfigService {
-  get = jasmine.createSpy('get').and.returnValue("http://localhost:5600/api/");
+  get = vi.fn().mockReturnValue("http://localhost:5600/api/");
 }
 
 let service: WorkoutService;
@@ -42,7 +42,7 @@ describe('WorkoutService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should get a filtered subset for workouts', (done: DoneFn) => {
+  it('should get a filtered subset for workouts', async () => {
     const expectedResults = new PaginatedResults<WorkoutDTO>();
     expectedResults.results = new Array<WorkoutDTO>(2);
     expectedResults.results.push(new WorkoutDTO());
@@ -52,9 +52,9 @@ describe('WorkoutService', () => {
     service.getFilteredSubset(10, 25, false).subscribe({
       next: (response: PaginatedResults<WorkoutDTO>) => {
         expect(response).toEqual(expectedResults);
-        done();
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}?firstRecord=10&pageSize=25&activeOnly=false&sortAscending=true`);
@@ -64,7 +64,7 @@ describe('WorkoutService', () => {
     req.flush(expectedResults);
   });
 
-  it('should get workout by public ID', (done: DoneFn) => {
+  it('should get workout by public ID', async () => {
     const expectedResults = new Workout();
     const workoutId: string = TEST_WORKOUT_ID;
     expectedResults.publicId = workoutId;
@@ -72,9 +72,9 @@ describe('WorkoutService', () => {
     service.getById(workoutId).subscribe({
       next: (workout: Workout) => {
         expect(workout).toEqual(expectedResults);
-        done();
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}/${TEST_WORKOUT_ID}`);
@@ -82,10 +82,9 @@ describe('WorkoutService', () => {
 
     // Respond with the mock results
     req.flush(expectedResults);
-
   });
 
-  it('should add new workout', (done: DoneFn) => {
+  it('should add new workout', async () => {
 
     //ARRANGE
     const workout = new Workout();
@@ -95,9 +94,10 @@ describe('WorkoutService', () => {
       .subscribe({
         next: (addedWorkout: Workout) => {
           expect(addedWorkout).toEqual(workout); //ASSERT
-          done();
+          ;
         },
-        error: fail
+        error: () => { throw new Error('Test failed'); }
+
       });
 
     //ASSERT
@@ -107,10 +107,9 @@ describe('WorkoutService', () => {
 
     // Respond with the mock results
     req.flush(workout);
-
   });
 
-  it('should update existing workout', (done: DoneFn) => {
+  it('should update existing workout', async () => {
 
     //ARRANGE
     const workout = new Workout();
@@ -121,9 +120,10 @@ describe('WorkoutService', () => {
       .subscribe({
         next: (updatedWorkout: Workout) => {
           expect(updatedWorkout).toEqual(workout); //ASSERT
-          done();
+          ;
         },
-        error: fail
+        error: () => { throw new Error('Test failed'); }
+
       });
 
 
@@ -134,10 +134,9 @@ describe('WorkoutService', () => {
 
     // Respond with the mock results
     req.flush(workout);
-
   });
 
-  it('should submit a workout plan', (done: DoneFn) => {
+  it('should submit a workout plan', async () => {
 
     //ARRANGE
     const workoutPlan = new WorkoutPlan();
@@ -148,9 +147,10 @@ describe('WorkoutService', () => {
       .subscribe({
         next: (executedWorkoutPublicId: string) => {
           expect(executedWorkoutPublicId).toEqual(expectedNewExecutedWorkoutPublicId); //ASSERT
-          done();
+          ;
         },
-        error: fail
+        error: () => { throw new Error('Test failed'); }
+
       });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}/plan`);
@@ -159,10 +159,9 @@ describe('WorkoutService', () => {
 
     // Respond with the mock results
     req.flush(expectedNewExecutedWorkoutPublicId);
-
   });
 
-  it('should submit a workout plan for later', (done: DoneFn) => {
+  it('should submit a workout plan for later', async () => {
 
     //ARRANGE
     const workoutPlan = new WorkoutPlan();
@@ -175,9 +174,10 @@ describe('WorkoutService', () => {
       .subscribe({
         next: (executedWorkoutPublicId: string) => {
           expect(executedWorkoutPublicId).toEqual(expectedNewExecutedWorkoutPublicId); //ASSERT
-          done();
+          ;
         },
-        error: fail
+        error: () => { throw new Error('Test failed'); }
+
       });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}/plan-for-later`);
@@ -186,10 +186,9 @@ describe('WorkoutService', () => {
 
     // Respond with the mock results
     req.flush(expectedNewExecutedWorkoutPublicId);
-
   });
 
-  it('should submit a workout plan for a past workout', (done: DoneFn) => {
+  it('should submit a workout plan for a past workout', async () => {
 
     //ARRANGE
     const workoutPlan = new WorkoutPlan();
@@ -204,9 +203,9 @@ describe('WorkoutService', () => {
       .subscribe({
         next: (executedWorkoutId: string) => {
           expect(executedWorkoutId).toEqual(expectedNewExecutedWorkoutPublicId); //ASSERT
-          done();
+          ;
         },
-        error: fail
+        error: () => { throw new Error('Test failed'); }
       });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}/plan-for-past/${startDateTime.toISOString()}/${endDateTime.toISOString()}`);
@@ -215,10 +214,9 @@ describe('WorkoutService', () => {
 
     // Respond with the mock results
     req.flush(expectedNewExecutedWorkoutPublicId);
-
   });
 
-  it('should get new workout plan', (done: DoneFn) => {
+  it('should get new workout plan', async () => {
     const workoutPublicId: string = "some-guid-123";
     const expectedPlan = new WorkoutPlan();
     expectedPlan.workoutId = workoutPublicId;
@@ -227,9 +225,9 @@ describe('WorkoutService', () => {
     service.getNewPlan(workoutPublicId).subscribe({
       next: (plan: WorkoutPlan) => {
         expect(plan).toEqual(expectedPlan);
-        done();
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPublicId}/plan`);
@@ -238,7 +236,7 @@ describe('WorkoutService', () => {
     req.flush(expectedPlan);
   });
 
-  it('should convert date string to date object when getting new workout plan', (done: DoneFn) => {
+  it('should convert date string to date object when getting new workout plan', async () => {
     const workoutPublicId: string = "some-guid-123";
     const expectedResults = {
       submittedDateTime: "2024-01-22T14:30:00.000Z"
@@ -247,15 +245,15 @@ describe('WorkoutService', () => {
     service.getNewPlan(workoutPublicId).subscribe({
       next: (plan: WorkoutPlan) => {
         expect(plan.submittedDateTime).toEqual(new Date(expectedResults.submittedDateTime));
-        done();
+        ;
       },
-      error: fail
+      error: () => { throw new Error('Test failed'); }
     });
 
     const req = httpMock.expectOne(`${API_ROOT_URL}/${workoutPublicId}/plan`);
     expect(req.request.method).toEqual('GET');
 
-    req.flush(expectedResults); 
+    req.flush(expectedResults);
   });
 });
 

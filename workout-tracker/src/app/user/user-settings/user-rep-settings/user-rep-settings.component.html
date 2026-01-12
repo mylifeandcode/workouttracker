@@ -1,13 +1,15 @@
 <div [formGroup]="repSettingsFormGroup()" class="row headroom">
     <div class="col-2">
-      <label>{{repSettingsFormGroup().controls.setType.value == 0 ? "Repetition" : "Timed"}} Sets</label> 
+      <span class="faux-label">{{repSettingsFormGroup().controls.setType.value == 0 ? "Repetition" : "Timed"}} Sets</span>
     </div>
     <div class="col-1">
         @if (repSettingsFormGroup().controls.setType.value == setTypeEnum.Timed) {
-          <label for="duration">Duration</label>
-          <input id="duration" wtSelectOnFocus formControlName="duration" type="number" />
+          <label>
+            Duration
+            <input id="duration" wtSelectOnFocus formControlName="duration" type="number" />
+          </label>
         } @else {
-          <label>Duration</label>
+          <span class="faux-label">Duration</span>
           <span>N/A</span>
         }
       

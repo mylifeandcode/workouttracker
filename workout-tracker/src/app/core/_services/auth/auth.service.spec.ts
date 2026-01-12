@@ -10,28 +10,30 @@ import { RouterModule } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 class ConfigServiceMock {
-  get = jasmine.createSpy('get').and.callFake((configKey: string) => {
-    if (configKey == "apiRoot") return "http://localhost:5600/";
-    if (configKey == "loginWithUserSelect") return true;
+  get = vi.fn().mockImplementation((configKey: string) => {
+    if (configKey == "apiRoot")
+      return "http://localhost:5600/";
+    if (configKey == "loginWithUserSelect")
+      return true;
 
     return "";
   });
 }
 
 class LocalStorageServiceMock {
-  set = jasmine.createSpy('set');
-  remove = jasmine.createSpy('remove');
-  get = jasmine.createSpy('get').and.returnValue(TEST_ACCESS_TOKEN);
+  set = vi.fn();
+  remove = vi.fn();
+  get = vi.fn().mockReturnValue(TEST_ACCESS_TOKEN);
 }
 
 @Component({
-  standalone: false
+  template: ''
 })
-class FakeComponent { };
+class FakeComponent {
+}
 
 //This has to be a real token because the service decodes it
-const TEST_ACCESS_TOKEN: string =
-  'eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.' +
+const TEST_ACCESS_TOKEN: string = 'eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.' +
   'eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWxhbiIsImh0dHA6Ly9z' +
   'Y2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmF0b3IiLCJVc2VySUQi' +
   'OiIyIiwiZXhwIjoxNjU4MDE2NTY0LCJpc3MiOiJ3d3cud29ya291dHRyYWNrZXIubmV0IiwiYXVkIjoid3d3LndvcmtvdXR0cmFja2Vy' +
@@ -40,14 +42,13 @@ const TEST_ACCESS_TOKEN: string =
 describe('AuthService', () => {
   let service: AuthService;
   let configService: ConfigService;
-  let localStorageService: LocalStorageService;
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterModule.forRoot([{ path: 'user-select', component: FakeComponent }])],
       providers: [
-  provideZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         {
           provide: ConfigService,
           useClass: ConfigServiceMock
@@ -62,7 +63,6 @@ describe('AuthService', () => {
     });
     service = TestBed.inject(AuthService);
     configService = TestBed.inject(ConfigService);
-    localStorageService = TestBed.inject(LocalStorageService);
     httpTestingController = TestBed.inject(HttpTestingController);
     service.init(); //Required because APP_INITIALIZER does this due to a race condition
   });
@@ -94,14 +94,14 @@ describe('AuthService', () => {
     /*
     const usernameSubscription = service.currentUserName
       .subscribe((loggedInUserName: string | null) => {
-        if(service.isUserLoggedIn) 
-          expect(loggedInUserName).toBe(username); 
+        if(service.isUserLoggedIn)
+          expect(loggedInUserName).toBe(username);
       });
     */
 
     //ACT
     service.logIn(username, password).subscribe((result: boolean) => {
-      expect(result).toBeTrue();
+      expect(result).toBe(true);
     });
 
     //ASSERT
@@ -117,7 +117,7 @@ describe('AuthService', () => {
   it('should return value of false from login when error occurs logging user in', () => {
 
     service.logIn("username", "aintarealpassword123$#@!").subscribe((result: boolean) => {
-      expect(result).toBeFalse();
+      expect(result).toBe(false);
     });
 
     //Respond with the mock results
@@ -141,7 +141,7 @@ describe('AuthService', () => {
     const usernameSubscription = service.currentUserName
       .subscribe((loggedInUserName: string | null) => {
         if(!service.isUserLoggedIn) {
-          expect(loggedInUserName).toBe(null); 
+          expect(loggedInUserName).toBe(null);
           expect(service.token).toBeNull();
         }
       });
@@ -183,7 +183,7 @@ describe('AuthService', () => {
 
     //Respond with the mock results
     testRequest.flush(TEST_ACCESS_TOKEN);
-    expect(service.isUserAdmin).toBeTrue();
+    expect(service.isUserAdmin).toBe(true);
 
   });
 
@@ -194,9 +194,11 @@ describe('AuthService', () => {
   it('should return login route from loginRoute property when applicable', () => {
 
     //Override default mock behavior and re-init
-    configService.get = jasmine.createSpy('get').and.callFake((configKey: string) => {
-      if (configKey == "apiRoot") return "http://localhost:5600/";
-      if (configKey == "loginWithUserSelect") return false;
+    configService.get = vi.fn().mockImplementation((configKey: string) => {
+      if (configKey == "apiRoot")
+        return "http://localhost:5600/";
+      if (configKey == "loginWithUserSelect")
+        return false;
 
       return "";
     });

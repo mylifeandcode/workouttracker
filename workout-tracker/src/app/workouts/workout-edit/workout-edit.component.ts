@@ -2,18 +2,19 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } fro
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
-import { Workout } from 'app/workouts/_models/workout';
-import { ExerciseDTO } from 'app/workouts/_models/exercise-dto';
+import { Workout } from '../_models/workout';
+import { ExerciseDTO } from '../_models/exercise-dto';
 import { ExerciseInWorkout } from '../_models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
-import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
+import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgClass } from '@angular/common';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
-import { EMPTY_GUID } from 'app/shared/shared-constants';
+import { EMPTY_GUID } from '../../shared/shared-constants';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface IExerciseInWorkout {
   id: FormControl<number>;
@@ -181,8 +182,8 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
           this.updateFormWithWorkoutValues(workout);
           this._workout = workout;
         },
-        error: (error: any) => {
-          this.errorMsg = error.message || 'An error occurred loading the workout.';
+        error: (error: HttpErrorResponse) => {
+          this.errorMsg.set(error.message || 'An error occurred loading the workout.');
           console.error('Error loading workout:', error);
         }
       });
@@ -227,8 +228,8 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
           //this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
           this._router.navigate([`workouts/edit/${addedWorkout.publicId}`]);
         },
-        error: (error: any) => {
-          this.errorMsg = error.message;
+        error: (error: HttpErrorResponse) => {
+          this.errorMsg.set(error.message);
           this.infoMsg.set(null);
         }
       });
@@ -242,12 +243,11 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
         this.workoutForm.markAsPristine();
       }))
       .subscribe({
-        next: (updatedWorkout: Workout) => {
+        next: () => {
           this.saving.set(false);
           this.infoMsg.set("Workout updated at " + new Date().toLocaleTimeString());
         },
-        error: (error: any) => {
-          //console.log("ERROR: ", error);
+        error: (error: HttpErrorResponse) => {
           this.errorMsg.set(error.message);
           this.infoMsg.set(null);
         }

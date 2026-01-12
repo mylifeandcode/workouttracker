@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { UserOverview } from 'app/core/_models/user-overview';
+import { UserOverview } from '../../../core/_models/user-overview';
 import { DatePipe } from '@angular/common';
 
 @Component({

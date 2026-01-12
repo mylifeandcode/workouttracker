@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ExerciseService } from 'app/exercises/_services/exercise.service';
+import { ExerciseService } from '../_services/exercise.service';
 import { ExerciseListBase } from '../exercise-list-base';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { RouterLink } from '@angular/router';
@@ -20,7 +20,7 @@ export class ExerciseListComponent extends ExerciseListBase {
     super(_exerciseSvc);
   }
 
-  public targetAreasFilterChange(selectedTargetAreas: string[]): void {
+  public override targetAreasFilterChange(selectedTargetAreas: string[]): void {
     this.getExercises(0, null, selectedTargetAreas); //TODO: Add code to take name filter into account
   }
 }

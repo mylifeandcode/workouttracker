@@ -1,74 +1,75 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavComponent } from './nav.component';
 import { Component, provideZonelessChangeDetection, signal, WritableSignal } from '@angular/core';
-import { AuthService } from 'app/core/_services/auth/auth.service';
+import { AuthService } from '../../core/_services/auth/auth.service';
 import { RouterModule } from '@angular/router';
 
 const username = 'someuser';
 
 class AuthServiceMock {
 
-  currentUserName: WritableSignal<string | null> = signal('someuser');
+    currentUserName: WritableSignal<string | null> = signal('someuser');
 
-  logOff = jasmine.createSpy('logOff');
-
+    logOff = vi.fn();
 }
 
 @Component({
-  standalone: false
+  template: ''
 })
-class FakeComponent { };
+class FakeComponent {
+}
+;
 
 describe('NavComponent', () => {
-  let component: NavComponent;
-  let fixture: ComponentFixture<NavComponent>;
+    let component: NavComponent;
+    let fixture: ComponentFixture<NavComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
-        NavComponent
-      ],
-      providers: [
-        provideZonelessChangeDetection(),
-        {
-          provide: AuthService,
-          useClass: AuthServiceMock
-        }
-      ]
-    })
-      .compileComponents();
-  });
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [
+                RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
+                NavComponent
+            ],
+            providers: [
+                provideZonelessChangeDetection(),
+                {
+                    provide: AuthService,
+                    useClass: AuthServiceMock
+                }
+            ]
+        })
+            .compileComponents();
+    });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(NavComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(NavComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
-  it('should determine if user is logged in', () => {
+    it('should determine if user is logged in', () => {
 
-    //ARRANGE
-    const authService = TestBed.inject(AuthService);
+        //ARRANGE
+        //Nothing else to do here
 
-    //ACT
-    //Nothing else to do here
+        //ACT
+        //Nothing else to do here
 
-    //ASSERT
-    expect(component.userIsLoggedIn).toBeTruthy();
+        //ASSERT
+        expect(component.userIsLoggedIn).toBeTruthy();
 
-  });
+    });
 
-  //TODO: Fix!
-  xit('should get current user info', () => {
+    //TODO: Fix!
+    it.skip('should get current user info', () => {
 
-    //ASSERT
-    expect(component.userName).toBe(username);
+        //ASSERT
+        expect(component.userName).toBe(username);
 
-  });
+    });
 
 });

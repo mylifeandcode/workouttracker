@@ -1,9 +1,8 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { User } from 'app/core/_models/user';
-import { UserNewDTO } from 'app/core/_models/user-new-dto';
-import { UserService } from 'app/core/_services/user/user.service';
+import { UserNewDTO } from '../../core/_models/user-new-dto';
+import { UserService } from '../../core/_services/user/user.service';
 import { finalize } from 'rxjs/operators';
 
 interface INewUserForm {
@@ -43,7 +42,7 @@ export class UserSelectNewComponent {
       .pipe(
         finalize(() => { this.addingUser.set(false); })
       )
-      .subscribe((addedUser: User) => {
+      .subscribe(() => {
         this._router.navigate(['/user-select']);
       });
   }

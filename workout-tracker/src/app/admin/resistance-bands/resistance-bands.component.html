@@ -60,7 +60,7 @@
   <ng-container *nzModalContent>
     <div>
       <label for="color">Color</label>
-      <input type="text" id="color" [(ngModel)]="newResistanceBand.color" required autofocus />
+      <input type="text" id="color" [(ngModel)]="newResistanceBand.color" required />
       @if (!newResistanceBand.color) {
         <small class="error-text">Color is required.</small>
       }

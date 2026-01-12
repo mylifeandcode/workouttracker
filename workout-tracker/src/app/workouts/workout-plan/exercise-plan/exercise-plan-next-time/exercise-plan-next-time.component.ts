@@ -24,7 +24,8 @@ export class ExercisePlanNextTimeComponent {
   @Output()
   resistanceBandsModalRequested: EventEmitter<FormGroup<IExercisePlanFormGroup>>;
 
-  public resistanceTypeEnum: typeof ResistanceType = ResistanceType; //Needed for template to reference enum
+  //public resistanceTypeEnum: typeof ResistanceType = ResistanceType; //Needed for template to reference enum
+  readonly resistanceTypeEnum = ResistanceType; // Changed to readonly and direct assignment
 
   constructor() { 
     this.resistanceBandsModalRequested = new EventEmitter<FormGroup<IExercisePlanFormGroup>>();

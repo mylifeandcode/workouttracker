@@ -1,4 +1,4 @@
-import { IHasDateRange } from "app/shared/interfaces/i-has-date-range";
+import { IHasDateRange } from "../../shared/interfaces/i-has-date-range";
 import { ExecutedExerciseMetrics } from "./executed-exercise-metrics";
 
 export class ExecutedWorkoutMetrics implements IHasDateRange {

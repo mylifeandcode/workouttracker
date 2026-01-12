@@ -8,59 +8,54 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 
 class AnalyticsServiceMock {
-  getExecutedWorkoutsSummary =
-    jasmine.createSpy('getExecutedWorkoutsSummary')
-      .and.returnValue(of(<ExecutedWorkoutsSummary>{
+    getExecutedWorkoutsSummary = vi.fn().mockReturnValue(of(<ExecutedWorkoutsSummary>{
         totalLoggedWorkouts: 12,
         firstLoggedWorkoutDateTime: new Date(2022, 4, 5),
         targetAreasWithWorkoutCounts: new Map<string, number>([
-          ['Chest', 2],
-          ['Back', 3],
-          ['Legs', 5],
-          ['Arms', 2]
+            ['Chest', 2],
+            ['Back', 3],
+            ['Legs', 5],
+            ['Arms', 2]
         ])
-      }));
+    }));
 }
 
 describe('AnalyticsDashboardComponent', () => {
-  let component: AnalyticsDashboardComponent;
-  let fixture: ComponentFixture<AnalyticsDashboardComponent>;
+    let component: AnalyticsDashboardComponent;
+    let fixture: ComponentFixture<AnalyticsDashboardComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AnalyticsDashboardComponent],
-      providers: [
-        {
-          provide: AnalyticsService,
-          useClass: AnalyticsServiceMock
-  },
-  provideZonelessChangeDetection()
-      ]
-    })
-      .overrideComponent(
-        AnalyticsDashboardComponent,
-        {
-          remove: { imports: [NzSpinModule] },
-          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
-        }
-      )
-      .compileComponents();
-  });
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [AnalyticsDashboardComponent],
+            providers: [
+                {
+                    provide: AnalyticsService,
+                    useClass: AnalyticsServiceMock
+                },
+                provideZonelessChangeDetection()
+            ]
+        })
+            .overrideComponent(AnalyticsDashboardComponent, {
+            remove: { imports: [NzSpinModule] },
+            add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        })
+            .compileComponents();
+    });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(AnalyticsDashboardComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(AnalyticsDashboardComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
-  it('should get analytics data when initializing', () => {
-    const analyticsService = TestBed.inject(AnalyticsService);
-    expect(analyticsService.getExecutedWorkoutsSummary).toHaveBeenCalledTimes(1);
-    expect(component.executedWorkoutsSummary()).not.toBeUndefined();
-    expect(component.gettingData()).toBeFalse();
-  });
+    it('should get analytics data when initializing', () => {
+        const analyticsService = TestBed.inject(AnalyticsService);
+        expect(analyticsService.getExecutedWorkoutsSummary).toHaveBeenCalledTimes(1);
+        expect(component.executedWorkoutsSummary()).not.toBeUndefined();
+        expect(component.gettingData()).toBe(false);
+    });
 });

@@ -1,9 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { User } from '../../_models/user';
 import { map, tap } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
-import { ConfigService } from '../config/config.service';
 import { UserOverview } from '../../_models/user-overview';
 import { ApiBaseService } from '../api-base/api-base.service';
 import { UserNewDTO } from '../../_models/user-new-dto';
@@ -39,10 +37,11 @@ export class UserService extends ApiBaseService<User> {
   }
 
   public addNew(user: UserNewDTO): Observable<User> {
-    return this._http.post<User>(`${this._apiRoot}/new`, user).pipe(tap((addedUser: User) => { this.invalidateCache(); }));
+    return this._http.post<User>(`${this._apiRoot}/new`, user).pipe(tap(() => { this.invalidateCache(); }));
   }
 
   public override add(user: User): Observable<never> {
+    console.log("UserService.add() called - throwing error.", user); //HACK
     return throwError(() => "To add new users, use the addNew() method. UserService doesn't support the base add() method.");
   }
 

@@ -1,13 +1,13 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from 'app/core/_services/auth/auth.service';
-import { User } from 'app/core/_models/user';
-import { UserMinMaxReps } from 'app/core/_models/user-min-max-reps';
-import { UserService } from 'app/core/_services/user/user.service';
-import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from 'app/core/_validators/custom-validators';
+import { AuthService } from '../../core/_services/auth/auth.service';
+import { User } from '../../core/_models/user';
+import { UserMinMaxReps } from '../../core/_models/user-min-max-reps';
+import { UserService } from '../../core/_services/user/user.service';
+import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from '../../core/_validators/custom-validators';
 import { catchError, finalize } from 'rxjs/operators';
 import { IRepSettingsForm, UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
-import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
+import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { RouterLink } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -40,6 +40,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   public user = signal<User | undefined>(undefined);
   public userSettingsForm: FormGroup<IUserSettingsForm> | undefined; //undefined until user info is retrieved
   public saving = signal(false);
+  public userSettingsLoaded = signal(false);
 
   public ngOnInit(): void {
     if (!this._authService.userPublicId) return;
@@ -54,6 +55,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
       .subscribe((user: User) => {
         this.user.set(user);
         this.createForm();
+        this.userSettingsLoaded.set(true);
       });
   }
 
@@ -92,7 +94,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
           throw err.message;
         })
       )
-      .subscribe((user: User) => {
+      .subscribe(() => {
         this._messageService.success('Settings saved.');
       });
   }

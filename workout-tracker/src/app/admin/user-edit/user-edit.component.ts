@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthService } from 'app/core/_services/auth/auth.service';
-import { ConfigService } from 'app/core/_services/config/config.service';
-import { User } from 'app/core/_models/user';
+import { AuthService } from '../../core/_services/auth/auth.service';
+import { ConfigService } from '../../core/_services/config/config.service';
+import { User } from '../../core/_models/user';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { UserService } from '../../core/_services/user/user.service';
-import { EMPTY_GUID } from 'app/shared/shared-constants';
+import { EMPTY_GUID } from '../../shared/shared-constants';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 interface IUserEditForm {
@@ -69,11 +70,11 @@ export class UserEditComponent implements OnInit {
       .pipe(finalize(() => { this.savingUserInfo.set(false); }))
       .subscribe({
         next: () => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
-        error: (error: any) => {
+        error: (error: HttpErrorResponse) => {
           if (error?.status == 403)
             this.errorMsg.set("You do not have permission to add or edit users.");
           else
-            this.errorMsg.set(error.error ? error.error : "An error has occurred. Please contact an administrator.");
+            this.errorMsg.set(error.message ? error.message : "An error has occurred. Please contact an administrator.");
         }
       });
   }
@@ -135,7 +136,7 @@ export class UserEditComponent implements OnInit {
               role: this._user.role
             });
         },
-        error: (error: any) => this.errorMsg.set(error),
+        error: (error: HttpErrorResponse) => this.errorMsg.set(error.message),
         complete: () => this.loadingUserInfo.set(false)
       });
 

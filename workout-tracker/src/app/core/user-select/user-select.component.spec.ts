@@ -3,87 +3,92 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserSelectComponent } from './user-select.component';
 import { UserService } from '../_services/user/user.service';
 import { of } from 'rxjs';
-import { User } from 'app/core/_models/user';
+import { User } from '../../core/_models/user';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from 'app/core/_services/auth/auth.service';
+import { AuthService } from '../../core/_services/auth/auth.service';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 
 class UserServiceMock {
-  //all$ = jasmine.createSpy('all$').and.returnValue(of(new Array<User>()));
-  all$ = of(new Array<User>());
+    //all$ = jasmine.createSpy('all$').and.returnValue(of(new Array<User>()));
+    all$ = of(new Array<User>());
 }
 
 class AuthServiceMock {
-  logIn = jasmine.createSpy('logIn').and.returnValue(of(true));
-  public get loginRoute(): string {
-    return "user-select";
-  }
+    logIn = vi.fn().mockReturnValue(of(true));
+    private readonly route = "user-select"; //readonly to satisfy linter rule
+    public get loginRoute(): string {
+        return this.route;
+    }
 }
 
 describe('UserSelectComponent', () => {
-  let component: UserSelectComponent;
-  let fixture: ComponentFixture<UserSelectComponent>;
+    let component: UserSelectComponent;
+    let fixture: ComponentFixture<UserSelectComponent>;
 
-  @Component({
-    standalone: false
-  })
-  class FakeComponent { };
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot([{ path: 'home', component: FakeComponent }]),
-        UserSelectComponent
-      ],
-      providers: [
-        provideZonelessChangeDetection(),
-        {
-          provide: UserService,
-          useClass: UserServiceMock
-        },
-        {
-          provide: AuthService,
-          useClass: AuthServiceMock
-        }
-      ]
+    @Component({
+      template: ''
     })
-      .overrideComponent(
-        UserSelectComponent,
-        {
-          remove: { imports: [NzSpinModule] },
-          add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+    class FakeComponent {
+    }
+    ;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [
+                RouterModule.forRoot([{ path: 'home', component: FakeComponent }]),
+                UserSelectComponent
+            ],
+            providers: [
+                provideZonelessChangeDetection(),
+                {
+                    provide: UserService,
+                    useClass: UserServiceMock
+                },
+                {
+                    provide: AuthService,
+                    useClass: AuthServiceMock
+                }
+            ]
         })
-      .compileComponents();
-  });
+            .overrideComponent(UserSelectComponent, {
+            remove: { imports: [NzSpinModule] },
+            add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+        })
+            .compileComponents();
+    });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(UserSelectComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(UserSelectComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
-  it('should select user', () => {
+    it('should select user', () => {
 
-    //ARRANGE
-    const authService = TestBed.inject(AuthService);
-    const router = TestBed.inject(Router);
-    spyOn(router, 'navigate').and.callThrough();
-    const userId = 1;
-    const userName = "davidleeroth";
+        //ARRANGE
+        const authService = TestBed.inject(AuthService);
+        const router = TestBed.inject(Router);
+        vi.spyOn(router, 'navigate');
+        const userId = 1;
+        const userName = "davidleeroth";
 
-    //ACT
-    component.selectUser(userId, userName);
+        //ACT
+        component.selectUser(userId, userName);
 
-    //ASSERT
-    expect(authService.logIn).toHaveBeenCalledOnceWith(userName, '');
-    expect(component.username()).toBe(userName);
-    expect(router.navigate).toHaveBeenCalledOnceWith(['home']);
+        //ASSERT
+        expect(authService.logIn).toHaveBeenCalledTimes(1);
 
-  });
+        //ASSERT
+        expect(authService.logIn).toHaveBeenCalledWith(userName, '');
+        expect(component.username()).toBe(userName);
+        expect(router.navigate).toHaveBeenCalledTimes(1);
+        expect(router.navigate).toHaveBeenCalledWith(['home']);
+
+    });
 });

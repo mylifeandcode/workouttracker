@@ -1,5 +1,5 @@
 import { ExerciseSide } from "../workout/_enums/exercise-side";
-import { IHasAuditDates } from "app/shared/interfaces/i-has-audit-dates";
+import { IHasAuditDates } from "../../shared/interfaces/i-has-audit-dates";
 
 export class ExecutedExerciseDTO implements IHasAuditDates {
   public id: number = 0;

@@ -2,16 +2,16 @@ import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { User } from 'app/core/_models/user';
-import { UserNewDTO } from 'app/core/_models/user-new-dto';
-import { UserService } from 'app/core/_services/user/user.service';
+import { User } from '../../core/_models/user';
+import { UserNewDTO } from '../../core/_models/user-new-dto';
+import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
 
 import { UserAddComponent } from './user-add.component';
-import { AuthService } from 'app/core/_services/auth/auth.service';
+import { AuthService } from '../../core/_services/auth/auth.service';
 
 class MockUserService {
-  addNew = jasmine.createSpy('addNew').and.returnValue(of(new User()));
+  addNew = vi.fn().mockReturnValue(of(new User()));
 }
 
 class MockAuthService {
@@ -23,7 +23,8 @@ class MockAuthService {
   template: '',
   imports: [ReactiveFormsModule]
 })
-class BlankComponent { }
+class BlankComponent {
+}
 
 describe('UserAddComponent', () => {
   let component: UserAddComponent;
@@ -39,7 +40,7 @@ describe('UserAddComponent', () => {
         UserAddComponent, BlankComponent
       ],
       providers: [
-  provideZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         {
           provide: UserService,
           useClass: MockUserService
@@ -64,7 +65,7 @@ describe('UserAddComponent', () => {
     component = fixture.componentInstance;
     userService = TestBed.inject(UserService);
     router = TestBed.inject(Router);
-    spyOn(router, 'navigate');
+    vi.spyOn(router, 'navigate');
     fixture.detectChanges();
   });
 
@@ -96,12 +97,12 @@ describe('UserAddComponent', () => {
   });
 
   //TODO: Revisit! Having a hard time overriding that routeConfig!
-  xit('should allow the user to cancel adding a new user in admin mode', () => {
+  it.skip('should allow the user to cancel adding a new user in admin mode', () => {
 
     //ARRANGE
     //Need to override default activated route and re-init for this one
     const activatedRoute = TestBed.inject(ActivatedRoute);
-    spyOnProperty(activatedRoute, "routeConfig", "get").and.returnValue({ path: '/users/add' });
+    vi.spyOn(activatedRoute, "routeConfig", "get").mockReturnValue({ path: '/users/add' });
 
     //ACT
     component.ngOnInit();
@@ -125,7 +126,7 @@ describe('UserAddComponent', () => {
   it('should abort cancellation when form is dirty and user presses cancel on confirm dialog', () => {
 
     //ARRANGE
-    spyOn(window, 'confirm').and.returnValue(false);
+    vi.spyOn(window, 'confirm').mockReturnValue(false);
     component.userAddForm.controls.name.setValue("Jane");
     component.userAddForm.controls.name.markAsDirty(); //Controls are only marked as dirty if changed via the UI
 

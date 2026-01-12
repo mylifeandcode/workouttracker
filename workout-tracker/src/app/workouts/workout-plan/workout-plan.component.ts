@@ -5,17 +5,18 @@ import { WorkoutPlan } from '../_models/workout-plan';
 import { WorkoutService } from '../_services/workout.service';
 import { ExercisePlan } from '../_models/exercise-plan';
 import { IBandAllocation, ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
-import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
+import { ResistanceBandIndividual } from '../../shared/models/resistance-band-individual';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
-import { ResistanceBandService } from 'app/shared/services/resistance-band.service';
+import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { finalize } from 'rxjs/operators';
 import { IWorkoutPlanForm } from '../workout/_interfaces/i-workout-plan-form';
 import { IExercisePlanFormGroup } from './exercise-plan/interfaces/i-exercise-plan-form-group';
-import { CheckForUnsavedDataComponent } from 'app/shared/components/check-for-unsaved-data.component';
+import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
-import { EMPTY_GUID } from 'app/shared/shared-constants';
+import { EMPTY_GUID } from '../../shared/shared-constants';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
@@ -119,7 +120,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
           this.isProcessing.set(false);
           this.workoutPlanForm.markAsPristine();
         }))
-        .subscribe((executedWorkoutPublicId: string) => {
+        .subscribe(() => {
           this._router.navigate([`workouts/select-planned`]);
         });
     }
@@ -264,13 +265,13 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
         next: (bands: ResistanceBandIndividual[]) => {
           this.allResistanceBands.set(bands);
         },
-        error: (error: any) => {
+        error: (error: HttpErrorResponse) => {
           this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
         }
       });
   }
 
-  private setErrorInfo(error: any, defaultMessage: string): void {
+  private setErrorInfo(error: HttpErrorResponse, defaultMessage: string): void {
     if (error.message)
       this.errorInfo.set(error.message);
     else

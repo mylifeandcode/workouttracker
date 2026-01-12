@@ -1,12 +1,11 @@
 import { HttpResponse } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ResistanceBand } from 'app/shared/models/resistance-band';
+import { ResistanceBand } from '../../shared/models/resistance-band';
 import { of, throwError } from 'rxjs';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 
 import { ResistanceBandsComponent } from './resistance-bands.component';
-import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NgStyle } from '@angular/common';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -23,11 +22,11 @@ const getResistanceBandInventory = (): Array<ResistanceBand> => {
 };
 
 class ResistanceBandServiceMock {
-  getAll = jasmine.createSpy('getAll').and.returnValue(of(getResistanceBandInventory()));
-  add = jasmine.createSpy('add').and.returnValue(of(new ResistanceBand()));
-  update = jasmine.createSpy('update').and.returnValue(of(new ResistanceBand()));
+  getAll = vi.fn().mockReturnValue(of(getResistanceBandInventory()));
+  add = vi.fn().mockReturnValue(of(new ResistanceBand()));
+  update = vi.fn().mockReturnValue(of(new ResistanceBand()));
   //deleteById = jasmine.createSpy('deleteById').and.returnValue(of(new HttpResponse<string>()));
-  delete = jasmine.createSpy('delete').and.returnValue(of(new HttpResponse<string>()));
+  delete = vi.fn().mockReturnValue(of(new HttpResponse<string>()));
 }
 
 describe('ResistanceBandsComponent', () => {
@@ -36,7 +35,9 @@ describe('ResistanceBandsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ResistanceBandsComponent],
+      imports: [
+        ResistanceBandsComponent
+      ],
       providers: [
         provideZonelessChangeDetection(),
         {
@@ -45,12 +46,14 @@ describe('ResistanceBandsComponent', () => {
         },
         {
           provide: NzMessageService,
-          useValue: jasmine.createSpyObj<NzMessageService>('NzMessageService', ['create'])
+          useValue: {
+            create: vi.fn().mockName("NzMessageService.create")
+          }
         },
         {
           provide: NzModalService,
           useValue: {
-            confirm: jasmine.createSpy('confirm').and.callFake((options) => {
+            confirm: vi.fn().mockImplementation((options) => {
               // Simulate the user clicking "OK"
               if (options.nzOnOk) {
                 const onOkResult = options.nzOnOk();
@@ -64,17 +67,14 @@ describe('ResistanceBandsComponent', () => {
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    }).overrideComponent(
-      ResistanceBandsComponent,
-      {
-        remove: 
-        { 
-          imports: [
-            NzTableModule, NzIconModule, NgStyle, NzModalModule, NzButtonModule
-          ] 
-        }, 
-        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
-      }).compileComponents();
+    }).overrideComponent(ResistanceBandsComponent, {
+      remove: {
+        imports: [
+          NzIconModule, NgStyle, NzModalModule, NzButtonModule
+        ]
+      },
+      add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -158,7 +158,7 @@ describe('ResistanceBandsComponent', () => {
     const resistanceBandService = TestBed.inject(ResistanceBandService);
     const modalService = TestBed.inject(NzModalService);
     const messageService = TestBed.inject(NzMessageService);
-    modalService.confirm = jasmine.createSpy('confirm').and.callFake(() => { });
+    modalService.confirm = vi.fn().mockImplementation(() => void 0); //Simulate user not confirming
     const band = new ResistanceBand();
     band.id = 5;
 
@@ -177,8 +177,8 @@ describe('ResistanceBandsComponent', () => {
 
     //ASSERT
     expect(component.newResistanceBand).not.toBeNull();
-    expect(component.modalSubmitted()).toBeFalse();
-    expect(component.showAddDialog()).toBeTrue();
+    expect(component.modalSubmitted()).toBe(false);
+    expect(component.showAddDialog()).toBe(true);
   });
 
   it('should hide modal', () => {
@@ -186,8 +186,8 @@ describe('ResistanceBandsComponent', () => {
     component.hideModal();
 
     //ASSERT
-    expect(component.showAddDialog()).toBeFalse();
-    expect(component.modalSubmitted()).toBeFalse();
+    expect(component.showAddDialog()).toBe(false);
+    expect(component.modalSubmitted()).toBe(false);
   });
 
   it('should initialize row editing', () => {
@@ -195,12 +195,12 @@ describe('ResistanceBandsComponent', () => {
     //it doesn't throw an exception
 
     try {
-      const band = new ResistanceBand();
+      //const band = new ResistanceBand();
       component.startEdit(1);
-      expect(true).toBeTrue(); //Here only to let Karma know we have an expectation
+      expect(true).toBe(true); //Here only to let Karma know we have an expectation
     }
     catch {
-      fail();
+      throw new Error();
     }
 
   });
@@ -245,7 +245,7 @@ describe('ResistanceBandsComponent', () => {
 
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
-    resistanceBandService.add = jasmine.createSpy('add').and.returnValue(throwError(() => new Error("Something went wrong!")));
+    resistanceBandService.add = vi.fn().mockReturnValue(throwError(() => new Error("Something went wrong!")));
 
     const messageService = TestBed.inject(NzMessageService);
 
@@ -261,7 +261,7 @@ describe('ResistanceBandsComponent', () => {
 
     //ARRANGE
     const resistanceBandService = TestBed.inject(ResistanceBandService);
-    resistanceBandService.update = jasmine.createSpy('update').and.returnValue(throwError(() => new Error("Something went wrong!")));
+    resistanceBandService.update = vi.fn().mockReturnValue(throwError(() => new Error("Something went wrong!")));
 
     const messageService = TestBed.inject(NzMessageService);
 

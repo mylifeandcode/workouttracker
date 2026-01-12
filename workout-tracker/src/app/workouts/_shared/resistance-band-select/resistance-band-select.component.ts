@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnChanges, Output, Signal, SimpleChanges, WritableSignal, computed, input, signal } from '@angular/core';
-import { ResistanceBandIndividual } from 'app/shared/models/resistance-band-individual';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { NzTransferModule, TransferChange, TransferItem } from 'ng-zorro-antd/transfer';
+import { ResistanceBandIndividual } from '../../../shared/models/resistance-band-individual';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
+import { NzTransferModule, TransferItem } from 'ng-zorro-antd/transfer';
 import { ResistanceBandColorPipe } from "../../../shared/pipes/resistance-band-color.pipe";
 import { ResistanceBandSelection } from '../../_models/resistance-band-selection';
 import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
@@ -15,7 +15,7 @@ export interface IBandAllocation {
     selector: 'wt-resistance-band-select',
     templateUrl: './resistance-band-select.component.html',
     styleUrls: ['./resistance-band-select.component.scss'],
-    imports: [NzTransferModule, NzToolTipModule, ResistanceAmountPipe, ResistanceBandColorPipe]
+    imports: [NzTransferModule, NzTooltipModule, ResistanceAmountPipe, ResistanceBandColorPipe]
 })
 export class ResistanceBandSelectComponent implements OnChanges {
 
@@ -149,7 +149,7 @@ export class ResistanceBandSelectComponent implements OnChanges {
     this.cancelClicked.emit();
   }
 
-  public onTransferChange($event: TransferChange): void {
+  public onTransferChange(): void {
     this.allocateTransferItems();
     this.validateForBilateralResistance();
   }  

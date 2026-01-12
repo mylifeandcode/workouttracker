@@ -1,18 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, WritableSignal, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs';
-
-const HTTP_OPTIONS = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json'
-  })
-};
 
 const HTTP_OPTIONS_FOR_TEXT_RESPONSE = {
   headers: new HttpHeaders({
@@ -112,7 +106,7 @@ export class AuthService {
           this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, token);
           return true;
         }),
-        catchError((err: any, caught: Observable<boolean>) => of(false))
+        catchError(() => of(false))
       );
   }
 
@@ -125,7 +119,7 @@ export class AuthService {
   }
 
   public restoreUserSessionIfApplicable(): void {
-    const token: string = this._localStorageService.get(this.LOCAL_STORAGE_TOKEN_KEY);
+    const token: string | null = (this._localStorageService.get(this.LOCAL_STORAGE_TOKEN_KEY) as string | null);
 
     if (token) {
       const decodedToken = jwtDecode<JwtPayload>(token);

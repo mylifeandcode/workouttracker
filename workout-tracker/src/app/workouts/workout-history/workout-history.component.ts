@@ -1,16 +1,17 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { PaginatedResults } from 'app/core/_models/paginated-results';
+import { PaginatedResults } from '../../core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { RouterLink } from '@angular/router';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { DatePipe } from '@angular/common';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { HttpErrorResponse } from '@angular/common/http';
 
 //TODO: This is similar to WorkoutsListComponent. Find a way to consolidate/reuse code.
 
@@ -20,7 +21,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     styleUrls: ['./workout-history.component.scss'],
     imports: [
       RouterLink, DatePipe, FormsModule,
-      NzTableModule, NzDropDownModule, NzToolTipModule, NzIconModule, NzModalModule 
+      NzTableModule, NzDropdownModule, NzTooltipModule, NzIconModule, NzModalModule 
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -42,10 +43,11 @@ export class WorkoutHistoryComponent implements OnInit {
   }
 
   public onQueryParamsChange(params: NzTableQueryParams): void {
-    const { pageSize, pageIndex, sort, filter } = params;
-    const currentSort = sort.find(item => item.value !== null);
-    const sortField = (currentSort && currentSort.key) || null;
-    const sortOrder = (currentSort && currentSort.value) || null;
+    //const { pageSize, pageIndex, sort, filter } = params;
+    const { pageSize, pageIndex } = params;
+    //const currentSort = sort.find(item => item.value !== null);
+    //const sortField = (currentSort && currentSort.key) || null;
+    //const sortOrder = (currentSort && currentSort.value) || null;
     //this.loadDataFromServer(pageIndex, pageSize, sortField, sortOrder, filter);
     this.getExecutedWorkouts((pageIndex - 1) * pageSize, this.workoutNameFilter());
   }
@@ -78,7 +80,7 @@ export class WorkoutHistoryComponent implements OnInit {
           this.executedWorkouts.set(results.results);
           this.totalRecords.set(results.totalCount);
         },
-        error: (error: any) => window.alert("An error occurred getting executed workouts: " + error)
+        error: (error: HttpErrorResponse) => window.alert("An error occurred getting executed workouts: " + error.message)
       });
   }
 
