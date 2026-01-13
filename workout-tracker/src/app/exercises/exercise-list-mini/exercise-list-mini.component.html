@@ -3,8 +3,8 @@
   [nzShowSizeChanger]="true"
   [nzTotal]="totalRecords()"
   [nzPageSize]="10"
-  [nzLoading]="loading()"
-  [nzData]="exercises()"
+  [nzLoading]="_exerciseResource.isLoading()"
+  [nzData]="_exerciseResource.value().results"
   (nzQueryParams)="getExercisesLazy($event)"
   >
   <thead>
@@ -37,8 +37,12 @@
   <tbody>
     @for (exercise of dt.data; track exercise.id) {
       <tr>
-        <td style="width: 40%"><a href="javascript:void(0)" class="exerciseName" (keypress.enter)="selectExercise(exercise)" (click)="selectExercise(exercise)">{{exercise.name}}</a></td>
-        <td [style]="{'overflow': 'visible'}">{{exercise.targetAreas}}</td>
+        <td style="width: 40%">
+          <a href="javascript:void(0)" class="exerciseName" (keypress.enter)="selectExercise(exercise)" (click)="selectExercise(exercise)">{{exercise.name}}</a>
+        </td>
+        <td [style]="{'overflow': 'visible'}">
+          {{exercise.targetAreas}}
+        </td>
       </tr>
     }
   </tbody>

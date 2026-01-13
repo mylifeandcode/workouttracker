@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ExerciseService } from '../_services/exercise.service';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { ExerciseListBase } from '../exercise-list-base';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { RouterLink } from '@angular/router';
@@ -13,14 +12,19 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule, NzSelectModule, NzTableModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExerciseListComponent extends ExerciseListBase {
+export class ExerciseListComponent extends ExerciseListBase implements OnDestroy {
 
   constructor() {
-    const _exerciseSvc = inject(ExerciseService);
-    super(_exerciseSvc);
+    super();
   }
 
-  public override targetAreasFilterChange(selectedTargetAreas: string[]): void {
-    this.getExercises(0, null, selectedTargetAreas); //TODO: Add code to take name filter into account
+  public ngOnDestroy(): void {
+    this._destroy$.next();
   }
+
+  /*
+  public override targetAreasFilterChange(selectedTargetAreas: string[]): void {
+    //this.getExercises(0, null, selectedTargetAreas); //TODO: Add code to take name filter into account
+  }
+  */
 }

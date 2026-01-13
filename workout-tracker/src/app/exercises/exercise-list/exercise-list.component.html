@@ -24,12 +24,12 @@
   </div>
   <div class="row">
     <div class="col-12">
-      <nz-table #dt [nzData]="exercises()"
+      <nz-table #dt [nzData]="_exerciseResource.value().results"
         [nzFrontPagination]="false"
         [nzShowSizeChanger]="true"
         [nzTotal]="totalRecords()"
         [nzPageSize]="10"
-        [nzLoading]="loading()"
+        [nzLoading]="_exerciseResource.isLoading()"
         (nzQueryParams)="getExercisesLazy($event)">
         <thead>
           <tr>
@@ -52,10 +52,10 @@
     </div>
   </div>
 
-  @if (totalRecords != null) {
+  @if (_exerciseResource.value().totalCount != null) {
     <div class="row mt-2 mb-2">
-      <div class="col-3">{{totalRecords()}} total exercise(s)</div>
-      @if (totalRecords() == 0) {
+      <div class="col-3">{{_exerciseResource.value().totalCount}} total exercise(s)</div>
+      @if (_exerciseResource.value().totalCount == 0) {
         <div class="col-9" style="font-style: italic">
           No exercises have been defined. Please create one using the "Add New" button below.
         </div>
@@ -65,7 +65,7 @@
 
   <div class="row bottom-padded">
     <div class="col-12">
-      <button routerLink="/exercises/new" [disabled]="loading()" class="btn btn-add-exercise">
+      <button routerLink="/exercises/new" [disabled]="_exerciseResource.isLoading()" class="btn btn-add-exercise">
         <i class="fa fa-plus"></i> Add New
       </button>
     </div>

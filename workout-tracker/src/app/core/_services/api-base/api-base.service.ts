@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { IEntity } from '../../../shared/interfaces/i-entity';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, mergeMap, shareReplay, take, tap } from 'rxjs/operators';
@@ -6,12 +6,7 @@ import { DateSerializationService } from '../date-serialization/date-serializati
 import { inject } from '@angular/core';
 import { IMightHaveAuditDates } from '../../../shared/interfaces/i-might-have-audit-dates';
 import { ConfigService } from '../config/config.service';
-
-const HTTP_OPTIONS = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json'
-  })
-};
+import { HTTP_OPTIONS } from '../../../shared/http-constants';
 
 export abstract class ApiBaseService<T extends IEntity & IMightHaveAuditDates> {
 

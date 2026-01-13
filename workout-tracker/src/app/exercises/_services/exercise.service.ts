@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, Signal, inject } from '@angular/core';
+import { HttpClient, HttpResourceRef } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Exercise } from '../../workouts/_models/exercise';
@@ -8,12 +8,9 @@ import { PaginatedResults } from '../../core/_models/paginated-results';
 import { ExerciseDTO } from '../../workouts/_models/exercise-dto';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
+import { httpResource } from '@angular/common/http';
+import { HTTP_OPTIONS } from '../../shared/http-constants';
 
-const HTTP_OPTIONS = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json'
-  })
-};
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +57,43 @@ export class ExerciseService {
           return paginatedResults;
         })
       );
+  }
+
+  public get(
+    firstRecOffset: Signal<number>,
+    pageSize: Signal<number>,
+    nameContains: Signal<string | undefined>,
+    targetAreaContains: Signal<string[] | null>): HttpResourceRef<PaginatedResults<ExerciseDTO>> {
+
+    /*
+    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset()}&pageSize=${pageSize()}&hasTargetAreas=${targetAreaContains()?.join(',') ?? ''}`;
+
+    if (nameContains() != null && nameContains()!.length > 0)
+      url += `&nameContains=${nameContains()}`;
+
+    if (targetAreaContains() != null) {
+      const areas = targetAreaContains();
+      if (areas != null && areas.length > 0) {
+        const targetAreas = areas.join(',');
+        url += `&hasTargetAreas=${targetAreas}`;
+        console.log("Filtering by target areas: ", targetAreas);
+      }
+    }
+
+    return httpResource<PaginatedResults<ExerciseDTO>>(
+      () => url, {
+        defaultValue: new PaginatedResults<ExerciseDTO>()
+      });
+    */
+
+    return httpResource<PaginatedResults<ExerciseDTO>>(
+      () => `${this.API_ROOT}?firstRecord=${firstRecOffset()}&pageSize=${pageSize()}` +
+        (nameContains() && nameContains()!.length > 0 ? `&nameContains=${nameContains()}` : ``) +
+        (targetAreaContains() && targetAreaContains()!.length > 0 ? `&hasTargetAreas=${targetAreaContains()!.join(',')}` : ``), 
+        {
+          defaultValue: new PaginatedResults<ExerciseDTO>()
+        }
+      );      
   }
 
   /*

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable, WritableSignal, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -7,15 +7,7 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs';
-
-const HTTP_OPTIONS_FOR_TEXT_RESPONSE = {
-  headers: new HttpHeaders({
-    'Accept': 'text/html, application/xhtml+xml, */*',
-    'Content-Type': 'application/json'
-  }),
-  responseType: 'text' as 'json'
-};
-
+import { HTTP_OPTIONS_FOR_TEXT_RESPONSE } from '../../../shared/http-constants';
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,5 @@
-import { Component, Output, EventEmitter, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { ExerciseListBase } from '../exercise-list-base';
-import { ExerciseService } from '../_services/exercise.service';
 import { ExerciseDTO } from '../../workouts/_models/exercise-dto';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -13,18 +12,20 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule, NzTableModule, NzSelectModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExerciseListMiniComponent extends ExerciseListBase {
+export class ExerciseListMiniComponent extends ExerciseListBase implements OnDestroy {
 
   //TODO: Replace with output
   @Output() exerciseSelected = new EventEmitter<ExerciseDTO>();
 
   constructor() {
-    const _exerciseSvc = inject(ExerciseService);
-    super(_exerciseSvc);
+    super();
+  }
+
+  public ngOnDestroy(): void {
+    this._destroy$.next();
   }
 
   public selectExercise(exercise: ExerciseDTO): void {
     this.exerciseSelected.emit(exercise);
   }
-
 }
