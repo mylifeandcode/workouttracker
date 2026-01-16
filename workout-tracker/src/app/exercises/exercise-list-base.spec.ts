@@ -91,7 +91,7 @@ describe('ExerciseListBaseComponent', () => {
     expect(component.targetAreas().length).toBe(3);
   });
 
-  it.only('should get exercises', () => {
+  it('should get exercises', () => {
 
     //ARRANGE
     const params: Partial<NzTableQueryParams> = {
