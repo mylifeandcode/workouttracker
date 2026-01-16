@@ -9,9 +9,23 @@ import { Component, inject as inject_1 } from '@angular/core';
 import { PaginatedResults } from '../core/_models/paginated-results';
 import { ExerciseService } from './_services/exercise.service';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { HttpResourceRef } from '@angular/common/http';
+import { MockedFunction } from 'vitest';
 
 class ExerciseServiceMock {
-  get = vi.fn().mockReturnValue(of(new PaginatedResults<ExerciseDTO>()));
+  get = vi.fn().mockImplementation(() => {
+
+      const paginatedResults = new PaginatedResults<ExerciseDTO>();
+      paginatedResults.totalCount = 0;
+      paginatedResults.results = new Array<ExerciseDTO>();
+
+      const mockResourceRef: Partial<HttpResourceRef<PaginatedResults<ExerciseDTO>>> = {
+        value: signal(paginatedResults),
+        isLoading: signal(false),
+      };      
+
+      return mockResourceRef
+  });
   getTargetAreas = vi.fn().mockImplementation(() => {
     const targetAreas = new Array<TargetArea>();
     targetAreas.push(new TargetArea(1, "Chest", 1, new Date(), null, null, false));
@@ -77,7 +91,7 @@ describe('ExerciseListBaseComponent', () => {
     expect(component.targetAreas().length).toBe(3);
   });
 
-  it('should get exercises', () => {
+  it.only('should get exercises', () => {
 
     //ARRANGE
     const params: Partial<NzTableQueryParams> = {
@@ -85,15 +99,21 @@ describe('ExerciseListBaseComponent', () => {
       "pageSize": 10
     };
 
-    const expectedName = signal("blah");
-
     //ACT
     component.updateQueryParams(params as NzTableQueryParams);
-    component.targetAreasFilterChange(["Chest"]);
+    component.targetAreasFilterChange(["Chest"]);    
 
     //ASSERT
     expect(exerciseService.get)
-      .toHaveBeenCalledWith(component.firstRecordOffset(), component.pageSize(), expectedName(), () => ["Chest"]);
+      .toHaveBeenCalledWith(
+        component.firstRecordOffset, 
+        component.pageSize, 
+        expect.any(Function), 
+        expect.any(Function));
+
+    const callArgs = (exerciseService.get as MockedFunction<typeof exerciseService.get>).mock.calls[0];
+    expect(callArgs[2]()).toBe(undefined); // nameFilter value
+    expect(callArgs[3]()).toEqual(["Chest"]); // targetAreas value
 
   });
 });

@@ -28,7 +28,7 @@ class MockDateSerializationService {
 }
 
 
-describe.only('ExerciseService', () => {
+describe('ExerciseService', () => {
   let service: ExerciseService;
   let http: HttpTestingController;
 
