@@ -10,78 +10,78 @@ import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 class ExerciseServiceMock {
-    getAll = vi.fn().mockReturnValue(of(new PaginatedResults<ExerciseDTO>()));
-    getTargetAreas = vi.fn().mockReturnValue(of(new Array<TargetArea>()));
+  getAll = vi.fn().mockReturnValue(of(new PaginatedResults<ExerciseDTO>()));
+  getTargetAreas = vi.fn().mockReturnValue(of(new Array<TargetArea>()));
 }
 
 describe('ExerciseListMiniComponent', () => {
-    let component: ExerciseListMiniComponent;
-    let fixture: ComponentFixture<ExerciseListMiniComponent>;
-    let exerciseService: ExerciseService;
+  let component: ExerciseListMiniComponent;
+  let fixture: ComponentFixture<ExerciseListMiniComponent>;
+  let exerciseService: ExerciseService;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            providers: [
-                {
-                    provide: ExerciseService,
-                    useClass: ExerciseServiceMock
-                },
-                provideZonelessChangeDetection()
-            ],
-            imports: [
-                ExerciseListMiniComponent,
-                NoopAnimationsModule
-            ]
-        })
-            .overrideComponent(ExerciseListMiniComponent, {
-            remove: {
-                imports: [NzTableModule] //Some imports still required to test
-            },
-            add: {
-                schemas: [CUSTOM_ELEMENTS_SCHEMA]
-            }
-        })
-            .compileComponents();
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: ExerciseService,
+          useClass: ExerciseServiceMock
+        },
+        provideZonelessChangeDetection()
+      ],
+      imports: [
+        ExerciseListMiniComponent,
+        NoopAnimationsModule
+      ]
+    })
+      .overrideComponent(ExerciseListMiniComponent, {
+        remove: {
+          imports: [NzTableModule] //Some imports still required to test
+        },
+        add: {
+          schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        }
+      })
+      .compileComponents();
+  });
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(ExerciseListMiniComponent);
-        component = fixture.componentInstance;
-        exerciseService = TestBed.inject(ExerciseService);
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ExerciseListMiniComponent);
+    component = fixture.componentInstance;
+    exerciseService = TestBed.inject(ExerciseService);
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-    //TODO: Revisit
-    it.skip('should get exercises lazily', () => {
-        //TODO: Consolidate the method we're testing: it exists in 2 different classes.
+  //TODO: Revisit
+  it.skip('should get exercises lazily', () => {
+    //TODO: Consolidate the method we're testing: it exists in 2 different classes.
 
-        //ARRANGE
-        const lazyLoadEvent: Partial<NzTableQueryParams> = {
-            "pageIndex": 1,
-            "pageSize": 10
-        };
+    //ARRANGE
+    const lazyLoadEvent: Partial<NzTableQueryParams> = {
+      "pageIndex": 1,
+      "pageSize": 10
+    };
 
-        //ACT
-        component.getExercisesLazy(lazyLoadEvent as NzTableQueryParams);
+    //ACT
+    component.updateQueryParams(lazyLoadEvent as NzTableQueryParams);
 
-        //ASSERT
-        expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, 'Pre', ['Chest']);
-    });
+    //ASSERT
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, 'Pre', ['Chest']);
+  });
 
-    it('should emit event when exercise is selected', () => {
-        //ARRANGE
-        const exerciseDTO = new ExerciseDTO();
-        vi.spyOn(component.exerciseSelected, 'emit');
+  it('should emit event when exercise is selected', () => {
+    //ARRANGE
+    const exerciseDTO = new ExerciseDTO();
+    vi.spyOn(component.exerciseSelected, 'emit');
 
-        //ACT
-        component.selectExercise(exerciseDTO);
+    //ACT
+    component.selectExercise(exerciseDTO);
 
-        //ASSERT
-        expect(component.exerciseSelected.emit).toHaveBeenCalledWith(exerciseDTO);
-    });
+    //ASSERT
+    expect(component.exerciseSelected.emit).toHaveBeenCalledWith(exerciseDTO);
+  });
 
 });

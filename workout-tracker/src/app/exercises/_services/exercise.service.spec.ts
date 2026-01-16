@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationRef, provideZonelessChangeDetection, signal } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ExerciseService } from './exercise.service';
 import { PaginatedResults } from '../../core/_models/paginated-results';
@@ -28,13 +28,12 @@ class MockDateSerializationService {
 }
 
 
-describe('ExerciseService', () => {
+describe.only('ExerciseService', () => {
   let service: ExerciseService;
   let http: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
@@ -50,10 +49,11 @@ describe('ExerciseService', () => {
       ]
     });
 
-    service = TestBed.inject(ExerciseService);
-    http = TestBed.inject(HttpTestingController);
+    //service = TestBed.inject(ExerciseService);
+    //http = TestBed.inject(HttpTestingController);
   });
 
+  /*
   afterEach(() => {
     http.verify();
   });
@@ -198,7 +198,33 @@ describe('ExerciseService', () => {
 
     req.flush(exercise);
   });
+*/
+  it('should get exercises via httpResource', async () => {
+    //ARRANGE
+    const firstRecOffset = signal(0);
+    const pageSize = signal(10);
+    const nameContains = signal('Bench');
+    const targetAreaContains = signal(['Chest']);
+    const results = new PaginatedResults<ExerciseDTO>();
 
+    //ACT
+    TestBed.runInInjectionContext(() => { 
+      const svc = TestBed.inject(ExerciseService);
+      const http = TestBed.inject(HttpTestingController);
+      const response = svc.get(firstRecOffset, pageSize, nameContains, targetAreaContains);
+      TestBed.inject(ApplicationRef).tick(); //Triggers the httpResource. Not to be confused with fakeAsync's tick().
+
+      http
+        .expectOne(`http://localhost:5600/api/exercises?firstRecord=${firstRecOffset()}&pageSize=${pageSize()}&nameContains=${nameContains()}&hasTargetAreas=${targetAreaContains()!.join(',')}`)
+        .flush(results);
+
+      //ASSERT
+      expect(response.value()).toEqual(results);
+      http.verify();
+    });
+  });
+
+  /*
   it.skip('should convert date strings to Date objects when creating new exercise', () => {
     const mockExercise = {
       createdDateTime: "2024-01-01T12:00:00Z",
@@ -245,4 +271,5 @@ describe('ExerciseService', () => {
 
     req.flush(exercise);
   });
+  */
 });

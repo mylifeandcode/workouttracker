@@ -22,9 +22,4 @@ export class ExerciseListComponent extends ExerciseListBase implements OnDestroy
     this._destroy$.next();
   }
 
-  /*
-  public override targetAreasFilterChange(selectedTargetAreas: string[]): void {
-    //this.getExercises(0, null, selectedTargetAreas); //TODO: Add code to take name filter into account
-  }
-  */
 }

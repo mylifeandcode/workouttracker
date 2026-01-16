@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 
 import { of } from 'rxjs';
 import { ExerciseDTO } from '../workouts/_models/exercise-dto';
@@ -8,9 +8,10 @@ import { ExerciseListBase } from './exercise-list-base';
 import { Component, inject as inject_1 } from '@angular/core';
 import { PaginatedResults } from '../core/_models/paginated-results';
 import { ExerciseService } from './_services/exercise.service';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 class ExerciseServiceMock {
-  getAll = vi.fn().mockReturnValue(of(new PaginatedResults<ExerciseDTO>()));
+  get = vi.fn().mockReturnValue(of(new PaginatedResults<ExerciseDTO>()));
   getTargetAreas = vi.fn().mockImplementation(() => {
     const targetAreas = new Array<TargetArea>();
     targetAreas.push(new TargetArea(1, "Chest", 1, new Date(), null, null, false));
@@ -31,7 +32,7 @@ class ExerciseListBaseExtenderComponent extends ExerciseListBase {
   constructor() {
     const _exerciseService = inject_1(ExerciseService);
 
-    super(_exerciseService);
+    super();
     this._exerciseService = _exerciseService;
 
   }
@@ -79,12 +80,20 @@ describe('ExerciseListBaseComponent', () => {
   it('should get exercises', () => {
 
     //ARRANGE
+    const params: Partial<NzTableQueryParams> = {
+      "pageIndex": 1,
+      "pageSize": 10
+    };
+
+    const expectedName = signal("blah");
 
     //ACT
-    component.getExercises(10, "blah", ["Chest"]);
+    component.updateQueryParams(params as NzTableQueryParams);
+    component.targetAreasFilterChange(["Chest"]);
 
     //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(10, component.pageSize(), "blah", ["Chest"]);
+    expect(exerciseService.get)
+      .toHaveBeenCalledWith(component.firstRecordOffset(), component.pageSize(), expectedName(), () => ["Chest"]);
 
   });
 });

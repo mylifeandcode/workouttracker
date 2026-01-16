@@ -66,7 +66,7 @@ describe('ExerciseListComponent', () => {
         };
 
         //ACT
-        component.getExercisesLazy(queryParams);
+        component.updateQueryParams(queryParams);
 
         //ASSERT
         expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null);

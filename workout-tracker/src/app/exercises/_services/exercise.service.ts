@@ -65,27 +65,6 @@ export class ExerciseService {
     nameContains: Signal<string | undefined>,
     targetAreaContains: Signal<string[] | null>): HttpResourceRef<PaginatedResults<ExerciseDTO>> {
 
-    /*
-    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset()}&pageSize=${pageSize()}&hasTargetAreas=${targetAreaContains()?.join(',') ?? ''}`;
-
-    if (nameContains() != null && nameContains()!.length > 0)
-      url += `&nameContains=${nameContains()}`;
-
-    if (targetAreaContains() != null) {
-      const areas = targetAreaContains();
-      if (areas != null && areas.length > 0) {
-        const targetAreas = areas.join(',');
-        url += `&hasTargetAreas=${targetAreas}`;
-        console.log("Filtering by target areas: ", targetAreas);
-      }
-    }
-
-    return httpResource<PaginatedResults<ExerciseDTO>>(
-      () => url, {
-        defaultValue: new PaginatedResults<ExerciseDTO>()
-      });
-    */
-
     return httpResource<PaginatedResults<ExerciseDTO>>(
       () => `${this.API_ROOT}?firstRecord=${firstRecOffset()}&pageSize=${pageSize()}` +
         (nameContains() && nameContains()!.length > 0 ? `&nameContains=${nameContains()}` : ``) +
@@ -95,12 +74,6 @@ export class ExerciseService {
         }
       );      
   }
-
-  /*
-  public getById(id: number): Observable<Exercise> {
-    return this._http.get<Exercise>(`${this.API_ROOT}/${id}`);
-  }
-  */
 
   public getById(publicId: string): Observable<Exercise> {
     return this._http

@@ -30,7 +30,7 @@
         [nzTotal]="totalRecords()"
         [nzPageSize]="10"
         [nzLoading]="_exerciseResource.isLoading()"
-        (nzQueryParams)="getExercisesLazy($event)">
+        (nzQueryParams)="updateQueryParams($event)">
         <thead>
           <tr>
             <th>Name</th>

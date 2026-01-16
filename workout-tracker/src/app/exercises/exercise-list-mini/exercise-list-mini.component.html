@@ -5,7 +5,7 @@
   [nzPageSize]="10"
   [nzLoading]="_exerciseResource.isLoading()"
   [nzData]="_exerciseResource.value().results"
-  (nzQueryParams)="getExercisesLazy($event)"
+  (nzQueryParams)="updateQueryParams($event)"
   >
   <thead>
     <tr>
