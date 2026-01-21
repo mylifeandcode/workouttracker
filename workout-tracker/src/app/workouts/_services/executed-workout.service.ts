@@ -65,10 +65,14 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
    * @param pageSize The number of records to return. Could be less if on the final page.
    * @returns An Observable<PaginatedResults<ExecutedWorkoutDTO>> containing information about ExecutedWorkouts
    */
-  public getFilteredSubset(startingIndex: number, pageSize: number, workoutNameContains: string | null = null): Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> {
-    //TODO: Add parameters for filtering
+  public getFilteredSubset(
+    startingIndex: number, 
+    pageSize: number, 
+    workoutNameContains: string | null = null,
+    onlyWithJournalNotes: boolean = false): Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> {
+
     const result: Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> =
-      this._http.get<PaginatedResults<ExecutedWorkoutSummaryDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}${workoutNameContains ? '&workoutNameContains=' + workoutNameContains : ''}`)
+      this._http.get<PaginatedResults<ExecutedWorkoutSummaryDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}${workoutNameContains ? '&workoutNameContains=' + workoutNameContains : ''}&onlyWithJournalNotes=${onlyWithJournalNotes}`)
         .pipe(
           map((response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
             response.results = response.results.map((ew: ExecutedWorkoutSummaryDTO) => {

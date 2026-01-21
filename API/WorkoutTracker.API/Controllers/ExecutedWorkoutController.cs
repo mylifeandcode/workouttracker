@@ -93,7 +93,8 @@ namespace WorkoutTracker.API.Controllers
             DateTime? startDateTime = null, 
             DateTime? endDateTime = null, 
             bool newestFirst = true, 
-            string workoutNameContains = null)
+            string workoutNameContains = null, 
+            bool onlyWithJournalNotes = false)
         {
             try
             {
@@ -101,7 +102,7 @@ namespace WorkoutTracker.API.Controllers
 
                 var filter =
                     BuildExecutedWorkoutFilter(
-                        userId, startDateTime, endDateTime, false, workoutNameContains);
+                        userId, startDateTime, endDateTime, false, workoutNameContains, onlyWithJournalNotes);
 
                 int totalCount = _executedWorkoutService.GetTotalCount(filter);
 
@@ -220,7 +221,8 @@ namespace WorkoutTracker.API.Controllers
             DateTime? startDateTime, 
             DateTime? endDateTime,
             bool plannedOnly = false, 
-            string workoutNameContains = null)
+            string workoutNameContains = null, 
+            bool onlyWithJournalNotes = false)
         {
             var filter = new ExecutedWorkoutFilter();
 
@@ -236,6 +238,8 @@ namespace WorkoutTracker.API.Controllers
                 if(filter.EndDateTime.HasValue)
                     filter.EndDateTime = endDateTime;
             }
+
+            filter.OnlyWithJournalNotes = onlyWithJournalNotes;
 
             return filter;
         }

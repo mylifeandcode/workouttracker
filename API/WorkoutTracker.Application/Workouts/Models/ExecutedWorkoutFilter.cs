@@ -11,5 +11,7 @@ namespace WorkoutTracker.Application.Workouts.Models
         public DateTime? StartDateTime { get; set; }
         public DateTime? EndDateTime { get; set; }
         public string? WorkoutNameContains { get; set; }
+
+        public bool OnlyWithJournalNotes { get; set; }
     }
 }

@@ -1,0 +1,11 @@
+@import '../../../variables.scss';
+
+h3 {
+  padding: 6px;
+  background-image: linear-gradient(to right, $history-color-two, $history-color-gradient-end);
+  color: $header-text-color-one;
+}
+
+tr.workout-journal {
+  line-height: 10px;
+}

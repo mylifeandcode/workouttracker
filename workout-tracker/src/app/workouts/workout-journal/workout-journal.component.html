@@ -1,0 +1,46 @@
+<h3 class="headroom">Workout Journal</h3>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <nz-table #dt
+        [nzData]="executedWorkouts()" 
+        [nzFrontPagination]="false"
+        [nzShowSizeChanger]="true"
+        [nzTotal]="totalRecords()"
+        [nzPageSize]="10"
+        [nzLoading]="loading()"
+        (nzQueryParams)="onQueryParamsChange($event)">
+        <thead>
+          <tr>
+            <th nzWidth="25%">Workout</th>
+            <th nzWidth="50%">Notes/Journal</th>
+            <th nzWidth="25%">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (executedWorkout of dt.data; track executedWorkout.id) {
+            <tr class="workout-journal">
+              <td>
+                <a routerLink="/workouts/history/view/{{executedWorkout.id}}">{{executedWorkout.name}}</a><br />
+              </td>
+              <td>{{executedWorkout.journal}}</td>
+              <td>
+                {{executedWorkout.startDateTime | date:'EEE, M/d/yyyy, h:mm a'}} - {{executedWorkout.endDateTime | date:'h:mm a'}}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+  @if (totalRecords() != null) {
+    <div class="row">
+      @if (totalRecords() > 0) {
+        <div class="col-12">{{totalRecords()}} total workouts</div>
+      } @else {
+        <div class="col-12" style="font-style: italic">No workouts have been executed yet.</div>
+      }
+    </div>
+  }
+</div>
+

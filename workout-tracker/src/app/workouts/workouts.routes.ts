@@ -53,6 +53,11 @@ export const workoutsRoutes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
+    path: 'journal',
+    loadComponent: () => import('./workout-journal/workout-journal.component').then(m => m.WorkoutJournalComponent),
+    canActivate: [UserSelectedGuard]
+  },
+  {
     path: 'plan/:id',
     loadComponent: () => import('./workout-plan/workout-plan.component').then(m => m.WorkoutPlanComponent),
     canActivate: [UserSelectedGuard],

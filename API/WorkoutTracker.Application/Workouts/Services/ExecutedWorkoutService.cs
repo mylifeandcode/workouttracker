@@ -253,6 +253,11 @@ namespace WorkoutTracker.Application.Workouts.Services
                     $"%{filter.WorkoutNameContains}%"));
             }
 
+            if (filter.OnlyWithJournalNotes)
+            {
+                query = query.Where(x => !string.IsNullOrEmpty(x.Journal));
+            }
+
         }
 
         #endregion Private Methods
