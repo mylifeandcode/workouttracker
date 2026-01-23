@@ -12,64 +12,64 @@ import { DatePipe } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 
 class MockExecutedWorkoutService {
-    getFilteredSubset = vi.fn().mockReturnValue(of(new PaginatedResults<ExecutedWorkoutSummaryDTO>()));
+  getFilteredSubset = vi.fn().mockReturnValue(of(new PaginatedResults<ExecutedWorkoutSummaryDTO>()));
 }
 
 describe('WorkoutHistoryComponent', () => {
-    let component: WorkoutHistoryComponent;
-    let fixture: ComponentFixture<WorkoutHistoryComponent>;
+  let component: WorkoutHistoryComponent;
+  let fixture: ComponentFixture<WorkoutHistoryComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            schemas: [CUSTOM_ELEMENTS_SCHEMA],
-            imports: [WorkoutHistoryComponent, RouterModule.forRoot([])],
-            providers: [
-                {
-                    provide: ExecutedWorkoutService,
-                    useClass: MockExecutedWorkoutService
-                },
-                provideZonelessChangeDetection()
-            ]
-        })
-            .overrideComponent(WorkoutHistoryComponent, {
-            remove: { imports: [NzTableModule, RouterLink, NzTooltipModule, NzModalModule, DatePipe] },
-            add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
-        })
-            .compileComponents();
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [WorkoutHistoryComponent, RouterModule.forRoot([])],
+      providers: [
+        {
+          provide: ExecutedWorkoutService,
+          useClass: MockExecutedWorkoutService
+        },
+        provideZonelessChangeDetection()
+      ]
+    })
+      .overrideComponent(WorkoutHistoryComponent, {
+        remove: { imports: [NzTableModule, RouterLink, NzTooltipModule, NzModalModule, DatePipe] },
+        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+      })
+      .compileComponents();
+  });
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(WorkoutHistoryComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(WorkoutHistoryComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-    it('should initialize with loading state', () => {
-        expect(component.loading()).toBe(false); // Should be false after ngOnInit completes
-        expect(component.totalRecords()).toBe(0);
-        expect(component.executedWorkouts()).toEqual([]);
-    });
+  it('should initialize with loading state', () => {
+    expect(component.loading()).toBe(false); // Should be false after ngOnInit completes
+    expect(component.totalRecords()).toBe(0);
+    expect(component.executedWorkouts()).toEqual([]);
+  });
 
-    it('should open and close notes modal', () => {
-        const testNotes = 'Test workout notes';
+  it('should open and close notes modal', () => {
+    const testNotes = 'Test workout notes';
 
-        component.openNotesModal(testNotes);
-        expect(component.showNotesModal()).toBe(true);
-        expect(component.notes()).toBe(testNotes);
+    component.openNotesModal(testNotes);
+    expect(component.showNotesModal()).toBe(true);
+    expect(component.notes()).toBe(testNotes);
 
-        component.closeNotesModal();
-        expect(component.showNotesModal()).toBe(false);
-    });
+    component.closeNotesModal();
+    expect(component.showNotesModal()).toBe(false);
+  });
 
-    it('should reset filter', () => {
-        component.workoutNameFilter.set('test filter');
+  it('should reset filter', () => {
+    component.workoutNameFilter.set('test filter');
 
-        component.reset();
+    component.reset();
 
-        expect(component.workoutNameFilter()).toBe('');
-    });
+    expect(component.workoutNameFilter()).toBe('');
+  });
 });
