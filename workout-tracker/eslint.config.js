@@ -1,10 +1,11 @@
 // @ts-check
 const eslint = require("@eslint/js");
-const { defineConfig } = require("eslint/config");
+const { defineConfig, globalIgnores } = require("eslint/config");
 const tseslint = require("typescript-eslint");
 const angular = require("angular-eslint");
 
 module.exports = defineConfig([
+  globalIgnores(["src/app/api/**"]),
   {
     files: ["**/*.ts"],
     extends: [
@@ -32,9 +33,7 @@ module.exports = defineConfig([
         },
       ],
       "@typescript-eslint/array-type": "off",
-      "@typescript-eslint/consistent-indexed-object-style": "off", /* Disabled due to code-gen files */
       "@typescript-eslint/consistent-type-assertions": "off",
-      "@typescript-eslint/consistent-type-definitions": "off", /* Disabled due to code-gen files */
       "@typescript-eslint/no-inferrable-types": [
         "off",
         null
