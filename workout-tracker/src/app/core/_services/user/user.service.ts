@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { User } from '../../_models/user';
 import { map, tap } from 'rxjs/operators';
-import { UserOverview } from '../../_models/user-overview';
+import { UserOverview } from '../../../api';
 import { ApiBaseService } from '../api-base/api-base.service';
-import { UserNewDTO } from '../../_models/user-new-dto';
+import { UserNewDto } from '../../../api';
 
 
 @Injectable({
@@ -36,7 +36,7 @@ export class UserService extends ApiBaseService<User> {
       );
   }
 
-  public addNew(user: UserNewDTO): Observable<User> {
+  public addNew(user: UserNewDto): Observable<User> {
     return this._http.post<User>(`${this._apiRoot}/new`, user).pipe(tap(() => { this.invalidateCache(); }));
   }
 

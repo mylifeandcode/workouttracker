@@ -7,7 +7,7 @@ namespace WorkoutTracker.API.Models
         Guid WorkoutId,
         DateTime? StartDateTime,
         DateTime? EndDateTime,
-        string Journal,
+        string? Journal,
         int Rating,
         IEnumerable<ExecutedExerciseDTO> Exercises) 
         : NamedEntityDTO(Id, CreatedDateTime, ModifiedDateTime, Name);

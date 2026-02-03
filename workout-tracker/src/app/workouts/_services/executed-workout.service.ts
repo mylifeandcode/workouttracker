@@ -1,12 +1,11 @@
 import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiBaseService } from '../../core/_services/api-base/api-base.service';
-import { PaginatedResults } from '../../core/_models/paginated-results';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
 import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
-import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
+import { ExecutedWorkoutSummaryDto, ExecutedWorkoutSummaryDtoPaginatedResults } from '../../api';
 
 @Injectable({
   providedIn: 'root'
@@ -17,65 +16,24 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
     super("executedworkout");
   }
 
-  /*
-  THESE 4 OVERRIDES AREN'T NECESSARY NOW, BUT KEEPING THEM HERE IN CASE I NEED THEM LATER.
-  public override getAll(): Observable<ExecutedWorkoutDTO[]> {
-    return super.getAll().pipe(
-      map((workouts: ExecutedWorkoutDTO[]) => {
-        workouts.forEach((workout: ExecutedWorkoutDTO) => 
-            workout.exercises.forEach((exercise: ExecutedExerciseDTO) => this._dateService.convertAuditDateStringsToDates(exercise)));
-        return workouts;
-      })
-    );
-  }
-
-  public override getById(publicId: string): Observable<ExecutedWorkoutDTO> {
-    return super.getById(publicId).pipe(
-      map((workout: ExecutedWorkoutDTO) => {
-        workout.exercises.forEach((exercise: ExecutedExerciseDTO) => this._dateService.convertAuditDateStringsToDates(exercise));
-        return workout;
-      })
-    );
-  }
-
-  public override add(entity: ExecutedWorkoutDTO): Observable<ExecutedWorkoutDTO> {
-    return super.add(entity).pipe(
-      map((workout: ExecutedWorkoutDTO) => {
-        workout.exercises.forEach((exercise: ExecutedExerciseDTO) => this._dateService.convertAuditDateStringsToDates(exercise));
-        return workout;
-      })
-    );
-  }
-
-  public override update(entity: ExecutedWorkoutDTO): Observable<ExecutedWorkoutDTO> {
-    return super.update(entity).pipe( 
-      map((workout: ExecutedWorkoutDTO) => {
-        workout.exercises.forEach((exercise: ExecutedExerciseDTO) => this._dateService.convertAuditDateStringsToDates(exercise));
-        return workout;
-      })
-    );
-  }
-  */
-
-  
   /**
    * Gets a subset of ExecutedWorkoutDTOs
    *
    * @param startingIndex The index of the record to start with.
    * @param pageSize The number of records to return. Could be less if on the final page.
-   * @returns An Observable<PaginatedResults<ExecutedWorkoutDTO>> containing information about ExecutedWorkouts
+   * @returns An ExecutedWorkoutSummaryDtoPaginatedResults containing information about ExecutedWorkouts
    */
   public getFilteredSubset(
     startingIndex: number, 
     pageSize: number, 
     workoutNameContains: string | null = null,
-    onlyWithJournalNotes: boolean = false): Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> {
+    onlyWithJournalNotes: boolean = false): Observable<ExecutedWorkoutSummaryDtoPaginatedResults> {
 
-    const result: Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> =
-      this._http.get<PaginatedResults<ExecutedWorkoutSummaryDTO>>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}${workoutNameContains ? '&workoutNameContains=' + workoutNameContains : ''}&onlyWithJournalNotes=${onlyWithJournalNotes}`)
+    const result: Observable<ExecutedWorkoutSummaryDtoPaginatedResults> =
+      this._http.get<ExecutedWorkoutSummaryDtoPaginatedResults>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}${workoutNameContains ? '&workoutNameContains=' + workoutNameContains : ''}&onlyWithJournalNotes=${onlyWithJournalNotes}`)
         .pipe(
-          map((response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-            response.results = response.results.map((ew: ExecutedWorkoutSummaryDTO) => {
+          map((response: ExecutedWorkoutSummaryDtoPaginatedResults) => {
+            response.results = response.results?.map((ew: ExecutedWorkoutSummaryDto) => {
               ew = this._dateService.convertDateRangeStringsToDates(ew);
               return ew;
             });
@@ -94,12 +52,12 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
    * @param pageSize The number of records to return. Could be less if on the final page.
    * @returns An Observable<PaginatedResults<ExecutedWorkoutDTO>> containing information about planned ExecutedWorkouts
    */
-  public getPlanned(startingIndex: number, pageSize: number): Observable<PaginatedResults<ExecutedWorkoutSummaryDTO>> {
+  public getPlanned(startingIndex: number, pageSize: number): Observable<ExecutedWorkoutSummaryDtoPaginatedResults> {
     return this._http
-      .get<PaginatedResults<ExecutedWorkoutSummaryDTO>>(`${this._apiRoot}/planned?firstRecord=${startingIndex}&pageSize=${pageSize}`)
+      .get<ExecutedWorkoutSummaryDtoPaginatedResults>(`${this._apiRoot}/planned?firstRecord=${startingIndex}&pageSize=${pageSize}`)
       .pipe(
-        map((response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-          response.results = response.results.map((ew: ExecutedWorkoutSummaryDTO) => {
+        map((response: ExecutedWorkoutSummaryDtoPaginatedResults) => {
+          response.results = response.results?.map((ew: ExecutedWorkoutSummaryDto) => {
             ew = this._dateService.convertDateRangeStringsToDates(ew);
             return ew;
           });
@@ -114,11 +72,11 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
    * @param pageSize The number of records to return.
    * @returns an array of recently executed workouts
    */
-  public getRecent(pageSize: number = 5): Observable<ExecutedWorkoutSummaryDTO[]> {
+  public getRecent(pageSize: number = 5): Observable<ExecutedWorkoutSummaryDto[]> {
     return this.getFilteredSubset(0, pageSize)
-      .pipe(map((response: PaginatedResults<ExecutedWorkoutSummaryDTO>) => { 
-        response.results.forEach((ew: ExecutedWorkoutSummaryDTO) => this._dateService.convertDateRangeStringsToDates(ew));
-        return response.results; 
+      .pipe(map((response: ExecutedWorkoutSummaryDtoPaginatedResults) => { 
+        response.results?.forEach((ew: ExecutedWorkoutSummaryDto) => this._dateService.convertDateRangeStringsToDates(ew));
+        return response.results ?? []; 
       }));
   }
 
@@ -139,11 +97,15 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
     return groupedExercises;
   }
 
-  public getInProgress(): Observable<ExecutedWorkoutSummaryDTO[]> {
+  //public getInProgress(): Observable<ExecutedWorkoutSummaryDTO[]> {
+  public getInProgress(): Observable<ExecutedWorkoutSummaryDto[]> {
     return this._http
-      .get<ExecutedWorkoutSummaryDTO[]>(`${this._apiRoot}/in-progress`)
-      .pipe(map((response: ExecutedWorkoutSummaryDTO[]) => {
-        response.forEach((ew: ExecutedWorkoutSummaryDTO) => this._dateService.convertDateRangeStringsToDates(ew));
+      //.get<ExecutedWorkoutSummaryDTO[]>(`${this._apiRoot}/in-progress`)
+      .get<ExecutedWorkoutSummaryDto[]>(`${this._apiRoot}/in-progress`)
+      //.pipe(map((response: ExecutedWorkoutSummaryDTO[]) => {
+      .pipe(map((response: ExecutedWorkoutSummaryDto[]) => {
+        //response.forEach((ew: ExecutedWorkoutSummaryDTO) => this._dateService.convertDateRangeStringsToDates(ew));
+        response.forEach((ew: ExecutedWorkoutSummaryDto) => this._dateService.convertDateRangeStringsToDates(ew));
         return response;
       }));
   }

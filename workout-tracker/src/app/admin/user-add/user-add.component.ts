@@ -2,11 +2,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { UserNewDTO } from '../../core/_models/user-new-dto';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { UserService } from '../../core/_services/user/user.service';
 import { CustomValidators } from '../../core/_validators/custom-validators';
 import { finalize } from 'rxjs/operators';
+import { UserNewDto } from '../../api';
 
 interface IUserAddForm {
   name: FormControl<string>;
@@ -91,13 +91,13 @@ export class UserAddComponent implements OnInit {
 
   }
 
-  private getUserForPersist(): UserNewDTO {
-    const user = new UserNewDTO();
-
-    user.userName = this.userAddForm.controls.name.value;
-    user.emailAddress = this.userAddForm.controls.emailAddress.value;
-    user.password = this.userAddForm.controls.password.value;
-    user.role = this.userAddForm.controls.role.value;
+  private getUserForPersist(): UserNewDto {
+    const user = <UserNewDto> {
+      userName: this.userAddForm.controls.name.value,
+      emailAddress: this.userAddForm.controls.emailAddress.value,
+      password: this.userAddForm.controls.password.value,
+      role: this.userAddForm.controls.role.value
+    };
 
     return user;
   }

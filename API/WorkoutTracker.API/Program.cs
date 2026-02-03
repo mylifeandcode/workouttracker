@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Extensions.Hosting;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -51,6 +53,9 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.SupportNonNullableReferenceTypes();
+    c.UseAllOfToExtendReferenceSchemas();
+    c.SchemaFilter<RequireNonNullablePropertiesSchemaFilter>();
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "WorkoutTrackerApi", Version = "v1" });
 });
 
@@ -177,4 +182,23 @@ void SetupLogging(WebApplicationBuilder appBuilder)
         .CreateLogger();
 
     appBuilder.Host.UseSerilog();
+}
+
+public class RequireNonNullablePropertiesSchemaFilter : ISchemaFilter
+{
+    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    {
+        if (schema.Properties == null) return;
+
+        var notNullableProperties = schema.Properties
+            .Where(x => !x.Value.Nullable && !schema.Required.Contains(x.Key))
+            .ToList();
+
+        foreach (var property in notNullableProperties)
+        {
+            schema.Required.Add(property.Key);
+        }
+
+    }
+
 }

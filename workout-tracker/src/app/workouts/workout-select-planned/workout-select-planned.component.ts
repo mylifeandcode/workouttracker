@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { PaginatedResults } from '../../core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
+import { ExecutedWorkoutSummaryDto, ExecutedWorkoutSummaryDtoPaginatedResults } from '../../api';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -25,7 +24,8 @@ export class WorkoutSelectPlannedComponent {
   private _messageService = inject(NzMessageService);
   //No ngOnInit() needed -- table will automatically get initial data due to lazy loading (Ajax in NG-ZORRO parlance)
 
-  public plannedWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
+  //public plannedWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
+  public plannedWorkouts = signal<ExecutedWorkoutSummaryDto[]>([]);
   public totalCount = signal<number>(0);
   public loading = signal<boolean>(true);
   public pageSize = signal<number>(10);
@@ -60,8 +60,9 @@ export class WorkoutSelectPlannedComponent {
       .getPlanned(first, this.pageSize())
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
-        next: (plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-          this.plannedWorkouts.set(plannedWorkoutInfo.results);
+        //next: (plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
+        next: (plannedWorkoutInfo: ExecutedWorkoutSummaryDtoPaginatedResults) => {
+          this.plannedWorkouts.set(plannedWorkoutInfo.results ?? []);
           this.totalCount.set(plannedWorkoutInfo.totalCount);
         }
       });

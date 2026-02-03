@@ -5,6 +5,7 @@
     <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
     <StartupObject></StartupObject>
     <UserSecretsId>bb48a3b1-794e-4418-9ad9-e5646ca5bdcd</UserSecretsId>
+	<Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

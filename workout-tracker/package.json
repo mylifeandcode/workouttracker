@@ -8,7 +8,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "openapi-ts": "openapi-ts"
   },
   "private": true,
   "dependencies": {
@@ -39,6 +40,7 @@
     "@angular/cli": "^21.0.5",
     "@angular/compiler-cli": "^21.0.8",
     "@angular/language-service": "^21.0.8",
+    "@hey-api/openapi-ts": "0.90.10",
     "@types/howler": "^2.2.7",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "^2.0.8",

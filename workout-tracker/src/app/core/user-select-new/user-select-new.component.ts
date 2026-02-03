@@ -1,9 +1,9 @@
 import { Component, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { UserNewDTO } from '../../core/_models/user-new-dto';
 import { UserService } from '../../core/_services/user/user.service';
 import { finalize } from 'rxjs/operators';
+import { UserNewDto } from '../../api';
 
 interface INewUserForm {
   name: FormControl<string>;
@@ -54,11 +54,12 @@ export class UserSelectNewComponent {
     });
   }
 
-  private getUserForPersist(): UserNewDTO {
-    const user = new UserNewDTO();
-    user.userName = this.newUserForm.controls.name.value.trim();
-    user.emailAddress = this.newUserForm.controls.emailAddress.value.trim();
-    user.password = "No Password. User-select mode!";
+  private getUserForPersist(): UserNewDto {
+    const user = <UserNewDto> {
+      userName: this.newUserForm.controls.name.value.trim(),
+      emailAddress: this.newUserForm.controls.emailAddress.value.trim(),
+      password: "No Password. User-select mode!"
+    };
 
     return user;
   }

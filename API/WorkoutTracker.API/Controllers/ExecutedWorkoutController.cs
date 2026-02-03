@@ -55,7 +55,7 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        //THERE IS NOT POST FOR EXECUTEDWORKOUTDTO -- THESE ONLY GET CREATED SERVER-SIDE
+        //THERE IS NO POST FOR EXECUTEDWORKOUTDTO -- THESE ONLY GET CREATED SERVER-SIDE
 
         [HttpPut("{id}")]
         public ActionResult<ExecutedWorkoutDTO> Put([FromBody] ExecutedWorkoutDTO value)

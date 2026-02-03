@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { UserOverview } from '../_models/user-overview';
+import { UserOverview } from '../../api';
 import { UserService } from '../_services/user/user.service';
 import { finalize } from 'rxjs/operators';
 import { UserOverviewComponent } from './user-overview/user-overview.component';

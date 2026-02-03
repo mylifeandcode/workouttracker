@@ -1,12 +1,11 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
 import { finalize } from 'rxjs';
-import { PaginatedResults } from '../../core/_models/paginated-results';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { RouterModule } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { ExecutedWorkoutSummaryDto, ExecutedWorkoutSummaryDtoPaginatedResults } from '../../api';
 
 @Component({
   selector: 'wt-workout-journal',
@@ -19,7 +18,7 @@ export class WorkoutJournalComponent implements OnInit {
   public totalRecords = signal(0);
   public loading = signal(false);
   public pageSize = signal(10);
-  public executedWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
+  public executedWorkouts = signal<ExecutedWorkoutSummaryDto[]>([]);
 
   private readonly _executedWorkoutService = inject(ExecutedWorkoutService);
 
@@ -38,8 +37,8 @@ export class WorkoutJournalComponent implements OnInit {
     this._executedWorkoutService.getFilteredSubset(first, this.pageSize(), null, true)
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
-        next: (results: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-          this.executedWorkouts.set(results.results);
+        next: (results: ExecutedWorkoutSummaryDtoPaginatedResults) => {
+          this.executedWorkouts.set(results.results ?? []);
           this.totalRecords.set(results.totalCount);
         },
         error: (error: HttpErrorResponse) => window.alert("An error occurred getting executed workouts: " + error.message)

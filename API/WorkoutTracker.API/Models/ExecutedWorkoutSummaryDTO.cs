@@ -6,6 +6,6 @@ namespace WorkoutTracker.API.Models
         Guid WorkoutPublicId,
         DateTime? StartDateTime,
         DateTime? EndDateTime,
-        string Journal) 
+        string? Journal) 
         : NamedEntityDTO(Id, CreatedDateTime, ModifiedDateTime, Name);
 }
