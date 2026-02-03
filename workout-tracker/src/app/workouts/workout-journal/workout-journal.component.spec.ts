@@ -10,7 +10,7 @@ class MockExecutedWorkoutService {
   getFilteredSubset = vi.fn().mockReturnValue(of(new PaginatedResults<ExecutedWorkoutSummaryDTO>()));
 }
 
-describe.only('WorkoutJournalComponent', () => {
+describe('WorkoutJournalComponent', () => {
   let component: WorkoutJournalComponent;
   let fixture: ComponentFixture<WorkoutJournalComponent>;
   let executedWorkoutService: ExecutedWorkoutService;
