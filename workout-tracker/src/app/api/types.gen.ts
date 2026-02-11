@@ -4,7 +4,7 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:5600' | (string & {});
 };
 
-export type ExecutedExerciseDto = {
+export type ExecutedExerciseDTO = {
     id: number;
     createdDateTime: Date;
     modifiedDateTime?: Date | null;
@@ -14,9 +14,9 @@ export type ExecutedExerciseDto = {
     sequence: number;
     targetRepCount: number;
     actualRepCount: number;
-    notes: string;
+    notes?: string | null;
     resistanceAmount: number;
-    resistanceMakeup: string;
+    resistanceMakeup?: string | null;
     setType: SetType;
     duration?: number | null;
     formRating: number;
@@ -29,7 +29,7 @@ export type ExecutedExerciseDto = {
 
 export type ExecutedExerciseMetrics = {
     exerciseId: string;
-    name?: string | null;
+    name: string;
     sequence: number;
     setType: SetType;
     averageRepCount: number;
@@ -38,7 +38,7 @@ export type ExecutedExerciseMetrics = {
     averageRangeOfMotion: number;
 };
 
-export type ExecutedWorkoutDto = {
+export type ExecutedWorkoutDTO = {
     id: string;
     createdDateTime: Date;
     modifiedDateTime?: Date | null;
@@ -48,17 +48,17 @@ export type ExecutedWorkoutDto = {
     endDateTime?: Date | null;
     journal?: string | null;
     rating: number;
-    exercises: Array<ExecutedExerciseDto>;
+    exercises: Array<ExecutedExerciseDTO>;
 };
 
 export type ExecutedWorkoutMetrics = {
-    name?: string | null;
+    name: string;
     startDateTime: Date;
     endDateTime: Date;
-    exerciseMetrics?: Array<ExecutedExerciseMetrics> | null;
+    exerciseMetrics: Array<ExecutedExerciseMetrics>;
 };
 
-export type ExecutedWorkoutSummaryDto = {
+export type ExecutedWorkoutSummaryDTO = {
     id: string;
     createdDateTime: Date;
     modifiedDateTime?: Date | null;
@@ -66,20 +66,20 @@ export type ExecutedWorkoutSummaryDto = {
     workoutPublicId: string;
     startDateTime?: Date | null;
     endDateTime?: Date | null;
-    journal: string;
+    journal?: string | null;
 };
 
-export type ExecutedWorkoutSummaryDtoPaginatedResults = {
-    results: Array<ExecutedWorkoutSummaryDto>;
+export type ExecutedWorkoutSummaryDTOPaginatedResults = {
+    results: Array<ExecutedWorkoutSummaryDTO>;
     totalCount: number;
 };
 
 export type ExecutedWorkoutsSummary = {
     totalLoggedWorkouts: number;
     firstLoggedWorkoutDateTime?: Date | null;
-    targetAreasWithWorkoutCounts?: {
+    targetAreasWithWorkoutCounts: {
         [key: string]: number;
-    } | null;
+    };
 };
 
 export type Exercise = {
@@ -88,13 +88,13 @@ export type Exercise = {
     createdDateTime: Date;
     modifiedByUserId?: number | null;
     modifiedDateTime?: Date | null;
-    name?: string | null;
+    name: string;
     publicId: string;
-    description?: string | null;
-    setup?: string | null;
-    movement?: string | null;
-    pointsToRemember?: string | null;
-    exerciseTargetAreaLinks?: Array<ExerciseTargetAreaLink> | null;
+    description: string;
+    setup: string;
+    movement: string;
+    pointsToRemember: string;
+    exerciseTargetAreaLinks: Array<ExerciseTargetAreaLink>;
     resistanceType: ResistanceType;
     oneSided: boolean;
     bandsEndToEnd?: boolean | null;
@@ -102,7 +102,7 @@ export type Exercise = {
     usesBilateralResistance: boolean;
 };
 
-export type ExerciseDto = {
+export type ExerciseDTO = {
     id: number;
     publicId: string;
     createdDateTime: Date;
@@ -111,8 +111,8 @@ export type ExerciseDto = {
     targetAreas: string;
 };
 
-export type ExerciseDtoPaginatedResults = {
-    results: Array<ExerciseDto>;
+export type ExerciseDTOPaginatedResults = {
+    results: Array<ExerciseDTO>;
     totalCount: number;
 };
 
@@ -122,14 +122,14 @@ export type ExerciseInWorkout = {
     createdDateTime: Date;
     modifiedByUserId?: number | null;
     modifiedDateTime?: Date | null;
-    exercise?: Exercise | null;
+    exercise: Exercise;
     exerciseId: number;
     numberOfSets: number;
     setType: SetType;
     sequence: number;
 };
 
-export type ExerciseInWorkoutDto = {
+export type ExerciseInWorkoutDTO = {
     id: number;
     exerciseId: string;
     exerciseName: string;
@@ -141,7 +141,7 @@ export type ExerciseInWorkoutDto = {
 export type ExercisePlan = {
     exerciseInWorkoutId: number;
     exerciseId: number;
-    exerciseName?: string | null;
+    exerciseName: string;
     numberOfSets: number;
     setType: SetType;
     resistanceType: ResistanceType;
@@ -167,7 +167,9 @@ export type ExercisePlan = {
     recommendationReason?: string | null;
 };
 
-export type ExerciseSide = 0 | 1;
+export const ExerciseSide = { 0: 0, 1: 1 } as const;
+
+export type ExerciseSide = typeof ExerciseSide[keyof typeof ExerciseSide];
 
 export type ExerciseTargetAreaLink = {
     id: number;
@@ -177,8 +179,8 @@ export type ExerciseTargetAreaLink = {
     modifiedDateTime?: Date | null;
     exerciseId: number;
     targetAreaId: number;
-    exercise?: Exercise | null;
-    targetArea?: TargetArea | null;
+    exercise: Exercise;
+    targetArea: TargetArea;
 };
 
 export type PasswordChangeRequest = {
@@ -201,15 +203,25 @@ export type ResistanceBand = {
     createdDateTime: Date;
     modifiedByUserId?: number | null;
     modifiedDateTime?: Date | null;
-    color?: string | null;
+    color: string;
     maxResistanceAmount: number;
     numberAvailable: number;
     publicId: string;
 };
 
-export type ResistanceType = 0 | 1 | 2 | 3 | 4;
+export const ResistanceType = {
+    0: 0,
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4
+} as const;
 
-export type SetType = 0 | 1;
+export type ResistanceType = typeof ResistanceType[keyof typeof ResistanceType];
+
+export const SetType = { 0: 0, 1: 1 } as const;
+
+export type SetType = typeof SetType[keyof typeof SetType];
 
 export type TargetArea = {
     id: number;
@@ -217,7 +229,7 @@ export type TargetArea = {
     createdDateTime: Date;
     modifiedByUserId?: number | null;
     modifiedDateTime?: Date | null;
-    name?: string | null;
+    name: string;
 };
 
 export type User = {
@@ -226,19 +238,19 @@ export type User = {
     createdDateTime: Date;
     modifiedByUserId?: number | null;
     modifiedDateTime?: Date | null;
-    name?: string | null;
+    name: string;
     publicId: string;
-    emailAddress?: string | null;
-    hashedPassword?: string | null;
-    profilePic?: string | null;
-    settings?: UserSettings | null;
+    emailAddress: string;
+    hashedPassword: string;
+    profilePic: string;
+    settings: UserSettings;
     role: UserRole;
-    salt?: string | null;
-    passwordResetCode?: string | null;
+    salt: string;
+    passwordResetCode: string;
     readonly passwordProtected: boolean;
 };
 
-export type UserCredentialsDto = {
+export type UserCredentialsDTO = {
     username: string;
     password: string;
 };
@@ -256,7 +268,7 @@ export type UserMinMaxReps = {
     maxReps: number;
 };
 
-export type UserNewDto = {
+export type UserNewDTO = {
     userName: string;
     emailAddress: string;
     password: string;
@@ -269,7 +281,9 @@ export type UserOverview = {
     plannedWorkoutCount: number;
 };
 
-export type UserRole = 1 | 2;
+export const UserRole = { 1: 1, 2: 2 } as const;
+
+export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 export type UserSettings = {
     id: number;
@@ -278,7 +292,7 @@ export type UserSettings = {
     modifiedByUserId?: number | null;
     modifiedDateTime?: Date | null;
     userId: number;
-    repSettings?: Array<UserMinMaxReps> | null;
+    repSettings: Array<UserMinMaxReps>;
     recommendationsEnabled: boolean;
     lowestAcceptableRating: number;
 };
@@ -289,32 +303,32 @@ export type Workout = {
     createdDateTime: Date;
     modifiedByUserId?: number | null;
     modifiedDateTime?: Date | null;
-    name?: string | null;
+    name: string;
     publicId: string;
-    exercises?: Array<ExerciseInWorkout> | null;
+    exercises: Array<ExerciseInWorkout>;
     active: boolean;
 };
 
-export type WorkoutDto = {
+export type WorkoutDTO = {
     id: string;
     createdDateTime: Date;
     modifiedDateTime?: Date | null;
     name: string;
-    exercises: Array<ExerciseInWorkoutDto>;
+    exercises: Array<ExerciseInWorkoutDTO>;
     targetAreas: string;
     active: boolean;
 };
 
-export type WorkoutDtoPaginatedResults = {
-    results: Array<WorkoutDto>;
+export type WorkoutDTOPaginatedResults = {
+    results: Array<WorkoutDTO>;
     totalCount: number;
 };
 
 export type WorkoutPlan = {
     workoutId: string;
-    workoutName?: string | null;
+    workoutName: string;
     hasBeenExecutedBefore: boolean;
-    exercises?: Array<ExercisePlan> | null;
+    exercises: Array<ExercisePlan>;
     submittedDateTime?: Date | null;
 };
 
@@ -324,15 +338,15 @@ export type UserWritable = {
     createdDateTime: Date;
     modifiedByUserId?: number | null;
     modifiedDateTime?: Date | null;
-    name?: string | null;
+    name: string;
     publicId: string;
-    emailAddress?: string | null;
-    hashedPassword?: string | null;
-    profilePic?: string | null;
-    settings?: UserSettings | null;
+    emailAddress: string;
+    hashedPassword: string;
+    profilePic: string;
+    settings: UserSettings;
     role: UserRole;
-    salt?: string | null;
-    passwordResetCode?: string | null;
+    salt: string;
+    passwordResetCode: string;
 };
 
 export type GetApiAnalyticsExecutedWorkoutsData = {
@@ -371,7 +385,7 @@ export type GetApiAnalyticsWorkoutMetricsByWorkoutPublicIdByCountResponses = {
 export type GetApiAnalyticsWorkoutMetricsByWorkoutPublicIdByCountResponse = GetApiAnalyticsWorkoutMetricsByWorkoutPublicIdByCountResponses[keyof GetApiAnalyticsWorkoutMetricsByWorkoutPublicIdByCountResponses];
 
 export type PostApiAuthLoginData = {
-    body?: UserCredentialsDto;
+    body?: UserCredentialsDTO;
     path?: never;
     query?: never;
     url: '/api/Auth/login';
@@ -459,13 +473,13 @@ export type GetApiExecutedWorkoutByPublicIdResponses = {
     /**
      * OK
      */
-    200: ExecutedWorkoutDto;
+    200: ExecutedWorkoutDTO;
 };
 
 export type GetApiExecutedWorkoutByPublicIdResponse = GetApiExecutedWorkoutByPublicIdResponses[keyof GetApiExecutedWorkoutByPublicIdResponses];
 
 export type PutApiExecutedWorkoutByIdData = {
-    body?: ExecutedWorkoutDto;
+    body?: ExecutedWorkoutDTO;
     path: {
         id: string;
     };
@@ -477,7 +491,7 @@ export type PutApiExecutedWorkoutByIdResponses = {
     /**
      * OK
      */
-    200: ExecutedWorkoutDto;
+    200: ExecutedWorkoutDTO;
 };
 
 export type PutApiExecutedWorkoutByIdResponse = PutApiExecutedWorkoutByIdResponses[keyof PutApiExecutedWorkoutByIdResponses];
@@ -501,7 +515,7 @@ export type GetApiExecutedWorkoutResponses = {
     /**
      * OK
      */
-    200: ExecutedWorkoutSummaryDtoPaginatedResults;
+    200: ExecutedWorkoutSummaryDTOPaginatedResults;
 };
 
 export type GetApiExecutedWorkoutResponse = GetApiExecutedWorkoutResponses[keyof GetApiExecutedWorkoutResponses];
@@ -521,7 +535,7 @@ export type GetApiExecutedWorkoutPlannedResponses = {
     /**
      * OK
      */
-    200: ExecutedWorkoutSummaryDtoPaginatedResults;
+    200: ExecutedWorkoutSummaryDTOPaginatedResults;
 };
 
 export type GetApiExecutedWorkoutPlannedResponse = GetApiExecutedWorkoutPlannedResponses[keyof GetApiExecutedWorkoutPlannedResponses];
@@ -537,7 +551,7 @@ export type GetApiExecutedWorkoutInProgressResponses = {
     /**
      * OK
      */
-    200: Array<ExecutedWorkoutSummaryDto>;
+    200: Array<ExecutedWorkoutSummaryDTO>;
 };
 
 export type GetApiExecutedWorkoutInProgressResponse = GetApiExecutedWorkoutInProgressResponses[keyof GetApiExecutedWorkoutInProgressResponses];
@@ -574,7 +588,7 @@ export type GetApiExercisesResponses = {
     /**
      * OK
      */
-    200: ExerciseDtoPaginatedResults;
+    200: ExerciseDTOPaginatedResults;
 };
 
 export type GetApiExercisesResponse = GetApiExercisesResponses[keyof GetApiExercisesResponses];
@@ -886,7 +900,7 @@ export type PostApiUsersResponses = {
 export type PostApiUsersResponse = PostApiUsersResponses[keyof PostApiUsersResponses];
 
 export type PostApiUsersNewData = {
-    body?: UserNewDto;
+    body?: UserNewDTO;
     path?: never;
     query?: never;
     url: '/api/Users/new';
@@ -986,7 +1000,7 @@ export type GetApiWorkoutsResponses = {
     /**
      * OK
      */
-    200: WorkoutDtoPaginatedResults;
+    200: WorkoutDTOPaginatedResults;
 };
 
 export type GetApiWorkoutsResponse = GetApiWorkoutsResponses[keyof GetApiWorkoutsResponses];

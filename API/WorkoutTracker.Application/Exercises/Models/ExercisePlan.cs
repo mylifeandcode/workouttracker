@@ -36,16 +36,16 @@ namespace WorkoutTracker.Application.Exercises.Models
         public byte TargetRepCount { get; set; }
 
         public decimal ResistanceAmountLastTime { get; set; }
-        public string ResistanceMakeupLastTime { get; set; }
+        public string? ResistanceMakeupLastTime { get; set; }
         public decimal? RecommendedResistanceAmount { get; set; }
-        public string RecommendedResistanceMakeup { get; set; }
+        public string? RecommendedResistanceMakeup { get; set; }
         public decimal ResistanceAmount { get; set; }
-        public string ResistanceMakeup { get; set; }
+        public string? ResistanceMakeup { get; set; }
         public bool? BandsEndToEnd { get; set; }
         public bool InvolvesReps { get; set; }
         public bool UsesBilateralResistance {  get; set; }
 
-        public string RecommendationReason { get; set; }
+        public string? RecommendationReason { get; set; }
 
         public ExercisePlan() { }
 

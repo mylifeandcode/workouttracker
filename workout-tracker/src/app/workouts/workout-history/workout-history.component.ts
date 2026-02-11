@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { ExecutedWorkoutSummaryDto, ExecutedWorkoutSummaryDtoPaginatedResults } from '../../api';
+import { ExecutedWorkoutSummaryDTO, ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
 import { RouterLink } from '@angular/router';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
@@ -31,7 +31,7 @@ export class WorkoutHistoryComponent implements OnInit {
   public loading = signal(false);
   public pageSize = signal(10);
   //public executedWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
-  public executedWorkouts = signal<ExecutedWorkoutSummaryDto[]>([]);
+  public executedWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
   public showNotesModal = signal(false);
   public notes = signal('');
   public workoutNameFilter = signal('');
@@ -76,7 +76,7 @@ export class WorkoutHistoryComponent implements OnInit {
     this._executedWorkoutService.getFilteredSubset(first, this.pageSize(), nameContains)
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
-        next: (results: ExecutedWorkoutSummaryDtoPaginatedResults) => {
+        next: (results: ExecutedWorkoutSummaryDTOPaginatedResults) => {
           this.executedWorkouts.set(results.results ?? []);
           this.totalRecords.set(results.totalCount);
         },

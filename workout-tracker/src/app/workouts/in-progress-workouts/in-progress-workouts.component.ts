@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@ang
 import { of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-//import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
-import { ExecutedWorkoutSummaryDto } from '../../api';
+import { ExecutedWorkoutSummaryDTO } from '../../api';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -20,7 +19,7 @@ export class InProgressWorkoutsComponent implements OnInit {
   private _executedWorkoutService = inject(ExecutedWorkoutService);
 
   //public inProgressWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
-  public inProgressWorkouts = signal<ExecutedWorkoutSummaryDto[]>([]);
+  public inProgressWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
   public loading = signal<boolean>(true);
   public errorMessage = signal<string | null>(null);
 
@@ -31,11 +30,11 @@ export class InProgressWorkoutsComponent implements OnInit {
         catchError((err: HttpErrorResponse) => {
           this.errorMessage.set(err.message ? err.message : "An error has occurred. Please contact an administrator.");
           //return of(new Array<ExecutedWorkoutSummaryDTO>());
-          return of(new Array<ExecutedWorkoutSummaryDto>());
+          return of(new Array<ExecutedWorkoutSummaryDTO>());
         })
       )
       //.subscribe((workouts: ExecutedWorkoutSummaryDTO[]) => {
-      .subscribe((workouts: ExecutedWorkoutSummaryDto[]) => {
+      .subscribe((workouts: ExecutedWorkoutSummaryDTO[]) => {
         this.inProgressWorkouts.set(workouts);
       });
   }

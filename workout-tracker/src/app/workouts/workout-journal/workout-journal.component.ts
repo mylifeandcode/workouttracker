@@ -5,7 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { RouterModule } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { ExecutedWorkoutSummaryDto, ExecutedWorkoutSummaryDtoPaginatedResults } from '../../api';
+import { ExecutedWorkoutSummaryDTO, ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
 
 @Component({
   selector: 'wt-workout-journal',
@@ -18,7 +18,7 @@ export class WorkoutJournalComponent implements OnInit {
   public totalRecords = signal(0);
   public loading = signal(false);
   public pageSize = signal(10);
-  public executedWorkouts = signal<ExecutedWorkoutSummaryDto[]>([]);
+  public executedWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
 
   private readonly _executedWorkoutService = inject(ExecutedWorkoutService);
 
@@ -37,7 +37,7 @@ export class WorkoutJournalComponent implements OnInit {
     this._executedWorkoutService.getFilteredSubset(first, this.pageSize(), null, true)
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
-        next: (results: ExecutedWorkoutSummaryDtoPaginatedResults) => {
+        next: (results: ExecutedWorkoutSummaryDTOPaginatedResults) => {
           this.executedWorkouts.set(results.results ?? []);
           this.totalRecords.set(results.totalCount);
         },

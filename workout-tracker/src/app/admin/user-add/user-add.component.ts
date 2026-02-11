@@ -6,7 +6,7 @@ import { AuthService } from '../../core/_services/auth/auth.service';
 import { UserService } from '../../core/_services/user/user.service';
 import { CustomValidators } from '../../core/_validators/custom-validators';
 import { finalize } from 'rxjs/operators';
-import { UserNewDto } from '../../api';
+import { UserNewDTO } from '../../api';
 
 interface IUserAddForm {
   name: FormControl<string>;
@@ -91,8 +91,8 @@ export class UserAddComponent implements OnInit {
 
   }
 
-  private getUserForPersist(): UserNewDto {
-    const user = <UserNewDto> {
+  private getUserForPersist(): UserNewDTO {
+    const user = <UserNewDTO> {
       userName: this.userAddForm.controls.name.value,
       emailAddress: this.userAddForm.controls.emailAddress.value,
       password: this.userAddForm.controls.password.value,

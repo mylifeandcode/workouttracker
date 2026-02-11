@@ -123,12 +123,8 @@ const exerciseTargetAreaLinkSchemaResponseTransformer = (data: any) => {
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    if (data.exercise) {
-        data.exercise = exerciseSchemaResponseTransformer(data.exercise);
-    }
-    if (data.targetArea) {
-        data.targetArea = targetAreaSchemaResponseTransformer(data.targetArea);
-    }
+    data.exercise = exerciseSchemaResponseTransformer(data.exercise);
+    data.targetArea = targetAreaSchemaResponseTransformer(data.targetArea);
     return data;
 };
 
@@ -137,9 +133,7 @@ const exerciseSchemaResponseTransformer = (data: any) => {
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    if (data.exerciseTargetAreaLinks) {
-        data.exerciseTargetAreaLinks = data.exerciseTargetAreaLinks.map((item: any) => exerciseTargetAreaLinkSchemaResponseTransformer(item));
-    }
+    data.exerciseTargetAreaLinks = data.exerciseTargetAreaLinks.map((item: any) => exerciseTargetAreaLinkSchemaResponseTransformer(item));
     return data;
 };
 
@@ -219,9 +213,7 @@ const userSettingsSchemaResponseTransformer = (data: any) => {
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    if (data.repSettings) {
-        data.repSettings = data.repSettings.map((item: any) => userMinMaxRepsSchemaResponseTransformer(item));
-    }
+    data.repSettings = data.repSettings.map((item: any) => userMinMaxRepsSchemaResponseTransformer(item));
     return data;
 };
 
@@ -230,9 +222,7 @@ const userSchemaResponseTransformer = (data: any) => {
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    if (data.settings) {
-        data.settings = userSettingsSchemaResponseTransformer(data.settings);
-    }
+    data.settings = userSettingsSchemaResponseTransformer(data.settings);
     return data;
 };
 
@@ -301,9 +291,7 @@ const exerciseInWorkoutSchemaResponseTransformer = (data: any) => {
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    if (data.exercise) {
-        data.exercise = exerciseSchemaResponseTransformer(data.exercise);
-    }
+    data.exercise = exerciseSchemaResponseTransformer(data.exercise);
     return data;
 };
 
@@ -312,9 +300,7 @@ const workoutSchemaResponseTransformer = (data: any) => {
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    if (data.exercises) {
-        data.exercises = data.exercises.map((item: any) => exerciseInWorkoutSchemaResponseTransformer(item));
-    }
+    data.exercises = data.exercises.map((item: any) => exerciseInWorkoutSchemaResponseTransformer(item));
     return data;
 };
 

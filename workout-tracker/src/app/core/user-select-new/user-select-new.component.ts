@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveF
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../core/_services/user/user.service';
 import { finalize } from 'rxjs/operators';
-import { UserNewDto } from '../../api';
+import { UserNewDTO } from '../../api';
 
 interface INewUserForm {
   name: FormControl<string>;
@@ -54,8 +54,8 @@ export class UserSelectNewComponent {
     });
   }
 
-  private getUserForPersist(): UserNewDto {
-    const user = <UserNewDto> {
+  private getUserForPersist(): UserNewDTO {
+    const user = <UserNewDTO> {
       userName: this.newUserForm.controls.name.value.trim(),
       emailAddress: this.newUserForm.controls.emailAddress.value.trim(),
       password: "No Password. User-select mode!"

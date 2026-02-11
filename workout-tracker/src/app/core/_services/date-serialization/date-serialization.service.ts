@@ -3,7 +3,7 @@ import { IHasAuditDates } from '../../../shared/interfaces/i-has-audit-dates';
 import { IMightHaveAuditDates } from '../../../shared/interfaces/i-might-have-audit-dates';
 import { IHasDateRange } from '../../../shared/interfaces/i-has-date-range';
 import { IMightHaveDateRange } from '../../../shared/interfaces/i-might-have-date-range';
-import { ExecutedWorkoutSummaryDto } from '../../../api';
+import { ExecutedWorkoutSummaryDTO } from '../../../api';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class DateSerializationService {
     return obj;
   }
 
-  public convertDateRangeStringsToDates<T extends IHasDateRange | IMightHaveDateRange | ExecutedWorkoutSummaryDto>(obj: T): T {
+  public convertDateRangeStringsToDates<T extends IHasDateRange | IMightHaveDateRange | ExecutedWorkoutSummaryDTO>(obj: T): T {
     if (obj.startDateTime) {
       obj.startDateTime = new Date(obj.startDateTime);
     }

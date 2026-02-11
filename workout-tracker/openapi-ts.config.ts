@@ -6,11 +6,16 @@ export default defineConfig({
   plugins: [
     {
       name: '@hey-api/typescript',
-      dates: 'types+transform'
+      dates: 'types+transform',
+      enums: 'javascript',
+      definitions: {
+        case: 'preserve', // or 'PascalCase', 'camelCase', etc.
+        name: '{{name}}' // template for the name
+      },      
     },
     {
       dates: true, 
       name: '@hey-api/transformers',
-    },    
+    }    
   ],
 });

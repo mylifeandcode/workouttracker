@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
-//import { ExecutedWorkoutSummaryDTO } from '../../_models/executed-workout-summary-dto';
-import { ExecutedWorkoutSummaryDto } from '../../../api';
+import { ExecutedWorkoutSummaryDTO } from '../../../api';
 import { Workout } from '../../_models/workout';
 import { WorkoutService } from '../../_services/workout.service';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -22,8 +21,7 @@ export class RecentWorkoutsComponent implements OnInit {
   private _workoutService = inject(WorkoutService);
   private _router = inject(Router);
 
-  //public recentWorkouts: ExecutedWorkoutSummaryDTO[] = [];
-  public recentWorkouts: ExecutedWorkoutSummaryDto[] = [];
+  public recentWorkouts: ExecutedWorkoutSummaryDTO[] = [];
   public showExercises = signal<boolean>(false);
   public selectedWorkout = signal<Workout | null>(null);
   public loading = signal<boolean>(true);
@@ -33,8 +31,7 @@ export class RecentWorkoutsComponent implements OnInit {
   public ngOnInit(): void {
     this._executedWorkoutService
       .getRecent() //TODO: Add code to exclude any workouts which have since been retired!
-      //.subscribe((workouts: ExecutedWorkoutSummaryDTO[]) => {
-      .subscribe((workouts: ExecutedWorkoutSummaryDto[]) => {
+      .subscribe((workouts: ExecutedWorkoutSummaryDTO[]) => {
         this.recentWorkouts = workouts;
         this.loading.set(false); //TODO: Use finalize and set this there instead.
       });
