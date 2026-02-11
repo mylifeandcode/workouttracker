@@ -1,3 +1,4 @@
+/*
 import { Entity } from "../../shared/models/entity";
 import { SetType } from "../../workouts/workout/_enums/set-type";
 
@@ -8,3 +9,4 @@ export class UserMinMaxReps extends Entity {
   public minReps: number = 0;
   public maxReps: number = 0;
 }
+*/

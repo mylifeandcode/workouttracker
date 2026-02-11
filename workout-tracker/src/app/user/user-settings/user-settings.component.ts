@@ -1,8 +1,7 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/_services/auth/auth.service';
-import { User } from '../../core/_models/user';
-import { UserMinMaxReps } from '../../core/_models/user-min-max-reps';
+import { User, UserMinMaxReps } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from '../../core/_validators/custom-validators';
 import { catchError, finalize } from 'rxjs/operators';
@@ -65,7 +64,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
       if (this.user()) {
         if (this.user()!.settings.repSettings == null || this.user()!.settings.repSettings.length === 0) {
           this.user()!.settings.repSettings = []; // Ensure it's an empty array if null or undefined
-          this.user()!.settings.repSettings.push(...[new UserMinMaxReps(), new UserMinMaxReps()]); // Add at least one default entry
+          this.user()!.settings.repSettings.push(...[<UserMinMaxReps>{}, <UserMinMaxReps>{}]); // Add at least one default entry
           this.user()!.settings.repSettings[0].setType = 0; // Default to Repetition for the first entry
           this.user()!.settings.repSettings[1].setType = 1; // Default to Timed for the second entry
         }

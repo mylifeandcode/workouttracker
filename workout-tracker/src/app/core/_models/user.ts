@@ -1,3 +1,4 @@
+/*
 import { NamedEntity } from '../../shared/models/named-entity';
 import { UserSettings } from './user-settings';
 
@@ -13,3 +14,4 @@ export class User extends NamedEntity {
     Object.assign(this, init);
   }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 import { EMPTY_GUID } from '../shared-constants';
 import { Entity } from './entity';
 
@@ -7,3 +8,4 @@ export class ResistanceBand extends Entity {
   public maxResistanceAmount: number = 0;
   public numberAvailable: number = 0;
 }
+*/

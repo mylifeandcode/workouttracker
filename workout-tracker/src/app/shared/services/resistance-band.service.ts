@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiBaseService } from '../../core/_services/api-base/api-base.service';
-import { ResistanceBand } from '../models/resistance-band';
+import { ResistanceBand } from '../../api';
 import { ResistanceBandIndividual } from '../models/resistance-band-individual';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';

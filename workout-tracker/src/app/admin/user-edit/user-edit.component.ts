@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveF
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { ConfigService } from '../../core/_services/config/config.service';
-import { User } from '../../core/_models/user';
+import { User, UserRole } from '../../api';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { UserService } from '../../core/_services/user/user.service';
@@ -13,7 +13,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 interface IUserEditForm {
   id: FormControl<number>;
-  publicId: FormControl<string | null>;
+  publicId: FormControl<string>;
   name: FormControl<string>;
   emailAddress: FormControl<string>;
   role: FormControl<number>;
@@ -104,7 +104,7 @@ export class UserEditComponent implements OnInit {
 
     return this._formBuilder.group<IUserEditForm>({
       id: new FormControl<number>(0, { nonNullable: true }),
-      publicId: new FormControl<string | null>(EMPTY_GUID, { nonNullable: true }),
+      publicId: new FormControl<string>(EMPTY_GUID, { nonNullable: true }),
       name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
       emailAddress: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
       role: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] })
@@ -143,13 +143,13 @@ export class UserEditComponent implements OnInit {
   }
 
   private getUserForPersist(): User {
-    const user = new User();
+    const user = <User>{};
 
     user.id = this.userEditForm.controls.id.value;
     user.publicId = this.userEditForm.controls.publicId.value;
     user.emailAddress = this.userEditForm.controls.emailAddress.value;
     user.name = this.userEditForm.controls.name.value;
-    user.role = this.userEditForm.controls.role.value;
+    user.role = <UserRole>this.userEditForm.controls.role.value;
 
     if (this._user?.settings) {
       user.settings = this._user.settings;

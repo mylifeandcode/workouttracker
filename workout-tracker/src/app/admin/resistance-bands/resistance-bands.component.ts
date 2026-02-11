@@ -1,6 +1,5 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
-
-import { ResistanceBand } from '../../shared/models/resistance-band';
+import { ResistanceBand } from '../../api';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
@@ -34,7 +33,7 @@ export class ResistanceBandsComponent implements OnInit {
 
   //Add modal related
   public showAddDialog = signal<boolean>(false);
-  public newResistanceBand: ResistanceBand = new ResistanceBand();
+  public newResistanceBand: ResistanceBand = <ResistanceBand>{};
   public modalSubmitted = signal<boolean>(false);
 
   //This is used to store the original row when we go into edit mode
@@ -65,7 +64,7 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   public openAddModal(): void {
-    this.newResistanceBand = new ResistanceBand();
+    this.newResistanceBand = <ResistanceBand>{};
     this.modalSubmitted.set(false);
     this.showAddDialog.set(true);
   }
