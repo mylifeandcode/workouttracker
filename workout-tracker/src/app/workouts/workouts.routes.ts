@@ -53,6 +53,11 @@ export const workoutsRoutes: Routes = [
     canActivate: [UserSelectedGuard]
   },
   {
+    path: 'history-infinite',
+    loadComponent: () => import('./workout-history-infinite/workout-history-infinite.component').then(m => m.WorkoutHistoryInfiniteComponent),
+    canActivate: [UserSelectedGuard]
+  },
+  {
     path: 'journal',
     loadComponent: () => import('./workout-journal/workout-journal.component').then(m => m.WorkoutJournalComponent),
     canActivate: [UserSelectedGuard]

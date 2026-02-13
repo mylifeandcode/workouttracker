@@ -1,0 +1,47 @@
+@import '../../../variables.scss';
+
+tr.workout-history {
+  line-height: 80px;
+}
+
+h3 {
+  padding: 6px;
+  background-image: linear-gradient(to right, $history-color-one, $history-color-gradient-end);
+  color: $header-text-color-one;
+}
+
+span {
+  color: #007bff;
+}
+
+.btn-start-workout {
+  color: $button-text-color-one;
+  background-color: $workout-color-one;
+}
+
+.btn-log-past-workout {
+  color: $button-text-color-one;
+  background-color: $workout-color-three;
+}
+
+.search-box {
+  padding: 8px;
+}
+
+.search-box input {
+  width: 188px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.search-box button {
+  width: 90px;
+}
+
+.search-button {
+  margin-right: 8px;
+}
+
+.modal-content {
+  padding: 16px;
+}

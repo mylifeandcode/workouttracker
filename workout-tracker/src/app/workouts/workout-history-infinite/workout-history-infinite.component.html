@@ -1,0 +1,41 @@
+<h3 class="headroom">Workout History</h3>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div style="max-height: 500px; overflow-y: auto;">
+        <table>
+          @for(workout of executedWorkouts(); track workout.id) {
+            <tr class="workout-history">
+              <td>
+                {{workout.id}} - {{workout.name}}
+              </td>
+            </tr>
+          }
+        </table>
+        <div wtInfiniteScroll (scrolled)="infiniteScroll()"></div>
+      </div>
+    </div>
+  </div>
+
+  @if (totalRecords() != null) {
+    <div class="row">
+      @if (totalRecords() > 0) {
+        <div class="col-12">{{totalRecords()}} total workouts</div>
+      } @else {
+        <div class="col-12" style="font-style: italic">No workouts have been executed yet.</div>
+      }
+    </div>
+  }
+  
+  <div class="row">
+    <div class="col-12 bottom-padded">
+      <button routerLink="/workouts/select" [disabled]="loading()" class="btn btn-start-workout me-2">
+        <i class="fa fa-plus"></i> Start a Workout
+      </button>
+      <button routerLink="/workouts/log-past-start" class="btn btn-log-past-workout"><i class="fa fa-pencil">
+        </i> Log a Past Workout
+      </button>
+    </div>
+  </div>
+
+</div>

@@ -38,7 +38,6 @@ export class WorkoutHistoryComponent implements OnInit {
   public workoutNameFilterVisible = signal(false);
 
   public ngOnInit(): void {
-    this.loading.set(true);
     this.getExecutedWorkouts(0, null);
   }
 
@@ -72,7 +71,7 @@ export class WorkoutHistoryComponent implements OnInit {
   }
 
   private getExecutedWorkouts(first: number, nameContains: string | null): void {
-
+    this.loading.set(true);
     this._executedWorkoutService.getFilteredSubset(first, this.pageSize(), nameContains)
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
