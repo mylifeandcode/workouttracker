@@ -1,9 +1,6 @@
+/*
 import { NamedEntity } from "../../shared/models/named-entity";
 import { ExerciseInWorkout } from './exercise-in-workout';
-
-/*
-THIS IS THE DOMAIN CLASS, NOT A DTO
-*/
 
 export class Workout extends NamedEntity {
   //public userId: number;
@@ -20,3 +17,4 @@ export class Workout extends NamedEntity {
     this.publicId = null;
   }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 import { Entity } from '../../shared/models/entity';
 import { Exercise } from './exercise';
 
@@ -27,3 +28,4 @@ export class ExerciseInWorkout extends Entity {
     this.exercise = null;
   }
 }
+*/

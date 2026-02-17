@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { Workout } from '../../../_models/workout';
+import { Workout } from '../../../../api';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ResistanceTypePipe } from '../../../_pipes/resistance-type.pipe';
 import { TargetAreasPipe } from '../../../_pipes/target-areas.pipe';

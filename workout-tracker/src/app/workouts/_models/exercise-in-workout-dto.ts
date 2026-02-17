@@ -1,3 +1,4 @@
+/*
 import { ResistanceType } from "../workout/_enums/resistance-type";
 import { SetType } from "../workout/_enums/set-type";
 
@@ -9,3 +10,4 @@ export class ExerciseInWorkoutDTO {
   setType: SetType = SetType.Repetition;
   resistanceType: ResistanceType = ResistanceType.BodyWeight;
 }
+*/

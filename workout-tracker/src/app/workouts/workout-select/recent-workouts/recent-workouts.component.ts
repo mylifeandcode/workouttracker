@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../../../api';
-import { Workout } from '../../_models/workout';
+import { ExecutedWorkoutSummaryDTO, Workout } from '../../../api';
 import { WorkoutService } from '../../_services/workout.service';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { WorkoutInfoComponent } from './workout-info/workout-info.component';

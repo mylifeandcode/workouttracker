@@ -1,3 +1,4 @@
+/*
 import { NamedEntityDTO } from "./named-entity-dto";
 import { ExerciseInWorkoutDTO } from "./exercise-in-workout-dto";
 
@@ -13,3 +14,4 @@ export class WorkoutDTO extends NamedEntityDTO {
       this.active = false;
     }
 }
+*/

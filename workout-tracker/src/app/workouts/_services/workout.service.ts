@@ -2,9 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Workout } from '../../workouts/_models/workout';
 import { PaginatedResults } from '../../core/_models/paginated-results';
-import { WorkoutDTO } from '../../workouts/_models/workout-dto';
+import { Workout, WorkoutDTO } from '../../api';
 import { WorkoutPlan } from '../_models/workout-plan';
 import { ConfigService } from '../../core/_services/config/config.service';
 

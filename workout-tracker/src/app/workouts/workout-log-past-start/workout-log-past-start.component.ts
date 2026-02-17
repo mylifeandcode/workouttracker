@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { CustomValidators } from '../../core/_validators/custom-validators';
 import { finalize } from 'rxjs/operators';
-import { WorkoutDTO } from '../_models/workout-dto';
+import { WorkoutDTO } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
 import { formatDate, NgClass } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, injec
 import { Router } from '@angular/router';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { finalize } from 'rxjs/operators';
-import { WorkoutDTO } from '../_models/workout-dto';
+import { WorkoutDTO } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
 import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.component';
 import { FormsModule } from '@angular/forms';

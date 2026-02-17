@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ExerciseTargetAreaLink } from '../_models/exercise-target-area-link';
+import { ExerciseTargetAreaLink } from '../../api';
 
 @Pipe({
     name: 'targetAreas',

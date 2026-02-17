@@ -2,8 +2,6 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } fro
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
-import { Workout } from '../_models/workout';
-import { ExerciseInWorkout } from '../_models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -14,7 +12,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
 import { EMPTY_GUID } from '../../shared/shared-constants';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ExerciseDTO } from '../../api';
+import { Exercise, ExerciseDTO, ExerciseInWorkout, Workout } from '../../api';
 
 interface IExerciseInWorkout {
   id: FormControl<number>;
@@ -71,7 +69,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   protected editEnabled = signal(false);
 
   //PRIVATE FIELDS
-  private _workout: Workout = new Workout();
+  private _workout: Workout = <Workout>{};
 
   //PROPERTIES
   get exercisesArray(): FormArray<FormGroup<IExerciseInWorkout>> {
@@ -153,7 +151,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       this.loadWorkout();
     }
     else {
-      this._workout = new Workout();
+      this._workout = <Workout>{};
       this.loading.set(false);
     }
   }
@@ -293,13 +291,17 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
     for (const exerciseFormGroup of this.exercisesArray.controls) {
       output.push(
-        new ExerciseInWorkout(
-          exerciseFormGroup.controls.id.value,
-          exerciseFormGroup.controls.exerciseId.value,
-          exerciseFormGroup.controls.exerciseName.value,
-          exerciseFormGroup.controls.numberOfSets.value,
-          exerciseFormGroup.controls.setType.value,
-          index)
+        <ExerciseInWorkout>{
+          id: exerciseFormGroup.controls.id.value,
+          createdByUserId: 0, //TODO: Fix,
+          createdDateTime: new Date(), //TODO: Fix
+          exercise: <Exercise>{},
+          exerciseId: exerciseFormGroup.controls.exerciseId.value,
+          exerciseName: exerciseFormGroup.controls.exerciseName.value,
+          numberOfSets: exerciseFormGroup.controls.numberOfSets.value,
+          sequence: index,
+          setType: exerciseFormGroup.controls.setType.value
+        }
       );
       index++;
     }
