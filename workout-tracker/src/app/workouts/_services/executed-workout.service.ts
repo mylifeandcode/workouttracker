@@ -3,9 +3,7 @@ import { Injectable } from '@angular/core';
 import { ApiBaseService } from '../../core/_services/api-base/api-base.service';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
-import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
-import { ExecutedWorkoutSummaryDTO, ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
+import { ExecutedExerciseDTO, ExecutedWorkoutDTO, ExecutedWorkoutSummaryDTO, ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
 
 @Injectable({
   providedIn: 'root'

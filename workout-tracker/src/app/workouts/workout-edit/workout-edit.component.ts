@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
 import { Workout } from '../_models/workout';
-import { ExerciseDTO } from '../_models/exercise-dto';
 import { ExerciseInWorkout } from '../_models/exercise-in-workout';
 import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
@@ -15,6 +14,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
 import { EMPTY_GUID } from '../../shared/shared-constants';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ExerciseDTO } from '../../api';
 
 interface IExerciseInWorkout {
   id: FormControl<number>;

@@ -5,8 +5,7 @@ import { ResistanceBandService } from '../../shared/services/resistance-band.ser
 import { IBandAllocation, ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from '../../shared/models/resistance-band-individual';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
-import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
+import { ExecutedExerciseDTO, ExecutedWorkoutDTO } from '../../api';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { Router, RouterLink } from '@angular/router';
 import { IWorkoutFormExercise } from './_interfaces/i-workout-form-exercise';
@@ -292,7 +291,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       this.exercisesArray?.push(
         this._formBuilder.group<IWorkoutFormExercise>({
           id: new FormControl<number>(exerciseArray[0].id, { nonNullable: true }),
-          exerciseId: new FormControl<number>(exerciseArray[0].exerciseId, { nonNullable: true }),
+          exerciseId: new FormControl<string>(exerciseArray[0].exerciseId, { nonNullable: true }),
           exerciseName: new FormControl<string>(exerciseArray[0].name, { nonNullable: true }),
           exerciseSets: this.getExerciseSetsFormArray(exerciseArray),
           setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }),
@@ -324,18 +323,18 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
         rangeOfMotionRating: new FormControl<number | null>(
           exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, { validators: Validators.required }),
 
-        resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup),
+        resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup ?? null),
 
         //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
         bandsEndToEnd: new FormControl<boolean | null>(
-          exercises[i].bandsEndToEnd),
+          exercises[i].bandsEndToEnd ?? null),
 
         duration: new FormControl<number | null>(WorkoutComponent.DEFAULT_DURATION), //TODO: Get/set value from API
 
         involvesReps: new FormControl<boolean>(
           exercises[i].involvesReps, { nonNullable: true }), //Kind of a hack, but I need to pass this value along
 
-        side: new FormControl<number | null>(exercises[i].side),
+        side: new FormControl<number | null>(exercises[i].side ?? null),
         usesBilateralResistance: new FormControl<boolean>(exercises[i].usesBilateralResistance, { nonNullable: true })
       });
 
@@ -398,8 +397,8 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       .pipe(finalize(() => { this.saving.set(false); }))
       .subscribe({
         next: (workout: ExecutedWorkoutDTO) => {
-          this._messageService.remove();
-          this._executedWorkout = workout;
+            this._messageService.remove();
+            this._executedWorkout = workout;
           if (completed) {
             if (this.pastWorkout()) {
               this.workoutForm.markAsPristine(); //To allow the guard to let us navigate away
@@ -408,13 +407,13 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
             else {
               this.infoMsg.set("Completed workout saved at " + new Date().toLocaleTimeString());
               this.workoutCompleted.set(true);
-              this.endDateTime.set(this._executedWorkout.endDateTime);
+              this.endDateTime.set(this._executedWorkout.endDateTime ?? null);
               this._messageService.success('Workout completed!');
               this.workoutForm.markAsPristine();
             }
           }
           else {
-            if (!this.startDateTime()) this.startDateTime.set(this._executedWorkout.startDateTime);
+            if (!this.startDateTime()) this.startDateTime.set(this._executedWorkout.startDateTime ?? null);
             this._messageService.success('Progress updated!');
           }
           this.activeAccordionTab.set(this.getExerciseInProgress());

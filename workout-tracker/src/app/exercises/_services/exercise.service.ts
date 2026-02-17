@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { Exercise } from '../../workouts/_models/exercise';
 import { TargetArea } from '../../workouts/_models/target-area';
 import { PaginatedResults } from '../../core/_models/paginated-results';
-import { ExerciseDTO } from '../../workouts/_models/exercise-dto';
+import { ExerciseDTO } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
 

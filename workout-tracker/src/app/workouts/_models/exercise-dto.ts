@@ -1,3 +1,4 @@
+/*
 import { IMightHaveAuditDates } from "../../shared/interfaces/i-might-have-audit-dates";
 
 export class ExerciseDTO implements IMightHaveAuditDates {
@@ -8,3 +9,4 @@ export class ExerciseDTO implements IMightHaveAuditDates {
   name: string = '';
   targetAreas: string = '';
 }
+*/

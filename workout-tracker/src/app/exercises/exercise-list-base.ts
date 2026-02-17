@@ -1,7 +1,7 @@
 import { ExerciseService } from './_services/exercise.service';
 import { PaginatedResults } from '../core/_models/paginated-results';
 import { debounceTime, distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
-import { ExerciseDTO } from '../workouts/_models/exercise-dto';
+import { ExerciseDTO } from '../api';
 import { Subject } from 'rxjs';
 import { effect, signal } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';

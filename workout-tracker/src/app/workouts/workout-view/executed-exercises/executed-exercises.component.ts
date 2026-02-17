@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { ExecutedExerciseDTO } from '../../_models/executed-exercise-dto';
+import { ExecutedExerciseDTO } from '../../../api';
 import { NgStyle } from '@angular/common';
 import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';
 import { RatingPipe } from '../../_pipes/rating.pipe';

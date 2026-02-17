@@ -3,7 +3,7 @@ import { IWorkoutFormExerciseSet } from "./i-workout-form-exercise-set";
 
 export interface IWorkoutFormExercise {
   id: FormControl<number>;
-  exerciseId: FormControl<number>;
+  exerciseId: FormControl<string>;
   exerciseName: FormControl<string>;
   exerciseSets: FormArray<FormGroup<IWorkoutFormExerciseSet>>;
   setType: FormControl<number>;

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { ExecutedExerciseDTO } from '../_models/executed-exercise-dto';
-import { ExecutedWorkoutDTO } from '../_models/executed-workout-dto';
+import { ExecutedExerciseDTO, ExecutedWorkoutDTO } from '../../api';
+
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';
 import { DatePipe, KeyValuePipe } from '@angular/common';
@@ -19,7 +19,7 @@ export class WorkoutViewComponent {
 
 
   public loading = signal<boolean>(true);
-  public executedWorkout = signal<ExecutedWorkoutDTO>(new ExecutedWorkoutDTO());
+  public executedWorkout = signal<ExecutedWorkoutDTO>(<ExecutedWorkoutDTO>{});
 
   id = input<string>("id");
 

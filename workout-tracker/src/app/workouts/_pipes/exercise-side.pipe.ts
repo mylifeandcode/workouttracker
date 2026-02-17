@@ -7,7 +7,7 @@ import { ExerciseSide } from '../workout/_enums/exercise-side';
 })
 export class ExerciseSidePipe implements PipeTransform {
 
-  transform(value: ExerciseSide | null): string {
+  transform(value: ExerciseSide | null | undefined): string {
     if (value == null) return "";
 
     switch(+value) {
