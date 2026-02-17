@@ -4,7 +4,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { RouterLink, RouterModule } from '@angular/router';
 import { PaginatedResults } from '../../core/_models/paginated-results';
-import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
+import { ExecutedWorkoutSummaryDTO } from '../../api';
 import { of } from 'rxjs';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';

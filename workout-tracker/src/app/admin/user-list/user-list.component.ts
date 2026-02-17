@@ -1,6 +1,6 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { UserService } from '../../core/_services/user/user.service';
-import { User } from '../../core/_models/user';
+import { User } from '../../api';
 import { Observable, finalize } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';

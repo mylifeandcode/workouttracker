@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WorkoutJournalComponent } from './workout-journal.component';
 import { of } from 'rxjs';
-import { ExecutedWorkoutSummaryDTO } from '../_models/executed-workout-summary-dto';
+import { ExecutedWorkoutSummaryDTO } from '../../api';
 import { PaginatedResults } from '../../core/_models/paginated-results';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 

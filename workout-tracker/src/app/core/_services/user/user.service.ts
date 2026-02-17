@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { User } from '../../_models/user';
 import { map, tap } from 'rxjs/operators';
-import { UserOverview } from '../../../api';
+import { User, UserOverview } from '../../../api';
 import { ApiBaseService } from '../api-base/api-base.service';
 import { UserNewDTO } from '../../../api';
 

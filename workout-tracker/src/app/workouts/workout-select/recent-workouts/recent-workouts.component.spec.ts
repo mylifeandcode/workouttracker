@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../../_models/executed-workout-summary-dto';
+import { ExecutedWorkoutSummaryDTO } from '../../../api';
 import { Workout } from '../../_models/workout';
 import { WorkoutService } from '../../_services/workout.service';
 
