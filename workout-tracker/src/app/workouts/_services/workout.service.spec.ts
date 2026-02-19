@@ -3,12 +3,9 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { WorkoutService } from './workout.service';
-import { Workout } from '../_models/workout';
 import { ConfigService } from '../../core/_services/config/config.service';
-import { WorkoutPlan } from '../_models/workout-plan';
-import { PaginatedResults } from '../../core/_models/paginated-results';
-import { WorkoutDTO } from '../_models/workout-dto';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { Workout, WorkoutPlan, WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
 
 const TEST_WORKOUT_ID = "some-fake-guid";
 const API_ROOT_URL = "http://localhost:5600/api/workouts";
@@ -43,14 +40,14 @@ describe('WorkoutService', () => {
   });
 
   it('should get a filtered subset for workouts', async () => {
-    const expectedResults = new PaginatedResults<WorkoutDTO>();
+    const expectedResults = <WorkoutDTOPaginatedResults>{};
     expectedResults.results = new Array<WorkoutDTO>(2);
-    expectedResults.results.push(new WorkoutDTO());
-    expectedResults.results.push(new WorkoutDTO());
+    expectedResults.results.push(<WorkoutDTO>{});
+    expectedResults.results.push(<WorkoutDTO>{});
     expectedResults.totalCount = 2;
 
     service.getFilteredSubset(10, 25, false).subscribe({
-      next: (response: PaginatedResults<WorkoutDTO>) => {
+      next: (response: WorkoutDTOPaginatedResults) => {
         expect(response).toEqual(expectedResults);
         ;
       },
@@ -65,7 +62,7 @@ describe('WorkoutService', () => {
   });
 
   it('should get workout by public ID', async () => {
-    const expectedResults = new Workout();
+    const expectedResults = <Workout>{};
     const workoutId: string = TEST_WORKOUT_ID;
     expectedResults.publicId = workoutId;
 
@@ -87,7 +84,7 @@ describe('WorkoutService', () => {
   it('should add new workout', async () => {
 
     //ARRANGE
-    const workout = new Workout();
+    const workout = <Workout>{};
 
     //ACT
     service.add(workout)
@@ -112,7 +109,7 @@ describe('WorkoutService', () => {
   it('should update existing workout', async () => {
 
     //ARRANGE
-    const workout = new Workout();
+    const workout = <Workout>{};
     workout.id = 100;
 
     //ACT
@@ -120,7 +117,6 @@ describe('WorkoutService', () => {
       .subscribe({
         next: (updatedWorkout: Workout) => {
           expect(updatedWorkout).toEqual(workout); //ASSERT
-          ;
         },
         error: () => { throw new Error('Test failed'); }
 
@@ -139,7 +135,7 @@ describe('WorkoutService', () => {
   it('should submit a workout plan', async () => {
 
     //ARRANGE
-    const workoutPlan = new WorkoutPlan();
+    const workoutPlan = <WorkoutPlan>{};
     const expectedNewExecutedWorkoutPublicId: string = "some-guid-456";
 
     //ACT
@@ -164,7 +160,7 @@ describe('WorkoutService', () => {
   it('should submit a workout plan for later', async () => {
 
     //ARRANGE
-    const workoutPlan = new WorkoutPlan();
+    const workoutPlan = <WorkoutPlan>{};
     const expectedNewExecutedWorkoutPublicId: string = "some-new-guid";
 
     workoutPlan.workoutId = "some-guid-30-blah-blah";
@@ -191,7 +187,7 @@ describe('WorkoutService', () => {
   it('should submit a workout plan for a past workout', async () => {
 
     //ARRANGE
-    const workoutPlan = new WorkoutPlan();
+    const workoutPlan = <WorkoutPlan>{};
     const expectedNewExecutedWorkoutPublicId: string = "someOtherGuid";
 
     workoutPlan.workoutId = "someGuid";
@@ -218,7 +214,7 @@ describe('WorkoutService', () => {
 
   it('should get new workout plan', async () => {
     const workoutPublicId: string = "some-guid-123";
-    const expectedPlan = new WorkoutPlan();
+    const expectedPlan = <WorkoutPlan>{};
     expectedPlan.workoutId = workoutPublicId;
     expectedPlan.submittedDateTime = new Date();
 

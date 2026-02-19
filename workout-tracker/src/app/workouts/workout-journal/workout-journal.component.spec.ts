@@ -2,12 +2,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WorkoutJournalComponent } from './workout-journal.component';
 import { of } from 'rxjs';
-import { ExecutedWorkoutSummaryDTO } from '../../api';
-import { PaginatedResults } from '../../core/_models/paginated-results';
+import { ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 
 class MockExecutedWorkoutService {
-  getFilteredSubset = vi.fn().mockReturnValue(of(new PaginatedResults<ExecutedWorkoutSummaryDTO>()));
+  getFilteredSubset = vi.fn().mockReturnValue(of(<ExecutedWorkoutSummaryDTOPaginatedResults>{}));
 }
 
 describe('WorkoutJournalComponent', () => {

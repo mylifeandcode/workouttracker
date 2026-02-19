@@ -1,9 +1,8 @@
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PaginatedResults } from '../../core/_models/paginated-results';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { ExecutedWorkoutSummaryDTO } from '../../api';
+import { ExecutedWorkoutSummaryDTO, ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
 
 import { WorkoutSelectPlannedComponent } from './workout-select-planned.component';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -15,7 +14,7 @@ import { ModalOptions, NzModalModule, NzModalService } from 'ng-zorro-antd/modal
 
 class MockExecutedWorkoutService {
   getPlanned = vi.fn().mockImplementation(() => {
-    const response = new PaginatedResults<ExecutedWorkoutSummaryDTO>();
+    const response = <ExecutedWorkoutSummaryDTOPaginatedResults>{};
     response.results = new Array<ExecutedWorkoutSummaryDTO>();
     response.results.push(<ExecutedWorkoutSummaryDTO>{});
     response.results.push(<ExecutedWorkoutSummaryDTO>{});

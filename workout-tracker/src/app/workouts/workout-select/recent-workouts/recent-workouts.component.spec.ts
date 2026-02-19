@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../../../api';
-import { Workout } from '../../_models/workout';
+import { Workout } from '../../../api';
 import { WorkoutService } from '../../_services/workout.service';
 
 import { RecentWorkoutsComponent } from './recent-workouts.component';
@@ -14,7 +14,7 @@ import { WorkoutInfoComponent } from './workout-info/workout-info.component';
 import { DatePipe } from '@angular/common';
 
 class MockExecutedWorkoutService {
-    getRecent = vi.fn().mockReturnValue(of(new Array<ExecutedWorkoutSummaryDTO>()));
+  getRecent = vi.fn().mockReturnValue(of(new Array<ExecutedWorkoutSummaryDTO>()));
 }
 
 class MockWorkoutService {
@@ -23,54 +23,54 @@ class MockRouter {
 }
 
 @Component({
-    selector: 'wt-workout-info',
-    template: ''
+  selector: 'wt-workout-info',
+  template: ''
 })
 class MockWorkoutInfoComponent {
-    readonly workout = input<Workout>();
+  readonly workout = input<Workout>();
 }
 
 describe('RecentWorkoutsComponent', () => {
-    let component: RecentWorkoutsComponent;
-    let fixture: ComponentFixture<RecentWorkoutsComponent>;
+  let component: RecentWorkoutsComponent;
+  let fixture: ComponentFixture<RecentWorkoutsComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            providers: [
-                provideZonelessChangeDetection(),
-                {
-                    provide: ExecutedWorkoutService,
-                    useClass: MockExecutedWorkoutService
-                },
-                {
-                    provide: WorkoutService,
-                    useClass: MockWorkoutService
-                },
-                {
-                    provide: Router,
-                    useClass: MockRouter
-                }
-            ],
-            imports: [
-                RecentWorkoutsComponent,
-                MockWorkoutInfoComponent
-            ],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA]
-        })
-            .overrideComponent(RecentWorkoutsComponent, {
-            remove: { imports: [NzTableModule, NzModalModule, WorkoutInfoComponent, DatePipe] },
-            add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
-        })
-            .compileComponents();
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        {
+          provide: ExecutedWorkoutService,
+          useClass: MockExecutedWorkoutService
+        },
+        {
+          provide: WorkoutService,
+          useClass: MockWorkoutService
+        },
+        {
+          provide: Router,
+          useClass: MockRouter
+        }
+      ],
+      imports: [
+        RecentWorkoutsComponent,
+        MockWorkoutInfoComponent
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    })
+      .overrideComponent(RecentWorkoutsComponent, {
+        remove: { imports: [NzTableModule, NzModalModule, WorkoutInfoComponent, DatePipe] },
+        add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }
+      })
+      .compileComponents();
+  });
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(RecentWorkoutsComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(RecentWorkoutsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

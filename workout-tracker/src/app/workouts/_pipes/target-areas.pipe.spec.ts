@@ -1,5 +1,4 @@
-import { ExerciseTargetAreaLink } from '../_models/exercise-target-area-link';
-import { TargetArea } from '../_models/target-area';
+import { ExerciseTargetAreaLink, TargetArea } from '../../api';
 import { TargetAreasPipe } from './target-areas.pipe';
 
 describe('TargetAreasPipe', () => {
@@ -12,13 +11,13 @@ describe('TargetAreasPipe', () => {
   it('should return a string of the target area names', () => {
 
     //ARRANGE
-    const link1 = new ExerciseTargetAreaLink(1, 2);
-    const link2 = new ExerciseTargetAreaLink(4, 5);
-    const link3 = new ExerciseTargetAreaLink(7, 8);
+    const link1 = <ExerciseTargetAreaLink>{ exerciseId: 1, targetAreaId: 2 };
+    const link2 = <ExerciseTargetAreaLink>{ exerciseId: 4, targetAreaId: 5 };
+    const link3 = <ExerciseTargetAreaLink>{ exerciseId: 7, targetAreaId: 8 };
 
-    link1.targetArea = new TargetArea(1, "Chest", 1, new Date(), null, null, false);
-    link2.targetArea = new TargetArea(2, "Triceps", 1, new Date(), null, null, false);
-    link3.targetArea = new TargetArea(3, "Shoulders", 1, new Date(), null, null, false);
+    link1.targetArea = <TargetArea>{ id: 1, name: "Chest", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() };
+    link2.targetArea = <TargetArea>{ id: 2, name: "Triceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() };
+    link3.targetArea = <TargetArea>{ id: 3, name: "Shoulders", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() };
 
     const links = new Array<ExerciseTargetAreaLink>();
     links.push(link1, link2, link3);
