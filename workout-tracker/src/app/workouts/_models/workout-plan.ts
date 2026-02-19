@@ -1,3 +1,4 @@
+/*
 import { ExercisePlan } from "./exercise-plan";
 
 export class WorkoutPlan {
@@ -7,3 +8,4 @@ export class WorkoutPlan {
   public exercises: ExercisePlan[] = [];
   public submittedDateTime?: Date;
 }
+*/

@@ -3,8 +3,7 @@ import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PaginatedResults } from '../../core/_models/paginated-results';
-import { Workout, WorkoutDTO } from '../../api';
-import { WorkoutPlan } from '../_models/workout-plan';
+import { Workout, WorkoutDTO, WorkoutPlan } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 
 const HTTP_OPTIONS = {

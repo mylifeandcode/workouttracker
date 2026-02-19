@@ -1,9 +1,8 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy, computed } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { WorkoutPlan } from '../_models/workout-plan';
+import { WorkoutPlan, ExercisePlan } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
-import { ExercisePlan } from '../_models/exercise-plan';
 import { IBandAllocation, ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { ResistanceBandIndividual } from '../../shared/models/resistance-band-individual';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
@@ -223,18 +222,18 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
           avgActualRepCountLastTime: new FormControl<number | null>(exercise.avgActualRepCountLastTime),
           avgRangeOfMotionLastTime: new FormControl<number | null>(exercise.avgRangeOfMotionLastTime),
           avgFormLastTime: new FormControl<number | null>(exercise.avgFormLastTime),
-          recommendedTargetRepCount: new FormControl<number | null>(exercise.recommendedTargetRepCount),
+          recommendedTargetRepCount: new FormControl<number | null>(exercise.recommendedTargetRepCount ?? null),
           targetRepCount: new FormControl<number | null>(exercise.targetRepCount, { validators: Validators.min(exercise.involvesReps ? 1 : 0) }),
           resistanceAmountLastTime: new FormControl<number | null>(exercise.resistanceAmountLastTime),
-          resistanceMakeupLastTime: new FormControl<string | null>(exercise.resistanceMakeupLastTime),
-          recommendedResistanceAmount: new FormControl<number | null>(exercise.recommendedResistanceAmount),
-          recommendedResistanceMakeup: new FormControl<string | null>(exercise.recommendedResistanceMakeup),
+          resistanceMakeupLastTime: new FormControl<string | null>(exercise.resistanceMakeupLastTime ?? null),
+          recommendedResistanceAmount: new FormControl<number | null>(exercise.recommendedResistanceAmount ?? null),
+          recommendedResistanceMakeup: new FormControl<string | null>(exercise.recommendedResistanceMakeup ?? null),
           resistanceAmount: new FormControl<number>(exercise.resistanceAmount, { nonNullable: true, validators: (exercise.resistanceType != 3 ? Validators.min(0.1) : null) }),
-          resistanceMakeup: new FormControl<string | null>(exercise.resistanceMakeup),
-          bandsEndToEnd: new FormControl<boolean | null>(exercise.bandsEndToEnd),
+          resistanceMakeup: new FormControl<string | null>(exercise.resistanceMakeup ?? null),
+          bandsEndToEnd: new FormControl<boolean | null>(exercise.bandsEndToEnd ?? null),
           involvesReps: new FormControl<boolean>(exercise.involvesReps, { nonNullable: true }),
           usesBilateralResistance: new FormControl<boolean>(exercise.usesBilateralResistance, { nonNullable: true }),
-          recommendationReason: new FormControl<string | null>(exercise.recommendationReason)
+          recommendationReason: new FormControl<string | null>(exercise.recommendationReason ?? null)
         })
       );
 
@@ -249,7 +248,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
         //TODO: Revisit. Maybe can be made simpler now that we have Typed Forms. :)
         const exercisePlan = this.workoutPlan()?.exercises[index];
         if (exercisePlan) {
-          exercisePlan.targetRepCount = exerciseFormGroup.controls.targetRepCount.value;
+          exercisePlan.targetRepCount = exerciseFormGroup.controls.targetRepCount.value ?? 0; //TODO: Need to revisit ExercisePlan for exercises without reps
           exercisePlan.resistanceAmount = exerciseFormGroup.controls.resistanceAmount.value;
           exercisePlan.resistanceMakeup = exerciseFormGroup.controls.resistanceMakeup.value;
         }
