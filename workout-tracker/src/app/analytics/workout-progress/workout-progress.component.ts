@@ -1,12 +1,11 @@
 import { Component, ElementRef, OnDestroy, OnInit, inject, viewChild, signal, ChangeDetectionStrategy } from '@angular/core';
-import { PaginatedResults } from '../../core/_models/paginated-results';
-import { WorkoutDTO } from '../../api';
+import { WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
 import { WorkoutService } from '../../workouts/_services/workout.service';
 import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
-import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
+import { ExecutedWorkoutMetrics } from '../../api';
 import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
@@ -195,7 +194,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
     this._workoutService.getFilteredSubset(0, pageSize, true)
       .pipe(finalize(() => { this.loadingData.set(false); }))
       .subscribe({
-        next: (result: PaginatedResults<WorkoutDTO>) => {
+        next: (result: WorkoutDTOPaginatedResults) => {
           this.workouts.set(result.results.sort((a, b) => a.name.localeCompare(b.name)));
         }/*,
         error: (error) => {

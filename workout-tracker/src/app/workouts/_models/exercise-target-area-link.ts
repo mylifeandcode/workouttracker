@@ -1,3 +1,4 @@
+/*
 import { Entity } from "../../shared/models/entity";
 import { TargetArea } from "./target-area";
 
@@ -8,3 +9,4 @@ export class ExerciseTargetAreaLink extends Entity {
         super();
     }
 }
+*/

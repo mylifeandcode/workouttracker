@@ -1,19 +1,13 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Exercise } from '../../workouts/_models/exercise';
-import { TargetArea } from '../../workouts/_models/target-area';
-import { PaginatedResults } from '../../core/_models/paginated-results';
-import { ExerciseDTO } from '../../api';
+import { ExerciseDTOPaginatedResults, TargetArea } from '../../api';
+import { Exercise } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
+import { HTTP_OPTIONS } from '../../shared/constants/http-constants';
 
-const HTTP_OPTIONS = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json'
-  })
-};
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +32,7 @@ export class ExerciseService {
     firstRecOffset: number,
     pageSize: number,
     nameContains: string | null = null,
-    targetAreaContains: string[] | null = null): Observable<PaginatedResults<ExerciseDTO>> {
+    targetAreaContains: string[] | null = null): Observable<ExerciseDTOPaginatedResults> {
 
     let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
 
@@ -51,7 +45,7 @@ export class ExerciseService {
     }
 
     return this._http
-      .get<PaginatedResults<ExerciseDTO>>(url)
+      .get<ExerciseDTOPaginatedResults>(url)
       .pipe(
         map((paginatedResults) => {
           paginatedResults.results.forEach(exercise => {
@@ -61,12 +55,6 @@ export class ExerciseService {
         })
       );
   }
-
-  /*
-  public getById(id: number): Observable<Exercise> {
-    return this._http.get<Exercise>(`${this.API_ROOT}/${id}`);
-  }
-  */
 
   public getById(publicId: string): Observable<Exercise> {
     return this._http

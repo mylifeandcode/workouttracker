@@ -2,10 +2,9 @@ import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@ang
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormRecord, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExerciseService } from '../_services/exercise.service';
-import { Exercise } from '../../workouts/_models/exercise';
-import { TargetArea } from '../../workouts/_models/target-area';
+import { TargetArea } from '../../api';
 import { CustomValidators } from '../../core/_validators/custom-validators';
-import { ExerciseTargetAreaLink } from '../../workouts/_models/exercise-target-area-link';
+import { Exercise, ExerciseTargetAreaLink } from '../../api';
 import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { ResistanceType } from '../../workouts/workout/_enums/resistance-type';
@@ -14,7 +13,7 @@ import { NgClass, KeyValuePipe } from '@angular/common';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
-import { EMPTY_GUID } from '../../shared/shared-constants';
+import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -85,7 +84,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   public resistanceTypeEnum: typeof ResistanceType = ResistanceType; //Needed for template to reference enum
 
   //PRIVATE FIELDS
-  private _exercise: Exercise = new Exercise();
+  private _exercise: Exercise = <Exercise>{};
   private _exercisePublicId: string | null = null; //TODO: Refactor. We have an exercise variable. Why have this too?
 
   constructor() {
@@ -192,8 +191,6 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   private subscribeToRouteParamsToSetupFormOnExerciseIdChange(): void {
 
-    //TODO: Re-evaluate. Do I really need to do this? I think a better solution might be to just look at the snapshot.
-    //this._route.params.subscribe(params => {
     this._exercisePublicId = this._route.snapshot.params['id'];
     if (this._exercisePublicId) {
       this.loadExercise();
@@ -208,11 +205,10 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       this.exerciseForm.controls.endToEnd.setValue(false);
       this.exerciseForm.controls.involvesReps.setValue(true);
 
-      this._exercise = new Exercise();
+      this._exercise = <Exercise>{};
       this._exercise.id = 0;
       this.loading.set(false);
     }
-    //}
 
   }
 
@@ -258,7 +254,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     this._exercise.setup = this.exerciseForm.controls.setup.value;
     this._exercise.movement = this.exerciseForm.controls.movement.value;
     this._exercise.pointsToRemember = this.exerciseForm.controls.pointsToRemember.value;
-    this._exercise.resistanceType = this.exerciseForm.controls.resistanceType.value;
+    this._exercise.resistanceType = <ResistanceType>this.exerciseForm.controls.resistanceType.value;
     this._exercise.oneSided = this.exerciseForm.controls.oneSided.value;
 
     if (this._exercise.resistanceType == ExerciseEditComponent.RESISTANCE_BANDS_TYPE)
@@ -284,10 +280,10 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
           (targetArea: TargetArea) => targetArea.name == key
         );
         if (selectedTargetArea) {
-          output.push(new ExerciseTargetAreaLink(
-            this._exercise.id,
-            selectedTargetArea.id
-          ));
+          output.push(<ExerciseTargetAreaLink>{
+            exerciseId: this._exercise.id,
+            targetAreaId: selectedTargetArea.id
+          });
         }
       }
     }
@@ -312,7 +308,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
     this.exerciseForm.controls.resistanceType.setValue(this._exercise.resistanceType);
     this.exerciseForm.controls.oneSided.setValue(this._exercise.oneSided);
-    this.exerciseForm.controls.endToEnd.setValue(this._exercise.bandsEndToEnd);
+    this.exerciseForm.controls.endToEnd.setValue(this._exercise.bandsEndToEnd ?? null);
     this.exerciseForm.controls.involvesReps.setValue(this._exercise.involvesReps);
     this.exerciseForm.controls.usesBilateralResistance.setValue(this._exercise.usesBilateralResistance);
   }

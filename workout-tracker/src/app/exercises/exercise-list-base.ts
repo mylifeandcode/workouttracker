@@ -1,7 +1,6 @@
 import { ExerciseService } from './_services/exercise.service';
-import { PaginatedResults } from '../core/_models/paginated-results';
 import { debounceTime, distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
-import { ExerciseDTO } from '../api';
+import { ExerciseDTO, ExerciseDTOPaginatedResults } from '../api';
 import { Subject } from 'rxjs';
 import { effect, signal } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -69,10 +68,9 @@ export abstract class ExerciseListBase {
         setTimeout(() => { this.loading.set(false); }, 500); //TODO: Revisit. Why am I using setTimeout() here?
       }))
       .subscribe({
-        next: (exercises: PaginatedResults<ExerciseDTO>) => {
+        next: (exercises: ExerciseDTOPaginatedResults) => {
           this.exercises.set(exercises.results);
           this.totalRecords.set(exercises.totalCount);
-          //console.log("TOTAL: ", exercises.totalCount);
         },
         error: (error: HttpErrorResponse) => window.alert("An error occurred getting exercises: " + error.message)
       });

@@ -10,7 +10,7 @@ import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
-import { EMPTY_GUID } from '../../shared/shared-constants';
+import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Exercise, ExerciseDTO, ExerciseInWorkout, Workout } from '../../api';
 
@@ -293,8 +293,8 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       output.push(
         <ExerciseInWorkout>{
           id: exerciseFormGroup.controls.id.value,
-          createdByUserId: 0, //TODO: Fix,
-          createdDateTime: new Date(), //TODO: Fix
+          createdByUserId: 0, //TODO: Update domain object. This value is never used had been defaulting to 0.
+          createdDateTime: new Date(), //TODO: Update domain object. This value is never used and had been defaulting to DateTime.Min.
           exercise: <Exercise>{},
           exerciseId: exerciseFormGroup.controls.exerciseId.value,
           exerciseName: exerciseFormGroup.controls.exerciseName.value,

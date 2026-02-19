@@ -1,16 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { PaginatedResults } from '../../core/_models/paginated-results';
-import { Workout, WorkoutDTO, WorkoutPlan } from '../../api';
+import { Workout, WorkoutDTOPaginatedResults, WorkoutPlan } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
+import { HTTP_OPTIONS } from '../../shared/constants/http-constants';
 
-const HTTP_OPTIONS = {
-  headers: new HttpHeaders({
-    'Content-Type':  'application/json'
-  })
-};
 
 @Injectable({
   providedIn: 'root'
@@ -30,14 +25,14 @@ export class WorkoutService {
     pageSize: number, 
     activeOnly: boolean, 
     sortAscending: boolean = true, 
-    nameContains: string | null = null): Observable<PaginatedResults<WorkoutDTO>> {
+    nameContains: string | null = null): Observable<WorkoutDTOPaginatedResults> {
         
     let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&activeOnly=${activeOnly}&sortAscending=${sortAscending}`;
 
     if(nameContains)
         url += `&nameContains=${nameContains}`;
 
-    return this._http.get<PaginatedResults<WorkoutDTO>>(url);
+    return this._http.get<WorkoutDTOPaginatedResults>(url);
   }
 
   public getById(id: string): Observable<Workout> {

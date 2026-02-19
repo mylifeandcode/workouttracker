@@ -1,3 +1,4 @@
+/*
 import { SetType } from "../../workouts/workout/_enums/set-type";
 
 export class ExecutedExerciseMetrics {
@@ -10,3 +11,4 @@ export class ExecutedExerciseMetrics {
   public averageForm: number = 0;
   public averageRangeOfMotion: number = 0;
 }
+*/

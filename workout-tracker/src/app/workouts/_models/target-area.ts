@@ -1,3 +1,4 @@
+/*
 import { NamedEntity } from '../../shared/models/named-entity';
 
 export class TargetArea extends NamedEntity {
@@ -21,3 +22,4 @@ export class TargetArea extends NamedEntity {
 
     }
 }
+*/

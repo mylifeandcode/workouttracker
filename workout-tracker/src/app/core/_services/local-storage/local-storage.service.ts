@@ -14,7 +14,7 @@ export class LocalStorageService {
   }
 
   //TODO: Revisit, make generic
-  public get(key: string): string |number | boolean | object | null {
+  public get(key: string): string | number | boolean | object | null {
     if (this.isLocalStorageSupported) {
       const localStorageItem: string | null = this._localStorage.getItem(key);
       if (localStorageItem)

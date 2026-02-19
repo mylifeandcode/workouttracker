@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PaginatedResults } from '../../core/_models/paginated-results';
 import { CustomValidators } from '../../core/_validators/custom-validators';
 import { finalize } from 'rxjs/operators';
-import { WorkoutDTO } from '../../api';
+import { WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
 import { formatDate, NgClass } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
@@ -101,7 +100,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
   private getUserWorkouts(): void {
     this._workoutService.getFilteredSubset(0, 500, true)
       .pipe(finalize(() => { this.gettingData.set(false); }))
-      .subscribe((result: PaginatedResults<WorkoutDTO>) => {
+      .subscribe((result: WorkoutDTOPaginatedResults) => {
         this.workouts.set(result.results.sort((a, b) => a.name.localeCompare(b.name)));
       });
   }

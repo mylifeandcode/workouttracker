@@ -13,7 +13,7 @@ import { IExercisePlanFormGroup } from './exercise-plan/interfaces/i-exercise-pl
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
-import { EMPTY_GUID } from '../../shared/shared-constants';
+import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { HttpErrorResponse } from '@angular/common/http';
 

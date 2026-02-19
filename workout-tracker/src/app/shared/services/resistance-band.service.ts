@@ -5,7 +5,6 @@ import { ResistanceBandIndividual } from '../models/resistance-band-individual';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-//TODO: Move to Core or Shared module
 //TODO: Implement caching and cache-busting
 
 @Injectable({

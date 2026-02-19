@@ -1,3 +1,4 @@
+/*
 import { IMightHaveAuditDates } from "../interfaces/i-might-have-audit-dates";
 export abstract class Entity implements IMightHaveAuditDates {
   id: number = 0;
@@ -6,3 +7,4 @@ export abstract class Entity implements IMightHaveAuditDates {
   modifiedByUserId: number | null = null;
   modifiedDateTime: Date | null = null;
 }
+*/

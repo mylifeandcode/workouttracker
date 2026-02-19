@@ -7,7 +7,7 @@ import { User, UserRole } from '../../api';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { UserService } from '../../core/_services/user/user.service';
-import { EMPTY_GUID } from '../../shared/shared-constants';
+import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { HttpErrorResponse } from '@angular/common/http';
 
 
