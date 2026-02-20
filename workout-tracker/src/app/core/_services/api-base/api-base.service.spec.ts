@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Entity } from '../../../shared/models/entity';
 import { ApiBaseService } from './api-base.service';
 import { HttpResponse, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { Injectable, provideZonelessChangeDetection } from '@angular/core';
@@ -12,7 +11,12 @@ class MockConfigService {
   get = vi.fn().mockReturnValue(API_ROOT);
 }
 
-class Widget extends Entity {
+class Widget {
+  id: number = 0;
+  createdByUserId: number | undefined;
+  createdDateTime: Date | undefined;
+  modifiedByUserId: number | null = null;
+  modifiedDateTime: Date | null = null;
 }
 
 //Because ApiBaseService<T> is (and should be) abstract, we'll create a class local

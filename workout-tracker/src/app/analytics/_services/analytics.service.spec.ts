@@ -5,9 +5,7 @@ import { SetType } from '../../workouts/workout/_enums/set-type';
 
 import { AnalyticsService, METRICS_TYPE } from './analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
-import { ExecutedExerciseMetrics } from '../_models/executed-exercise-metrics';
-import { ExecutedWorkoutMetrics } from '../_models/executed-workout-metrics';
-import { ExecutedWorkoutsSummary } from '../_models/executed-workouts-summary';
+import { ExecutedExerciseMetrics, ExecutedWorkoutMetrics, ExecutedWorkoutsSummary } from '../../api';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
@@ -64,7 +62,7 @@ describe('AnalyticsService', () => {
   });
 
   it('should get executed workouts summary', () => {
-    const expectedResults = new ExecutedWorkoutsSummary();
+    const expectedResults = <ExecutedWorkoutsSummary>{};
     const httpMock = TestBed.inject(HttpTestingController);
 
     service.getExecutedWorkoutsSummary()
@@ -214,12 +212,12 @@ describe('AnalyticsService', () => {
     //TODO: Create builders for these
     const metrics: ExecutedWorkoutMetrics[] = [];
 
-    const workout1 = new ExecutedWorkoutMetrics();
+    const workout1 = <ExecutedWorkoutMetrics>{};
     workout1.name = "Chest and Arms Mini v2";
     workout1.startDateTime = new Date(2022, 3, 4, 12, 0, 0);
     workout1.endDateTime = new Date(2022, 3, 4, 13, 2, 0);
     workout1.exerciseMetrics = [];
-    const workout1Exercise1 = new ExecutedExerciseMetrics();
+    const workout1Exercise1 = <ExecutedExerciseMetrics>{};
     workout1Exercise1.averageForm = 4;
     workout1Exercise1.averageRangeOfMotion = 3;
     workout1Exercise1.averageRepCount = 8;
@@ -229,7 +227,7 @@ describe('AnalyticsService', () => {
     workout1Exercise1.sequence = 0;
     workout1Exercise1.setType = SetType.Repetition;
     workout1.exerciseMetrics.push(workout1Exercise1);
-    const workout1Exercise2 = new ExecutedExerciseMetrics();
+    const workout1Exercise2 = <ExecutedExerciseMetrics>{};
     workout1Exercise2.averageForm = 5;
     workout1Exercise2.averageRangeOfMotion = 5;
     workout1Exercise2.averageRepCount = 8;
@@ -240,12 +238,12 @@ describe('AnalyticsService', () => {
     workout1Exercise2.setType = SetType.Repetition;
     workout1.exerciseMetrics.push(workout1Exercise2);
 
-    const workout2 = new ExecutedWorkoutMetrics();
+    const workout2 = <ExecutedWorkoutMetrics>{};
     workout2.name = "Chest and Arms Mini v2";
     workout2.startDateTime = new Date(2022, 3, 11, 14, 0, 0);
     workout2.endDateTime = new Date(2022, 3, 11, 15, 30, 2);
     workout2.exerciseMetrics = [];
-    const workout2Exercise1 = new ExecutedExerciseMetrics();
+    const workout2Exercise1 = <ExecutedExerciseMetrics>{};
     workout2Exercise1.averageForm = 2;
     workout2Exercise1.averageRangeOfMotion = 2;
     workout2Exercise1.averageRepCount = 8;
@@ -255,7 +253,7 @@ describe('AnalyticsService', () => {
     workout2Exercise1.sequence = 0;
     workout2Exercise1.setType = SetType.Repetition;
     workout2.exerciseMetrics.push(workout2Exercise1);
-    const workout2Exercise2 = new ExecutedExerciseMetrics();
+    const workout2Exercise2 = <ExecutedExerciseMetrics>{};
     workout2Exercise2.averageForm = 4;
     workout2Exercise2.averageRangeOfMotion = 3;
     workout2Exercise2.averageRepCount = 6;

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UserOverview } from '../../../core/_models/user-overview';
+import { UserOverview } from '../../../api';
 import { UserOverviewComponent } from './user-overview.component';
 import { provideZonelessChangeDetection } from '@angular/core';
 
@@ -28,7 +28,7 @@ describe('UserOverviewComponent', () => {
 
   //Setup Methods
   function getUserOverview(): UserOverview {
-    const userOverview = new UserOverview();
+    const userOverview = <UserOverview>{};
 
     userOverview.lastWorkoutDateTime = new Date(2022, 2, 26, 13, 15, 0, 0);
     userOverview.plannedWorkoutCount = 2;

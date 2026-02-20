@@ -3,10 +3,8 @@ import { provideZonelessChangeDetection } from '@angular/core';
 
 import { UserService } from './user.service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { User } from '../../../core/_models/user';
+import { User, UserNewDTO, UserOverview } from '../../../api';
 import { ConfigService } from '../config/config.service';
-import { UserOverview } from '../../_models/user-overview';
-import { UserNewDTO } from '../../_models/user-new-dto';
 import { HttpResponse, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 const TEST_USER_ID: string = "1";
@@ -62,7 +60,7 @@ describe('UserService', () => {
   });
 
   it('should get user info by user ID', () => {
-    const expectedResults = new User();
+    const expectedResults = <User>{};
     const userId: string = TEST_USER_ID;
     expectedResults.publicId = userId;
 
@@ -80,8 +78,8 @@ describe('UserService', () => {
   });
 
   it('should add user', () => {
-    const userNew = new UserNewDTO();
-    const userSaved = new User();
+    const userNew = <UserNewDTO>{};
+    const userSaved = <User>{};
 
     service.addNew(userNew)
       .subscribe({
@@ -99,7 +97,7 @@ describe('UserService', () => {
   });
 
   it('should update user', () => {
-    const user = new User();
+    const user = <User>{};
     user.id = parseInt(TEST_USER_ID, 10);
 
     service.update(user)
@@ -137,7 +135,7 @@ describe('UserService', () => {
 
   it('should get user overview', () => {
 
-    const userOverview = new UserOverview();
+    const userOverview = <UserOverview>{};
 
     service.getOverview().subscribe((overview: UserOverview) => {
       expect(overview).toBe(userOverview);

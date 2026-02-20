@@ -2,8 +2,7 @@ import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { User } from '../../core/_models/user';
-import { UserNewDTO } from '../../core/_models/user-new-dto';
+import { User, UserNewDTO } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
 
@@ -11,7 +10,7 @@ import { UserAddComponent } from './user-add.component';
 import { AuthService } from '../../core/_services/auth/auth.service';
 
 class MockUserService {
-  addNew = vi.fn().mockReturnValue(of(new User()));
+  addNew = vi.fn().mockReturnValue(of(<User>{}));
 }
 
 class MockAuthService {
@@ -76,7 +75,7 @@ describe('UserAddComponent', () => {
   it('should add user', () => {
 
     //ARRANGE
-    const expectedUser = new UserNewDTO();
+    const expectedUser = <UserNewDTO>{};
     expectedUser.userName = "NewUser";
     expectedUser.emailAddress = "newuser@workouttracker.com";
     expectedUser.password = "gargargar123";

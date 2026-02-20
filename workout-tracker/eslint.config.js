@@ -33,6 +33,7 @@ module.exports = defineConfig([
         },
       ],
       "@typescript-eslint/array-type": "off",
+      "@typescript-eslint/consistent-indexed-object-style": "off",
       "@typescript-eslint/consistent-type-assertions": "off",
       "@typescript-eslint/no-inferrable-types": [
         "off",

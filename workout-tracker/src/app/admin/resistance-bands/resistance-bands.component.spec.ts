@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ResistanceBand } from '../../shared/models/resistance-band';
+import { ResistanceBand } from '../../api';
 import { of, throwError } from 'rxjs';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 
@@ -23,8 +23,8 @@ const getResistanceBandInventory = (): Array<ResistanceBand> => {
 
 class ResistanceBandServiceMock {
   getAll = vi.fn().mockReturnValue(of(getResistanceBandInventory()));
-  add = vi.fn().mockReturnValue(of(new ResistanceBand()));
-  update = vi.fn().mockReturnValue(of(new ResistanceBand()));
+  add = vi.fn().mockReturnValue(of(<ResistanceBand>{}));
+  update = vi.fn().mockReturnValue(of(<ResistanceBand>{}));
   //deleteById = jasmine.createSpy('deleteById').and.returnValue(of(new HttpResponse<string>()));
   delete = vi.fn().mockReturnValue(of(new HttpResponse<string>()));
 }
@@ -159,7 +159,7 @@ describe('ResistanceBandsComponent', () => {
     const modalService = TestBed.inject(NzModalService);
     const messageService = TestBed.inject(NzMessageService);
     modalService.confirm = vi.fn().mockImplementation(() => void 0); //Simulate user not confirming
-    const band = new ResistanceBand();
+    const band = <ResistanceBand>{};
     band.id = 5;
 
     //ACT

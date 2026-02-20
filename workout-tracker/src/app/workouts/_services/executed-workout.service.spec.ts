@@ -76,7 +76,7 @@ describe('ExecutedWorkoutService', () => {
       });
 
     //ASSERT
-    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=10&pageSize=50`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=10&pageSize=50&onlyWithJournalNotes=false`);
     expect(req.request.method).toEqual('GET');
 
     //Respond with the mock results
@@ -109,7 +109,7 @@ describe('ExecutedWorkoutService', () => {
       });
 
     //ASSERT
-    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5&onlyWithJournalNotes=false`);
     expect(req.request.method).toEqual('GET');
 
     //Respond with the mock results
@@ -195,7 +195,7 @@ describe('ExecutedWorkoutService', () => {
     });
 
     //ASSERT
-    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5&onlyWithJournalNotes=false`);
     expect(req.request.method).toEqual('GET');
 
     //Respond with the mock results
@@ -227,7 +227,7 @@ describe('ExecutedWorkoutService', () => {
     });
 
     //ASSERT
-    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5`);
+    const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5&onlyWithJournalNotes=false`);
     expect(req.request.method).toEqual('GET');
 
     //Respond with the mock results

@@ -2,91 +2,90 @@ import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { User } from '../../core/_models/user';
-import { UserNewDTO } from '../../core/_models/user-new-dto';
+import { User, UserNewDTO } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
 
 import { UserSelectNewComponent } from './user-select-new.component';
 
 class MockUserService {
-    addNew = vi.fn().mockReturnValue(of(new User()));
+  addNew = vi.fn().mockReturnValue(of(<User>{}));
 }
 
 @Component({
-    selector: 'wt-blank',
-    template: '',
-    imports: [ReactiveFormsModule]
+  selector: 'wt-blank',
+  template: '',
+  imports: [ReactiveFormsModule]
 })
 class BlankComponent {
 }
 
 describe('UserSelectNewComponent', () => {
-    let component: UserSelectNewComponent;
-    let fixture: ComponentFixture<UserSelectNewComponent>;
-    let router: Router;
+  let component: UserSelectNewComponent;
+  let fixture: ComponentFixture<UserSelectNewComponent>;
+  let router: Router;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            providers: [
-                provideZonelessChangeDetection(),
-                FormBuilder,
-                {
-                    provide: UserService,
-                    useClass: MockUserService
-                }
-            ],
-            imports: [
-                RouterModule.forRoot([{ path: 'user-select', component: BlankComponent }]),
-                BlankComponent
-            ]
-        })
-            .compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        FormBuilder,
+        {
+          provide: UserService,
+          useClass: MockUserService
+        }
+      ],
+      imports: [
+        RouterModule.forRoot([{ path: 'user-select', component: BlankComponent }]),
+        BlankComponent
+      ]
+    })
+      .compileComponents();
 
-        fixture = TestBed.createComponent(UserSelectNewComponent);
-        component = fixture.componentInstance;
-        router = TestBed.inject(Router);
-        vi.spyOn(router, 'navigate');
-        fixture.detectChanges();
+    fixture = TestBed.createComponent(UserSelectNewComponent);
+    component = fixture.componentInstance;
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate');
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should create a FormGroup', () => {
+    expect(component.newUserForm).not.toBeNull();
+    expect(component.newUserForm.controls.emailAddress).not.toBeNull();
+    expect(component.newUserForm.controls.name).not.toBeNull();
+  });
+
+  it('should initialize signals with default values', () => {
+    expect(component.errorMsg()).toBeUndefined();
+    expect(component.addingUser()).toBe(false);
+  });
+
+  it('should add a user', () => {
+    //ARRANGE
+    const userService = TestBed.inject(UserService);
+    const userName = "jtkirk";
+    const emailAddress = "jtkirk@ufp.org";
+    const expectedUser = <UserNewDTO>{};
+
+    expectedUser.userName = userName;
+    expectedUser.emailAddress = emailAddress;
+    expectedUser.password = "No Password. User-select mode!";
+
+    component.newUserForm.patchValue({
+      name: userName,
+      emailAddress
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+    //ACT
+    component.addUser();
 
-    it('should create a FormGroup', () => {
-        expect(component.newUserForm).not.toBeNull();
-        expect(component.newUserForm.controls.emailAddress).not.toBeNull();
-        expect(component.newUserForm.controls.name).not.toBeNull();
-    });
-
-    it('should initialize signals with default values', () => {
-        expect(component.errorMsg()).toBeUndefined();
-        expect(component.addingUser()).toBe(false);
-    });
-
-    it('should add a user', () => {
-        //ARRANGE
-        const userService = TestBed.inject(UserService);
-        const userName = "jtkirk";
-        const emailAddress = "jtkirk@ufp.org";
-        const expectedUser = new UserNewDTO();
-
-        expectedUser.userName = userName;
-        expectedUser.emailAddress = emailAddress;
-        expectedUser.password = "No Password. User-select mode!";
-
-        component.newUserForm.patchValue({
-            name: userName,
-            emailAddress
-        });
-
-        //ACT
-        component.addUser();
-
-        //ASSERT
-        expect(userService.addNew).toHaveBeenCalledWith(expectedUser);
-        expect(router.navigate).toHaveBeenCalledWith(['/user-select']);
-    });
+    //ASSERT
+    expect(userService.addNew).toHaveBeenCalledWith(expectedUser);
+    expect(router.navigate).toHaveBeenCalledWith(['/user-select']);
+  });
 
 });

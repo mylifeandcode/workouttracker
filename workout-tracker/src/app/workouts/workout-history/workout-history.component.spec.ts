@@ -48,8 +48,9 @@ describe('WorkoutHistoryComponent', () => {
   });
 
   it('should initialize with loading state', () => {
+    expect(component).toBeTruthy();
     expect(component.loading()).toBe(false); // Should be false after ngOnInit completes
-    expect(component.totalRecords()).toBe(0);
+    expect(component.totalRecords()).toEqual(0);
     expect(component.executedWorkouts()).toEqual([]);
   });
 

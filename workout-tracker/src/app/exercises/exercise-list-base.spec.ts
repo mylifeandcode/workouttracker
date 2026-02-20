@@ -2,20 +2,18 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 
 import { of } from 'rxjs';
-import { ExerciseDTO } from '../workouts/_models/exercise-dto';
-import { TargetArea } from '../workouts/_models/target-area';
 import { ExerciseListBase } from './exercise-list-base';
 import { Component, inject as inject_1 } from '@angular/core';
-import { PaginatedResults } from '../core/_models/paginated-results';
 import { ExerciseService } from './_services/exercise.service';
+import { ExerciseDTOPaginatedResults, TargetArea } from '../api';
 
 class ExerciseServiceMock {
-  getAll = vi.fn().mockReturnValue(of(new PaginatedResults<ExerciseDTO>()));
+  getAll = vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{}));
   getTargetAreas = vi.fn().mockImplementation(() => {
     const targetAreas = new Array<TargetArea>();
-    targetAreas.push(new TargetArea(1, "Chest", 1, new Date(), null, null, false));
-    targetAreas.push(new TargetArea(2, "Biceps", 1, new Date(), null, null, false));
-    targetAreas.push(new TargetArea(3, "Triceps", 1, new Date(), null, null, false));
+    targetAreas.push(<TargetArea>{ id: 1, name: "Chest", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
+    targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
+    targetAreas.push(<TargetArea>{ id: 3, name: "Triceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
     return of(targetAreas);
   });
 }

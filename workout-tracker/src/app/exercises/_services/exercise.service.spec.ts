@@ -2,9 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ExerciseService } from './exercise.service';
-import { PaginatedResults } from '../../core/_models/paginated-results';
-import { Exercise } from '../../workouts/_models/exercise';
-import { ExerciseDTO } from '../../workouts/_models/exercise-dto';
+import { Exercise, ExerciseDTOPaginatedResults } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
@@ -63,7 +61,7 @@ describe('ExerciseService', () => {
   });
 
   it('should retrieve exercises', async () => {
-    const expectedResults = new PaginatedResults<ExerciseDTO>();
+    const expectedResults = <ExerciseDTOPaginatedResults>{};
 
     service.getAll(0, 10).subscribe({
       next: exercises => {
@@ -106,7 +104,7 @@ describe('ExerciseService', () => {
   });
 
   it('should retrieve exercises with the nameContains param', async () => {
-    const expectedResults = new PaginatedResults<ExerciseDTO>();
+    const expectedResults = <ExerciseDTOPaginatedResults>{};
 
     service.getAll(0, 10, 'Press').subscribe({
       next: exercises => {
@@ -124,7 +122,7 @@ describe('ExerciseService', () => {
   });
 
   it('should retrieve exercises with the targetAreaContains param', async () => {
-    const expectedResults = new PaginatedResults<ExerciseDTO>();
+    const expectedResults = <ExerciseDTOPaginatedResults>{};
 
     service.getAll(0, 10, null, ['Chest']).subscribe({
       next: exercises => {
@@ -142,7 +140,7 @@ describe('ExerciseService', () => {
 
   it('should retrieve exercise by ID', async () => {
 
-    const expectedExercise = new Exercise();
+    const expectedExercise = <Exercise>{};
 
     service.getById('5').subscribe({
       next: exercise => {
@@ -182,7 +180,7 @@ describe('ExerciseService', () => {
   });
 
   it('should create new exercise', async () => {
-    const exercise = new Exercise();
+    const exercise = <Exercise>{};
 
     service.add(exercise).subscribe({
       next: (result: Exercise) => {
@@ -205,9 +203,9 @@ describe('ExerciseService', () => {
       modifiedDateTime: "2024-01-02T12:00:00Z"
     };
 
-    let result: Exercise = new Exercise();
+    let result: Exercise = <Exercise>{};
 
-    service.add(new Exercise()).subscribe({
+    service.add(<Exercise>{}).subscribe({
       next: exercise => {
         result = exercise;
       },
@@ -228,7 +226,7 @@ describe('ExerciseService', () => {
   });
 
   it('should update existing exercise', async () => {
-    const exercise = new Exercise();
+    const exercise = <Exercise>{};
     exercise.id = 6;
 
     service.update(exercise).subscribe({
