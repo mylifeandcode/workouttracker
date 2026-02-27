@@ -86,6 +86,7 @@ export class ExerciseService {
       .post<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS)
       .pipe(
         map((newExercise) => {
+          console.log('Received new exercise from API:', newExercise);
           this._dateService.convertAuditDateStringsToDates(newExercise);
           return newExercise;
         })

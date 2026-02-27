@@ -33,17 +33,18 @@ class BlankComponent {
 class WorkoutServiceMock {
   private getTestWorkout(): Workout {
     const workout = <Workout>{};
+    workout.id = 123;
     workout.publicId = WORKOUT_PUBLIC_ID;
     workout.active = true;
     workout.name = 'Test Workout';
     workout.exercises = [];
 
     workout.exercises.push(<ExerciseInWorkout>{
-      id: 1, exerciseId: 10, sequence: 0, exercise: { name: 'Bench Press' }, setType: 1, numberOfSets: 3, createdByUserId: 0, createdDateTime: new Date()
+      id: 1, exerciseId: 10, sequence: 0, exercise: { name: 'Bench Press' }, setType: 0, numberOfSets: 3, createdByUserId: 0, createdDateTime: new Date()
     });
 
     workout.exercises.push(<ExerciseInWorkout>{
-      id: 1, exerciseId: 20, sequence: 1, exercise: { name: 'Bicep Curls' }, setType: 1, numberOfSets: 3, createdByUserId: 0, createdDateTime: new Date()
+      id: 2, exerciseId: 20, sequence: 1, exercise: { name: 'Biceps Curls' }, setType: 1, numberOfSets: 4, createdByUserId: 0, createdDateTime: new Date()
     });
     return workout;
   }
@@ -136,12 +137,12 @@ describe('WorkoutEditComponent', () => {
     expect(component.workoutForm.controls.exercises.value[0].exerciseId).toBe(10);
     expect(component.workoutForm.controls.exercises.value[0].exerciseName).toBe('Bench Press');
     expect(component.workoutForm.controls.exercises.value[0].numberOfSets).toBe(3);
-    expect(component.workoutForm.controls.exercises.value[0].setType).toBe(1);
+    expect(component.workoutForm.controls.exercises.value[0].setType).toBe(0);
     expect(component.workoutForm.controls.exercises.value[1].id).toBe(2);
     expect(component.workoutForm.controls.exercises.value[1].exerciseId).toBe(20);
     expect(component.workoutForm.controls.exercises.value[1].exerciseName).toBe('Biceps Curls');
     expect(component.workoutForm.controls.exercises.value[1].numberOfSets).toBe(4);
-    expect(component.workoutForm.controls.exercises.value[1].setType).toBe(2);
+    expect(component.workoutForm.controls.exercises.value[1].setType).toBe(1);
   });
 
   /*

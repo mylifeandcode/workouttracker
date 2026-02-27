@@ -141,7 +141,16 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       else
         this.updateWorkout();
 
-    }
+    }/*
+    else {
+      Object.keys(this.workoutForm.controls).forEach(key => {
+        const control = this.workoutForm.get(key);
+        if (control?.invalid) {
+          console.log('Invalid control:', key, control.errors);
+        }
+      });
+    }*/
+      
   }
 
   //PRIVATE METHODS ///////////////////////////////////////////////////////////////////////////////
@@ -182,7 +191,6 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
         },
         error: (error: HttpErrorResponse) => {
           this.errorMsg.set(error.message || 'An error occurred loading the workout.');
-          console.error('Error loading workout:', error);
         }
       });
   }
@@ -211,7 +219,6 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   private addWorkout(): void {
-    //console.log("ADDING WORKOUT: ", this._workout);
     this._workout.publicId = EMPTY_GUID;
     this._workoutService.add(this._workout)
       .pipe(finalize(() => {
@@ -234,7 +241,6 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   private updateWorkout(): void {
-    //console.log("UPDATING WORKOUT: ", this._workout);
     this._workoutService.update(this._workout)
       .pipe(finalize(() => {
         this.saving.set(false);
@@ -279,7 +285,6 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   private updateWorkoutFromFormValues(): void {
     if (this.workoutForm) {
-      //console.log("this._workout: ", this._workout);
       this._workout.name = this.workoutForm.controls.name.value;
       this._workout.exercises = this.getExercisesFromForm();
     }

@@ -6,7 +6,7 @@ import { ResistanceBandService } from '../../shared/services/resistance-band.ser
 import { ResistanceBandIndividual } from '../../shared/models/resistance-band-individual';
 import { of } from 'rxjs';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
-import { WorkoutPlan } from '../../api';
+import { ExercisePlan, WorkoutPlan } from '../../api';
 import { ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { WorkoutService } from '../_services/workout.service';
 
@@ -15,7 +15,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 
 class WorkoutServiceMock {
-  getNewPlan = vi.fn().mockReturnValue(of(<WorkoutPlan>{}));
+  getNewPlan = vi.fn().mockReturnValue(of(<WorkoutPlan>{ exercises: Array<ExercisePlan>() }));
   submitPlanForPast = vi.fn().mockReturnValue(of(12));
   submitPlan = vi.fn().mockReturnValue(of(5));
   submitPlanForLater = vi.fn().mockReturnValue(of(32));

@@ -223,7 +223,8 @@ describe('ExerciseEditComponent', () => {
     exercise.pointsToRemember = 'Form!';
     exercise.resistanceType = 1;
     exercise.exerciseTargetAreaLinks = [];
-    exercise.exerciseTargetAreaLinks.push(<ExerciseTargetAreaLink>{ id: 0, exerciseId: 0, targetAreaId: 1 });
+    exercise.exerciseTargetAreaLinks.push(<ExerciseTargetAreaLink>{ exerciseId: 0, targetAreaId: 1 });
+    exercise.usesBilateralResistance = false;
 
     //exerciseService.getById = jasmine.createSpy('getById').and.returnValue(of(exercise));
     exerciseService.add = vi.fn().mockReturnValue(of(exercise));
@@ -245,6 +246,7 @@ describe('ExerciseEditComponent', () => {
     component.exerciseForm.controls.pointsToRemember.setValue(exercise.pointsToRemember);
     component.exerciseForm.controls.resistanceType.setValue(exercise.resistanceType);
     component.exerciseForm.controls.targetAreas.setValue({ 'Chest': true, 'Biceps': false, 'Triceps': false });
+    component.exerciseForm.controls.usesBilateralResistance.setValue(exercise.usesBilateralResistance);
 
     //ACT
     component.saveExercise();

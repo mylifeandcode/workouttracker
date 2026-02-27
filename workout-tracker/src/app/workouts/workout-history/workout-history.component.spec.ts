@@ -11,7 +11,7 @@ import { DatePipe } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 
 class MockExecutedWorkoutService {
-  getFilteredSubset = vi.fn().mockReturnValue(of(<ExecutedWorkoutSummaryDTOPaginatedResults>{}));
+  getFilteredSubset = vi.fn().mockReturnValue(of(<ExecutedWorkoutSummaryDTOPaginatedResults>{ totalCount: 0, results: [] }));
 }
 
 describe('WorkoutHistoryComponent', () => {
@@ -48,10 +48,11 @@ describe('WorkoutHistoryComponent', () => {
   });
 
   it('should initialize with loading state', () => {
+    //TODO: Refactor test to include non-zero/non-empty mock results and verify those are set correctly.
     expect(component).toBeTruthy();
     expect(component.loading()).toBe(false); // Should be false after ngOnInit completes
-    expect(component.totalRecords()).toEqual(0);
-    expect(component.executedWorkouts()).toEqual([]);
+    expect(component.totalRecords()).toEqual(0); //Mock results have 0
+    expect(component.executedWorkouts()).toEqual([]); //Mock resutls are empty array
   });
 
   it('should open and close notes modal', () => {
