@@ -15,9 +15,9 @@ export class ConfigService {
     pairs.forEach((pair) => {
       ConfigService._configValues.set(pair[0], (pair[1] as string | boolean | number));
     });
-    }
+  }
 
-  public get(key: string): string | boolean | number | null{
+  public get(key: string): string | boolean | number | null {
 
     const setting = ConfigService._configValues.get(key);
 

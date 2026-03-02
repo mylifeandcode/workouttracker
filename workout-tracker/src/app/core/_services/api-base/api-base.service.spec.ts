@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ApiBaseService } from './api-base.service';
-import { HttpResponse, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { Injectable, provideZonelessChangeDetection } from '@angular/core';
 import { ConfigService } from '../config/config.service';
+import { firstValueFrom } from 'rxjs';
 
 const API_ROOT = "https://someUrl/api/";
 
@@ -65,17 +66,14 @@ describe('ApiBaseService', () => {
     const widgets = new Array<Widget>();
 
     //ACT
-    const result = service.all$;
-    result.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets);
-      ;
-    });
+    const result = firstValueFrom(service.all$);
 
     //ASSERT
     const req = http.expectOne(`${API_ROOT}widgets`);
     expect(req.request.method).toEqual('GET');
-    //Respond with the mock results
+
     req.flush(widgets);
+    expect(await result).toBe(widgets);
   });
 
   it('should get by ID', async () => {
@@ -85,16 +83,14 @@ describe('ApiBaseService', () => {
     const WIDGET_ID: string = '1';
 
     //ACT
-    const result = service.getById(WIDGET_ID);
-    result.subscribe((widgetResult: Widget) => {
-      expect(widgetResult).toBe(widget);
-    });
+    const result = firstValueFrom(service.getById(WIDGET_ID));
 
     //ASSERT
     const req = http.expectOne(`${API_ROOT}widgets/${WIDGET_ID}`);
     expect(req.request.method).toEqual('GET');
-    //Respond with the mock results
+    
     req.flush(widget);
+    expect(await result).toBe(widget);
   });
 
   it('should add', async () => {
@@ -103,16 +99,14 @@ describe('ApiBaseService', () => {
     const widget = new Widget();
 
     //ACT
-    const result = service.add(widget);
-    result.subscribe((widgetResult: Widget) => {
-      expect(widgetResult).toBe(widget);
-    });
+    const result = firstValueFrom(service.add(widget));
 
     //ASSERT
     const req = http.expectOne(`${API_ROOT}widgets`);
     expect(req.request.method).toEqual('POST');
-    //Respond with the mock results
+
     req.flush(widget);
+    expect(await result).toBe(widget);
   });
 
   it('should update', async () => {
@@ -123,16 +117,14 @@ describe('ApiBaseService', () => {
     widget.id = WIDGET_ID;
 
     //ACT
-    const result = service.update(widget);
-    result.subscribe((widgetResult: Widget) => {
-      expect(widgetResult).toBe(widget);
-    });
+    const result = firstValueFrom(service.update(widget));
 
     //ASSERT
     const req = http.expectOne(`${API_ROOT}widgets/${WIDGET_ID}`);
     expect(req.request.method).toEqual('PUT');
-    //Respond with the mock results
+
     req.flush(widget);
+    expect(await result).toBe(widget);
   });
 
   it('should delete', async () => {
@@ -141,77 +133,63 @@ describe('ApiBaseService', () => {
     const WIDGET_ID: string = '1';
 
     //ACT
-    const result = service.deleteById(WIDGET_ID);
-    result.subscribe((response: HttpResponse<void>) => {
-      expect(response).toBeTruthy();
-    });
+    const result = firstValueFrom(service.deleteById(WIDGET_ID));
 
     //ASSERT
     const req = http.expectOne(`${API_ROOT}widgets/${WIDGET_ID}`);
     expect(req.request.method).toEqual('DELETE');
-    //Respond with the mock results
+
     req.flush(new Object());
+    expect(await result).toEqual(new Object());
   });
 
-  it('should cache data', () => {
+  it('should cache data', async () => {
 
     //ARRANGE
     const widgets = new Array<Widget>();
 
     //ACT
-    const result1 = service.all$;
-    result1.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets);
-    });
-
-    const result2 = service.all$;
-    result2.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets);
-    });
-
-    const result3 = service.all$;
-    result3.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets);
-    });
+    const result1 = firstValueFrom(service.all$); //Only this one should trigger an HTTP request
+    const result2 = firstValueFrom(service.all$);
+    const result3 = firstValueFrom(service.all$);
 
     //ASSERT
     const req = http.expectOne(`${API_ROOT}widgets`);
     expect(req.request.method).toEqual('GET');
-    //Respond with the mock results
+
     req.flush(widgets);
+
+    expect(await result1).toBe(widgets);
+    expect(await result2).toBe(widgets);
+    expect(await result3).toBe(widgets);
   });
 
-  it('should clear cached data', () => {
+  it('should clear cached data', async () => {
 
     //ARRANGE
     const widgets = new Array<Widget>();
 
     //ACT
-    const result1 = service.all$;
-    result1.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets);
-    });
-
-    const result2 = service.all$;
-    result2.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets);
-    });
+    const result1 = firstValueFrom(service.all$); //Should trigger HTTP request
+    const result2 = firstValueFrom(service.all$); //Should return cached data
 
     service.invalidateCache();
 
-    const result3 = service.all$;
-    result3.subscribe((widgetResults: Widget[]) => {
-      expect(widgetResults).toBe(widgets);
-    });
+    const result3 = firstValueFrom(service.all$); //Should trigger HTTP request
+
 
     //ASSERT
     const requests = http.match(`${API_ROOT}widgets`);
     expect(requests.length).toBe(2);
     requests.forEach(request => {
       expect(request.request.method).toEqual('GET');
-      //Respond with the mock results
+
       request.flush(widgets);
     });
+
+    expect(await result1).toBe(widgets);
+    expect(await result2).toBe(widgets);
+    expect(await result3).toBe(widgets);
   });
 
 });

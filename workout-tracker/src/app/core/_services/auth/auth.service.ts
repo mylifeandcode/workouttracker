@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { HTTP_OPTIONS_FOR_TEXT_RESPONSE } from '../../../shared/constants/http-constants';
 
@@ -90,6 +90,7 @@ export class AuthService {
     return this._http
       .post<string>(`${this._apiRoot}/login`, { username, password }, HTTP_OPTIONS_FOR_TEXT_RESPONSE) //TODO: Create strong type for credentials object
       .pipe(
+        tap(() => console.log('Login successful, processing token...')),
         map((token: string) => {
           //Using map() here so I can act on the result and then return a boolean.
           this.decodedTokenPayload = jwtDecode<JwtPayload>(token); //Do this first, before setting token which states "user is logged in"

@@ -92,14 +92,15 @@ export class UserAddComponent implements OnInit {
   }
 
   private getUserForPersist(): UserNewDTO {
-    const user = <UserNewDTO> {
-      userName: this.userAddForm.controls.name.value,
-      emailAddress: this.userAddForm.controls.emailAddress.value,
-      password: this.userAddForm.controls.password.value,
-      role: this.userAddForm.controls.role.value
+    const { name, emailAddress, password, role } = this.userAddForm.value;
+
+    return <UserNewDTO>{
+      userName: name,
+      emailAddress,
+      password,
+      role
     };
 
-    return user;
   }
 
 }

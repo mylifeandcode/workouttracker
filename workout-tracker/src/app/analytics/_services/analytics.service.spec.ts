@@ -9,6 +9,7 @@ import { ExecutedExerciseMetrics, ExecutedWorkoutMetrics, ExecutedWorkoutsSummar
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
+import { firstValueFrom } from 'rxjs';
 
 
 class MockConfigService {
@@ -61,38 +62,28 @@ describe('AnalyticsService', () => {
     expect(configService.get).toHaveBeenCalledWith('apiRoot');
   });
 
-  it('should get executed workouts summary', () => {
+  it('should get executed workouts summary', async () => {
     const expectedResults = <ExecutedWorkoutsSummary>{};
     const httpMock = TestBed.inject(HttpTestingController);
-
-    service.getExecutedWorkoutsSummary()
-      .subscribe((results: ExecutedWorkoutsSummary) => {
-        expect(results).toBe(expectedResults);
-      });
+    const responsePromise = firstValueFrom(service.getExecutedWorkoutsSummary());
 
     const req = httpMock.expectOne("http://localhost:5600/api/analytics/executed-workouts");
     expect(req.request.method).toEqual('GET');
 
-    // Respond with the mock results
     req.flush(expectedResults);
-
+    expect(await responsePromise).toBe(expectedResults);
   });
 
-  it('should get executed workout metrics', () => {
+  it('should get executed workout metrics', async () => {
     const expectedResults: ExecutedWorkoutMetrics[] = [];
     const httpMock = TestBed.inject(HttpTestingController);
-
-    service.getExecutedWorkoutMetrics('some-id', 50)
-      .subscribe((results: ExecutedWorkoutMetrics[]) => {
-        expect(results).toBe(expectedResults);
-      });
+    const responsePromise = firstValueFrom(service.getExecutedWorkoutMetrics('some-id', 50));
 
     const req = httpMock.expectOne("http://localhost:5600/api/analytics/workout-metrics/some-id/50");
     expect(req.request.method).toEqual('GET');
 
-    // Respond with the mock results
     req.flush(expectedResults);
-
+    expect(await responsePromise).toBe(expectedResults);
   });
 
   it('should get exercise chart data for form and range of motion', () => {
@@ -113,7 +104,6 @@ describe('AnalyticsService', () => {
 
     //ASSERT
     expect(results).toEqual(expectedResults);
-
   });
 
   it('should get exercise chart data for reps', () => {
@@ -133,7 +123,6 @@ describe('AnalyticsService', () => {
 
     //ASSERT
     expect(results).toEqual(expectedResults);
-
   });
 
   it('should get exercise chart data for resistance', () => {
@@ -155,7 +144,6 @@ describe('AnalyticsService', () => {
 
     //ASSERT
     expect(results).toEqual(expectedResults);
-
   });
 
   it('should convert date strings to Date objects when getting executed workout metrics', async () => {
@@ -171,23 +159,22 @@ describe('AnalyticsService', () => {
       }
     ];
 
-    service.getExecutedWorkoutMetrics('some-id', 50)
-      .subscribe((results: ExecutedWorkoutMetrics[]) => {
-        expect(results.length).toBe(2);
-        expect(results[0].startDateTime instanceof Date).toBe(true);
-        expect(results[0].startDateTime).toEqual(new Date("2022-04-04T12:00:00Z"));
-        expect(results[0].endDateTime instanceof Date).toBe(true);
-        expect(results[0].endDateTime).toEqual(new Date("2022-04-04T13:00:00Z"));
-        expect(results[1].startDateTime instanceof Date).toBe(true);
-        expect(results[1].startDateTime).toEqual(new Date("2022-04-11T14:00:00Z"));
-        expect(results[1].endDateTime instanceof Date).toBe(true);
-        expect(results[1].endDateTime).toEqual(new Date("2022-04-11T15:30:00Z"));
-        ;
-      });
+    const responsePromise = firstValueFrom(service.getExecutedWorkoutMetrics('some-id', 50));
 
     const req = httpMock.expectOne("http://localhost:5600/api/analytics/workout-metrics/some-id/50");
     expect(req.request.method).toEqual('GET');
     req.flush(mockResponse);
+
+    const results = await responsePromise;
+    expect(results.length).toBe(2);
+    expect(results[0].startDateTime instanceof Date).toBe(true);
+    expect(results[0].startDateTime).toEqual(new Date("2022-04-04T12:00:00Z"));
+    expect(results[0].endDateTime instanceof Date).toBe(true);
+    expect(results[0].endDateTime).toEqual(new Date("2022-04-04T13:00:00Z"));
+    expect(results[1].startDateTime instanceof Date).toBe(true);
+    expect(results[1].startDateTime).toEqual(new Date("2022-04-11T14:00:00Z"));
+    expect(results[1].endDateTime instanceof Date).toBe(true);
+    expect(results[1].endDateTime).toEqual(new Date("2022-04-11T15:30:00Z"));
   });
 
   it('should convert date string to Date object when getting executed workouts summary', async () => {
@@ -196,16 +183,15 @@ describe('AnalyticsService', () => {
       firstLoggedWorkoutDateTime: "2022-04-04T12:00:00Z"
     };
 
-    service.getExecutedWorkoutsSummary()
-      .subscribe((results: ExecutedWorkoutsSummary) => {
-        expect(results.firstLoggedWorkoutDateTime instanceof Date).toBe(true);
-        expect(results.firstLoggedWorkoutDateTime).toEqual(new Date("2022-04-04T12:00:00Z"));
-        ;
-      });
+    const responsePromise = firstValueFrom(service.getExecutedWorkoutsSummary());
 
     const req = httpMock.expectOne("http://localhost:5600/api/analytics/executed-workouts");
     expect(req.request.method).toEqual('GET');
     req.flush(mockResponse);
+
+    const results = await responsePromise;
+    expect(results.firstLoggedWorkoutDateTime instanceof Date).toBe(true);
+    expect(results.firstLoggedWorkoutDateTime).toEqual(new Date("2022-04-04T12:00:00Z"));
   });
 
   const getMetricsForTest = (): ExecutedWorkoutMetrics[] => {

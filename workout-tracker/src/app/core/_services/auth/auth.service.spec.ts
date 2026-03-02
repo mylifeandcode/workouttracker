@@ -1,7 +1,7 @@
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { throwError } from 'rxjs';
+import { firstValueFrom, throwError } from 'rxjs';
 
 import { AuthService } from './auth.service';
 import { ConfigService } from '../config/config.service';
@@ -71,93 +71,69 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  /*
-  it('should return null from currentUserName property when no user is logged in', () => {
-    service.currentUserName.subscribe((result: string | null) => {
-      expect(result).toBeNull();
-    });
-  });
-  */
-
   it('should initialize', () => {
     service.init();
     expect(configService.get).toHaveBeenCalledWith("apiRoot");
     expect(configService.get).toHaveBeenCalledWith("loginWithUserSelect");
   });
 
-  it('should log user in', () => {
+  it('should log user in', async () => {
 
     //ARRANGE
     const username = "unittestuser";
     const password = "thispasswordaintreal123%^&";
 
-    /*
-    const usernameSubscription = service.currentUserName
-      .subscribe((loggedInUserName: string | null) => {
-        if(service.isUserLoggedIn)
-          expect(loggedInUserName).toBe(username);
-      });
-    */
-
     //ACT
-    service.logIn(username, password).subscribe((result: boolean) => {
-      expect(result).toBe(true);
-    });
+    const result = firstValueFrom(service.logIn(username, password));
 
     //ASSERT
     const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
     expect(testRequest.request.method).toEqual('POST');
 
-    //Respond with the mock results
+
     testRequest.flush(TEST_ACCESS_TOKEN);
     expect(service.token).toBe(TEST_ACCESS_TOKEN);
-    //usernameSubscription.unsubscribe();
+    
+    expect(await result).toBe(true);
   });
 
-  it('should return value of false from login when error occurs logging user in', () => {
+  it('should return value of false from login when error occurs logging user in', async () => {
 
-    service.logIn("username", "aintarealpassword123$#@!").subscribe((result: boolean) => {
-      expect(result).toBe(false);
-    });
+    const result = firstValueFrom(service.logIn("username", "aintarealpassword123$#@!"));
 
-    //Respond with the mock results
     const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
     expect(testRequest.request.method).toEqual('POST');
 
     testRequest.flush(throwError(() => "Something bad happened!"));
-
+    expect(await result).toBe(false);
   });
 
-  it('should log user out', () => {
+  it('should log user out', async () => {
 
     //ARRANGE
     //We need to log in first
     const username = "unittestuser";
     const password = "thispasswordaintreal123%^&";
 
-    service.logIn(username, password).subscribe();
+    const result = firstValueFrom(service.logIn(username, password));
 
-    /*
-    const usernameSubscription = service.currentUserName
-      .subscribe((loggedInUserName: string | null) => {
-        if(!service.isUserLoggedIn) {
-          expect(loggedInUserName).toBe(null);
-          expect(service.token).toBeNull();
-        }
-      });
-    */
+    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
+    expect(testRequest.request.method).toEqual('POST');
+
+    testRequest.flush(TEST_ACCESS_TOKEN);
+
+    //Sanity Check
+    expect(await result).toBe(true);
+    expect(service.currentUserName()).toBe(username);
+    expect(service.token).toBe(TEST_ACCESS_TOKEN);
+    //End login
 
     //ACT
     service.logOut();
 
     //ASSERT
-    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
-    expect(testRequest.request.method).toEqual('POST');
-
-    //Respond with the mock results
-    testRequest.flush(TEST_ACCESS_TOKEN);
-    //usernameSubscription.unsubscribe();
-
+    expect(service.currentUserName()).toBe(null);
+    expect(service.token).toBeNull();
   });
 
   //Having a unit test for restoreUserSessionIfApplicable() is problematic because it does an 
@@ -168,14 +144,14 @@ describe('AuthService', () => {
   //TODO: Create unit test for "should return false from isUserAdmin when user is not an admin".
   //Issue is similar to the one above: need a real, non-admin token value.
 
-  it('should return true from isUserAdmin when user is an admin', () => {
+  it('should return true from isUserAdmin when user is an admin', async () => {
 
     //ARRANGE
     //We need to log in first
     const username = "unittestuser";
     const password = "thispasswordaintreal123%^&";
 
-    service.logIn(username, password).subscribe();
+    const loginResult = firstValueFrom(service.logIn(username, password));
 
     //ASSERT
     const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
@@ -183,8 +159,8 @@ describe('AuthService', () => {
 
     //Respond with the mock results
     testRequest.flush(TEST_ACCESS_TOKEN);
+    expect(await loginResult).toBe(true);
     expect(service.isUserAdmin).toBe(true);
-
   });
 
   it('should return user-select route from loginRoute property when applicable', () => {
