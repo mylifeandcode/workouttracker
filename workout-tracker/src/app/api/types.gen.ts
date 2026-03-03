@@ -241,12 +241,12 @@ export type User = {
     name: string;
     publicId: string;
     emailAddress: string;
-    hashedPassword: string;
-    profilePic: string;
+    hashedPassword?: string | null;
+    profilePic?: string | null;
     settings: UserSettings;
     role: UserRole;
-    salt: string;
-    passwordResetCode: string;
+    salt?: string | null;
+    passwordResetCode?: string | null;
     readonly passwordProtected: boolean;
 };
 
@@ -341,12 +341,12 @@ export type UserWritable = {
     name: string;
     publicId: string;
     emailAddress: string;
-    hashedPassword: string;
-    profilePic: string;
+    hashedPassword?: string | null;
+    profilePic?: string | null;
     settings: UserSettings;
     role: UserRole;
-    salt: string;
-    passwordResetCode: string;
+    salt?: string | null;
+    passwordResetCode?: string | null;
 };
 
 export type GetApiAnalyticsExecutedWorkoutsData = {
