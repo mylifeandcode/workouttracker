@@ -1,5 +1,4 @@
 import { configDefaults, defineConfig } from 'vitest/config';
-import { webdriverio } from '@vitest/browser-webdriverio'
 
 export default defineConfig({
   test: {

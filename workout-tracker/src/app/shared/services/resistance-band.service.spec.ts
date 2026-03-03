@@ -4,8 +4,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ResistanceBandService } from '../services/resistance-band.service';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { ResistanceBand } from '../../api';
-import { ResistanceBandIndividual } from '../../shared/models/resistance-band-individual';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 class ConfigServiceMock {
   get = vi.fn().mockReturnValue('http://someUrl/api/');
@@ -39,7 +39,7 @@ describe('ResistanceBandServiceService', () => {
     expect(configService.get).toHaveBeenCalledWith('apiRoot');
   });
 
-  it('should get all individual bands', () => {
+  it('should get all individual bands', async () => {
 
     //ARRANGE
     const httpMock = TestBed.inject(HttpTestingController);
@@ -58,16 +58,13 @@ describe('ResistanceBandServiceService', () => {
     resistanceBands.push(orangeBand);
 
     //ACT
-    const result = service.getAllIndividualBands();
-    result.subscribe((bands: ResistanceBandIndividual[]) => {
-      expect(bands.length).toBe(5);
-    });
+    const bands = firstValueFrom(service.getAllIndividualBands());
 
     //ASSERT
     const req = httpMock.expectOne("http://someUrl/api/resistancebands");
     expect(req.request.method).toEqual('GET');
-    //Respond with the mock results
+    
     req.flush(resistanceBands);
-
+    expect(await bands).toHaveLength(5);
   });
 });

@@ -5,7 +5,7 @@ import { UserService } from './user.service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { User, UserNewDTO, UserOverview } from '../../../api';
 import { ConfigService } from '../config/config.service';
-import { HttpResponse, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
 const TEST_USER_ID: string = "1";

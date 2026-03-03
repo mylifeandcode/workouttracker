@@ -7,6 +7,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
 import { ExecutedWorkoutSummaryDTO, ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
+import { firstValueFrom } from 'rxjs';
 
 const API_ROOT_URL: string = "http://localhost:5600/api/";
 
@@ -65,15 +66,7 @@ describe('ExecutedWorkoutService', () => {
     expectedResults.totalCount = 1;
 
     //ACT
-    service.getFilteredSubset(10, 50)
-      .subscribe({
-        next: (response: ExecutedWorkoutSummaryDTOPaginatedResults) => {
-          //ASSERT
-          expect(response).toEqual(expectedResults);
-          ;
-        },
-        error: () => { throw new Error('Test failed'); }
-      });
+    const result = firstValueFrom(service.getFilteredSubset(10, 50));
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=10&pageSize=50&onlyWithJournalNotes=false`);
@@ -81,6 +74,7 @@ describe('ExecutedWorkoutService', () => {
 
     //Respond with the mock results
     req.flush(expectedResults);
+    await expect(result).resolves.toEqual(expectedResults);
   });
 
   it('should convert date strings to dates when getting filtered subset', async () => {
@@ -95,18 +89,7 @@ describe('ExecutedWorkoutService', () => {
     };
 
     //ACT
-    service.getFilteredSubset(0, 5)
-      .subscribe({
-        next: (response: ExecutedWorkoutSummaryDTOPaginatedResults) => {
-          //ASSERT
-          expect(response.results[0].startDateTime instanceof Date).toBe(true);
-          expect(response.results[0].startDateTime!.toISOString()).toBe("2024-06-01T10:00:00.000Z");
-          expect(response.results[0].endDateTime instanceof Date).toBe(true);
-          expect(response.results[0].endDateTime!.toISOString()).toBe("2024-06-01T11:00:00.000Z");
-          ;
-        },
-        error: () => { throw new Error('Test failed'); }
-      });
+    const result = firstValueFrom(service.getFilteredSubset(0, 5));
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5&onlyWithJournalNotes=false`);
@@ -114,6 +97,11 @@ describe('ExecutedWorkoutService', () => {
 
     //Respond with the mock results
     req.flush(mockResults);
+    const response = await result;
+    expect(response.results[0].startDateTime instanceof Date).toBe(true);
+    expect(response.results[0].startDateTime!.toISOString()).toBe("2024-06-01T10:00:00.000Z");
+    expect(response.results[0].endDateTime instanceof Date).toBe(true);
+    expect(response.results[0].endDateTime!.toISOString()).toBe("2024-06-01T11:00:00.000Z");
   });
 
   it('should get planned workouts', async () => {
@@ -126,15 +114,7 @@ describe('ExecutedWorkoutService', () => {
     expectedResults.totalCount = 3;
 
     //ACT
-    service.getPlanned(20, 10)
-      .subscribe({
-        next: (response: ExecutedWorkoutSummaryDTOPaginatedResults) => {
-          //ASSERT
-          expect(response).toEqual(expectedResults);
-          ;
-        },
-        error: () => { throw new Error('Test failed'); }
-      });
+    const result = firstValueFrom(service.getPlanned(20, 10));
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout/planned?firstRecord=20&pageSize=10`);
@@ -142,6 +122,7 @@ describe('ExecutedWorkoutService', () => {
 
     //Respond with the mock results
     req.flush(expectedResults);
+    expect(await result).toEqual(expectedResults);
   });
 
   it('should convert date strings to dates when getting planned workouts', async () => {
@@ -156,18 +137,7 @@ describe('ExecutedWorkoutService', () => {
     };
 
     //ACT
-    service.getPlanned(0, 5)
-      .subscribe({
-        next: (response: ExecutedWorkoutSummaryDTOPaginatedResults) => {
-          //ASSERT
-          expect(response.results[0].startDateTime instanceof Date).toBe(true);
-          expect(response.results[0].startDateTime!.toISOString()).toBe("2024-06-01T10:00:00.000Z");
-          expect(response.results[0].endDateTime instanceof Date).toBe(true);
-          expect(response.results[0].endDateTime!.toISOString()).toBe("2024-06-01T11:00:00.000Z");
-          ;
-        },
-        error: () => { throw new Error('Test failed'); }
-      });
+    const result = firstValueFrom(service.getPlanned(0, 5));
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout/planned?firstRecord=0&pageSize=5`);
@@ -175,6 +145,11 @@ describe('ExecutedWorkoutService', () => {
 
     //Respond with the mock results
     req.flush(mockResults);
+    const response = await result;
+    expect(response.results[0].startDateTime instanceof Date).toBe(true);
+    expect(response.results[0].startDateTime!.toISOString()).toBe("2024-06-01T10:00:00.000Z");
+    expect(response.results[0].endDateTime instanceof Date).toBe(true);
+    expect(response.results[0].endDateTime!.toISOString()).toBe("2024-06-01T11:00:00.000Z");
   });
 
   it('should get recent executed workouts', async () => {
@@ -185,14 +160,7 @@ describe('ExecutedWorkoutService', () => {
     expectedResults.totalCount = 1;
 
     //ACT
-    service.getRecent().subscribe({
-      next: (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
-        //ASSERT
-        expect(recentWorkouts).toEqual(expectedResults.results);
-        ;
-      },
-      error: () => { throw new Error('Test failed'); }
-    });
+    const response = firstValueFrom(service.getRecent());
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5&onlyWithJournalNotes=false`);
@@ -200,6 +168,8 @@ describe('ExecutedWorkoutService', () => {
 
     //Respond with the mock results
     req.flush(expectedResults);
+    const result = await response;
+    expect(result).toEqual(expectedResults.results);
   });
 
   it('should convert date strings to dates when getting recent executed workouts', async () => {
@@ -214,17 +184,7 @@ describe('ExecutedWorkoutService', () => {
     };
 
     //ACT
-    service.getRecent().subscribe({
-      next: (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
-        //ASSERT
-        expect(recentWorkouts[0].startDateTime instanceof Date).toBe(true);
-        expect(recentWorkouts[0].startDateTime!.toISOString()).toBe("2024-06-01T10:00:00.000Z");
-        expect(recentWorkouts[0].endDateTime instanceof Date).toBe(true);
-        expect(recentWorkouts[0].endDateTime!.toISOString()).toBe("2024-06-01T11:00:00.000Z");
-        ;
-      },
-      error: () => { throw new Error('Test failed'); }
-    });
+    const response = firstValueFrom(service.getRecent());
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout?firstRecord=0&pageSize=5&onlyWithJournalNotes=false`);
@@ -232,6 +192,11 @@ describe('ExecutedWorkoutService', () => {
 
     //Respond with the mock results
     req.flush(mockResults);
+    const recentWorkouts = await response;
+    expect(recentWorkouts[0].startDateTime instanceof Date).toBe(true);
+    expect(recentWorkouts[0].startDateTime!.toISOString()).toBe("2024-06-01T10:00:00.000Z");
+    expect(recentWorkouts[0].endDateTime instanceof Date).toBe(true);
+    expect(recentWorkouts[0].endDateTime!.toISOString()).toBe("2024-06-01T11:00:00.000Z");
   });
 
   it('should get in-progress workouts', async () => {
@@ -240,14 +205,7 @@ describe('ExecutedWorkoutService', () => {
     expectedResults.push(...[<ExecutedWorkoutSummaryDTO>{}, <ExecutedWorkoutSummaryDTO>{}]);
 
     //ACT
-    service.getInProgress().subscribe({
-      next: (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
-        //ASSERT
-        expect(recentWorkouts).toEqual(expectedResults);
-        ;
-      },
-      error: () => { throw new Error('Test failed'); }
-    });
+    const response = firstValueFrom(service.getInProgress());
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout/in-progress`);
@@ -255,6 +213,8 @@ describe('ExecutedWorkoutService', () => {
 
     //Respond with the mock results
     req.flush(expectedResults);
+    const inProgressWorkouts = await response;
+    expect(inProgressWorkouts).toEqual(expectedResults);
   });
 
   it('should convert date strings to dates when getting in-progress workouts', async () => {
@@ -267,17 +227,7 @@ describe('ExecutedWorkoutService', () => {
     ];
 
     //ACT
-    service.getInProgress().subscribe({
-      next: (recentWorkouts: ExecutedWorkoutSummaryDTO[]) => {
-        //ASSERT
-        expect(recentWorkouts[0].startDateTime instanceof Date).toBe(true);
-        expect(recentWorkouts[0].startDateTime!.toISOString()).toBe("2024-06-01T10:00:00.000Z");
-        expect(recentWorkouts[0].endDateTime instanceof Date).toBe(true);
-        expect(recentWorkouts[0].endDateTime!.toISOString()).toBe("2024-06-01T11:00:00.000Z");
-        ;
-      },
-      error: () => { throw new Error('Test failed'); }
-    });
+    const response = firstValueFrom(service.getInProgress());
 
     //ASSERT
     const req = httpMock.expectOne(`${API_ROOT_URL}executedworkout/in-progress`);
@@ -285,6 +235,11 @@ describe('ExecutedWorkoutService', () => {
 
     //Respond with the mock results
     req.flush(mockResults);
+    const recentWorkouts = await response;
+    expect(recentWorkouts[0].startDateTime instanceof Date).toBe(true);
+    expect(recentWorkouts[0].startDateTime!.toISOString()).toBe("2024-06-01T10:00:00.000Z");
+    expect(recentWorkouts[0].endDateTime instanceof Date).toBe(true);
+    expect(recentWorkouts[0].endDateTime!.toISOString()).toBe("2024-06-01T11:00:00.000Z");
   });
 
 });
