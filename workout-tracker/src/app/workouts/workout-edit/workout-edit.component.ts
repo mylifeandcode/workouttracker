@@ -12,7 +12,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
 import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Exercise, ExerciseDTO, ExerciseInWorkout, Workout } from '../../api';
+import { ExerciseDTO, ExerciseInWorkout, Workout } from '../../api';
 
 interface IExerciseInWorkout {
   id: FormControl<number>;
