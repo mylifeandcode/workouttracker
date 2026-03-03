@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutTracker.Data;
 
@@ -11,9 +12,11 @@ using WorkoutTracker.Data;
 namespace WorkoutTracker.Data.Migrations
 {
     [DbContext(typeof(WorkoutsContext))]
-    partial class WorkoutsContextModelSnapshot : ModelSnapshot
+    [Migration("20260303161704_ExecutedExerciseNullableResistanceMakeup")]
+    partial class ExecutedExerciseNullableResistanceMakeup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,7 +98,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("CreatedByUserId", "CreatedDateTime", "ModifiedByUserId", "ModifiedDateTime");
 
-                    b.ToTable("ExecutedExercises", (string)null);
+                    b.ToTable("ExecutedExercises");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Exercises.Exercise", b =>
@@ -170,7 +173,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("CreatedByUserId", "CreatedDateTime", "ModifiedByUserId", "ModifiedDateTime");
 
-                    b.ToTable("Exercises", (string)null);
+                    b.ToTable("Exercises");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Exercises.ExerciseInWorkout", b =>
@@ -214,7 +217,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("ExerciseInWorkout", (string)null);
+                    b.ToTable("ExerciseInWorkout");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Exercises.ExerciseTargetAreaLink", b =>
@@ -249,7 +252,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("TargetAreaId");
 
-                    b.ToTable("ExerciseTargetAreaLinks", (string)null);
+                    b.ToTable("ExerciseTargetAreaLinks");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Exercises.TargetArea", b =>
@@ -283,7 +286,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("CreatedByUserId", "CreatedDateTime", "ModifiedByUserId", "ModifiedDateTime");
 
-                    b.ToTable("TargetAreas", (string)null);
+                    b.ToTable("TargetAreas");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Resistances.Resistance", b =>
@@ -323,7 +326,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("CreatedByUserId", "CreatedDateTime", "ModifiedByUserId", "ModifiedDateTime");
 
-                    b.ToTable("Resistances", (string)null);
+                    b.ToTable("Resistances");
 
                     b.HasDiscriminator().HasValue("Resistance");
 
@@ -374,7 +377,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("CreatedByUserId", "CreatedDateTime", "ModifiedByUserId", "ModifiedDateTime");
 
-                    b.ToTable("ResistanceBands", (string)null);
+                    b.ToTable("ResistanceBands");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Sets.ExecutedSet", b =>
@@ -411,7 +414,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("CreatedByUserId", "CreatedDateTime", "ModifiedByUserId", "ModifiedDateTime");
 
-                    b.ToTable("ExecutedSets", (string)null);
+                    b.ToTable("ExecutedSets");
 
                     b.HasDiscriminator().HasValue("ExecutedSet");
 
@@ -483,7 +486,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("CreatedByUserId", "CreatedDateTime", "ModifiedByUserId", "ModifiedDateTime");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Users.UserMinMaxReps", b =>
@@ -525,7 +528,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("UserSettingsId");
 
-                    b.ToTable("UserMinMaxReps", (string)null);
+                    b.ToTable("UserMinMaxReps");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Users.UserSettings", b =>
@@ -562,7 +565,7 @@ namespace WorkoutTracker.Data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserSettings", (string)null);
+                    b.ToTable("UserSettings");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Workouts.ExecutedWorkout", b =>
@@ -607,7 +610,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("ExecutedWorkouts", (string)null);
+                    b.ToTable("ExecutedWorkouts");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Workouts.Workout", b =>
@@ -651,7 +654,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("CreatedByUserId", "CreatedDateTime", "ModifiedByUserId", "ModifiedDateTime");
 
-                    b.ToTable("Workouts", (string)null);
+                    b.ToTable("Workouts");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Domain.Resistances.BandResistance", b =>

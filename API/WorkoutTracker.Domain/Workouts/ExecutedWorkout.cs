@@ -43,7 +43,7 @@ namespace WorkoutTracker.Domain.Workouts
         /// the user can include thoughts about their energy level, how they 
         /// were failing, or what music they were listening to during the Workout.
         /// </summary>
-        public string Journal { get; set; }
+        public string? Journal { get; set; }
         
         /// <summary>
         /// A number indicating how well the Workout went (the higher the 

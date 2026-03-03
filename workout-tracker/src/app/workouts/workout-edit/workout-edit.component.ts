@@ -136,6 +136,8 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       this.saving.set(true);
       this.infoMsg.set("Saving...");
 
+      console.log('Workout to save:', this._workout);
+
       if (!this._workout.publicId)
         this.addWorkout();
       else
@@ -161,6 +163,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     }
     else {
       this._workout = <Workout>{};
+      this._workout.active = true;
       this.loading.set(false);
     }
   }
@@ -300,7 +303,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
           id: exerciseFormGroup.controls.id.value,
           createdByUserId: 0, //TODO: Update domain object. This value is never used had been defaulting to 0.
           createdDateTime: new Date(), //TODO: Update domain object. This value is never used and had been defaulting to DateTime.Min.
-          exercise: <Exercise>{},
+          exercise: null,
           exerciseId: exerciseFormGroup.controls.exerciseId.value,
           exerciseName: exerciseFormGroup.controls.exerciseName.value,
           numberOfSets: exerciseFormGroup.controls.numberOfSets.value,

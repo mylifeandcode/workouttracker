@@ -43,7 +43,7 @@ namespace WorkoutTracker.Domain.Exercises
         /// Any notes pertaining to the Exercise performed 
         /// (or a reason why it was skipped!).
         /// </summary>
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         /// <summary>
         /// The amount of resistance used when this exercise was executed.
@@ -60,7 +60,7 @@ namespace WorkoutTracker.Domain.Exercises
         /// value of O,O,P,Blk indicates two orange bands, one purple band, and a 
         /// black band.
         /// </example>
-        public string ResistanceMakeup { get; set; }
+        public string? ResistanceMakeup { get; set; }
 
         /// <summary>
         /// The type of set the exercise was executed in.

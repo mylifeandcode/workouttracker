@@ -291,7 +291,9 @@ const exerciseInWorkoutSchemaResponseTransformer = (data: any) => {
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    data.exercise = exerciseSchemaResponseTransformer(data.exercise);
+    if (data.exercise) {
+        data.exercise = exerciseSchemaResponseTransformer(data.exercise);
+    }
     return data;
 };
 

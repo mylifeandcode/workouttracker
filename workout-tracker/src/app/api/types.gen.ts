@@ -122,7 +122,7 @@ export type ExerciseInWorkout = {
     createdDateTime: Date;
     modifiedByUserId?: number | null;
     modifiedDateTime?: Date | null;
-    exercise: Exercise;
+    exercise?: Exercise | null;
     exerciseId: number;
     numberOfSets: number;
     setType: SetType;
