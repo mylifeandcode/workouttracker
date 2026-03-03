@@ -179,8 +179,8 @@ export type ExerciseTargetAreaLink = {
     modifiedDateTime?: Date | null;
     exerciseId: number;
     targetAreaId: number;
-    exercise: Exercise;
-    targetArea: TargetArea;
+    exercise?: Exercise | null;
+    targetArea?: TargetArea | null;
 };
 
 export type PasswordChangeRequest = {

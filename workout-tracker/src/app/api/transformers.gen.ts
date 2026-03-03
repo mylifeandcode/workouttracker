@@ -123,8 +123,12 @@ const exerciseTargetAreaLinkSchemaResponseTransformer = (data: any) => {
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    data.exercise = exerciseSchemaResponseTransformer(data.exercise);
-    data.targetArea = targetAreaSchemaResponseTransformer(data.targetArea);
+    if (data.exercise) {
+        data.exercise = exerciseSchemaResponseTransformer(data.exercise);
+    }
+    if (data.targetArea) {
+        data.targetArea = targetAreaSchemaResponseTransformer(data.targetArea);
+    }
     return data;
 };
 

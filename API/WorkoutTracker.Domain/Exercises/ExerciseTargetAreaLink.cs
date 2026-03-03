@@ -14,7 +14,7 @@ namespace WorkoutTracker.Domain.Exercises
     {
         public int ExerciseId { get; set; }
         public int TargetAreaId { get; set; }
-        public virtual Exercise Exercise { get; set; }
-        public virtual TargetArea TargetArea { get; set; }
+        public virtual Exercise? Exercise { get; set; }
+        public virtual TargetArea? TargetArea { get; set; }
     }
 }
