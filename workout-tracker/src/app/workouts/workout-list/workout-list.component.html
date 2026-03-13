@@ -4,9 +4,11 @@
     <div class="col-4">
       Filter by Name &nbsp;<input pInputText type="text" [(ngModel)]="nameFilter" />
     </div>
+    <!--
     <div class="col-4">
       Active Workouts Only &nbsp;<input type="checkbox" checked [(ngModel)]="filterByActiveOnly" />
     </div>
+    -->
   </div>
   <div class="row">
     <div class="col-12">
@@ -22,20 +24,11 @@
       >
         <thead>
           <tr>
-            <!--NG-ZORRO only tracks selected filted options, so unchecking the "ACTIVE ONLY" filter resulted in NG-ZORRO thinking NO fitlers were being applied-->
-            <!--
-            <th nzCustomFilter>
-              Name
-              <nz-filter-trigger [(nzVisible)]="workoutNameFilterVisible" [nzActive]="_filterByNameContains != null && _filterByNameContains.length > 0" [nzDropdownMenu]="menu">
-                <nz-icon nzType="search" />
-              </nz-filter-trigger>              
-            </th>
-            <th>Target Areas</th>
-            <th nzColumnKey="active" [nzFilters]="filterStatus">Status</th>
-            -->
             <th nzColumnKey="name" [nzSortFn]="true">Name</th>
             <th>Target Areas</th>
-            <th>Status</th>
+            <th nzColumnKey="active" [nzFilters]="statusFilter" [nzFilterFn]="true" [nzFilterMultiple]="true" [nzShowFilter]="true">
+              Status
+            </th>
           </tr>
         </thead>
         <tbody>

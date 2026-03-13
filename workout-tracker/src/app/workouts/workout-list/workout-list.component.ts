@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
 import { debounceTime, finalize } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
-import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
+import { NzTableFilterList, NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +24,10 @@ export class WorkoutListComponent {
   public loading = signal<boolean>(true);
   public workouts = signal<WorkoutDTO[]>([]);
 
+  public statusFilter: NzTableFilterList = [
+    { text: 'Active Only', value: 'ActiveOnly', byDefault: true }  
+  ];
+
   protected nameFilter = signal('');
   protected filterByActiveOnly = signal(true);
   protected pageIndex = signal<number>(1);
@@ -33,24 +37,20 @@ export class WorkoutListComponent {
   private _nameFilterForDebounce$ = toObservable(this.nameFilter).pipe(debounceTime(500));
   private _nameFilterForDebounce = toSignal(this._nameFilterForDebounce$);
 
-  /*
-  private _filterChange = effect(() => {
-    //Even if the signals weren't referenced here, getWorkouts() references them, 
-    //so this effect would run when they change :)
-    this.pageIndex.set(1);
-    this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this._nameFilterForDebounce());
-  });
-  */
-
   public onQueryParamsChange(params: NzTableQueryParams): void {
     console.log("Table parameters have changed: ", params);
 
-    const { pageSize, pageIndex, sort } = params;
+    const { pageSize, pageIndex, sort, filter } = params;
+
+    //With nzFilterMultiple=true, value is always an array
+    const activeFilter = filter.find(f => f.key === 'active');
+    const activeOnly = activeFilter?.value?.includes('ActiveOnly') ?? false;    
+
     this.pageSize.set(pageSize);
     this.pageIndex.set(pageIndex); 
 
     //We're currently only sorting on name, so we can use the first sort index's value directly
-    this.getWorkouts(((pageIndex - 1) * pageSize), pageSize, this.filterByActiveOnly(), sort[0]?.value !== 'descend', this.nameFilter());
+    this.getWorkouts(((pageIndex - 1) * pageSize), pageSize, activeOnly, sort[0]?.value !== 'descend', this.nameFilter());
   }
 
   public retireWorkout(workoutPublicId: string, workoutName: string): void {
