@@ -6,7 +6,7 @@ import { HttpResponse } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { WorkoutDTOPaginatedResults } from '../../api';
-
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 class WorkoutServiceMock {
   getFilteredSubset = vi.fn().mockReturnValue(of(<WorkoutDTOPaginatedResults>{}));
@@ -40,117 +40,81 @@ describe('WorkoutListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutListComponent);
     component = fixture.componentInstance;
-    workoutService = TestBed.inject(WorkoutService);
     fixture.detectChanges();
+    workoutService = TestBed.inject(WorkoutService);
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  /*
-  it('should get workouts filtered by name lazily (active only)', () => {
-    //TODO: Consolidate the method we're testing: it exists in 2 different classes.
-
-    //ARRANGE
-    const lazyLoadEvent: any = { //Unfortunately, the parameter of the onLazyLoad event of PrimeNg's table is declared as type "any"
-      "first": 0,
-      "rows": 10,
-      "sortOrder": 1,
-      "filters": {
-        "name": {
-          "value": "Chest",
-          "matchMode": "in"
-        }
-      },
-      "globalFilter": null
+  it('should query workouts using table params', () => {
+    const params: NzTableQueryParams = {
+      pageIndex: 2,
+      pageSize: 25,
+      sort: [{ key: 'name', value: 'descend' }],
+      filter: [{ key: 'active', value: ['ActiveOnly'] }]
     };
 
-    //ACT
-    component.getWorkoutsLazy(lazyLoadEvent);
+    component.onQueryParamsChange(params);
 
-    //ASSERT
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 10, true, 'Chest');
+    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(25, 25, true, false, '');
   });
 
-  it('should get workouts filtered by name lazily (active and inactive)', () => {
-    //TODO: Consolidate the method we're testing: it exists in 2 different classes.
+  it('should search using current table state and reset to first page', () => {
+    component.onQueryParamsChange({
+      pageIndex: 2,
+      pageSize: 20,
+      sort: [{ key: 'name', value: 'descend' }],
+      filter: [{ key: 'active', value: [] }]
+    });
 
-    //ARRANGE
-    const lazyLoadEvent: any = { //Unfortunately, the parameter of the onLazyLoad event of PrimeNg's table is declared as type "any"
-      "first": 0,
-      "rows": 10,
-      "sortOrder": 1,
-      "filters": {
-        "activeOnly": {
-          "value": false,
-          "matchMode": "equals"
-        },
-        "name": {
-          "value": "Arms",
-          "matchMode": "in"
-        }
-      },
-      "globalFilter": null
-    };
+    component.search();
 
-    //ACT
-    component.getWorkoutsLazy(lazyLoadEvent);
-
-    //ASSERT
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 10, false, 'Arms');
+    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 20, false, false, '');
   });
 
-  /*
-  it('should get workouts without name filter lazily', () => {
-    //TODO: Consolidate the method we're testing: it exists in 2 different classes.
+  it('should reset and search using the current table state', () => {
+    component.onQueryParamsChange({
+      pageIndex: 3,
+      pageSize: 20,
+      sort: [{ key: 'name', value: 'descend' }],
+      filter: [{ key: 'active', value: [] }]
+    });
 
-    //ARRANGE
-    const lazyLoadEvent: any = { //Unfortunately, the parameter of the onLazyLoad event of PrimeNg's table is declared as type "any"
-      "first": 0,
-      "rows": 10,
-      "sortOrder": 1,
-      "filters": {
-        "activeOnly": {
-          "value": true,
-          "matchMode": "equals"
-        }
-      },
-      "globalFilter": null
-    };
+    component.reset();
 
-    //ACT
-    component.getWorkoutsLazy(lazyLoadEvent);
-
-    //ASSERT
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 10, true, null);
+    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 20, false, false, '');
   });
-  */
 
-  //TODO: Revisit
-  it.skip('should retire a workout', () => {
-    //ARRANGE
+  it('should retire a workout and refresh with current filters', () => {
+    component.onQueryParamsChange({
+      pageIndex: 1,
+      pageSize: 15,
+      sort: [{ key: 'name', value: 'descend' }],
+      filter: [{ key: 'active', value: [] }]
+    });
     vi.spyOn(window, 'confirm').mockReturnValue(true);
 
-    //ACT
-    component.retireWorkout('some-guid', "My Workout");
+    component.retireWorkout('some-guid', 'My Workout');
 
-    //ASSERT
     expect(workoutService.retire).toHaveBeenCalledWith('some-guid');
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledTimes(1);
+    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 15, false, false, '');
   });
 
-  //TODO: Revisit
-  it.skip('should reactivate a workout', () => {
-    //ARRANGE
+  it('should reactivate a workout and refresh with current filters', () => {
+    component.onQueryParamsChange({
+      pageIndex: 1,
+      pageSize: 30,
+      sort: [{ key: 'name', value: 'ascend' }],
+      filter: [{ key: 'active', value: ['ActiveOnly'] }]
+    });
     vi.spyOn(window, 'confirm').mockReturnValue(true);
 
-    //ACT
-    component.reactivateWorkout("some-guid", "My Workout");
+    component.reactivateWorkout('some-guid', 'My Workout');
 
-    //ASSERT
-    expect(workoutService.reactivate).toHaveBeenCalledWith("some-guid");
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledTimes(1);
+    expect(workoutService.reactivate).toHaveBeenCalledWith('some-guid');
+    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 30, true, true, '');
   });
 
 });

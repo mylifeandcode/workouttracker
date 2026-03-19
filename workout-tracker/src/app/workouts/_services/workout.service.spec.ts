@@ -57,6 +57,22 @@ describe('WorkoutService', () => {
     await expect(response).resolves.toEqual(expectedResults);
   });
 
+  it('should encode nameContains when getting filtered subset', async () => {
+    const expectedResults = <WorkoutDTOPaginatedResults>{};
+    expectedResults.results = [];
+    expectedResults.totalCount = 0;
+
+    const nameContains = "Chest & Shoulders + Core";
+    const encodedNameContains = encodeURIComponent(nameContains);
+    const response = firstValueFrom(service.getFilteredSubset(0, 10, true, true, nameContains));
+
+    const req = httpMock.expectOne(`${API_ROOT_URL}?firstRecord=0&pageSize=10&activeOnly=true&sortAscending=true&nameContains=${encodedNameContains}`);
+    expect(req.request.method).toEqual('GET');
+
+    req.flush(expectedResults);
+    await expect(response).resolves.toEqual(expectedResults);
+  });
+
   it('should get workout by public ID', async () => {
     const expectedResults = <Workout>{};
     const workoutId: string = TEST_WORKOUT_ID;

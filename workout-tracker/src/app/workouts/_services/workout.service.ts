@@ -30,7 +30,7 @@ export class WorkoutService {
     let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&activeOnly=${activeOnly}&sortAscending=${sortAscending}`;
 
     if(nameContains)
-        url += `&nameContains=${nameContains}`;
+      url += `&nameContains=${encodeURIComponent(nameContains)}`;
 
     return this._http.get<WorkoutDTOPaginatedResults>(url);
   }

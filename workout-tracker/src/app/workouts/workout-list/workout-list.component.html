@@ -1,16 +1,6 @@
 <h3 class="headroom">Workouts</h3>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-4">
-      Filter by Name &nbsp;<input pInputText type="text" [(ngModel)]="nameFilter" />
-    </div>
-    <!--
-    <div class="col-4">
-      Active Workouts Only &nbsp;<input type="checkbox" checked [(ngModel)]="filterByActiveOnly" />
-    </div>
-    -->
-  </div>
-  <div class="row">
     <div class="col-12">
       <nz-table #dt
         [nzData]="workouts()" 
@@ -24,7 +14,12 @@
       >
         <thead>
           <tr>
-            <th nzColumnKey="name" [nzSortFn]="true">Name</th>
+            <th nzColumnKey="name" [nzSortFn]="true" nzCustomFilter>
+              Name
+              <nz-filter-trigger [(nzVisible)]="nameFilterVisible" [nzActive]="nameFilter().length > 0" [nzDropdownMenu]="menu">
+                <nz-icon nzType="search" />
+              </nz-filter-trigger>
+            </th>
             <th>Target Areas</th>
             <th nzColumnKey="active" [nzFilters]="statusFilter" [nzFilterFn]="true" [nzFilterMultiple]="true" [nzShowFilter]="true">
               Status
@@ -84,14 +79,12 @@
   </div>
 </div>
 
-<!--
 <nz-dropdown-menu #menu="nzDropdownMenu">
   <div class="ant-table-filter-dropdown">
     <div class="search-box">
-      <input type="text" nz-input placeholder="Workout Name" [(ngModel)]="_filterByNameContains" />
+      <input type="text" nz-input placeholder="Workout Name" [(ngModel)]="nameFilter" />
       <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">Search</button>
       <button nz-button nzSize="small" (click)="reset()">Reset</button>
     </div>
   </div>
 </nz-dropdown-menu>
--->

@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
-import { debounceTime, finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { NzTableFilterList, NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { FormsModule } from '@angular/forms';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'wt-workout-list',
@@ -29,28 +28,38 @@ export class WorkoutListComponent {
   ];
 
   protected nameFilter = signal('');
+  protected nameFilterVisible = signal(false);
   protected filterByActiveOnly = signal(true);
+  protected sortAscending = signal(true);
   protected pageIndex = signal<number>(1);
   protected pageSize = signal<number>(10);
 
-  //Signals don't have debounce natively, so we need this ugly bit of code :(
-  private _nameFilterForDebounce$ = toObservable(this.nameFilter).pipe(debounceTime(500));
-  private _nameFilterForDebounce = toSignal(this._nameFilterForDebounce$);
-
   public onQueryParamsChange(params: NzTableQueryParams): void {
-    console.log("Table parameters have changed: ", params);
-
     const { pageSize, pageIndex, sort, filter } = params;
 
     //With nzFilterMultiple=true, value is always an array
     const activeFilter = filter.find(f => f.key === 'active');
     const activeOnly = activeFilter?.value?.includes('ActiveOnly') ?? false;    
+    const currentSort = sort.find(item => item.value !== null);
+    const sortAscending = currentSort?.value !== 'descend';
 
+    this.filterByActiveOnly.set(activeOnly);
+    this.sortAscending.set(sortAscending);
     this.pageSize.set(pageSize);
     this.pageIndex.set(pageIndex); 
 
-    //We're currently only sorting on name, so we can use the first sort index's value directly
-    this.getWorkouts(((pageIndex - 1) * pageSize), pageSize, activeOnly, sort[0]?.value !== 'descend', this.nameFilter());
+    this.getWorkouts(((pageIndex - 1) * pageSize), pageSize, activeOnly, sortAscending, this.nameFilter());
+  }
+
+  public reset(): void {
+    this.nameFilter.set('');
+    this.search();
+  }
+
+  public search(): void {
+    this.nameFilterVisible.set(false);
+    this.pageIndex.set(1);
+    this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this.sortAscending(), this.nameFilter());
   }
 
   public retireWorkout(workoutPublicId: string, workoutName: string): void {
@@ -61,7 +70,7 @@ export class WorkoutListComponent {
         .subscribe({
           next: () => {
             this.pageIndex.set(1);
-            this.getWorkouts(0);
+            this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this.sortAscending(), this.nameFilter());
           },
           error: (error: HttpErrorResponse) => window.alert("An error occurred while retiring workout: " + error.message)
         });
@@ -76,7 +85,7 @@ export class WorkoutListComponent {
         .subscribe({
           next: () => {
             this.pageIndex.set(1);
-            this.getWorkouts(0);
+            this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this.sortAscending(), this.nameFilter());
           },
           error: (error: HttpErrorResponse) => window.alert("An error occurred while reactivating workout: " + error.message)
         });
@@ -84,7 +93,6 @@ export class WorkoutListComponent {
   }
 
   private getWorkouts(first: number, pageSize: number = 10, filterByActiveOnly: boolean = true, sortAscending: boolean = true, nameFilter: string = ''): void {
-    console.log("GETTING WORKOUTS: ", first, pageSize);
     //this.totalRecords = 0; DO NOT SET THIS -- IT WILL TRIGGER THE PARAMS CHANGE HANDLER AND CALL IT ALL AGAIN WITH THE DEFAULT PARAMS!
     this.loading.set(true);
     this._workoutSvc.getFilteredSubset(first, pageSize, filterByActiveOnly, sortAscending, nameFilter)
