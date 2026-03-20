@@ -1,40 +1,24 @@
 <h3 class="headroom">Exercises</h3>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-6">
-      Filter by Name &nbsp;<input [(ngModel)]="_nameFilter" />
-    </div>
-    <div class="col-6">
-      Filter by Target Areas
-      <nz-select 
-        [nzMaxTagCount]="3"
-        nzMode="multiple"
-        [nzMaxTagPlaceholder]="tagPlaceHolder"
-        nzPlaceHolder="Please select"
-        [(ngModel)]="_selectedTargetAreas" 
-        class="ms-2 mb-2"
-        (ngModelChange)="targetAreasFilterChange($event)"
-        >
-        @for (targetArea of targetAreas(); track targetArea) {
-          <nz-option [nzLabel]="targetArea" [nzValue]="targetArea"></nz-option>
-        }
-      </nz-select>
-      <ng-template #tagPlaceHolder let-selectedList>and {{ selectedList.length }} more selected</ng-template>
-    </div>
-  </div>
-  <div class="row">
     <div class="col-12">
       <nz-table #dt [nzData]="exercises()"
         [nzFrontPagination]="false"
         [nzShowSizeChanger]="true"
         [nzTotal]="totalRecords()"
-        [nzPageSize]="10"
+        [(nzPageSize)]="pageSize"
+        [(nzPageIndex)]="pageIndex"
         [nzLoading]="loading()"
-        (nzQueryParams)="getExercisesLazy($event)">
+        (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Target Areas</th>
+            <th nzCustomFilter>
+              Name
+              <nz-filter-trigger [(nzVisible)]="nameFilterVisible" [nzActive]="nameFilter().length > 0" [nzDropdownMenu]="menu">
+                <nz-icon nzType="search" />
+              </nz-filter-trigger>
+            </th>
+            <th nzColumnKey="targetAreas" [nzFilters]="targetAreaFilters()" [nzFilterFn]="true" [nzFilterMultiple]="true">Target Areas</th>
           </tr>
         </thead>
         <tbody>
@@ -71,3 +55,13 @@
     </div>
   </div>
 </div>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+  <div class="ant-table-filter-dropdown">
+    <div class="search-box">
+      <input type="text" nz-input placeholder="Exercise Name" [(ngModel)]="nameFilter" />
+      <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">Search</button>
+      <button nz-button nzSize="small" (click)="reset()">Reset</button>
+    </div>
+  </div>
+</nz-dropdown-menu>

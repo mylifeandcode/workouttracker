@@ -4,14 +4,17 @@ import { ExerciseListComponent } from './exercise-list.component';
 import { ExerciseService } from '../_services/exercise.service';
 import { ExerciseDTOPaginatedResults, TargetArea } from '../../api';
 import { of } from 'rxjs';
-import { RouterLink, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
-import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
 
 class ExerciseServiceMock {
-  getAll = vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{}));
-  getTargetAreas = vi.fn().mockReturnValue(of(new Array<TargetArea>()));
+  getAll = vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{ results: [], totalCount: 0 }));
+  getTargetAreas = vi.fn().mockReturnValue(of([
+    <TargetArea>{ id: 1, name: 'Chest' },
+    <TargetArea>{ id: 2, name: 'Biceps' },
+    <TargetArea>{ id: 3, name: 'Triceps' }
+  ]));
 }
 
 describe('ExerciseListComponent', () => {
@@ -23,8 +26,7 @@ describe('ExerciseListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([]),
-        ExerciseListComponent,
-        NoopAnimationsModule
+        ExerciseListComponent
       ],
       providers: [
         {
@@ -32,16 +34,9 @@ describe('ExerciseListComponent', () => {
           useClass: ExerciseServiceMock
         },
         provideZonelessChangeDetection()
-      ]
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-      .overrideComponent(ExerciseListComponent, {
-        remove: {
-          imports: [NzTableModule, RouterLink] //Some imports still required to test
-        },
-        add: {
-          schemas: [CUSTOM_ELEMENTS_SCHEMA]
-        }
-      })
       .compileComponents();
   });
 
@@ -56,19 +51,60 @@ describe('ExerciseListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get exercises lazily', () => {
+  it('should populate target area filters from service', () => {
+    expect(exerciseService.getTargetAreas).toHaveBeenCalled();
+    expect(component.targetAreaFilters()).toEqual([
+      { text: 'Chest', value: 'Chest' },
+      { text: 'Biceps', value: 'Biceps' },
+      { text: 'Triceps', value: 'Triceps' }
+    ]);
+  });
+
+  it('should get exercises on query params change', () => {
     //ARRANGE
-    const queryParams = <NzTableQueryParams>{
+    const queryParams: NzTableQueryParams = {
       pageIndex: 1,
-      pageSize: 10
+      pageSize: 10,
+      sort: [],
+      filter: []
     };
 
     //ACT
-    component.getExercisesLazy(queryParams);
+    component.onQueryParamsChange(queryParams);
 
     //ASSERT
     expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null);
   });
 
-  //TODO: Add tests for refactored filter methods
+  it('should pass target area filters from query params', () => {
+    //ARRANGE
+    const queryParams: NzTableQueryParams = {
+      pageIndex: 1,
+      pageSize: 10,
+      sort: [],
+      filter: [{ key: 'targetAreas', value: ['Chest', 'Biceps'] }]
+    };
+
+    //ACT
+    component.onQueryParamsChange(queryParams);
+
+    //ASSERT
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', ['Chest', 'Biceps']);
+  });
+
+  it('should search with current name filter', () => {
+    //ACT
+    component.search();
+
+    //ASSERT
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null);
+  });
+
+  it('should reset name filter and search', () => {
+    //ACT
+    component.reset();
+
+    //ASSERT
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null);
+  });
 });
