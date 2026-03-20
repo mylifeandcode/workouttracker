@@ -1,14 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, WritableSignal, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { HTTP_OPTIONS_FOR_TEXT_RESPONSE } from '../../../shared/constants/http-constants';
 
+interface AuthTokenResult {
+  accessToken: string;
+  refreshToken: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +25,7 @@ export class AuthService {
 
   //READ-ONLY FIELDS
   private readonly LOCAL_STORAGE_TOKEN_KEY = "WorkoutTrackerToken";
+  private readonly LOCAL_STORAGE_REFRESH_TOKEN_KEY = "WorkoutTrackerRefreshToken";
 
   //READ-ONLY PROPERTIES
   public get loginRoute(): string {
@@ -34,27 +38,21 @@ export class AuthService {
 
   public currentUserName: WritableSignal<string | null> = signal(null);
 
+  // Refresh token coordination
+  public isRefreshing = false;
+  public refreshTokenSubject = new BehaviorSubject<string | null>(null);
+
   //PRIVATE FIELDS
   private _apiRoot: string = '';
   private _loginRoute: string = '';
-
-  /*
-  private _userSubject$ = new BehaviorSubject<string | null>(null);
-  private _userObservable$: Observable<string | null> = this._userSubject$.asObservable();
-  */
 
   //PRIVATE READ-ONLY FIELDS
   private readonly ROLE_CLAIM_TYPE: string = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
   private readonly USER_ID_CLAIM_TYPE: string = "UserID";
   private readonly USER_PUBLIC_ID_CLAIM_TYPE: string = "UserPublicID";
+  private readonly NAME_CLAIM_TYPE: string = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
 
   //PROPERTIES ////////////////////////////////////////////////////////////////
-
-  /*
-  public get currentUserName(): Observable<string | null> {
-    return this._userObservable$;
-  }
-  */
 
   public get isUserLoggedIn(): boolean {
     return (this.token != null);
@@ -88,16 +86,11 @@ export class AuthService {
 
   public logIn(username: string, password: string): Observable<boolean> {
     return this._http
-      .post<string>(`${this._apiRoot}/login`, { username, password }, HTTP_OPTIONS_FOR_TEXT_RESPONSE) //TODO: Create strong type for credentials object
+      .post<AuthTokenResult>(`${this._apiRoot}/login`, { username, password })
       .pipe(
         tap(() => console.log('Login successful, processing token...')),
-        map((token: string) => {
-          //Using map() here so I can act on the result and then return a boolean.
-          this.decodedTokenPayload = jwtDecode<JwtPayload>(token); //Do this first, before setting token which states "user is logged in"
-          this.token = token;
-          //this._userSubject$.next(username);
-          this.currentUserName.set(username);
-          this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, token);
+        map((result: AuthTokenResult) => {
+          this.setTokens(result.accessToken, result.refreshToken, username);
           return true;
         }),
         catchError(() => of(false))
@@ -105,30 +98,68 @@ export class AuthService {
   }
 
   public logOut(): void {
+    // Fire-and-forget revoke call
+    if (this.token) {
+      this._http.post(`${this._apiRoot}/revoke`, {}).subscribe({ error: () => {} });
+    }
+
     this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);
+    this._localStorageService.remove(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY);
     this.token = null;
-    //this._userSubject$.next(null);
+    this.decodedTokenPayload = undefined;
     this.currentUserName.set(null);
     this._router.navigate([this._loginRoute]);
   }
 
+  public refreshAccessToken(): Observable<boolean> {
+    const refreshToken = this._localStorageService.get(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY) as string | null;
+
+    if (!this.token || !refreshToken) {
+      return of(false);
+    }
+
+    return this._http
+      .post<AuthTokenResult>(`${this._apiRoot}/refresh`, {
+        accessToken: this.token,
+        refreshToken: refreshToken
+      })
+      .pipe(
+        map((result: AuthTokenResult) => {
+          const username = this.currentUserName() ?? '';
+          this.setTokens(result.accessToken, result.refreshToken, username);
+          return true;
+        }),
+        catchError(() => of(false))
+      );
+  }
+
   public restoreUserSessionIfApplicable(): void {
     const token: string | null = (this._localStorageService.get(this.LOCAL_STORAGE_TOKEN_KEY) as string | null);
+    const refreshToken: string | null = (this._localStorageService.get(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY) as string | null);
 
     if (token) {
       const decodedToken = jwtDecode<JwtPayload>(token);
       if (decodedToken) {
 
         if (!this.isExpired(decodedToken?.exp)) {
+          // Access token still valid — restore directly
           this.decodedTokenPayload = decodedToken;
           this.token = token;
 
-          const username = <string | null>this.decodedTokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name' as keyof JwtPayload];
+          const username = <string | null>this.decodedTokenPayload[this.NAME_CLAIM_TYPE as keyof JwtPayload];
           if (username) {
-            //this._userSubject$.next(username);
             this.currentUserName.set(username);
           }
-
+        } else if (refreshToken) {
+          // Access token expired but refresh token exists — attempt refresh
+          this.token = token; // Set temporarily so refreshAccessToken can send it
+          this.refreshAccessToken().subscribe(success => {
+            if (!success) {
+              this.token = null;
+              this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);
+              this._localStorageService.remove(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY);
+            }
+          });
         }
       }
     }
@@ -152,8 +183,20 @@ export class AuthService {
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
 
+  private setTokens(accessToken: string, refreshToken: string, username: string): void {
+    this.decodedTokenPayload = jwtDecode<JwtPayload>(accessToken);
+    this.token = accessToken;
+    this.currentUserName.set(username || this.getUsernameFromToken());
+    this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, accessToken);
+    this._localStorageService.set(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY, refreshToken);
+  }
+
+  private getUsernameFromToken(): string | null {
+    if (!this.decodedTokenPayload) return null;
+    return <string | null>this.decodedTokenPayload[this.NAME_CLAIM_TYPE as keyof JwtPayload] ?? null;
+  }
+
   private isExpired(expirationSecondsSinceEpoch: number | undefined): boolean {
-    //console.log("expirationSecondsSinceEpoch: ", expirationSecondsSinceEpoch);
     if (!expirationSecondsSinceEpoch) return true;
     return expirationSecondsSinceEpoch < this.getSecondsSinceEpoch();
   }
@@ -163,7 +206,6 @@ export class AuthService {
     const now = new Date();
     const utcMilllisecondsSinceEpoch = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
     const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
-    //console.log("utcSecondsSinceEpoch: ", utcSecondsSinceEpoch);
     return utcSecondsSinceEpoch;
   }
 

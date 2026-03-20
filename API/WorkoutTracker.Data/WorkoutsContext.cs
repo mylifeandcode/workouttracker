@@ -32,6 +32,7 @@ namespace WorkoutTracker.Data
 
         //Users
         public DbSet<User> Users { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         //public WorkoutsContext() { }
         public WorkoutsContext(DbContextOptions<WorkoutsContext> options) : base(options) { }

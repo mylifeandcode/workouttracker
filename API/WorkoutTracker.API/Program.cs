@@ -159,6 +159,7 @@ void RegisterStuff(WebApplicationBuilder appBuilder)
         containerBuilder.RegisterType<Repository<Workout>>().As<IRepository<Workout>>();
         containerBuilder.RegisterType<Repository<ExecutedWorkout>>().As<IRepository<ExecutedWorkout>>();
         containerBuilder.RegisterType<Repository<ResistanceBand>>().As<IRepository<ResistanceBand>>();
+        containerBuilder.RegisterType<Repository<RefreshToken>>().As<IRepository<RefreshToken>>();
 
         containerBuilder.RegisterType<EmailService>().As<IEmailService>()
             .WithParameter("enabled", appBuilder.Configuration["SMTP:Enabled"])

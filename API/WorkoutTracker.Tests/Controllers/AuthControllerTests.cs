@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
@@ -24,6 +25,7 @@ namespace WorkoutTracker.Tests.Controllers
         private Mock<ITokenService> _tokenServiceMock;
         private IConfiguration _configuration;
         private Mock<ICryptoService> _cryptoServiceMock;
+        private Mock<IRefreshTokenService> _refreshTokenServiceMock;
         private AuthController _sut;
 
         [TestInitialize]
@@ -34,8 +36,8 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.GetAll())
                 .Returns(new List<User>(2) 
                     { 
-                        new User { Name = "Kirk", HashedPassword = "oijosidjfsgd", Salt = "iunfidnfgfd" }, 
-                        new User { Name = "Spock", HashedPassword = "njnfdgdfufgdf", Salt = " jsnkjnbfdf8" } 
+                        new User { Id = 1, Name = "Kirk", HashedPassword = "oijosidjfsgd", Salt = "iunfidnfgfd" }, 
+                        new User { Id = 2, Name = "Spock", HashedPassword = "njnfdgdfufgdf", Salt = " jsnkjnbfdf8" } 
                     });
             _userServiceMock
                 .Setup(x => x.ChangePassword(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()));
@@ -50,7 +52,7 @@ namespace WorkoutTracker.Tests.Controllers
 
             _tokenServiceMock = new Mock<ITokenService>(MockBehavior.Strict);
             _tokenServiceMock
-                .Setup(x => x.BuildToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<User>()))
+                .Setup(x => x.BuildToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<User>(), It.IsAny<int>()))
                 .Returns("someToken");
 
             _configuration = GetConfiguration(true);
@@ -60,7 +62,14 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(true);
 
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object);
+            _refreshTokenServiceMock = new Mock<IRefreshTokenService>(MockBehavior.Strict);
+            _refreshTokenServiceMock
+                .Setup(x => x.GenerateRefreshToken(It.IsAny<int>()))
+                .Returns(("someRawRefreshToken", new RefreshToken { Id = 1 }));
+            _refreshTokenServiceMock
+                .Setup(x => x.RevokeByUserId(It.IsAny<int>()));
+
+            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object);
         }
 
         [TestMethod]
@@ -74,13 +83,15 @@ namespace WorkoutTracker.Tests.Controllers
             var result = _sut.Login(credentials);
 
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(ContentResult));
-            var contentResult = (ContentResult)result;
-            Assert.AreEqual("someToken", contentResult.Content);
-            Assert.AreEqual(200, contentResult.StatusCode);
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            var okResult = (OkObjectResult)result;
+            var tokenResult = (AuthTokenResultDTO)okResult.Value;
+            Assert.AreEqual("someToken", tokenResult.AccessToken);
+            Assert.AreEqual("someRawRefreshToken", tokenResult.RefreshToken);
             _userServiceMock.Verify(x => x.GetAll(), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>()), Times.Once);
+            _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), 15), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.GenerateRefreshToken(It.IsAny<int>()), Times.Once);
         }
 
         [TestMethod]
@@ -90,7 +101,7 @@ namespace WorkoutTracker.Tests.Controllers
             _configuration = GetConfiguration(false);
 
             //TODO: Troubleshoot. The updated config doesn't take unless I recreate the controller.
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object);
+            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object);
 
             var credentials = new UserCredentialsDTO();
             credentials.Username = "Spock";
@@ -99,13 +110,15 @@ namespace WorkoutTracker.Tests.Controllers
             var result = _sut.Login(credentials);
 
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(ContentResult));
-            var contentResult = (ContentResult)result;
-            Assert.AreEqual("someToken", contentResult.Content);
-            Assert.AreEqual(200, contentResult.StatusCode);
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            var okResult = (OkObjectResult)result;
+            var tokenResult = (AuthTokenResultDTO)okResult.Value;
+            Assert.AreEqual("someToken", tokenResult.AccessToken);
+            Assert.AreEqual("someRawRefreshToken", tokenResult.RefreshToken);
             _userServiceMock.Verify(x => x.GetAll(), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>()), Times.Once);
+            _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), 15), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.GenerateRefreshToken(It.IsAny<int>()), Times.Once);
         }
 
         [TestMethod]
@@ -124,7 +137,7 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.AreEqual((int)HttpStatusCode.NotFound, notFoundResult.StatusCode); //Kind of redundant
             _userServiceMock.Verify(x => x.GetAll(), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>()), Times.Never);
+            _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), It.IsAny<int>()), Times.Never);
         }
 
         [TestMethod]
@@ -137,7 +150,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Returns(false);
 
             //TODO: Troubleshoot. The updated config doesn't take unless I recreate the controller.
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object);
+            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object);
 
             var credentials = new UserCredentialsDTO();
             credentials.Username = "Spock";
@@ -152,7 +165,116 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.AreEqual((int)HttpStatusCode.Unauthorized, unauthorizedResult.StatusCode); //Kind of redundant
             _userServiceMock.Verify(x => x.GetAll(), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>()), Times.Never);
+            _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [TestMethod]
+        public void Should_Refresh_Token_Successfully()
+        {
+            //ARRANGE
+            var existingToken = new RefreshToken { Id = 1, UserId = 2, IsRevoked = false };
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim("UserID", "2"),
+                new Claim(ClaimTypes.Name, "Spock")
+            }));
+
+            _tokenServiceMock
+                .Setup(x => x.GetPrincipalFromExpiredToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(principal);
+
+            _refreshTokenServiceMock
+                .Setup(x => x.ValidateRefreshToken(It.IsAny<string>(), 2))
+                .Returns(existingToken);
+
+            _refreshTokenServiceMock
+                .Setup(x => x.RevokeAndReplace(existingToken, 2))
+                .Returns(("newRawRefreshToken", new RefreshToken { Id = 2 }));
+
+            var request = new RefreshTokenRequestDTO
+            {
+                AccessToken = "expiredAccessToken",
+                RefreshToken = "validRefreshToken"
+            };
+
+            //ACT
+            var result = _sut.Refresh(request);
+
+            //ASSERT
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            var okResult = (OkObjectResult)result;
+            var tokenResult = (AuthTokenResultDTO)okResult.Value;
+            Assert.AreEqual("someToken", tokenResult.AccessToken);
+            Assert.AreEqual("newRawRefreshToken", tokenResult.RefreshToken);
+            _tokenServiceMock.Verify(x => x.GetPrincipalFromExpiredToken("expiredAccessToken", "SomeKey", "SomeIssuer"), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.ValidateRefreshToken("validRefreshToken", 2), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.RevokeAndReplace(existingToken, 2), Times.Once);
+        }
+
+        [TestMethod]
+        public void Should_Return_Unauthorized_From_Refresh_When_Token_Invalid()
+        {
+            //ARRANGE
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim("UserID", "2"),
+                new Claim(ClaimTypes.Name, "Spock")
+            }));
+
+            _tokenServiceMock
+                .Setup(x => x.GetPrincipalFromExpiredToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(principal);
+
+            _refreshTokenServiceMock
+                .Setup(x => x.ValidateRefreshToken(It.IsAny<string>(), 2))
+                .Returns((RefreshToken?)null);
+
+            var request = new RefreshTokenRequestDTO
+            {
+                AccessToken = "expiredAccessToken",
+                RefreshToken = "invalidRefreshToken"
+            };
+
+            //ACT
+            var result = _sut.Refresh(request);
+
+            //ASSERT
+            Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
+        }
+
+        [TestMethod]
+        public void Should_Return_Unauthorized_From_Refresh_When_Access_Token_Cannot_Be_Parsed()
+        {
+            //ARRANGE
+            _tokenServiceMock
+                .Setup(x => x.GetPrincipalFromExpiredToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns((ClaimsPrincipal?)null);
+
+            var request = new RefreshTokenRequestDTO
+            {
+                AccessToken = "totallyBogusToken",
+                RefreshToken = "someRefreshToken"
+            };
+
+            //ACT
+            var result = _sut.Refresh(request);
+
+            //ASSERT
+            Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
+        }
+
+        [TestMethod]
+        public void Should_Revoke_Tokens()
+        {
+            //ARRANGE
+            SetupUser(_sut);
+
+            //ACT
+            var result = _sut.Revoke();
+
+            //ASSERT
+            Assert.IsInstanceOfType(result, typeof(NoContentResult));
+            _refreshTokenServiceMock.Verify(x => x.RevokeByUserId(1), Times.Once);
         }
 
         [TestMethod]
@@ -170,6 +292,7 @@ namespace WorkoutTracker.Tests.Controllers
             //ASSERT
             Assert.IsInstanceOfType(result, typeof(OkResult));
             _userServiceMock.Verify(x => x.ChangePassword(1, request.CurrentPassword, request.NewPassword), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.RevokeByUserId(1), Times.Once);
         }
 
         [TestMethod]
@@ -223,7 +346,9 @@ namespace WorkoutTracker.Tests.Controllers
             {
                 {"SimpleLogin", useSimpleLogin.ToString()},
                 {"Jwt:Key", "SomeKey"},
-                {"Jwt:Issuer", "SomeIssuer"}
+                {"Jwt:Issuer", "SomeIssuer"},
+                {"Jwt:AccessTokenLifetimeMinutes", "15"},
+                {"Jwt:RefreshTokenLifetimeDays", "7"}
             };
 
             return new ConfigurationBuilder()

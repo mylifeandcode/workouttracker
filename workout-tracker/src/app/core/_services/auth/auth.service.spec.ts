@@ -23,7 +23,11 @@ class ConfigServiceMock {
 class LocalStorageServiceMock {
   set = vi.fn();
   remove = vi.fn();
-  get = vi.fn().mockReturnValue(TEST_ACCESS_TOKEN);
+  get = vi.fn().mockImplementation((key: string) => {
+    if (key === 'WorkoutTrackerToken') return TEST_ACCESS_TOKEN;
+    if (key === 'WorkoutTrackerRefreshToken') return 'testRefreshToken';
+    return null;
+  });
 }
 
 @Component({
@@ -42,6 +46,7 @@ const TEST_ACCESS_TOKEN: string = 'eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L
 describe('AuthService', () => {
   let service: AuthService;
   let configService: ConfigService;
+  let localStorageService: LocalStorageService;
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
@@ -63,6 +68,7 @@ describe('AuthService', () => {
     });
     service = TestBed.inject(AuthService);
     configService = TestBed.inject(ConfigService);
+    localStorageService = TestBed.inject(LocalStorageService);
     httpTestingController = TestBed.inject(HttpTestingController);
     service.init(); //Required because APP_INITIALIZER does this due to a race condition
   });
@@ -90,9 +96,9 @@ describe('AuthService', () => {
     const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
     expect(testRequest.request.method).toEqual('POST');
 
-
-    testRequest.flush(TEST_ACCESS_TOKEN);
+    testRequest.flush({ accessToken: TEST_ACCESS_TOKEN, refreshToken: 'testRefreshToken' });
     expect(service.token).toBe(TEST_ACCESS_TOKEN);
+    expect(localStorageService.set).toHaveBeenCalledWith('WorkoutTrackerRefreshToken', 'testRefreshToken');
     
     expect(await result).toBe(true);
   });
@@ -120,7 +126,7 @@ describe('AuthService', () => {
     const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
     expect(testRequest.request.method).toEqual('POST');
 
-    testRequest.flush(TEST_ACCESS_TOKEN);
+    testRequest.flush({ accessToken: TEST_ACCESS_TOKEN, refreshToken: 'testRefreshToken' });
 
     //Sanity Check
     expect(await result).toBe(true);
@@ -131,9 +137,47 @@ describe('AuthService', () => {
     //ACT
     service.logOut();
 
+    //Flush the revoke request (fire-and-forget)
+    const revokeRequest = httpTestingController.expectOne("http://localhost:5600/auth/revoke");
+    revokeRequest.flush(null);
+
     //ASSERT
     expect(service.currentUserName()).toBe(null);
     expect(service.token).toBeNull();
+    expect(localStorageService.remove).toHaveBeenCalledWith('WorkoutTrackerToken');
+    expect(localStorageService.remove).toHaveBeenCalledWith('WorkoutTrackerRefreshToken');
+  });
+
+  it('should refresh access token successfully', async () => {
+    //ARRANGE
+    service.token = TEST_ACCESS_TOKEN;
+
+    //ACT
+    const result = firstValueFrom(service.refreshAccessToken());
+
+    //ASSERT
+    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/refresh");
+    expect(testRequest.request.method).toEqual('POST');
+    expect(testRequest.request.body.accessToken).toBe(TEST_ACCESS_TOKEN);
+    expect(testRequest.request.body.refreshToken).toBe('testRefreshToken');
+
+    testRequest.flush({ accessToken: TEST_ACCESS_TOKEN, refreshToken: 'newRefreshToken' });
+    expect(await result).toBe(true);
+    expect(service.token).toBe(TEST_ACCESS_TOKEN);
+    expect(localStorageService.set).toHaveBeenCalledWith('WorkoutTrackerRefreshToken', 'newRefreshToken');
+  });
+
+  it('should return false from refreshAccessToken when error occurs', async () => {
+    //ARRANGE
+    service.token = TEST_ACCESS_TOKEN;
+
+    //ACT
+    const result = firstValueFrom(service.refreshAccessToken());
+
+    //ASSERT
+    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/refresh");
+    testRequest.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+    expect(await result).toBe(false);
   });
 
   //Having a unit test for restoreUserSessionIfApplicable() is problematic because it does an 
@@ -158,7 +202,7 @@ describe('AuthService', () => {
     expect(testRequest.request.method).toEqual('POST');
 
     //Respond with the mock results
-    testRequest.flush(TEST_ACCESS_TOKEN);
+    testRequest.flush({ accessToken: TEST_ACCESS_TOKEN, refreshToken: 'testRefreshToken' });
     expect(await loginResult).toBe(true);
     expect(service.isUserAdmin).toBe(true);
   });

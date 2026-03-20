@@ -22,17 +22,20 @@ namespace WorkoutTracker.API.Controllers
         private ITokenService _tokenService;
         private IConfiguration _config;
         private ICryptoService _cryptoService;
+        private IRefreshTokenService _refreshTokenService;
 
         public AuthController(
             IUserService userService, 
             ITokenService tokenService, 
             IConfiguration config, 
-            ICryptoService cryptoService)
+            ICryptoService cryptoService,
+            IRefreshTokenService refreshTokenService)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
+            _refreshTokenService = refreshTokenService ?? throw new ArgumentNullException(nameof(refreshTokenService));
         }
 
         [AllowAnonymous]
@@ -54,13 +57,67 @@ namespace WorkoutTracker.API.Controllers
                     return new UnauthorizedResult();
             }
 
-            var token = 
+            int accessTokenLifetimeMinutes = int.TryParse(_config["Jwt:AccessTokenLifetimeMinutes"], out var minutes) ? minutes : 15;
+
+            var accessToken = 
                 _tokenService.BuildToken(
                     _config["Jwt:Key"].ToString(), 
                     _config["Jwt:Issuer"].ToString(),
-                    user);
+                    user,
+                    accessTokenLifetimeMinutes);
 
-            return new ContentResult { Content = token, StatusCode = 200 };
+            var (rawRefreshToken, refreshTokenEntity) = _refreshTokenService.GenerateRefreshToken(user.Id);
+
+            return Ok(new AuthTokenResultDTO { AccessToken = accessToken, RefreshToken = rawRefreshToken });
+        }
+
+        [AllowAnonymous]
+        [Route("refresh")]
+        [HttpPost]
+        public IActionResult Refresh(RefreshTokenRequestDTO request)
+        {
+            if (request == null || string.IsNullOrWhiteSpace(request.AccessToken) || string.IsNullOrWhiteSpace(request.RefreshToken))
+                return BadRequest();
+
+            var jwtKey = _config["Jwt:Key"].ToString();
+            var jwtIssuer = _config["Jwt:Issuer"].ToString();
+
+            // Extract user identity from the expired access token
+            var principal = _tokenService.GetPrincipalFromExpiredToken(request.AccessToken, jwtKey, jwtIssuer);
+            if (principal == null)
+                return Unauthorized();
+
+            var userIdClaim = principal.FindFirst("UserID")?.Value;
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            // Validate the refresh token
+            var existingToken = _refreshTokenService.ValidateRefreshToken(request.RefreshToken, userId);
+            if (existingToken == null)
+                return Unauthorized();
+
+            // Get the user to build a new access token
+            var user = _userService.GetAll().FirstOrDefault(x => x.Id == userId);
+            if (user == null)
+                return Unauthorized();
+
+            // Revoke old and create new refresh token
+            var (newRawRefreshToken, _) = _refreshTokenService.RevokeAndReplace(existingToken, userId);
+
+            // Build new access token
+            int accessTokenLifetimeMinutes = int.TryParse(_config["Jwt:AccessTokenLifetimeMinutes"], out var minutes) ? minutes : 15;
+            var newAccessToken = _tokenService.BuildToken(jwtKey, jwtIssuer, user, accessTokenLifetimeMinutes);
+
+            return Ok(new AuthTokenResultDTO { AccessToken = newAccessToken, RefreshToken = newRawRefreshToken });
+        }
+
+        [Route("revoke")]
+        [HttpPost]
+        public IActionResult Revoke()
+        {
+            int userId = GetUserID();
+            _refreshTokenService.RevokeByUserId(userId);
+            return NoContent();
         }
 
         [Route("change-password")]
@@ -74,6 +131,7 @@ namespace WorkoutTracker.API.Controllers
                 int userId = GetUserID();
 
                 _userService.ChangePassword(userId, passwordChangeRequest.CurrentPassword, passwordChangeRequest.NewPassword);
+                _refreshTokenService.RevokeByUserId(userId);
 
                 return Ok();
             }
