@@ -83,8 +83,8 @@ namespace WorkoutTracker.Tests.Controllers
             var result = _sut.Login(credentials);
 
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-            var okResult = (OkObjectResult)result;
+            Assert.IsInstanceOfType(result, typeof(ActionResult<AuthTokenResultDTO>));
+            var okResult = (OkObjectResult)result.Result;
             var tokenResult = (AuthTokenResultDTO)okResult.Value;
             Assert.AreEqual("someToken", tokenResult.AccessToken);
             Assert.AreEqual("someRawRefreshToken", tokenResult.RefreshToken);
@@ -110,8 +110,8 @@ namespace WorkoutTracker.Tests.Controllers
             var result = _sut.Login(credentials);
 
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-            var okResult = (OkObjectResult)result;
+            Assert.IsInstanceOfType(result, typeof(ActionResult<AuthTokenResultDTO>));
+            var okResult = (OkObjectResult)result.Result;
             var tokenResult = (AuthTokenResultDTO)okResult.Value;
             Assert.AreEqual("someToken", tokenResult.AccessToken);
             Assert.AreEqual("someRawRefreshToken", tokenResult.RefreshToken);
@@ -132,8 +132,8 @@ namespace WorkoutTracker.Tests.Controllers
             var result = _sut.Login(credentials);
 
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
-            var notFoundResult = (NotFoundResult)result;
+            Assert.IsInstanceOfType(result, typeof(ActionResult<AuthTokenResultDTO>));
+            var notFoundResult = (NotFoundResult)result.Result;
             Assert.AreEqual((int)HttpStatusCode.NotFound, notFoundResult.StatusCode); //Kind of redundant
             _userServiceMock.Verify(x => x.GetAll(), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -160,8 +160,8 @@ namespace WorkoutTracker.Tests.Controllers
             var result = _sut.Login(credentials);
 
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
-            var unauthorizedResult = (UnauthorizedResult)result;
+            Assert.IsInstanceOfType(result.Result, typeof(UnauthorizedResult));
+            var unauthorizedResult = (UnauthorizedResult)result.Result;
             Assert.AreEqual((int)HttpStatusCode.Unauthorized, unauthorizedResult.StatusCode); //Kind of redundant
             _userServiceMock.Verify(x => x.GetAll(), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
@@ -201,8 +201,8 @@ namespace WorkoutTracker.Tests.Controllers
             var result = _sut.Refresh(request);
 
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-            var okResult = (OkObjectResult)result;
+            Assert.IsInstanceOfType(result, typeof(ActionResult<AuthTokenResultDTO>));
+            var okResult = (OkObjectResult)result.Result;
             var tokenResult = (AuthTokenResultDTO)okResult.Value;
             Assert.AreEqual("someToken", tokenResult.AccessToken);
             Assert.AreEqual("newRawRefreshToken", tokenResult.RefreshToken);
@@ -239,7 +239,7 @@ namespace WorkoutTracker.Tests.Controllers
             var result = _sut.Refresh(request);
 
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
+            Assert.IsInstanceOfType(result.Result, typeof(UnauthorizedResult));
         }
 
         [TestMethod]
@@ -260,7 +260,7 @@ namespace WorkoutTracker.Tests.Controllers
             var result = _sut.Refresh(request);
 
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
+            Assert.IsInstanceOfType(result.Result, typeof(UnauthorizedResult));
         }
 
         [TestMethod]

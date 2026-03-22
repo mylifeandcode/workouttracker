@@ -4,6 +4,11 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:5600' | (string & {});
 };
 
+export type AuthTokenResultDTO = {
+    accessToken: string;
+    refreshToken: string;
+};
+
 export type ExecutedExerciseDTO = {
     id: number;
     createdDateTime: Date;
@@ -191,6 +196,11 @@ export type PasswordChangeRequest = {
 export type PasswordResetRequest = {
     resetCode: string;
     newPassword: string;
+};
+
+export type RefreshTokenRequestDTO = {
+    accessToken: string;
+    refreshToken: string;
 };
 
 export type RequestPasswordResetRequest = {
@@ -392,6 +402,38 @@ export type PostApiAuthLoginData = {
 };
 
 export type PostApiAuthLoginResponses = {
+    /**
+     * OK
+     */
+    200: AuthTokenResultDTO;
+};
+
+export type PostApiAuthLoginResponse = PostApiAuthLoginResponses[keyof PostApiAuthLoginResponses];
+
+export type PostApiAuthRefreshData = {
+    body?: RefreshTokenRequestDTO;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/refresh';
+};
+
+export type PostApiAuthRefreshResponses = {
+    /**
+     * OK
+     */
+    200: AuthTokenResultDTO;
+};
+
+export type PostApiAuthRefreshResponse = PostApiAuthRefreshResponses[keyof PostApiAuthRefreshResponses];
+
+export type PostApiAuthRevokeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/revoke';
+};
+
+export type PostApiAuthRevokeResponses = {
     /**
      * OK
      */

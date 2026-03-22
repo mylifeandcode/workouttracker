@@ -27,7 +27,7 @@ describe('AuthInterceptor', () => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
-  provideZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         {
           provide: HTTP_INTERCEPTORS,
           useClass: AuthInterceptor,

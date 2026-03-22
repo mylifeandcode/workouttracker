@@ -5,13 +5,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
-import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
-
-interface AuthTokenResult {
-  accessToken: string;
-  refreshToken: string;
-}
+import { AuthTokenResultDTO } from '../../../api';
 
 @Injectable({
   providedIn: 'root'
@@ -86,10 +82,10 @@ export class AuthService {
 
   public logIn(username: string, password: string): Observable<boolean> {
     return this._http
-      .post<AuthTokenResult>(`${this._apiRoot}/login`, { username, password })
+      .post<AuthTokenResultDTO>(`${this._apiRoot}/login`, { username, password })
       .pipe(
         tap(() => console.log('Login successful, processing token...')),
-        map((result: AuthTokenResult) => {
+        map((result: AuthTokenResultDTO) => {
           this.setTokens(result.accessToken, result.refreshToken, username);
           return true;
         }),
@@ -119,12 +115,12 @@ export class AuthService {
     }
 
     return this._http
-      .post<AuthTokenResult>(`${this._apiRoot}/refresh`, {
+      .post<AuthTokenResultDTO>(`${this._apiRoot}/refresh`, {
         accessToken: this.token,
         refreshToken: refreshToken
       })
       .pipe(
-        map((result: AuthTokenResult) => {
+        map((result: AuthTokenResultDTO) => {
           const username = this.currentUserName() ?? '';
           this.setTokens(result.accessToken, result.refreshToken, username);
           return true;

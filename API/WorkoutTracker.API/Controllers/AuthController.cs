@@ -41,7 +41,7 @@ namespace WorkoutTracker.API.Controllers
         [AllowAnonymous]
         [Route("login")]
         [HttpPost]
-        public IActionResult Login(UserCredentialsDTO credentials)
+        public ActionResult<AuthTokenResultDTO> Login(UserCredentialsDTO credentials)
         {
             if (!IsCredentialsObjectValid(credentials))
                 return BadRequest();
@@ -74,7 +74,7 @@ namespace WorkoutTracker.API.Controllers
         [AllowAnonymous]
         [Route("refresh")]
         [HttpPost]
-        public IActionResult Refresh(RefreshTokenRequestDTO request)
+        public ActionResult<AuthTokenResultDTO> Refresh(RefreshTokenRequestDTO request)
         {
             if (request == null || string.IsNullOrWhiteSpace(request.AccessToken) || string.IsNullOrWhiteSpace(request.RefreshToken))
                 return BadRequest();
