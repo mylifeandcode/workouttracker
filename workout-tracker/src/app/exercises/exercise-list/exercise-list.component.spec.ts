@@ -107,4 +107,29 @@ describe('ExerciseListComponent', () => {
     //ASSERT
     expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null);
   });
+
+  it('should reset page index to 1 when target area filter changes', () => {
+    //ARRANGE
+    const queryParams1: NzTableQueryParams = {
+      pageIndex: 2,
+      pageSize: 10,
+      sort: [],
+      filter: [{ key: 'targetAreas', value: ['Chest'] }]
+    };
+
+    const queryParams2: NzTableQueryParams = {
+      pageIndex: 2,
+      pageSize: 10,
+      sort: [],
+      filter: [{ key: 'targetAreas', value: ['Biceps'] }]
+    };
+
+    //ACT
+    component.onQueryParamsChange(queryParams1);
+    component.onQueryParamsChange(queryParams2);
+
+    //ASSERT
+    expect(component.pageIndex()).toBe(1);
+  });
+  
 });

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ExerciseService } from '../_services/exercise.service';
 import { ExerciseDTO, ExerciseDTOPaginatedResults } from '../../api';
 import { finalize, map } from 'rxjs/operators';
@@ -16,26 +16,35 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule, NzTableModule, NzIconModule, NzDropdownModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExerciseListComponent {
+export class ExerciseListComponent implements OnInit {
   private readonly _exerciseSvc = inject(ExerciseService);
 
   public totalRecords = signal<number>(0);
   public loading = signal<boolean>(true);
   public exercises = signal<ExerciseDTO[]>([]);
   public targetAreaFilters = signal<NzTableFilterList>([]);
+  public tableSetupFinished = signal(false);
 
+  //Less than ideal to have this be public
+  public pageIndex = signal<number>(1);
+
+  protected pageSize = signal<number>(10);
   protected nameFilter = signal('');
   protected nameFilterVisible = signal(false);
-  protected pageIndex = signal<number>(1);
-  protected pageSize = signal<number>(10);
 
-  constructor() {
+  private _previousTargetAreaFilter: string[] | null = null;
+
+
+  public ngOnInit(): void {
     this._exerciseSvc
       .getTargetAreas()
-      .pipe(map(areas => areas.map(area => ({ text: area.name, value: area.name }))))
+      .pipe(
+        map(areas => areas.map(area => ({ text: area.name, value: area.name })))
+      )
       .subscribe({
         next: (filters: NzTableFilterList) => {
           this.targetAreaFilters.set(filters);
+          this.tableSetupFinished.set(true);
         },
         error: (error: HttpErrorResponse) => window.alert("An error occurred getting target areas: " + error.message)
       });
@@ -43,13 +52,20 @@ export class ExerciseListComponent {
 
   public onQueryParamsChange(params: NzTableQueryParams): void {
     const { pageSize, pageIndex, filter } = params;
+    console.log('pageSize:', pageSize, 'pageIndex:', pageIndex, 'filter:', filter);
+
 
     const targetAreaFilter = filter.find(f => f.key === 'targetAreas');
     const selectedTargetAreas: string[] | null =
       targetAreaFilter?.value?.length ? targetAreaFilter.value : null;
 
-    this.pageSize.set(pageSize);
-    this.pageIndex.set(pageIndex);
+    if (JSON.stringify(selectedTargetAreas) !== JSON.stringify(this._previousTargetAreaFilter)) {
+      this.pageIndex.set(1);
+      this._previousTargetAreaFilter = selectedTargetAreas;
+    }
+
+    //this.pageSize.set(pageSize);
+    //this.pageIndex.set(pageIndex);
 
     this.getExercises((pageIndex - 1) * pageSize, this.nameFilter(), selectedTargetAreas);
   }
@@ -70,7 +86,7 @@ export class ExerciseListComponent {
     this._exerciseSvc
       .getAll(first, this.pageSize(), nameContains, targetAreaContains)
       .pipe(finalize(() => {
-        setTimeout(() => { this.loading.set(false); }, 500);
+        this.loading.set(false);
       }))
       .subscribe({
         next: (exercises: ExerciseDTOPaginatedResults) => {

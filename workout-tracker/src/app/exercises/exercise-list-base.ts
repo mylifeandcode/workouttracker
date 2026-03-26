@@ -65,7 +65,7 @@ export abstract class ExerciseListBase {
     this._exerciseSvc
       .getAll(first, this.pageSize(), nameContains, targetAreaContains)
       .pipe(finalize(() => {
-        setTimeout(() => { this.loading.set(false); }, 500); //TODO: Revisit. Why am I using setTimeout() here?
+        this.loading.set(false);
       }))
       .subscribe({
         next: (exercises: ExerciseDTOPaginatedResults) => {
