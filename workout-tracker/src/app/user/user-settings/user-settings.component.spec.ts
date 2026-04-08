@@ -6,59 +6,59 @@ import { SetType } from '../../workouts/workout/_enums/set-type';
 import { User, UserMinMaxReps, UserSettings } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
+import { vi, type Mocked } from 'vitest';
 
 import { UserSettingsComponent } from './user-settings.component';
 import { RouterLink, RouterModule } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
 
-class MockAuthService {
-  userId: number = 0;
-  userPublicId: string = 'some-guid';
-}
-
-class MockUserService {
-  getById = vi.fn().mockImplementation(() => {
-    const user = <User>{};
-    user.settings = <UserSettings>{};
-    user.settings.repSettings = new Array<UserMinMaxReps>();
-    user.settings.repSettings.push(<UserMinMaxReps>{});
-    user.settings.repSettings.push(<UserMinMaxReps>{});
-    user.settings.repSettings[0].setType = SetType.Repetition;
-    user.settings.repSettings[0].id = 1;
-    user.settings.repSettings[1].setType = SetType.Timed;
-    user.settings.repSettings[1].id = 2;
-    user.settings.recommendationsEnabled = true;
-
-    return of(user);
-  });
-
-  update = vi.fn().mockImplementation((user: User) => of(user));
-}
-
-class NzMessageServiceMock {
-  success = vi.fn();
-}
-
 describe('UserSettingsComponent', () => {
   let component: UserSettingsComponent;
   let fixture: ComponentFixture<UserSettingsComponent>;
 
   beforeEach(async () => {
+    const AuthServiceMock: Partial<Mocked<AuthService>> = {
+      userId: 0,
+      userPublicId: 'some-guid'
+    };
+
+    const UserServiceMock: Partial<Mocked<UserService>> = {
+      getById: vi.fn().mockImplementation(() => {
+        const user = <User>{};
+        user.settings = <UserSettings>{};
+        user.settings.repSettings = new Array<UserMinMaxReps>();
+        user.settings.repSettings.push(<UserMinMaxReps>{});
+        user.settings.repSettings.push(<UserMinMaxReps>{});
+        user.settings.repSettings[0].setType = SetType.Repetition;
+        user.settings.repSettings[0].id = 1;
+        user.settings.repSettings[1].setType = SetType.Timed;
+        user.settings.repSettings[1].id = 2;
+        user.settings.recommendationsEnabled = true;
+
+        return of(user);
+      }),
+      update: vi.fn().mockImplementation((user: User) => of(user))
+    };
+
+    const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
+      success: vi.fn()
+    };
+
     await TestBed.configureTestingModule({
       providers: [
         FormBuilder,
         {
           provide: AuthService,
-          useClass: MockAuthService
+          useValue: AuthServiceMock
         },
         {
           provide: UserService,
-          useClass: MockUserService
+          useValue: UserServiceMock
         },
         {
           provide: NzMessageService,
-          useClass: NzMessageServiceMock
+          useValue: MessageServiceMock
         },
         provideZonelessChangeDetection()
       ],

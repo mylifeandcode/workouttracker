@@ -3,31 +3,31 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { ConfigService } from '../../core/_services/config/config.service';
+import { vi, type Mocked } from 'vitest';
 
 import { ForgotPasswordComponent } from './forgot-password.component';
-
-class AuthServiceMock {
-}
-class ConfigServiceMock {
-    get = vi.fn().mockReturnValue(true);
-}
 
 describe('ForgotPasswordComponent', () => {
     let component: ForgotPasswordComponent;
     let fixture: ComponentFixture<ForgotPasswordComponent>;
 
     beforeEach(async () => {
+        const AuthServiceMock: Partial<Mocked<AuthService>> = {};
+        const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
+            get: vi.fn().mockReturnValue(true)
+        };
+
         await TestBed.configureTestingModule({
             imports: [ForgotPasswordComponent],
             providers: [
                 FormBuilder,
                 {
                     provide: AuthService,
-                    useClass: AuthServiceMock
+                    useValue: AuthServiceMock
                 },
                 {
                     provide: ConfigService,
-                    useClass: ConfigServiceMock
+                    useValue: ConfigServiceMock
                 },
                 provideZonelessChangeDetection()
             ]

@@ -3,27 +3,28 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { of } from 'rxjs';
+import { vi, type Mocked } from 'vitest';
 
 import { ResetPasswordComponent } from './reset-password.component';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-
-class AuthServiceMock {
-    validatePasswordResetCode = vi.fn().mockReturnValue(of(true));
-}
 
 describe('ResetPasswordComponent', () => {
     let component: ResetPasswordComponent;
     let fixture: ComponentFixture<ResetPasswordComponent>;
 
     beforeEach(async () => {
+        const AuthServiceMock: Partial<Mocked<AuthService>> = {
+            validatePasswordResetCode: vi.fn().mockReturnValue(of(true))
+        };
+
         await TestBed.configureTestingModule({
             imports: [RouterModule.forRoot([]), ReactiveFormsModule, ResetPasswordComponent],
             providers: [
                 FormBuilder,
                 {
                     provide: AuthService,
-                    useClass: AuthServiceMock
+                    useValue: AuthServiceMock
                 },
                 {
                     provide: ActivatedRoute,
