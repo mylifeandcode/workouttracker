@@ -6,7 +6,7 @@ import { SetType } from '../../workouts/workout/_enums/set-type';
 import { User, UserMinMaxReps, UserSettings } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
-import { vi, type Mocked } from 'vitest';
+import { type Mocked } from 'vitest';
 
 import { UserSettingsComponent } from './user-settings.component';
 import { RouterLink, RouterModule } from '@angular/router';

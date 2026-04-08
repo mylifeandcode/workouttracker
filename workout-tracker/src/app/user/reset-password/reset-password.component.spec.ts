@@ -3,7 +3,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { of } from 'rxjs';
-import { vi, type Mocked } from 'vitest';
+import { type Mocked } from 'vitest';
 
 import { ResetPasswordComponent } from './reset-password.component';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';

@@ -6,22 +6,23 @@ import { ConfigService } from '../../core/_services/config/config.service';
 import { ResistanceBand } from '../../api';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-
-class ConfigServiceMock {
-  get = vi.fn().mockReturnValue('http://someUrl/api/');
-}
+import { type Mocked } from 'vitest';
 
 describe('ResistanceBandServiceService', () => {
   let service: ResistanceBandService;
 
   beforeEach(() => {
+    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
+      get: vi.fn().mockReturnValue('http://someUrl/api/')
+    };
+
     TestBed.configureTestingModule({
       imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useClass: ConfigServiceMock
+          useValue: ConfigServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()

@@ -3,7 +3,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { ConfigService } from '../../core/_services/config/config.service';
-import { vi, type Mocked } from 'vitest';
+import { type Mocked } from 'vitest';
 
 import { ForgotPasswordComponent } from './forgot-password.component';
 

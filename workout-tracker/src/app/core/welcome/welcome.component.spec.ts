@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserOverview } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
-import { vi, type Mocked } from 'vitest';
+import { type Mocked } from 'vitest';
 
 import { WelcomeComponent } from './welcome.component';
 import { UserOverviewComponent } from './user-overview/user-overview.component';

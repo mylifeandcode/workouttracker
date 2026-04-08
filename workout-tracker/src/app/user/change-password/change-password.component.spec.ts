@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/_services/auth/auth.service';
-import { vi, type Mocked } from 'vitest';
+import { type Mocked } from 'vitest';
 
 import { ChangePasswordComponent } from './change-password.component';
 import { Router, RouterModule } from '@angular/router';
