@@ -8,18 +8,9 @@ import { User } from '../../api';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { AuthService } from '../../core/_services/auth/auth.service';
+import { type Mocked } from 'vitest';
 
 const CURRENT_USER_ID = 5150;
-
-class UserServiceMock {
-  getCurrentUserInfo = vi.fn().mockReturnValue(of(<User>{ id: CURRENT_USER_ID }));
-  getById = vi.fn().mockReturnValue(of(<User>{}));
-  add = vi.fn().mockReturnValue(of(<User>{}));
-  update = vi.fn().mockReturnValue(of(<User>{}));
-}
-
-class AuthServiceMock {
-}
 
 @Component({
   template: ''
@@ -33,6 +24,13 @@ describe('UserEditComponent', () => {
   let userService: UserService;
 
   beforeEach(async () => {
+    const UserServiceMock: Partial<Mocked<UserService>> = {
+      getById: vi.fn().mockReturnValue(of(<User>{})),
+      add: vi.fn().mockReturnValue(of(<User>{})),
+      update: vi.fn().mockReturnValue(of(<User>{}))
+    };
+    const AuthServiceMock: Partial<Mocked<AuthService>> = {};
+
     await TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
@@ -43,7 +41,7 @@ describe('UserEditComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: UserService,
-          useClass: UserServiceMock
+          useValue: UserServiceMock
         },
         {
           provide: ActivatedRoute,
@@ -55,7 +53,7 @@ describe('UserEditComponent', () => {
         },
         {
           provide: AuthService,
-          useClass: AuthServiceMock
+          useValue: AuthServiceMock
         }
       ]
     })

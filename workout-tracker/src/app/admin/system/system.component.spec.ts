@@ -6,21 +6,20 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-
-
-class MockSoundService {
-  playSound = vi.fn();
-}
-
-class MockMessageService {
-  success = vi.fn();
-}
+import { type Mocked } from 'vitest';
 
 describe('SystemComponent', () => {
   let component: SystemComponent;
   let fixture: ComponentFixture<SystemComponent>;
 
   beforeEach(async () => {
+    const SoundServiceMock: Partial<Mocked<SoundService>> = {
+      playSound: vi.fn()
+    };
+    const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
+      success: vi.fn()
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         SystemComponent
@@ -29,11 +28,11 @@ describe('SystemComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: SoundService,
-          useClass: MockSoundService
+          useValue: SoundServiceMock
         },
         {
           provide: NzMessageService,
-          useClass: MockMessageService
+          useValue: MessageServiceMock
         }
       ]
     })

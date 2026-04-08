@@ -6,19 +6,7 @@ import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
 import { User } from '../../api';
 import { RouterModule } from '@angular/router';
-
-class UserServiceMock {
-  private fakeUsers: User[] = [
-    <User>{ id: 1, name: 'Fred' },
-    <User>{ id: 2, name: 'Joe' },
-    <User>{ id: 3, name: 'Paul' }
-  ];
-
-  getAll = vi.fn().mockReturnValue(of(this.fakeUsers));
-  getCurrentUserInfo = vi.fn().mockReturnValue(of(<User>{}));
-  deleteById = vi.fn().mockReturnValue(of(null)); //TOOD: Revisit
-  all$ = of(this.fakeUsers);
-}
+import { type Mocked } from 'vitest';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -26,13 +14,24 @@ describe('UserListComponent', () => {
   let userService: UserService;
 
   beforeEach(async () => {
+    const fakeUsers: User[] = [
+      <User>{ id: 1, name: 'Fred' },
+      <User>{ id: 2, name: 'Joe' },
+      <User>{ id: 3, name: 'Paul' }
+    ];
+    const UserServiceMock: Partial<Mocked<UserService>> = {
+      getAll: vi.fn().mockReturnValue(of(fakeUsers)),
+      deleteById: vi.fn().mockReturnValue(of(null)), //TOOD: Revisit
+      all$: of(fakeUsers)
+    };
+
     await TestBed.configureTestingModule({
       imports: [RouterModule.forRoot([]), UserListComponent],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: UserService,
-          useClass: UserServiceMock
+          useValue: UserServiceMock
         }
       ]
     })

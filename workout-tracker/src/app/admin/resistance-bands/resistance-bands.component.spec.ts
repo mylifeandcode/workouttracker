@@ -11,6 +11,7 @@ import { NgStyle } from '@angular/common';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { type Mocked } from 'vitest';
 
 const getResistanceBandInventory = (): Array<ResistanceBand> => {
   const bands = new Array<ResistanceBand>();
@@ -21,19 +22,33 @@ const getResistanceBandInventory = (): Array<ResistanceBand> => {
   return bands;
 };
 
-class ResistanceBandServiceMock {
-  getAll = vi.fn().mockReturnValue(of(getResistanceBandInventory()));
-  add = vi.fn().mockReturnValue(of(<ResistanceBand>{}));
-  update = vi.fn().mockReturnValue(of(<ResistanceBand>{}));
-  //deleteById = jasmine.createSpy('deleteById').and.returnValue(of(new HttpResponse<string>()));
-  delete = vi.fn().mockReturnValue(of(new HttpResponse<string>()));
-}
-
 describe('ResistanceBandsComponent', () => {
   let component: ResistanceBandsComponent;
   let fixture: ComponentFixture<ResistanceBandsComponent>;
 
   beforeEach(async () => {
+    const ResistanceBandServiceMock: Partial<Mocked<ResistanceBandService>> = {
+      getAll: vi.fn().mockReturnValue(of(getResistanceBandInventory())),
+      add: vi.fn().mockReturnValue(of(<ResistanceBand>{})),
+      update: vi.fn().mockReturnValue(of(<ResistanceBand>{})),
+      delete: vi.fn().mockReturnValue(of(new HttpResponse<string>()))
+    };
+    const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
+      create: vi.fn().mockName('NzMessageService.create')
+    };
+    const ModalServiceMock: Partial<Mocked<NzModalService>> = {
+      confirm: vi.fn().mockImplementation((options) => {
+        // Simulate the user clicking "OK"
+        if (options.nzOnOk) {
+          const onOkResult = options.nzOnOk();
+          if (onOkResult instanceof Promise) {
+            return onOkResult.then(() => ({ result: 'ok' } as NzModalRef));
+          }
+        }
+        return { result: 'ok' } as NzModalRef;
+      })
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         ResistanceBandsComponent
@@ -42,28 +57,15 @@ describe('ResistanceBandsComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: ResistanceBandService,
-          useClass: ResistanceBandServiceMock
+          useValue: ResistanceBandServiceMock
         },
         {
           provide: NzMessageService,
-          useValue: {
-            create: vi.fn().mockName("NzMessageService.create")
-          }
+          useValue: MessageServiceMock
         },
         {
           provide: NzModalService,
-          useValue: {
-            confirm: vi.fn().mockImplementation((options) => {
-              // Simulate the user clicking "OK"
-              if (options.nzOnOk) {
-                const onOkResult = options.nzOnOk();
-                if (onOkResult instanceof Promise) {
-                  return onOkResult.then(() => ({ result: 'ok' } as NzModalRef));
-                }
-              }
-              return { result: 'ok' } as NzModalRef;
-            }),
-          },
+          useValue: ModalServiceMock
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

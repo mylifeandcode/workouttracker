@@ -8,14 +8,7 @@ import { of } from 'rxjs';
 
 import { UserAddComponent } from './user-add.component';
 import { AuthService } from '../../core/_services/auth/auth.service';
-
-class MockUserService {
-  addNew = vi.fn().mockReturnValue(of(<User>{}));
-}
-
-class MockAuthService {
-  isUserLoggedIn = true;
-}
+import { type Mocked } from 'vitest';
 
 @Component({
   selector: 'wt-blank',
@@ -32,6 +25,13 @@ describe('UserAddComponent', () => {
   let router: Router;
 
   beforeEach(async () => {
+    const UserServiceMock: Partial<Mocked<UserService>> = {
+      addNew: vi.fn().mockReturnValue(of(<User>{}))
+    };
+    const AuthServiceMock: Partial<Mocked<AuthService>> = {
+      get isUserLoggedIn() { return true; }
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
@@ -42,11 +42,11 @@ describe('UserAddComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: UserService,
-          useClass: MockUserService
+          useValue: UserServiceMock
         },
         {
           provide: AuthService,
-          useClass: MockAuthService
+          useValue: AuthServiceMock
         },
         {
           provide: ActivatedRoute,

@@ -2,32 +2,31 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { AuthService } from '../../../core/_services/auth/auth.service';
+import { type Mocked } from 'vitest';
 
 import { UserIsAdminGuard } from '../user-is-admin/user-is-admin.guard';
-
-class AuthServiceMock {
-  private readonly adminStatus = true; //readonly to satisfy linter rule
-  public get isUserAdmin(): boolean { return this.adminStatus; }
-}
-
-class RouterMock {
-  navigate = vi.fn().mockReturnValue(Promise.resolve(true));
-}
 
 describe('UserIsAdminGuard', () => {
   let guard: UserIsAdminGuard;
 
   beforeEach(() => {
+    const AuthServiceMock: Partial<Mocked<AuthService>> = {
+      get isUserAdmin() { return true; }
+    };
+    const RouterMock: Partial<Mocked<Router>> = {
+      navigate: vi.fn().mockReturnValue(Promise.resolve(true))
+    };
+
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: AuthService,
-          useClass: AuthServiceMock
+          useValue: AuthServiceMock
         },
         {
           provide: Router,
-          useClass: RouterMock
+          useValue: RouterMock
         }
       ]
     });
