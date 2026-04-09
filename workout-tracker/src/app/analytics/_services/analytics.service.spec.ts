@@ -10,41 +10,40 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
 import { firstValueFrom } from 'rxjs';
-
-
-class MockConfigService {
-  get = vi.fn().mockReturnValue('http://localhost:5600/api/');
-}
-
-class MockDateSerializationService {
-  convertDateRangeStringsToDates = vi.fn().mockImplementation((obj: ExecutedWorkoutMetrics) => {
-    if (obj.startDateTime && typeof obj.startDateTime === 'string') {
-      obj.startDateTime = new Date(obj.startDateTime);
-    }
-
-    if (obj.endDateTime && typeof obj.endDateTime === 'string') {
-      obj.endDateTime = new Date(obj.endDateTime);
-    }
-
-    return obj;
-  });
-}
+import { type Mocked } from 'vitest';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
 
   beforeEach(() => {
+    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
+      get: vi.fn().mockReturnValue('http://localhost:5600/api/')
+    };
+    const DateSerializationServiceMock: Partial<Mocked<DateSerializationService>> = {
+      convertDateRangeStringsToDates: vi.fn().mockImplementation((obj: ExecutedWorkoutMetrics) => {
+        if (obj.startDateTime && typeof obj.startDateTime === 'string') {
+          obj.startDateTime = new Date(obj.startDateTime);
+        }
+
+        if (obj.endDateTime && typeof obj.endDateTime === 'string') {
+          obj.endDateTime = new Date(obj.endDateTime);
+        }
+
+        return obj;
+      })
+    };
+
     TestBed.configureTestingModule({
       imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useClass: MockConfigService
+          useValue: ConfigServiceMock
         },
         {
           provide: DateSerializationService,
-          useClass: MockDateSerializationService
+          useValue: DateSerializationServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()

@@ -6,31 +6,32 @@ import { AnalyticsDashboardComponent } from './analytics-dashboard.component';
 import { AnalyticsService } from '../_services/analytics.service';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
-
-class AnalyticsServiceMock {
-  getExecutedWorkoutsSummary = vi.fn().mockReturnValue(of(<ExecutedWorkoutsSummary>{
-    totalLoggedWorkouts: 12,
-    firstLoggedWorkoutDateTime: new Date(2022, 4, 5),
-    targetAreasWithWorkoutCounts: <{ [key: string]: number }>{
-      'Chest': 2,
-      'Back': 3,
-      'Legs': 5,
-      'Arms': 2
-    }
-  }));
-}
+import { type Mocked } from 'vitest';
 
 describe('AnalyticsDashboardComponent', () => {
   let component: AnalyticsDashboardComponent;
   let fixture: ComponentFixture<AnalyticsDashboardComponent>;
 
   beforeEach(async () => {
+    const AnalyticsServiceMock: Partial<Mocked<AnalyticsService>> = {
+      getExecutedWorkoutsSummary: vi.fn().mockReturnValue(of(<ExecutedWorkoutsSummary>{
+        totalLoggedWorkouts: 12,
+        firstLoggedWorkoutDateTime: new Date(2022, 4, 5),
+        targetAreasWithWorkoutCounts: <{ [key: string]: number }>{
+          'Chest': 2,
+          'Back': 3,
+          'Legs': 5,
+          'Arms': 2
+        }
+      }))
+    };
+
     await TestBed.configureTestingModule({
       imports: [AnalyticsDashboardComponent],
       providers: [
         {
           provide: AnalyticsService,
-          useClass: AnalyticsServiceMock
+          useValue: AnalyticsServiceMock
         },
         provideZonelessChangeDetection()
       ]

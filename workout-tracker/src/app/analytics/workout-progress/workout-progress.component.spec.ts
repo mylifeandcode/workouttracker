@@ -10,52 +10,7 @@ import { WorkoutProgressComponent } from './workout-progress.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-
-class AnalyticsServiceMock {
-  getExerciseChartData = vi.fn().mockReturnValue(of(new AnalyticsChartData()));
-
-  getExecutedWorkoutMetrics = vi.fn().mockImplementation(() => {
-    const metrics = new Array<ExecutedWorkoutMetrics>();
-    const exercise1Metrics = <ExecutedExerciseMetrics>{};
-    exercise1Metrics.name = "Exercise 1";
-    exercise1Metrics.exerciseId = '1';
-    const exercise2Metrics = <ExecutedExerciseMetrics>{};
-    exercise2Metrics.name = "Exercise 2";
-    exercise2Metrics.exerciseId = '2';
-    const exercise3Metrics = <ExecutedExerciseMetrics>{};
-    exercise3Metrics.name = "Exercise 3";
-    exercise3Metrics.exerciseId = '3';
-    const metric1 = <ExecutedWorkoutMetrics>{};
-    metric1.exerciseMetrics = [];
-    metric1.exerciseMetrics.push(exercise1Metrics, exercise2Metrics, exercise3Metrics);
-    metrics.push(metric1);
-    return of(metrics);
-  });
-}
-
-class WorkoutServiceMock {
-  getFilteredSubset = vi.fn().mockImplementation(() => {
-    const result = <WorkoutDTOPaginatedResults>{};
-    result.results = [];
-
-    const workout1 = <WorkoutDTO>{};
-    workout1.name = "Workout B";
-    workout1.id = '20';
-
-    const workout2 = <WorkoutDTO>{};
-    workout2.name = "Workout C";
-    workout2.id = '30';
-
-    const workout3 = <WorkoutDTO>{};
-    workout3.name = "Workout A";
-    workout3.id = '10';
-
-    result.results.push(workout1, workout2, workout3);
-
-    result.totalCount = 0;
-    return of(result);
-  });
-}
+import { type Mocked } from 'vitest';
 
 describe('WorkoutProgressComponent', () => {
   let component: WorkoutProgressComponent;
@@ -64,16 +19,60 @@ describe('WorkoutProgressComponent', () => {
   let workoutService: WorkoutService;
 
   beforeEach(async () => {
+    const AnalyticsServiceMock: Partial<Mocked<AnalyticsService>> = {
+      getExerciseChartData: vi.fn().mockReturnValue(of(new AnalyticsChartData())),
+      getExecutedWorkoutMetrics: vi.fn().mockImplementation(() => {
+        const metrics = new Array<ExecutedWorkoutMetrics>();
+        const exercise1Metrics = <ExecutedExerciseMetrics>{};
+        exercise1Metrics.name = "Exercise 1";
+        exercise1Metrics.exerciseId = '1';
+        const exercise2Metrics = <ExecutedExerciseMetrics>{};
+        exercise2Metrics.name = "Exercise 2";
+        exercise2Metrics.exerciseId = '2';
+        const exercise3Metrics = <ExecutedExerciseMetrics>{};
+        exercise3Metrics.name = "Exercise 3";
+        exercise3Metrics.exerciseId = '3';
+        const metric1 = <ExecutedWorkoutMetrics>{};
+        metric1.exerciseMetrics = [];
+        metric1.exerciseMetrics.push(exercise1Metrics, exercise2Metrics, exercise3Metrics);
+        metrics.push(metric1);
+        return of(metrics);
+      })
+    };
+    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
+      getFilteredSubset: vi.fn().mockImplementation(() => {
+        const result = <WorkoutDTOPaginatedResults>{};
+        result.results = [];
+
+        const workout1 = <WorkoutDTO>{};
+        workout1.name = "Workout B";
+        workout1.id = '20';
+
+        const workout2 = <WorkoutDTO>{};
+        workout2.name = "Workout C";
+        workout2.id = '30';
+
+        const workout3 = <WorkoutDTO>{};
+        workout3.name = "Workout A";
+        workout3.id = '10';
+
+        result.results.push(workout1, workout2, workout3);
+
+        result.totalCount = 0;
+        return of(result);
+      })
+    };
+
     await TestBed.configureTestingModule({
       providers: [
         FormBuilder,
         {
           provide: AnalyticsService,
-          useClass: AnalyticsServiceMock
+          useValue: AnalyticsServiceMock
         },
         {
           provide: WorkoutService,
-          useClass: WorkoutServiceMock
+          useValue: WorkoutServiceMock
         },
         provideZonelessChangeDetection()
       ],
