@@ -3,12 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, RouterModule, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../../_services/auth/auth.service';
 import { UserNotSelectedGuard } from '../user-not-selected/user-not-selected.guard';
-
-class AuthServiceMock {
-    isUserLoggedIn = vi.fn().mockReturnValue(true);
-
-    loginRoute: string = "login";
-}
+import { type Mocked } from 'vitest';
 
 @Component({
   template: ''
@@ -20,6 +15,11 @@ describe('UserNotSelectedGuard', () => {
     let guard: UserNotSelectedGuard;
 
     beforeEach(() => {
+        const AuthServiceMock: Partial<Mocked<AuthService>> = {
+            get isUserLoggedIn() { return true; },
+            loginRoute: "login"
+        };
+
         TestBed.configureTestingModule({
             imports: [
                 RouterModule.forRoot([{ path: 'home', component: FakeComponent }])
@@ -28,7 +28,7 @@ describe('UserNotSelectedGuard', () => {
                 provideZonelessChangeDetection(),
                 {
                     provide: AuthService,
-                    useClass: AuthServiceMock
+                    useValue: AuthServiceMock
                 },
                 {
                     provide: RouterStateSnapshot,

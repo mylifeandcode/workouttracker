@@ -5,12 +5,9 @@ import { Router, RouterModule } from '@angular/router';
 import { User, UserNewDTO } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
+import { type Mocked } from 'vitest';
 
 import { UserSelectNewComponent } from './user-select-new.component';
-
-class MockUserService {
-  addNew = vi.fn().mockReturnValue(of(<User>{}));
-}
 
 @Component({
   selector: 'wt-blank',
@@ -26,13 +23,17 @@ describe('UserSelectNewComponent', () => {
   let router: Router;
 
   beforeEach(async () => {
+    const UserServiceMock: Partial<Mocked<UserService>> = {
+      addNew: vi.fn().mockReturnValue(of(<User>{}))
+    };
+
     await TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         FormBuilder,
         {
           provide: UserService,
-          useClass: MockUserService
+          useValue: UserServiceMock
         }
       ],
       imports: [

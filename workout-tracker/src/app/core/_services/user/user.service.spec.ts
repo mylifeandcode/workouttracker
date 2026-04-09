@@ -7,12 +7,9 @@ import { User, UserNewDTO, UserOverview } from '../../../api';
 import { ConfigService } from '../config/config.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { type Mocked } from 'vitest';
 
 const TEST_USER_ID: string = "1";
-
-class ConfigServiceMock {
-  get = vi.fn().mockReturnValue("http://localhost:5600/api/");
-}
 
 //TODO: Refactor this spec to use service values initialized before each test rather than injection everywhere
 
@@ -21,6 +18,10 @@ describe('UserService', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
+    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
+      get: vi.fn().mockReturnValue("http://localhost:5600/api/")
+    };
+
     TestBed.configureTestingModule({
       imports: [],
       providers: [
@@ -28,7 +29,7 @@ describe('UserService', () => {
         UserService,
         {
           provide: ConfigService,
-          useClass: ConfigServiceMock
+          useValue: ConfigServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()

@@ -6,24 +6,23 @@ import { BehaviorSubject, of } from 'rxjs';
 
 import { AuthInterceptor } from './auth.interceptor';
 import { AuthService } from './_services/auth/auth.service';
-
-class AuthServiceMock {
-  token: string | null = "someAccessToken";
-  isRefreshing = false;
-  refreshTokenSubject = new BehaviorSubject<string | null>(null);
-
-  refreshAccessToken = vi.fn().mockReturnValue(of(true));
-
-  logOut = vi.fn();
-}
+import { type Mocked } from 'vitest';
 
 describe('AuthInterceptor', () => {
 
   let httpTestingController: HttpTestingController;
   let httpClient: HttpClient;
-  let authService: AuthServiceMock;
+  let authService: AuthService;
 
   beforeEach(() => {
+    const AuthServiceMock: Partial<Mocked<AuthService>> = {
+      token: "someAccessToken",
+      isRefreshing: false,
+      refreshTokenSubject: new BehaviorSubject<string | null>(null),
+      refreshAccessToken: vi.fn().mockReturnValue(of(true)),
+      logOut: vi.fn()
+    };
+
     TestBed.configureTestingModule({
       imports: [],
       providers: [
@@ -35,7 +34,7 @@ describe('AuthInterceptor', () => {
         },
         {
           provide: AuthService,
-          useClass: AuthServiceMock
+          useValue: AuthServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
@@ -44,7 +43,7 @@ describe('AuthInterceptor', () => {
 
     httpClient = TestBed.inject(HttpClient);
     httpTestingController = TestBed.inject(HttpTestingController);
-    authService = TestBed.inject(AuthService) as unknown as AuthServiceMock;
+    authService = TestBed.inject(AuthService);
 
   });
 
@@ -73,7 +72,7 @@ describe('AuthInterceptor', () => {
 
   it('should attempt refresh on 401 and retry original request', () => {
 
-    authService.refreshAccessToken.mockReturnValue(of(true));
+    vi.mocked(authService.refreshAccessToken).mockReturnValue(of(true));
 
     httpClient.get("api/data").subscribe();
 

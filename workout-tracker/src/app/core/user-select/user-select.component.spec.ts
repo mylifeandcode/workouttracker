@@ -8,20 +8,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } fro
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-
-
-class UserServiceMock {
-  //all$ = jasmine.createSpy('all$').and.returnValue(of(new Array<User>()));
-  all$ = of(new Array<User>());
-}
-
-class AuthServiceMock {
-  logIn = vi.fn().mockReturnValue(of(true));
-  private readonly route = "user-select"; //readonly to satisfy linter rule
-  public get loginRoute(): string {
-    return this.route;
-  }
-}
+import { type Mocked } from 'vitest';
 
 describe('UserSelectComponent', () => {
   let component: UserSelectComponent;
@@ -35,6 +22,14 @@ describe('UserSelectComponent', () => {
   ;
 
   beforeEach(async () => {
+    const UserServiceMock: Partial<Mocked<UserService>> = {
+      all$: of(new Array<User>())
+    };
+    const AuthServiceMock: Partial<Mocked<AuthService>> = {
+      logIn: vi.fn().mockReturnValue(of(true)),
+      get loginRoute() { return "user-select"; }
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([{ path: 'home', component: FakeComponent }]),
@@ -44,11 +39,11 @@ describe('UserSelectComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: UserService,
-          useClass: UserServiceMock
+          useValue: UserServiceMock
         },
         {
           provide: AuthService,
-          useClass: AuthServiceMock
+          useValue: AuthServiceMock
         }
       ]
     })

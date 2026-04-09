@@ -7,15 +7,7 @@ import { of } from 'rxjs';
 
 import { LoginComponent } from './login.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-
-class AuthServiceMock {
-    private readonly route = "login"; //readonly to satisfy linter rule
-    public get loginRoute(): string {
-        return this.route;
-    }
-
-    logIn = vi.fn().mockReturnValue(of(true));
-}
+import { type Mocked } from 'vitest';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
@@ -23,13 +15,18 @@ describe('LoginComponent', () => {
     let router: Router;
 
     beforeEach(async () => {
+        const AuthServiceMock: Partial<Mocked<AuthService>> = {
+            get loginRoute() { return "login"; },
+            logIn: vi.fn().mockReturnValue(of(true))
+        };
+
         await TestBed.configureTestingModule({
             providers: [
                 provideZonelessChangeDetection(),
                 FormBuilder,
                 {
                     provide: AuthService,
-                    useClass: AuthServiceMock
+                    useValue: AuthServiceMock
                 }
             ],
             imports: [RouterModule.forRoot([]), ReactiveFormsModule, LoginComponent]

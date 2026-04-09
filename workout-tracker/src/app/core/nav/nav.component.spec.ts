@@ -1,17 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavComponent } from './nav.component';
-import { Component, provideZonelessChangeDetection, signal, WritableSignal } from '@angular/core';
+import { Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { RouterModule } from '@angular/router';
 
 const username = 'someuser';
-
-class AuthServiceMock {
-
-    currentUserName: WritableSignal<string | null> = signal('someuser');
-
-    logOff = vi.fn();
-}
 
 @Component({
   template: ''
@@ -25,6 +18,11 @@ describe('NavComponent', () => {
     let fixture: ComponentFixture<NavComponent>;
 
     beforeEach(async () => {
+        const AuthServiceMock = {
+            currentUserName: signal<string | null>('someuser'),
+            logOut: vi.fn()
+        } satisfies Partial<AuthService>;
+
         await TestBed.configureTestingModule({
             imports: [
                 RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
@@ -34,7 +32,7 @@ describe('NavComponent', () => {
                 provideZonelessChangeDetection(),
                 {
                     provide: AuthService,
-                    useClass: AuthServiceMock
+                    useValue: AuthServiceMock
                 }
             ]
         })

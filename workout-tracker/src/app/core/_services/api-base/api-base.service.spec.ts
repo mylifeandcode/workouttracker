@@ -7,10 +7,7 @@ import { ConfigService } from '../config/config.service';
 import { firstValueFrom } from 'rxjs';
 
 const API_ROOT = "https://someUrl/api/";
-
-class MockConfigService {
-  get = vi.fn().mockReturnValue(API_ROOT);
-}
+import { type Mocked } from 'vitest';
 
 class Widget {
   id: number = 0;
@@ -37,6 +34,10 @@ describe('ApiBaseService', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
+    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
+      get: vi.fn().mockReturnValue(API_ROOT)
+    };
+
     TestBed.configureTestingModule({
       imports: [],
       providers: [
@@ -46,7 +47,7 @@ describe('ApiBaseService', () => {
         provideHttpClientTesting(),
         {
           provide: ConfigService,
-          useClass: MockConfigService
+          useValue: ConfigServiceMock
         }
       ]
     });

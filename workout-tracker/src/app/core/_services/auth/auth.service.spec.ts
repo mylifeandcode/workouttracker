@@ -8,27 +8,7 @@ import { ConfigService } from '../config/config.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { RouterModule } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-
-class ConfigServiceMock {
-  get = vi.fn().mockImplementation((configKey: string) => {
-    if (configKey == "apiRoot")
-      return "http://localhost:5600/";
-    if (configKey == "loginWithUserSelect")
-      return true;
-
-    return "";
-  });
-}
-
-class LocalStorageServiceMock {
-  set = vi.fn();
-  remove = vi.fn();
-  get = vi.fn().mockImplementation((key: string) => {
-    if (key === 'WorkoutTrackerToken') return TEST_ACCESS_TOKEN;
-    if (key === 'WorkoutTrackerRefreshToken') return 'testRefreshToken';
-    return null;
-  });
-}
+import { type Mocked } from 'vitest';
 
 @Component({
   template: ''
@@ -50,17 +30,37 @@ describe('AuthService', () => {
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
+    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
+      get: vi.fn().mockImplementation((configKey: string) => {
+        if (configKey == "apiRoot")
+          return "http://localhost:5600/";
+        if (configKey == "loginWithUserSelect")
+          return true;
+
+        return "";
+      })
+    };
+    const LocalStorageServiceMock: Partial<Mocked<LocalStorageService>> = {
+      set: vi.fn(),
+      remove: vi.fn(),
+      get: vi.fn().mockImplementation((key: string) => {
+        if (key === 'WorkoutTrackerToken') return TEST_ACCESS_TOKEN;
+        if (key === 'WorkoutTrackerRefreshToken') return 'testRefreshToken';
+        return null;
+      })
+    };
+
     TestBed.configureTestingModule({
       imports: [RouterModule.forRoot([{ path: 'user-select', component: FakeComponent }])],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useClass: ConfigServiceMock
+          useValue: ConfigServiceMock
         },
         {
           provide: LocalStorageService,
-          useClass: LocalStorageServiceMock
+          useValue: LocalStorageServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
