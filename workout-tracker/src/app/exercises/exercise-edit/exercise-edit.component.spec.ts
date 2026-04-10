@@ -11,6 +11,7 @@ import { Exercise, ExerciseTargetAreaLink, TargetArea } from '../../api/';
 import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
+import { type Mocked } from 'vitest';
 
 //TODO: Move initialization inside beforeEach()
 const EXERCISE: Exercise = <Exercise>{
@@ -29,29 +30,6 @@ const EXERCISE: Exercise = <Exercise>{
     }
   ]
 };
-
-class ExerciseServiceMock {
-  resistanceTypes: Map<number, string> = new Map<number, string>();
-
-  constructor() {
-    this.resistanceTypes.set(0, 'Free Weight');
-    this.resistanceTypes.set(1, 'Resistance Band');
-  }
-
-  getTargetAreas = vi.fn().mockImplementation(() => {
-    const targetAreas = new Array<TargetArea>();
-    targetAreas.push(<TargetArea>{ id: 1, name: "Chest", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
-    targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
-    targetAreas.push(<TargetArea>{ id: 3, name: "Triceps", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
-    return of(targetAreas);
-  });
-
-  getById = vi.fn().mockReturnValue(of(EXERCISE));
-  getResistanceTypes = vi.fn().mockReturnValue(of(this.resistanceTypes));
-
-  add = vi.fn().mockImplementation((exercise: Exercise) => of(exercise));
-  update = vi.fn().mockImplementation((exercise: Exercise) => of(exercise));
-}
 
 @Pipe({
   name: 'insertSpaceBeforeCapital',
@@ -80,6 +58,24 @@ describe('ExerciseEditComponent', () => {
   let exerciseService: ExerciseService;
 
   beforeEach(async () => {
+    const resistanceTypes = new Map<number, string>();
+    resistanceTypes.set(0, 'Free Weight');
+    resistanceTypes.set(1, 'Resistance Band');
+
+    const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
+      getTargetAreas: vi.fn().mockImplementation(() => {
+        const targetAreas = new Array<TargetArea>();
+        targetAreas.push(<TargetArea>{ id: 1, name: "Chest", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
+        targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
+        targetAreas.push(<TargetArea>{ id: 3, name: "Triceps", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
+        return of(targetAreas);
+      }),
+      getById: vi.fn().mockReturnValue(of(EXERCISE)),
+      getResistanceTypes: vi.fn().mockReturnValue(of(resistanceTypes)),
+      add: vi.fn().mockImplementation((exercise: Exercise) => of(exercise)),
+      update: vi.fn().mockImplementation((exercise: Exercise) => of(exercise))
+    };
+
     TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
@@ -90,7 +86,7 @@ describe('ExerciseEditComponent', () => {
       providers: [
         {
           provide: ExerciseService,
-          useClass: ExerciseServiceMock
+          useValue: ExerciseServiceMock
         },
         {
           provide: ActivatedRoute,
@@ -227,7 +223,7 @@ describe('ExerciseEditComponent', () => {
     exercise.usesBilateralResistance = false;
 
     //exerciseService.getById = jasmine.createSpy('getById').and.returnValue(of(exercise));
-    exerciseService.add = vi.fn().mockReturnValue(of(exercise));
+    exerciseService.add = vi.mocked(exerciseService.add).mockReturnValue(of(exercise));
 
     const route = TestBed.inject(ActivatedRoute);
     route.snapshot.params['id'] = 0;

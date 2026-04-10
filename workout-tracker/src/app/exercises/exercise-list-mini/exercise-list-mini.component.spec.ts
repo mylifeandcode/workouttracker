@@ -6,11 +6,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ExerciseDTO, ExerciseDTOPaginatedResults, TargetArea } from '../../api';
-
-class ExerciseServiceMock {
-  getAll = vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{}));
-  getTargetAreas = vi.fn().mockReturnValue(of(new Array<TargetArea>()));
-}
+import { type Mocked } from 'vitest';
 
 describe('ExerciseListMiniComponent', () => {
   let component: ExerciseListMiniComponent;
@@ -18,11 +14,16 @@ describe('ExerciseListMiniComponent', () => {
   let exerciseService: ExerciseService;
 
   beforeEach(async () => {
+    const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
+      getAll: vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{})),
+      getTargetAreas: vi.fn().mockReturnValue(of(new Array<TargetArea>()))
+    };
+
     await TestBed.configureTestingModule({
       providers: [
         {
           provide: ExerciseService,
-          useClass: ExerciseServiceMock
+          useValue: ExerciseServiceMock
         },
         provideZonelessChangeDetection()
       ],

@@ -6,17 +6,7 @@ import { ExerciseListBase } from './exercise-list-base';
 import { Component, inject as inject_1 } from '@angular/core';
 import { ExerciseService } from './_services/exercise.service';
 import { ExerciseDTOPaginatedResults, TargetArea } from '../api';
-
-class ExerciseServiceMock {
-  getAll = vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{}));
-  getTargetAreas = vi.fn().mockImplementation(() => {
-    const targetAreas = new Array<TargetArea>();
-    targetAreas.push(<TargetArea>{ id: 1, name: "Chest", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
-    targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
-    targetAreas.push(<TargetArea>{ id: 3, name: "Triceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
-    return of(targetAreas);
-  });
-}
+import { type Mocked } from 'vitest';
 
 //We're testing an abstract base class, so let's create a class here that extends it
 @Component({
@@ -41,11 +31,22 @@ describe('ExerciseListBaseComponent', () => {
   let exerciseService: ExerciseService;
 
   beforeEach(async () => {
+    const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
+      getAll: vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{})),
+      getTargetAreas: vi.fn().mockImplementation(() => {
+        const targetAreas = new Array<TargetArea>();
+        targetAreas.push(<TargetArea>{ id: 1, name: "Chest", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
+        targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
+        targetAreas.push(<TargetArea>{ id: 3, name: "Triceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
+        return of(targetAreas);
+      })
+    };
+
     await TestBed.configureTestingModule({
       providers: [
         {
           provide: ExerciseService,
-          useClass: ExerciseServiceMock
+          useValue: ExerciseServiceMock
         },
         provideZonelessChangeDetection()
       ],

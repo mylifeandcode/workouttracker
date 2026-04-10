@@ -7,15 +7,7 @@ import { of } from 'rxjs';
 import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-
-class ExerciseServiceMock {
-  getAll = vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{ results: [], totalCount: 0 }));
-  getTargetAreas = vi.fn().mockReturnValue(of([
-    <TargetArea>{ id: 1, name: 'Chest' },
-    <TargetArea>{ id: 2, name: 'Biceps' },
-    <TargetArea>{ id: 3, name: 'Triceps' }
-  ]));
-}
+import { type Mocked } from 'vitest';
 
 describe('ExerciseListComponent', () => {
   let component: ExerciseListComponent;
@@ -23,6 +15,15 @@ describe('ExerciseListComponent', () => {
   let exerciseService: ExerciseService;
 
   beforeEach(async () => {
+    const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
+      getAll: vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{ results: [], totalCount: 0 })),
+      getTargetAreas: vi.fn().mockReturnValue(of([
+        <TargetArea>{ id: 1, name: 'Chest' },
+        <TargetArea>{ id: 2, name: 'Biceps' },
+        <TargetArea>{ id: 3, name: 'Triceps' }
+      ]))
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([]),
@@ -31,7 +32,7 @@ describe('ExerciseListComponent', () => {
       providers: [
         {
           provide: ExerciseService,
-          useClass: ExerciseServiceMock
+          useValue: ExerciseServiceMock
         },
         provideZonelessChangeDetection()
       ],
