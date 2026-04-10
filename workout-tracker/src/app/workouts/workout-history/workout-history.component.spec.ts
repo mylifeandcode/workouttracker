@@ -9,23 +9,24 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { DatePipe } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-
-class MockExecutedWorkoutService {
-  getFilteredSubset = vi.fn().mockReturnValue(of(<ExecutedWorkoutSummaryDTOPaginatedResults>{ totalCount: 0, results: [] }));
-}
+import { type Mocked } from 'vitest';
 
 describe('WorkoutHistoryComponent', () => {
   let component: WorkoutHistoryComponent;
   let fixture: ComponentFixture<WorkoutHistoryComponent>;
 
   beforeEach(async () => {
+    const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
+      getFilteredSubset: vi.fn().mockReturnValue(of(<ExecutedWorkoutSummaryDTOPaginatedResults>{ totalCount: 0, results: [] }))
+    };
+
     await TestBed.configureTestingModule({
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [WorkoutHistoryComponent, RouterModule.forRoot([])],
       providers: [
         {
           provide: ExecutedWorkoutService,
-          useClass: MockExecutedWorkoutService
+          useValue: MockExecutedWorkoutService
         },
         provideZonelessChangeDetection()
       ]

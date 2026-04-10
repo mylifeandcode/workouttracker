@@ -10,53 +10,52 @@ import { HttpResponse } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { ModalOptions, NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
-
-
-class MockExecutedWorkoutService {
-  getPlanned = vi.fn().mockImplementation(() => {
-    const response = <ExecutedWorkoutSummaryDTOPaginatedResults>{};
-    response.results = new Array<ExecutedWorkoutSummaryDTO>();
-    response.results.push(<ExecutedWorkoutSummaryDTO>{});
-    response.results.push(<ExecutedWorkoutSummaryDTO>{});
-    response.totalCount = 2;
-    return of(response);
-  });
-
-  deletePlanned = vi.fn().mockReturnValue(of(new HttpResponse<void>()));
-}
-
-class MockNzMessageService {
-  success = vi.fn();
-}
-
-class MockNzModalService {
-  confirm = vi.fn().mockImplementation((options: ModalOptions) => {
-    if (options && typeof options.nzOnOk === 'function') {
-      //return options.nzOnOk(); // Simulate the user confirming
-      return (options.nzOnOk as () => void)();
-    }
-  });
-}
+import { type Mocked } from 'vitest';
 
 describe('WorkoutSelectPlannedComponent', () => {
   let component: WorkoutSelectPlannedComponent;
   let fixture: ComponentFixture<WorkoutSelectPlannedComponent>;
 
   beforeEach(async () => {
+    const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
+      getPlanned: vi.fn().mockImplementation(() => {
+        const response = <ExecutedWorkoutSummaryDTOPaginatedResults>{};
+        response.results = new Array<ExecutedWorkoutSummaryDTO>();
+        response.results.push(<ExecutedWorkoutSummaryDTO>{});
+        response.results.push(<ExecutedWorkoutSummaryDTO>{});
+        response.totalCount = 2;
+        return of(response);
+      }),
+      deletePlanned: vi.fn().mockReturnValue(of(new HttpResponse<void>()))
+    };
+
+    const MockNzMessageService: Partial<Mocked<NzMessageService>> = {
+      success: vi.fn()
+    };
+
+    const MockNzModalService: Partial<Mocked<NzModalService>> = {
+      confirm: vi.fn().mockImplementation((options: ModalOptions) => {
+        if (options && typeof options.nzOnOk === 'function') {
+          //return options.nzOnOk(); // Simulate the user confirming
+          return (options.nzOnOk as () => void)();
+        }
+      })
+    };
+
     await TestBed.configureTestingModule({
       imports: [WorkoutSelectPlannedComponent],
       providers: [
         {
           provide: ExecutedWorkoutService,
-          useClass: MockExecutedWorkoutService
+          useValue: MockExecutedWorkoutService
         },
         {
           provide: NzMessageService,
-          useClass: MockNzMessageService
+          useValue: MockNzMessageService
         },
         {
           provide: NzModalService,
-          useClass: MockNzModalService
+          useValue: MockNzModalService
         },
         provideRouter([]),
         provideZonelessChangeDetection()

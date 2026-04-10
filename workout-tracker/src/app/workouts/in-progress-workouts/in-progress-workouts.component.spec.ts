@@ -6,44 +6,45 @@ import { ExecutedWorkoutDTO } from '../../api';
 
 import { InProgressWorkoutsComponent } from './in-progress-workouts.component';
 import { provideRouter } from '@angular/router';
-
-class MockExeceutedWorkoutService {
-  getInProgress = vi.fn().mockImplementation(() => {
-    const workouts: ExecutedWorkoutDTO[] = [];
-    workouts.push(...[<ExecutedWorkoutDTO>{
-      id: 'guid-56',
-      name: 'Chest and Arms',
-      workoutId: 'some-guid-56',
-      startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
-      journal: null, rating: 0, exercises: [],
-      createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
-      modifiedByUserId: 1, modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
-    },
-    <ExecutedWorkoutDTO>{
-      id: 'guid-56',
-      name: 'Chest and Arms',
-      workoutId: 'some-guid-56',
-      startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
-      journal: null, rating: 0, exercises: [],
-      createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
-      modifiedByUserId: 1, modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
-    }]);
-
-    return of(workouts);
-  });
-}
+import { type Mocked } from 'vitest';
 
 describe('InProgressWorkoutsComponent', () => {
   let component: InProgressWorkoutsComponent;
   let fixture: ComponentFixture<InProgressWorkoutsComponent>;
 
   beforeEach(async () => {
+    const MockExeceutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
+      getInProgress: vi.fn().mockImplementation(() => {
+        const workouts: ExecutedWorkoutDTO[] = [];
+        workouts.push(...[<ExecutedWorkoutDTO>{
+          id: 'guid-56',
+          name: 'Chest and Arms',
+          workoutId: 'some-guid-56',
+          startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
+          journal: null, rating: 0, exercises: [],
+          createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
+          modifiedByUserId: 1, modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
+        },
+        <ExecutedWorkoutDTO>{
+          id: 'guid-56',
+          name: 'Chest and Arms',
+          workoutId: 'some-guid-56',
+          startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
+          journal: null, rating: 0, exercises: [],
+          createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
+          modifiedByUserId: 1, modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
+        }]);
+
+        return of(workouts);
+      })
+    };
+
     await TestBed.configureTestingModule({
       imports: [InProgressWorkoutsComponent],
       providers: [
         {
           provide: ExecutedWorkoutService,
-          useClass: MockExeceutedWorkoutService
+          useValue: MockExeceutedWorkoutService
         },
         provideRouter([]),
         provideZonelessChangeDetection()

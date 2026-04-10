@@ -7,26 +7,27 @@ import { ConfigService } from '../../core/_services/config/config.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { Workout, WorkoutPlan, WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
 import { firstValueFrom } from 'rxjs';
+import { type Mocked } from 'vitest';
 
 const TEST_WORKOUT_ID = "some-fake-guid";
 const API_ROOT_URL = "http://localhost:5600/api/workouts";
-
-class MockConfigService {
-  get = vi.fn().mockReturnValue("http://localhost:5600/api/");
-}
 
 let service: WorkoutService;
 let httpMock: HttpTestingController;
 
 describe('WorkoutService', () => {
   beforeEach(() => {
+    const MockConfigService: Partial<Mocked<ConfigService>> = {
+      get: vi.fn().mockReturnValue("http://localhost:5600/api/")
+    };
+
     TestBed.configureTestingModule({
       imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useClass: MockConfigService
+          useValue: MockConfigService
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()

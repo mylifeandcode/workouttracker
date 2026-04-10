@@ -16,6 +16,7 @@ import { DurationComponent } from '../_shared/duration/duration.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { type Mocked } from 'vitest';
 
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
 
@@ -91,47 +92,6 @@ function getRandomInt(max: number): number {
 }
 //END HELPER FUNCTIONS ////////////////////////////////////////////////////////
 
-//SERVICE MOCK CLASSES ////////////////////////////////////////////////////////
-class WorkoutServiceMock {
-  getFilteredSubset = vi.fn().mockReturnValue(of(getFakeUserWorkouts()));
-}
-
-class ResistanceBandServiceMock {
-  getAllIndividualBands = vi.fn().mockReturnValue(of(getResistanceBands()));
-}
-
-class ExecutedWorkoutServiceMock {
-  //getNew = jasmine.createSpy('getNew').and.returnValue(of(getFakeExecutedWorkout()));
-  add = vi.fn().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout));
-  getById = vi.fn().mockReturnValue(of(getFakeExecutedWorkout()));
-
-  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Record<string, ExecutedExerciseDTO[]> {
-    const sortedExercises: ExecutedExerciseDTO[] = exercises
-      .sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
-
-    const groupedExercises = sortedExercises.reduce((groups, exercise) => {
-      const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
-      if (!groups[key]) {
-        groups[key] = [];
-      }
-      groups[key].push(exercise);
-      return groups;
-    }, {} as Record<string, ExecutedExerciseDTO[]>);
-
-    return groupedExercises;
-  }
-
-  update = vi.fn().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout));
-}
-
-class NzMessageServiceMock {
-  success = vi.fn();
-  info = vi.fn();
-  error = vi.fn();
-  remove = vi.fn();
-}
-//END SERVICE MOCK CLASSES ////////////////////////////////////////////////////
-
 //COMPONENT MOCK CLASSES //////////////////////////////////////////////////////
 /*
 The casting solution presented at this URL did not work: https://medium.com/angular-in-depth/angular-unit-testing-viewchild-4525e0c7b756
@@ -162,6 +122,43 @@ describe('WorkoutComponent', () => {
   let fixture: ComponentFixture<WorkoutComponent>;
 
   beforeEach(async () => {
+    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
+      getFilteredSubset: vi.fn().mockReturnValue(of(getFakeUserWorkouts()))
+    };
+
+    const ResistanceBandServiceMock: Partial<Mocked<ResistanceBandService>> = {
+      getAllIndividualBands: vi.fn().mockReturnValue(of(getResistanceBands()))
+    };
+
+    const ExecutedWorkoutServiceMock: Partial<Mocked<ExecutedWorkoutService>> = {
+      //getNew = jasmine.createSpy('getNew').and.returnValue(of(getFakeExecutedWorkout()));
+      add: vi.fn().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout)),
+      getById: vi.fn().mockReturnValue(of(getFakeExecutedWorkout())),
+      groupExecutedExercises: vi.fn().mockImplementation((exercises: ExecutedExerciseDTO[]) => {
+        const sortedExercises: ExecutedExerciseDTO[] = exercises
+          .sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
+
+        const groupedExercises = sortedExercises.reduce((groups, exercise) => {
+          const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
+          if (!groups[key]) {
+            groups[key] = [];
+          }
+          groups[key].push(exercise);
+          return groups;
+        }, {} as Record<string, ExecutedExerciseDTO[]>);
+
+        return groupedExercises;
+      }),
+      update: vi.fn().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout))
+    };
+
+    const NzMessageServiceMock: Partial<Mocked<NzMessageService>> = {
+      success: vi.fn(),
+      info: vi.fn(),
+      error: vi.fn(),
+      remove: vi.fn()
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
@@ -172,19 +169,19 @@ describe('WorkoutComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: WorkoutService,
-          useClass: WorkoutServiceMock
+          useValue: WorkoutServiceMock
         },
         {
           provide: ResistanceBandService,
-          useClass: ResistanceBandServiceMock
+          useValue: ResistanceBandServiceMock
         },
         {
           provide: ExecutedWorkoutService,
-          useClass: ExecutedWorkoutServiceMock
+          useValue: ExecutedWorkoutServiceMock
         },
         {
           provide: NzMessageService,
-          useClass: NzMessageServiceMock
+          useValue: NzMessageServiceMock
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -464,7 +461,7 @@ describe('WorkoutComponent', () => {
 
     const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
     executedWorkoutService.getById =
-      vi.fn().mockReturnValue(of(workout));
+      vi.mocked(executedWorkoutService.getById).mockReturnValue(of(workout));
 
     //ACT
     component.ngOnInit(); //Need to reinitialize due to changed mock

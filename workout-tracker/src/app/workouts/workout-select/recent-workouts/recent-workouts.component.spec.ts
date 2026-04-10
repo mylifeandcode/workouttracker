@@ -12,15 +12,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { WorkoutInfoComponent } from './workout-info/workout-info.component';
 import { DatePipe } from '@angular/common';
-
-class MockExecutedWorkoutService {
-  getRecent = vi.fn().mockReturnValue(of(new Array<ExecutedWorkoutSummaryDTO>()));
-}
-
-class MockWorkoutService {
-}
-class MockRouter {
-}
+import { type Mocked } from 'vitest';
 
 @Component({
   selector: 'wt-workout-info',
@@ -35,20 +27,26 @@ describe('RecentWorkoutsComponent', () => {
   let fixture: ComponentFixture<RecentWorkoutsComponent>;
 
   beforeEach(async () => {
+    const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
+      getRecent: vi.fn().mockReturnValue(of(new Array<ExecutedWorkoutSummaryDTO>()))
+    };
+    const MockWorkoutService: Partial<Mocked<WorkoutService>> = {};
+    const MockRouter: Partial<Mocked<Router>> = {};
+
     await TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ExecutedWorkoutService,
-          useClass: MockExecutedWorkoutService
+          useValue: MockExecutedWorkoutService
         },
         {
           provide: WorkoutService,
-          useClass: MockWorkoutService
+          useValue: MockWorkoutService
         },
         {
           provide: Router,
-          useClass: MockRouter
+          useValue: MockRouter
         }
       ],
       imports: [

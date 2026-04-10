@@ -7,52 +7,31 @@ import { WorkoutViewComponent } from './workout-view.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ExecutedExercisesComponent } from './executed-exercises/executed-exercises.component';
 import { DatePipe } from '@angular/common';
+import { type Mocked } from 'vitest';
 
 const EXECUTED_WORKOUT_PUBLIC_ID = 'some-guid-5';
 
-class ExecutedWorkoutServiceMock {
-  getById = vi.fn().mockReturnValue(of(this.getFakeExecutedWorkout()));
+function getFakeExecutedWorkoutForView(): ExecutedWorkoutDTO {
+  const executedWorkout = <ExecutedWorkoutDTO>{};
+  const executedExercise1 = <ExecutedExerciseDTO>{};
+  const executedExercise2 = <ExecutedExerciseDTO>{};
+  const executedExercise3 = <ExecutedExerciseDTO>{};
 
-  private getFakeExecutedWorkout(): ExecutedWorkoutDTO {
+  executedExercise1.exerciseId = "1";
+  executedExercise1.setType = 0;
 
-    const executedWorkout = <ExecutedWorkoutDTO>{};
-    const executedExercise1 = <ExecutedExerciseDTO>{};
-    const executedExercise2 = <ExecutedExerciseDTO>{};
-    const executedExercise3 = <ExecutedExerciseDTO>{};
+  executedExercise2.exerciseId = "1";
+  executedExercise2.setType = 0;
 
-    executedExercise1.exerciseId = "1";
-    executedExercise1.setType = 0;
+  executedExercise3.exerciseId = "2";
+  executedExercise3.setType = 1;
 
-    executedExercise2.exerciseId = "1";
-    executedExercise2.setType = 0;
+  executedWorkout.exercises = [];
+  executedWorkout.exercises.push(...[executedExercise1, executedExercise2, executedExercise3]);
 
-    executedExercise3.exerciseId = "2";
-    executedExercise3.setType = 1;
+  executedWorkout.name = "Some Workout";
 
-    executedWorkout.exercises = [];
-    executedWorkout.exercises.push(...[executedExercise1, executedExercise2, executedExercise3]);
-
-    executedWorkout.name = "Some Workout";
-
-    return executedWorkout;
-  }
-
-  public groupExecutedExercises(exercises: ExecutedExerciseDTO[]): Record<string, ExecutedExerciseDTO[]> {
-    const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
-
-    const groupedExercises = sortedExercises.reduce((groups, exercise) => {
-      const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
-
-      if (!groups[key]) {
-        groups[key] = [];
-      }
-      groups[key].push(exercise);
-
-      return groups;
-    }, {} as Record<string, ExecutedExerciseDTO[]>);
-
-    return groupedExercises;
-  }
+  return executedWorkout;
 }
 
 @Component({
@@ -81,7 +60,25 @@ describe('WorkoutViewComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: ExecutedWorkoutService,
-          useClass: ExecutedWorkoutServiceMock
+          useValue: <Partial<Mocked<ExecutedWorkoutService>>>{
+            getById: vi.fn().mockReturnValue(of(getFakeExecutedWorkoutForView())),
+            groupExecutedExercises: vi.fn().mockImplementation((exercises: ExecutedExerciseDTO[]) => {
+              const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
+
+              const groupedExercises = sortedExercises.reduce((groups, exercise) => {
+                const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
+
+                if (!groups[key]) {
+                  groups[key] = [];
+                }
+                groups[key].push(exercise);
+
+                return groups;
+              }, {} as Record<string, ExecutedExerciseDTO[]>);
+
+              return groupedExercises;
+            })
+          }
         }
       ]
     })

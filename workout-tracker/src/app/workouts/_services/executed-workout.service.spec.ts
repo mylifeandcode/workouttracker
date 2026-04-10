@@ -8,43 +8,44 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
 import { ExecutedWorkoutSummaryDTO, ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
 import { firstValueFrom } from 'rxjs';
+import { type Mocked } from 'vitest';
 
 const API_ROOT_URL: string = "http://localhost:5600/api/";
-
-class MockConfigService {
-  get = vi.fn().mockReturnValue(API_ROOT_URL);
-}
-
-class MockDateSerializationService {
-  convertDateRangeStringsToDates = vi.fn().mockImplementation((obj: ExecutedWorkoutSummaryDTO) => {
-    if (obj.startDateTime && typeof obj.startDateTime === 'string') {
-      obj.startDateTime = new Date(obj.startDateTime);
-    }
-
-    if (obj.endDateTime && typeof obj.endDateTime === 'string') {
-      obj.endDateTime = new Date(obj.endDateTime);
-    }
-
-    return obj;
-  });
-}
 
 describe('ExecutedWorkoutService', () => {
   let service: ExecutedWorkoutService;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
+    const MockConfigService: Partial<Mocked<ConfigService>> = {
+      get: vi.fn().mockReturnValue(API_ROOT_URL)
+    };
+
+    const MockDateSerializationService: Partial<Mocked<DateSerializationService>> = {
+      convertDateRangeStringsToDates: vi.fn().mockImplementation((obj: ExecutedWorkoutSummaryDTO) => {
+        if (obj.startDateTime && typeof obj.startDateTime === 'string') {
+          obj.startDateTime = new Date(obj.startDateTime);
+        }
+
+        if (obj.endDateTime && typeof obj.endDateTime === 'string') {
+          obj.endDateTime = new Date(obj.endDateTime);
+        }
+
+        return obj;
+      })
+    };
+
     TestBed.configureTestingModule({
       imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useClass: MockConfigService
+          useValue: MockConfigService
         },
         {
           provide: DateSerializationService,
-          useClass: MockDateSerializationService
+          useValue: MockDateSerializationService
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()

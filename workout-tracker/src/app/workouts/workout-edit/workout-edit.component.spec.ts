@@ -14,6 +14,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
+import { type Mocked } from 'vitest';
 
 @Component({
   selector: 'wt-exercise-list-mini',
@@ -30,30 +31,25 @@ class FakeExerciseListMiniComponent {
 class BlankComponent {
 }
 
-class WorkoutServiceMock {
-  private getTestWorkout(): Workout {
-    const workout = <Workout>{};
-    workout.id = 123;
-    workout.publicId = WORKOUT_PUBLIC_ID;
-    workout.active = true;
-    workout.name = 'Test Workout';
-    workout.exercises = [];
-
-    workout.exercises.push(<ExerciseInWorkout>{
-      id: 1, exerciseId: 10, sequence: 0, exercise: { name: 'Bench Press' }, setType: 0, numberOfSets: 3, createdByUserId: 0, createdDateTime: new Date()
-    });
-
-    workout.exercises.push(<ExerciseInWorkout>{
-      id: 2, exerciseId: 20, sequence: 1, exercise: { name: 'Biceps Curls' }, setType: 1, numberOfSets: 4, createdByUserId: 0, createdDateTime: new Date()
-    });
-    return workout;
-  }
-  getById = vi.fn().mockReturnValue(of(this.getTestWorkout()));
-  add = vi.fn().mockReturnValue(of(<Workout>{}));
-  update = vi.fn().mockReturnValue(of(<Workout>{}));
-}
-
 const WORKOUT_PUBLIC_ID: string = "some-guid";
+
+function getTestWorkout(): Workout {
+  const workout = <Workout>{};
+  workout.id = 123;
+  workout.publicId = WORKOUT_PUBLIC_ID;
+  workout.active = true;
+  workout.name = 'Test Workout';
+  workout.exercises = [];
+
+  workout.exercises.push(<ExerciseInWorkout>{
+    id: 1, exerciseId: 10, sequence: 0, exercise: { name: 'Bench Press' }, setType: 0, numberOfSets: 3, createdByUserId: 0, createdDateTime: new Date()
+  });
+
+  workout.exercises.push(<ExerciseInWorkout>{
+    id: 2, exerciseId: 20, sequence: 1, exercise: { name: 'Biceps Curls' }, setType: 1, numberOfSets: 4, createdByUserId: 0, createdDateTime: new Date()
+  });
+  return workout;
+}
 
 function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
   const activatedRouteSnapshot = new ActivatedRouteSnapshot();
@@ -92,7 +88,11 @@ describe('WorkoutEditComponent', () => {
         },
         {
           provide: WorkoutService,
-          useClass: WorkoutServiceMock
+          useValue: <Partial<Mocked<WorkoutService>>>{
+            getById: vi.fn().mockReturnValue(of(getTestWorkout())),
+            add: vi.fn().mockReturnValue(of(<Workout>{})),
+            update: vi.fn().mockReturnValue(of(<Workout>{}))
+          }
         },
         provideZonelessChangeDetection()
       ]

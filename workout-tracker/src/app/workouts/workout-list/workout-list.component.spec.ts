@@ -7,12 +7,7 @@ import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { WorkoutDTOPaginatedResults } from '../../api';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-
-class WorkoutServiceMock {
-  getFilteredSubset = vi.fn().mockReturnValue(of(<WorkoutDTOPaginatedResults>{}));
-  retire = vi.fn().mockReturnValue(of(new HttpResponse<void>()));
-  reactivate = vi.fn().mockReturnValue(of(new HttpResponse<void>()));
-}
+import { type Mocked } from 'vitest';
 
 describe('WorkoutListComponent', () => {
   let component: WorkoutListComponent;
@@ -20,6 +15,12 @@ describe('WorkoutListComponent', () => {
   let workoutService: WorkoutService;
 
   beforeEach(async () => {
+    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
+      getFilteredSubset: vi.fn().mockReturnValue(of(<WorkoutDTOPaginatedResults>{})),
+      retire: vi.fn().mockReturnValue(of(new HttpResponse<void>())),
+      reactivate: vi.fn().mockReturnValue(of(new HttpResponse<void>()))
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([]),
@@ -29,7 +30,7 @@ describe('WorkoutListComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: WorkoutService,
-          useClass: WorkoutServiceMock
+          useValue: WorkoutServiceMock
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

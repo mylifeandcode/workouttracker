@@ -6,28 +6,21 @@ import { of } from 'rxjs';
 import { WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutLogPastStartComponent } from './workout-log-past-start.component';
+import { type Mocked } from 'vitest';
 
-class WorkoutServiceMock {
-  getFilteredSubset = vi.fn().mockReturnValue(of(this.getWorkouts()));
+function getLogPastStartWorkouts(): WorkoutDTOPaginatedResults {
+  const result = <WorkoutDTOPaginatedResults>{};
 
-  private getWorkouts(): WorkoutDTOPaginatedResults {
-    const result = <WorkoutDTOPaginatedResults>{};
+  result.totalCount = 3;
+  result.results = [];
 
-    result.totalCount = 3;
-    result.results = [];
-
-    for (let x = 0; x < 3; x++) {
-      result.results.push(<WorkoutDTO>{});
-      result.results[x].id = x.toString();
-      result.results[x].name = `Workout ${x}`;
-    }
-
-    return result;
+  for (let x = 0; x < 3; x++) {
+    result.results.push(<WorkoutDTO>{});
+    result.results[x].id = x.toString();
+    result.results[x].name = `Workout ${x}`;
   }
-}
 
-class RouterMock {
-  navigate = vi.fn().mockReturnValue(Promise.resolve(true));
+  return result;
 }
 
 describe('WorkoutLogPastStartComponent', () => {
@@ -35,15 +28,22 @@ describe('WorkoutLogPastStartComponent', () => {
   let fixture: ComponentFixture<WorkoutLogPastStartComponent>;
 
   beforeEach(async () => {
+    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
+      getFilteredSubset: vi.fn().mockReturnValue(of(getLogPastStartWorkouts()))
+    };
+    const RouterMock: Partial<Mocked<Router>> = {
+      navigate: vi.fn().mockReturnValue(Promise.resolve(true))
+    };
+
     await TestBed.configureTestingModule({
       providers: [
         {
           provide: WorkoutService,
-          useClass: WorkoutServiceMock
+          useValue: WorkoutServiceMock
         },
         {
           provide: Router,
-          useClass: RouterMock
+          useValue: RouterMock
         },
         // TODO: What is proper etiquette for components using a FormBuilder?
         // Should we mock it like other dependencies?

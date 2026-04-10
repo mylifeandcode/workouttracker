@@ -13,22 +13,7 @@ import { WorkoutService } from '../_services/workout.service';
 import { WorkoutPlanComponent } from './workout-plan.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-
-class WorkoutServiceMock {
-  getNewPlan = vi.fn().mockReturnValue(of(<WorkoutPlan>{ exercises: Array<ExercisePlan>() }));
-  submitPlanForPast = vi.fn().mockReturnValue(of(12));
-  submitPlan = vi.fn().mockReturnValue(of(5));
-  submitPlanForLater = vi.fn().mockReturnValue(of(32));
-}
-
-class MockResistanceBandService {
-  getAllIndividualBands = vi.fn().mockImplementation(() => {
-    const bands: ResistanceBandIndividual[] = [];
-    bands.push(new ResistanceBandIndividual("Orange", 30));
-    bands.push(new ResistanceBandIndividual("Purple", 23));
-    return of(bands);
-  });
-}
+import { type Mocked } from 'vitest';
 
 @Component({
   selector: 'wt-resistance-band-select',
@@ -53,15 +38,31 @@ describe('WorkoutPlanComponent', () => {
   let fixture: ComponentFixture<WorkoutPlanComponent>;
 
   beforeEach(async () => {
+    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
+      getNewPlan: vi.fn().mockReturnValue(of(<WorkoutPlan>{ exercises: Array<ExercisePlan>() })),
+      submitPlanForPast: vi.fn().mockReturnValue(of(12)),
+      submitPlan: vi.fn().mockReturnValue(of(5)),
+      submitPlanForLater: vi.fn().mockReturnValue(of(32))
+    };
+
+    const MockResistanceBandService: Partial<Mocked<ResistanceBandService>> = {
+      getAllIndividualBands: vi.fn().mockImplementation(() => {
+        const bands: ResistanceBandIndividual[] = [];
+        bands.push(new ResistanceBandIndividual("Orange", 30));
+        bands.push(new ResistanceBandIndividual("Purple", 23));
+        return of(bands);
+      })
+    };
+
     await TestBed.configureTestingModule({
       providers: [
         {
           provide: WorkoutService,
-          useClass: WorkoutServiceMock
+          useValue: WorkoutServiceMock
         },
         {
           provide: ResistanceBandService,
-          useClass: MockResistanceBandService
+          useValue: MockResistanceBandService
         },
         {
           provide: ActivatedRoute,

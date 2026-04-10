@@ -8,33 +8,34 @@ import { WorkoutService } from '../_services/workout.service';
 import { WorkoutSelectComponent } from './workout-select.component';
 import { RouterModule } from '@angular/router';
 import { RecentWorkoutsComponent } from './recent-workouts/recent-workouts.component';
-
-class WorkoutServiceMock {
-  getFilteredSubset = vi.fn().mockImplementation(() => {
-    const fakeResponse = <WorkoutDTOPaginatedResults>{};
-    fakeResponse.results = [];
-    fakeResponse.results.push(<WorkoutDTO>{});
-    fakeResponse.results[0].name = "Workout 1";
-    fakeResponse.results[0].id = "1";
-    fakeResponse.results.push(<WorkoutDTO>{});
-    fakeResponse.results[1].name = "Workout 2";
-    fakeResponse.results[1].id = "2";
-    fakeResponse.totalCount = 2;
-    return of(fakeResponse);
-  });
-}
+import { type Mocked } from 'vitest';
 
 describe('WorkoutSelectComponent', () => {
   let component: WorkoutSelectComponent;
   let fixture: ComponentFixture<WorkoutSelectComponent>;
 
   beforeEach(async () => {
+    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
+      getFilteredSubset: vi.fn().mockImplementation(() => {
+        const fakeResponse = <WorkoutDTOPaginatedResults>{};
+        fakeResponse.results = [];
+        fakeResponse.results.push(<WorkoutDTO>{});
+        fakeResponse.results[0].name = "Workout 1";
+        fakeResponse.results[0].id = "1";
+        fakeResponse.results.push(<WorkoutDTO>{});
+        fakeResponse.results[1].name = "Workout 2";
+        fakeResponse.results[1].id = "2";
+        fakeResponse.totalCount = 2;
+        return of(fakeResponse);
+      })
+    };
+
     await TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: WorkoutService,
-          useClass: WorkoutServiceMock
+          useValue: WorkoutServiceMock
         },
         {
           provide: AuthService,

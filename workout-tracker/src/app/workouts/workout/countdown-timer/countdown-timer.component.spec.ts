@@ -4,11 +4,7 @@ import { SoundService } from '../../../core/_services/sound/sound.service';
 import { CountdownEvent, CountdownModule, CountdownStatus } from 'ngx-countdown';
 
 import { CountdownTimerComponent } from './countdown-timer.component';
-
-class SoundServiceMock {
-    playSound = vi.fn();
-}
-
+import { type Mocked } from 'vitest';
 
 //TODO: Need to resolve tests which are failing because ViewChild objects aren't visible
 //and therefore the backing objects are null
@@ -17,13 +13,17 @@ describe('CountdownTimerComponent', () => {
     let fixture: ComponentFixture<CountdownTimerComponent>;
 
     beforeEach(async () => {
+        const SoundServiceMock: Partial<Mocked<SoundService>> = {
+            playSound: vi.fn()
+        };
+
         await TestBed.configureTestingModule({
             imports: [CountdownModule, CountdownTimerComponent],
             providers: [
                 provideZonelessChangeDetection(),
                 {
                     provide: SoundService,
-                    useClass: SoundServiceMock
+                    useValue: SoundServiceMock
                 }
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA]
