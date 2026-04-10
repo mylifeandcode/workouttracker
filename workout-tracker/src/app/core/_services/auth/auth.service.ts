@@ -96,7 +96,7 @@ export class AuthService {
   public logOut(): void {
     // Fire-and-forget revoke call
     if (this.token) {
-      this._http.post(`${this._apiRoot}/revoke`, {}).subscribe({ error: () => {} });
+      this._http.post(`${this._apiRoot}/revoke`, {}).subscribe();
     }
 
     this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);

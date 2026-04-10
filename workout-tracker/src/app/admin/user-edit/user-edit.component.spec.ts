@@ -10,7 +10,7 @@ import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { type Mocked } from 'vitest';
 
-const CURRENT_USER_ID = 5150;
+//const CURRENT_USER_ID = 5150;
 
 @Component({
   template: ''
