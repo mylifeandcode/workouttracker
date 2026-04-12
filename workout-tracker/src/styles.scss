@@ -91,6 +91,15 @@ select.ng-invalid.ng-touched {
   background: rgba(0, 0, 0, 1);
 }
 
+.card-widget {
+  @extend .micro-widget;
+  color: black;
+  background-color: white;
+  border-color: grey;
+  border-style: solid;
+  border-width: 1px;
+}
+
 .section-title {
   font-weight: bolder;
   font-size: large;
