@@ -1,14 +1,14 @@
 <div class="d-flex flex-column card-widget">
 
-  <div class="d-flex next-time pt-2 bottom-padded">
+  <div class="d-flex next-time px-2 pt-2 bottom-padded">
     <div class="pt-2">
-      <span class="section-title">{{planningAhead() ? 'NEXT' : 'THIS'}} TIME</span>
+      <span>{{planningAhead() ? 'NEXT' : 'THIS'}} TIME</span>
     </div>
   </div>
 
-  <div class="d-flex pt-2 little-footroom flex-row px-2">
+  <div class="d-flex pt-2 little-footroom flex-row px-2 border-bottom">
     <div class="half-area">
-      <strong>Resistance Amount</strong>
+      Resistance Amount
     </div>
 
     @if (formGroup()) {
@@ -35,7 +35,7 @@
 
   <div class="d-flex bottom-padded px-2">
     <div class="half-area">
-      <strong>Target Rep Count</strong>
+      Target Rep Count
     </div>
     @if (formGroup()) {
       <div class="half-area" [formGroup]="formGroup()">

@@ -1,67 +1,75 @@
 <div class="d-flex flex-column card-widget">
 
-  <div class="d-flex last-time pt-2 bottom-padded">
+  <div class="d-flex last-time pt-2 px-2 bottom-padded">
     <div>
-      <span class="section-title">LAST TIME</span>
+      <span>LAST TIME</span>
     </div>
   </div>
 
-  <div class="d-flex pt-2 px-2">
+  <div class="d-flex pt-2 px-2 border-bottom">
     <div class="half-area">
-      <strong>Resistance Amount</strong>
+      Resistance Amount
     </div>
     <div class="half-area">
-      <span>{{formGroup().controls.resistanceType.value==3 ? 'Body Weight' :
-        formGroup().controls.resistanceAmountLastTime.value |
-        resistanceAmount:formGroup().controls.resistanceType.value==2}}</span>
-      @if (formGroup().controls.resistanceMakeupLastTime.value) {
-        <br />(<span [innerHTML]="formGroup().controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
-      }
-    </div>
-  </div>
-
-  <div class="d-flex pt-2 bottom-padded px-2">
-    <div class="half-area">
-      <strong>Target Rep Count</strong>
-    </div>
-    <div class="half-area">
-      @if (formGroup().controls.involvesReps.value) {
-        <span>{{formGroup().controls.targetRepCountLastTime.value}}</span>
-      } @else {
-        <span>N/A</span>
-      }
+      <strong>
+        <span>{{formGroup().controls.resistanceType.value==3 ? 'Body Weight' : formGroup().controls.resistanceAmountLastTime.value | resistanceAmount:formGroup().controls.resistanceType.value==2}}</span>
+        @if (formGroup().controls.resistanceMakeupLastTime.value) {
+          <br />(<span [innerHTML]="formGroup().controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
+        }
+      </strong>
     </div>
   </div>
 
-  <div class="d-flex bottom-padded px-2">
+  <div class="d-flex px-2 border-bottom">
     <div class="half-area">
-      <strong>Avg Actual Rep Count</strong>
+      Target Rep Count
     </div>
     <div class="half-area">
-      @if (formGroup().controls.involvesReps.value) {
-        <span>{{formGroup().controls.avgActualRepCountLastTime.value}}</span>
-      } @else {
-        <span>N/A</span>
-      }
+      <strong>
+        @if (formGroup().controls.involvesReps.value) {
+          <span>{{formGroup().controls.targetRepCountLastTime.value}}</span>
+        } @else {
+          <span>N/A</span>
+        }
+      </strong>
     </div>
   </div>
 
-  <div class="d-flex bottom-padded px-2">
+  <div class="d-flex px-2 border-bottom">
     <div class="half-area">
-      <strong>Avg Range of Motion</strong>
+      Avg Actual Rep Count
+    </div>
+    <div class="half-area">
+      <strong>
+        @if (formGroup().controls.involvesReps.value) {
+          <span>{{formGroup().controls.avgActualRepCountLastTime.value}}</span>
+        } @else {
+          <span>N/A</span>
+        }
+      </strong>
+    </div>
+  </div>
+
+  <div class="d-flex px-2 border-bottom">
+    <div class="half-area">
+      Avg Range of Motion
     </div>
 
     <div class="half-area">
-      <span>{{formGroup().controls.avgRangeOfMotionLastTime.value | rating}}</span>
+      <strong>
+        <span>{{formGroup().controls.avgRangeOfMotionLastTime.value | rating}}</span>
+      </strong>
     </div>
   </div>
 
   <div class="d-flex little-footroom px-2">
     <div class="half-area">
-      <strong>Avg Form</strong>
+      Avg Form
     </div>
     <div class="half-area">
-      <span>{{formGroup().controls.avgFormLastTime.value | rating}}</span>
+      <strong>
+        <span>{{formGroup().controls.avgFormLastTime.value | rating}}</span>
+      </strong>
     </div>
   </div>
 
