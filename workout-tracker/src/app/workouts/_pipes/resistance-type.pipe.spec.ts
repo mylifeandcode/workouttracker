@@ -1,4 +1,4 @@
-import { ResistanceType } from '../workout/_enums/resistance-type';
+import { ResistanceType } from '../../api';
 import { ResistanceTypePipe } from './resistance-type.pipe';
 
 describe('ResistanceTypePipe', () => {
@@ -10,43 +10,43 @@ describe('ResistanceTypePipe', () => {
   });
 
   it('should return the correct value for ResistanceType.BodyWeight', () => {
-    expect(pipe.transform(ResistanceType.BodyWeight)).toEqual("Body Weight");
+    expect(pipe.transform(ResistanceType.BODY_WEIGHT)).toEqual("Body Weight");
   });
 
   it('should return the correct value for ResistanceType.BodyWeight (lowercase)', () => {
-    expect(pipe.transform(ResistanceType.BodyWeight, false)).toEqual("body weight");
+    expect(pipe.transform(ResistanceType.BODY_WEIGHT, false)).toEqual("body weight");
   });
 
   it('should return the correct value for ResistanceType.FreeWeight', () => {
-    expect(pipe.transform(ResistanceType.FreeWeight)).toEqual("Free Weight");
+    expect(pipe.transform(ResistanceType.FREE_WEIGHT)).toEqual("Free Weight");
   });
 
   it('should return the correct value for ResistanceType.FreeWeight (lowercase)', () => {
-    expect(pipe.transform(ResistanceType.FreeWeight, false)).toEqual("free weight");
+    expect(pipe.transform(ResistanceType.FREE_WEIGHT, false)).toEqual("free weight");
   });
 
   it('should return the correct value for ResistanceType.MachineWeight', () => {
-    expect(pipe.transform(ResistanceType.MachineWeight)).toEqual("Machine Weight");
+    expect(pipe.transform(ResistanceType.MACHINE_WEIGHT)).toEqual("Machine Weight");
   });
 
   it('should return the correct value for ResistanceType.MachineWeight (lowercase)', () => {
-    expect(pipe.transform(ResistanceType.MachineWeight, false)).toEqual("machine weight");
+    expect(pipe.transform(ResistanceType.MACHINE_WEIGHT, false)).toEqual("machine weight");
   });
   
   it('should return the correct value for ResistanceType.Other', () => {
-    expect(pipe.transform(ResistanceType.Other)).toEqual("Other");
+    expect(pipe.transform(ResistanceType.OTHER)).toEqual("Other");
   });
 
   it('should return the correct value for ResistanceType.Other (lowercase)', () => {
-    expect(pipe.transform(ResistanceType.Other, false)).toEqual("other");
+    expect(pipe.transform(ResistanceType.OTHER, false)).toEqual("other");
   });
   
   it('should return the correct value for ResistanceType.ResistanceBand', () => {
-    expect(pipe.transform(ResistanceType.ResistanceBand)).toEqual("Resistance Band");
+    expect(pipe.transform(ResistanceType.RESISTANCE_BAND)).toEqual("Resistance Band");
   });
 
   it('should return the correct value for ResistanceType.ResistanceBand (lowercase)', () => {
-    expect(pipe.transform(ResistanceType.ResistanceBand, false)).toEqual("resistance band");
+    expect(pipe.transform(ResistanceType.RESISTANCE_BAND, false)).toEqual("resistance band");
   });
   
 });

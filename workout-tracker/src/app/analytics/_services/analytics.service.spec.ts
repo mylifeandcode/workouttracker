@@ -1,11 +1,10 @@
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ConfigService } from '../../core/_services/config/config.service';
-import { SetType } from '../../workouts/workout/_enums/set-type';
 
 import { AnalyticsService, METRICS_TYPE } from './analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
-import { ExecutedExerciseMetrics, ExecutedWorkoutMetrics, ExecutedWorkoutsSummary } from '../../api';
+import { ExecutedExerciseMetrics, ExecutedWorkoutMetrics, ExecutedWorkoutsSummary, SetType } from '../../api';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
@@ -210,7 +209,7 @@ describe('AnalyticsService', () => {
     workout1Exercise1.exerciseId = "some-guid-6";
     workout1Exercise1.name = "Chest Press with Bands";
     workout1Exercise1.sequence = 0;
-    workout1Exercise1.setType = SetType.Repetition;
+    workout1Exercise1.setType = SetType.REPETITION;
     workout1.exerciseMetrics.push(workout1Exercise1);
     const workout1Exercise2 = <ExecutedExerciseMetrics>{};
     workout1Exercise2.averageForm = 5;
@@ -220,7 +219,7 @@ describe('AnalyticsService', () => {
     workout1Exercise2.exerciseId = "some-guid-7";
     workout1Exercise2.name = "Overhead Triceps Ext. with Bands";
     workout1Exercise2.sequence = 1;
-    workout1Exercise2.setType = SetType.Repetition;
+    workout1Exercise2.setType = SetType.REPETITION;
     workout1.exerciseMetrics.push(workout1Exercise2);
 
     const workout2 = <ExecutedWorkoutMetrics>{};
@@ -236,7 +235,7 @@ describe('AnalyticsService', () => {
     workout2Exercise1.exerciseId = "some-guid-6";
     workout2Exercise1.name = "Chest Press with Bands";
     workout2Exercise1.sequence = 0;
-    workout2Exercise1.setType = SetType.Repetition;
+    workout2Exercise1.setType = SetType.REPETITION;
     workout2.exerciseMetrics.push(workout2Exercise1);
     const workout2Exercise2 = <ExecutedExerciseMetrics>{};
     workout2Exercise2.averageForm = 4;
@@ -246,7 +245,7 @@ describe('AnalyticsService', () => {
     workout2Exercise2.exerciseId = "some-guid-7";
     workout2Exercise2.name = "Overhead Triceps Ext. with Bands";
     workout2Exercise2.sequence = 1;
-    workout2Exercise2.setType = SetType.Repetition;
+    workout2Exercise2.setType = SetType.REPETITION;
     workout2.exerciseMetrics.push(workout2Exercise2);
 
     metrics.push(workout1, workout2);

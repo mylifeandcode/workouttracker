@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SetType } from '../../../workouts/workout/_enums/set-type';
+import { SetType } from '../../../api';
 import { SelectOnFocusDirective } from '../../../shared/directives/select-on-focus.directive';
 
 

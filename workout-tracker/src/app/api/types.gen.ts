@@ -172,7 +172,13 @@ export type ExercisePlan = {
     recommendationReason?: string | null;
 };
 
-export const ExerciseSide = { 0: 0, 1: 1 } as const;
+export const ExerciseSide = { /**
+     * Left
+     */
+    LEFT: 0, /**
+     * Right
+     */
+    RIGHT: 1 } as const;
 
 export type ExerciseSide = typeof ExerciseSide[keyof typeof ExerciseSide];
 
@@ -220,16 +226,37 @@ export type ResistanceBand = {
 };
 
 export const ResistanceType = {
-    0: 0,
-    1: 1,
-    2: 2,
-    3: 3,
-    4: 4
+    /**
+     * FreeWeight
+     */
+    FREE_WEIGHT: 0,
+    /**
+     * MachineWeight
+     */
+    MACHINE_WEIGHT: 1,
+    /**
+     * ResistanceBand
+     */
+    RESISTANCE_BAND: 2,
+    /**
+     * BodyWeight
+     */
+    BODY_WEIGHT: 3,
+    /**
+     * Other
+     */
+    OTHER: 4
 } as const;
 
 export type ResistanceType = typeof ResistanceType[keyof typeof ResistanceType];
 
-export const SetType = { 0: 0, 1: 1 } as const;
+export const SetType = { /**
+     * Repetition
+     */
+    REPETITION: 0, /**
+     * Timed
+     */
+    TIMED: 1 } as const;
 
 export type SetType = typeof SetType[keyof typeof SetType];
 
@@ -291,7 +318,13 @@ export type UserOverview = {
     plannedWorkoutCount: number;
 };
 
-export const UserRole = { 1: 1, 2: 2 } as const;
+export const UserRole = { /**
+     * Standard
+     */
+    STANDARD: 1, /**
+     * Administrator
+     */
+    ADMINISTRATOR: 2 } as const;
 
 export type UserRole = typeof UserRole[keyof typeof UserRole];
 

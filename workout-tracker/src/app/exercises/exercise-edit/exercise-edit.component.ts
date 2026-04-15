@@ -2,12 +2,10 @@ import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@ang
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormRecord, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExerciseService } from '../_services/exercise.service';
-import { TargetArea } from '../../api';
+import { TargetArea, ResistanceType, Exercise, ExerciseTargetAreaLink } from '../../api';
 import { CustomValidators } from '../../core/_validators/custom-validators';
-import { Exercise, ExerciseTargetAreaLink } from '../../api';
 import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
-import { ResistanceType } from '../../workouts/workout/_enums/resistance-type';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgClass, KeyValuePipe } from '@angular/common';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';

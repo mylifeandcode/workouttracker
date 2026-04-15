@@ -44,7 +44,7 @@
 
             <div class="col-1 exercise-info-div">
               {{$index + 1 }} {{exerciseSet.controls.side.value | exerciseSide}}
-              @if (formGroup().controls.setType.value == setTypeEnum.Timed) {
+              @if (formGroup().controls.setType.value == setTypeEnum.TIMED) {
                 <button 
                   class="btn btn-sm btn-success"
                   (click)="showTimer(setsArray!.controls[$index])">
@@ -65,18 +65,18 @@
             <!--Resistance Amount-->
             <div class="col-4 exercise-info-div">
               
-              @if (formGroup().controls.resistanceType.value < resistanceTypeEnum.ResistanceBand || formGroup().controls.resistanceType.value == resistanceTypeEnum.Other) {
+              @if (formGroup().controls.resistanceType.value < resistanceTypeEnum.RESISTANCE_BAND || formGroup().controls.resistanceType.value == resistanceTypeEnum.OTHER) {
                 <input wtSelectOnFocus
                   type="number" 
                   class="form-control resistance-amount" 
                   formControlName="resistance" required />
               }
 
-              @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.BodyWeight) {
+              @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.BODY_WEIGHT) {
                 <span><strong>Body Weight</strong></span>
               }
 
-              @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
+              @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.RESISTANCE_BAND) {
                 <span>
                   <button 
                     class="btn btn-sm btn-primary mild-margins"
@@ -97,7 +97,7 @@
 
             <!--Duration-->
             <div class="col-1">
-              @if (formGroup().controls.setType.value == setTypeEnum.Repetition) {
+              @if (formGroup().controls.setType.value == setTypeEnum.REPETITION) {
                 <span class="exercise-info-span">N/A</span>
               } @else {
                 <button 

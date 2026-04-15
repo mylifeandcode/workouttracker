@@ -14,16 +14,16 @@
     @if (formGroup()) {
       <div class="half-area" [formGroup]="formGroup()">
 
-        @if (formGroup().controls.resistanceType.value != resistanceTypeEnum.ResistanceBand && formGroup().controls.resistanceType.value !=resistanceTypeEnum.BodyWeight) {
+        @if (formGroup().controls.resistanceType.value != resistanceTypeEnum.RESISTANCE_BAND && formGroup().controls.resistanceType.value !=resistanceTypeEnum.BODY_WEIGHT) {
           <input wtSelectOnFocus type="number" class="amount trail-space" formControlName="resistanceAmount" required />
-        } @else if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
+        } @else if (formGroup().controls.resistanceType.value == resistanceTypeEnum.RESISTANCE_BAND) {
           <span class="no-input-value">
             @if (formGroup().controls.resistanceAmount.value) {
               {{formGroup().controls.resistanceAmount.value | resistanceAmount:true}}
               <br />(<span [innerHTML]="formGroup().controls.resistanceMakeup.value | resistanceBandColor"></span>)
             }
           </span>
-        } @else if (formGroup().controls.resistanceType.value == resistanceTypeEnum.BodyWeight) {
+        } @else if (formGroup().controls.resistanceType.value == resistanceTypeEnum.BODY_WEIGHT) {
           <span class="no-input-value">
             Body Weight
           </span>
@@ -57,13 +57,13 @@
 
   <div class="d-flex align-content-end little-footroom px-2">
     <div class="w-100 text-center">
-      @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
+      @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.RESISTANCE_BAND) {
         <button class="btn btn-choose-resistance btn-sm me-1" (click)="selectResistanceBands(formGroup())">
           Choose Resistance
         </button>
       }
 
-      @if (workoutHasBeenExecutedBefore() && formGroup().controls.resistanceType.value != resistanceTypeEnum.BodyWeight) {
+      @if (workoutHasBeenExecutedBefore() && formGroup().controls.resistanceType.value != resistanceTypeEnum.BODY_WEIGHT) {
         <button class="btn btn-same-as-last-time btn-sm ms-1" (click)="useSameResistanceAsLastTime()">
           Use Same Resistance as Last Time
         </button>

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ExerciseSide } from '../workout/_enums/exercise-side';
+import { ExerciseSide } from '../../api';
 
 @Pipe({
     name: 'exerciseSide',
@@ -7,13 +7,13 @@ import { ExerciseSide } from '../workout/_enums/exercise-side';
 })
 export class ExerciseSidePipe implements PipeTransform {
 
-  transform(value: ExerciseSide | null | undefined): string {
+  transform(value: ExerciseSide | number | null | undefined): string {
     if (value == null) return "";
 
     switch(+value) {
-      case ExerciseSide.Left:
+      case ExerciseSide.LEFT:
         return " (L)";
-      case ExerciseSide.Right:
+      case ExerciseSide.RIGHT:
         return " (R)";
       default:
         return "";

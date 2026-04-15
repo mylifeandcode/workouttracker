@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output, input } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SetType } from '../_enums/set-type';
-import { ResistanceType } from '../_enums/resistance-type';
+import { ResistanceType, SetType } from '../../../api';
 import { NgStyle } from '@angular/common';
 import { IWorkoutFormExercise } from '../_interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../_interfaces/i-workout-form-exercise-set';

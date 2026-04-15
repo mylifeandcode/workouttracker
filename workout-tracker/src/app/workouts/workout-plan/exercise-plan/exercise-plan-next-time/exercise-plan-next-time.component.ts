@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, input } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
-import { ResistanceType } from '../../../workout/_enums/resistance-type';
+import { ResistanceType } from '../../../../api';
 import { SelectOnFocusDirective } from '../../../../shared/directives/select-on-focus.directive';
 import { ResistanceBandColorPipe } from '../../../../shared/pipes/resistance-band-color.pipe';
 import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';

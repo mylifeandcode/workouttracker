@@ -8,11 +8,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Extensions.Hosting;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -56,6 +59,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SupportNonNullableReferenceTypes();
     c.UseAllOfToExtendReferenceSchemas();
     c.SchemaFilter<RequireNonNullablePropertiesSchemaFilter>();
+    c.SchemaFilter<EnumVarNamesSchemaFilter>();
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "WorkoutTrackerApi", Version = "v1" });
 });
 
@@ -202,4 +206,18 @@ public class RequireNonNullablePropertiesSchemaFilter : ISchemaFilter
 
     }
 
+}
+
+public class EnumVarNamesSchemaFilter : ISchemaFilter
+{
+    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    {
+        if (!context.Type.IsEnum) return;
+
+        var names = Enum.GetNames(context.Type);
+        schema.Extensions["x-enum-varnames"] = new OpenApiArray()
+            .Concat(names.Select(n => new OpenApiString(n)))
+            .Cast<IOpenApiAny>()
+            .Aggregate(new OpenApiArray(), (arr, item) => { arr.Add(item); return arr; });
+    }
 }

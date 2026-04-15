@@ -2,8 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/_services/auth/auth.service';
-import { SetType } from '../../workouts/workout/_enums/set-type';
-import { User, UserMinMaxReps, UserSettings } from '../../api';
+import { User, UserMinMaxReps, UserSettings, SetType } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
 import { type Mocked } from 'vitest';
@@ -30,9 +29,9 @@ describe('UserSettingsComponent', () => {
         user.settings.repSettings = new Array<UserMinMaxReps>();
         user.settings.repSettings.push(<UserMinMaxReps>{});
         user.settings.repSettings.push(<UserMinMaxReps>{});
-        user.settings.repSettings[0].setType = SetType.Repetition;
+        user.settings.repSettings[0].setType = SetType.REPETITION;
         user.settings.repSettings[0].id = 1;
-        user.settings.repSettings[1].setType = SetType.Timed;
+        user.settings.repSettings[1].setType = SetType.TIMED;
         user.settings.repSettings[1].id = 2;
         user.settings.recommendationsEnabled = true;
 
@@ -149,13 +148,13 @@ describe('UserSettingsComponent', () => {
     expectedSavedUser.settings.repSettings = new Array<UserMinMaxReps>();
     expectedSavedUser.settings.repSettings.push(<UserMinMaxReps>{});
     expectedSavedUser.settings.repSettings[0].id = 1;
-    expectedSavedUser.settings.repSettings[0].setType = SetType.Repetition;
+    expectedSavedUser.settings.repSettings[0].setType = SetType.REPETITION;
     expectedSavedUser.settings.repSettings[0].minReps = minRepetitionSetReps;
     expectedSavedUser.settings.repSettings[0].maxReps = maxRepetitionSetReps;
     expectedSavedUser.settings.repSettings[0].duration = null;
     expectedSavedUser.settings.repSettings.push(<UserMinMaxReps>{});
     expectedSavedUser.settings.repSettings[1].id = 2;
-    expectedSavedUser.settings.repSettings[1].setType = SetType.Timed;
+    expectedSavedUser.settings.repSettings[1].setType = SetType.TIMED;
     expectedSavedUser.settings.repSettings[1].minReps = minTimedSetReps;
     expectedSavedUser.settings.repSettings[1].maxReps = maxTimedSetReps;
     expectedSavedUser.settings.repSettings[1].duration = duration;
