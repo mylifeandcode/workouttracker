@@ -1,16 +1,8 @@
 @import '../../../../../variables.scss';
 
 .last-time-container {
-  margin-left: -12px;
-  margin-right: -12px;
-  height: 100%; 
-  padding-left: 0; 
-  padding-right: 0;  
 
-  border-right-style: solid;
-  border-top-style: solid;
-  border-bottom-style: solid;
-  border-color: $workout-color-four;
+  flex: 0 0;
 
 }
 

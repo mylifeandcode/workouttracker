@@ -1,18 +1,5 @@
 @import '../../../../../variables.scss';
 
-.suggestions-container {
-  margin-left: -12px;
-  margin-right: -12px;
-  height: 100%; 
-  padding-left: 0; 
-  padding-right: 0;
-  background-color: lightgray;
-  flex: 0 0;
-  border-top-style: solid;
-  border-bottom-style: solid;
-  border-color: $workout-color-four;
-}
-
 .suggestions {
   //background-image: url('../../../assets/images/blue-steel.png');
   //border-style: solid;
@@ -27,7 +14,7 @@
 
 .half-area {
   //flex: 1 0 auto;
-  flex: 1 0;
+  flex: 1;
 }
 
 .inner-container {
