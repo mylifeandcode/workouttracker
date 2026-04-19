@@ -1,5 +1,10 @@
 @import '../../../../../variables.scss';
 
+.next-time-container {
+  flex: 1 1 auto;
+  height: 100%;
+}
+
 .next-time {
   padding-bottom: 8px;
   padding-left: 4px;

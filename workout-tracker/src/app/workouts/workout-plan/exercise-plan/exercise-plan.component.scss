@@ -42,7 +42,7 @@ label {
 }
 
 .full-height {
-  flex: 1; /* This will make the child expand horizontally */
+  //flex: 1; /* This will make the child expand horizontally */
   align-self: stretch; /* This will make the child expand vertically */
 }
 

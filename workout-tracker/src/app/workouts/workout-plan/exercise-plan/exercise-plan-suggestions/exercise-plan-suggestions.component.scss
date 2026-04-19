@@ -1,5 +1,10 @@
 @import '../../../../../variables.scss';
 
+.suggestions-container {
+  flex: 1 1 auto;
+  height: 100%;
+}
+
 .suggestions {
   //background-image: url('../../../assets/images/blue-steel.png');
   //border-style: solid;
