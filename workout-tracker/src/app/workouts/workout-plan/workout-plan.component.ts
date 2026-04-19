@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy, computed, input } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { WorkoutPlan, ExercisePlan } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
 import { IBandAllocation, ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
@@ -36,7 +36,6 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
 
   private _workoutService = inject(WorkoutService);
   private _resistanceBandService = inject(ResistanceBandService);
-  private _activatedRoute = inject(ActivatedRoute);
   private _router = inject(Router);
   private _formBuilder = inject(FormBuilder);
 

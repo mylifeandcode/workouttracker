@@ -1,5 +1,19 @@
-.button-type-link {
-  color: blue;
+@use '../../../../variables.scss' as v;
+
+%button-base {
+  color: white;
+  border-style: none;
+  border-radius: 5px;
+}
+
+.plan-button {
+  @extend %button-base;
+  background-color: v.$workout-color-one;
+}
+
+.view-button {
+  @extend %button-base;
+  background-color: v.$workout-color-three;
 }
 
 h5 {

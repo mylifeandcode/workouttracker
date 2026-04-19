@@ -89,6 +89,7 @@ describe('WorkoutPlanComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutPlanComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('id', 'testComponentId');
     fixture.detectChanges();
   });
 
@@ -143,12 +144,8 @@ describe('WorkoutPlanComponent', () => {
   it('should determine plan is for past workout based on route params', () => {
 
     //ARRANGE
-    const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.params =
-      of({
-        start: new Date(2022, 3, 22, 12, 13, 0),
-        end: new Date(2022, 3, 22, 13, 35, 6)
-      });
+    fixture.componentRef.setInput('start', "2022-03-22T12:13:00");
+    fixture.componentRef.setInput('end', "2022-03-22T13:35:06");
 
     //ACT
     component.ngOnInit(); //Because we changed the activated route
@@ -168,19 +165,14 @@ describe('WorkoutPlanComponent', () => {
     //ARRANGE
     const startDate = new Date(2022, 3, 22, 12, 13, 0);
     const endDate = new Date(2022, 3, 22, 13, 35, 6);
-
-    const activatedRoute = TestBed.inject(ActivatedRoute);
-    activatedRoute.params =
-      of({
-        start: startDate,
-        end: endDate
-      });
+    fixture.componentRef.setInput('start', startDate.toISOString());
+    fixture.componentRef.setInput('end', endDate.toISOString());
 
     const workoutService = TestBed.inject(WorkoutService);
     const router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate');
 
-    component.ngOnInit(); //Because we changed the activated route
+    component.ngOnInit();
 
     //ACT
     component.submitPlanForPast();

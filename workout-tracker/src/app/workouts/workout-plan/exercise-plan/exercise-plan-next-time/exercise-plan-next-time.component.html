@@ -33,7 +33,7 @@
     }
   </div>
 
-  <div class="d-flex bottom-padded px-2">
+  <div class="d-flex align-items-center bottom-padded px-2 pt-2">
     <div class="half-area">
       Target Rep Count
     </div>
@@ -48,30 +48,32 @@
     }
   </div>
 
-  <div class="d-flex align-content-end flex-grow-1 px-2">
+  <div class="d-flex align-content-end flex-grow-1 px-3">
     @if (formGroup().invalid) {
       <span class="info-required">Information required</span>
     }
   </div>
 
-  <div class="px-2 little-footroom">
-    <div class="next-time px-2 pt-2">
-      <div>
-        <span>RESISTANCE</span>
+  @if (formGroup().controls.resistanceType.value != resistanceTypeEnum.BodyWeight) {
+    <div class="px-2 little-footroom">
+      <div class="next-time pt-2">
+        <div>
+          <span>RESISTANCE</span>
+        </div>
+      </div>
+      <div class="d-flex align-items-center">
+        @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
+          <button class="flex-fill btn btn-choose-resistance btn-sm me-1" (click)="selectResistanceBands(formGroup())">
+            Choose
+          </button>
+        }
+
+        @if (workoutHasBeenExecutedBefore() && formGroup().controls.resistanceType.value != resistanceTypeEnum.BodyWeight) {
+          <button class="flex-fill btn btn-same-as-last-time btn-sm ms-1" (click)="useSameResistanceAsLastTime()">
+            Use Same as Last Time
+          </button>
+        }
       </div>
     </div>
-    <div class="d-flex align-items-center">
-      @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
-        <button class="flex-fill btn btn-choose-resistance btn-sm me-1" (click)="selectResistanceBands(formGroup())">
-          Choose
-        </button>
-      }
-
-      @if (workoutHasBeenExecutedBefore() && formGroup().controls.resistanceType.value != resistanceTypeEnum.BodyWeight) {
-        <button class="flex-fill btn btn-same-as-last-time btn-sm ms-1" (click)="useSameResistanceAsLastTime()">
-          Use Same as Last Time
-        </button>
-      }
-    </div>
-  </div>
+  }
 </div>

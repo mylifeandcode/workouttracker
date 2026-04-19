@@ -35,14 +35,12 @@
     </div>
   </div>
 
-  <div class="d-flex bottom-padded px-2 inner-container half-area">
-    <div class="half-area">
+  <div class="bottom-padded px-2 inner-container half-area">
+    <div>
       Reason(s)
     </div>
-    <div class="half-area">
-      <strong>
-        <span>{{formGroup().controls.recommendationReason.value}}</span>
-      </strong>
+    <div>
+      <span [innerHTML]="formGroup().controls.recommendationReason.value | sentencesToTags"></span>
     </div>
   </div>
 
