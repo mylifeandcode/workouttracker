@@ -5,6 +5,7 @@
 
 body {
   font-size: 16px;
+  font-family: "Rubik";
 }
 
 .btn.btn-fullWidth {
@@ -66,9 +67,9 @@ select.ng-invalid.ng-touched {
   color: white;
   border-radius: 25px;
   background: rgba(0, 0, 0, 0.6);
-  padding: 20px;
-  margin-left: 5px;
-  margin-right: 5px;
+  padding: 12px;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 .small-widget {
@@ -89,6 +90,15 @@ select.ng-invalid.ng-touched {
 .micro-widget-opaque {
   @extend .micro-widget;
   background: rgba(0, 0, 0, 1);
+}
+
+.card-widget {
+  @extend .micro-widget;
+  color: black;
+  background-color: white;
+  border-color: grey;
+  border-style: solid;
+  border-width: 1px;
 }
 
 .section-title {
@@ -139,4 +149,12 @@ input[type=checkbox] {
     border-color: #007bff;
     box-shadow: 0 0 rgba(0, 123, 255, 0.5);
   }  
+}
+
+.tag {
+  color: white;
+  background-color: #007bff;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  padding: 4px 8px;
 }

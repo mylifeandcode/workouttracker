@@ -1,46 +1,50 @@
-<div class="d-flex flex-column suggestions-container">
+<div class="d-flex suggestions-container flex-column card-widget">
 
-  <div class="suggestions">
-    <div class="pt-2">
-      <span class="section-title micro-widget-opaque">Suggestions</span>
+  <div class="d-flex suggestions px-2 pt-2">
+    <div>
+      <span>SUGGESTIONS</span>
     </div>
   </div>
 
-  <div class="d-flex pt-2 bottom-padded px-2">
+  <div class="d-flex pt-2 px-2 border-bottom">
     <div style="width: 50%">
-      <strong>Resistance Amount</strong>
+      Resistance Amount
     </div>
     <div style="width: 50%">
-      <span>{{formGroup().controls.resistanceType.value==3 ? 'Body Weight' : formGroup().controls.recommendedResistanceAmount.value | resistanceAmount:formGroup().controls.resistanceType.value==2}}</span>
-      @if (formGroup().controls.recommendedResistanceMakeup.value) {
-        <br />(<span [innerHTML]="formGroup().controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
-      }
+      <strong>
+        <span>{{formGroup().controls.resistanceType.value==3 ? 'Body Weight' : formGroup().controls.recommendedResistanceAmount.value | resistanceAmount:formGroup().controls.resistanceType.value==2}}</span>
+        @if (formGroup().controls.recommendedResistanceMakeup.value) {
+          <br />(<span [innerHTML]="formGroup().controls.recommendedResistanceMakeup.value | resistanceBandColor"></span>)
+        }
+      </strong>
     </div>
   </div>
 
-  <div class="d-flex bottom-padded px-2">
+  <div class="d-flex px-2 border-bottom">
     <div class="half-area">
-      <strong>Target Rep Count</strong>
+      Target Rep Count
     </div>
     <div class="half-area">
-      @if (formGroup().controls.involvesReps.value) {
-        <span>{{formGroup().controls.recommendedTargetRepCount.value}}</span>
-      } @else {
-        <span>N/A</span>
-      }
-    </div>
-  </div>
-
-  <div class="d-flex bottom-padded px-2 inner-container half-area">
-    <div class="half-area">
-      <strong>Reason(s)</strong> 
-    </div>
-    <div class="half-area">
-      <span>{{formGroup().controls.recommendationReason.value}}</span>
+      <strong>
+        @if (formGroup().controls.involvesReps.value) {
+          <span>{{formGroup().controls.recommendedTargetRepCount.value}}</span>
+        } @else {
+          <span>N/A</span>
+        }
+      </strong>
     </div>
   </div>
 
-  <div class="d-flex align-content-end little-footroom px-2">
+  <div class="bottom-padded px-2 inner-container half-area">
+    <div>
+      Reason(s)
+    </div>
+    <div>
+      <span [innerHTML]="formGroup().controls.recommendationReason.value | sentencesToTags"></span>
+    </div>
+  </div>
+
+  <div class="align-content-end little-footroom px-2">
     <div class="w-100 text-center">
       <button class="lead-space btn btn-sm btn-use-suggestions" (click)="useSuggestions()">Use Suggestions</button>
     </div>

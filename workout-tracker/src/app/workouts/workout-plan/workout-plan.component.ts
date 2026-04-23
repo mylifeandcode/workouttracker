@@ -1,6 +1,6 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy, computed, input } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { WorkoutPlan, ExercisePlan } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
 import { IBandAllocation, ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
@@ -29,9 +29,13 @@ import { HttpErrorResponse } from '@angular/common/http';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implements OnInit {
+  //INPUTS
+  id = input.required<string>();
+  start = input<string | null>(null);
+  end = input<string | null>(null);
+
   private _workoutService = inject(WorkoutService);
   private _resistanceBandService = inject(ResistanceBandService);
-  private _activatedRoute = inject(ActivatedRoute);
   private _router = inject(Router);
   private _formBuilder = inject(FormBuilder);
 
@@ -89,7 +93,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   //PUBLIC METHODS
   public ngOnInit(): void {
     this.getResistanceBandInventory();
-    this.subscribeToRoute();
+    this.processInputs();
     this.planningForLater.set(this._router.url.includes("for-later"));
   }
 
@@ -145,7 +149,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
     this.settingResistanceForBilateralExercise.set(exerciseFormGroup.controls.usesBilateralResistance.value);
     this.showResistanceBandsSelectModal.set(true);
     this.formGroupForResistanceSelection = exerciseFormGroup;
-    this.exerciseBandAllocation.set({ 
+    this.exerciseBandAllocation.set({
       selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value ?? '',
       doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value
     });
@@ -168,30 +172,31 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
   //END PUBLIC METHODS
 
   //PRIVATE METHODS
-  private subscribeToRoute(): void { //TODO: Refactor. Use snapshot instead.
-    this._activatedRoute.params.subscribe((params: Params) => {
-      this.workoutPlan.set(undefined);
-      const workoutId = params["id"];
+  private processInputs(): void {
+    this.workoutPlan.set(undefined);
+    const workoutId = this.id();
 
-      if (params["start"])
-        this._pastWorkoutStartDateTime = new Date(params["start"]);
+    if (this.start()) {
+      this._pastWorkoutStartDateTime = new Date(this.start()!);
+    }
 
-      if (params["end"])
-        this._pastWorkoutEndDateTime = new Date(params["end"]);
+    if (this.end()) {
+      this._pastWorkoutEndDateTime = new Date(this.end()!);
+    }
 
-      this._apiCallsInProgress.update(n => n + 1);
-      this._workoutService.getNewPlan(workoutId)
-        .pipe(finalize(() => { this._apiCallsInProgress.update(n => n - 1); }))
-        .subscribe((result: WorkoutPlan) => {
-          this.workoutPlan.set(result);
-          this.workoutPlanForm.patchValue({
-            workoutPublicId: result.workoutId,
-            workoutName: result.workoutName,
-            hasBeenExecutedBefore: result.hasBeenExecutedBefore
-          });
-          this.setupExercisesFormGroup(result.exercises);
+    this._apiCallsInProgress.update(n => n + 1);
+    this._workoutService.getNewPlan(workoutId)
+      .pipe(finalize(() => { this._apiCallsInProgress.update(n => n - 1); }))
+      .subscribe((result: WorkoutPlan) => {
+        this.workoutPlan.set(result);
+        this.workoutPlanForm.patchValue({
+          workoutPublicId: result.workoutId,
+          workoutName: result.workoutName,
+          hasBeenExecutedBefore: result.hasBeenExecutedBefore
         });
-    });
+        this.setupExercisesFormGroup(result.exercises);
+      });
+
   }
 
   private createForm(): FormGroup<IWorkoutPlanForm> {

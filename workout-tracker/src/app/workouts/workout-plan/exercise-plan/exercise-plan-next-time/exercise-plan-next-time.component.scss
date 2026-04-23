@@ -1,21 +1,12 @@
 @import '../../../../../variables.scss';
 
 .next-time-container {
-  margin-left: -12px;
-  margin-right: -12px;
-  height: 100%; 
-  padding-left: 0; 
-  padding-right: 0;
-  flex: 0 0;
-  border-left-style: solid;
-  //border-right-style: solid;
-  border-top-style: solid;
-  border-bottom-style: solid;
-  border-color: $workout-color-four;
+  flex: 1 1 auto;
+  height: 100%;
 }
 
 .next-time {
-  background-color:white;
+  padding-bottom: 8px;
   padding-left: 4px;
 }
 

@@ -1,7 +1,6 @@
 @if (formGroup()) {
-  <div class="row" [formGroup]="formGroup()">
-    <div class="col-12">
-  
+  <div [formGroup]="formGroup()">
+    
       <div class="row exercise-name">
         <div class="col-12">
           <h5 class="exercise-header-row">{{formGroup().controls.exerciseName.value}}</h5>
@@ -11,17 +10,17 @@
   
       <div class="row">
   
-        <div class="col-4 full-height">
+        <div class="col-12 col-md-4 full-height">
           <wt-exercise-plan-last-time [formGroup]="formGroup()"></wt-exercise-plan-last-time>
         </div>
   
         @if (formGroup().controls.recommendationReason.value) {
-          <div class="col-4 full-height">
+          <div class="col-12 col-md-4 full-height">
             <wt-exercise-plan-suggestions [formGroup]="formGroup()"></wt-exercise-plan-suggestions>
           </div>
         }
   
-        <div class="col-4 full-height">
+        <div class="col-12 col-md-4 full-height">
           <wt-exercise-plan-next-time 
             [formGroup]="formGroup()" 
             [workoutHasBeenExecutedBefore]="workoutHasBeenExecutedBefore()"
@@ -31,6 +30,5 @@
   
       </div>
   
-    </div>
   </div>
 }

@@ -1,14 +1,14 @@
-<div class="d-flex flex-column next-time-container">
+<div class="d-flex next-time-container flex-column card-widget">
 
-  <div class="d-flex next-time section-header">
-    <div class="pt-2">
-      <span class="section-title micro-widget-opaque">{{planningAhead() ? 'Next' : 'This'}} Time</span>
+  <div class="next-time px-2 pt-2">
+    <div>
+      <span>{{planningAhead() ? 'NEXT' : 'THIS'}} TIME</span>
     </div>
   </div>
 
-  <div class="d-flex pt-2 little-footroom flex-row px-2">
+  <div class="d-flex pt-2 align-items-center bottom-padded px-2 pt-2">
     <div class="half-area">
-      <strong>Resistance Amount</strong>
+      Resistance Amount
     </div>
 
     @if (formGroup()) {
@@ -28,20 +28,19 @@
             Body Weight
           </span>
         }
-        
+
       </div>
     }
   </div>
 
-  <div class="d-flex bottom-padded px-2">
+  <div class="d-flex align-items-center bottom-padded px-2 pt-2">
     <div class="half-area">
-      <strong>Target Rep Count</strong>
+      Target Rep Count
     </div>
     @if (formGroup()) {
       <div class="half-area" [formGroup]="formGroup()">
         @if (formGroup().controls.involvesReps.value) {
-          <input wtSelectOnFocus type="number" class="amount"
-          formControlName="targetRepCount" required />
+          <input wtSelectOnFocus type="number" class="amount" formControlName="targetRepCount" required />
         } @else {
           <span class="pre-pop-value">N/A</span>
         }
@@ -49,7 +48,7 @@
     }
   </div>
 
-  <div class="d-flex align-content-end flex-grow-1 px-2">
+  <div class="d-flex align-content-end flex-grow-1 px-3">
     @if (formGroup().invalid) {
       <span class="info-required">Information required</span>
     }
@@ -57,13 +56,13 @@
 
   <div class="d-flex align-content-end little-footroom px-2">
     <div class="w-100 text-center">
-      @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.RESISTANCE_BAND) {
+      @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.ResistanceBand) {
         <button class="btn btn-choose-resistance btn-sm me-1" (click)="selectResistanceBands(formGroup())">
           Choose Resistance
         </button>
       }
 
-      @if (workoutHasBeenExecutedBefore() && formGroup().controls.resistanceType.value != resistanceTypeEnum.BODY_WEIGHT) {
+      @if (workoutHasBeenExecutedBefore() && formGroup().controls.resistanceType.value != resistanceTypeEnum.BodyWeight) {
         <button class="btn btn-same-as-last-time btn-sm ms-1" (click)="useSameResistanceAsLastTime()">
           Use Same Resistance as Last Time
         </button>
