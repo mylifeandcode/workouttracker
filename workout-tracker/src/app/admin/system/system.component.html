@@ -38,7 +38,7 @@
     <div class="col-4">
       <h3>Multi-Select with Select/Deselect All</h3>
       <!--Note nzMaxTagCount to limit the number of tags displayed-->
-      <nz-select nzMode="multiple" [(ngModel)]="selectedValues" [nzMaxTagCount]="2" [nzDropdownRender]="selectAllTpl" style="width: 300px">
+      <nz-select nzMode="multiple" [(ngModel)]="selectedValues" [nzMaxTagCount]="2" [nzDropdownRender]="selectAllTpl" style="width: 300px" nzPlaceHolder="Please select">
         @for(option of options; track option.label) {
           <nz-option [nzValue]="option.value" [nzLabel]="option.label" />
         }
