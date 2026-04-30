@@ -282,7 +282,7 @@ namespace WorkoutTracker.Tests.Services
             executedWorkoutRepo.Verify(x => x.Delete(100), Times.Once);
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
         public void Should_Not_Delete_Planned_Workout_Which_Has_Been_Started()
         {
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
@@ -304,15 +304,12 @@ namespace WorkoutTracker.Tests.Services
                     workoutRepo.Object,
                     _logger.Object);
 
-
-            //ACT
-            sut.DeletePlanned(Guid.NewGuid());
-
-            //ASSERT
-            //No assertions. Test will fail if ExpectedException doesn't occur.
+            //ACT & ASSERT
+            Assert.Throws<ArgumentException>(() =>
+                sut.DeletePlanned(Guid.NewGuid()));
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
         public void Should_Not_Delete_Planned_Workout_When_Not_Found()
         {
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
@@ -334,12 +331,9 @@ namespace WorkoutTracker.Tests.Services
                     workoutRepo.Object,
                     _logger.Object);
 
-
-            //ACT
-            sut.DeletePlanned(Guid.NewGuid());
-
-            //ASSERT
-            //No assertions. Test will fail if ExpectedException doesn't occur.
+            //ACT & ASSERT
+            Assert.Throws<ArgumentException>(() =>
+                sut.DeletePlanned(Guid.NewGuid()));
         }
     }
 }
