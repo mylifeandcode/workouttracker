@@ -17,7 +17,7 @@ describe('WelcomeComponent', () => {
 
   beforeEach(async () => {
     const UserServiceMock: Partial<Mocked<UserService>> = {
-      getOverview: vi.fn().mockReturnValue(of(<UserOverview>{
+      getOverview: vi.fn<UserService['getOverview']>().mockReturnValue(of(<UserOverview>{
         lastWorkoutDateTime: new Date(2022, 2, 26, 15, 20),
         plannedWorkoutCount: 3,
         username: 'Tyson'
@@ -52,6 +52,7 @@ describe('WelcomeComponent', () => {
   });
 
   it('should get user overview on init', () => {
+
     const userService = TestBed.inject(UserService);
     expect(userService.getOverview).toHaveBeenCalled();
     expect(component.userOverview()).toEqual({
