@@ -6,7 +6,7 @@ import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
-import { ExecutedWorkoutSummaryDTO, ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
+import { ExecutedWorkoutSummaryDTO, PaginatedResultsOfExecutedWorkoutSummaryDTO } from '../../api';
 import { firstValueFrom } from 'rxjs';
 import { type Mocked } from 'vitest';
 
@@ -61,7 +61,7 @@ describe('ExecutedWorkoutService', () => {
 
   it('should get filtered subset', async () => {
     //ARRANGE
-    const expectedResults = <ExecutedWorkoutSummaryDTOPaginatedResults>{};
+    const expectedResults = <PaginatedResultsOfExecutedWorkoutSummaryDTO>{};
     expectedResults.results = new Array<ExecutedWorkoutSummaryDTO>(1);
     expectedResults.results.push(<ExecutedWorkoutSummaryDTO>{});
     expectedResults.totalCount = 1;
@@ -107,7 +107,7 @@ describe('ExecutedWorkoutService', () => {
 
   it('should get planned workouts', async () => {
     //ARRANGE
-    const expectedResults = <ExecutedWorkoutSummaryDTOPaginatedResults>{};
+    const expectedResults = <PaginatedResultsOfExecutedWorkoutSummaryDTO>{};
     expectedResults.results = new Array<ExecutedWorkoutSummaryDTO>(3);
     expectedResults.results.push(<ExecutedWorkoutSummaryDTO>{});
     expectedResults.results.push(<ExecutedWorkoutSummaryDTO>{});
@@ -155,7 +155,7 @@ describe('ExecutedWorkoutService', () => {
 
   it('should get recent executed workouts', async () => {
     //ARRANGE
-    const expectedResults = <ExecutedWorkoutSummaryDTOPaginatedResults>{};
+    const expectedResults = <PaginatedResultsOfExecutedWorkoutSummaryDTO>{};
     expectedResults.results = new Array<ExecutedWorkoutSummaryDTO>(1);
     expectedResults.results.push(<ExecutedWorkoutSummaryDTO>{});
     expectedResults.totalCount = 1;

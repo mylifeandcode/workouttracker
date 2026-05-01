@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ExerciseService } from '../_services/exercise.service';
-import { ExerciseDTO, ExerciseDTOPaginatedResults } from '../../api';
+import { ExerciseDTO, PaginatedResultsOfExerciseDTO } from '../../api';
 import { finalize, map } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
@@ -89,7 +89,7 @@ export class ExerciseListComponent implements OnInit {
         this.loading.set(false);
       }))
       .subscribe({
-        next: (exercises: ExerciseDTOPaginatedResults) => {
+        next: (exercises: PaginatedResultsOfExerciseDTO) => {
           this.exercises.set(exercises.results);
           this.totalRecords.set(exercises.totalCount);
         },

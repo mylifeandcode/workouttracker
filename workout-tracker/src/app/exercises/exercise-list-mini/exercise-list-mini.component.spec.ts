@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ExerciseDTO, ExerciseDTOPaginatedResults, TargetArea } from '../../api';
+import { ExerciseDTO, PaginatedResultsOfExerciseDTO, TargetArea } from '../../api';
 import { type Mocked } from 'vitest';
 
 describe('ExerciseListMiniComponent', () => {
@@ -15,7 +15,7 @@ describe('ExerciseListMiniComponent', () => {
 
   beforeEach(async () => {
     const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{})),
+      getAll: vi.fn().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{})),
       getTargetAreas: vi.fn().mockReturnValue(of(new Array<TargetArea>()))
     };
 

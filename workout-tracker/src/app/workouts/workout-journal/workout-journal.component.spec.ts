@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { WorkoutJournalComponent } from './workout-journal.component';
 import { of } from 'rxjs';
-import { ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
+import { PaginatedResultsOfExecutedWorkoutSummaryDTO } from '../../api';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { type Mocked } from 'vitest';
 
@@ -13,7 +13,7 @@ describe('WorkoutJournalComponent', () => {
 
   beforeEach(async () => {
     const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getFilteredSubset: vi.fn().mockReturnValue(of(<ExecutedWorkoutSummaryDTOPaginatedResults>{}))
+      getFilteredSubset: vi.fn().mockReturnValue(of(<PaginatedResultsOfExecutedWorkoutSummaryDTO>{}))
     };
 
     await TestBed.configureTestingModule({

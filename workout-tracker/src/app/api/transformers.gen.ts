@@ -34,10 +34,6 @@ const executedExerciseDtoSchemaResponseTransformer = (data: any) => {
 };
 
 const executedWorkoutDtoSchemaResponseTransformer = (data: any) => {
-    data.createdDateTime = new Date(data.createdDateTime);
-    if (data.modifiedDateTime) {
-        data.modifiedDateTime = new Date(data.modifiedDateTime);
-    }
     if (data.startDateTime) {
         data.startDateTime = new Date(data.startDateTime);
     }
@@ -45,6 +41,10 @@ const executedWorkoutDtoSchemaResponseTransformer = (data: any) => {
         data.endDateTime = new Date(data.endDateTime);
     }
     data.exercises = data.exercises.map((item: any) => executedExerciseDtoSchemaResponseTransformer(item));
+    data.createdDateTime = new Date(data.createdDateTime);
+    if (data.modifiedDateTime) {
+        data.modifiedDateTime = new Date(data.modifiedDateTime);
+    }
     return data;
 };
 
@@ -59,31 +59,31 @@ export const putApiExecutedWorkoutByIdResponseTransformer = async (data: any): P
 };
 
 const executedWorkoutSummaryDtoSchemaResponseTransformer = (data: any) => {
-    data.createdDateTime = new Date(data.createdDateTime);
-    if (data.modifiedDateTime) {
-        data.modifiedDateTime = new Date(data.modifiedDateTime);
-    }
     if (data.startDateTime) {
         data.startDateTime = new Date(data.startDateTime);
     }
     if (data.endDateTime) {
         data.endDateTime = new Date(data.endDateTime);
     }
+    data.createdDateTime = new Date(data.createdDateTime);
+    if (data.modifiedDateTime) {
+        data.modifiedDateTime = new Date(data.modifiedDateTime);
+    }
     return data;
 };
 
-const executedWorkoutSummaryDtoPaginatedResultsSchemaResponseTransformer = (data: any) => {
+const paginatedResultsOfExecutedWorkoutSummaryDtoSchemaResponseTransformer = (data: any) => {
     data.results = data.results.map((item: any) => executedWorkoutSummaryDtoSchemaResponseTransformer(item));
     return data;
 };
 
 export const getApiExecutedWorkoutResponseTransformer = async (data: any): Promise<GetApiExecutedWorkoutResponse> => {
-    data = executedWorkoutSummaryDtoPaginatedResultsSchemaResponseTransformer(data);
+    data = paginatedResultsOfExecutedWorkoutSummaryDtoSchemaResponseTransformer(data);
     return data;
 };
 
 export const getApiExecutedWorkoutPlannedResponseTransformer = async (data: any): Promise<GetApiExecutedWorkoutPlannedResponse> => {
-    data = executedWorkoutSummaryDtoPaginatedResultsSchemaResponseTransformer(data);
+    data = paginatedResultsOfExecutedWorkoutSummaryDtoSchemaResponseTransformer(data);
     return data;
 };
 
@@ -100,13 +100,13 @@ const exerciseDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-const exerciseDtoPaginatedResultsSchemaResponseTransformer = (data: any) => {
+const PaginatedResultsOfExerciseDTOchemaResponseTransformer = (data: any) => {
     data.results = data.results.map((item: any) => exerciseDtoSchemaResponseTransformer(item));
     return data;
 };
 
 export const getApiExercisesResponseTransformer = async (data: any): Promise<GetApiExercisesResponse> => {
-    data = exerciseDtoPaginatedResultsSchemaResponseTransformer(data);
+    data = PaginatedResultsOfExerciseDTOchemaResponseTransformer(data);
     return data;
 };
 
@@ -119,25 +119,25 @@ const targetAreaSchemaResponseTransformer = (data: any) => {
 };
 
 const exerciseTargetAreaLinkSchemaResponseTransformer = (data: any) => {
-    data.createdDateTime = new Date(data.createdDateTime);
-    if (data.modifiedDateTime) {
-        data.modifiedDateTime = new Date(data.modifiedDateTime);
-    }
     if (data.exercise) {
         data.exercise = exerciseSchemaResponseTransformer(data.exercise);
     }
     if (data.targetArea) {
         data.targetArea = targetAreaSchemaResponseTransformer(data.targetArea);
     }
-    return data;
-};
-
-const exerciseSchemaResponseTransformer = (data: any) => {
     data.createdDateTime = new Date(data.createdDateTime);
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
+    return data;
+};
+
+const exerciseSchemaResponseTransformer = (data: any) => {
     data.exerciseTargetAreaLinks = data.exerciseTargetAreaLinks.map((item: any) => exerciseTargetAreaLinkSchemaResponseTransformer(item));
+    data.createdDateTime = new Date(data.createdDateTime);
+    if (data.modifiedDateTime) {
+        data.modifiedDateTime = new Date(data.modifiedDateTime);
+    }
     return data;
 };
 
@@ -213,20 +213,20 @@ const userMinMaxRepsSchemaResponseTransformer = (data: any) => {
 };
 
 const userSettingsSchemaResponseTransformer = (data: any) => {
+    data.repSettings = data.repSettings.map((item: any) => userMinMaxRepsSchemaResponseTransformer(item));
     data.createdDateTime = new Date(data.createdDateTime);
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    data.repSettings = data.repSettings.map((item: any) => userMinMaxRepsSchemaResponseTransformer(item));
     return data;
 };
 
 const userSchemaResponseTransformer = (data: any) => {
+    data.settings = userSettingsSchemaResponseTransformer(data.settings);
     data.createdDateTime = new Date(data.createdDateTime);
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    data.settings = userSettingsSchemaResponseTransformer(data.settings);
     return data;
 };
 
@@ -280,33 +280,33 @@ const workoutDtoSchemaResponseTransformer = (data: any) => {
     return data;
 };
 
-const workoutDtoPaginatedResultsSchemaResponseTransformer = (data: any) => {
+const paginatedResultsOfWorkoutDtoSchemaResponseTransformer = (data: any) => {
     data.results = data.results.map((item: any) => workoutDtoSchemaResponseTransformer(item));
     return data;
 };
 
 export const getApiWorkoutsResponseTransformer = async (data: any): Promise<GetApiWorkoutsResponse> => {
-    data = workoutDtoPaginatedResultsSchemaResponseTransformer(data);
+    data = paginatedResultsOfWorkoutDtoSchemaResponseTransformer(data);
     return data;
 };
 
 const exerciseInWorkoutSchemaResponseTransformer = (data: any) => {
+    if (data.exercise) {
+        data.exercise = exerciseSchemaResponseTransformer(data.exercise);
+    }
     data.createdDateTime = new Date(data.createdDateTime);
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
-    }
-    if (data.exercise) {
-        data.exercise = exerciseSchemaResponseTransformer(data.exercise);
     }
     return data;
 };
 
 const workoutSchemaResponseTransformer = (data: any) => {
+    data.exercises = data.exercises.map((item: any) => exerciseInWorkoutSchemaResponseTransformer(item));
     data.createdDateTime = new Date(data.createdDateTime);
     if (data.modifiedDateTime) {
         data.modifiedDateTime = new Date(data.modifiedDateTime);
     }
-    data.exercises = data.exercises.map((item: any) => exerciseInWorkoutSchemaResponseTransformer(item));
     return data;
 };
 

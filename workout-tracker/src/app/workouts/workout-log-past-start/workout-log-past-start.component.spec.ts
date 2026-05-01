@@ -3,13 +3,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
-import { WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
+import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutLogPastStartComponent } from './workout-log-past-start.component';
 import { type Mocked } from 'vitest';
 
-function getLogPastStartWorkouts(): WorkoutDTOPaginatedResults {
-  const result = <WorkoutDTOPaginatedResults>{};
+function getLogPastStartWorkouts(): PaginatedResultsOfWorkoutDTO {
+  const result = <PaginatedResultsOfWorkoutDTO>{};
 
   result.totalCount = 3;
   result.results = [];

@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ExecutedExerciseMetrics, ExecutedWorkoutMetrics, WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
+import { ExecutedExerciseMetrics, ExecutedWorkoutMetrics, WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { WorkoutService } from '../../workouts/_services/workout.service';
 import { of } from 'rxjs';
 import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';
@@ -41,7 +41,7 @@ describe('WorkoutProgressComponent', () => {
     };
     const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
       getFilteredSubset: vi.fn().mockImplementation(() => {
-        const result = <WorkoutDTOPaginatedResults>{};
+        const result = <PaginatedResultsOfWorkoutDTO>{};
         result.results = [];
 
         const workout1 = <WorkoutDTO>{};

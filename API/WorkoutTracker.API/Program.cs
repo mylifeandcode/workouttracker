@@ -248,15 +248,17 @@ public class IntIsNoStringSchemaTransformer : IOpenApiSchemaTransformer
         OpenApiSchemaTransformerContext context,
         CancellationToken cancellationToken)
     {
+        var isNullable = schema.Type.HasValue && (schema.Type.Value & JsonSchemaType.Null) == JsonSchemaType.Null;
+
         if (schema.Format == "int16" || schema.Format == "int32" || schema.Format == "int64" || schema.Format == "uint8" || schema.Format == "uint16" || schema.Format == "uint32" || schema.Format == "uint64")
         {
-            schema.Type = JsonSchemaType.Integer;
+            schema.Type = isNullable ? JsonSchemaType.Integer | JsonSchemaType.Null : JsonSchemaType.Integer;
             schema.Pattern = null;
         }
 
         if (schema.Format == "float" || schema.Format == "double")
         {
-            schema.Type = JsonSchemaType.Number;
+            schema.Type = isNullable ? JsonSchemaType.Number | JsonSchemaType.Null : JsonSchemaType.Number;
             schema.Pattern = null;
         }
 

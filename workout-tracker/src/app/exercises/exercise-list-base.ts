@@ -1,6 +1,6 @@
 import { ExerciseService } from './_services/exercise.service';
 import { debounceTime, distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
-import { ExerciseDTO, ExerciseDTOPaginatedResults } from '../api';
+import { ExerciseDTO, PaginatedResultsOfExerciseDTO } from '../api';
 import { Subject } from 'rxjs';
 import { effect, signal } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -68,7 +68,7 @@ export abstract class ExerciseListBase {
         this.loading.set(false);
       }))
       .subscribe({
-        next: (exercises: ExerciseDTOPaginatedResults) => {
+        next: (exercises: PaginatedResultsOfExerciseDTO) => {
           this.exercises.set(exercises.results);
           this.totalRecords.set(exercises.totalCount);
         },

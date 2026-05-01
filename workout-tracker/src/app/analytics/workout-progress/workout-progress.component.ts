@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, inject, viewChild, signal, ChangeDetectionStrategy } from '@angular/core';
-import { WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
+import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { WorkoutService } from '../../workouts/_services/workout.service';
 import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
@@ -194,7 +194,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
     this._workoutService.getFilteredSubset(0, pageSize, true)
       .pipe(finalize(() => { this.loadingData.set(false); }))
       .subscribe({
-        next: (result: WorkoutDTOPaginatedResults) => {
+        next: (result: PaginatedResultsOfWorkoutDTO) => {
           this.workouts.set(result.results.sort((a, b) => a.name.localeCompare(b.name)));
         }/*,
         error: (error) => {

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ExerciseDTOPaginatedResults, TargetArea } from '../../api';
+import { PaginatedResultsOfExerciseDTO, TargetArea } from '../../api';
 import { Exercise } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
@@ -32,7 +32,7 @@ export class ExerciseService {
     firstRecOffset: number,
     pageSize: number,
     nameContains: string | null = null,
-    targetAreaContains: string[] | null = null): Observable<ExerciseDTOPaginatedResults> {
+    targetAreaContains: string[] | null = null): Observable<PaginatedResultsOfExerciseDTO> {
 
     let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
 
@@ -45,7 +45,7 @@ export class ExerciseService {
     }
 
     return this._http
-      .get<ExerciseDTOPaginatedResults>(url)
+      .get<PaginatedResultsOfExerciseDTO>(url)
       .pipe(
         map((paginatedResults) => {
           paginatedResults.results.forEach(exercise => {

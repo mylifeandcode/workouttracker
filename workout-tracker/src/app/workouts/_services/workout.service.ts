@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Workout, WorkoutDTOPaginatedResults, WorkoutPlan } from '../../api';
+import { Workout, PaginatedResultsOfWorkoutDTO, WorkoutPlan } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { HTTP_OPTIONS } from '../../shared/constants/http-constants';
 
@@ -25,14 +25,14 @@ export class WorkoutService {
     pageSize: number, 
     activeOnly: boolean, 
     sortAscending: boolean = true, 
-    nameContains: string | null = null): Observable<WorkoutDTOPaginatedResults> {
+    nameContains: string | null = null): Observable<PaginatedResultsOfWorkoutDTO> {
         
     let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&activeOnly=${activeOnly}&sortAscending=${sortAscending}`;
 
     if(nameContains)
       url += `&nameContains=${encodeURIComponent(nameContains)}`;
 
-    return this._http.get<WorkoutDTOPaginatedResults>(url);
+    return this._http.get<PaginatedResultsOfWorkoutDTO>(url);
   }
 
   public getById(id: string): Observable<Workout> {

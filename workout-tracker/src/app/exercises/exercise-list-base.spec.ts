@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { ExerciseListBase } from './exercise-list-base';
 import { Component, inject as inject_1 } from '@angular/core';
 import { ExerciseService } from './_services/exercise.service';
-import { ExerciseDTOPaginatedResults, TargetArea } from '../api';
+import { PaginatedResultsOfExerciseDTO, TargetArea } from '../api';
 import { type Mocked } from 'vitest';
 
 //We're testing an abstract base class, so let's create a class here that extends it
@@ -32,7 +32,7 @@ describe('ExerciseListBaseComponent', () => {
 
   beforeEach(async () => {
     const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{})),
+      getAll: vi.fn().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{})),
       getTargetAreas: vi.fn().mockImplementation(() => {
         const targetAreas = new Array<TargetArea>();
         targetAreas.push(<TargetArea>{ id: 1, name: "Chest", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });

@@ -3,7 +3,7 @@ import { WorkoutHistoryComponent } from './workout-history.component';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { RouterLink, RouterModule } from '@angular/router';
-import { ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
+import { PaginatedResultsOfExecutedWorkoutSummaryDTO } from '../../api';
 import { of } from 'rxjs';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
@@ -17,7 +17,7 @@ describe('WorkoutHistoryComponent', () => {
 
   beforeEach(async () => {
     const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getFilteredSubset: vi.fn().mockReturnValue(of(<ExecutedWorkoutSummaryDTOPaginatedResults>{ totalCount: 0, results: [] }))
+      getFilteredSubset: vi.fn().mockReturnValue(of(<PaginatedResultsOfExecutedWorkoutSummaryDTO>{ totalCount: 0, results: [] }))
     };
 
     await TestBed.configureTestingModule({
