@@ -11,7 +11,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Serilog;
 using Serilog.Extensions.Hosting;
 using System;
@@ -19,7 +18,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.Json.Nodes;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +31,6 @@ using WorkoutTracker.Domain.Resistances;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Repository;
-
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -67,16 +64,6 @@ builder.Services.AddControllers()
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-/*
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SupportNonNullableReferenceTypes();
-    c.UseAllOfToExtendReferenceSchemas();
-    c.SchemaFilter<RequireNonNullablePropertiesSchemaFilter>();
-    c.SchemaFilter<EnumVarNamesSchemaFilter>();
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "WorkoutTrackerApi", Version = "v1" });
-});
-*/
 
 builder.Services.AddLogging(loggingBuilder =>
 {
@@ -119,8 +106,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
     app.MapOpenApi();
 }
 
@@ -204,42 +189,6 @@ void SetupLogging(WebApplicationBuilder appBuilder)
     appBuilder.Host.UseSerilog();
 }
 
-/*
-public class RequireNonNullablePropertiesSchemaFilter : ISchemaFilter
-{
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
-    {
-        if (schema.Properties == null) return;
-
-        var notNullableProperties = schema.Properties
-            .Where(x => !x.Value.Nullable && !schema.Required.Contains(x.Key))
-            .ToList();
-
-        foreach (var property in notNullableProperties)
-        {
-            schema.Required.Add(property.Key);
-        }
-
-    }
-
-}
-
-public class EnumVarNamesSchemaFilter : ISchemaFilter
-{
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
-    {
-        if (!context.Type.IsEnum) return;
-
-        var names = Enum.GetNames(context.Type);
-        schema.Extensions["x-enum-varnames"] = new OpenApiArray()
-            .Concat(names.Select(n => new OpenApiString(n)))
-            .Cast<IOpenApiAny>()
-            .Aggregate(new OpenApiArray(), (arr, item) => { arr.Add(item); return arr; });
-    }
-}
-*/
-
-// IntIsNoStringSchemaTransformer.cs
 
 public class IntIsNoStringSchemaTransformer : IOpenApiSchemaTransformer
 {
