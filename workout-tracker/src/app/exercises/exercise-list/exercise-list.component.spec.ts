@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExerciseListComponent } from './exercise-list.component';
 import { ExerciseService } from '../_services/exercise.service';
-import { ExerciseDTOPaginatedResults, TargetArea } from '../../api';
+import { PaginatedResultsOfExerciseDTO, TargetArea } from '../../api';
 import { of } from 'rxjs';
 import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
@@ -16,7 +16,7 @@ describe('ExerciseListComponent', () => {
 
   beforeEach(async () => {
     const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn().mockReturnValue(of(<ExerciseDTOPaginatedResults>{ results: [], totalCount: 0 })),
+      getAll: vi.fn().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{ results: [], totalCount: 0 })),
       getTargetAreas: vi.fn().mockReturnValue(of([
         <TargetArea>{ id: 1, name: 'Chest' },
         <TargetArea>{ id: 2, name: 'Biceps' },

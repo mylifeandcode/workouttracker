@@ -32,7 +32,7 @@ namespace WorkoutTracker.Tests.Controllers
             //ASSERT
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
-            Assert.ReferenceEquals((response.Result as OkObjectResult).Value, exercise);
+            Assert.AreSame((response.Result as OkObjectResult).Value, exercise);
         }
 
         [TestMethod]
@@ -70,7 +70,7 @@ namespace WorkoutTracker.Tests.Controllers
             //ASSERT
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
-            Assert.ReferenceEquals((response.Result as OkObjectResult).Value, exercise);
+            Assert.AreSame(exercise, (response.Result as OkObjectResult).Value);
         }
 
         [TestMethod]
@@ -92,7 +92,7 @@ namespace WorkoutTracker.Tests.Controllers
             //ASSERT
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
-            Assert.ReferenceEquals((response.Result as OkObjectResult).Value, exercise);
+            Assert.AreSame(exercise, (response.Result as OkObjectResult).Value);
         }
 
         [TestMethod]

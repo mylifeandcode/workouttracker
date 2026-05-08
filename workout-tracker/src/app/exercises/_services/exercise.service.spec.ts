@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ExerciseService } from './exercise.service';
-import { Exercise, ExerciseDTOPaginatedResults } from '../../api';
+import { Exercise, PaginatedResultsOfExerciseDTO } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
@@ -65,7 +65,7 @@ describe('ExerciseService', () => {
   it('should retrieve exercises', async () => {
     //Testing with ViTest is a bit different than it had been with Jasmine/Karma.
     //Revised approach from the official Angular docs here: https://angular.dev/guide/http/testing#expecting-and-answering-requests
-    const expectedResults = <ExerciseDTOPaginatedResults>{ results: [], totalCount: 0 };
+    const expectedResults = <PaginatedResultsOfExerciseDTO>{ results: [], totalCount: 0 };
     const exercisesPromise = firstValueFrom(service.getAll(0, 10));
 
     const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10");
@@ -97,7 +97,7 @@ describe('ExerciseService', () => {
   });
 
   it('should retrieve exercises with the nameContains param', async () => {
-    const expectedResults = <ExerciseDTOPaginatedResults>{ results: [], totalCount: 0 };
+    const expectedResults = <PaginatedResultsOfExerciseDTO>{ results: [], totalCount: 0 };
     const exercisesPromise = firstValueFrom(service.getAll(0, 10, 'Press'));
 
     // ExerciseService should have made one request to GET exercises from expected URL
@@ -109,7 +109,7 @@ describe('ExerciseService', () => {
   });
 
   it('should retrieve exercises with the targetAreaContains param', async () => {
-    const expectedResults = <ExerciseDTOPaginatedResults>{ totalCount: 0, results: [] };
+    const expectedResults = <PaginatedResultsOfExerciseDTO>{ totalCount: 0, results: [] };
     const exercisesPromise = firstValueFrom(service.getAll(0, 10, null, ['Chest']));
 
     const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&hasTargetAreas=Chest");

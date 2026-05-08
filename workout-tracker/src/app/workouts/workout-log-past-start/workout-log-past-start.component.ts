@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveF
 import { Router } from '@angular/router';
 import { CustomValidators } from '../../core/_validators/custom-validators';
 import { finalize } from 'rxjs/operators';
-import { WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
+import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
 import { formatDate, NgClass } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
@@ -100,7 +100,7 @@ export class WorkoutLogPastStartComponent implements OnInit {
   private getUserWorkouts(): void {
     this._workoutService.getFilteredSubset(0, 500, true)
       .pipe(finalize(() => { this.gettingData.set(false); }))
-      .subscribe((result: WorkoutDTOPaginatedResults) => {
+      .subscribe((result: PaginatedResultsOfWorkoutDTO) => {
         this.workouts.set(result.results.sort((a, b) => a.name.localeCompare(b.name)));
       });
   }

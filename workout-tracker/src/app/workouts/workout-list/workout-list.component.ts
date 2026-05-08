@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
-import { WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
+import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { finalize } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
@@ -98,7 +98,7 @@ export class WorkoutListComponent {
     this._workoutSvc.getFilteredSubset(first, pageSize, filterByActiveOnly, sortAscending, nameFilter)
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
-        next: (results: WorkoutDTOPaginatedResults) => {
+        next: (results: PaginatedResultsOfWorkoutDTO) => {
           this.workouts.set(results.results);
           this.totalRecords.set(results.totalCount);
         },

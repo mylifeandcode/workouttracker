@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ApiBaseService } from '../../core/_services/api-base/api-base.service';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { ExecutedExerciseDTO, ExecutedWorkoutDTO, ExecutedWorkoutSummaryDTO, ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
+import { ExecutedExerciseDTO, ExecutedWorkoutDTO, ExecutedWorkoutSummaryDTO, PaginatedResultsOfExecutedWorkoutSummaryDTO } from '../../api';
 
 @Injectable({
   providedIn: 'root'
@@ -19,18 +19,18 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
    *
    * @param startingIndex The index of the record to start with.
    * @param pageSize The number of records to return. Could be less if on the final page.
-   * @returns An ExecutedWorkoutSummaryDTOPaginatedResults containing information about ExecutedWorkouts
+   * @returns An PaginatedResultsOfExecutedWorkoutSummaryDTO containing information about ExecutedWorkouts
    */
   public getFilteredSubset(
     startingIndex: number, 
     pageSize: number, 
     workoutNameContains: string | null = null,
-    onlyWithJournalNotes: boolean = false): Observable<ExecutedWorkoutSummaryDTOPaginatedResults> {
+    onlyWithJournalNotes: boolean = false): Observable<PaginatedResultsOfExecutedWorkoutSummaryDTO> {
 
-    const result: Observable<ExecutedWorkoutSummaryDTOPaginatedResults> =
-      this._http.get<ExecutedWorkoutSummaryDTOPaginatedResults>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}${workoutNameContains ? '&workoutNameContains=' + workoutNameContains : ''}&onlyWithJournalNotes=${onlyWithJournalNotes}`)
+    const result: Observable<PaginatedResultsOfExecutedWorkoutSummaryDTO> =
+      this._http.get<PaginatedResultsOfExecutedWorkoutSummaryDTO>(`${this._apiRoot}?firstRecord=${startingIndex}&pageSize=${pageSize}${workoutNameContains ? '&workoutNameContains=' + workoutNameContains : ''}&onlyWithJournalNotes=${onlyWithJournalNotes}`)
         .pipe(
-          map((response: ExecutedWorkoutSummaryDTOPaginatedResults) => {
+          map((response: PaginatedResultsOfExecutedWorkoutSummaryDTO) => {
             response.results = response.results?.map((ew: ExecutedWorkoutSummaryDTO) => {
               ew = this._dateService.convertDateRangeStringsToDates(ew);
               return ew;
@@ -48,13 +48,13 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
    * 
    * @param startingIndex The index of the record to start with.
    * @param pageSize The number of records to return. Could be less if on the final page.
-   * @returns An Observable<PaginatedResults<ExecutedWorkoutDTO>> containing information about planned ExecutedWorkouts
+   * @returns An Observable<PaginatedResultsOfExecutedWorkoutSummaryDTO> containing information about planned ExecutedWorkouts
    */
-  public getPlanned(startingIndex: number, pageSize: number): Observable<ExecutedWorkoutSummaryDTOPaginatedResults> {
+  public getPlanned(startingIndex: number, pageSize: number): Observable<PaginatedResultsOfExecutedWorkoutSummaryDTO> {
     return this._http
-      .get<ExecutedWorkoutSummaryDTOPaginatedResults>(`${this._apiRoot}/planned?firstRecord=${startingIndex}&pageSize=${pageSize}`)
+      .get<PaginatedResultsOfExecutedWorkoutSummaryDTO>(`${this._apiRoot}/planned?firstRecord=${startingIndex}&pageSize=${pageSize}`)
       .pipe(
-        map((response: ExecutedWorkoutSummaryDTOPaginatedResults) => {
+        map((response: PaginatedResultsOfExecutedWorkoutSummaryDTO) => {
           response.results = response.results?.map((ew: ExecutedWorkoutSummaryDTO) => {
             ew = this._dateService.convertDateRangeStringsToDates(ew);
             return ew;
@@ -72,7 +72,7 @@ export class ExecutedWorkoutService extends ApiBaseService<ExecutedWorkoutDTO> {
    */
   public getRecent(pageSize: number = 5): Observable<ExecutedWorkoutSummaryDTO[]> {
     return this.getFilteredSubset(0, pageSize)
-      .pipe(map((response: ExecutedWorkoutSummaryDTOPaginatedResults) => { 
+      .pipe(map((response: PaginatedResultsOfExecutedWorkoutSummaryDTO) => { 
         response.results?.forEach((ew: ExecutedWorkoutSummaryDTO) => this._dateService.convertDateRangeStringsToDates(ew));
         return response.results ?? []; 
       }));

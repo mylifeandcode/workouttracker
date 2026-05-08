@@ -5,7 +5,7 @@ import { WorkoutService } from '../_services/workout.service';
 import { of } from 'rxjs';
 import { ResistanceBandIndividual } from '../../shared/models/resistance-band-individual';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
-import { ExecutedExerciseDTO, ExecutedWorkoutDTO, ResistanceType, SetType, WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
+import { ExecutedExerciseDTO, ExecutedWorkoutDTO, ResistanceType, SetType, WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Output, input, provideZonelessChangeDetection } from '@angular/core';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
@@ -21,8 +21,8 @@ import { type Mocked } from 'vitest';
 const NUMBER_OF_DISTINCT_EXERCISES_IN_WORKOUT = 4;
 
 //HELPER FUNCTIONS ////////////////////////////////////////////////////////////
-const getFakeUserWorkouts = (): WorkoutDTOPaginatedResults => {
-  const workouts = <WorkoutDTOPaginatedResults>{};
+const getFakeUserWorkouts = (): PaginatedResultsOfWorkoutDTO => {
+  const workouts = <PaginatedResultsOfWorkoutDTO>{};
   workouts.totalCount = 3;
   for (let x = 0; x < workouts.totalCount; x++) {
     workouts.results = new Array<WorkoutDTO>();

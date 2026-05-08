@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { ExecutedWorkoutSummaryDTO, ExecutedWorkoutSummaryDTOPaginatedResults } from '../../api';
+import { ExecutedWorkoutSummaryDTO, PaginatedResultsOfExecutedWorkoutSummaryDTO } from '../../api';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -60,8 +60,8 @@ export class WorkoutSelectPlannedComponent {
       .getPlanned(first, this.pageSize())
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
-        //next: (plannedWorkoutInfo: PaginatedResults<ExecutedWorkoutSummaryDTO>) => {
-        next: (plannedWorkoutInfo: ExecutedWorkoutSummaryDTOPaginatedResults) => {
+        //next: (plannedWorkoutInfo: PaginatedResultsOfExecutedWorkoutSummaryDTO) => {
+        next: (plannedWorkoutInfo: PaginatedResultsOfExecutedWorkoutSummaryDTO) => {
           this.plannedWorkouts.set(plannedWorkoutInfo.results ?? []);
           this.totalCount.set(plannedWorkoutInfo.totalCount);
         }

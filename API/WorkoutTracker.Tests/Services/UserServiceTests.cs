@@ -12,6 +12,7 @@ using WorkoutTracker.Application.Users.Services;
 using WorkoutTracker.Domain.BaseClasses;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Repository;
+using Microsoft.OpenApi;
 
 namespace WorkoutTracker.Tests.Services
 {
@@ -156,42 +157,26 @@ namespace WorkoutTracker.Tests.Services
             _userRepositoryMock.Verify(x => x.Update(It.IsAny<User>(), true), Times.Once);
         }
 
-        [TestMethod, ExpectedException(typeof(ApplicationException))]
+        [TestMethod]
         public void Should_Throw_An_Exception_When_Trying_To_Change_Password_When_User_Not_Found()
         {
             //ARRANGE
             _userRepositoryMock.Setup(mock => mock.Get(It.IsAny<int>())).Returns((User)null);
 
-            //ACT
-            _sut.ChangePassword(2, "blah", "garrrrr!");
-
-            //ASSERT
-            //We never get here due to the exception. Maybe refactor someday to catch the exception and verify these.
-            /*
-            _userRepositoryMock.Verify(x => x.Get(2), Times.Once);
-            _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), "MySalt"), Times.Never);
-            _cryptoServiceMock.Verify(x => x.ComputeHash(It.IsAny<string>(), "MySalt"), Times.Never);
-            _userRepositoryMock.Verify(x => x.Update(It.IsAny<User>(), true), Times.Never);
-            */
+            //ACT & ASSERT
+            Assert.Throws<ApplicationException>(() =>
+                _sut.ChangePassword(2, "blah", "garrrrr!"));
         }
 
-        [TestMethod, ExpectedException(typeof(ApplicationException))]
+        [TestMethod]
         public void Should_Throw_An_Exception_When_Trying_To_Change_Password_When_Current_Password_Is_Not_A_Match()
         {
             //ARRANGE
             _cryptoServiceMock.Setup(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(false);
 
-            //ACT
-            _sut.ChangePassword(3, "heeeeey", "yoooouuuu");
-
-            //ASSERT
-            //We never get here due to the exception. Maybe refactor someday to catch the exception and verify these.
-            /*
-            _userRepositoryMock.Verify(x => x.Get(2), Times.Once);
-            _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), "MySalt"), Times.Never);
-            _cryptoServiceMock.Verify(x => x.ComputeHash(It.IsAny<string>(), "MySalt"), Times.Never);
-            _userRepositoryMock.Verify(x => x.Update(It.IsAny<User>(), true), Times.Never);
-            */
+            //ACT & ASSERT
+            Assert.Throws<ApplicationException>(() =>
+                _sut.ChangePassword(3, "heeeeey", "yoooouuuu"));
         }
 
         [TestMethod]

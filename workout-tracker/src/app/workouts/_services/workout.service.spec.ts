@@ -5,7 +5,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { WorkoutService } from './workout.service';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { Workout, WorkoutPlan, WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
+import { Workout, WorkoutPlan, WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { firstValueFrom } from 'rxjs';
 import { type Mocked } from 'vitest';
 
@@ -42,7 +42,7 @@ describe('WorkoutService', () => {
   });
 
   it('should get a filtered subset for workouts', async () => {
-    const expectedResults = <WorkoutDTOPaginatedResults>{};
+    const expectedResults = <PaginatedResultsOfWorkoutDTO>{};
     expectedResults.results = new Array<WorkoutDTO>(2);
     expectedResults.results.push(<WorkoutDTO>{});
     expectedResults.results.push(<WorkoutDTO>{});
@@ -59,7 +59,7 @@ describe('WorkoutService', () => {
   });
 
   it('should encode nameContains when getting filtered subset', async () => {
-    const expectedResults = <WorkoutDTOPaginatedResults>{};
+    const expectedResults = <PaginatedResultsOfWorkoutDTO>{};
     expectedResults.results = [];
     expectedResults.totalCount = 0;
 

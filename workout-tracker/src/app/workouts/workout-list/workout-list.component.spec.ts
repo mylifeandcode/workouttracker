@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
-import { WorkoutDTOPaginatedResults } from '../../api';
+import { PaginatedResultsOfWorkoutDTO } from '../../api';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { type Mocked } from 'vitest';
 
@@ -16,7 +16,7 @@ describe('WorkoutListComponent', () => {
 
   beforeEach(async () => {
     const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getFilteredSubset: vi.fn().mockReturnValue(of(<WorkoutDTOPaginatedResults>{})),
+      getFilteredSubset: vi.fn().mockReturnValue(of(<PaginatedResultsOfWorkoutDTO>{})),
       retire: vi.fn().mockReturnValue(of(new HttpResponse<void>())),
       reactivate: vi.fn().mockReturnValue(of(new HttpResponse<void>()))
     };

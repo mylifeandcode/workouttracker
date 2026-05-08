@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { of } from 'rxjs';
-import { WorkoutDTO, WorkoutDTOPaginatedResults } from '../../api';
+import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
 
 import { WorkoutSelectComponent } from './workout-select.component';
@@ -17,7 +17,7 @@ describe('WorkoutSelectComponent', () => {
   beforeEach(async () => {
     const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
       getFilteredSubset: vi.fn().mockImplementation(() => {
-        const fakeResponse = <WorkoutDTOPaginatedResults>{};
+        const fakeResponse = <PaginatedResultsOfWorkoutDTO>{};
         fakeResponse.results = [];
         fakeResponse.results.push(<WorkoutDTO>{});
         fakeResponse.results[0].name = "Workout 1";
