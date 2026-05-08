@@ -89,9 +89,9 @@ describe('WorkoutEditComponent', () => {
         {
           provide: WorkoutService,
           useValue: <Partial<Mocked<WorkoutService>>>{
-            getById: vi.fn().mockReturnValue(of(getTestWorkout())),
-            add: vi.fn().mockReturnValue(of(<Workout>{})),
-            update: vi.fn().mockReturnValue(of(<Workout>{}))
+            getById: vi.fn<WorkoutService['getById']>().mockReturnValue(of(getTestWorkout())),
+            add: vi.fn<WorkoutService['add']>().mockReturnValue(of(<Workout>{})),
+            update: vi.fn<WorkoutService['update']>().mockReturnValue(of(<Workout>{}))
           }
         },
         provideZonelessChangeDetection()

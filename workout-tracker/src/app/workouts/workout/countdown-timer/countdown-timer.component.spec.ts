@@ -14,7 +14,7 @@ describe('CountdownTimerComponent', () => {
 
     beforeEach(async () => {
         const SoundServiceMock: Partial<Mocked<SoundService>> = {
-            playSound: vi.fn()
+            playSound: vi.fn<SoundService['playSound']>()
         };
 
         await TestBed.configureTestingModule({

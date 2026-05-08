@@ -16,9 +16,9 @@ describe('WorkoutListComponent', () => {
 
   beforeEach(async () => {
     const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getFilteredSubset: vi.fn().mockReturnValue(of(<PaginatedResultsOfWorkoutDTO>{})),
-      retire: vi.fn().mockReturnValue(of(new HttpResponse<void>())),
-      reactivate: vi.fn().mockReturnValue(of(new HttpResponse<void>()))
+      getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>().mockReturnValue(of(<PaginatedResultsOfWorkoutDTO>{})),
+      retire: vi.fn<WorkoutService['retire']>().mockReturnValue(of(new HttpResponse<void>())),
+      reactivate: vi.fn<WorkoutService['reactivate']>().mockReturnValue(of(new HttpResponse<void>()))
     };
 
     await TestBed.configureTestingModule({

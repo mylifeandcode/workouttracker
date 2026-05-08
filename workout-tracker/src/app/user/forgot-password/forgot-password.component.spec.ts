@@ -14,7 +14,7 @@ describe('ForgotPasswordComponent', () => {
     beforeEach(async () => {
         const AuthServiceMock: Partial<Mocked<AuthService>> = {};
         const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-            get: vi.fn().mockReturnValue(true)
+            get: vi.fn<ConfigService['get']>().mockReturnValue(true)
         };
 
         await TestBed.configureTestingModule({

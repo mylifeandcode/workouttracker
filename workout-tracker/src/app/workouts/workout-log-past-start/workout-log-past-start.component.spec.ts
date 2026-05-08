@@ -29,10 +29,10 @@ describe('WorkoutLogPastStartComponent', () => {
 
   beforeEach(async () => {
     const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getFilteredSubset: vi.fn().mockReturnValue(of(getLogPastStartWorkouts()))
+      getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>().mockReturnValue(of(getLogPastStartWorkouts()))
     };
     const RouterMock: Partial<Mocked<Router>> = {
-      navigate: vi.fn().mockReturnValue(Promise.resolve(true))
+      navigate: vi.fn<Router['navigate']>().mockReturnValue(Promise.resolve(true))
     };
 
     await TestBed.configureTestingModule({

@@ -14,7 +14,7 @@ describe('UserIsAdminGuard', () => {
       get isUserAdmin() { return true; }
     };
     const RouterMock: Partial<Mocked<Router>> = {
-      navigate: vi.fn().mockReturnValue(Promise.resolve(true))
+      navigate: vi.fn<Router['navigate']>().mockReturnValue(Promise.resolve(true))
     };
 
     TestBed.configureTestingModule({

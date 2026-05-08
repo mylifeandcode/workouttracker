@@ -123,18 +123,18 @@ describe('WorkoutComponent', () => {
 
   beforeEach(async () => {
     const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getFilteredSubset: vi.fn().mockReturnValue(of(getFakeUserWorkouts()))
+      getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>().mockReturnValue(of(getFakeUserWorkouts()))
     };
 
     const ResistanceBandServiceMock: Partial<Mocked<ResistanceBandService>> = {
-      getAllIndividualBands: vi.fn().mockReturnValue(of(getResistanceBands()))
+      getAllIndividualBands: vi.fn<ResistanceBandService['getAllIndividualBands']>().mockReturnValue(of(getResistanceBands()))
     };
 
     const ExecutedWorkoutServiceMock: Partial<Mocked<ExecutedWorkoutService>> = {
       //getNew = jasmine.createSpy('getNew').and.returnValue(of(getFakeExecutedWorkout()));
-      add: vi.fn().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout)),
-      getById: vi.fn().mockReturnValue(of(getFakeExecutedWorkout())),
-      groupExecutedExercises: vi.fn().mockImplementation((exercises: ExecutedExerciseDTO[]) => {
+      add: vi.fn<ExecutedWorkoutService['add']>().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout)),
+      getById: vi.fn<ExecutedWorkoutService['getById']>().mockReturnValue(of(getFakeExecutedWorkout())),
+      groupExecutedExercises: vi.fn<ExecutedWorkoutService['groupExecutedExercises']>().mockImplementation((exercises: ExecutedExerciseDTO[]) => {
         const sortedExercises: ExecutedExerciseDTO[] = exercises
           .sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
 
@@ -149,14 +149,14 @@ describe('WorkoutComponent', () => {
 
         return groupedExercises;
       }),
-      update: vi.fn().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout))
+      update: vi.fn<ExecutedWorkoutService['update']>().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout))
     };
 
     const NzMessageServiceMock: Partial<Mocked<NzMessageService>> = {
-      success: vi.fn(),
-      info: vi.fn(),
-      error: vi.fn(),
-      remove: vi.fn()
+      success: vi.fn<NzMessageService['success']>(),
+      info: vi.fn<NzMessageService['info']>(),
+      error: vi.fn<NzMessageService['error']>(),
+      remove: vi.fn<NzMessageService['remove']>()
     };
 
     await TestBed.configureTestingModule({

@@ -17,7 +17,7 @@ describe('WorkoutHistoryComponent', () => {
 
   beforeEach(async () => {
     const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getFilteredSubset: vi.fn().mockReturnValue(of(<PaginatedResultsOfExecutedWorkoutSummaryDTO>{ totalCount: 0, results: [] }))
+      getFilteredSubset: vi.fn<ExecutedWorkoutService['getFilteredSubset']>().mockReturnValue(of(<PaginatedResultsOfExecutedWorkoutSummaryDTO>{ totalCount: 0, results: [] }))
     };
 
     await TestBed.configureTestingModule({

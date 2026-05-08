@@ -16,8 +16,8 @@ describe('ExerciseListComponent', () => {
 
   beforeEach(async () => {
     const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{ results: [], totalCount: 0 })),
-      getTargetAreas: vi.fn().mockReturnValue(of([
+      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{ results: [], totalCount: 0 })),
+      getTargetAreas: vi.fn<ExerciseService['getTargetAreas']>().mockReturnValue(of([
         <TargetArea>{ id: 1, name: 'Chest' },
         <TargetArea>{ id: 2, name: 'Biceps' },
         <TargetArea>{ id: 3, name: 'Triceps' }

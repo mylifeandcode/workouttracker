@@ -20,7 +20,7 @@ describe('NavComponent', () => {
     beforeEach(async () => {
         const AuthServiceMock = {
             currentUserName: signal<string | null>('someuser'),
-            logOut: vi.fn()
+            logOut: vi.fn<AuthService['logOut']>()
         } satisfies Partial<AuthService>;
 
         await TestBed.configureTestingModule({

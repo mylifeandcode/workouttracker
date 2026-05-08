@@ -31,7 +31,7 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn().mockImplementation((configKey: string) => {
+      get: vi.fn<ConfigService['get']>().mockImplementation((configKey: string) => {
         if (configKey == "apiRoot")
           return "http://localhost:5600/";
         if (configKey == "loginWithUserSelect")
@@ -41,9 +41,9 @@ describe('AuthService', () => {
       })
     };
     const LocalStorageServiceMock: Partial<Mocked<LocalStorageService>> = {
-      set: vi.fn(),
-      remove: vi.fn(),
-      get: vi.fn().mockImplementation((key: string) => {
+      set: vi.fn<LocalStorageService['set']>(),
+      remove: vi.fn<LocalStorageService['remove']>(),
+      get: vi.fn<LocalStorageService['get']>().mockImplementation((key: string) => {
         if (key === 'WorkoutTrackerToken') return TEST_ACCESS_TOKEN;
         if (key === 'WorkoutTrackerRefreshToken') return 'testRefreshToken';
         return null;

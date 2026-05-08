@@ -15,7 +15,7 @@ describe('ResetPasswordComponent', () => {
 
     beforeEach(async () => {
         const AuthServiceMock: Partial<Mocked<AuthService>> = {
-            validatePasswordResetCode: vi.fn().mockReturnValue(of(true))
+            validatePasswordResetCode: vi.fn<AuthService['validatePasswordResetCode']>().mockReturnValue(of(true))
         };
 
         await TestBed.configureTestingModule({

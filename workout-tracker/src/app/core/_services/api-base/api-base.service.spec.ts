@@ -35,7 +35,7 @@ describe('ApiBaseService', () => {
 
   beforeEach(() => {
     const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn().mockReturnValue(API_ROOT)
+      get: vi.fn<ConfigService['get']>().mockReturnValue(API_ROOT)
     };
 
     TestBed.configureTestingModule({

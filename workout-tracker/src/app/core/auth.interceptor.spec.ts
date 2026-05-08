@@ -19,8 +19,8 @@ describe('AuthInterceptor', () => {
       token: "someAccessToken",
       isRefreshing: false,
       refreshTokenSubject: new BehaviorSubject<string | null>(null),
-      refreshAccessToken: vi.fn().mockReturnValue(of(true)),
-      logOut: vi.fn()
+      refreshAccessToken: vi.fn<AuthService['refreshAccessToken']>().mockReturnValue(of(true)),
+      logOut: vi.fn<AuthService['logOut']>()
     };
 
     TestBed.configureTestingModule({

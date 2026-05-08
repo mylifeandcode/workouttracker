@@ -19,7 +19,7 @@ describe('UserService', () => {
 
   beforeEach(() => {
     const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn().mockReturnValue("http://localhost:5600/api/")
+      get: vi.fn<ConfigService['get']>().mockReturnValue("http://localhost:5600/api/")
     };
 
     TestBed.configureTestingModule({

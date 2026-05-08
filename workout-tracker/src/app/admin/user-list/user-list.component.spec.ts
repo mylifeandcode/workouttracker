@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 
 import { UserListComponent } from './user-list.component';
 import { UserService } from '../../core/_services/user/user.service';
@@ -20,8 +21,8 @@ describe('UserListComponent', () => {
       <User>{ id: 3, name: 'Paul' }
     ];
     const UserServiceMock: Partial<Mocked<UserService>> = {
-      getAll: vi.fn().mockReturnValue(of(fakeUsers)),
-      deleteById: vi.fn().mockReturnValue(of(null)), //TOOD: Revisit
+      getAll: vi.fn<UserService['getAll']>().mockReturnValue(of(fakeUsers)),
+      deleteById: vi.fn<UserService['deleteById']>().mockReturnValue(of(new HttpResponse<void>())), //TOOD: Revisit
       all$: of(fakeUsers)
     };
 

@@ -26,7 +26,7 @@ describe('UserAddComponent', () => {
 
   beforeEach(async () => {
     const UserServiceMock: Partial<Mocked<UserService>> = {
-      addNew: vi.fn().mockReturnValue(of(<User>{}))
+      addNew: vi.fn<UserService['addNew']>().mockReturnValue(of(<User>{}))
     };
     const AuthServiceMock: Partial<Mocked<AuthService>> = {
       get isUserLoggedIn() { return true; }

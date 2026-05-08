@@ -63,17 +63,17 @@ describe('ExerciseEditComponent', () => {
     resistanceTypes.set(1, 'Resistance Band');
 
     const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getTargetAreas: vi.fn().mockImplementation(() => {
+      getTargetAreas: vi.fn<ExerciseService['getTargetAreas']>().mockImplementation(() => {
         const targetAreas = new Array<TargetArea>();
         targetAreas.push(<TargetArea>{ id: 1, name: "Chest", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
         targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
         targetAreas.push(<TargetArea>{ id: 3, name: "Triceps", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
         return of(targetAreas);
       }),
-      getById: vi.fn().mockReturnValue(of(EXERCISE)),
-      getResistanceTypes: vi.fn().mockReturnValue(of(resistanceTypes)),
-      add: vi.fn().mockImplementation((exercise: Exercise) => of(exercise)),
-      update: vi.fn().mockImplementation((exercise: Exercise) => of(exercise))
+      getById: vi.fn<ExerciseService['getById']>().mockReturnValue(of(EXERCISE)),
+      getResistanceTypes: vi.fn<ExerciseService['getResistanceTypes']>().mockReturnValue(of(resistanceTypes)),
+      add: vi.fn<ExerciseService['add']>().mockImplementation((exercise: Exercise) => of(exercise)),
+      update: vi.fn<ExerciseService['update']>().mockImplementation((exercise: Exercise) => of(exercise))
     };
 
     TestBed.configureTestingModule({

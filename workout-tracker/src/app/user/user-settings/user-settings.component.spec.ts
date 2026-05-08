@@ -23,7 +23,7 @@ describe('UserSettingsComponent', () => {
     };
 
     const UserServiceMock: Partial<Mocked<UserService>> = {
-      getById: vi.fn().mockImplementation(() => {
+      getById: vi.fn<UserService['getById']>().mockImplementation(() => {
         const user = <User>{};
         user.settings = <UserSettings>{};
         user.settings.repSettings = new Array<UserMinMaxReps>();
@@ -37,11 +37,11 @@ describe('UserSettingsComponent', () => {
 
         return of(user);
       }),
-      update: vi.fn().mockImplementation((user: User) => of(user))
+      update: vi.fn<UserService['update']>().mockImplementation((user: User) => of(user))
     };
 
     const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
-      success: vi.fn()
+      success: vi.fn<NzMessageService['success']>()
     };
 
     await TestBed.configureTestingModule({

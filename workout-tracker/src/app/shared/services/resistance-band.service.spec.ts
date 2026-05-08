@@ -13,7 +13,7 @@ describe('ResistanceBandServiceService', () => {
 
   beforeEach(() => {
     const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn().mockReturnValue('http://someUrl/api/')
+      get: vi.fn<ConfigService['get']>().mockReturnValue('http://someUrl/api/')
     };
 
     TestBed.configureTestingModule({

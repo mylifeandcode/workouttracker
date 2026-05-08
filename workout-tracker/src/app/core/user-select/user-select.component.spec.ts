@@ -26,7 +26,7 @@ describe('UserSelectComponent', () => {
       all$: of(new Array<User>())
     };
     const AuthServiceMock: Partial<Mocked<AuthService>> = {
-      logIn: vi.fn().mockReturnValue(of(true)),
+      logIn: vi.fn<AuthService['logIn']>().mockReturnValue(of(true)),
       get loginRoute() { return "user-select"; }
     };
 

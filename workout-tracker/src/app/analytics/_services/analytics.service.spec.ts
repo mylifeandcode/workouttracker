@@ -16,7 +16,7 @@ describe('AnalyticsService', () => {
 
   beforeEach(() => {
     const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn().mockReturnValue('http://localhost:5600/api/')
+      get: vi.fn<ConfigService['get']>().mockReturnValue('http://localhost:5600/api/')
     };
     const DateSerializationServiceMock: Partial<Mocked<DateSerializationService>> = {
       convertDateRangeStringsToDates: vi.fn().mockImplementation((obj: ExecutedWorkoutMetrics) => {

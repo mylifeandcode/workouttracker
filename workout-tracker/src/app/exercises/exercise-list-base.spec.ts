@@ -32,8 +32,8 @@ describe('ExerciseListBaseComponent', () => {
 
   beforeEach(async () => {
     const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{})),
-      getTargetAreas: vi.fn().mockImplementation(() => {
+      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{})),
+      getTargetAreas: vi.fn<ExerciseService['getTargetAreas']>().mockImplementation(() => {
         const targetAreas = new Array<TargetArea>();
         targetAreas.push(<TargetArea>{ id: 1, name: "Chest", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
         targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });

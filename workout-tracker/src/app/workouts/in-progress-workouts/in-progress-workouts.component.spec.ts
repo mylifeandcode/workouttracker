@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { ExecutedWorkoutDTO } from '../../api';
+import { ExecutedWorkoutSummaryDTO } from '../../api';
 
 import { InProgressWorkoutsComponent } from './in-progress-workouts.component';
 import { provideRouter } from '@angular/router';
@@ -14,25 +14,25 @@ describe('InProgressWorkoutsComponent', () => {
 
   beforeEach(async () => {
     const MockExeceutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getInProgress: vi.fn().mockImplementation(() => {
-        const workouts: ExecutedWorkoutDTO[] = [];
-        workouts.push(...[<ExecutedWorkoutDTO>{
+      getInProgress: vi.fn<ExecutedWorkoutService['getInProgress']>().mockImplementation(() => {
+        const workouts: ExecutedWorkoutSummaryDTO[] = [];
+        workouts.push(...[<ExecutedWorkoutSummaryDTO>{
           id: 'guid-56',
           name: 'Chest and Arms',
-          workoutId: 'some-guid-56',
+          workoutPublicId: 'some-guid-56',
           startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
-          journal: null, rating: 0, exercises: [],
-          createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
-          modifiedByUserId: 1, modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
+          journal: null,
+          createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
+          modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
         },
-        <ExecutedWorkoutDTO>{
-          id: 'guid-56',
+        <ExecutedWorkoutSummaryDTO>{
+          id: 'guid-57',
           name: 'Chest and Arms',
-          workoutId: 'some-guid-56',
+          workoutPublicId: 'some-guid-56',
           startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
-          journal: null, rating: 0, exercises: [],
-          createdByUserId: 1, createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
-          modifiedByUserId: 1, modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
+          journal: null,
+          createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
+          modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
         }]);
 
         return of(workouts);

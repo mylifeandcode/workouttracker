@@ -25,9 +25,9 @@ describe('UserEditComponent', () => {
 
   beforeEach(async () => {
     const UserServiceMock: Partial<Mocked<UserService>> = {
-      getById: vi.fn().mockReturnValue(of(<User>{})),
+      getById: vi.fn<UserService['getById']>().mockReturnValue(of(<User>{})),
       add: vi.fn().mockReturnValue(of(<User>{})),
-      update: vi.fn().mockReturnValue(of(<User>{}))
+      update: vi.fn<UserService['update']>().mockReturnValue(of(<User>{}))
     };
     const AuthServiceMock: Partial<Mocked<AuthService>> = {};
 
@@ -97,7 +97,7 @@ describe('UserEditComponent', () => {
 
   it('should populate error message when error occurs while saving user info', () => {
     //ARRANGE
-    userService.update = vi.fn().mockReturnValue(throwError(() => new Error("Something bad happened.")));
+    userService.update = vi.fn<UserService['update']>().mockReturnValue(throwError(() => new Error("Something bad happened.")));
     component.userEditForm.controls.id.setValue(100);
     component.userEditForm.controls.name.setValue('Doug');
 
@@ -112,7 +112,7 @@ describe('UserEditComponent', () => {
   it('should populate error message when user does not have permissions to save user info', () => {
     //ARRANGE
     const error = { status: 403 };
-    userService.update = vi.fn().mockReturnValue(throwError(() => error));
+    userService.update = vi.fn<UserService['update']>().mockReturnValue(throwError(() => error));
     component.userEditForm.controls.id.setValue(100);
     component.userEditForm.controls.name.setValue('Doug');
 

@@ -18,7 +18,7 @@ describe('WorkoutSelectPlannedComponent', () => {
 
   beforeEach(async () => {
     const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getPlanned: vi.fn().mockImplementation(() => {
+      getPlanned: vi.fn<ExecutedWorkoutService['getPlanned']>().mockImplementation(() => {
         const response = <PaginatedResultsOfExecutedWorkoutSummaryDTO>{};
         response.results = new Array<ExecutedWorkoutSummaryDTO>();
         response.results.push(<ExecutedWorkoutSummaryDTO>{});
@@ -26,11 +26,11 @@ describe('WorkoutSelectPlannedComponent', () => {
         response.totalCount = 2;
         return of(response);
       }),
-      deletePlanned: vi.fn().mockReturnValue(of(new HttpResponse<void>()))
+      deletePlanned: vi.fn<ExecutedWorkoutService['deletePlanned']>().mockReturnValue(of(new HttpResponse<void>()))
     };
 
     const MockNzMessageService: Partial<Mocked<NzMessageService>> = {
-      success: vi.fn()
+      success: vi.fn<NzMessageService['success']>()
     };
 
     const MockNzModalService: Partial<Mocked<NzModalService>> = {

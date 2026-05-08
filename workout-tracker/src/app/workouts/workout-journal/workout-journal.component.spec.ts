@@ -13,7 +13,7 @@ describe('WorkoutJournalComponent', () => {
 
   beforeEach(async () => {
     const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getFilteredSubset: vi.fn().mockReturnValue(of(<PaginatedResultsOfExecutedWorkoutSummaryDTO>{}))
+      getFilteredSubset: vi.fn<ExecutedWorkoutService['getFilteredSubset']>().mockReturnValue(of(<PaginatedResultsOfExecutedWorkoutSummaryDTO>{}))
     };
 
     await TestBed.configureTestingModule({

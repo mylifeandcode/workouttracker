@@ -20,8 +20,8 @@ describe('WorkoutProgressComponent', () => {
 
   beforeEach(async () => {
     const AnalyticsServiceMock: Partial<Mocked<AnalyticsService>> = {
-      getExerciseChartData: vi.fn().mockReturnValue(of(new AnalyticsChartData())),
-      getExecutedWorkoutMetrics: vi.fn().mockImplementation(() => {
+      getExerciseChartData: vi.fn<AnalyticsService['getExerciseChartData']>().mockReturnValue(new AnalyticsChartData()),
+      getExecutedWorkoutMetrics: vi.fn<AnalyticsService['getExecutedWorkoutMetrics']>().mockImplementation(() => {
         const metrics = new Array<ExecutedWorkoutMetrics>();
         const exercise1Metrics = <ExecutedExerciseMetrics>{};
         exercise1Metrics.name = "Exercise 1";
@@ -40,7 +40,7 @@ describe('WorkoutProgressComponent', () => {
       })
     };
     const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getFilteredSubset: vi.fn().mockImplementation(() => {
+      getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>().mockImplementation(() => {
         const result = <PaginatedResultsOfWorkoutDTO>{};
         result.results = [];
 

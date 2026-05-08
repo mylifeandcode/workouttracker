@@ -9,7 +9,7 @@ describe('ResistanceAmountPipe', () => {
 
     beforeEach(() => {
         const MockConfigService: Partial<Mocked<ConfigService>> = {
-            get: vi.fn().mockReturnValue('lb')
+            get: vi.fn<ConfigService['get']>().mockReturnValue('lb')
         };
 
         TestBed.configureTestingModule({

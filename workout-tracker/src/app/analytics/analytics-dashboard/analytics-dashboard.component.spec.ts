@@ -14,7 +14,7 @@ describe('AnalyticsDashboardComponent', () => {
 
   beforeEach(async () => {
     const AnalyticsServiceMock: Partial<Mocked<AnalyticsService>> = {
-      getExecutedWorkoutsSummary: vi.fn().mockReturnValue(of(<ExecutedWorkoutsSummary>{
+      getExecutedWorkoutsSummary: vi.fn<AnalyticsService['getExecutedWorkoutsSummary']>().mockReturnValue(of(<ExecutedWorkoutsSummary>{
         totalLoggedWorkouts: 12,
         firstLoggedWorkoutDateTime: new Date(2022, 4, 5),
         targetAreasWithWorkoutCounts: <{ [key: string]: number }>{

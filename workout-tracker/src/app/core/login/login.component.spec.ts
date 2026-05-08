@@ -17,7 +17,7 @@ describe('LoginComponent', () => {
     beforeEach(async () => {
         const AuthServiceMock: Partial<Mocked<AuthService>> = {
             get loginRoute() { return "login"; },
-            logIn: vi.fn().mockReturnValue(of(true))
+            logIn: vi.fn<AuthService['logIn']>().mockReturnValue(of(true))
         };
 
         await TestBed.configureTestingModule({
@@ -79,7 +79,7 @@ describe('LoginComponent', () => {
         //ARRANGE
         //Overide default mock implementation
         const authService = TestBed.inject(AuthService);
-        authService.logIn = vi.fn().mockReturnValue(of(false));
+        authService.logIn = vi.fn<AuthService['logIn']>().mockReturnValue(of(false));
 
         //ACT
         component.login();

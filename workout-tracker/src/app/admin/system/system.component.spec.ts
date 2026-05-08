@@ -14,10 +14,10 @@ describe('SystemComponent', () => {
 
   beforeEach(async () => {
     const SoundServiceMock: Partial<Mocked<SoundService>> = {
-      playSound: vi.fn()
+      playSound: vi.fn<SoundService['playSound']>()
     };
     const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
-      success: vi.fn()
+      success: vi.fn<NzMessageService['success']>()
     };
 
     await TestBed.configureTestingModule({

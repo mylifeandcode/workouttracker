@@ -61,8 +61,8 @@ describe('WorkoutViewComponent', () => {
         {
           provide: ExecutedWorkoutService,
           useValue: <Partial<Mocked<ExecutedWorkoutService>>>{
-            getById: vi.fn().mockReturnValue(of(getFakeExecutedWorkoutForView())),
-            groupExecutedExercises: vi.fn().mockImplementation((exercises: ExecutedExerciseDTO[]) => {
+            getById: vi.fn<ExecutedWorkoutService['getById']>().mockReturnValue(of(getFakeExecutedWorkoutForView())),
+            groupExecutedExercises: vi.fn<ExecutedWorkoutService['groupExecutedExercises']>().mockImplementation((exercises: ExecutedExerciseDTO[]) => {
               const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
 
               const groupedExercises = sortedExercises.reduce((groups, exercise) => {

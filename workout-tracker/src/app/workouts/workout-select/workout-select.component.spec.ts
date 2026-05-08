@@ -16,7 +16,7 @@ describe('WorkoutSelectComponent', () => {
 
   beforeEach(async () => {
     const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getFilteredSubset: vi.fn().mockImplementation(() => {
+      getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>().mockImplementation(() => {
         const fakeResponse = <PaginatedResultsOfWorkoutDTO>{};
         fakeResponse.results = [];
         fakeResponse.results.push(<WorkoutDTO>{});

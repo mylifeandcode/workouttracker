@@ -15,8 +15,8 @@ describe('ExerciseListMiniComponent', () => {
 
   beforeEach(async () => {
     const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{})),
-      getTargetAreas: vi.fn().mockReturnValue(of(new Array<TargetArea>()))
+      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{})),
+      getTargetAreas: vi.fn<ExerciseService['getTargetAreas']>().mockReturnValue(of(new Array<TargetArea>()))
     };
 
     await TestBed.configureTestingModule({

@@ -28,13 +28,13 @@ describe('ResistanceBandsComponent', () => {
 
   beforeEach(async () => {
     const ResistanceBandServiceMock: Partial<Mocked<ResistanceBandService>> = {
-      getAll: vi.fn().mockReturnValue(of(getResistanceBandInventory())),
-      add: vi.fn().mockReturnValue(of(<ResistanceBand>{})),
-      update: vi.fn().mockReturnValue(of(<ResistanceBand>{})),
-      delete: vi.fn().mockReturnValue(of(new HttpResponse<string>()))
+      getAll: vi.fn<ResistanceBandService['getAll']>().mockReturnValue(of(getResistanceBandInventory())),
+      add: vi.fn<ResistanceBandService['add']>().mockReturnValue(of(<ResistanceBand>{})),
+      update: vi.fn<ResistanceBandService['update']>().mockReturnValue(of(<ResistanceBand>{})),
+      delete: vi.fn<ResistanceBandService['delete']>().mockReturnValue(of(new HttpResponse<void>()))
     };
     const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
-      create: vi.fn().mockName('NzMessageService.create')
+      create: vi.fn<NzMessageService['create']>().mockName('NzMessageService.create')
     };
     const ModalServiceMock: Partial<Mocked<NzModalService>> = {
       confirm: vi.fn().mockImplementation((options) => {

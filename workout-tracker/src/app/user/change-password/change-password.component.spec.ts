@@ -15,7 +15,7 @@ describe('ChangePasswordComponent', () => {
     beforeEach(async () => {
         const AuthServiceMock: Partial<Mocked<AuthService>> = {
             // Apparently, this is the way to represent a void Observable.
-            changePassword: vi.fn().mockReturnValue(of(undefined))
+            changePassword: vi.fn<AuthService['changePassword']>().mockReturnValue(of(undefined))
         };
 
         await TestBed.configureTestingModule({

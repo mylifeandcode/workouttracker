@@ -39,14 +39,14 @@ describe('WorkoutPlanComponent', () => {
 
   beforeEach(async () => {
     const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getNewPlan: vi.fn().mockReturnValue(of(<WorkoutPlan>{ exercises: Array<ExercisePlan>() })),
-      submitPlanForPast: vi.fn().mockReturnValue(of(12)),
-      submitPlan: vi.fn().mockReturnValue(of(5)),
-      submitPlanForLater: vi.fn().mockReturnValue(of(32))
+      getNewPlan: vi.fn<WorkoutService['getNewPlan']>().mockReturnValue(of(<WorkoutPlan>{ exercises: Array<ExercisePlan>() })),
+      submitPlanForPast: vi.fn<WorkoutService['submitPlanForPast']>().mockReturnValue(of('12')),
+      submitPlan: vi.fn<WorkoutService['submitPlan']>().mockReturnValue(of('5')),
+      submitPlanForLater: vi.fn<WorkoutService['submitPlanForLater']>().mockReturnValue(of('32'))
     };
 
     const MockResistanceBandService: Partial<Mocked<ResistanceBandService>> = {
-      getAllIndividualBands: vi.fn().mockImplementation(() => {
+      getAllIndividualBands: vi.fn<ResistanceBandService['getAllIndividualBands']>().mockImplementation(() => {
         const bands: ResistanceBandIndividual[] = [];
         bands.push(new ResistanceBandIndividual("Orange", 30));
         bands.push(new ResistanceBandIndividual("Purple", 23));

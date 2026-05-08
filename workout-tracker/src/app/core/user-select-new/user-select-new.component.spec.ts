@@ -24,7 +24,7 @@ describe('UserSelectNewComponent', () => {
 
   beforeEach(async () => {
     const UserServiceMock: Partial<Mocked<UserService>> = {
-      addNew: vi.fn().mockReturnValue(of(<User>{}))
+      addNew: vi.fn<UserService['addNew']>().mockReturnValue(of(<User>{}))
     };
 
     await TestBed.configureTestingModule({

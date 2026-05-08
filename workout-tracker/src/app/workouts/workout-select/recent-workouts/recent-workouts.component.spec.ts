@@ -28,7 +28,7 @@ describe('RecentWorkoutsComponent', () => {
 
   beforeEach(async () => {
     const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getRecent: vi.fn().mockReturnValue(of(new Array<ExecutedWorkoutSummaryDTO>()))
+      getRecent: vi.fn<ExecutedWorkoutService['getRecent']>().mockReturnValue(of(new Array<ExecutedWorkoutSummaryDTO>()))
     };
     const MockWorkoutService: Partial<Mocked<WorkoutService>> = {};
     const MockRouter: Partial<Mocked<Router>> = {};

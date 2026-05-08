@@ -18,7 +18,7 @@ describe('ExecutedWorkoutService', () => {
 
   beforeEach(() => {
     const MockConfigService: Partial<Mocked<ConfigService>> = {
-      get: vi.fn().mockReturnValue(API_ROOT_URL)
+      get: vi.fn<ConfigService['get']>().mockReturnValue(API_ROOT_URL)
     };
 
     const MockDateSerializationService: Partial<Mocked<DateSerializationService>> = {
