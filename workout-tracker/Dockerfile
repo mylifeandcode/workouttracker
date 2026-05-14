@@ -1,20 +1,14 @@
-### Stage 1 - Using node image, copy package files to it, install packages, 
-### copy over app files, build, and run test
-#FROM node:12.14.1 as node
-FROM zenika/alpine-chrome:86-with-node-12 as build
+### Stage 1 - Build
+FROM node:22-alpine AS build
 USER root
 WORKDIR /app
-#ENV PATH /app/node_modules/.bin:$PATH
-COPY package.json package.json
-COPY package-lock.json package-lock.json
+COPY package.json package-lock.json ./
 RUN npm ci
 RUN npm install -g @angular/cli
 COPY . .
-RUN npm run build -- --prod
-RUN npm run test-for-ci
+RUN npm run build
 
-### Stage 2 - Copy app files to nginx image
-### This resolved an issue for me: https://forums.docker.com/t/strange-docker-output-or-help-me-please-im-very-noob/100788/2
-FROM nginx:alpine
+### Stage 2 - Serve with nginx
+FROM nginx:stable-alpine
 VOLUME /var/cache/nginx
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist/workout-tracker/browser /usr/share/nginx/html

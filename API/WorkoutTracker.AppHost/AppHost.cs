@@ -1,5 +1,8 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
+// Add the following line to configure the Docker Compose environment
+builder.AddDockerComposeEnvironment("env");
+
 var api = builder.AddProject<Projects.WorkoutTracker_API>("api")
     .WithExternalHttpEndpoints();
 
