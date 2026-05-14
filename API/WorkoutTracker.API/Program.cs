@@ -124,15 +124,19 @@ app.MapDefaultEndpoints();
 using (var serviceScope = app.Services.CreateScope())
 {
     var context = serviceScope.ServiceProvider.GetRequiredService<WorkoutsContext>();
-    try
+    for (var attempt = 1; ; attempt++)
     {
-        context.Database.Migrate();
-    }
-    catch (SqlException ex) when (ex.Number == 1801)
-    {
-        // SQL Server was still recovering the database from the data volume when EF
-        // checked for its existence. Now that it's online, retry without creating.
-        context.Database.Migrate();
+        try
+        {
+            context.Database.Migrate();
+            break;
+        }
+        catch (SqlException) when (attempt < 10)
+        {
+            // SQL Server may still be recovering databases from the data volume.
+            // Retry until it's fully ready or we exhaust attempts.
+            Thread.Sleep(TimeSpan.FromSeconds(3));
+        }
     }
     context.EnsureSeedData();
 }
