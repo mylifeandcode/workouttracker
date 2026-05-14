@@ -35,6 +35,8 @@ using WorkoutTracker.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.Services.AddOpenApi(options =>
 {
     options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1;
@@ -116,6 +118,7 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapDefaultEndpoints();
 
 using (var serviceScope = app.Services.CreateScope())
 {

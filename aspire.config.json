@@ -1,0 +1,6 @@
+{
+  "appHost": {
+    "language": "csharp",
+    "path": "API/WorkoutTracker.AppHost/WorkoutTracker.AppHost.csproj"
+  }
+}

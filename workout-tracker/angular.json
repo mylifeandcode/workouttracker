@@ -86,7 +86,8 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "buildTarget": "workout-tracker:build"
+            "buildTarget": "workout-tracker:build",
+            "proxyConfig": "proxy.conf.js"
           },
           "configurations": {
             "production": {

@@ -1,5 +1,5 @@
 {
-  "apiRoot": "http://localhost:5600/api/",
+  "apiRoot": "/api/",
   "loginWithUserSelect": true,
   "smtpEnabled": false,
   "unitOfMass": "lb"
