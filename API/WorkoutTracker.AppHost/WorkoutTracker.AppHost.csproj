@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.Docker" Version="13.3.2" />
     <PackageReference Include="Aspire.Hosting.JavaScript" Version="*" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="*" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.CodeAnalysis;
@@ -123,7 +124,16 @@ app.MapDefaultEndpoints();
 using (var serviceScope = app.Services.CreateScope())
 {
     var context = serviceScope.ServiceProvider.GetRequiredService<WorkoutsContext>();
-    context.Database.Migrate();
+    try
+    {
+        context.Database.Migrate();
+    }
+    catch (SqlException ex) when (ex.Number == 1801)
+    {
+        // SQL Server was still recovering the database from the data volume when EF
+        // checked for its existence. Now that it's online, retry without creating.
+        context.Database.Migrate();
+    }
     context.EnsureSeedData();
 }
 

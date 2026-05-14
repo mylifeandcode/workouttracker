@@ -12,3 +12,4 @@ RUN npm run build
 FROM nginx:stable-alpine
 VOLUME /var/cache/nginx
 COPY --from=build /app/dist/workout-tracker/browser /usr/share/nginx/html
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
