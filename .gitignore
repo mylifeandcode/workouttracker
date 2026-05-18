@@ -24,8 +24,8 @@ build/Release
 # Users Environment Variables
 .lock-wscript
 
-# Aspire deployment secrets — contains image tags and may contain credentials
-API/WorkoutTracker.AppHost/aspire-output/.env.Production
+# Aspire deploy output — generated artifacts, not source
+API/WorkoutTracker.AppHost/aspire-output/
 
 # OS generated files #
 .DS_Store
