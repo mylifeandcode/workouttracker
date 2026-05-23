@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WorkoutTracker.Application.Shared.Interfaces
 {
     public interface IServiceBase<T>
     {
-        T Add(T entity, bool saveChanges = false);
-        void Delete(int entityId);
-        IEnumerable<T> GetAll();
-        T GetById(int id);
-        int GetTotalCount();
-        T Update(T entity, bool saveChanges = false);
+        Task<T> AddAsync(T entity, bool saveChanges = false);
+        Task DeleteAsync(int entityId);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T?> GetByIdAsync(int id);
+        Task<int> GetTotalCountAsync();
+        Task<T> UpdateAsync(T entity, bool saveChanges = false);
     }
 }

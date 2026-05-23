@@ -9,11 +9,14 @@ namespace WorkoutTracker.Application.Exercises.Models
     {
         public int ExerciseId { get; set; }
         public decimal ResistanceAmount { get; set; }
-        public string ResistanceMakeup { get; set; }
+        public string? ResistanceMakeup { get; set; }
         public byte Reps { get; set; }
         public string Reason { get; set; }
 
-        public ExerciseAmountRecommendation() { }
+        public ExerciseAmountRecommendation()
+        {
+          Reason = string.Empty;
+        }
 
         public ExerciseAmountRecommendation(ExecutedExerciseAverages averages, string reason)
         {

@@ -1,20 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using WorkoutTracker.Domain.Resistances;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Shared.Interfaces;
+using WorkoutTracker.Domain.Resistances;
 
 namespace WorkoutTracker.Application.Resistances.Interfaces
 {
     public interface IResistanceBandService : ISimpleService<ResistanceBand>
     {
-        List<ResistanceBand> GetIndividualBands();
-        List<ResistanceBand> GetResistanceBandsForResistanceAmountRange(
+        Task<List<ResistanceBand>> GetIndividualBandsAsync();
+        Task<List<ResistanceBand>> GetResistanceBandsForResistanceAmountRangeAsync(
             decimal currentAmount,
             decimal minimalIncrease,
             decimal preferredMaxIncrease,
             bool doubleBandResistanceAmounts,
             bool exerciseUsesBilateralResistance);
-        ResistanceBand GetLowestResistanceBand();
+        Task<ResistanceBand?> GetLowestResistanceBandAsync();
     }
 }

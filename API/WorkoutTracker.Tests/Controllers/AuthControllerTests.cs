@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
@@ -33,22 +32,24 @@ namespace WorkoutTracker.Tests.Controllers
         {
             _userServiceMock = new Mock<IUserService>(MockBehavior.Strict);
             _userServiceMock
-                .Setup(x => x.GetAll())
-                .Returns(new List<User>(2) 
-                    { 
-                        new User { Id = 1, Name = "Kirk", HashedPassword = "oijosidjfsgd", Salt = "iunfidnfgfd" }, 
-                        new User { Id = 2, Name = "Spock", HashedPassword = "njnfdgdfufgdf", Salt = " jsnkjnbfdf8" } 
+                .Setup(x => x.GetAllAsync())
+                .ReturnsAsync(new List<User>(2)
+                    {
+                        new User { Id = 1, Name = "Kirk", HashedPassword = "oijosidjfsgd", Salt = "iunfidnfgfd" },
+                        new User { Id = 2, Name = "Spock", HashedPassword = "njnfdgdfufgdf", Salt = " jsnkjnbfdf8" }
                     });
             _userServiceMock
-                .Setup(x => x.ChangePassword(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()));
+                .Setup(x => x.ChangePasswordAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
             _userServiceMock
-                .Setup(x => x.RequestPasswordReset(It.IsAny<string>()))
-                .Returns("someResetCode");
+                .Setup(x => x.RequestPasswordResetAsync(It.IsAny<string>()))
+                .ReturnsAsync("someResetCode");
             _userServiceMock
-                .Setup(x => x.ResetPassword(It.IsAny<string>(), It.IsAny<string>()));
+                .Setup(x => x.ResetPasswordAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
             _userServiceMock
-                .Setup(x => x.ValidatePasswordResetCode(It.IsAny<string>()))
-                .Returns(true);
+                .Setup(x => x.ValidatePasswordResetCodeAsync(It.IsAny<string>()))
+                .ReturnsAsync(true);
 
             _tokenServiceMock = new Mock<ITokenService>(MockBehavior.Strict);
             _tokenServiceMock
@@ -64,23 +65,24 @@ namespace WorkoutTracker.Tests.Controllers
 
             _refreshTokenServiceMock = new Mock<IRefreshTokenService>(MockBehavior.Strict);
             _refreshTokenServiceMock
-                .Setup(x => x.GenerateRefreshToken(It.IsAny<int>()))
-                .Returns(("someRawRefreshToken", new RefreshToken { Id = 1 }));
+                .Setup(x => x.GenerateRefreshTokenAsync(It.IsAny<int>()))
+                .ReturnsAsync(("someRawRefreshToken", new RefreshToken { Id = 1 }));
             _refreshTokenServiceMock
-                .Setup(x => x.RevokeByUserId(It.IsAny<int>()));
+                .Setup(x => x.RevokeByUserIdAsync(It.IsAny<int>()))
+                .Returns(Task.CompletedTask);
 
             _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object);
         }
 
         [TestMethod]
-        public void Should_Log_User_In_Using_Simple_Login_When_User_Is_Found()
+        public async Task Should_Log_User_In_Using_Simple_Login_When_User_Is_Found()
         {
             //ARRANGE
             var credentials = new UserCredentialsDTO();
             credentials.Username = "Spock";
 
             //ACT
-            var result = _sut.Login(credentials);
+            var result = await _sut.Login(credentials);
 
             //ASSERT
             Assert.IsInstanceOfType(result, typeof(ActionResult<AuthTokenResultDTO>));
@@ -88,14 +90,14 @@ namespace WorkoutTracker.Tests.Controllers
             var tokenResult = (AuthTokenResultDTO)okResult.Value;
             Assert.AreEqual("someToken", tokenResult.AccessToken);
             Assert.AreEqual("someRawRefreshToken", tokenResult.RefreshToken);
-            _userServiceMock.Verify(x => x.GetAll(), Times.Once);
+            _userServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), 15), Times.Once);
-            _refreshTokenServiceMock.Verify(x => x.GenerateRefreshToken(It.IsAny<int>()), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.GenerateRefreshTokenAsync(It.IsAny<int>()), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Log_User_In_Using_Normal_Login_When_User_Is_Found()
+        public async Task Should_Log_User_In_Using_Normal_Login_When_User_Is_Found()
         {
             //ARRANGE
             _configuration = GetConfiguration(false);
@@ -107,7 +109,7 @@ namespace WorkoutTracker.Tests.Controllers
             credentials.Username = "Spock";
 
             //ACT
-            var result = _sut.Login(credentials);
+            var result = await _sut.Login(credentials);
 
             //ASSERT
             Assert.IsInstanceOfType(result, typeof(ActionResult<AuthTokenResultDTO>));
@@ -115,33 +117,33 @@ namespace WorkoutTracker.Tests.Controllers
             var tokenResult = (AuthTokenResultDTO)okResult.Value;
             Assert.AreEqual("someToken", tokenResult.AccessToken);
             Assert.AreEqual("someRawRefreshToken", tokenResult.RefreshToken);
-            _userServiceMock.Verify(x => x.GetAll(), Times.Once);
+            _userServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), 15), Times.Once);
-            _refreshTokenServiceMock.Verify(x => x.GenerateRefreshToken(It.IsAny<int>()), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.GenerateRefreshTokenAsync(It.IsAny<int>()), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Return_Not_Found_Result_From_Login_When_User_Not_Found()
+        public async Task Should_Return_Not_Found_Result_From_Login_When_User_Not_Found()
         {
             //ARRANGE
             var credentials = new UserCredentialsDTO();
             credentials.Username = "Bones";
 
             //ACT
-            var result = _sut.Login(credentials);
+            var result = await _sut.Login(credentials);
 
             //ASSERT
             Assert.IsInstanceOfType(result, typeof(ActionResult<AuthTokenResultDTO>));
             var notFoundResult = (NotFoundResult)result.Result;
-            Assert.AreEqual((int)HttpStatusCode.NotFound, notFoundResult.StatusCode); //Kind of redundant
-            _userServiceMock.Verify(x => x.GetAll(), Times.Once);
+            Assert.AreEqual((int)HttpStatusCode.NotFound, notFoundResult.StatusCode);
+            _userServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), It.IsAny<int>()), Times.Never);
         }
 
         [TestMethod]
-        public void Should_Return_UnauthorizedResult_From_Login_When_Credentials_Are_Incorrect()
+        public async Task Should_Return_UnauthorizedResult_From_Login_When_Credentials_Are_Incorrect()
         {
             //ARRANGE
             _configuration = GetConfiguration(false);
@@ -157,19 +159,19 @@ namespace WorkoutTracker.Tests.Controllers
             credentials.Password = "Kolinahr123!!!";
 
             //ACT
-            var result = _sut.Login(credentials);
+            var result = await _sut.Login(credentials);
 
             //ASSERT
             Assert.IsInstanceOfType(result.Result, typeof(UnauthorizedResult));
             var unauthorizedResult = (UnauthorizedResult)result.Result;
-            Assert.AreEqual((int)HttpStatusCode.Unauthorized, unauthorizedResult.StatusCode); //Kind of redundant
-            _userServiceMock.Verify(x => x.GetAll(), Times.Once);
+            Assert.AreEqual((int)HttpStatusCode.Unauthorized, unauthorizedResult.StatusCode);
+            _userServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), It.IsAny<int>()), Times.Never);
         }
 
         [TestMethod]
-        public void Should_Refresh_Token_Successfully()
+        public async Task Should_Refresh_Token_Successfully()
         {
             //ARRANGE
             var existingToken = new RefreshToken { Id = 1, UserId = 2, IsRevoked = false };
@@ -184,12 +186,12 @@ namespace WorkoutTracker.Tests.Controllers
                 .Returns(principal);
 
             _refreshTokenServiceMock
-                .Setup(x => x.ValidateRefreshToken(It.IsAny<string>(), 2))
-                .Returns(existingToken);
+                .Setup(x => x.ValidateRefreshTokenAsync(It.IsAny<string>(), 2))
+                .ReturnsAsync(existingToken);
 
             _refreshTokenServiceMock
-                .Setup(x => x.RevokeAndReplace(existingToken, 2))
-                .Returns(("newRawRefreshToken", new RefreshToken { Id = 2 }));
+                .Setup(x => x.RevokeAndReplaceAsync(existingToken, 2))
+                .ReturnsAsync(("newRawRefreshToken", new RefreshToken { Id = 2 }));
 
             var request = new RefreshTokenRequestDTO
             {
@@ -198,7 +200,7 @@ namespace WorkoutTracker.Tests.Controllers
             };
 
             //ACT
-            var result = _sut.Refresh(request);
+            var result = await _sut.Refresh(request);
 
             //ASSERT
             Assert.IsInstanceOfType(result, typeof(ActionResult<AuthTokenResultDTO>));
@@ -207,12 +209,12 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.AreEqual("someToken", tokenResult.AccessToken);
             Assert.AreEqual("newRawRefreshToken", tokenResult.RefreshToken);
             _tokenServiceMock.Verify(x => x.GetPrincipalFromExpiredToken("expiredAccessToken", "SomeKey", "SomeIssuer"), Times.Once);
-            _refreshTokenServiceMock.Verify(x => x.ValidateRefreshToken("validRefreshToken", 2), Times.Once);
-            _refreshTokenServiceMock.Verify(x => x.RevokeAndReplace(existingToken, 2), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.ValidateRefreshTokenAsync("validRefreshToken", 2), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.RevokeAndReplaceAsync(existingToken, 2), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Return_Unauthorized_From_Refresh_When_Token_Invalid()
+        public async Task Should_Return_Unauthorized_From_Refresh_When_Token_Invalid()
         {
             //ARRANGE
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -226,8 +228,8 @@ namespace WorkoutTracker.Tests.Controllers
                 .Returns(principal);
 
             _refreshTokenServiceMock
-                .Setup(x => x.ValidateRefreshToken(It.IsAny<string>(), 2))
-                .Returns((RefreshToken?)null);
+                .Setup(x => x.ValidateRefreshTokenAsync(It.IsAny<string>(), 2))
+                .ReturnsAsync((RefreshToken?)null);
 
             var request = new RefreshTokenRequestDTO
             {
@@ -236,14 +238,14 @@ namespace WorkoutTracker.Tests.Controllers
             };
 
             //ACT
-            var result = _sut.Refresh(request);
+            var result = await _sut.Refresh(request);
 
             //ASSERT
             Assert.IsInstanceOfType(result.Result, typeof(UnauthorizedResult));
         }
 
         [TestMethod]
-        public void Should_Return_Unauthorized_From_Refresh_When_Access_Token_Cannot_Be_Parsed()
+        public async Task Should_Return_Unauthorized_From_Refresh_When_Access_Token_Cannot_Be_Parsed()
         {
             //ARRANGE
             _tokenServiceMock
@@ -257,28 +259,28 @@ namespace WorkoutTracker.Tests.Controllers
             };
 
             //ACT
-            var result = _sut.Refresh(request);
+            var result = await _sut.Refresh(request);
 
             //ASSERT
             Assert.IsInstanceOfType(result.Result, typeof(UnauthorizedResult));
         }
 
         [TestMethod]
-        public void Should_Revoke_Tokens()
+        public async Task Should_Revoke_Tokens()
         {
             //ARRANGE
             SetupUser(_sut);
 
             //ACT
-            var result = _sut.Revoke();
+            var result = await _sut.Revoke();
 
             //ASSERT
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
-            _refreshTokenServiceMock.Verify(x => x.RevokeByUserId(1), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.RevokeByUserIdAsync(1), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Change_User_Password()
+        public async Task Should_Change_User_Password()
         {
             //ARRANGE
             SetupUser(_sut);
@@ -287,35 +289,35 @@ namespace WorkoutTracker.Tests.Controllers
             request.NewPassword = "MyNewPassword";
 
             //ACT
-            var result = _sut.ChangePassword(request);
+            var result = await _sut.ChangePassword(request);
 
             //ASSERT
             Assert.IsInstanceOfType(result, typeof(OkResult));
-            _userServiceMock.Verify(x => x.ChangePassword(1, request.CurrentPassword, request.NewPassword), Times.Once);
-            _refreshTokenServiceMock.Verify(x => x.RevokeByUserId(1), Times.Once);
+            _userServiceMock.Verify(x => x.ChangePasswordAsync(1, request.CurrentPassword, request.NewPassword), Times.Once);
+            _refreshTokenServiceMock.Verify(x => x.RevokeByUserIdAsync(1), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Process_Password_Reset_Request()
+        public async Task Should_Process_Password_Reset_Request()
         {
             //ARRANGE
             var request = new RequestPasswordResetRequest();
             request.EmailAddress = "jtkirk@ufp.gov";
 
             //ACT
-            var result = _sut.RequestPasswordReset(request);
+            var result = await _sut.RequestPasswordReset(request);
 
             //ASSERT
             Assert.IsInstanceOfType(result, typeof(ActionResult<string>));
             var actionResult = (ActionResult<string>)result;
             var okObjectResult = (OkObjectResult)actionResult.Result;
-            Assert.AreEqual((int)HttpStatusCode.OK, okObjectResult.StatusCode); //Kind of redundant
+            Assert.AreEqual((int)HttpStatusCode.OK, okObjectResult.StatusCode);
             Assert.AreEqual("someResetCode", okObjectResult.Value);
-            _userServiceMock.Verify(x => x.RequestPasswordReset(request.EmailAddress), Times.Once);
+            _userServiceMock.Verify(x => x.RequestPasswordResetAsync(request.EmailAddress), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Reset_Password()
+        public async Task Should_Reset_Password()
         {
             //ARRANGE
             var request = new PasswordResetRequest();
@@ -323,20 +325,20 @@ namespace WorkoutTracker.Tests.Controllers
             request.NewPassword = "SomeNewFancyPassword12323238834!!!*&^%";
 
             //ACT
-            var result = _sut.ResetPassword(request);
+            var result = await _sut.ResetPassword(request);
 
             //ASSERT
             Assert.IsInstanceOfType(result, typeof(OkResult));
-            _userServiceMock.Verify(x => x.ResetPassword(request.ResetCode, request.NewPassword), Times.Once);
+            _userServiceMock.Verify(x => x.ResetPasswordAsync(request.ResetCode, request.NewPassword), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Validate_Password_Reset_Code()
+        public async Task Should_Validate_Password_Reset_Code()
         {
-            var result = _sut.ValidatePasswordResetCode("someResetCode");
+            var result = await _sut.ValidatePasswordResetCode("someResetCode");
             Assert.IsInstanceOfType(result, typeof(ActionResult<bool>));
             Assert.IsTrue((result as ActionResult<bool>).Value);
-            _userServiceMock.Verify(x => x.ValidatePasswordResetCode("someResetCode"), Times.Once);
+            _userServiceMock.Verify(x => x.ValidatePasswordResetCodeAsync("someResetCode"), Times.Once);
         }
 
         private IConfiguration GetConfiguration(bool useSimpleLogin)

@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Workouts.Models;
@@ -24,26 +25,26 @@ namespace WorkoutTracker.Application.Workouts.Services
             _workoutRepo = workoutRepo ?? throw new ArgumentNullException(nameof(workoutRepo));
         }
 
-        public ExecutedWorkout Create(WorkoutPlan plan, bool startWorkout)
+        public async Task<ExecutedWorkout> CreateAsync(WorkoutPlan plan, bool startWorkout)
         {
             if (plan == null)
                 throw new ArgumentNullException(nameof(plan));
 
             if (startWorkout)
-                return CreateFromPlan(plan, plan.SubmittedDateTime, null);
+                return await CreateFromPlanAsync(plan, plan.SubmittedDateTime, null);
             else
-                return CreateFromPlan(plan, null, null);
+                return await CreateFromPlanAsync(plan, null, null);
         }
 
-        public ExecutedWorkout Create(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime)
+        public async Task<ExecutedWorkout> CreateAsync(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime)
         {
             if (plan == null)
                 throw new ArgumentNullException(nameof(plan));
 
-            return CreateFromPlan(plan, startDateTime, endDateTime);
+            return await CreateFromPlanAsync(plan, startDateTime, endDateTime);
         }
 
-        public override ExecutedWorkout Add(ExecutedWorkout entity, bool saveChanges = false)
+        public override async Task<ExecutedWorkout> AddAsync(ExecutedWorkout entity, bool saveChanges = false)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -52,43 +53,39 @@ namespace WorkoutTracker.Application.Workouts.Services
             When attempting to save an ExecutedWorkout, the following exception would
             occur:
 
-            "The instance of entity type 'TargetArea' cannot be tracked because 
-            another instance with the same key value for {'Id'} is already being 
-            tracked. When attaching existing entities, ensure that only one entity 
-            instance with a given key value is attached. Consider using 
-            'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the 
+            "The instance of entity type 'TargetArea' cannot be tracked because
+            another instance with the same key value for {'Id'} is already being
+            tracked. When attaching existing entities, ensure that only one entity
+            instance with a given key value is attached. Consider using
+            'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the
             conflicting key values."
-            
-            This is because ExecutedExercise has a reference to an Exercise, which 
-            in turn has a collection of ExerciseTargetAreaLinks, which in turn relate 
-            to TargetAreas. One solution to the problem would be to set the state 
-            of the Exercise objects to EntityState.Unchanged, but this requires a 
-            reference to the DbContext. I'm going with the simpler (albeit less 
-            elegant) approach here, which is to set the Exercises to null. The 
+
+            This is because ExecutedExercise has a reference to an Exercise, which
+            in turn has a collection of ExerciseTargetAreaLinks, which in turn relate
+            to TargetAreas. One solution to the problem would be to set the state
+            of the Exercise objects to EntityState.Unchanged, but this requires a
+            reference to the DbContext. I'm going with the simpler (albeit less
+            elegant) approach here, which is to set the Exercises to null. The
             reference will still be preserved via the ExerciseId property.
             */
-            //TODO: Use the approach in the Update() method instead!
             foreach (var executedExercise in entity.Exercises)
             {
                 executedExercise.Exercise = null;
             }
-            return base.Add(entity, saveChanges);
+            return await base.AddAsync(entity, saveChanges);
         }
 
-        public override ExecutedWorkout Update(ExecutedWorkout entity, bool saveChanges = false)
+        public override async Task<ExecutedWorkout> UpdateAsync(ExecutedWorkout entity, bool saveChanges = false)
         {
-            //TODO: Refactor to make async
-            //TODO: Refactor method signature to remove saveChanges param
-
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            _repo.UpdateAsync(entity, (executedWorkout) => executedWorkout.Exercises).Wait();
+            await _repo.UpdateAsync(entity, (executedWorkout) => executedWorkout.Exercises);
 
             return entity;
         }
 
-        public IEnumerable<ExecutedWorkout> GetFilteredSubset(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst)
+        public async Task<IEnumerable<ExecutedWorkout>> GetFilteredSubsetAsync(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst)
         {
             IQueryable<ExecutedWorkout> query = _repo.GetWithoutTracking();
 
@@ -100,59 +97,71 @@ namespace WorkoutTracker.Application.Workouts.Services
             else
                 query = query.OrderBy(x => x.StartDateTime);
 
-            var output = query.Skip(firstRecordIndex).Take(subsetSize);
-            return output;
+            return await query.Skip(firstRecordIndex).Take(subsetSize).ToListAsync();
         }
 
-        public IEnumerable<ExecutedWorkout> GetRecent(int numberOfMostRecent)
+        public async Task<IEnumerable<ExecutedWorkout>> GetRecentByWorkoutAsync(int workoutId, int count)
         {
-            IQueryable<ExecutedWorkout> query = _repo.GetWithoutTracking();
-            var output = query
+            return await _repo.GetWithoutTracking()
+                .Where(x => x.WorkoutId == workoutId && x.EndDateTime.HasValue)
+                .OrderByDescending(x => x.EndDateTime)
+                .Take(count)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<ExecutedWorkout>> GetRecentAsync(int numberOfMostRecent)
+        {
+            return await _repo.GetWithoutTracking()
                 .Where(workout => workout.StartDateTime.HasValue)
-                .OrderByDescending(workout => workout.StartDateTime.Value)
-                //.Distinct(workout.Workout.Id) //TODO: Get last n number of distinct by Workout
-                .Take(numberOfMostRecent);
-            return output;
+                .OrderByDescending(workout => workout.StartDateTime!.Value)
+                .Take(numberOfMostRecent)
+                .ToListAsync();
         }
 
-        public ExecutedWorkout GetLatest(Guid workoutPublicId)
+        public async Task<ExecutedWorkout?> GetLatestAsync(Guid workoutPublicId)
         {
-            //No user ID needed here, as workouts are user-centric
-            return _repo.GetWithoutTracking()
+            return await _repo.GetWithoutTracking()
                 .Where(x => x.StartDateTime.HasValue && x.EndDateTime.HasValue)
                 .OrderByDescending(x => x.Id)
-                .FirstOrDefault(x => x.Workout.PublicId == workoutPublicId);
+                .FirstOrDefaultAsync(x => x.Workout.PublicId == workoutPublicId);
         }
 
-        public int GetTotalCount(ExecutedWorkoutFilter filter)
+        public async Task<int> GetTotalCountAsync(ExecutedWorkoutFilter filter)
         {
             var query = _repo.GetWithoutTracking();
             ApplyQueryFilters(ref query, filter);
-            return query.Count();
+            return await query.CountAsync();
         }
 
-        public int GetPlannedCount(int userId)
+        public async Task<int> GetPlannedCountAsync(int userId)
         {
-            return 
-                _repo.GetWithoutTracking()
-                    .Where(x => x.CreatedByUserId == userId 
-                        && !x.StartDateTime.HasValue 
-                        && !x.EndDateTime.HasValue).Count();
+            return await _repo.GetWithoutTracking()
+                .Where(x => x.CreatedByUserId == userId
+                    && !x.StartDateTime.HasValue
+                    && !x.EndDateTime.HasValue)
+                .CountAsync();
         }
 
-        public IEnumerable<ExecutedWorkout> GetInProgress(int userId)
+        public async Task<IEnumerable<ExecutedWorkout>> GetByUserAsync(int userId)
         {
-            return
-                _repo.GetWithoutTracking()
-                    .Where(x => x.CreatedByUserId == userId
-                        && x.StartDateTime.HasValue
-                        && !x.EndDateTime.HasValue)
-                    .OrderByDescending(x => x.StartDateTime);
+            return await _repo.GetWithoutTracking()
+                .Where(x => x.CreatedByUserId == userId)
+                .ToListAsync();
         }
 
-        public void DeletePlanned(Guid publicId)
+        public async Task<IEnumerable<ExecutedWorkout>> GetInProgressAsync(int userId)
         {
-            var executedWorkout = _repo.Get().FirstOrDefault(x => x.PublicId == publicId);
+            return await _repo.GetWithoutTracking()
+                .Where(x => x.CreatedByUserId == userId
+                    && x.StartDateTime.HasValue
+                    && !x.EndDateTime.HasValue)
+                .OrderByDescending(x => x.StartDateTime)
+                .ToListAsync();
+        }
+
+        public async Task DeletePlannedAsync(Guid publicId)
+        {
+            var executedWorkout = await _repo.Get().FirstOrDefaultAsync(x => x.PublicId == publicId);
 
             if (executedWorkout == null)
                 throw new ArgumentException($"Executed workout {publicId} not found.");
@@ -160,29 +169,22 @@ namespace WorkoutTracker.Application.Workouts.Services
             if (executedWorkout.StartDateTime.HasValue)
                 throw new ArgumentException($"Executed workout {publicId} has already been started.");
 
-            _repo.Delete(executedWorkout.Id);
-        }
-
-        public ExecutedWorkout GetByPublicId(Guid publicId)
-        {
-            return base.GetByPublicID(publicId);
+            await _repo.DeleteAsync(executedWorkout.Id);
         }
 
         #region Private Methods
 
-        private ExecutedWorkout CreateFromPlan(WorkoutPlan workoutPlan, DateTime? startDateTime, DateTime? endDateTime)
+        private async Task<ExecutedWorkout> CreateFromPlanAsync(WorkoutPlan workoutPlan, DateTime? startDateTime, DateTime? endDateTime)
         {
             var executedWorkout = new ExecutedWorkout();
-            var workout = _workoutRepo.GetWithoutTracking().First(x => x.PublicId == workoutPlan.WorkoutId);
-            //executedWorkout.WorkoutId = workoutPlan.WorkoutId;
+            var workout = await _workoutRepo.GetWithoutTracking().FirstAsync(x => x.PublicId == workoutPlan.WorkoutId);
             executedWorkout.WorkoutId = workout.Id;
             executedWorkout.CreatedByUserId = workout.CreatedByUserId;
-            executedWorkout.Exercises = new List<ExecutedExercise>(); //TODO: Initialize by known size
+            executedWorkout.Exercises = new List<ExecutedExercise>();
 
             byte exerciseSequence = 0;
             foreach (var exerciseInWorkout in workout.Exercises?.OrderBy(x => x.Sequence))
             {
-                //Find the ExercisePlan in the submitted WorkoutPlan for this exercise
                 var exercisePlan = workoutPlan.Exercises.First(exPlan => exPlan.ExerciseId == exerciseInWorkout.ExerciseId);
 
                 for (byte x = 0; x < exerciseInWorkout.NumberOfSets; x++)
@@ -190,7 +192,6 @@ namespace WorkoutTracker.Application.Workouts.Services
                     var exerciseToExecute = new ExecutedExercise();
                     exerciseToExecute.CreatedByUserId = workout.CreatedByUserId;
                     exerciseToExecute.CreatedDateTime = workoutPlan.SubmittedDateTime.Value;
-                    //exerciseToExecute.Exercise = exerciseInWorkout.Exercise; //NOPE! Don't do this. Just the ID (below) will do. Otherwise, it tries to update the object graph for Exercise!
                     exerciseToExecute.ExerciseId = exerciseInWorkout.Exercise.Id;
                     exerciseToExecute.Sequence = exerciseSequence;
                     exerciseToExecute.SetType = exerciseInWorkout.SetType;
@@ -217,8 +218,8 @@ namespace WorkoutTracker.Application.Workouts.Services
 
             executedWorkout.StartDateTime = startDateTime;
             executedWorkout.EndDateTime = endDateTime;
-            
-            _repo.Add(executedWorkout, true);
+
+            await AddAsync(executedWorkout, true);
 
             return executedWorkout;
         }
@@ -230,11 +231,11 @@ namespace WorkoutTracker.Application.Workouts.Services
 
             query = query.Where(x => x.CreatedByUserId == filter.UserId);
 
-            if (filter.PlannedOnly) //TODO: Rethink. This approach is kind of kludgey. Maybe use a base class instead, and check the type.
-            { 
+            if (filter.PlannedOnly)
+            {
                 query = query.Where(x => x.StartDateTime == null && x.EndDateTime == null);
             }
-            else 
+            else
             {
                 if (filter.StartDateTime.HasValue)
                     query = query.Where(x => x.StartDateTime >= filter.StartDateTime);
@@ -257,7 +258,6 @@ namespace WorkoutTracker.Application.Workouts.Services
             {
                 query = query.Where(x => !string.IsNullOrEmpty(x.Journal));
             }
-
         }
 
         #endregion Private Methods

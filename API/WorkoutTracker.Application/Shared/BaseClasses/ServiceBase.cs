@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 using WorkoutTracker.Repository;
 using WorkoutTracker.Application.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -20,34 +20,34 @@ namespace WorkoutTracker.Application.Shared.BaseClasses
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public virtual IEnumerable<T> GetAll()
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            return _repo.Get();
+            return await _repo.GetAllAsync();
         }
 
-        public virtual T GetById(int id)
+        public virtual async Task<T?> GetByIdAsync(int id)
         {
-            return _repo.Get(id);
+            return await _repo.GetAsync(id);
         }
 
-        public virtual T Add(T entity, bool saveChanges = false)
+        public virtual async Task<T> AddAsync(T entity, bool saveChanges = false)
         {
-            return _repo.Add(entity, saveChanges);
+            return await _repo.AddAsync(entity, saveChanges);
         }
 
-        public virtual T Update(T entity, bool saveChanges = false)
+        public virtual async Task<T> UpdateAsync(T entity, bool saveChanges = false)
         {
-            return _repo.Update(entity, saveChanges);
+            return await _repo.UpdateAsync(entity, saveChanges);
         }
 
-        public virtual void Delete(int entityId)
+        public virtual async Task DeleteAsync(int entityId)
         {
-            _repo.Delete(entityId);
+            await _repo.DeleteAsync(entityId);
         }
 
-        public int GetTotalCount()
+        public async Task<int> GetTotalCountAsync()
         {
-            return _repo.Get().Count();
+            return await _repo.GetTotalCountAsync();
         }
     }
 }

@@ -1,11 +1,12 @@
-﻿using System;
+using System;
 using System.Linq;
-using WorkoutTracker.Application.Workouts.Models;
-using WorkoutTracker.Domain.Users;
-using WorkoutTracker.Domain.Workouts;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.Application.Workouts.Interfaces;
+using WorkoutTracker.Application.Workouts.Models;
+using WorkoutTracker.Domain.Users;
+using WorkoutTracker.Domain.Workouts;
 using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Workouts.Services
@@ -22,7 +23,7 @@ namespace WorkoutTracker.Application.Workouts.Services
             IWorkoutService workoutService,
             IExecutedWorkoutService executedWorkoutService,
             IUserService userService,
-            IExerciseAmountRecommendationService recommendationService, 
+            IExerciseAmountRecommendationService recommendationService,
             ILogger<WorkoutPlanService> logger)
         {
             _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));
@@ -32,28 +33,28 @@ namespace WorkoutTracker.Application.Workouts.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public WorkoutPlan Create(Guid workoutPublicId, int userId)
+        public async Task<WorkoutPlan> CreateAsync(Guid workoutPublicId, int userId)
         {
             try
             {
-                ExecutedWorkout lastExecutedWorkout = _executedWorkoutService.GetLatest(workoutPublicId);
+                ExecutedWorkout? lastExecutedWorkout = await _executedWorkoutService.GetLatestAsync(workoutPublicId);
 
                 if (lastExecutedWorkout == null)
-                    return CreatePlanForNewWorkout(workoutPublicId, userId);
+                    return await CreatePlanForNewWorkoutAsync(workoutPublicId, userId);
                 else
-                    return CreatePlanForExecutedWorkout(lastExecutedWorkout);
+                    return await CreatePlanForExecutedWorkoutAsync(lastExecutedWorkout);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in WorkoutPlanService.Create()");
+                _logger.LogError(ex, "Error in WorkoutPlanService.CreateAsync()");
                 throw;
             }
         }
 
-        private WorkoutPlan CreatePlanForNewWorkout(Guid workoutPublicId, int userId)
+        private async Task<WorkoutPlan> CreatePlanForNewWorkoutAsync(Guid workoutPublicId, int userId)
         {
-            Workout workout = _workoutService.GetByPublicId(workoutPublicId);
-            var userSettings = GetUserSettings(userId);
+            Workout? workout = await _workoutService.GetByPublicIDAsync(workoutPublicId);
+            var userSettings = await GetUserSettingsAsync(userId);
 
             var plan = new WorkoutPlan(workout, false);
 
@@ -62,7 +63,7 @@ namespace WorkoutTracker.Application.Workouts.Services
                 foreach (var exercisePlan in plan.Exercises)
                 {
                     var exercise = workout.Exercises.First(x => x.ExerciseId == exercisePlan.ExerciseId);
-                    var recommendation = _recommendationService.GetRecommendation(exercise.Exercise, null, userSettings);
+                    var recommendation = await _recommendationService.GetRecommendationAsync(exercise.Exercise, null, userSettings);
                     exercisePlan.ApplyRecommendation(recommendation);
                 }
             }
@@ -70,35 +71,23 @@ namespace WorkoutTracker.Application.Workouts.Services
             return plan;
         }
 
-        private WorkoutPlan CreatePlanForExecutedWorkout(ExecutedWorkout lastExecutedWorkout)
+        private async Task<WorkoutPlan> CreatePlanForExecutedWorkoutAsync(ExecutedWorkout lastExecutedWorkout)
         {
             var workoutPlan = new WorkoutPlan(lastExecutedWorkout.Workout, true);
             var exercisesInWorkout = lastExecutedWorkout.Workout.Exercises.ToList();
-            var userSettings = GetUserSettings(lastExecutedWorkout.Workout.CreatedByUserId);
+            var userSettings = await GetUserSettingsAsync(lastExecutedWorkout.Workout.CreatedByUserId);
 
             for (short x = 0; x < exercisesInWorkout.Count; x++)
             {
                 var exerciseInWorkout = exercisesInWorkout[x];
-
-                //Find the ExercisePlan object from our new WorkoutPlan object for this exercise
                 var exercisePlan = workoutPlan.Exercises.First(x => x.Sequence == exerciseInWorkout.Sequence);
-
-                //Get the ExecutedExercises for this exercise from the last time this workout 
-                //was performed
-                var exercisesFromLastTime =
-                    lastExecutedWorkout
-                        .Exercises
-                        .Where(x => x.ExerciseId == exerciseInWorkout.ExerciseId);
+                var exercisesFromLastTime = lastExecutedWorkout.Exercises.Where(x => x.ExerciseId == exerciseInWorkout.ExerciseId);
 
                 exercisePlan.SetLastTimeValues(exercisesFromLastTime);
 
-                //If recommendations are enabled, apply them
                 if (userSettings != null && userSettings.RecommendationsEnabled)
                 {
-                    var recommendation =
-                        _recommendationService.GetRecommendation(
-                            exerciseInWorkout.Exercise, lastExecutedWorkout, userSettings);
-
+                    var recommendation = await _recommendationService.GetRecommendationAsync(exerciseInWorkout.Exercise, lastExecutedWorkout, userSettings);
                     exercisePlan.ApplyRecommendation(recommendation);
                 }
             }
@@ -106,9 +95,9 @@ namespace WorkoutTracker.Application.Workouts.Services
             return workoutPlan;
         }
 
-        private UserSettings GetUserSettings(int userId)
+        private async Task<UserSettings> GetUserSettingsAsync(int userId)
         {
-            var user = _userService.GetById(userId);
+            var user = await _userService.GetByIdAsync(userId);
             if (user == null)
                 throw new ApplicationException($"User {userId} not found.");
             else

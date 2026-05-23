@@ -9,6 +9,6 @@ namespace WorkoutTracker.Application.Shared.Interfaces
     public interface IEmailService : IDisposable
     {
         bool IsEnabled { get; }
-        void SendEmail(string to, string from, string subject, string body);
+        Task SendEmailAsync(string to, string from, string subject, string body);
     }
 }

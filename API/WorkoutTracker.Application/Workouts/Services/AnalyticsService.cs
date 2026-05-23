@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Workouts.Models;
@@ -13,55 +13,49 @@ namespace WorkoutTracker.Application.Workouts.Services
     {
         private IExecutedWorkoutService _executedWorkoutService;
         private ITargetAreaService _targetAreaService;
-        private ILogger<AnalyticsService> _logger;
-
         public AnalyticsService(
-            IExecutedWorkoutService executedWorkoutService, 
-            ITargetAreaService targetAreaService,
-            ILogger<AnalyticsService> logger)
+            IExecutedWorkoutService executedWorkoutService,
+            ITargetAreaService targetAreaService)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _targetAreaService = targetAreaService ?? throw new ArgumentNullException(nameof(targetAreaService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public List<ExecutedWorkoutMetrics> GetExecutedWorkoutMetrics(int workoutId, int count = 5)
+        public async Task<List<ExecutedWorkoutMetrics>> GetExecutedWorkoutMetricsAsync(int workoutId, int count = 5)
         {
-            var executedWorkouts = GetRecentExecutedWorkouts(workoutId, count).ToList();
+            var executedWorkouts = await GetRecentExecutedWorkoutsAsync(workoutId, count);
             var output = new List<ExecutedWorkoutMetrics>(executedWorkouts.Count);
 
             executedWorkouts.ForEach(x => output.Add(new ExecutedWorkoutMetrics(x)));
-            
+
             return output.OrderBy(x => x.EndDateTime).ToList();
         }
 
-        public ExecutedWorkoutsSummary GetExecutedWorkoutsSummary(int userId)
+        public async Task<ExecutedWorkoutsSummary> GetExecutedWorkoutsSummaryAsync(int userId)
         {
             var summary = new ExecutedWorkoutsSummary();
-            var firstWorkout =
-                _executedWorkoutService
-                    .GetAll()
-                    .Where(x => x.CreatedByUserId == userId && x.StartDateTime.HasValue)
-                    .OrderBy(x => x.StartDateTime)
-                    .FirstOrDefault();
+            var allWorkouts = (await _executedWorkoutService.GetByUserAsync(userId)).ToList();
+
+            var firstWorkout = allWorkouts
+                .Where(x => x.StartDateTime.HasValue)
+                .OrderBy(x => x.StartDateTime)
+                .FirstOrDefault();
 
             if (firstWorkout != null)
                 summary.FirstLoggedWorkoutDateTime = firstWorkout.StartDateTime;
 
-            summary.TotalLoggedWorkouts =
-                _executedWorkoutService
-                    .GetAll()
-                    .Where(x => x.CreatedByUserId == userId)
-                    .Count();
+            summary.TotalLoggedWorkouts = allWorkouts.Count;
 
-            summary.TargetAreasWithWorkoutCounts = GetCountOfWorkoutsByTargetArea(userId);
+            summary.TargetAreasWithWorkoutCounts = await GetCountOfWorkoutsByTargetAreaAsync(allWorkouts);
 
             return summary;
         }
 
         #region Private Methods
-        private Dictionary<string, int> GetCountOfWorkoutsByTargetArea(int userId)
+
+        private async Task<Dictionary<string, int>> GetCountOfWorkoutsByTargetAreaAsync(List<ExecutedWorkout> allWorkouts)
         {
+            //TODO: Convert back to SQL. This is one of those cases where it's better to make a SQL call than use an O/RM.
             /*
             In SQL, the query looks like this:
             
@@ -77,14 +71,9 @@ namespace WorkoutTracker.Application.Workouts.Services
             I couldn't figure out a way to do this in LINQ, and didn't want to resort to doing a straight SQL call, so I took the 
             less-than-ideal approach below.
             */
-
-            //TODO: Convert back to SQL. This is one of those cases where it's better to make a SQL call than use an O/RM.
-
             var executedWorkoutIdsWithTargetAreas =
-                _executedWorkoutService
-                    .GetAll()
-                    .Where(executedWorkout => executedWorkout.CreatedByUserId == userId && executedWorkout.EndDateTime.HasValue)
-                    .ToList()
+                allWorkouts
+                    .Where(executedWorkout => executedWorkout.EndDateTime.HasValue)
                     .Select(executedWorkout =>
                         new
                         {
@@ -98,7 +87,7 @@ namespace WorkoutTracker.Application.Workouts.Services
                     .Distinct()
                     .ToList();
 
-            var allTargetAreas = _targetAreaService.GetAll().OrderBy(x => x.Name).ToList();
+            var allTargetAreas = (await _targetAreaService.GetAllAsync()).OrderBy(x => x.Name).ToList();
             var output = new Dictionary<string, int>(allTargetAreas.Count);
 
             foreach (var area in allTargetAreas)
@@ -109,14 +98,11 @@ namespace WorkoutTracker.Application.Workouts.Services
             return output;
         }
 
-        private IEnumerable<ExecutedWorkout> GetRecentExecutedWorkouts(int workoutId, int count = 5)
+        private async Task<List<ExecutedWorkout>> GetRecentExecutedWorkoutsAsync(int workoutId, int count = 5)
         {
-            return _executedWorkoutService
-                    .GetAll()
-                    .Where(x => x.WorkoutId == workoutId && x.EndDateTime.HasValue)
-                    .OrderByDescending(x => x.EndDateTime)
-                    .Take(count);
+            return [.. await _executedWorkoutService.GetRecentByWorkoutAsync(workoutId, count)];
         }
+
         #endregion Private Methods
     }
 }

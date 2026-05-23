@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Services;
 using WorkoutTracker.Application.Resistances.Interfaces;
@@ -36,37 +34,35 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Get_Decreased_Resistance_Amount_For_MachineWeight_Exercise_With_Multiplier_Of_Negative_1()
+        public async Task Should_Get_Decreased_Resistance_Amount_For_MachineWeight_Exercise_With_Multiplier_Of_Negative_1()
         {
-            string makeup = null;
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, -1, false, false, out makeup);
+            var (result, _) = await _sut.GetNewResistanceAmountAsync(ResistanceType.MachineWeight, 30, -1, false, false);
             Assert.AreEqual(20, result);
         }
 
         [TestMethod]
-        public void Should_Get_Decreased_Resistance_Amount_For_MachineWeight_Exercise_With_Multiplier_Of_Negative_2()
+        public async Task Should_Get_Decreased_Resistance_Amount_For_MachineWeight_Exercise_With_Multiplier_Of_Negative_2()
         {
-            string makeup = null;
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, -2, false, false, out makeup);
+            var (result, _) = await _sut.GetNewResistanceAmountAsync(ResistanceType.MachineWeight, 30, -2, false, false);
             Assert.AreEqual(10, result);
         }
 
         [TestMethod]
-        public void Should_Get_Decreased_Resistance_Amount_For_ResistanceBand_Exercise_With_Multiplier_Of_Negative_1()
+        public async Task Should_Get_Decreased_Resistance_Amount_For_ResistanceBand_Exercise_With_Multiplier_Of_Negative_1()
         {
             _resistanceBandServiceMock
-                .Setup(x => x.GetLowestResistanceBand())
-                .Returns(new ResistanceBand { Color = "Yellow", MaxResistanceAmount = 3 });
+                .Setup(x => x.GetLowestResistanceBandAsync())
+                .ReturnsAsync(new ResistanceBand { Color = "Yellow", MaxResistanceAmount = 3 });
 
             _resistanceBandServiceMock
                 .Setup(x =>
-                    x.GetResistanceBandsForResistanceAmountRange(
+                    x.GetResistanceBandsForResistanceAmountRangeAsync(
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
                         It.IsAny<bool>(),
                         It.IsAny<bool>()))
-                .Returns(new List<ResistanceBand> { new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 } });
+                .ReturnsAsync(new List<ResistanceBand> { new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 } });
 
             decimal currentResistanceAmount = 30;
             sbyte multiplier = -1;
@@ -75,44 +71,41 @@ namespace WorkoutTracker.Tests.Services
             decimal expectedMinimalAdjustment = -3;
             decimal expectedMaximumAdjustment = -13;
 
-            string makeup = null;
-            
-            var result = _sut.GetNewResistanceAmount(
-                ResistanceType.ResistanceBand, 
-                currentResistanceAmount, 
-                multiplier, 
-                isDoubledBands, 
-                usesBilateralResistance,
-                out makeup);
-            
+            var (result, makeup) = await _sut.GetNewResistanceAmountAsync(
+                ResistanceType.ResistanceBand,
+                currentResistanceAmount,
+                multiplier,
+                isDoubledBands,
+                usesBilateralResistance);
+
             Assert.AreEqual(23, result);
-            _resistanceBandServiceMock.Verify(x => x.GetLowestResistanceBand(), Times.Once);
-            _resistanceBandServiceMock.Verify(x => 
-                x.GetResistanceBandsForResistanceAmountRange(
-                    currentResistanceAmount, 
-                    expectedMinimalAdjustment, 
-                    expectedMaximumAdjustment, 
+            _resistanceBandServiceMock.Verify(x => x.GetLowestResistanceBandAsync(), Times.Once);
+            _resistanceBandServiceMock.Verify(x =>
+                x.GetResistanceBandsForResistanceAmountRangeAsync(
+                    currentResistanceAmount,
+                    expectedMinimalAdjustment,
+                    expectedMaximumAdjustment,
                     isDoubledBands,
-                    usesBilateralResistance), 
+                    usesBilateralResistance),
                     Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Decreased_Resistance_Amount_For_ResistanceBand_Exercise_With_Multiplier_Of_Negative_2()
+        public async Task Should_Get_Decreased_Resistance_Amount_For_ResistanceBand_Exercise_With_Multiplier_Of_Negative_2()
         {
             _resistanceBandServiceMock
-                .Setup(x => x.GetLowestResistanceBand())
-                .Returns(new ResistanceBand { Color = "Yellow", MaxResistanceAmount = 3 });
+                .Setup(x => x.GetLowestResistanceBandAsync())
+                .ReturnsAsync(new ResistanceBand { Color = "Yellow", MaxResistanceAmount = 3 });
 
             _resistanceBandServiceMock
                 .Setup(x =>
-                    x.GetResistanceBandsForResistanceAmountRange(
+                    x.GetResistanceBandsForResistanceAmountRangeAsync(
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
                         It.IsAny<bool>(),
                         It.IsAny<bool>()))
-                .Returns(new List<ResistanceBand> { new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 } });
+                .ReturnsAsync(new List<ResistanceBand> { new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 } });
 
             decimal currentResistanceAmount = 30;
             sbyte multiplier = -2;
@@ -121,20 +114,17 @@ namespace WorkoutTracker.Tests.Services
             decimal expectedMinimalAdjustment = -6;
             decimal expectedMaximumAdjustment = -16;
 
-            string makeup = null;
-
-            var result = _sut.GetNewResistanceAmount(
+            var (result, makeup) = await _sut.GetNewResistanceAmountAsync(
                 ResistanceType.ResistanceBand,
                 currentResistanceAmount,
                 multiplier,
                 isDoubledBands,
-                usesBilateralResistance,
-                out makeup);
+                usesBilateralResistance);
 
             Assert.AreEqual(23, result);
-            _resistanceBandServiceMock.Verify(x => x.GetLowestResistanceBand(), Times.Once);
+            _resistanceBandServiceMock.Verify(x => x.GetLowestResistanceBandAsync(), Times.Once);
             _resistanceBandServiceMock.Verify(x =>
-                x.GetResistanceBandsForResistanceAmountRange(
+                x.GetResistanceBandsForResistanceAmountRangeAsync(
                     currentResistanceAmount,
                     expectedMinimalAdjustment,
                     expectedMaximumAdjustment,
@@ -144,21 +134,21 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Get_Decreased_Resistance_Amount_For_ResistanceBand_Exercise_With_Bands_Doubled_Over()
+        public async Task Should_Get_Decreased_Resistance_Amount_For_ResistanceBand_Exercise_With_Bands_Doubled_Over()
         {
             _resistanceBandServiceMock
-                .Setup(x => x.GetLowestResistanceBand())
-                .Returns(new ResistanceBand { Color = "Yellow", MaxResistanceAmount = 3 });
+                .Setup(x => x.GetLowestResistanceBandAsync())
+                .ReturnsAsync(new ResistanceBand { Color = "Yellow", MaxResistanceAmount = 3 });
 
             _resistanceBandServiceMock
                 .Setup(x =>
-                    x.GetResistanceBandsForResistanceAmountRange(
+                    x.GetResistanceBandsForResistanceAmountRangeAsync(
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
                         It.IsAny<decimal>(),
                         It.IsAny<bool>(),
                         It.IsAny<bool>()))
-                .Returns(new List<ResistanceBand> { new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 } });
+                .ReturnsAsync(new List<ResistanceBand> { new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 } });
 
             decimal currentResistanceAmount = 30;
             sbyte multiplier = -2;
@@ -167,102 +157,91 @@ namespace WorkoutTracker.Tests.Services
             decimal expectedMinimalAdjustment = -6;
             decimal expectedMaximumAdjustment = -16;
 
-            string makeup = null;
-
-            var result = _sut.GetNewResistanceAmount(
+            var (result, makeup) = await _sut.GetNewResistanceAmountAsync(
                 ResistanceType.ResistanceBand,
                 currentResistanceAmount,
                 multiplier,
                 isDoubledBands,
-                usesBilateralResistance,
-                out makeup);
+                usesBilateralResistance);
 
             Assert.AreEqual(46, result);
-            _resistanceBandServiceMock.Verify(x => x.GetLowestResistanceBand(), Times.Once);
+            _resistanceBandServiceMock.Verify(x => x.GetLowestResistanceBandAsync(), Times.Once);
             _resistanceBandServiceMock.Verify(x =>
-                x.GetResistanceBandsForResistanceAmountRange(
+                x.GetResistanceBandsForResistanceAmountRangeAsync(
                     currentResistanceAmount,
                     expectedMinimalAdjustment,
                     expectedMaximumAdjustment,
-                    isDoubledBands, 
+                    isDoubledBands,
                     usesBilateralResistance),
                     Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Increased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_1()
+        public async Task Should_Get_Increased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_1()
         {
-            string makeup = null;
             //Assumes a free weight increment of 5 lbs. Bilaterally, that should add up to 10.
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.FreeWeight, 30, 1, false, true, out makeup);
+            var (result, _) = await _sut.GetNewResistanceAmountAsync(ResistanceType.FreeWeight, 30, 1, false, true);
             Assert.AreEqual(40, result);
         }
 
         [TestMethod]
-        public void Should_Get_Decreased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_Negative_1()
+        public async Task Should_Get_Decreased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_Negative_1()
         {
-            string makeup = null;
             //Assumes a free weight increment of 5 lbs. Bilaterally, that should add up to 10.
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.FreeWeight, 30, -1, false, true, out makeup);
+            var (result, _) = await _sut.GetNewResistanceAmountAsync(ResistanceType.FreeWeight, 30, -1, false, true);
             Assert.AreEqual(20, result);
         }
 
         [TestMethod]
-        public void Should_Get_Increased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_2()
+        public async Task Should_Get_Increased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_2()
         {
-            string makeup = null;
             //Assumes a free weight increment of 5 lbs. Bilaterally, that should add up to 10.
             //Multiplier of 2 should give us a result of 50 (30 + (10 * 2)).
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.FreeWeight, 30, 2, false, true, out makeup);
+            var (result, _) = await _sut.GetNewResistanceAmountAsync(ResistanceType.FreeWeight, 30, 2, false, true);
             Assert.AreEqual(50, result);
         }
 
         [TestMethod]
-        public void Should_Get_Decreased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_Negative_2()
+        public async Task Should_Get_Decreased_Resistance_For_Bilateral_FreeWeight_Exercise_With_Multiplier_Of_Negative_2()
         {
-            string makeup = null;
             //Assumes a free weight increment of 5 lbs. Bilaterally, that should add up to 10.
             //Multiplier of -2 should give us a result of 10 (30 - (10 * 2)).
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.FreeWeight, 30, -2, false, true, out makeup);
+            var (result, _) = await _sut.GetNewResistanceAmountAsync(ResistanceType.FreeWeight, 30, -2, false, true);
             Assert.AreEqual(10, result);
         }
 
         [TestMethod]
-        public void Should_Get_Increased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_1()
+        public async Task Should_Get_Increased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_1()
         {
-            string makeup = null;
             //Assumes a machine weight increment of 10 lbs. Bilaterally, that should add up to 20.
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, 1, false, true, out makeup);
+            var (result, _) = await _sut.GetNewResistanceAmountAsync(ResistanceType.MachineWeight, 30, 1, false, true);
             Assert.AreEqual(50, result);
         }
 
         [TestMethod]
-        public void Should_Get_Decreased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_Negative_1()
+        public async Task Should_Get_Decreased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_Negative_1()
         {
-            string makeup = null;
             //Assumes a machine weight increment of 10 lbs. Bilaterally, that should add up to 20.
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, -1, false, true, out makeup);
+            var (result, _) = await _sut.GetNewResistanceAmountAsync(ResistanceType.MachineWeight, 30, -1, false, true);
             Assert.AreEqual(10, result);
         }
 
         [TestMethod]
-        public void Should_Get_Increased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_2()
+        public async Task Should_Get_Increased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_2()
         {
-            string makeup = null;
             //Assumes a machine weight increment of 10 lbs. Bilaterally, that should add up to 20.
             //Multiplier of 2 should give us a result of 70 (30 + (20 * 2)).
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, 2, false, true, out makeup);
+            var (result, _) = await _sut.GetNewResistanceAmountAsync(ResistanceType.MachineWeight, 30, 2, false, true);
             Assert.AreEqual(70, result);
         }
 
         [TestMethod]
-        public void Should_Get_Decreased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_Negative_2()
+        public async Task Should_Get_Decreased_Resistance_For_Bilateral_MachineWeight_Exercise_With_Multiplier_Of_Negative_2()
         {
-            string makeup = null;
             //Assumes a machine weight increment of 10 lbs. Bilaterally, that should add up to 20.
             //Multiplier of -2 should give us a result of -10 (30 - (20 * 2)).
             //Result should be the minimum resistance amount -- in this case, 10.
-            var result = _sut.GetNewResistanceAmount(Domain.Exercises.ResistanceType.MachineWeight, 30, -2, false, true, out makeup);
+            var (result, _) = await _sut.GetNewResistanceAmountAsync(ResistanceType.MachineWeight, 30, -2, false, true);
             Assert.AreEqual(10, result);
         }
     }

@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
@@ -16,18 +17,18 @@ namespace WorkoutTracker.Tests.Controllers
     public class ExerciseControllerTests : UserAwareControllerTestsBase
     {
         [TestMethod]
-        public void Should_Get_Exercise_By_PublicId()
+        public async Task Should_Get_Exercise_By_PublicId()
         {
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
             var exercise = new Exercise();
             exercise.PublicId = Guid.NewGuid();
-            exerciseSvc.Setup(x => x.GetByPublicId(It.IsAny<Guid>())).Returns(exercise);
+            exerciseSvc.Setup(x => x.GetByPublicIdAsync(It.IsAny<Guid>())).ReturnsAsync(exercise);
             var sut = new ExerciseController(exerciseSvc.Object);
             SetupUser(sut);
 
             //ACT
-            var response = sut.GetByPublicId(exercise.PublicId);
+            var response = await sut.GetByPublicId(exercise.PublicId);
 
             //ASSERT
             Assert.IsNotNull(response);
@@ -36,15 +37,15 @@ namespace WorkoutTracker.Tests.Controllers
         }
 
         [TestMethod]
-        public void Should_Return_Not_Found_When_Getting_Exercise_By_PublicId_And_Not_Found()
+        public async Task Should_Return_Not_Found_When_Getting_Exercise_By_PublicId_And_Not_Found()
         {
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
-            exerciseSvc.Setup(x => x.GetByPublicId(It.IsAny<Guid>())).Returns((Exercise)null);
+            exerciseSvc.Setup(x => x.GetByPublicIdAsync(It.IsAny<Guid>())).ReturnsAsync((Exercise)null);
             var sut = new ExerciseController(exerciseSvc.Object);
 
             //ACT
-            var response = sut.GetByPublicId(Guid.NewGuid());
+            var response = await sut.GetByPublicId(Guid.NewGuid());
 
             //ASSERT
             Assert.IsNotNull(response);
@@ -52,20 +53,20 @@ namespace WorkoutTracker.Tests.Controllers
         }
 
         [TestMethod]
-        public void Should_Create_New_Exercise()
+        public async Task Should_Create_New_Exercise()
         {
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
             var exercise = new Exercise();
             exerciseSvc
-                .Setup(x => x.Add(It.IsAny<Exercise>(), true))
-                .Returns((Exercise newExercise, bool save) => exercise);
+                .Setup(x => x.AddAsync(It.IsAny<Exercise>(), true))
+                .ReturnsAsync((Exercise newExercise, bool save) => exercise);
 
             var sut = new ExerciseController(exerciseSvc.Object);
             SetupUser(sut);
 
             //ACT
-            var response = sut.Post(exercise);
+            var response = await sut.Post(exercise);
 
             //ASSERT
             Assert.IsNotNull(response);
@@ -74,20 +75,20 @@ namespace WorkoutTracker.Tests.Controllers
         }
 
         [TestMethod]
-        public void Should_Update_Existing_Exercise()
+        public async Task Should_Update_Existing_Exercise()
         {
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
             var exercise = new Exercise();
             exerciseSvc
-                .Setup(x => x.Update(It.IsAny<Exercise>(), true))
-                .Returns((Exercise newExercise, bool save) => exercise);
+                .Setup(x => x.UpdateAsync(It.IsAny<Exercise>(), true))
+                .ReturnsAsync((Exercise newExercise, bool save) => exercise);
 
             var sut = new ExerciseController(exerciseSvc.Object);
             SetupUser(sut);
 
             //ACT
-            var response = sut.Put(exercise);
+            var response = await sut.Put(exercise);
 
             //ASSERT
             Assert.IsNotNull(response);
@@ -96,7 +97,7 @@ namespace WorkoutTracker.Tests.Controllers
         }
 
         [TestMethod]
-        public void Should_Get_Exercises_Without_Filtering()
+        public async Task Should_Get_Exercises_Without_Filtering()
         {
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
@@ -114,17 +115,17 @@ namespace WorkoutTracker.Tests.Controllers
             exercises.Add(exercise);
 
             exerciseSvc
-                .Setup(x => x.Get(It.IsAny<int>(), It.IsAny<short>(), It.IsAny<ExerciseFilter>()))
-                .Returns(exercises);
+                .Setup(x => x.GetAsync(It.IsAny<int>(), It.IsAny<short>(), It.IsAny<ExerciseFilter>()))
+                .ReturnsAsync(exercises);
 
             exerciseSvc
-                .Setup(x => x.GetTotalCount(It.IsAny<ExerciseFilter>()))
-                .Returns(100);
+                .Setup(x => x.GetTotalCountAsync(It.IsAny<ExerciseFilter>()))
+                .ReturnsAsync(100);
 
             var sut = new ExerciseController(exerciseSvc.Object);
 
             //ACT
-            var response = sut.Get(0, 20);
+            var response = await sut.Get(0, 20);
 
             //ASSERT
             Assert.IsNotNull(response);

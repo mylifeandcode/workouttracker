@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.API.Auth;
@@ -25,9 +26,9 @@ namespace WorkoutTracker.API.Controllers
         private IRefreshTokenService _refreshTokenService;
 
         public AuthController(
-            IUserService userService, 
-            ITokenService tokenService, 
-            IConfiguration config, 
+            IUserService userService,
+            ITokenService tokenService,
+            IConfiguration config,
             ICryptoService cryptoService,
             IRefreshTokenService refreshTokenService)
         {
@@ -41,17 +42,17 @@ namespace WorkoutTracker.API.Controllers
         [AllowAnonymous]
         [Route("login")]
         [HttpPost]
-        public ActionResult<AuthTokenResultDTO> Login(UserCredentialsDTO credentials)
+        public async Task<ActionResult<AuthTokenResultDTO>> Login(UserCredentialsDTO credentials)
         {
             if (!IsCredentialsObjectValid(credentials))
                 return BadRequest();
 
-            var user = _userService.GetAll().FirstOrDefault(x => x.Name == credentials.Username);
+            var user = (await _userService.GetAllAsync()).FirstOrDefault(x => x.Name == credentials.Username);
 
             if (user == null)
                 return new NotFoundResult();
 
-            if (!Convert.ToBoolean(_config["SimpleLogin"])) 
+            if (!Convert.ToBoolean(_config["SimpleLogin"]))
             {
                 if (!_cryptoService.VerifyValuesMatch(credentials.Password, user.HashedPassword, user.Salt))
                     return new UnauthorizedResult();
@@ -59,14 +60,14 @@ namespace WorkoutTracker.API.Controllers
 
             int accessTokenLifetimeMinutes = int.TryParse(_config["Jwt:AccessTokenLifetimeMinutes"], out var minutes) ? minutes : 15;
 
-            var accessToken = 
+            var accessToken =
                 _tokenService.BuildToken(
-                    _config["Jwt:Key"].ToString(), 
+                    _config["Jwt:Key"].ToString(),
                     _config["Jwt:Issuer"].ToString(),
                     user,
                     accessTokenLifetimeMinutes);
 
-            var (rawRefreshToken, refreshTokenEntity) = _refreshTokenService.GenerateRefreshToken(user.Id);
+            var (rawRefreshToken, refreshTokenEntity) = await _refreshTokenService.GenerateRefreshTokenAsync(user.Id);
 
             return Ok(new AuthTokenResultDTO { AccessToken = accessToken, RefreshToken = rawRefreshToken });
         }
@@ -74,7 +75,7 @@ namespace WorkoutTracker.API.Controllers
         [AllowAnonymous]
         [Route("refresh")]
         [HttpPost]
-        public ActionResult<AuthTokenResultDTO> Refresh(RefreshTokenRequestDTO request)
+        public async Task<ActionResult<AuthTokenResultDTO>> Refresh(RefreshTokenRequestDTO request)
         {
             if (request == null || string.IsNullOrWhiteSpace(request.AccessToken) || string.IsNullOrWhiteSpace(request.RefreshToken))
                 return BadRequest();
@@ -92,17 +93,17 @@ namespace WorkoutTracker.API.Controllers
                 return Unauthorized();
 
             // Validate the refresh token
-            var existingToken = _refreshTokenService.ValidateRefreshToken(request.RefreshToken, userId);
+            var existingToken = await _refreshTokenService.ValidateRefreshTokenAsync(request.RefreshToken, userId);
             if (existingToken == null)
                 return Unauthorized();
 
             // Get the user to build a new access token
-            var user = _userService.GetAll().FirstOrDefault(x => x.Id == userId);
+            var user = (await _userService.GetAllAsync()).FirstOrDefault(x => x.Id == userId);
             if (user == null)
                 return Unauthorized();
 
             // Revoke old and create new refresh token
-            var (newRawRefreshToken, _) = _refreshTokenService.RevokeAndReplace(existingToken, userId);
+            var (newRawRefreshToken, _) = await _refreshTokenService.RevokeAndReplaceAsync(existingToken, userId);
 
             // Build new access token
             int accessTokenLifetimeMinutes = int.TryParse(_config["Jwt:AccessTokenLifetimeMinutes"], out var minutes) ? minutes : 15;
@@ -113,16 +114,16 @@ namespace WorkoutTracker.API.Controllers
 
         [Route("revoke")]
         [HttpPost]
-        public IActionResult Revoke()
+        public async Task<IActionResult> Revoke()
         {
             int userId = GetUserID();
-            _refreshTokenService.RevokeByUserId(userId);
+            await _refreshTokenService.RevokeByUserIdAsync(userId);
             return NoContent();
         }
 
         [Route("change-password")]
         [HttpPost]
-        public IActionResult ChangePassword(PasswordChangeRequest passwordChangeRequest)
+        public async Task<IActionResult> ChangePassword(PasswordChangeRequest passwordChangeRequest)
         {
             if(passwordChangeRequest == null) return BadRequest();
 
@@ -130,8 +131,8 @@ namespace WorkoutTracker.API.Controllers
             {
                 int userId = GetUserID();
 
-                _userService.ChangePassword(userId, passwordChangeRequest.CurrentPassword, passwordChangeRequest.NewPassword);
-                _refreshTokenService.RevokeByUserId(userId);
+                await _userService.ChangePasswordAsync(userId, passwordChangeRequest.CurrentPassword, passwordChangeRequest.NewPassword);
+                await _refreshTokenService.RevokeByUserIdAsync(userId);
 
                 return Ok();
             }
@@ -144,11 +145,11 @@ namespace WorkoutTracker.API.Controllers
         [Route("request-password-reset")]
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult<string> RequestPasswordReset(RequestPasswordResetRequest request)
+        public async Task<ActionResult<string>> RequestPasswordReset(RequestPasswordResetRequest request)
         {
             try
             {
-                string resetCode = _userService.RequestPasswordReset(request.EmailAddress);
+                string resetCode = await _userService.RequestPasswordResetAsync(request.EmailAddress);
                 return Ok(resetCode);
             }
             catch (Exception ex)
@@ -160,11 +161,11 @@ namespace WorkoutTracker.API.Controllers
         [Route("reset-password")]
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult ResetPassword(PasswordResetRequest request)
+        public async Task<IActionResult> ResetPassword(PasswordResetRequest request)
         {
             try
             {
-                _userService.ResetPassword(request.ResetCode, request.NewPassword);
+                await _userService.ResetPasswordAsync(request.ResetCode, request.NewPassword);
                 return Ok();
             }
             catch (Exception ex)
@@ -176,9 +177,9 @@ namespace WorkoutTracker.API.Controllers
         [Route("validate-reset-code/{resetCode}")]
         [AllowAnonymous]
         [HttpGet]
-        public ActionResult<bool> ValidatePasswordResetCode(string resetCode)
+        public async Task<ActionResult<bool>> ValidatePasswordResetCode(string resetCode)
         {
-            return _userService.ValidatePasswordResetCode(resetCode);
+            return await _userService.ValidatePasswordResetCodeAsync(resetCode);
         }
 
         private bool IsCredentialsObjectValid(UserCredentialsDTO credentials)

@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using WorkoutTracker.Domain.Exercises;
@@ -7,7 +8,6 @@ using WorkoutTracker.Repository;
 using Shouldly;
 using System;
 using WorkoutTracker.Application.Exercises.Services;
-using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Tests.Services
@@ -17,8 +17,8 @@ namespace WorkoutTracker.Tests.Services
     {
         private Mock<ILogger<ExerciseService>> _logger;
 
-        [TestInitialize] 
-        public void Initialize() 
+        [TestInitialize]
+        public void Initialize()
         {
             _logger = new Mock<ILogger<ExerciseService>>(MockBehavior.Strict);
             _logger.Setup(x => x.Log(
@@ -27,158 +27,67 @@ namespace WorkoutTracker.Tests.Services
                 It.Is<It.IsAnyType>((o, t) => true),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
-
         }
 
-        //TODO: Fix! The 'Like' method is the issue here.
-        /*
         [TestMethod]
-        public void Should_Get_Exercises_By_Filter()
-        {
-            //ARRANGE
-            var filter = new ExerciseFilter { NameContains = "Press", HasTargetAreas = new List<string>{ "Arms", "Chest" } };
-            var exercises = new List<Exercise>(3);
-            
-            //TODO: Create a builder for this
-            exercises.Add(
-                new Exercise 
-                { 
-                    Name = "Seated Row", 
-                    ExerciseTargetAreaLinks = 
-                        new List<ExerciseTargetAreaLink>(1) 
-                        { 
-                            new ExerciseTargetAreaLink 
-                            { 
-                                Id = 5, 
-                                TargetArea = new TargetArea { Name = "Back" } 
-                            } 
-                        } 
-                });
-
-            exercises.Add(
-                new Exercise
-                {
-                    Name = "Standing Press",
-                    ExerciseTargetAreaLinks =
-                        new List<ExerciseTargetAreaLink>(2)
-                        {
-                            new ExerciseTargetAreaLink
-                            {
-                                Id = 100, 
-                                TargetArea = new TargetArea { Name = "Arms" }
-                            },
-                            new ExerciseTargetAreaLink
-                            {
-                                Id = 101, 
-                                TargetArea = new TargetArea { Name = "Chest" }
-                            }
-                        }
-                });
-
-            exercises.Add(
-                new Exercise
-                {
-                    Name = "Mental Telepathy Builder",
-                    ExerciseTargetAreaLinks =
-                        new List<ExerciseTargetAreaLink>(1)
-                        {
-                            new ExerciseTargetAreaLink
-                            {
-                                Id = 999, 
-                                TargetArea = new TargetArea { Name = "THE MIND!" }
-                            }
-                        }
-                });
-
-            var repoMock = new Mock<IRepository<Exercise>>(MockBehavior.Strict);
-            repoMock.Setup(mock => mock.Get()).Returns(exercises.AsQueryable());
-
-            var sut = new ExerciseService(repoMock.Object);
-
-            //ACT
-            var results = sut.Get(0, 10, filter);
-
-            //ASSERT
-            results.Count().ShouldBe(1);
-            var result = results.First();
-            result.Name.ShouldBe("Standing Press");
-            result.ExerciseTargetAreaLinks.Count.ShouldBe(2);
-            result.ExerciseTargetAreaLinks.ShouldContain(link => link.TargetArea.Name == "Chest");
-            result.ExerciseTargetAreaLinks.ShouldContain(link => link.TargetArea.Name == "Arms");
-        }
-        */
-
-        [TestMethod]
-        public void Should_Add_Exercise()
+        public async Task Should_Add_Exercise()
         {
             //ARRANGE
             var exercise = new Exercise();
             var repoMock = new Mock<IRepository<Exercise>>(MockBehavior.Strict);
-            
+
             repoMock
-                .Setup(mock => mock.Add(It.IsAny<Exercise>(), true))
-                .Returns(exercise);
+                .Setup(mock => mock.AddAsync(It.IsAny<Exercise>(), true))
+                .ReturnsAsync(exercise);
 
             var sut = new ExerciseService(repoMock.Object, _logger.Object);
 
             //ACT
-            var result = sut.Add(exercise, true);
+            var result = await sut.AddAsync(exercise, true);
 
             //ASSERT
             result.ShouldBeSameAs(exercise);
-            repoMock.Verify(mock => mock.Add(exercise, true), Times.Once);
+            repoMock.Verify(mock => mock.AddAsync(exercise, true), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Update_Exercise()
+        public async Task Should_Update_Exercise()
         {
             //ARRANGE
             //TODO: Create builder for these Exercises
-            var modifiedExercise = 
-                new Exercise 
-                { 
-                    Id = 1, 
-                    ExerciseTargetAreaLinks = 
-                        new List<ExerciseTargetAreaLink>(2) 
-                        { 
-                            new ExerciseTargetAreaLink 
-                            {
-                                Id = 1, ExerciseId = 1, TargetAreaId = 3
-                            },
-                            new ExerciseTargetAreaLink
-                            {
-                                Id = 2, ExerciseId = 1, TargetAreaId = 7
-                            }
-                        } 
-                };
-
-            var existingExercise = 
-                new Exercise 
-                { 
+            var modifiedExercise =
+                new Exercise
+                {
                     Id = 1,
                     ExerciseTargetAreaLinks =
                         new List<ExerciseTargetAreaLink>(2)
                         {
-                            new ExerciseTargetAreaLink
-                            {
-                                Id = 1, ExerciseId = 1, TargetAreaId = 4
-                            },
-                            new ExerciseTargetAreaLink
-                            {
-                                Id = 2, ExerciseId = 1, TargetAreaId = 7
-                            }
+                            new ExerciseTargetAreaLink { Id = 1, ExerciseId = 1, TargetAreaId = 3 },
+                            new ExerciseTargetAreaLink { Id = 2, ExerciseId = 1, TargetAreaId = 7 }
                         }
                 };
-            
+
+            var existingExercise =
+                new Exercise
+                {
+                    Id = 1,
+                    ExerciseTargetAreaLinks =
+                        new List<ExerciseTargetAreaLink>(2)
+                        {
+                            new ExerciseTargetAreaLink { Id = 1, ExerciseId = 1, TargetAreaId = 4 },
+                            new ExerciseTargetAreaLink { Id = 2, ExerciseId = 1, TargetAreaId = 7 }
+                        }
+                };
+
             var repoMock = new Mock<IRepository<Exercise>>(MockBehavior.Strict);
 
             repoMock
-                .Setup(mock => mock.Update(existingExercise, true))
-                .Returns(existingExercise);
-            
+                .Setup(mock => mock.UpdateAsync(existingExercise, true))
+                .ReturnsAsync(existingExercise);
+
             repoMock
-                .Setup(mock => mock.Get(1))
-                .Returns(existingExercise);
+                .Setup(mock => mock.GetAsync(1))
+                .ReturnsAsync(existingExercise);
 
             repoMock
                 .Setup(mock => mock.SetValues(existingExercise, modifiedExercise));
@@ -186,20 +95,20 @@ namespace WorkoutTracker.Tests.Services
             var sut = new ExerciseService(repoMock.Object, _logger.Object);
 
             //ACT
-            var result = sut.Update(modifiedExercise, true);
+            var result = await sut.UpdateAsync(modifiedExercise, true);
 
             //ASSERT
             result.ShouldBeSameAs(existingExercise);
-            repoMock.Verify(mock => mock.Get(1), Times.Once);
-            repoMock.Verify(mock => mock.Update(existingExercise, true), Times.Once);
+            repoMock.Verify(mock => mock.GetAsync(1), Times.Once);
+            repoMock.Verify(mock => mock.UpdateAsync(existingExercise, true), Times.Once);
             existingExercise.ExerciseTargetAreaLinks.ShouldNotBeNull();
             existingExercise.ExerciseTargetAreaLinks.Count.ShouldBe(modifiedExercise.ExerciseTargetAreaLinks.Count);
             foreach (var link in existingExercise.ExerciseTargetAreaLinks)
             {
                 modifiedExercise
-                    .ExerciseTargetAreaLinks.Any(modifiedLink => 
-                        modifiedLink.Id == link.Id 
-                        && modifiedLink.ExerciseId == link.ExerciseId 
+                    .ExerciseTargetAreaLinks.Any(modifiedLink =>
+                        modifiedLink.Id == link.Id
+                        && modifiedLink.ExerciseId == link.ExerciseId
                         && modifiedLink.TargetAreaId == link.TargetAreaId)
                     .ShouldBeTrue();
             }

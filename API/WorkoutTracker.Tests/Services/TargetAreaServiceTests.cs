@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Services;
 using WorkoutTracker.Domain.Exercises;
@@ -17,8 +15,8 @@ namespace WorkoutTracker.Tests.Services
     {
         private Mock<ILogger<TargetAreaService>> _loggerMock;
 
-        [TestInitialize] 
-        public void Setup() 
+        [TestInitialize]
+        public void Setup()
         {
             _loggerMock = new Mock<ILogger<TargetAreaService>>(MockBehavior.Strict);
             _loggerMock.Setup(x => x.Log(
@@ -30,73 +28,72 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Get_TargetArea_By_ID()
+        public async Task Should_Get_TargetArea_By_ID()
         {
             //ARRANGE
             var targetArea = new TargetArea();
             int targetAreaId = 5;
             var repo = new Mock<IRepository<TargetArea>>(MockBehavior.Strict);
-            repo.Setup(x => x.Get(targetAreaId)).Returns(targetArea);
+            repo.Setup(x => x.GetAsync(targetAreaId)).ReturnsAsync(targetArea);
             var sut = new TargetAreaService(repo.Object, _loggerMock.Object);
 
             //ACT
-            var result = sut.Get(targetAreaId);
+            var result = await sut.GetAsync(targetAreaId);
 
             //ASSERT
             Assert.IsNotNull(result);
-            repo.Verify(x => x.Get(targetAreaId), Times.Once);
+            repo.Verify(x => x.GetAsync(targetAreaId), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_All_TargetAreas()
+        public async Task Should_Get_All_TargetAreas()
         {
             //ARRANGE
-            var allTargetAreas = 
-                new List<TargetArea>(3)
-                { 
-                    new TargetArea(), 
-                    new TargetArea(), 
-                    new TargetArea() 
-                }.AsQueryable();            
+            var allTargetAreas = new List<TargetArea>(3)
+            {
+                new TargetArea(),
+                new TargetArea(),
+                new TargetArea()
+            };
             var repo = new Mock<IRepository<TargetArea>>(MockBehavior.Strict);
-            repo.Setup(x => x.GetWithoutTracking()).Returns(allTargetAreas);
+            repo.Setup(x => x.GetAllWithoutTrackingAsync()).ReturnsAsync(allTargetAreas);
             var sut = new TargetAreaService(repo.Object, _loggerMock.Object);
 
             //ACT
-            var results = sut.GetAll();
+            var results = await sut.GetAllAsync();
 
             //ASSERT
             Assert.AreEqual(allTargetAreas, results);
-            repo.Verify(x => x.GetWithoutTracking(), Times.Once);
+            repo.Verify(x => x.GetAllWithoutTrackingAsync(), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_TargetAreas_By_IDs()
+        public async Task Should_Get_TargetAreas_By_IDs()
         {
             //ARRANGE
-            var allTargetAreas =
-                new List<TargetArea>(5)
-                {
-                    new TargetArea(){ Id = 1 },
-                    new TargetArea(){ Id = 2 },
-                    new TargetArea(){ Id = 3 },
-                    new TargetArea(){ Id = 4 },
-                    new TargetArea(){ Id = 5 }
-                }.AsQueryable();
+            var allTargetAreas = new List<TargetArea>(5)
+            {
+                new TargetArea() { Id = 1 },
+                new TargetArea() { Id = 2 },
+                new TargetArea() { Id = 3 },
+                new TargetArea() { Id = 4 },
+                new TargetArea() { Id = 5 }
+            };
             var repo = new Mock<IRepository<TargetArea>>(MockBehavior.Strict);
-            repo.Setup(x => x.GetWithoutTracking()).Returns(allTargetAreas);
+            repo.Setup(x => x.GetWithoutTracking()).Returns(allTargetAreas.AsAsyncQueryable());
             var sut = new TargetAreaService(repo.Object, _loggerMock.Object);
             var idsToGet = new int[] { 2, 3, 5 };
 
             //ACT
-            var results = sut.GetByIds(idsToGet);
+            var results = await sut.GetByIdsAsync(idsToGet);
 
             //ASSERT
             Assert.IsNotNull(results);
-            Assert.AreEqual(idsToGet.Length, results.Count());
+            var resultList = new List<TargetArea>(results);
+            Assert.AreEqual(idsToGet.Length, resultList.Count);
             for (byte x = 0; x < idsToGet.Length; x++)
             {
-                Assert.IsNotNull(results.First(y => y.Id == idsToGet[x]));
+                Assert.IsNotNull(resultList.Find(y => y.Id == idsToGet[x]));
             }
             repo.Verify(x => x.GetWithoutTracking(), Times.Once);
         }

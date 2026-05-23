@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +25,9 @@ namespace WorkoutTracker.API.Controllers
         private IWorkoutDTOMapper _workoutDTOMapper;
 
         public WorkoutController(
-            IWorkoutService workoutService, 
-            IWorkoutPlanService workoutPlanService, 
-            IExecutedWorkoutService executedWorkoutService, 
+            IWorkoutService workoutService,
+            IWorkoutPlanService workoutPlanService,
+            IExecutedWorkoutService executedWorkoutService,
             IWorkoutDTOMapper workoutDTOMapper)
         {
             _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));
@@ -37,7 +38,7 @@ namespace WorkoutTracker.API.Controllers
 
         // GET: api/Workouts
         [HttpGet]
-        public ActionResult<PaginatedResults<WorkoutDTO>> Get(int firstRecord, short pageSize, bool activeOnly, bool sortAscending = true, string nameContains = null)
+        public async Task<ActionResult<PaginatedResults<WorkoutDTO>>> Get(int firstRecord, short pageSize, bool activeOnly, bool sortAscending = true, string nameContains = null)
         {
             try
             {
@@ -45,14 +46,14 @@ namespace WorkoutTracker.API.Controllers
 
                 var filter = BuildWorkoutFilter(userId, activeOnly, nameContains);
 
-                int totalCount = _workoutService.GetTotalCount(filter);
+                int totalCount = await _workoutService.GetTotalCountAsync(filter);
 
-                var workoutsQuery = _workoutService.Get(firstRecord, pageSize, filter);
-                var workouts = sortAscending
-                    ? workoutsQuery.OrderBy(x => x.Name)
-                    : workoutsQuery.OrderByDescending(x => x.Name);
+                var workouts = (await _workoutService.GetAsync(firstRecord, pageSize, filter));
+                var sortedWorkouts = sortAscending
+                    ? workouts.OrderBy(x => x.Name)
+                    : workouts.OrderByDescending(x => x.Name);
 
-                var results = workouts.Select((workout) =>
+                var results = sortedWorkouts.Select((workout) =>
                 {
                     return _workoutDTOMapper.MapFromWorkout(workout);
                 });
@@ -93,11 +94,11 @@ namespace WorkoutTracker.API.Controllers
         */
 
         [HttpGet("{publicId}")]
-        public ActionResult<Workout> GetByPublicId(Guid publicId)
+        public async Task<ActionResult<Workout>> GetByPublicId(Guid publicId)
         {
             try
             {
-                var workout = _workoutService.GetByPublicId(publicId);
+                var workout = await _workoutService.GetByPublicIDAsync(publicId);
                 if (workout == null)
                     return NotFound(publicId);
                 else
@@ -140,11 +141,11 @@ namespace WorkoutTracker.API.Controllers
         */
 
         [HttpGet("{workoutPublicId}/plan")]
-        public ActionResult<WorkoutPlan> GetNewPlan(Guid workoutPublicId)
+        public async Task<ActionResult<WorkoutPlan>> GetNewPlan(Guid workoutPublicId)
         {
             try
             {
-                var plan = _workoutPlanService.Create(workoutPublicId, this.GetUserID());
+                var plan = await _workoutPlanService.CreateAsync(workoutPublicId, this.GetUserID());
                 return Ok(plan);
             }
             catch (Exception ex)
@@ -154,30 +155,30 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpPost("plan")]
-        public ActionResult<Guid> SubmitPlan([FromBody] WorkoutPlan plan)
+        public async Task<ActionResult<Guid>> SubmitPlan([FromBody] WorkoutPlan plan)
         {
-            return CreateWorkoutFromWorkoutPlan(plan, true);
+            return await CreateWorkoutFromWorkoutPlanAsync(plan, true);
         }
 
         [HttpPost("plan-for-later")]
-        public ActionResult<Guid> SubmitPlanForLater([FromBody] WorkoutPlan plan)
+        public async Task<ActionResult<Guid>> SubmitPlanForLater([FromBody] WorkoutPlan plan)
         {
-            return CreateWorkoutFromWorkoutPlan(plan, false);
+            return await CreateWorkoutFromWorkoutPlanAsync(plan, false);
         }
 
         [HttpPost("plan-for-past/{startDateTime}/{endDateTime}")]
-        public ActionResult<Guid> SubmitPlanForPast([FromBody] WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime) {
-            return CreateWorkoutFromWorkoutPlanForPast(plan, startDateTime, endDateTime);
+        public async Task<ActionResult<Guid>> SubmitPlanForPast([FromBody] WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime) {
+            return await CreateWorkoutFromWorkoutPlanForPastAsync(plan, startDateTime, endDateTime);
         }
 
         // POST api/Workouts
         [HttpPost]
-        public ActionResult<Workout> Post([FromBody]Workout value)
+        public async Task<ActionResult<Workout>> Post([FromBody]Workout value)
         {
             try
             {
                 SetCreatedAuditFields(value);
-                return Ok(_workoutService.Add(value, true));
+                return Ok(await _workoutService.AddAsync(value, true));
             }
             catch (Exception ex)
             {
@@ -187,12 +188,12 @@ namespace WorkoutTracker.API.Controllers
 
         // PUT api/Workouts
         [HttpPut]
-        public ActionResult<Workout> Put([FromBody]Workout value)
+        public async Task<ActionResult<Workout>> Put([FromBody]Workout value)
         {
             try
             {
                 SetModifiedAuditFields(value);
-                return Ok(_workoutService.Update(value, true));
+                return Ok(await _workoutService.UpdateAsync(value, true));
             }
             catch (Exception ex)
             {
@@ -208,11 +209,11 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpPut("{publicId}/retire")]
-        public ActionResult Retire(Guid publicId)
+        public async Task<ActionResult> Retire(Guid publicId)
         {
             try
             {
-                _workoutService.Retire(publicId);
+                await _workoutService.RetireAsync(publicId);
                 return Ok();
             }
             catch (Exception ex)
@@ -222,11 +223,11 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpPut("{publicId}/reactivate")]
-        public ActionResult Reactivate(Guid publicId)
+        public async Task<ActionResult> Reactivate(Guid publicId)
         {
             try
             {
-                _workoutService.Reactivate(publicId);
+                await _workoutService.ReactivateAsync(publicId);
                 return Ok();
             }
             catch (Exception ex)
@@ -248,13 +249,12 @@ namespace WorkoutTracker.API.Controllers
             return filter;
         }
 
-        private ActionResult<Guid> CreateWorkoutFromWorkoutPlan(WorkoutPlan plan, bool startWorkout)
+        private async Task<ActionResult<Guid>> CreateWorkoutFromWorkoutPlanAsync(WorkoutPlan plan, bool startWorkout)
         {
             try
             {
-                var executedWorkout = _executedWorkoutService.Create(plan, startWorkout);
+                var executedWorkout = await _executedWorkoutService.CreateAsync(plan, startWorkout);
                 return Ok(executedWorkout.PublicId);
-
             }
             catch (Exception ex)
             {
@@ -262,13 +262,12 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        private ActionResult<Guid> CreateWorkoutFromWorkoutPlanForPast(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime)
+        private async Task<ActionResult<Guid>> CreateWorkoutFromWorkoutPlanForPastAsync(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime)
         {
             try
             {
-                var executedWorkout = _executedWorkoutService.Create(plan, startDateTime, endDateTime);
+                var executedWorkout = await _executedWorkoutService.CreateAsync(plan, startDateTime, endDateTime);
                 return Ok(executedWorkout.PublicId);
-
             }
             catch (Exception ex)
             {

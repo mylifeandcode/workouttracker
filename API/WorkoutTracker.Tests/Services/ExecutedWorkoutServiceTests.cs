@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Shouldly;
@@ -36,7 +36,7 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Create_ExecutedWorkout_From_ExercisePlan()
+        public async Task Should_Create_ExecutedWorkout_From_ExercisePlan()
         {
             //ARRANGE
             DateTime submittedDate = new DateTime(2020, 2, 3);
@@ -50,9 +50,9 @@ namespace WorkoutTracker.Tests.Services
             workoutPlan.Exercises.Add(
                 new ExercisePlan()
                 {
-                    ExerciseId = 101, 
-                    TargetRepCount = 10, 
-                    ResistanceAmount = 80, 
+                    ExerciseId = 101,
+                    TargetRepCount = 10,
+                    ResistanceAmount = 80,
                     ResistanceMakeup = "Onyx, Onxy"
                 }
             );
@@ -82,10 +82,10 @@ namespace WorkoutTracker.Tests.Services
             workout.Exercises.Add(
                 new ExerciseInWorkout()
                 {
-                    ExerciseId = 101, 
-                    Exercise = new Exercise() { Id = 101 }, 
-                    NumberOfSets = 2, 
-                    SetType = SetType.Repetition, 
+                    ExerciseId = 101,
+                    Exercise = new Exercise() { Id = 101 },
+                    NumberOfSets = 2,
+                    SetType = SetType.Repetition,
                     Sequence = 0
                 }
             );
@@ -94,7 +94,7 @@ namespace WorkoutTracker.Tests.Services
                 {
                     ExerciseId = 102,
                     Exercise = new Exercise() { Id = 102 },
-                    NumberOfSets = 3, 
+                    NumberOfSets = 3,
                     SetType = SetType.Timed,
                     Sequence = 1
                 }
@@ -104,7 +104,7 @@ namespace WorkoutTracker.Tests.Services
                 {
                     ExerciseId = 103,
                     Exercise = new Exercise() { Id = 103, OneSided = true },
-                    NumberOfSets = 4, 
+                    NumberOfSets = 4,
                     SetType = SetType.Repetition,
                     Sequence = 2
                 }
@@ -112,12 +112,12 @@ namespace WorkoutTracker.Tests.Services
 
             var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
             //workoutRepo.Setup(x => x.GetWithoutTracking(It.IsAny<int>())).Returns(workout);
-            workoutRepo.Setup(x => x.GetWithoutTracking()).Returns(new List<Workout>([workout]).AsQueryable());
+            workoutRepo.Setup(x => x.GetWithoutTracking()).Returns(new List<Workout>([workout]).AsAsyncQueryable());
 
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
-                .Setup(x => x.Add(It.IsAny<ExecutedWorkout>(), true))
-                .Returns((ExecutedWorkout executedWorkout, bool saveChanges) => executedWorkout);
+                .Setup(x => x.AddAsync(It.IsAny<ExecutedWorkout>(), true))
+                .ReturnsAsync((ExecutedWorkout executedWorkout, bool saveChanges) => executedWorkout);
 
             var sut =
                 new ExecutedWorkoutService(
@@ -126,14 +126,14 @@ namespace WorkoutTracker.Tests.Services
                     _logger.Object);
 
             //ACT
-            var result = sut.Create(workoutPlan, true);
+            var result = await sut.CreateAsync(workoutPlan, true);
 
             //ASSERT
             Assert.IsNotNull(result, "result is null.");
             Assert.IsNotNull(result.Exercises, "result.Exercises is null.");
             Assert.AreEqual(workout.Exercises.Sum(x => x.NumberOfSets * (x.Exercise.OneSided ? 2 : 1)), result.Exercises.Count, "result.Exercises.Count isn't as expected.");
             Assert.AreEqual(submittedDate, result.StartDateTime, "result.StartDateTime is not as expected.");
-            
+
             byte exerciseSequence = 0;
             foreach (var exerciseInWorkout in workout.Exercises?.OrderBy(x => x.Sequence))
             {
@@ -146,12 +146,12 @@ namespace WorkoutTracker.Tests.Services
                     //Confirm audit values
                     Assert.AreEqual(workout.CreatedByUserId, executedExercisesInResult[x].CreatedByUserId);
                     Assert.AreEqual(submittedDate, executedExercisesInResult[x].CreatedDateTime);
-                    
+
                     //Confirm exercise
 
                     //NOPE for this condition -- having the object and not just the ID caused trouble elsewhere!
                     //Assert.AreEqual(exerciseInWorkout.Exercise, executedExercisesInResult[x].Exercise);
-                    
+
                     Assert.AreEqual(exerciseInWorkout.ExerciseId, executedExercisesInResult[x].ExerciseId);
                     Assert.AreEqual(exerciseInWorkout.SetType, executedExercisesInResult[x].SetType);
 
@@ -166,7 +166,7 @@ namespace WorkoutTracker.Tests.Services
                     exerciseSequence++;
                 }
             }
-            executedWorkoutRepo.Verify(x => x.Add(It.IsAny<ExecutedWorkout>(), true), Times.Once());
+            executedWorkoutRepo.Verify(x => x.AddAsync(It.IsAny<ExecutedWorkout>(), true), Times.Once());
 
         }
 
@@ -177,7 +177,7 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Update_ExecutedWorkout()
+        public async Task Should_Update_ExecutedWorkout()
         {
             //ARRANGE
             var modifiedExecutedWorkout = new ExecutedWorkout();
@@ -204,17 +204,17 @@ namespace WorkoutTracker.Tests.Services
                     _logger.Object);
 
             //ACT
-            var result = sut.Update(modifiedExecutedWorkout);
+            var result = await sut.UpdateAsync(modifiedExecutedWorkout);
 
             //ASSERT
             result.ShouldBeSameAs(modifiedExecutedWorkout);
             executedWorkoutRepo
-                .Verify(mock => mock.UpdateAsync(modifiedExecutedWorkout, It.IsAny<Expression<Func<ExecutedWorkout, object>>[]>()), 
+                .Verify(mock => mock.UpdateAsync(modifiedExecutedWorkout, It.IsAny<Expression<Func<ExecutedWorkout, object>>[]>()),
                 Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_In_Progress_Workouts() 
+        public async Task Should_Get_In_Progress_Workouts()
         {
             //ARRANGE
             int userId = 10;
@@ -231,7 +231,7 @@ namespace WorkoutTracker.Tests.Services
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
                 .Setup(x => x.GetWithoutTracking())
-                .Returns(executedWorkouts.AsQueryable());
+                .Returns(executedWorkouts.AsAsyncQueryable());
 
             var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
 
@@ -242,7 +242,7 @@ namespace WorkoutTracker.Tests.Services
                     _logger.Object);
 
             //ACT
-            var results = sut.GetInProgress(userId).ToList();
+            var results = (await sut.GetInProgressAsync(userId)).ToList();
 
             //ASSERT
             var expectedResults = executedWorkouts.Where(x => x.StartDateTime.HasValue).ToList();
@@ -250,20 +250,21 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Delete_Planned_Workout()
+        public async Task Should_Delete_Planned_Workout()
         {
             //ARRANGE
             var executedWorkoutId = Guid.NewGuid();
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
-                .Setup(x => x.Delete(It.IsAny<int>()));
+                .Setup(x => x.DeleteAsync(It.IsAny<int>()))
+                .Returns(Task.CompletedTask);
 
             var executedWorkouts = new List<ExecutedWorkout>(1);
             executedWorkouts.Add(new ExecutedWorkout { Id = 100, PublicId = executedWorkoutId });
 
             executedWorkoutRepo
                 .Setup(x => x.Get())
-                .Returns(executedWorkouts.AsQueryable());
+                .Returns(executedWorkouts.AsAsyncQueryable());
 
             var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
 
@@ -275,26 +276,27 @@ namespace WorkoutTracker.Tests.Services
 
 
             //ACT
-            sut.DeletePlanned(executedWorkoutId);
+            await sut.DeletePlannedAsync(executedWorkoutId);
 
             //ASSERT
             executedWorkoutRepo.Verify(x => x.Get(), Times.Once);
-            executedWorkoutRepo.Verify(x => x.Delete(100), Times.Once);
+            executedWorkoutRepo.Verify(x => x.DeleteAsync(100), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Not_Delete_Planned_Workout_Which_Has_Been_Started()
+        public async Task Should_Not_Delete_Planned_Workout_Which_Has_Been_Started()
         {
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
-                .Setup(x => x.Delete(It.IsAny<int>()));
+                .Setup(x => x.DeleteAsync(It.IsAny<int>()))
+                .Returns(Task.CompletedTask);
 
             var executedWorkouts = new List<ExecutedWorkout>(1);
             executedWorkouts.Add(new ExecutedWorkout { Id = 100, StartDateTime = new DateTime() });
 
             executedWorkoutRepo
                 .Setup(x => x.Get())
-                .Returns(executedWorkouts.AsQueryable());
+                .Returns(executedWorkouts.AsAsyncQueryable());
 
             var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
 
@@ -305,23 +307,24 @@ namespace WorkoutTracker.Tests.Services
                     _logger.Object);
 
             //ACT & ASSERT
-            Assert.Throws<ArgumentException>(() =>
-                sut.DeletePlanned(Guid.NewGuid()));
+            await Should.ThrowAsync<ArgumentException>(() =>
+                sut.DeletePlannedAsync(Guid.NewGuid()));
         }
 
         [TestMethod]
-        public void Should_Not_Delete_Planned_Workout_When_Not_Found()
+        public async Task Should_Not_Delete_Planned_Workout_When_Not_Found()
         {
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
-                .Setup(x => x.Delete(It.IsAny<int>()));
+                .Setup(x => x.DeleteAsync(It.IsAny<int>()))
+                .Returns(Task.CompletedTask);
 
             var executedWorkouts = new List<ExecutedWorkout>(1);
             executedWorkouts.Add(new ExecutedWorkout { Id = 200 });
 
             executedWorkoutRepo
                 .Setup(x => x.Get())
-                .Returns(executedWorkouts.AsQueryable());
+                .Returns(executedWorkouts.AsAsyncQueryable());
 
             var workoutRepo = new Mock<IRepository<Workout>>(MockBehavior.Strict);
 
@@ -332,8 +335,8 @@ namespace WorkoutTracker.Tests.Services
                     _logger.Object);
 
             //ACT & ASSERT
-            Assert.Throws<ArgumentException>(() =>
-                sut.DeletePlanned(Guid.NewGuid()));
+            await Should.ThrowAsync<ArgumentException>(() =>
+                sut.DeletePlannedAsync(Guid.NewGuid()));
         }
     }
 }

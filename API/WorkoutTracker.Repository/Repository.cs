@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -33,88 +33,54 @@ namespace WorkoutTracker.Repository
             return _dbSet.AsNoTracking().AsQueryable();
         }
 
-        public TEntity Get(int id)
+        public async Task<TEntity?> GetAsync(int id)
         {
-            return _dbSet.Find(id);
+            return await _dbSet.FindAsync(id);
         }
 
-        public TEntity GetWithoutTracking(int id)
-        { 
-            return _dbSet.AsNoTracking().FirstOrDefault(x => x.Id == id);
+        public async Task<TEntity?> GetWithoutTrackingAsync(int id)
+        {
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public TEntity Add(TEntity entity, bool saveChanges = false)
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync();
+        }
+
+        public async Task<IEnumerable<TEntity>> GetAllWithoutTrackingAsync()
+        {
+            return await _dbSet.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<TEntity> AddAsync(TEntity entity, bool saveChanges = false)
         {
             entity.CreatedDateTime = DateTime.Now.ToUniversalTime();
-            _context.Add<TEntity>(entity);
+            await _context.AddAsync<TEntity>(entity);
 
             if (saveChanges)
-                _context.SaveChanges(); //Save();
+                await _context.SaveChangesAsync();
 
             return entity;
         }
 
-        /*
-        public Task<TEntity> AddAsync(TEntity entity, bool saveChanges = false)
-        {
-            entity.CreatedDateTime = DateTime.Now;
-            _context.AddAsync<TEntity>(entity);
-
-            if (saveChanges)
-                SaveAsync();
-
-            return Task.FromResult<TEntity>(entity);
-        }
-        */
-
-        public TEntity Update(TEntity entity, bool saveChanges = false)
+        public async Task<TEntity> UpdateAsync(TEntity entity, bool saveChanges = false)
         {
             entity.ModifiedDateTime = DateTime.Now.ToUniversalTime();
             _context.Update<TEntity>(entity);
 
             if (saveChanges)
-                _context.SaveChanges(); //Save();
+                await _context.SaveChangesAsync();
 
             return entity;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            _context.Remove<TEntity>(Get(id));
-            _context.SaveChanges();
+            var entity = await _dbSet.FindAsync(id);
+            _context.Remove(entity);
+            await _context.SaveChangesAsync();
         }
-
-        //TODO: Re-evaluate. I don't think this method is needed.
-        /*
-        public virtual void Save()
-        {
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                //TODO: Log
-                //TODO: Handle different exception types
-                throw;
-            }
-        }
-
-        //TODO: Re-evaluate. I don't think this method is needed.
-        public virtual Task SaveAsync()
-        {
-            try
-            {
-                return _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                //TODO: Log
-                //TODO: Handle different exception types
-                throw;
-            }
-        }
-        */
 
         public void SetValues(TEntity target, TEntity source)
         {
@@ -161,14 +127,19 @@ namespace WorkoutTracker.Repository
             return await _context.SaveChangesAsync();
         }
 
-        public bool Any()
+        public async Task<bool> AnyAsync()
         {
-            return _dbSet.Any();
+            return await _dbSet.AnyAsync();
         }
 
-        public bool Any(Expression<Func<TEntity, bool>> predicate)
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return _dbSet.Any(predicate);
+            return await _dbSet.AnyAsync(predicate);
+        }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            return await _dbSet.CountAsync();
         }
     }
 }

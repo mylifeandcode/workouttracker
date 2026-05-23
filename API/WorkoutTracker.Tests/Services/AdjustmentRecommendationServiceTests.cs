@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -20,7 +21,6 @@ namespace WorkoutTracker.Tests.Services
         private Mock<ILogger<AdjustmentRecommendationService>> _loggerMock;
         private UserSettings _userSettings;
         private AdjustmentRecommendationService _sut;
-        private string _makeup = "Blue";
 
         [TestInitialize]
         public void Initialize()
@@ -29,28 +29,27 @@ namespace WorkoutTracker.Tests.Services
 
             _loggerMock = new Mock<ILogger<AdjustmentRecommendationService>>(MockBehavior.Strict);
             _loggerMock.Setup(x => x.Log(
-                It.IsAny<LogLevel>(), 
+                It.IsAny<LogLevel>(),
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((o, t) => true), 
-                It.IsAny<Exception>(), 
+                It.Is<It.IsAnyType>((o, t) => true),
+                It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
 
             _resistanceServiceMock = new Mock<IResistanceService>(MockBehavior.Strict);
             _resistanceServiceMock
-                .Setup(x => x.GetNewResistanceAmount(
+                .Setup(x => x.GetNewResistanceAmountAsync(
                     It.IsAny<ResistanceType>(),
                     It.IsAny<decimal>(),
                     It.IsAny<sbyte>(),
                     It.IsAny<bool>(),
-                    It.IsAny<bool>(),
-                    out _makeup))
-                .Returns(13);
+                    It.IsAny<bool>()))
+                .ReturnsAsync((13m, "Blue"));
 
             _sut = new AdjustmentRecommendationService(_resistanceServiceMock.Object, _loggerMock.Object);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Form_Was_Bad()
+        public async Task Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Form_Was_Bad()
         {
             //ARRANGE
             var executedExercise =
@@ -69,26 +68,25 @@ namespace WorkoutTracker.Tests.Services
             const sbyte EXPECTED_MODIFIER = -1;
 
             //ACT
-            var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
+            var recommendation = await _sut.GetAdjustmentRecommendationAsync(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
             Assert.AreEqual("Form needs improvement.", recommendation.Reason, "Recommendation Reason isn't as expected.");
-            Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected."); //Pre-set fake value
-            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected."); //Pre-set fake value
+            Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
+            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
             Assert.AreEqual(executedExercise.TargetRepCount, recommendation.Reps, "Recommendation Reps isn't as expected.");
-            _resistanceServiceMock.Verify(x => 
-                x.GetNewResistanceAmount(
-                    executedExercise.Exercise.ResistanceType, 
-                    executedExercise.ResistanceAmount, 
-                    EXPECTED_MODIFIER, 
-                    !executedExercise.Exercise.OneSided, 
-                    executedExercise.Exercise.UsesBilateralResistance,
-                    out _makeup), Times.Once);
+            _resistanceServiceMock.Verify(x =>
+                x.GetNewResistanceAmountAsync(
+                    executedExercise.Exercise.ResistanceType,
+                    executedExercise.ResistanceAmount,
+                    EXPECTED_MODIFIER,
+                    !executedExercise.Exercise.OneSided,
+                    executedExercise.Exercise.UsesBilateralResistance), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Form_Was_Awful()
+        public async Task Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Form_Was_Awful()
         {
             //ARRANGE
             var executedExercise =
@@ -107,25 +105,24 @@ namespace WorkoutTracker.Tests.Services
             const sbyte EXPECTED_MODIFIER = -2;
 
             //ACT
-            var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
+            var recommendation = await _sut.GetAdjustmentRecommendationAsync(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
             Assert.AreEqual("Form needs much improvement.", recommendation.Reason, "Recommendation Reason isn't as expected.");
-            Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected."); //Pre-set fake value
-            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected."); //Pre-set fake value
+            Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
+            Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
             _resistanceServiceMock.Verify(x =>
-                x.GetNewResistanceAmount(
+                x.GetNewResistanceAmountAsync(
                     executedExercise.Exercise.ResistanceType,
                     executedExercise.ResistanceAmount,
                     EXPECTED_MODIFIER,
                     !executedExercise.Exercise.OneSided,
-                    executedExercise.Exercise.UsesBilateralResistance,
-                    out _makeup), Times.Once);
+                    executedExercise.Exercise.UsesBilateralResistance), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Range_of_Motion_Was_Bad()
+        public async Task Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Range_of_Motion_Was_Bad()
         {
             //ARRANGE
             var executedExercise =
@@ -144,7 +141,7 @@ namespace WorkoutTracker.Tests.Services
             const sbyte EXPECTED_MODIFIER = -1;
 
             //ACT
-            var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
+            var recommendation = await _sut.GetAdjustmentRecommendationAsync(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
@@ -152,17 +149,16 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
             Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
             _resistanceServiceMock.Verify(x =>
-                x.GetNewResistanceAmount(
+                x.GetNewResistanceAmountAsync(
                     executedExercise.Exercise.ResistanceType,
                     executedExercise.ResistanceAmount,
                     EXPECTED_MODIFIER,
                     !executedExercise.Exercise.OneSided,
-                    executedExercise.Exercise.UsesBilateralResistance,
-                    out _makeup), Times.Once);
+                    executedExercise.Exercise.UsesBilateralResistance), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Range_of_Motion_Was_Awful()
+        public async Task Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Range_of_Motion_Was_Awful()
         {
             //ARRANGE
             var executedExercise =
@@ -181,7 +177,7 @@ namespace WorkoutTracker.Tests.Services
             const sbyte EXPECTED_MODIFIER = -2;
 
             //ACT
-            var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
+            var recommendation = await _sut.GetAdjustmentRecommendationAsync(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
@@ -189,17 +185,16 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
             Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
             _resistanceServiceMock.Verify(x =>
-                x.GetNewResistanceAmount(
+                x.GetNewResistanceAmountAsync(
                     executedExercise.Exercise.ResistanceType,
                     executedExercise.ResistanceAmount,
                     EXPECTED_MODIFIER,
                     !executedExercise.Exercise.OneSided,
-                    executedExercise.Exercise.UsesBilateralResistance,
-                    out _makeup), Times.Once);
+                    executedExercise.Exercise.UsesBilateralResistance), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Actual_Rep_Count_Was_Bad_But_Not_Less_Than_Minimum()
+        public async Task Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Actual_Rep_Count_Was_Bad_But_Not_Less_Than_Minimum()
         {
             //ARRANGE
             var executedExercise =
@@ -211,14 +206,14 @@ namespace WorkoutTracker.Tests.Services
                     FormRating = 5,
                     RangeOfMotionRating = 5,
                     ResistanceAmount = 19,
-                    ResistanceMakeup = "Blue", 
+                    ResistanceMakeup = "Blue",
                     Exercise = new Exercise { ResistanceType = ResistanceType.ResistanceBand }
                 };
 
             var averages = new ExecutedExerciseAverages(new List<ExecutedExercise> { executedExercise });
 
             //ACT
-            var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
+            var recommendation = await _sut.GetAdjustmentRecommendationAsync(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
@@ -226,17 +221,16 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(19, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
             Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
             _resistanceServiceMock.Verify(x =>
-                x.GetNewResistanceAmount(
+                x.GetNewResistanceAmountAsync(
                     executedExercise.Exercise.ResistanceType,
                     executedExercise.ResistanceAmount,
                     It.IsAny<sbyte>(),
                     !executedExercise.Exercise.OneSided,
-                    executedExercise.Exercise.UsesBilateralResistance,
-                    out _makeup), Times.Never);
+                    executedExercise.Exercise.UsesBilateralResistance), Times.Never);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Actual_Rep_Count_Was_Awful()
+        public async Task Should_Get_Adjustment_Recommendation_For_Repetition_Set_Where_Actual_Rep_Count_Was_Awful()
         {
             //ARRANGE
             var executedExercise =
@@ -254,7 +248,7 @@ namespace WorkoutTracker.Tests.Services
             var averages = new ExecutedExerciseAverages(new List<ExecutedExercise> { executedExercise });
 
             //ACT
-            var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
+            var recommendation = await _sut.GetAdjustmentRecommendationAsync(averages, _userSettings);
             const sbyte EXPECTED_MODIFIER = -2;
 
             //ASSERT
@@ -263,17 +257,16 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
             Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
             _resistanceServiceMock.Verify(x =>
-                x.GetNewResistanceAmount(
+                x.GetNewResistanceAmountAsync(
                     executedExercise.Exercise.ResistanceType,
                     executedExercise.ResistanceAmount,
                     EXPECTED_MODIFIER,
                     !executedExercise.Exercise.OneSided,
-                    executedExercise.Exercise.UsesBilateralResistance,
-                    out _makeup), Times.Once);
+                    executedExercise.Exercise.UsesBilateralResistance), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Adjustment_Recommendation_For_Repetition_Set_With_Multiple_Areas_For_Improvement()
+        public async Task Should_Get_Adjustment_Recommendation_For_Repetition_Set_With_Multiple_Areas_For_Improvement()
         {
             //ARRANGE
             var executedExercise =
@@ -292,7 +285,7 @@ namespace WorkoutTracker.Tests.Services
             const sbyte EXPECTED_MODIFIER = -2;
 
             //ACT
-            var recommendation = _sut.GetAdjustmentRecommendation(averages, _userSettings);
+            var recommendation = await _sut.GetAdjustmentRecommendationAsync(averages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(recommendation);
@@ -300,13 +293,12 @@ namespace WorkoutTracker.Tests.Services
             Assert.AreEqual(13, recommendation.ResistanceAmount, "Recommendation ResistanceAmount isn't as expected.");
             Assert.AreEqual("Blue", recommendation.ResistanceMakeup, "Recommendation ResistanceMakeup isn't as expected.");
             _resistanceServiceMock.Verify(x =>
-                x.GetNewResistanceAmount(
+                x.GetNewResistanceAmountAsync(
                     executedExercise.Exercise.ResistanceType,
                     executedExercise.ResistanceAmount,
                     EXPECTED_MODIFIER,
                     !executedExercise.Exercise.OneSided,
-                    executedExercise.Exercise.UsesBilateralResistance,
-                    out _makeup), Times.Once);
+                    executedExercise.Exercise.UsesBilateralResistance), Times.Once);
         }
     }
 }

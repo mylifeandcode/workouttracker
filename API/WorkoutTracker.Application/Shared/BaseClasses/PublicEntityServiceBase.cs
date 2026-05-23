@@ -1,9 +1,11 @@
-﻿using System;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Domain.BaseClasses;
 using WorkoutTracker.Repository;
 using Microsoft.Extensions.Logging;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Domain.Interfaces;
 
 namespace WorkoutTracker.Application.Shared.BaseClasses
@@ -12,10 +14,9 @@ namespace WorkoutTracker.Application.Shared.BaseClasses
     {
         public PublicEntityServiceBase(IRepository<T> repo, ILogger logger): base(repo, logger) { }
 
-        public T GetByPublicID(Guid publicId)
+        public async Task<T?> GetByPublicIDAsync(Guid publicId)
         {
-            return _repo.GetWithoutTracking().FirstOrDefault(x => x.PublicId == publicId);
+            return await _repo.GetWithoutTracking().FirstOrDefaultAsync(x => x.PublicId == publicId);
         }
-
     }
 }

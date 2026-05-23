@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 
 namespace WorkoutTracker.Application.Exercises.Interfaces
 {
     public interface ITargetAreaService
     {
-        IEnumerable<TargetArea> GetAll();
-        TargetArea Get(int id);
-        IEnumerable<TargetArea> GetByIds(int[] ids);
+        Task<IEnumerable<TargetArea>> GetAllAsync();
+        Task<TargetArea?> GetAsync(int id);
+        Task<IEnumerable<TargetArea>> GetByIdsAsync(int[] ids);
     }
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
 using WorkoutTracker.Application.Shared.BaseClasses;
@@ -15,41 +16,38 @@ namespace WorkoutTracker.Application.Exercises.Services
     {
         public ExerciseService(IRepository<Exercise> repo, ILogger<ExerciseService> logger) : base(repo, logger) { }
 
-        public IEnumerable<Exercise> Get(int firstRecord, short pageSize, ExerciseFilter filter)
+        public async Task<IEnumerable<Exercise>> GetAsync(int firstRecord, short pageSize, ExerciseFilter filter)
         {
             IQueryable<Exercise> query = _repo.GetWithoutTracking();
 
             if (filter != null)
                 ApplyQueryFilters(ref query, filter);
 
-            var output = query.Skip(firstRecord).Take(pageSize);
-            return output;
+            return await query.Skip(firstRecord).Take(pageSize).ToListAsync();
         }
 
-        public Exercise GetByPublicId(Guid publicId)
+        public async Task<Exercise?> GetByPublicIdAsync(Guid publicId)
         {
-            return _repo.GetWithoutTracking().FirstOrDefault(x => x.PublicId == publicId);
+            return await _repo.GetWithoutTracking().FirstOrDefaultAsync(x => x.PublicId == publicId);
         }
 
-        public override Exercise Update(Exercise modifiedExercise, bool saveChanges = false)
+        public override async Task<Exercise> UpdateAsync(Exercise modifiedExercise, bool saveChanges = false)
         {
             if (modifiedExercise == null)
                 throw new ArgumentNullException(nameof(modifiedExercise));
 
             /*
             Remove any ExerciseTargetAreaLinks which are not present in entity.
-            I thought there'd be an easier way to handle this, but as this is a 
-            disconnected entity, apparently there is not. :/
-            See https://docs.microsoft.com/en-us/ef/core/saving/disconnected-entities for 
+            See https://docs.microsoft.com/en-us/ef/core/saving/disconnected-entities for
             more info.
             */
-            var existingExercise = _repo.Get(modifiedExercise.Id); //Once we do this, this entity is TRACKED
+            var existingExercise = await _repo.GetAsync(modifiedExercise.Id);
             _repo.SetValues(existingExercise, modifiedExercise);
 
             AddExerciseTargetAreaLinksToExistingExercise(existingExercise, modifiedExercise);
             RemoveExerciseTargetAreaLinksToExistingExercise(existingExercise, modifiedExercise);
 
-            return _repo.Update(existingExercise, saveChanges);
+            return await _repo.UpdateAsync(existingExercise, saveChanges);
         }
 
         public Dictionary<int, string> GetResistanceTypes()
@@ -61,14 +59,15 @@ namespace WorkoutTracker.Application.Exercises.Services
                     .ToDictionary(enumValue => enumValue, enumValue => Enum.GetName(typeof(ResistanceType), enumValue));
         }
 
-        public int GetTotalCount(ExerciseFilter filter)
+        public async Task<int> GetTotalCountAsync(ExerciseFilter filter)
         {
             var query = _repo.GetWithoutTracking();
             ApplyQueryFilters(ref query, filter);
-            return query.Count();
+            return await query.CountAsync();
         }
 
         #region Private Methods
+
         private void ApplyQueryFilters(ref IQueryable<Exercise> query, ExerciseFilter filter)
         {
             if (filter == null)
@@ -79,11 +78,11 @@ namespace WorkoutTracker.Application.Exercises.Services
 
             if (filter.HasTargetAreas != null && filter.HasTargetAreas.Any())
             {
-                //filter.HasTargetAreas.ForEach((targetArea) =>
                 foreach (var targetArea in filter.HasTargetAreas)
                 {
                     query = query.Where(exercise =>
                         exercise.ExerciseTargetAreaLinks.Any(links =>
+                            links.TargetArea != null &&
                             EF.Functions.Like(links.TargetArea.Name.ToUpper(), targetArea.ToUpper())));
                 }
             }

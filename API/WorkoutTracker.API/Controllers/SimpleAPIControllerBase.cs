@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Domain.BaseClasses;
@@ -17,11 +18,11 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet]
-        public virtual ActionResult<IEnumerable<T>> Get()
+        public virtual async Task<ActionResult<IEnumerable<T>>> Get()
         {
             try
             {
-                return Ok(_service.GetAll());
+                return Ok(await _service.GetAllAsync());
             }
             catch (Exception ex)
             {
@@ -30,11 +31,11 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public virtual ActionResult<T> Get(int id)
+        public virtual async Task<ActionResult<T>> Get(int id)
         {
             try
             {
-                var entity = _service.GetById(id);
+                var entity = await _service.GetByIdAsync(id);
 
                 if (entity == null)
                     return NotFound();
@@ -48,12 +49,12 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpPost]
-        public virtual ActionResult<T> Post([FromBody] T value, bool setAuditFields = true)
+        public virtual async Task<ActionResult<T>> Post([FromBody] T value, bool setAuditFields = true)
         {
             try
             {
                 if (setAuditFields) SetCreatedAuditFields(value);
-                return Ok(_service.Add(value));
+                return Ok(await _service.AddAsync(value));
             }
             catch (BadHttpRequestException ex)
             {
@@ -66,12 +67,12 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public virtual ActionResult<T> Put(int id, [FromBody] T value)
+        public virtual async Task<ActionResult<T>> Put(int id, [FromBody] T value)
         {
             try
             {
                 SetModifiedAuditFields(value);
-                return Ok(_service.Update(value));
+                return Ok(await _service.UpdateAsync(value));
             }
             catch (BadHttpRequestException ex)
             {
@@ -84,11 +85,11 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public virtual IActionResult Delete(int id)
+        public virtual async Task<IActionResult> Delete(int id)
         {
             try
             {
-                _service.Delete(id);
+                await _service.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)

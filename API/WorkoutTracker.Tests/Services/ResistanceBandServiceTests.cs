@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using WorkoutTracker.Repository;
 using Shouldly;
 using WorkoutTracker.Domain.Resistances;
-using WorkoutTracker.Application.Resistances;
 using WorkoutTracker.Application.Resistances.Services;
 using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
@@ -37,48 +37,48 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Add()
+        public async Task Should_Add()
         {
             //ARRANGE
             var resistanceBand = new ResistanceBand();
 
             //ACT
-            var result = _sut.Add(resistanceBand);
+            var result = await _sut.AddAsync(resistanceBand);
 
             //ASSERT
-            _repo.Verify(mock => mock.Add(resistanceBand, true), Times.Once);
+            _repo.Verify(mock => mock.AddAsync(resistanceBand, true), Times.Once);
             result.ShouldBeSameAs(resistanceBand);
         }
 
         [TestMethod]
-        public void Should_Delete()
+        public async Task Should_Delete()
         {
             //ARRANGE
             int resistanceBandId = 5;
 
             //ACT
-            _sut.Delete(resistanceBandId);
+            await _sut.DeleteAsync(resistanceBandId);
 
             //ASSERT
-            _repo.Verify(mock => mock.Delete(resistanceBandId), Times.Once);
+            _repo.Verify(mock => mock.DeleteAsync(resistanceBandId), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Update()
+        public async Task Should_Update()
         {
             //ARRANGE
             var resistanceBand = new ResistanceBand();
 
             //ACT
-            var result = _sut.Update(resistanceBand);
+            var result = await _sut.UpdateAsync(resistanceBand);
 
             //ASSERT
-            _repo.Verify(mock => mock.Update(resistanceBand, true), Times.Once);
+            _repo.Verify(mock => mock.UpdateAsync(resistanceBand, true), Times.Once);
             result.ShouldBeSameAs(resistanceBand);
         }
 
         [TestMethod]
-        public void Should_Get_All()
+        public async Task Should_Get_All()
         {
             //ARRANGE
             var resistanceBands = new List<ResistanceBand>(3);
@@ -86,39 +86,39 @@ namespace WorkoutTracker.Tests.Services
             resistanceBands.Add(new ResistanceBand { Color = "Purple", MaxResistanceAmount = 23 });
             resistanceBands.Add(new ResistanceBand { Color = "Black", MaxResistanceAmount = 19 });
 
-            _repo.Setup(mock => mock.Get()).Returns(resistanceBands.AsQueryable());
+            _repo.Setup(mock => mock.GetAllAsync()).ReturnsAsync(resistanceBands);
 
             //ACT
-            var results = _sut.GetAll().ToList();
+            var results = (await _sut.GetAllAsync()).ToList();
 
             //ASSERT
             results.ShouldBe(resistanceBands);
-            _repo.Verify(mock => mock.Get(), Times.Once);
+            _repo.Verify(mock => mock.GetAllAsync(), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_By_ID()
+        public async Task Should_Get_By_ID()
         {
             //ARRANGE
             var resistanceBand = new ResistanceBand { Color = "Blue", MaxResistanceAmount = 13 };
-            _repo.Setup(mock => mock.Get(It.IsAny<int>())).Returns(resistanceBand);
+            _repo.Setup(mock => mock.GetAsync(It.IsAny<int>())).ReturnsAsync(resistanceBand);
 
             //ACT
-            var result = _sut.GetById(1);
+            var result = await _sut.GetByIdAsync(1);
 
             //ASSERT
             result.ShouldBe(resistanceBand);
-            _repo.Verify(mock => mock.Get(It.IsAny<int>()), Times.Once);
+            _repo.Verify(mock => mock.GetAsync(It.IsAny<int>()), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Individual_Bands()
+        public async Task Should_Get_Individual_Bands()
         {
             //ARRANGE
             int expectedCount = _bands.Sum(band => band.NumberAvailable);
 
             //ACT
-            var result = _sut.GetIndividualBands();
+            var result = await _sut.GetIndividualBandsAsync();
 
             //ASSERT
             Assert.AreEqual(expectedCount, result.Count);
@@ -129,32 +129,32 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Calculate_Next_Resistance_Amount_When_Scenario_Is_Simple()
+        public async Task Should_Calculate_Next_Resistance_Amount_When_Scenario_Is_Simple()
         {
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, 3, 5, false, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(30, 3, 5, false, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual(35, result.Sum(band => band.MaxResistanceAmount));
             Assert.IsTrue(
-                result.Count(band => band.Color == "Orange") == 1 
+                result.Count(band => band.Color == "Orange") == 1
                 && result.Count(band => band.Color == "Green") == 1);
         }
 
         [TestMethod]
-        public void Should_Calculate_Next_Resistance_Amount_When_Scenario_Is_Not_So_Simple()
+        public async Task Should_Calculate_Next_Resistance_Amount_When_Scenario_Is_Not_So_Simple()
         {
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, 20, 25, false, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(30, 20, 25, false, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -165,14 +165,14 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Calculate_Next_Resistance_Amount_When_Scenario_Is_Complex()
+        public async Task Should_Calculate_Next_Resistance_Amount_When_Scenario_Is_Complex()
         {
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(40, 20, 30, false, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(40, 20, 30, false, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -183,14 +183,14 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Calculate_Next_Resistance_Amount_When_Scenario_Is_Complex2()
+        public async Task Should_Calculate_Next_Resistance_Amount_When_Scenario_Is_Complex2()
         {
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(40, 20, 25, false, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(40, 20, 25, false, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -201,14 +201,14 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Calculate_Next_Resistance_Amount_When_Band_Resistances_Are_Doubled()
+        public async Task Should_Calculate_Next_Resistance_Amount_When_Band_Resistances_Are_Doubled()
         {
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(120, 10, 15, true, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(120, 10, 15, true, false);
 
             //ASSERT
             Assert.AreEqual(3, result.Count);
@@ -220,14 +220,14 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Simple()
+        public async Task Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Simple()
         {
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(10, -5, -10, false, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(10, -5, -10, false, false);
 
             //ASSERT
             Assert.AreEqual(1, result.Count);
@@ -236,15 +236,14 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Simple2()
+        public async Task Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Simple2()
         {
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
 
             //ACT
-            //var result = sut.CalculatePreviousAvailableResistanceAmount(30, 5, 10, false);
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(30, -3, -13, false, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(30, -3, -13, false, false);
 
             //ASSERT
             Assert.AreEqual(1, result.Count);
@@ -253,14 +252,14 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Not_Simple()
+        public async Task Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Not_Simple()
         {
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(35, -5, -10, false, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(35, -5, -10, false, false);
 
             //ASSERT
             Assert.AreEqual(1, result.Count);
@@ -269,7 +268,7 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Not_Simple2()
+        public async Task Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Not_Simple2()
         {
             //TODO: Refine/base expectations dynamically not statically
 
@@ -277,24 +276,24 @@ namespace WorkoutTracker.Tests.Services
 
             //ACT
             //106 = Purple and Orange bands
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(106, -6, -16, true, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(106, -6, -16, true, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
-            Assert.AreEqual(96, (result.Sum(band => band.MaxResistanceAmount) * 2)); //Multiply by 2 for bands doubled over (true param above)
+            Assert.AreEqual(96, (result.Sum(band => band.MaxResistanceAmount) * 2));
             Assert.IsTrue(result.Count(band => band.Color == "Onyx") == 1);
             Assert.IsTrue(result.Count(band => band.Color == "Red") == 1);
         }
 
         [TestMethod]
-        public void Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Complex()
+        public async Task Should_Calculate_Previous_Resistance_Amount_When_Scenario_Is_Complex()
         {
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(80, -20, -25, false, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(80, -20, -25, false, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -305,14 +304,14 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Calculate_Previous_Resistance_Amount_When_Band_Resistances_Are_Doubled()
+        public async Task Should_Calculate_Previous_Resistance_Amount_When_Band_Resistances_Are_Doubled()
         {
             //TODO: Refine/base expectations dynamically not statically
 
             //ARRANGE
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(120, -20, -25, true, false);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(120, -20, -25, true, false);
 
             //ASSERT
             Assert.AreEqual(2, result.Count);
@@ -323,44 +322,43 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Get_Lowest_Resistance_Band()
+        public async Task Should_Get_Lowest_Resistance_Band()
         {
             //ARRANGE
             var lowestBand = _bands.MinBy(x => x.MaxResistanceAmount);
 
             //ACT
-            var result = _sut.GetLowestResistanceBand();
+            var result = await _sut.GetLowestResistanceBandAsync();
 
             //ASSERT
             Assert.IsNotNull(result);
             Assert.IsTrue(result.MaxResistanceAmount == lowestBand.MaxResistanceAmount);
-            _repo.Verify(x => x.Get(), Times.Once);
+            _repo.Verify(x => x.GetAllAsync(), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Get_Lowest_Resistance_Band_From_Variable_If_Already_Retrieved()
+        public async Task Should_Get_Lowest_Resistance_Band_From_Variable_If_Already_Retrieved()
         {
             //ARRANGE
             var lowestBand = _bands.MinBy(x => x.MaxResistanceAmount);
 
             //ACT
-            var result = _sut.GetLowestResistanceBand();
-            var resultAgain = _sut.GetLowestResistanceBand();
+            var result = await _sut.GetLowestResistanceBandAsync();
+            var resultAgain = await _sut.GetLowestResistanceBandAsync();
 
             //ASSERT
             Assert.IsNotNull(resultAgain);
             Assert.IsTrue(resultAgain.MaxResistanceAmount == lowestBand.MaxResistanceAmount);
-            _repo.Verify(x => x.Get(), Times.Once);
+            _repo.Verify(x => x.GetAllAsync(), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Return_No_Bands_For_Bilateral_Exercise_When_None_Meet_Criteria()
+        public async Task Should_Return_No_Bands_For_Bilateral_Exercise_When_None_Meet_Criteria()
         {
             //ARRANGE
 
-
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(80, 4, 10, true, true);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(80, 4, 10, true, true);
 
             //ASSERT
             Assert.IsNotNull(result);
@@ -368,11 +366,9 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Return_Bands_For_Bilateral_Exercise()
+        public async Task Should_Return_Bands_For_Bilateral_Exercise()
         {
             //ARRANGE
-            //Set the repo up differently for this one
-            //_repo = new Mock<IRepository<ResistanceBand>>(MockBehavior.Strict);
             _bands = new List<ResistanceBand>(8)
             {
                 new ResistanceBand { Color = "Onyx", MaxResistanceAmount = 40, NumberAvailable = 3 },
@@ -385,24 +381,15 @@ namespace WorkoutTracker.Tests.Services
                 new ResistanceBand { Color = "Yellow", MaxResistanceAmount = 3, NumberAvailable = 1 }
             };
 
-            _repo
-                .Setup(mock => mock.Get())
-                .Returns(_bands.AsQueryable());
-
-            _repo
-                .Setup(mock => mock.Add(It.IsAny<ResistanceBand>(), true))
-                .Returns((ResistanceBand resistanceBand, bool save) => resistanceBand);
-
-            _repo
-                .Setup(mock => mock.Delete(It.IsAny<int>()));
-
-            _repo
-                .Setup(mock => mock.Update(It.IsAny<ResistanceBand>(), true))
-                .Returns((ResistanceBand resistanceBand, bool save) => resistanceBand);
-
+            _repo.Setup(mock => mock.GetAllAsync()).ReturnsAsync(_bands);
+            _repo.Setup(mock => mock.AddAsync(It.IsAny<ResistanceBand>(), true))
+                .ReturnsAsync((ResistanceBand resistanceBand, bool save) => resistanceBand);
+            _repo.Setup(mock => mock.DeleteAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
+            _repo.Setup(mock => mock.UpdateAsync(It.IsAny<ResistanceBand>(), true))
+                .ReturnsAsync((ResistanceBand resistanceBand, bool save) => resistanceBand);
 
             //ACT
-            var result = _sut.GetResistanceBandsForResistanceAmountRange(160, 40, 60, true, true);
+            var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(160, 40, 60, true, true);
 
             //ASSERT
             Assert.IsNotNull(result);
@@ -425,21 +412,12 @@ namespace WorkoutTracker.Tests.Services
                 new ResistanceBand { Color = "Yellow", MaxResistanceAmount = 3, NumberAvailable = 1 }
             };
 
-            _repo
-                .Setup(mock => mock.Get())
-                .Returns(_bands.AsQueryable());
-
-            _repo
-                .Setup(mock => mock.Add(It.IsAny<ResistanceBand>(), true))
-                .Returns((ResistanceBand resistanceBand, bool save) => resistanceBand);
-
-            _repo
-                .Setup(mock => mock.Delete(It.IsAny<int>()));
-
-            _repo
-                .Setup(mock => mock.Update(It.IsAny<ResistanceBand>(), true))
-                .Returns((ResistanceBand resistanceBand, bool save) => resistanceBand);
+            _repo.Setup(mock => mock.GetAllAsync()).ReturnsAsync(_bands);
+            _repo.Setup(mock => mock.AddAsync(It.IsAny<ResistanceBand>(), true))
+                .ReturnsAsync((ResistanceBand resistanceBand, bool save) => resistanceBand);
+            _repo.Setup(mock => mock.DeleteAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
+            _repo.Setup(mock => mock.UpdateAsync(It.IsAny<ResistanceBand>(), true))
+                .ReturnsAsync((ResistanceBand resistanceBand, bool save) => resistanceBand);
         }
-
     }
 }

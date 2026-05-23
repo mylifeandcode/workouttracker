@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Shouldly;
@@ -6,13 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Application.Users.Services;
-using WorkoutTracker.Domain.BaseClasses;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Repository;
-using Microsoft.OpenApi;
 
 namespace WorkoutTracker.Tests.Services
 {
@@ -39,12 +38,12 @@ namespace WorkoutTracker.Tests.Services
         public void Init()
         {
             _userRepositoryMock = new Mock<IRepository<User>>(MockBehavior.Strict);
-            _userRepositoryMock.Setup(mock => mock.Add(It.IsAny<User>(), true)).Returns((User user, bool save) => user);
-            _userRepositoryMock.Setup(mock => mock.Delete(It.IsAny<int>()));
-            _userRepositoryMock.Setup(mock => mock.Update(It.IsAny<User>(), true)).Returns((User user, bool save) => user);
-            _userRepositoryMock.Setup(mock => mock.Get()).Returns(_users.AsQueryable());
-            _userRepositoryMock.Setup(mock => mock.Get(It.IsAny<int>())).Returns(_users[0]);
-            _userRepositoryMock.Setup(mock => mock.Any(It.IsAny<Expression<Func<User, bool>>>())).Returns(false);
+            _userRepositoryMock.Setup(mock => mock.AddAsync(It.IsAny<User>(), true)).ReturnsAsync((User user, bool save) => user);
+            _userRepositoryMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
+            _userRepositoryMock.Setup(mock => mock.UpdateAsync(It.IsAny<User>(), true)).ReturnsAsync((User user, bool save) => user);
+            _userRepositoryMock.Setup(mock => mock.Get()).Returns(_users.AsAsyncQueryable());
+            _userRepositoryMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).ReturnsAsync(_users[0]);
+            _userRepositoryMock.Setup(mock => mock.AnyAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(false);
 
             _cryptoServiceMock = new Mock<ICryptoService>(MockBehavior.Strict);
             _cryptoServiceMock.Setup(x => x.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHash");
@@ -53,7 +52,7 @@ namespace WorkoutTracker.Tests.Services
             _cryptoServiceMock.Setup(x => x.GeneratePasswordResetCode()).Returns("SomePasswordResetCode");
 
             _emailServiceMock = new Mock<IEmailService>(MockBehavior.Strict);
-            _emailServiceMock.Setup(x => x.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+            _emailServiceMock.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
             _emailServiceMock.SetupGet(x => x.IsEnabled).Returns(true);
             _emailServiceMock.Setup(x => x.Dispose());
 
@@ -69,163 +68,159 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Add_User()
+        public async Task Should_Add_User()
         {
             //ARRANGE
             var user = new User();
 
             //ACT
-            var result = _sut.Add(user);
+            var result = await _sut.AddAsync(user);
 
             //ASSERT
-            _userRepositoryMock.Verify(mock => mock.Add(user, true), Times.Once);
+            _userRepositoryMock.Verify(mock => mock.AddAsync(user, true), Times.Once);
             result.ShouldBeSameAs(user);
         }
 
         [TestMethod]
-        public void Should_Create_User_As_Admin_When_No_Users_Exist()
+        public async Task Should_Create_User_As_Admin_When_No_Users_Exist()
         {
             //ARRANGE
             var user = new User();
             user.Role = UserRole.Standard;
 
             //ACT
-            _sut.Add(user);
+            await _sut.AddAsync(user);
 
             //ASSERT
-            _userRepositoryMock.Verify(mock => mock.Add(It.Is<User>(x => x.Role == UserRole.Administrator), true), Times.Once);
+            _userRepositoryMock.Verify(mock => mock.AddAsync(It.Is<User>(x => x.Role == UserRole.Administrator), true), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Delete_User()
+        public async Task Should_Delete_User()
         {
             //ARRANGE
             int userId = 100;
 
             //ACT
-            _sut.Delete(userId);
+            await _sut.DeleteAsync(userId);
 
             //ASSERT
-            _userRepositoryMock.Verify(mock => mock.Delete(userId), Times.Once);
+            _userRepositoryMock.Verify(mock => mock.DeleteAsync(userId), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Update_User()
+        public async Task Should_Update_User()
         {
             //ARRANGE
             var user = new User();
 
             //ACT
-            var result = _sut.Update(user);
+            var result = await _sut.UpdateAsync(user);
 
             //ASSERT
-            _userRepositoryMock.Verify(mock => mock.Update(user, true), Times.Once);
+            _userRepositoryMock.Verify(mock => mock.UpdateAsync(user, true), Times.Once);
             result.ShouldBeSameAs(user);
         }
 
         [TestMethod]
-        public void Should_Get_All_Users_Excluding_SYSTEM_User()
+        public async Task Should_Get_All_Users_Excluding_SYSTEM_User()
         {
             //ARRANGE
 
             //ACT
-            var results = _sut.GetAll().ToList();
+            var results = (await _sut.GetAllAsync()).ToList();
 
             //ASSERT
             results.Count.ShouldBe(_users.Count - 1);
-            results.Any(user =>
-                    //user.Name.ToUpper(System.Globalization.CultureInfo.CurrentCulture) == "SYSTEM")
-                    //EF doesn't like the culture stuff! :/                    
-                    user.Name.ToUpper() == "SYSTEM")
-                .ShouldBeFalse();
+            results.Any(user => user.Name.ToUpper() == "SYSTEM").ShouldBeFalse();
         }
 
         [TestMethod]
-        public void Should_Change_Password()
+        public async Task Should_Change_Password()
         {
             //ARRANGE
             const string currentPassword = "MyOldPassword";
             const string newPassword = "MyNewPassword";
 
             //ACT
-            _sut.ChangePassword(1, currentPassword, newPassword);
+            await _sut.ChangePasswordAsync(1, currentPassword, newPassword);
 
             //ASSERT
-            _userRepositoryMock.Verify(x => x.Get(1), Times.Once);
+            _userRepositoryMock.Verify(x => x.GetAsync(1), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(currentPassword, It.IsAny<string>(), "MySalt"), Times.Once);
             _cryptoServiceMock.Verify(x => x.ComputeHash(newPassword, "MySalt"), Times.Once);
-            _userRepositoryMock.Verify(x => x.Update(It.IsAny<User>(), true), Times.Once);
+            _userRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<User>(), true), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Throw_An_Exception_When_Trying_To_Change_Password_When_User_Not_Found()
+        public async Task Should_Throw_An_Exception_When_Trying_To_Change_Password_When_User_Not_Found()
         {
             //ARRANGE
-            _userRepositoryMock.Setup(mock => mock.Get(It.IsAny<int>())).Returns((User)null);
+            _userRepositoryMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).ReturnsAsync((User)null);
 
             //ACT & ASSERT
-            Assert.Throws<ApplicationException>(() =>
-                _sut.ChangePassword(2, "blah", "garrrrr!"));
+            await Should.ThrowAsync<ApplicationException>(() =>
+                _sut.ChangePasswordAsync(2, "blah", "garrrrr!"));
         }
 
         [TestMethod]
-        public void Should_Throw_An_Exception_When_Trying_To_Change_Password_When_Current_Password_Is_Not_A_Match()
+        public async Task Should_Throw_An_Exception_When_Trying_To_Change_Password_When_Current_Password_Is_Not_A_Match()
         {
             //ARRANGE
             _cryptoServiceMock.Setup(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(false);
 
             //ACT & ASSERT
-            Assert.Throws<ApplicationException>(() =>
-                _sut.ChangePassword(3, "heeeeey", "yoooouuuu"));
+            await Should.ThrowAsync<ApplicationException>(() =>
+                _sut.ChangePasswordAsync(3, "heeeeey", "yoooouuuu"));
         }
 
         [TestMethod]
-        public void Should_Process_Password_Reset_Request()
+        public async Task Should_Process_Password_Reset_Request()
         {
             //ARRANGE
 
             //ACT
-            var resetCode = _sut.RequestPasswordReset("paul@here.com");
+            var resetCode = await _sut.RequestPasswordResetAsync("paul@here.com");
 
             //ASSERT
             Assert.IsNotNull(resetCode);
-            _userRepositoryMock.Verify(x => x.Update(It.Is<User>(user => user.PasswordResetCode == resetCode), true), Times.Once);
-            _emailServiceMock.Verify(x => 
-                x.SendEmail(
-                    "paul@here.com", 
-                    "noreply@workouttracker.com", 
-                    "Password Reset", 
-                    It.IsAny<string>()), 
+            _userRepositoryMock.Verify(x => x.UpdateAsync(It.Is<User>(user => user.PasswordResetCode == resetCode), true), Times.Once);
+            _emailServiceMock.Verify(x =>
+                x.SendEmailAsync(
+                    "paul@here.com",
+                    "noreply@workouttracker.com",
+                    "Password Reset",
+                    It.IsAny<string>()),
                 Times.Once);
         }
 
         [TestMethod]
-        public void Should_Reset_Password()
+        public async Task Should_Reset_Password()
         {
             //ARRANGE
             const string resetCode = "SomePasswordResetCode";
             const string newPassword = "newPassword123987!&^";
 
             //ACT
-            _sut.ResetPassword(resetCode, newPassword);
+            await _sut.ResetPasswordAsync(resetCode, newPassword);
 
             //ASSERT
             _cryptoServiceMock.Verify(x => x.ComputeHash(newPassword, "MySalt"), Times.Once);
             _userRepositoryMock.Verify(x =>
-                x.Update(
+                x.UpdateAsync(
                     It.Is<User>(user => user.PasswordResetCode == null && user.HashedPassword == "someHash"), true), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Validate_Password_Reset_Code_True()
+        public async Task Should_Validate_Password_Reset_Code_True()
         {
-            Assert.IsTrue(_sut.ValidatePasswordResetCode("SomePasswordResetCode"));
+            Assert.IsTrue(await _sut.ValidatePasswordResetCodeAsync("SomePasswordResetCode"));
         }
 
         [TestMethod]
-        public void Should_Validate_Password_Reset_Code_False()
+        public async Task Should_Validate_Password_Reset_Code_False()
         {
-            Assert.IsFalse(_sut.ValidatePasswordResetCode("SomeNonExistentPasswordResetCode"));
+            Assert.IsFalse(await _sut.ValidatePasswordResetCodeAsync("SomeNonExistentPasswordResetCode"));
         }
     }
 }

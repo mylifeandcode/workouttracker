@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -25,8 +26,8 @@ namespace WorkoutTracker.API.Controllers
         private IExecutedWorkoutSummaryDTOMapper _summaryDtoMapper;
 
         public ExecutedWorkoutController(
-            IExecutedWorkoutService executedWorkoutService, 
-            IExecutedWorkoutDTOMapper dtoMapper, 
+            IExecutedWorkoutService executedWorkoutService,
+            IExecutedWorkoutDTOMapper dtoMapper,
             IExecutedWorkoutSummaryDTOMapper summaryDtoMapper)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
@@ -36,11 +37,11 @@ namespace WorkoutTracker.API.Controllers
 
         // GET api/ExecutedWorkout/5
         [HttpGet("{publicId}")]
-        public ActionResult<ExecutedWorkoutDTO> Get(Guid publicId)
+        public async Task<ActionResult<ExecutedWorkoutDTO>> Get(Guid publicId)
         {
             try
             {
-                var executedWorkout = _executedWorkoutService.GetByPublicId(publicId);
+                var executedWorkout = await _executedWorkoutService.GetByPublicIDAsync(publicId);
                 if (executedWorkout == null)
                     return NotFound();
 
@@ -58,22 +59,14 @@ namespace WorkoutTracker.API.Controllers
         //THERE IS NO POST FOR EXECUTEDWORKOUTDTO -- THESE ONLY GET CREATED SERVER-SIDE
 
         [HttpPut("{id}")]
-        public ActionResult<ExecutedWorkoutDTO> Put([FromBody] ExecutedWorkoutDTO value)
+        public async Task<ActionResult<ExecutedWorkoutDTO>> Put([FromBody] ExecutedWorkoutDTO value)
         {
             try
             {
-                //This attempt to prevent an intermittent problem caused BIGGER problems! Revisit!
-                /*
-                if(value.Exercises.Any(x => x.ExecutedWorkoutId == 0))
-                    return StatusCode(400, "One or more ExecutedExercises has an ExecutedWorkoutId of 0.");
-
-                if(value.Id == 0)
-                    return StatusCode(400, "ExecutedWorkout has an Id of 0.");
-                */
-                var executedWorkout = _executedWorkoutService.GetByPublicId(value.Id);
+                var executedWorkout = await _executedWorkoutService.GetByPublicIDAsync(value.Id);
                 UpdateExecutedWorkoutFromDTO(executedWorkout, value);
                 SetModifiedAuditFields(executedWorkout);
-                var updatedWorkout = _executedWorkoutService.Update(executedWorkout, true);
+                await _executedWorkoutService.UpdateAsync(executedWorkout, true);
                 return _dtoMapper.MapFromExecutedWorkout(executedWorkout);
             }
             catch (BadHttpRequestException ex)
@@ -87,13 +80,13 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>> Get(
-            int firstRecord, 
-            short pageSize, 
-            DateTime? startDateTime = null, 
-            DateTime? endDateTime = null, 
-            bool newestFirst = true, 
-            string workoutNameContains = null, 
+        public async Task<ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>>> Get(
+            int firstRecord,
+            short pageSize,
+            DateTime? startDateTime = null,
+            DateTime? endDateTime = null,
+            bool newestFirst = true,
+            string workoutNameContains = null,
             bool onlyWithJournalNotes = false)
         {
             try
@@ -104,11 +97,11 @@ namespace WorkoutTracker.API.Controllers
                     BuildExecutedWorkoutFilter(
                         userId, startDateTime, endDateTime, false, workoutNameContains, onlyWithJournalNotes);
 
-                int totalCount = _executedWorkoutService.GetTotalCount(filter);
+                int totalCount = await _executedWorkoutService.GetTotalCountAsync(filter);
 
                 var executedWorkouts =
-                    _executedWorkoutService
-                        .GetFilteredSubset(firstRecord, pageSize, filter, newestFirst)
+                    (await _executedWorkoutService
+                        .GetFilteredSubsetAsync(firstRecord, pageSize, filter, newestFirst))
                         .ToList();
 
                 var results = executedWorkouts.Select((executedWorkout) =>
@@ -140,7 +133,7 @@ namespace WorkoutTracker.API.Controllers
 
 
         [HttpGet("planned")]
-        public ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>> GetPlanned(int firstRecord, short pageSize, bool newestFirst = true)
+        public async Task<ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>>> GetPlanned(int firstRecord, short pageSize, bool newestFirst = true)
         {
             try
             {
@@ -150,11 +143,11 @@ namespace WorkoutTracker.API.Controllers
                     BuildExecutedWorkoutFilter(
                         userId, null, null, true); //last param of true is "planned only"
 
-                int totalCount = _executedWorkoutService.GetTotalCount(filter);
+                int totalCount = await _executedWorkoutService.GetTotalCountAsync(filter);
 
                 var executedWorkouts =
-                    _executedWorkoutService
-                        .GetFilteredSubset(firstRecord, pageSize, filter, newestFirst)
+                    (await _executedWorkoutService
+                        .GetFilteredSubsetAsync(firstRecord, pageSize, filter, newestFirst))
                         .ToList();
 
                 var results = executedWorkouts.Select((executedWorkout) =>
@@ -166,7 +159,7 @@ namespace WorkoutTracker.API.Controllers
                         executedWorkout.Workout.Name,
                         executedWorkout.Workout.PublicId,
                         executedWorkout.StartDateTime,
-                        executedWorkout.EndDateTime, 
+                        executedWorkout.EndDateTime,
                         executedWorkout.Journal);
                 });
 
@@ -185,11 +178,11 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet("in-progress")]
-        public ActionResult<ExecutedWorkoutSummaryDTO[]> GetInProgress()
+        public async Task<ActionResult<ExecutedWorkoutSummaryDTO[]>> GetInProgress()
         {
-            try 
+            try
             {
-                var inProgressWorkouts = _executedWorkoutService.GetInProgress(GetUserID()).ToList(); //Enumerate!
+                var inProgressWorkouts = (await _executedWorkoutService.GetInProgressAsync(GetUserID())).ToList();
                 if (!inProgressWorkouts.Any())
                     return Ok(new List<ExecutedWorkoutSummaryDTO>(0));
 
@@ -203,11 +196,11 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpDelete("planned/{publicId}")]
-        public ActionResult DeletePlanned(Guid publicId)
+        public async Task<ActionResult> DeletePlanned(Guid publicId)
         {
             try
-            { 
-                _executedWorkoutService.DeletePlanned(publicId);
+            {
+                await _executedWorkoutService.DeletePlannedAsync(publicId);
                 return StatusCode(200);
             }
             catch (Exception ex)
@@ -217,11 +210,11 @@ namespace WorkoutTracker.API.Controllers
         }
 
         private ExecutedWorkoutFilter BuildExecutedWorkoutFilter(
-            int userId, 
-            DateTime? startDateTime, 
+            int userId,
+            DateTime? startDateTime,
             DateTime? endDateTime,
-            bool plannedOnly = false, 
-            string workoutNameContains = null, 
+            bool plannedOnly = false,
+            string workoutNameContains = null,
             bool onlyWithJournalNotes = false)
         {
             var filter = new ExecutedWorkoutFilter();
@@ -231,10 +224,10 @@ namespace WorkoutTracker.API.Controllers
             filter.WorkoutNameContains = workoutNameContains;
 
             if (!plannedOnly) //TODO: Rethink. This is kind of kludgey.
-            { 
+            {
                 if(filter.StartDateTime.HasValue)
                     filter.StartDateTime = startDateTime;
-            
+
                 if(filter.EndDateTime.HasValue)
                     filter.EndDateTime = endDateTime;
             }

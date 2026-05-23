@@ -1,11 +1,9 @@
-﻿using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
@@ -21,7 +19,6 @@ namespace WorkoutTracker.Tests.Services
         private IncreaseRecommendationService _sut;
         private Mock<IResistanceService> _resistanceServiceMock;
         private Mock<ILogger<IncreaseRecommendationService>> _loggerMock;
-        private string _makeup;
         private UserSettings _userSettings;
         private const decimal EXPECTED_NEW_RESISTANCE_AMOUNT = 100;
 
@@ -30,15 +27,14 @@ namespace WorkoutTracker.Tests.Services
         {
             _resistanceServiceMock = new Mock<IResistanceService>(MockBehavior.Strict);
             _resistanceServiceMock
-                .Setup(x => 
-                    x.GetNewResistanceAmount(
-                        It.IsAny<ResistanceType>(), 
-                        It.IsAny<decimal>(), 
-                        It.IsAny<sbyte>(), 
-                        It.IsAny<bool>(), 
+                .Setup(x =>
+                    x.GetNewResistanceAmountAsync(
+                        It.IsAny<ResistanceType>(),
+                        It.IsAny<decimal>(),
+                        It.IsAny<sbyte>(),
                         It.IsAny<bool>(),
-                        out _makeup))
-                .Returns(EXPECTED_NEW_RESISTANCE_AMOUNT);
+                        It.IsAny<bool>()))
+                .ReturnsAsync((EXPECTED_NEW_RESISTANCE_AMOUNT, (string?)null));
 
             _userSettings = UserSettings.GetDefault();
             _loggerMock = new Mock<ILogger<IncreaseRecommendationService>>(MockBehavior.Strict);
@@ -53,13 +49,13 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Get_Increase_Recommendation_When_ActualReps_Exceeded_TargetReps_But_Less_Than_Max()
+        public async Task Should_Get_Increase_Recommendation_When_ActualReps_Exceeded_TargetReps_But_Less_Than_Max()
         {
             //ARRANGE
             var executedExerciseAverages = GetExecutedExerciseAverages(10, 11, 19);
 
             //ACT
-            var result = _sut.GetIncreaseRecommendation(executedExerciseAverages, _userSettings);
+            var result = await _sut.GetIncreaseRecommendationAsync(executedExerciseAverages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(result, "Result is null.");
@@ -68,13 +64,13 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Get_Increase_Recommendation_For_BodyWeight_Exercise_When_ActualReps_Exceeded_TargetReps()
+        public async Task Should_Get_Increase_Recommendation_For_BodyWeight_Exercise_When_ActualReps_Exceeded_TargetReps()
         {
             //ARRANGE
             var executedExerciseAverages = GetExecutedExerciseAverages(30, 30, 0, ResistanceType.BodyWeight);
 
             //ACT
-            var result = _sut.GetIncreaseRecommendation(executedExerciseAverages, _userSettings);
+            var result = await _sut.GetIncreaseRecommendationAsync(executedExerciseAverages, _userSettings);
 
             //ASSERT
             Assert.IsNotNull(result, "Result is null.");
@@ -83,13 +79,13 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Get_Increase_Recommendation_When_ActualReps_Exceeded_TargetReps_And_Greater_Than_Max()
+        public async Task Should_Get_Increase_Recommendation_When_ActualReps_Exceeded_TargetReps_And_Greater_Than_Max()
         {
             //ARRANGE
             var executedExerciseAverages = GetExecutedExerciseAverages(10, 15, 19);
 
             //ACT
-            var result = _sut.GetIncreaseRecommendation(executedExerciseAverages, _userSettings);
+            var result = await _sut.GetIncreaseRecommendationAsync(executedExerciseAverages, _userSettings);
 
             //ASSERT
             var repSettings = _userSettings.RepSettings.First(x => x.SetType == SetType.Repetition);
@@ -99,13 +95,13 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Get_Increase_Recommendation_For_BodyWeigh_Exercise_When_ActualReps_Greatly_Exceeded_TargetReps()
+        public async Task Should_Get_Increase_Recommendation_For_BodyWeigh_Exercise_When_ActualReps_Greatly_Exceeded_TargetReps()
         {
             //ARRANGE
             var executedExerciseAverages = GetExecutedExerciseAverages(30, 40, 0, ResistanceType.BodyWeight);
 
             //ACT
-            var result = _sut.GetIncreaseRecommendation(executedExerciseAverages, _userSettings);
+            var result = await _sut.GetIncreaseRecommendationAsync(executedExerciseAverages, _userSettings);
 
             //ASSERT
             var repSettings = _userSettings.RepSettings.First(x => x.SetType == SetType.Repetition);
@@ -115,9 +111,9 @@ namespace WorkoutTracker.Tests.Services
         }
 
         private ExecutedExerciseAverages GetExecutedExerciseAverages(
-            byte targetReps, 
-            byte actualReps, 
-            decimal resistanceAmount, 
+            byte targetReps,
+            byte actualReps,
+            decimal resistanceAmount,
             ResistanceType resistanceType = ResistanceType.ResistanceBand)
         {
             var executedExercise =
@@ -130,7 +126,7 @@ namespace WorkoutTracker.Tests.Services
                     RangeOfMotionRating = 4,
                     ResistanceAmount = resistanceAmount,
                     ResistanceMakeup = "Some Value",
-                    Exercise = new Exercise { ResistanceType = resistanceType }, 
+                    Exercise = new Exercise { ResistanceType = resistanceType },
                     ExerciseId = 1
                 };
 

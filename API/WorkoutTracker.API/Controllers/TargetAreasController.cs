@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Domain.Exercises;
-using WorkoutTracker.Application;
 using WorkoutTracker.Application.Exercises.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -27,11 +25,11 @@ namespace WorkoutTracker.API.Controllers
 
         // GET: api/values
         [HttpGet]
-        public ActionResult<IEnumerable<TargetArea>> Get()
+        public async Task<ActionResult<IEnumerable<TargetArea>>> Get()
         {
             try
             {
-                return Ok(_svc.GetAll().ToList());
+                return Ok(await _svc.GetAllAsync());
             }
             catch (Exception ex)
             {
@@ -41,11 +39,11 @@ namespace WorkoutTracker.API.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<TargetArea> Get(int id)
+        public async Task<ActionResult<TargetArea>> Get(int id)
         {
             try
             {
-                return Ok(_svc.Get(id));
+                return Ok(await _svc.GetAsync(id));
             }
             catch (Exception ex)
             {

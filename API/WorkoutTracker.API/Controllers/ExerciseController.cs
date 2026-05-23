@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -33,20 +34,16 @@ namespace WorkoutTracker.API.Controllers
 
         // GET: api/Exercises
         [HttpGet]
-        public ActionResult<PaginatedResults<ExerciseDTO>> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null)
+        public async Task<ActionResult<PaginatedResults<ExerciseDTO>>> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null)
         {
             try
             {
                 var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
 
-                int totalCount = _exerciseService.GetTotalCount(filter); //TODO: Modify to get total count by filter
+                int totalCount = await _exerciseService.GetTotalCountAsync(filter);
 
-                //Blows up after upgrading to EF Core 3.1 from 2.2!
-                //More info at https://stackoverflow.com/questions/59677609/problem-with-ef-core-after-migrating-from-2-2-to-3-1
-                //Had to add .ToList() to the call below.
                 var exercises =
-                    _exerciseService
-                        .Get(firstRecord, pageSize, filter)
+                    (await _exerciseService.GetAsync(firstRecord, pageSize, filter))
                         .OrderBy(x => x.Name);
 
                 var results = exercises.Select((exercise) =>
@@ -91,11 +88,11 @@ namespace WorkoutTracker.API.Controllers
         */
 
         [HttpGet("{publicId}")]
-        public ActionResult<Exercise> GetByPublicId(Guid publicId)
+        public async Task<ActionResult<Exercise>> GetByPublicId(Guid publicId)
         {
             try
             {
-                var exercise = _exerciseService.GetByPublicId(publicId);
+                var exercise = await _exerciseService.GetByPublicIdAsync(publicId);
                 if (exercise == null)
                     return NotFound(publicId);
                 else
@@ -109,12 +106,12 @@ namespace WorkoutTracker.API.Controllers
 
         // POST api/Exercises
         [HttpPost]
-        public ActionResult<Exercise> Post([FromBody]Exercise value)
+        public async Task<ActionResult<Exercise>> Post([FromBody]Exercise value)
         {
             try
             {
                 SetCreatedAuditFields(value);
-                return Ok(_exerciseService.Add(value, true));
+                return Ok(await _exerciseService.AddAsync(value, true));
             }
             catch (BadHttpRequestException ex)
             {
@@ -128,12 +125,12 @@ namespace WorkoutTracker.API.Controllers
 
         // PUT api/Exercises
         [HttpPut]
-        public ActionResult<Exercise> Put([FromBody]Exercise value)
+        public async Task<ActionResult<Exercise>> Put([FromBody]Exercise value)
         {
             try
             {
                 SetModifiedAuditFields(value);
-                return Ok(_exerciseService.Update(value, true));
+                return Ok(await _exerciseService.UpdateAsync(value, true));
             }
             catch (BadHttpRequestException ex)
             {

@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Repository;
-using WorkoutTracker.Application.Exercises.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.Application.Exercises.Services
@@ -19,19 +21,19 @@ namespace WorkoutTracker.Application.Exercises.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public TargetArea Get(int id)
+        public async Task<TargetArea?> GetAsync(int id)
         {
-            return _repo.Get(id);
+            return await _repo.GetAsync(id);
         }
 
-        public IEnumerable<TargetArea> GetAll()
+        public async Task<IEnumerable<TargetArea>> GetAllAsync()
         {
-            return _repo.GetWithoutTracking();
+            return await _repo.GetAllWithoutTrackingAsync();
         }
 
-        public IEnumerable<TargetArea> GetByIds(int[] ids)
+        public async Task<IEnumerable<TargetArea>> GetByIdsAsync(int[] ids)
         {
-            return _repo.GetWithoutTracking().Where(x => ids.Contains(x.Id));
+            return await _repo.GetWithoutTracking().Where(x => ids.Contains(x.Id)).ToListAsync();
         }
     }
 }

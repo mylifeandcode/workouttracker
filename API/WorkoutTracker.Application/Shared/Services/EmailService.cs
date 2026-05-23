@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Shared.Interfaces;
 
 namespace WorkoutTracker.Application.Shared.Services
@@ -24,9 +25,9 @@ namespace WorkoutTracker.Application.Shared.Services
             }
         }
 
-        public void SendEmail(string to, string from, string subject, string body)
+        public async Task SendEmailAsync(string to, string from, string subject, string body)
         {
-            _smtpClient.Send(from, to, subject, body);
+            await _smtpClient.SendMailAsync(new MailMessage(from, to, subject, body));
         }
 
         protected virtual void Dispose(bool disposing)

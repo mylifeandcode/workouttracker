@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -30,16 +30,16 @@ namespace WorkoutTracker.Tests.Services
 
         private ExecutedWorkout _executedWorkout;
 
-        private Mock<IWorkoutService> _workoutServiceMock = 
+        private Mock<IWorkoutService> _workoutServiceMock =
             new Mock<IWorkoutService>(MockBehavior.Strict);
 
-        private Mock<IExecutedWorkoutService> _executedWorkoutServiceMock = 
+        private Mock<IExecutedWorkoutService> _executedWorkoutServiceMock =
             new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
 
         private Mock<IUserService> _userServiceMock =
             new Mock<IUserService>(MockBehavior.Strict);
 
-        private Mock<IExerciseAmountRecommendationService> _recommendationServiceMock = 
+        private Mock<IExerciseAmountRecommendationService> _recommendationServiceMock =
             new Mock<IExerciseAmountRecommendationService>(MockBehavior.Strict);
 
         private Mock<ILogger<WorkoutPlanService>> _loggerMock = new Mock<ILogger<WorkoutPlanService>>(MockBehavior.Strict);
@@ -56,7 +56,7 @@ namespace WorkoutTracker.Tests.Services
                     .With(x => x.Name = "Exercise 1")
                     .Build();
 
-            var exercise2 = 
+            var exercise2 =
                 _exerciseBuilder
                     .With(x => x.Id = 6)
                     .With(x => x.Name = "Exercise 2")
@@ -82,7 +82,7 @@ namespace WorkoutTracker.Tests.Services
                             .With(x => x.ExerciseId = exercise2.Id)
                             .With(x => x.Sequence = 2)
                             .Build(),
-                        _exerciseInWorkoutBuilder                            
+                        _exerciseInWorkoutBuilder
                             .With(x => x.Exercise = exercise3)
                             .With(x => x.ExerciseId = exercise3.Id)
                             .With(x => x.Sequence = 3)
@@ -117,8 +117,8 @@ namespace WorkoutTracker.Tests.Services
             user.Settings.RecommendationsEnabled = false;
 
             _userServiceMock
-                .Setup(x => x.GetById(It.IsAny<int>()))
-                .Returns(user);
+                .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(user);
 
             _loggerMock.Setup(x => x.Log(
                 It.IsAny<LogLevel>(),
@@ -128,27 +128,27 @@ namespace WorkoutTracker.Tests.Services
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
 
             _sut = new WorkoutPlanService(
-                _workoutServiceMock.Object, 
-                _executedWorkoutServiceMock.Object, 
+                _workoutServiceMock.Object,
+                _executedWorkoutServiceMock.Object,
                 _userServiceMock.Object,
-                _recommendationServiceMock.Object, 
+                _recommendationServiceMock.Object,
                 _loggerMock.Object);
         }
 
         [TestMethod]
-        public void Should_Get_WorkoutPlan_For_Workout_Which_Has_Been_Performed_Previously()
+        public async Task Should_Get_WorkoutPlan_For_Workout_Which_Has_Been_Performed_Previously()
         {
             //ARRANGE
             _executedWorkoutServiceMock
-                .Setup(x => x.GetLatest(It.IsAny<Guid>()))
-                .Returns(_executedWorkout);
+                .Setup(x => x.GetLatestAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_executedWorkout);
 
             const int WORKOUT_ID = 1;
             Guid WORKOUT_PUBLIC_ID = Guid.NewGuid();
             const int USER_ID = 5;
 
             //ACT
-            var plan = _sut.Create(WORKOUT_PUBLIC_ID, USER_ID);
+            var plan = await _sut.CreateAsync(WORKOUT_PUBLIC_ID, USER_ID);
 
             //ASSERT
             plan.ShouldNotBeNull();
@@ -168,9 +168,9 @@ namespace WorkoutTracker.Tests.Services
             }
 
             _executedWorkoutServiceMock
-                .Verify(x => x.GetLatest(WORKOUT_PUBLIC_ID), Times.Once);
+                .Verify(x => x.GetLatestAsync(WORKOUT_PUBLIC_ID), Times.Once);
             _workoutServiceMock
-                .Verify(x => x.GetById(It.IsAny<int>()), Times.Never);
+                .Verify(x => x.GetByIdAsync(It.IsAny<int>()), Times.Never);
         }
 
         [TestMethod]

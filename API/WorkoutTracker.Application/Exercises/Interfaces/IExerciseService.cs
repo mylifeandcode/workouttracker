@@ -1,21 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using WorkoutTracker.Domain.Exercises;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Models;
+using WorkoutTracker.Domain.Exercises;
 
 namespace WorkoutTracker.Application.Exercises.Interfaces
 {
     public interface IExerciseService
     {
-        Exercise Add(Exercise exercise, bool saveChanges = false);
-        Exercise Update(Exercise exercise, bool saveChanges = false);
-        void Delete(int exerciseId);
-        IEnumerable<Exercise> Get(int firstRecord, short pageSize, ExerciseFilter filter);
-        int GetTotalCount();
-        Exercise GetById(int exerciseId);
-        Exercise GetByPublicId(Guid publicId);
+        Task<Exercise> AddAsync(Exercise exercise, bool saveChanges = false);
+        Task<Exercise> UpdateAsync(Exercise exercise, bool saveChanges = false);
+        Task DeleteAsync(int exerciseId);
+        Task<IEnumerable<Exercise>> GetAsync(int firstRecord, short pageSize, ExerciseFilter filter);
+        Task<int> GetTotalCountAsync();
+        Task<Exercise?> GetByIdAsync(int exerciseId);
+        Task<Exercise?> GetByPublicIdAsync(Guid publicId);
         Dictionary<int, string> GetResistanceTypes();
-        int GetTotalCount(ExerciseFilter filter);
+        Task<int> GetTotalCountAsync(ExerciseFilter filter);
     }
 }

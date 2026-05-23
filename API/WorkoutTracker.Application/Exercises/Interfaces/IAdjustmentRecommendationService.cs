@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
@@ -11,8 +7,8 @@ namespace WorkoutTracker.Application.Exercises.Interfaces
 {
     public interface IAdjustmentRecommendationService
     {
-        ExerciseAmountRecommendation GetAdjustmentRecommendation(
-                    ExecutedExerciseAverages executedExerciseAverages,
-                    UserSettings userSettings);
+        Task<ExerciseAmountRecommendation> GetAdjustmentRecommendationAsync(
+            ExecutedExerciseAverages executedExerciseAverages,
+            UserSettings userSettings);
     }
 }

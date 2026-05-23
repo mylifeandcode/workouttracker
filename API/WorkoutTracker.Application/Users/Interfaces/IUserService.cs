@@ -1,14 +1,15 @@
-﻿using WorkoutTracker.Domain.Users;
-using WorkoutTracker.Application.Shared.Interfaces;
 using System;
+using System.Threading.Tasks;
+using WorkoutTracker.Application.Shared.Interfaces;
+using WorkoutTracker.Domain.Users;
 
 namespace WorkoutTracker.Application.Users.Interfaces
 {
     public interface IUserService : ISimpleService<User>
     {
-        void ChangePassword(int userId, string currentPassword, string newPassword);
-        string RequestPasswordReset(string emailAddress);
-        void ResetPassword(string resetCode, string newPassword);
-        bool ValidatePasswordResetCode(string resetCode);
+        Task ChangePasswordAsync(int userId, string currentPassword, string newPassword);
+        Task<string?> RequestPasswordResetAsync(string emailAddress);
+        Task ResetPasswordAsync(string resetCode, string newPassword);
+        Task<bool> ValidatePasswordResetCodeAsync(string resetCode);
     }
 }

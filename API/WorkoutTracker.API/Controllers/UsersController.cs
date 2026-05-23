@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.API.Models;
@@ -23,8 +24,8 @@ namespace WorkoutTracker.API.Controllers
         private readonly ICryptoService _cryptoService;
 
         public UsersController(
-            IUserService userService, 
-            IExecutedWorkoutService executedWorkoutService, 
+            IUserService userService,
+            IExecutedWorkoutService executedWorkoutService,
             ICryptoService cryptoService) : base(userService)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
@@ -36,8 +37,8 @@ namespace WorkoutTracker.API.Controllers
         [HttpGet("{id}")]
         public new ActionResult<UserDTO> Get(int id)
         {
-            //This method replaces the default implementation because we don't 
-            //want to return the domain object which includes the user's 
+            //This method replaces the default implementation because we don't
+            //want to return the domain object which includes the user's
             //hashed password.
             //TODO: Implement a different authentication approach.
             //Is an STS overkill for this little home workout tracker?
@@ -58,14 +59,14 @@ namespace WorkoutTracker.API.Controllers
         */
 
         [HttpGet("{publicId:guid}")]
-        public ActionResult<User> GetByPublicId(Guid publicId)
+        public async Task<ActionResult<User>> GetByPublicId(Guid publicId)
         {
-            //This method replaces the default implementation because we don't 
-            //want to return the domain object which includes the user's 
+            //This method replaces the default implementation because we don't
+            //want to return the domain object which includes the user's
             //hashed password.
             try
             {
-                var entity = _service.GetByPublicId(publicId);
+                var entity = await _service.GetByPublicIdAsync(publicId);
 
                 if (entity == null)
                     return NotFound();
@@ -82,13 +83,13 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [AllowAnonymous]
-        public override ActionResult<IEnumerable<User>> Get()
+        public override async Task<ActionResult<IEnumerable<User>>> Get()
         {
-            return Ok(_service.GetAllWithoutTracking());
+            return Ok(await _service.GetAllWithoutTrackingAsync());
         }
 
         [Authorize(Roles = "Administrator")]
-        public override ActionResult<User> Post([FromBody] User value, bool setAuditFields = true)
+        public override async Task<ActionResult<User>> Post([FromBody] User value, bool setAuditFields = true)
         {
             int userId = this.GetUserID();
             value.Settings.ModifiedByUserId = userId;
@@ -98,34 +99,35 @@ namespace WorkoutTracker.API.Controllers
                 repSetting.ModifiedByUserId = userId;
                 repSetting.ModifiedDateTime = value.Settings.ModifiedDateTime = DateTime.Now;
             }
-            return base.Post(value, setAuditFields);
+            return await base.Post(value, setAuditFields);
         }
 
         //[Authorize(Roles = "Administrator")] NOPE -- Because anyone can create/register a new user
         [HttpPost("new")]
         [AllowAnonymous]
-        public ActionResult<User> Post([FromBody] UserNewDTO value)
+        public async Task<ActionResult<User>> Post([FromBody] UserNewDTO value)
         {
             var user = GetUserFromUserNewDTO(value);
-            return base.Post(user, false);
+            return await base.Post(user, false);
         }
 
         [HttpGet("overview")]
-        public ActionResult<UserOverview> GetUserOverview()
+        public async Task<ActionResult<UserOverview>> GetUserOverview()
         {
             var overview = new UserOverview();
-            var user = _service.GetById(GetUserID());
+            var user = await _service.GetByIdAsync(GetUserID());
 
             if (user == null)
                 return StatusCode(500, "User not found.");
-            
+
             overview.Username = user.Name;
 
-            var mostRecentWorkout = _executedWorkoutService.GetRecent(1);
-            if (mostRecentWorkout.Any())
-                overview.LastWorkoutDateTime = mostRecentWorkout.First().StartDateTime;
-            
-            overview.PlannedWorkoutCount = _executedWorkoutService.GetPlannedCount(GetUserID());
+            var mostRecentWorkouts = await _executedWorkoutService.GetRecentAsync(1);
+            var mostRecentWorkout = mostRecentWorkouts.FirstOrDefault();
+            if (mostRecentWorkout != null)
+                overview.LastWorkoutDateTime = mostRecentWorkout.StartDateTime;
+
+            overview.PlannedWorkoutCount = await _executedWorkoutService.GetPlannedCountAsync(GetUserID());
 
             return Ok(overview);
         }

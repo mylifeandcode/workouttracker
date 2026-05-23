@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Shared.Interfaces;
@@ -19,94 +21,87 @@ namespace WorkoutTracker.Application.Users.Services
         private bool _disposedValue;
 
         public UserService(
-            IRepository<User> repo, 
-            ICryptoService cryptoService, 
-            IEmailService emailService, 
+            IRepository<User> repo,
+            ICryptoService cryptoService,
+            IEmailService emailService,
             ILogger<UserService> logger,
-            string frontEndResetPasswordUrl) : base(repo, logger) 
+            string frontEndResetPasswordUrl) : base(repo, logger)
         {
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            if(!string.IsNullOrWhiteSpace(frontEndResetPasswordUrl))
+            if (!string.IsNullOrWhiteSpace(frontEndResetPasswordUrl))
                 _frontEndResetPasswordUrl = frontEndResetPasswordUrl;
             else
                 throw new ArgumentNullException(nameof(frontEndResetPasswordUrl));
             _logger.LogInformation("UserService constructed");
         }
 
-        public User Add(User user)
+        public async Task<User> AddAsync(User user)
         {
-            //If no users have been defined, the first one needs to be an administrator
-            if (!_repo.Any(x => x.Name != "SYSTEM")) user.Role = UserRole.Administrator;
-            return Add(user, true);
+            if (!await _repo.AnyAsync(x => x.Name != "SYSTEM")) user.Role = UserRole.Administrator;
+            return await AddAsync(user, true);
         }
 
-        public override void Delete(int userId)
+        public override async Task DeleteAsync(int userId)
         {
             //TODO: Delete entities associated with user (workouts, etc)
-            base.Delete(userId);
+            await base.DeleteAsync(userId);
         }
 
-        public User Update(User user)
+        public async Task<User> UpdateAsync(User user)
         {
-            return Update(user, true);
+            return await UpdateAsync(user, true);
         }
 
-        public override IEnumerable<User> GetAll()
+        public override async Task<IEnumerable<User>> GetAllAsync()
         {
-            //return _repo.Get().Where(x => x.Name.ToUpper(System.Globalization.CultureInfo.CurrentCulture) != "SYSTEM");
-            //TODO: Revisit this query based on the error below.
-            /*
-            The version above doesn't translate.
-            Exception is "InvalidOperationException: 
-            The LINQ expression 'DbSet<User> .Where(u => u.Name.ToUpper(__CurrentCulture_0) != "SYSTEM")' 
-            could not be translated. Either rewrite the query in a form that can be translated, or switch to 
-            client evaluation explicitly by inserting a call to either AsEnumerable(), AsAsyncEnumerable(), 
-            ToList(), or ToListAsync(). See https://go.microsoft.com/fwlink/?linkid=2101038 for more information."
-            */
-            return _repo.Get().Where(x => x.Name.ToUpper() != "SYSTEM");
+            return await _repo.Get().Where(x => x.Name.ToUpper() != "SYSTEM").ToListAsync();
         }
 
-        public IEnumerable<User> GetAllWithoutTracking() 
+        public async Task<IEnumerable<User>> GetAllWithoutTrackingAsync()
         {
-            return _repo.GetWithoutTracking().Where(x => x.Name.ToUpper() != "SYSTEM");
+            return await _repo.GetWithoutTracking().Where(x => x.Name.ToUpper() != "SYSTEM").ToListAsync();
         }
 
-        public void ChangePassword(int userId, string currentPassword, string newPassword)
+        public async Task<User?> GetByPublicIdAsync(Guid publicId)
+        {
+            return await _repo.GetWithoutTracking().FirstOrDefaultAsync(x => x.PublicId == publicId);
+        }
+
+        public async Task ChangePasswordAsync(int userId, string currentPassword, string newPassword)
         {
             try
             {
-                var user = _repo.Get(userId);
-                
+                var user = await _repo.GetAsync(userId);
+
                 if (user == null) throw new ApplicationException("User not found.");
                 if (!_cryptoService.VerifyValuesMatch(currentPassword, user.HashedPassword, user.Salt))
                     throw new ApplicationException("Current password is not correct.");
-                
+
                 user.HashedPassword = _cryptoService.ComputeHash(newPassword, user.Salt);
-                _repo.Update(user, true);
+                await _repo.UpdateAsync(user, true);
             }
             catch (Exception ex)
             {
-                //TODO: Log
                 throw;
             }
         }
 
-        public string RequestPasswordReset(string emailAddress)
+        public async Task<string?> RequestPasswordResetAsync(string emailAddress)
         {
-            var user = _repo.Get().FirstOrDefault(x => x.EmailAddress == emailAddress);
+            var user = await _repo.Get().FirstOrDefaultAsync(x => x.EmailAddress == emailAddress);
             if (user == null)
-                return null; //No user found. Don't throw an exception. If this was a malicious attempt, we don't want to provide useful information.
+                return null;
 
             user.PasswordResetCode = _cryptoService.GeneratePasswordResetCode();
-            _repo.Update(user, true);
+            await _repo.UpdateAsync(user, true);
 
             if (_emailService.IsEnabled)
-            { 
-                _emailService.SendEmail(
+            {
+                await _emailService.SendEmailAsync(
                     emailAddress,
-                    "noreply@workouttracker.com", //TODO: Make configurable
+                    "noreply@workouttracker.com",
                     "Password Reset",
                     $"A password reset request was received. If you made this request, please go to {_frontEndResetPasswordUrl}/{user.PasswordResetCode}"
                     );
@@ -115,27 +110,22 @@ namespace WorkoutTracker.Application.Users.Services
             return user.PasswordResetCode;
         }
 
-        public void ResetPassword(string resetCode, string newPassword)
+        public async Task ResetPasswordAsync(string resetCode, string newPassword)
         {
-            var user = _repo.Get().FirstOrDefault(user => user.PasswordResetCode == resetCode);
-            
+            var user = await _repo.Get().FirstOrDefaultAsync(user => user.PasswordResetCode == resetCode);
+
             if (user == null)
                 throw new ApplicationException($"No user found with password reset code {resetCode}.");
 
             user.HashedPassword = _cryptoService.ComputeHash(newPassword, user.Salt);
             user.PasswordResetCode = null;
 
-            _repo.Update(user, true);
+            await _repo.UpdateAsync(user, true);
         }
 
-        public bool ValidatePasswordResetCode(string resetCode)
+        public async Task<bool> ValidatePasswordResetCodeAsync(string resetCode)
         {
-            return _repo.Get().Any(user => user.PasswordResetCode == resetCode);
-        }
-
-        public User GetByPublicId(Guid publicId)
-        {
-            return _repo.GetWithoutTracking().FirstOrDefault(x => x.PublicId == publicId);
+            return await _repo.Get().AnyAsync(user => user.PasswordResetCode == resetCode);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -147,25 +137,20 @@ namespace WorkoutTracker.Application.Users.Services
                     // TODO: Dispose managed state (managed objects)
                 }
 
-                // Free unmanaged resources (unmanaged objects) and override finalizer
                 if (_emailService != null)
                     _emailService.Dispose();
 
-                // TODO: set large fields to null
                 _disposedValue = true;
             }
         }
 
-        // override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
         ~UserService()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

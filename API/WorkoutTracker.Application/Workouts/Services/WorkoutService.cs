@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Workouts.Models;
@@ -15,50 +16,41 @@ namespace WorkoutTracker.Application.Workouts.Services
     {
         public WorkoutService(IRepository<Workout> repo, ILogger<WorkoutService> logger) : base(repo, logger) { }
 
-        public IEnumerable<Workout> Get(int firstRecord, short pageSize, WorkoutFilter filter)
+        public async Task<IEnumerable<Workout>> GetAsync(int firstRecord, short pageSize, WorkoutFilter filter)
         {
             IQueryable<Workout> query = _repo.GetWithoutTracking();
 
             if (filter != null)
                 ApplyQueryFilters(ref query, filter);
 
-            var output = query.Skip(firstRecord).Take(pageSize);
-            return output;
+            return await query.Skip(firstRecord).Take(pageSize).ToListAsync();
         }
 
-        public Workout GetByPublicId(Guid publicId)
+        public override async Task<Workout> UpdateAsync(Workout modifiedWorkout, bool saveChanges = false)
         {
-            return base.GetByPublicID(publicId);
-        }
-
-        public override Workout Update(Workout modifiedWorkout, bool saveChanges = false)
-        {
-            //TODO: Refactor to make async
-            //TODO: Refactor method signature to remove saveChanges param
-
             if (modifiedWorkout == null)
                 throw new ArgumentNullException(nameof(modifiedWorkout));
 
-            _repo.UpdateAsync(modifiedWorkout, (workout) => workout.Exercises).Wait();
+            await _repo.UpdateAsync(modifiedWorkout, (workout) => workout.Exercises);
 
             return modifiedWorkout;
         }
 
-        public void Retire(Guid publicId)
+        public async Task RetireAsync(Guid publicId)
         {
-            SetActive(publicId, false);
+            await SetActiveAsync(publicId, false);
         }
 
-        public void Reactivate(Guid publicId)
+        public async Task ReactivateAsync(Guid publicId)
         {
-            SetActive(publicId, true);
+            await SetActiveAsync(publicId, true);
         }
 
-        public int GetTotalCount(WorkoutFilter filter)
+        public async Task<int> GetTotalCountAsync(WorkoutFilter filter)
         {
             var query = _repo.GetWithoutTracking();
             ApplyQueryFilters(ref query, filter);
-            return query.Count();
+            return await query.CountAsync();
         }
 
         private static void ApplyQueryFilters(ref IQueryable<Workout> query, WorkoutFilter filter)
@@ -75,15 +67,15 @@ namespace WorkoutTracker.Application.Workouts.Services
                 query = query.Where(workout => EF.Functions.Like(workout.Name, "%" + filter.NameContains + "%"));
         }
 
-        private void SetActive(Guid workoutPublicId, bool active)
+        private async Task SetActiveAsync(Guid workoutPublicId, bool active)
         {
             try
             {
-                var workout = _repo.Get().First(x => x.PublicId == workoutPublicId);
+                var workout = await _repo.Get().FirstAsync(x => x.PublicId == workoutPublicId);
                 workout.Active = active;
                 workout.ModifiedByUserId = workout.CreatedByUserId;
                 workout.ModifiedDateTime = DateTime.Now;
-                _repo.Update(workout, true);
+                await _repo.UpdateAsync(workout, true);
             }
             catch (Exception ex)
             {

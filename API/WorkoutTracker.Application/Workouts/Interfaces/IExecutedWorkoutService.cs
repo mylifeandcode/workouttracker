@@ -1,23 +1,24 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Application.Workouts.Models;
 using WorkoutTracker.Domain.Workouts;
-using WorkoutTracker.Application.Shared.Interfaces;
-using System;
 
 namespace WorkoutTracker.Application.Workouts.Interfaces
 {
     public interface IExecutedWorkoutService : IPublicEntityServiceBase<ExecutedWorkout>
     {
-        ExecutedWorkout Create(WorkoutPlan plan, bool startWorkout);
-        ExecutedWorkout Create(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime);
-        IEnumerable<ExecutedWorkout> GetFilteredSubset(
-            int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst);
-        IEnumerable<ExecutedWorkout> GetRecent(int numberOfMostRecent);
-        ExecutedWorkout GetLatest(Guid workoutPublicId);
-        int GetTotalCount(ExecutedWorkoutFilter filter);
-        int GetPlannedCount(int userId);
-        IEnumerable<ExecutedWorkout> GetInProgress(int userId);
-        void DeletePlanned(Guid publicId);
-        ExecutedWorkout GetByPublicId(Guid publicId);
+        Task<ExecutedWorkout> CreateAsync(WorkoutPlan plan, bool startWorkout);
+        Task<ExecutedWorkout> CreateAsync(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime);
+        Task<IEnumerable<ExecutedWorkout>> GetFilteredSubsetAsync(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst);
+        Task<IEnumerable<ExecutedWorkout>> GetRecentAsync(int numberOfMostRecent);
+        Task<ExecutedWorkout?> GetLatestAsync(Guid workoutPublicId);
+        Task<int> GetTotalCountAsync(ExecutedWorkoutFilter filter);
+        Task<int> GetPlannedCountAsync(int userId);
+        Task<IEnumerable<ExecutedWorkout>> GetByUserAsync(int userId);
+        Task<IEnumerable<ExecutedWorkout>> GetRecentByWorkoutAsync(int workoutId, int count);
+        Task<IEnumerable<ExecutedWorkout>> GetInProgressAsync(int userId);
+        Task DeletePlannedAsync(Guid publicId);
     }
 }

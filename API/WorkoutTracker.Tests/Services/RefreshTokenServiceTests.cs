@@ -3,8 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using WorkoutTracker.Application.Security.Interfaces;
+using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Services;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Repository;
@@ -35,15 +34,15 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Generate_Refresh_Token()
+        public async Task Should_Generate_Refresh_Token()
         {
             //ARRANGE
             _refreshTokenRepoMock
-                .Setup(x => x.Add(It.IsAny<RefreshToken>(), true))
-                .Returns((RefreshToken t, bool _) => t);
+                .Setup(x => x.AddAsync(It.IsAny<RefreshToken>(), true))
+                .ReturnsAsync((RefreshToken t, bool _) => t);
 
             //ACT
-            var (rawToken, entity) = _sut.GenerateRefreshToken(1);
+            var (rawToken, entity) = await _sut.GenerateRefreshTokenAsync(1);
 
             //ASSERT
             Assert.IsNotNull(rawToken);
@@ -54,11 +53,11 @@ namespace WorkoutTracker.Tests.Services
             Assert.IsFalse(entity.IsRevoked);
             Assert.IsFalse(string.IsNullOrWhiteSpace(entity.TokenHash));
             Assert.IsTrue(entity.ExpiryDate > DateTime.UtcNow);
-            _refreshTokenRepoMock.Verify(x => x.Add(It.IsAny<RefreshToken>(), true), Times.Once);
+            _refreshTokenRepoMock.Verify(x => x.AddAsync(It.IsAny<RefreshToken>(), true), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Validate_Refresh_Token_Successfully()
+        public async Task Should_Validate_Refresh_Token_Successfully()
         {
             //ARRANGE
             var rawToken = "testRawToken123";
@@ -74,10 +73,10 @@ namespace WorkoutTracker.Tests.Services
 
             _refreshTokenRepoMock
                 .Setup(x => x.Get())
-                .Returns(new List<RefreshToken> { existingToken }.AsQueryable());
+                .Returns(new List<RefreshToken> { existingToken }.AsAsyncQueryable());
 
             //ACT
-            var result = _sut.ValidateRefreshToken(rawToken, 1);
+            var result = await _sut.ValidateRefreshTokenAsync(rawToken, 1);
 
             //ASSERT
             Assert.IsNotNull(result);
@@ -85,22 +84,22 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public void Should_Return_Null_When_Token_Not_Found()
+        public async Task Should_Return_Null_When_Token_Not_Found()
         {
             //ARRANGE
             _refreshTokenRepoMock
                 .Setup(x => x.Get())
-                .Returns(new List<RefreshToken>().AsQueryable());
+                .Returns(new List<RefreshToken>().AsAsyncQueryable());
 
             //ACT
-            var result = _sut.ValidateRefreshToken("nonexistentToken", 1);
+            var result = await _sut.ValidateRefreshTokenAsync("nonexistentToken", 1);
 
             //ASSERT
             Assert.IsNull(result);
         }
 
         [TestMethod]
-        public void Should_Return_Null_When_Token_Is_Expired()
+        public async Task Should_Return_Null_When_Token_Is_Expired()
         {
             //ARRANGE
             var rawToken = "testRawToken123";
@@ -116,17 +115,17 @@ namespace WorkoutTracker.Tests.Services
 
             _refreshTokenRepoMock
                 .Setup(x => x.Get())
-                .Returns(new List<RefreshToken> { existingToken }.AsQueryable());
+                .Returns(new List<RefreshToken> { existingToken }.AsAsyncQueryable());
 
             //ACT
-            var result = _sut.ValidateRefreshToken(rawToken, 1);
+            var result = await _sut.ValidateRefreshTokenAsync(rawToken, 1);
 
             //ASSERT
             Assert.IsNull(result);
         }
 
         [TestMethod]
-        public void Should_Return_Null_And_Revoke_Descendants_When_Token_Is_Revoked()
+        public async Task Should_Return_Null_And_Revoke_Descendants_When_Token_Is_Revoked()
         {
             //ARRANGE
             var rawToken = "testRawToken123";
@@ -152,27 +151,27 @@ namespace WorkoutTracker.Tests.Services
 
             _refreshTokenRepoMock
                 .Setup(x => x.Get())
-                .Returns(new List<RefreshToken> { existingToken, childToken }.AsQueryable());
+                .Returns(new List<RefreshToken> { existingToken, childToken }.AsAsyncQueryable());
 
             _refreshTokenRepoMock
-                .Setup(x => x.Get(2))
-                .Returns(childToken);
+                .Setup(x => x.GetAsync(2))
+                .ReturnsAsync(childToken);
 
             _refreshTokenRepoMock
-                .Setup(x => x.Update(It.IsAny<RefreshToken>(), true))
-                .Returns((RefreshToken t, bool _) => t);
+                .Setup(x => x.UpdateAsync(It.IsAny<RefreshToken>(), true))
+                .ReturnsAsync((RefreshToken t, bool _) => t);
 
             //ACT
-            var result = _sut.ValidateRefreshToken(rawToken, 1);
+            var result = await _sut.ValidateRefreshTokenAsync(rawToken, 1);
 
             //ASSERT
             Assert.IsNull(result);
             Assert.IsTrue(childToken.IsRevoked);
-            _refreshTokenRepoMock.Verify(x => x.Update(childToken, true), Times.Once);
+            _refreshTokenRepoMock.Verify(x => x.UpdateAsync(childToken, true), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Return_Null_When_Token_Belongs_To_Different_User()
+        public async Task Should_Return_Null_When_Token_Belongs_To_Different_User()
         {
             //ARRANGE
             var rawToken = "testRawToken123";
@@ -188,17 +187,17 @@ namespace WorkoutTracker.Tests.Services
 
             _refreshTokenRepoMock
                 .Setup(x => x.Get())
-                .Returns(new List<RefreshToken> { existingToken }.AsQueryable());
+                .Returns(new List<RefreshToken> { existingToken }.AsAsyncQueryable());
 
             //ACT
-            var result = _sut.ValidateRefreshToken(rawToken, 1);
+            var result = await _sut.ValidateRefreshTokenAsync(rawToken, 1);
 
             //ASSERT
             Assert.IsNull(result);
         }
 
         [TestMethod]
-        public void Should_Revoke_And_Replace_Token()
+        public async Task Should_Revoke_And_Replace_Token()
         {
             //ARRANGE
             var existingToken = new RefreshToken
@@ -211,27 +210,27 @@ namespace WorkoutTracker.Tests.Services
             };
 
             _refreshTokenRepoMock
-                .Setup(x => x.Add(It.IsAny<RefreshToken>(), true))
-                .Returns((RefreshToken t, bool _) => { t.Id = 2; return t; });
+                .Setup(x => x.AddAsync(It.IsAny<RefreshToken>(), true))
+                .ReturnsAsync((RefreshToken t, bool _) => { t.Id = 2; return t; });
 
             _refreshTokenRepoMock
-                .Setup(x => x.Update(It.IsAny<RefreshToken>(), true))
-                .Returns((RefreshToken t, bool _) => t);
+                .Setup(x => x.UpdateAsync(It.IsAny<RefreshToken>(), true))
+                .ReturnsAsync((RefreshToken t, bool _) => t);
 
             //ACT
-            var (newRawToken, newEntity) = _sut.RevokeAndReplace(existingToken, 1);
+            var (newRawToken, newEntity) = await _sut.RevokeAndReplaceAsync(existingToken, 1);
 
             //ASSERT
             Assert.IsTrue(existingToken.IsRevoked);
             Assert.IsNotNull(newRawToken);
             Assert.IsNotNull(newEntity);
             Assert.AreEqual(2, existingToken.ReplacedByTokenId);
-            _refreshTokenRepoMock.Verify(x => x.Add(It.IsAny<RefreshToken>(), true), Times.Once);
-            _refreshTokenRepoMock.Verify(x => x.Update(existingToken, true), Times.Once);
+            _refreshTokenRepoMock.Verify(x => x.AddAsync(It.IsAny<RefreshToken>(), true), Times.Once);
+            _refreshTokenRepoMock.Verify(x => x.UpdateAsync(existingToken, true), Times.Once);
         }
 
         [TestMethod]
-        public void Should_Revoke_All_Tokens_By_User_Id()
+        public async Task Should_Revoke_All_Tokens_By_User_Id()
         {
             //ARRANGE
             var tokens = new List<RefreshToken>
@@ -242,23 +241,23 @@ namespace WorkoutTracker.Tests.Services
 
             _refreshTokenRepoMock
                 .Setup(x => x.Get())
-                .Returns(tokens.AsQueryable());
+                .Returns(tokens.AsAsyncQueryable());
 
             _refreshTokenRepoMock
-                .Setup(x => x.Update(It.IsAny<RefreshToken>(), false))
-                .Returns((RefreshToken t, bool _) => t);
+                .Setup(x => x.UpdateAsync(It.IsAny<RefreshToken>(), false))
+                .ReturnsAsync((RefreshToken t, bool _) => t);
 
             _refreshTokenRepoMock
-                .Setup(x => x.Update(It.IsAny<RefreshToken>(), true))
-                .Returns((RefreshToken t, bool _) => t);
+                .Setup(x => x.UpdateAsync(It.IsAny<RefreshToken>(), true))
+                .ReturnsAsync((RefreshToken t, bool _) => t);
 
             //ACT
-            _sut.RevokeByUserId(1);
+            await _sut.RevokeByUserIdAsync(1);
 
             //ASSERT
-            Assert.IsTrue(tokens.All(t => t.IsRevoked));
-            _refreshTokenRepoMock.Verify(x => x.Update(It.IsAny<RefreshToken>(), false), Times.Exactly(2));
-            _refreshTokenRepoMock.Verify(x => x.Update(tokens[0], true), Times.Once);
+            Assert.IsTrue(tokens.TrueForAll(t => t.IsRevoked));
+            _refreshTokenRepoMock.Verify(x => x.UpdateAsync(It.IsAny<RefreshToken>(), false), Times.Exactly(2));
+            _refreshTokenRepoMock.Verify(x => x.UpdateAsync(tokens[0], true), Times.Once);
         }
     }
 }
