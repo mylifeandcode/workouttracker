@@ -219,10 +219,10 @@ describe('ResistanceBandsComponent', () => {
     component.cancelEdit(1);
 
     //ASSERT
-    expect(component.resistanceBands[0].color).toEqual(band.color);
-    expect(component.resistanceBands[0].maxResistanceAmount).toEqual(band.maxResistanceAmount);
-    expect(component.resistanceBands[0].id).toEqual(band.id);
-    expect(component.resistanceBands[0].numberAvailable).toEqual(band.numberAvailable);
+    expect(component.resistanceBands()[0].color).toEqual(band.color);
+    expect(component.resistanceBands()[0].maxResistanceAmount).toEqual(band.maxResistanceAmount);
+    expect(component.resistanceBands()[0].id).toEqual(band.id);
+    expect(component.resistanceBands()[0].numberAvailable).toEqual(band.numberAvailable);
 
   });
 

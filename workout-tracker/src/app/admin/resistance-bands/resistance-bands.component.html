@@ -7,7 +7,7 @@
 @if (!busy()) {
   <div class="container-fluid">
 
-    <nz-table #dt [nzData]="resistanceBands" [nzShowPagination]="false" dataKey="id" editMode="row">
+    <nz-table #dt [nzData]="resistanceBands()" [nzShowPagination]="false" dataKey="id" editMode="row">
       <thead>
         <tr>
           <th [nzSortFn]="sortColumnByColor">Color</th>

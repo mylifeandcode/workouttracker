@@ -27,7 +27,7 @@ export class ResistanceBandsComponent implements OnInit {
   private readonly _messageService = inject(NzMessageService);
   private readonly _modalService = inject(NzModalService);
 
-  public resistanceBands: ResistanceBand[] = [];
+  public resistanceBands = signal<ResistanceBand[]>([]);
   public busy = signal<boolean>(false);
   public busyMsg = signal<string | undefined>(undefined);
 
@@ -48,16 +48,16 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   public cancelEdit(id: number): void {
-    const index = this.resistanceBands.findIndex(item => item.id === id);
+    const index = this.resistanceBands().findIndex(item => item.id === id);
     this.editCache[id] = {
-      data: { ...this.resistanceBands[index] },
+      data: { ...this.resistanceBands()[index] },
       edit: false
     };
   }
 
   public saveEdit(id: number): void {
-    const index = this.resistanceBands.findIndex(item => item.id === id);
-    Object.assign(this.resistanceBands[index], this.editCache[id].data);
+    const index = this.resistanceBands().findIndex(item => item.id === id);
+    Object.assign(this.resistanceBands()[index], this.editCache[id].data);
 
     this.editCache[id].edit = false;
     this.updateResistanceBand(this.editCache[id].data);
@@ -111,7 +111,7 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   private setupEditCache(): void {
-    this.resistanceBands.forEach(item => {
+    this.resistanceBands().forEach(item => {
       this.editCache[item.id] = {
         edit: false,
         data: { ...item }
@@ -131,7 +131,7 @@ export class ResistanceBandsComponent implements OnInit {
         })
       )
       .subscribe((results: ResistanceBand[]) => {
-        this.resistanceBands = results;
+        this.resistanceBands.set(results);
         this.setupEditCache();
       });
   }
