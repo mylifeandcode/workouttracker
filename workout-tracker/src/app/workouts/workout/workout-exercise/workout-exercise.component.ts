@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ResistanceType, SetType } from '../../../api';
 import { NgStyle } from '@angular/common';
@@ -42,17 +42,13 @@ export class WorkoutExerciseComponent {
    */
   readonly formGroup = input.required<FormGroup<IWorkoutFormExercise>>(); //HACK -- kind of. Not really initialized correctly unless I'm mistaken. Value should be there though. This is just to make the compiler happy.
 
-  @Output()
-  resistanceBandsSelect = new EventEmitter<FormGroup<IWorkoutFormExerciseSet>>();
+  readonly resistanceBandsSelect = output<FormGroup<IWorkoutFormExerciseSet>>();
 
-  @Output()
-  showTimerRequest = new EventEmitter<FormGroup<IWorkoutFormExerciseSet>>();
+  readonly showTimerRequest = output<FormGroup<IWorkoutFormExerciseSet>>();
 
-  @Output()
-  rangeOfMotionEntered = new EventEmitter();
+  readonly rangeOfMotionEntered = output();
 
-  @Output()
-  durationEdit = new EventEmitter<FormControl<number | null>>();
+  readonly durationEdit = output<FormControl<number | null>>();
 
   public setTypeEnum: typeof SetType = SetType;
   public resistanceTypeEnum: typeof ResistanceType = ResistanceType;

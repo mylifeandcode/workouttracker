@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Output, input, provideZonelessChangeDetection } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Output, input, output, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -24,11 +24,9 @@ class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
   public override readonly resistanceBandInventory = input<ResistanceBandIndividual[]>([]);
 
-  @Output()
-  public override okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
+  public override okClicked = output<ResistanceBandSelection>();
 
-  @Output()
-  public override cancelClicked: EventEmitter<void> = new EventEmitter<void>();
+  public override cancelClicked = output<void>();
 
   override setBandAllocation = vi.fn();
 }

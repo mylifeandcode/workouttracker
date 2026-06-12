@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, output } from '@angular/core';
 import { ExerciseListBase } from '../exercise-list-base';
 import { ExerciseService } from '../_services/exercise.service';
 import { ExerciseDTO } from '../../api';
@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 export class ExerciseListMiniComponent extends ExerciseListBase {
 
   //TODO: Replace with output
-  @Output() exerciseSelected = new EventEmitter<ExerciseDTO>();
+  readonly exerciseSelected = output<ExerciseDTO>();
 
   constructor() {
     const _exerciseSvc = inject(ExerciseService);

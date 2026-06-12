@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal, output } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
@@ -31,8 +31,7 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
   readonly showRecent = signal<boolean>(true);
   readonly showHeading = signal<boolean>(true);
 
-  @Output()
-  workoutsLoaded: EventEmitter<void> = new EventEmitter<void>();
+  readonly workoutsLoaded = output<void>();
 
   //PUBLIC PROPERTIES
   /**
@@ -72,6 +71,7 @@ export class WorkoutSelectComponent implements OnInit { //}, OnDestroy {
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe((result: PaginatedResultsOfWorkoutDTO) => {
         this.workouts.set(result.results.sort((a, b) => a.name.localeCompare(b.name)));
+        // TODO: The 'emit' function requires a mandatory void argument
         this.workoutsLoaded.emit();
       });
   }

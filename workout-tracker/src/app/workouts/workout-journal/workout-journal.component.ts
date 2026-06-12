@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { finalize } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -12,6 +12,7 @@ import { ExecutedWorkoutSummaryDTO, PaginatedResultsOfExecutedWorkoutSummaryDTO 
   imports: [NzTableModule, RouterModule, DatePipe],
   templateUrl: './workout-journal.component.html',
   styleUrl: './workout-journal.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkoutJournalComponent implements OnInit {
 

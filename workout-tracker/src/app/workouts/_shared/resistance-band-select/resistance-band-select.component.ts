@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnChanges, Output, Signal, SimpleChanges, WritableSignal, computed, input, signal } from '@angular/core';
+import { Component, OnChanges, Signal, SimpleChanges, WritableSignal, computed, input, signal, output } from '@angular/core';
 import { ResistanceBandIndividual } from '../../../shared/models/resistance-band-individual';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzTransferModule, TransferItem } from 'ng-zorro-antd/transfer';
@@ -26,11 +26,9 @@ export class ResistanceBandSelectComponent implements OnChanges {
 
 
   //OUTPUTS
-  @Output()
-  public okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
+  public readonly okClicked = output<ResistanceBandSelection>();
 
-  @Output()
-  public cancelClicked: EventEmitter<void> = new EventEmitter<void>();
+  public readonly cancelClicked = output<void>();
 
 
   //SIGNALS
@@ -146,6 +144,7 @@ export class ResistanceBandSelectComponent implements OnChanges {
 
   public cancel(): void {
     this.showBilateralValidationFailure = false;
+    // TODO: The 'emit' function requires a mandatory void argument
     this.cancelClicked.emit();
   }
 

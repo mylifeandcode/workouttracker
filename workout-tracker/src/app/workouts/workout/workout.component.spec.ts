@@ -7,7 +7,7 @@ import { ResistanceBandIndividual } from '../../shared/models/resistance-band-in
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { ExecutedExerciseDTO, ExecutedWorkoutDTO, ResistanceType, SetType, WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Output, input, provideZonelessChangeDetection } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Output, input, provideZonelessChangeDetection, output } from '@angular/core';
 import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
 import { WorkoutExerciseComponent } from './workout-exercise/workout-exercise.component';
@@ -106,11 +106,9 @@ class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
   public override readonly resistanceBandInventory = input<ResistanceBandIndividual[]>([]);
 
-  @Output()
-  public override okClicked: EventEmitter<ResistanceBandSelection> = new EventEmitter<ResistanceBandSelection>();
+  public override okClicked = output<ResistanceBandSelection>();
 
-  @Output()
-  public override cancelClicked: EventEmitter<void> = new EventEmitter<void>();
+  public override cancelClicked = output<void>();
 
   override setBandAllocation = vi.fn();
 }

@@ -1,4 +1,4 @@
-import { Component, ViewChild, effect, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, effect, inject, input, signal, ChangeDetectionStrategy, viewChild } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
 import { SoundService } from '../../../core/_services/sound/sound.service';
 import { NgStyle } from '@angular/common';
@@ -13,8 +13,8 @@ import { NgStyle } from '@angular/common';
 export class CountdownTimerComponent {
   private _soundService = inject(SoundService);
 
-  @ViewChild('preCountdown', { static: false }) private _preCountdown: CountdownComponent | undefined;
-  @ViewChild('mainCountdown', { static: false }) private _countdown: CountdownComponent | undefined;
+  private readonly _preCountdown = viewChild<CountdownComponent>('preCountdown');
+  private readonly _countdown = viewChild<CountdownComponent>('mainCountdown');
 
   public countdownConfig: CountdownConfig = this.getCountdownConfig(0);
   public preCountdownConfig: CountdownConfig = this.getCountdownConfig(0);
@@ -39,7 +39,7 @@ export class CountdownTimerComponent {
   public startCountdown(): void {
     this.showPreCountdown.set(true);
     this._preCountdownHasBegun.set(true);
-    this._preCountdown?.begin();
+    this._preCountdown()?.begin();
   }
 
   //TODO: Add ability to pause
@@ -49,7 +49,7 @@ export class CountdownTimerComponent {
       this.showPreCountdown.set(false);
       this.playSound();
       this.countdownHasBegun.set(true);
-      this._countdown?.begin();
+      this._countdown()?.begin();
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnChanges, Output, inject, input } from '@angular/core';
+import { Component, OnChanges, inject, input, output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectOnFocusDirective } from '../../../shared/directives/select-on-focus.directive';
 
@@ -19,11 +19,9 @@ private _formBuilder = inject(FormBuilder);
 ;
   readonly currentDuration = input<number>(0);
 
-  @Output()
-  okClicked: EventEmitter<number> = new EventEmitter<number>();
+  readonly okClicked = output<number>();
 
-  @Output()
-  cancelClicked: EventEmitter<void> = new EventEmitter<void>();
+  readonly cancelClicked = output<void>();
 
   public form: FormGroup<IDurationForm>;
 
@@ -40,6 +38,7 @@ private _formBuilder = inject(FormBuilder);
   }
 
   public cancel(): void {
+    // TODO: The 'emit' function requires a mandatory void argument
     this.cancelClicked.emit();
   }
 

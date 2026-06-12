@@ -1,8 +1,9 @@
-import { Component, HostListener } from "@angular/core";
+import { ChangeDetectionStrategy, Component, HostListener } from "@angular/core";
 
 @Component({
     template: '',
-    standalone: true
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export abstract class CheckForUnsavedDataComponent {
 
