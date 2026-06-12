@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IExercisePlanFormGroup } from './interfaces/i-exercise-plan-form-group';
 import { ExercisePlanLastTimeComponent } from './exercise-plan-last-time/exercise-plan-last-time.component';
@@ -10,20 +10,14 @@ import { ResistanceTypePipe } from '../../_pipes/resistance-type.pipe';
     selector: 'wt-exercise-plan',
     templateUrl: './exercise-plan.component.html',
     styleUrls: ['./exercise-plan.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, ExercisePlanLastTimeComponent, ExercisePlanSuggestionsComponent, ExercisePlanNextTimeComponent, ResistanceTypePipe]
+    imports: [FormsModule, ReactiveFormsModule, ExercisePlanLastTimeComponent, ExercisePlanSuggestionsComponent, ExercisePlanNextTimeComponent, ResistanceTypePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExercisePlanComponent {
 
-  readonly formGroup = input.required<FormGroup<IExercisePlanFormGroup>>(); //HACK -- kind of. Initializes, but...not for real.
-
+  readonly formGroup = input.required<FormGroup<IExercisePlanFormGroup>>();
   readonly workoutHasBeenExecutedBefore = input<boolean>(false);
-
-  @Output()
-  resistanceBandsModalRequested: EventEmitter<FormGroup<IExercisePlanFormGroup>>;
-
-  constructor() { 
-    this.resistanceBandsModalRequested = new EventEmitter<FormGroup<IExercisePlanFormGroup>>();
-  }
+  readonly resistanceBandsModalRequested = output<FormGroup<IExercisePlanFormGroup>>();
 
   public selectResistanceBands(formGroup: FormGroup<IExercisePlanFormGroup>): void {
     this.resistanceBandsModalRequested.emit(formGroup);
