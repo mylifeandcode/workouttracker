@@ -69,7 +69,7 @@ describe('ResistanceBandSelectComponent', () => {
         component.ngOnChanges({ 'bandAllocation': change });
 
         //ASSERT
-        expect(component.showBilateralValidationFailure).toBe(false);
+        expect(component.showBilateralValidationFailure()).toBe(false);
     });
 
     it('should show message about bilateral resistance on changes when exercise uses it', () => {
@@ -84,7 +84,7 @@ describe('ResistanceBandSelectComponent', () => {
         component.ngOnChanges({ 'bandAllocation': change });
 
         //ASSERT
-        expect(component.showBilateralValidationFailure).toBe(true);
+        expect(component.showBilateralValidationFailure()).toBe(true);
     });
 
     it('should show message about bilateral resistance when exercise uses it and user selects resistance which is not equally divisible', () => {
@@ -99,13 +99,13 @@ describe('ResistanceBandSelectComponent', () => {
             checked: false
         };
 
-        component.transferItems.push(band);
+        component.transferItems.set([band]);
 
         //ACT
         component.onTransferChange();
 
         //ASSERT
-        expect(component.showBilateralValidationFailure).toBe(true);
+        expect(component.showBilateralValidationFailure()).toBe(true);
     });
 
     it('should show message about bilateral resistance when exercise uses it and user selects just one band', () => {
@@ -127,13 +127,13 @@ describe('ResistanceBandSelectComponent', () => {
             checked: false
         };
 
-        component.transferItems.push(...[band1, band2]);
+        component.transferItems.set([band1, band2]);
 
         //ACT
         component.onTransferChange();
 
         //ASSERT
-        expect(component.showBilateralValidationFailure).toBe(true);
+        expect(component.showBilateralValidationFailure()).toBe(true);
     });
 
     it('should not show message about bilateral resistance when exercise uses it and user selects resistance which is equally divisible', () => {
@@ -171,12 +171,12 @@ describe('ResistanceBandSelectComponent', () => {
             checked: false
         };
 
-        component.transferItems.push(...[band1, band2, band3, band4]);
+        component.transferItems.set([band1, band2, band3, band4]);
 
         //ACT
         component.onTransferChange();
 
         //ASSERT
-        expect(component.showBilateralValidationFailure).toBe(false);
+        expect(component.showBilateralValidationFailure()).toBe(false);
     });
 });

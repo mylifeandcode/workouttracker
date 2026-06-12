@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12 d-flex justify-content-center">
       <nz-transfer
-        [nzDataSource]="transferItems"
+        [nzDataSource]="transferItems()"
         [nzTitles]="['Available', 'Selected']"
         [nzRender]="bandItem"
         nzNotFoundContent="No bands"
@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  @if (showBilateralValidationFailure) {
+  @if (showBilateralValidationFailure()) {
     <div class="row">
       <div class="col-12">
         <span class="bilateral-warning">
@@ -45,7 +45,7 @@
     <div class="col-6">
       <button class="btn btn-warning pull-right mild-margins" (click)="cancel()">Cancel</button>
       <span style="width:100px"></span>
-      <button class="btn btn-success pull-right" [disabled]="maxSelectedResistance() == 0 || exerciseUsesBilateralResistance() && showBilateralValidationFailure" (click)="ok()">OK</button>  
+      <button class="btn btn-success pull-right" [disabled]="maxSelectedResistance() == 0 || exerciseUsesBilateralResistance() && showBilateralValidationFailure()" (click)="ok()">OK</button>
     </div>
   </div>
 
