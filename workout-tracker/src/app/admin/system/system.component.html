@@ -11,6 +11,9 @@
     </div>
     <div class="col-4"> <!--CENTER COLUMN-->
       <button class="btn btn-info btn-fullWidth" (click)="testToast()">Test Toast</button>
+      <p>
+        <wt-duration [currentDuration]="duration()" (okClicked)="duration.set($event)" (cancelClicked)="duration.set(0)"></wt-duration>
+      </p>
     </div>
     <div class="col-4"> <!--RIGHT COLUMN-->
       <button class="btn btn-danger btn-fullWidth" (click)="testCountdown()">Test Countdown</button>

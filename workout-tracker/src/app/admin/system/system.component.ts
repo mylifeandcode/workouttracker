@@ -7,11 +7,12 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormsModule } from '@angular/forms';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { DurationComponent } from '../../workouts/_shared/duration/duration.component';
 
 @Component({
   selector: 'wt-system',
   templateUrl: './system.component.html',
-  imports: [NzSpinModule, NzModalModule, CountdownTimerComponent, NzSelectModule, FormsModule, NzCheckboxModule],
+  imports: [NzSpinModule, NzModalModule, CountdownTimerComponent, NzSelectModule, FormsModule, NzCheckboxModule, DurationComponent],
   styleUrls: ['./system.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -21,6 +22,7 @@ export class SystemComponent {
 
   showCountdownModal = signal<boolean>(false);
   countdownModalActivatedDateTime = signal<Date | null>(null);
+  public duration = signal<number>(0);
 
   public testSoundService(): void {
     this._soundService.playSound('../../assets/sounds/210639764.mp3');

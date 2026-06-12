@@ -1,4 +1,4 @@
-import { Component, OnChanges, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnChanges, inject, input, output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectOnFocusDirective } from '../../../shared/directives/select-on-focus.directive';
 
@@ -12,15 +12,14 @@ interface IDurationForm {
     selector: 'wt-duration',
     templateUrl: './duration.component.html',
     styleUrls: ['./duration.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective]
+    imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DurationComponent implements OnChanges {
 private _formBuilder = inject(FormBuilder);
-;
+
   readonly currentDuration = input<number>(0);
-
   readonly okClicked = output<number>();
-
   readonly cancelClicked = output<void>();
 
   public form: FormGroup<IDurationForm>;
