@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Router, UrlTree } from '@angular/router';
 import { AuthService } from '../../_services/auth/auth.service';
 
 @Injectable({
@@ -12,17 +11,16 @@ export class UserSelectedGuard  {
 
 
   //public canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-  public canActivate(): Observable<boolean> | Promise<boolean> | boolean {
+  public canActivate(): boolean | UrlTree {
 
-    let returnValue: boolean = true;
-
+    // Return a UrlTree (rather than navigate() + false) so the router resolves
+    // the redirect as part of this same navigation — the target component is
+    // never instantiated, so there's no flash before the redirect.
     if (!this._authService.isUserLoggedIn) {
-      returnValue = false;
-      //console.log(`Redirecting to ${this._authService.loginRoute}`)
-      this._router.navigate([this._authService.loginRoute]);
+      return this._router.parseUrl(this._authService.loginRoute);
     }
 
-    return returnValue;
+    return true;
 
   }
 

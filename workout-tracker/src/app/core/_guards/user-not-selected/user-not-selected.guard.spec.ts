@@ -1,6 +1,6 @@
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router, RouterModule, RouterStateSnapshot } from '@angular/router';
+import { Router, RouterModule, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthService } from '../../_services/auth/auth.service';
 import { UserNotSelectedGuard } from '../user-not-selected/user-not-selected.guard';
 import { type Mocked } from 'vitest';
@@ -13,10 +13,14 @@ class FakeComponent {
 
 describe('UserNotSelectedGuard', () => {
     let guard: UserNotSelectedGuard;
+    let userLoggedIn: boolean;
 
     beforeEach(() => {
+        userLoggedIn = true;
         const AuthServiceMock: Partial<Mocked<AuthService>> = {
-            get isUserLoggedIn() { return true; },
+            //isUserLoggedIn is a getter on AuthService; back it with a closure
+            //variable so each test can control it without reassigning the property.
+            get isUserLoggedIn() { return userLoggedIn; },
             loginRoute: "login"
         };
 
@@ -45,20 +49,28 @@ describe('UserNotSelectedGuard', () => {
         expect(guard).toBeTruthy();
     });
 
-    it('should return false from canActivate() and redirect to home when user is not null', () => {
+    it('should return a UrlTree redirecting to home when a user is already logged in', () => {
 
         //ARRANGE
         const router = TestBed.inject(Router);
-        vi.spyOn(router, 'navigate');
-        //const state = <RouterStateSnapshot>{ url: "login" };
 
         //ACT
-        //const result = guard.canActivate(new ActivatedRouteSnapshot(), state);
         const result = guard.canActivate();
 
         //ASSERT
-        expect(result).toBe(false);
-        expect(router.navigate).toHaveBeenCalledTimes(1);
-        expect(router.navigate).toHaveBeenCalledWith(['home']);
+        expect(result instanceof UrlTree).toBe(true);
+        expect(router.serializeUrl(result as UrlTree)).toBe('/home');
+    });
+
+    it('should return true from canActivate() when no user is logged in', () => {
+
+        //ARRANGE
+        userLoggedIn = false;
+
+        //ACT
+        const result = guard.canActivate();
+
+        //ASSERT
+        expect(result).toBe(true);
     });
 });

@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { UrlTree, Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { AuthService } from '../../_services/auth/auth.service';
 
 @Injectable({
@@ -16,23 +15,18 @@ export class UserNotSelectedGuard  {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
   */
-  canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      let returnValue: boolean = true;
+  canActivate(): boolean | UrlTree {
 
+      // Return a UrlTree (rather than navigate() + false) so the router resolves
+      // the redirect atomically and the user-select component never renders for
+      // an already-logged-in user.
       if(this._authService.isUserLoggedIn) {
         //console.log("User is already logged in");
-        returnValue = false;
-        this._router.navigate(['home']);
+        return this._router.parseUrl('home');
       }
 
-      /*
-      if(state.url.indexOf(this._authService.loginRoute) < 0) {
-        console.log("Going to login route");
-        this._router.navigate([this._authService.loginRoute]);
-      }
-      */
       //console.log(`No user selected (${this._authService.isUserLoggedIn}). Continuing to route.`);
-      return returnValue;
+      return true;
 
   }
 

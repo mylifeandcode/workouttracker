@@ -129,36 +129,52 @@ export class AuthService {
       );
   }
 
-  public restoreUserSessionIfApplicable(): void {
+  public restoreUserSessionIfApplicable(): Observable<void> {
     const token: string | null = (this._localStorageService.get(this.LOCAL_STORAGE_TOKEN_KEY) as string | null);
     const refreshToken: string | null = (this._localStorageService.get(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY) as string | null);
 
-    if (token) {
-      const decodedToken = jwtDecode<JwtPayload>(token);
-      if (decodedToken) {
-
-        if (!this.isExpired(decodedToken?.exp)) {
-          // Access token still valid — restore directly
-          this.decodedTokenPayload = decodedToken;
-          this.token = token;
-
-          const username = <string | null>this.decodedTokenPayload[this.NAME_CLAIM_TYPE as keyof JwtPayload];
-          if (username) {
-            this.currentUserName.set(username);
-          }
-        } else if (refreshToken) {
-          // Access token expired but refresh token exists — attempt refresh
-          this.token = token; // Set temporarily so refreshAccessToken can send it
-          this.refreshAccessToken().subscribe(success => {
-            if (!success) {
-              this.token = null;
-              this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);
-              this._localStorageService.remove(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY);
-            }
-          });
-        }
-      }
+    if (!token) {
+      return of(undefined);
     }
+
+    const decodedToken = jwtDecode<JwtPayload>(token);
+    if (!decodedToken) {
+      return of(undefined);
+    }
+
+    if (!this.isExpired(decodedToken?.exp)) {
+      // Access token still valid — restore directly
+      this.decodedTokenPayload = decodedToken;
+      this.token = token;
+
+      const username = <string | null>this.decodedTokenPayload[this.NAME_CLAIM_TYPE as keyof JwtPayload];
+      if (username) {
+        this.currentUserName.set(username);
+      }
+
+      return of(undefined);
+    }
+
+    if (refreshToken) {
+      // Access token expired but refresh token exists — attempt refresh.
+      // Returns the refresh Observable so the APP_INITIALIZER can wait for it,
+      // guaranteeing auth state is settled before any route guard runs.
+      this.token = token; // Set temporarily so refreshAccessToken can send it
+      return this.refreshAccessToken().pipe(
+        tap(success => {
+          if (!success) {
+            this.token = null;
+            this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);
+            this._localStorageService.remove(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY);
+          }
+        }),
+        map(() => undefined)
+      );
+    }
+
+    // Access token expired and no refresh token — ensure we don't look logged in
+    this.token = null;
+    return of(undefined);
   }
 
   public changePassword(currentPassword: string, newPassword: string): Observable<void> {

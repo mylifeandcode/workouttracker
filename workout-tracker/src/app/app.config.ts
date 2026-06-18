@@ -10,7 +10,7 @@ import { AuthService } from './core/_services/auth/auth.service';
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AuthInterceptor } from './core/auth.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { Observable, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import en from '@angular/common/locales/en';
 import { registerLocaleData } from '@angular/common';
 import { provideNzI18n, en_US } from 'ng-zorro-antd/i18n';
@@ -42,14 +42,18 @@ function initializeApp(
   authService: AuthService,
   http: HttpClient): () => Observable<unknown> {
   console.log("APP IS INITIALIZING...");
-  return (): Observable<object> => http.get("config.json")
+  return (): Observable<unknown> => http.get("config.json")
     .pipe(
       tap((config: object) => {
         console.log("Loaded config: ", config);
         configService.init(config);
         authService.init();
-        authService.restoreUserSessionIfApplicable();
-        userService.init();
-      })
+      }),
+      // Wait for session restoration (including any token refresh) to fully
+      // resolve before bootstrap completes. The router won't activate a route
+      // until every app initializer finishes, so guards never run against
+      // unsettled auth state — no expired-token flash before the redirect.
+      switchMap(() => authService.restoreUserSessionIfApplicable()),
+      tap(() => userService.init())
     );
 }
