@@ -1,5 +1,5 @@
 @if (!editModeEnabled()) {
-  <h3 class="headroom header">Exercise</h3>  
+  <h3 class="headroom header">Exercise</h3>
 } @else if (!loading()) {
   <h3 class="headroom header">Exercise {{ isNew ? 'Creation' : 'Edit' }}</h3>
 }
@@ -11,63 +11,60 @@
         <nz-spin nzSize="large"></nz-spin>
       </div>
     </div>
-  } @else if(exerciseForm) {
-    <form [formGroup]="exerciseForm" novalidate>
+  } @else {
+    <form novalidate>
       <fieldset [disabled]="!editModeEnabled()">
         <div class="row bottom-padded">
-  
+
           <div class="col-9">
-            <input type="hidden" formControlName="id" />
-  
             <label class="center-block"
-              [ngClass]="{'has-error': exerciseForm.controls.name.touched && exerciseForm.controls.name.errors}">
+              [ngClass]="{'has-error': exerciseForm.name().touched() && exerciseForm.name().errors().length}">
               Name
-              <input class="form-control" formControlName="name" placeholder="Exercise Name (required)" />
+              <input class="form-control" [formField]="exerciseForm.name" placeholder="Exercise Name (required)" />
             </label>
-            @if (exerciseForm.controls.name.touched && exerciseForm.controls.name.errors) {
+            @if (exerciseForm.name().touched() && exerciseForm.name().errors().length) {
               <span class="error-text">Required</span>
             }
-            
+
             <br />
-  
+
             <label class="center-block"
-              [ngClass]="{'has-error': exerciseForm.controls.description.touched && exerciseForm.controls.description.errors}">
+              [ngClass]="{'has-error': exerciseForm.description().touched() && exerciseForm.description().errors().length}">
               Description
-              <textarea class="form-control" rows="6" formControlName="description"
+              <textarea class="form-control" rows="6" [formField]="exerciseForm.description"
                 placeholder="Exercise Description (required)"></textarea>
             </label>
 
-            @if (exerciseForm.controls.description.touched) {
-              @if (exerciseForm.controls.description.errors?.required) {
-                <span class="error-text">Required</span>
-              }
-
-              @if (exerciseForm.controls.description.errors?.maxlength) {
-                <span class="error-text">Max length exceeded</span>
+            @if (exerciseForm.description().touched()) {
+              @for (error of exerciseForm.description().errors(); track error.kind) {
+                @if (error.kind === 'required') {
+                  <span class="error-text">Required</span>
+                }
+                @if (error.kind === 'maxLength') {
+                  <span class="error-text">Max length exceeded</span>
+                }
               }
             }
           </div>
-  
-          @if (exerciseForm.controls.targetAreas) {
-            <div class="col-3 target-areas" formGroupName="targetAreas">
-              <strong>Target Areas</strong>
 
-              @if (exerciseForm.controls.targetAreas.dirty && exerciseForm.controls.targetAreas.errors) {
-                <br /><span class="error-text">At least one Target Area is required</span>
-              }
-    
-              @for (area of exerciseForm.controls.targetAreas.value | keyvalue; track $index) {
-                <div [ngClass]="{'has-error': exerciseForm.controls.targetAreas.touched && exerciseForm.controls.targetAreas.errors}">
-                  <input type="checkbox" [formControlName]="area.key" [value]="area.value" /> {{area.key}}
-                </div>
-              }
-    
-              @if (exerciseForm.controls.targetAreas.dirty && exerciseForm.controls.targetAreas.errors) {
-                <span class="error-text">At least one Target Area is required</span>
-              }
-            </div>
-          }
-  
+          <div class="col-3 target-areas">
+            <strong>Target Areas</strong>
+
+            @if (exerciseForm.targetAreas().touched() && exerciseForm.targetAreas().errors().length) {
+              <br /><span class="error-text">At least one Target Area is required</span>
+            }
+
+            @for (area of exerciseForm.targetAreas; track area().value().id) {
+              <div [ngClass]="{'has-error': exerciseForm.targetAreas().touched() && exerciseForm.targetAreas().errors().length}">
+                <input type="checkbox" [formField]="area.selected" /> {{ area.name().value() }}
+              </div>
+            }
+
+            @if (exerciseForm.targetAreas().touched() && exerciseForm.targetAreas().errors().length) {
+              <span class="error-text">At least one Target Area is required</span>
+            }
+          </div>
+
         </div>
         <div class="row bottom-padded">
           <div class="col-3">
@@ -75,7 +72,7 @@
               <label class="center-block" for="resistanceType">
                 Resistance Type
               </label>
-              <select formControlName="resistanceType" id="resistanceType" class="form-select">
+              <select [formField]="exerciseForm.resistanceType" id="resistanceType" class="form-select">
                 @for (resistanceType of resistanceTypes | keyvalue; track $index) {
                   <option [value]="resistanceType.key">
                     {{resistanceType.value | insertSpaceBeforeCapital}}
@@ -84,10 +81,10 @@
               </select>
             }
           </div>
-          @if (exerciseForm.controls.resistanceType.value == resistanceTypeEnum.RESISTANCE_BAND) {
+          @if (+exerciseForm.resistanceType().value() === resistanceTypeEnum.RESISTANCE_BAND) {
             <div class="col-3">
               <div class="pt-4">
-                <label><input type="checkbox" formControlName="endToEnd"> End to End</label> 
+                <label><input type="checkbox" [formField]="exerciseForm.endToEnd"> End to End</label>
                 <small style="margin-left: 12px;"
                   nz-tooltip nzTooltipTitle="''End to End'' specifies that the exercise is performed with one end of the band clipped to a ring, and the other hand clipped to a handle, as opposed to looped through an anchor."
                   nzTooltipPlacement="right">(What's this?)</small>
@@ -98,7 +95,7 @@
         <div class="row bottom-padded">
           <div class="col-3">
             <div>
-              <label><input type="checkbox" formControlName="involvesReps"> Involves Repetitions</label> <small
+              <label><input type="checkbox" [formField]="exerciseForm.involvesReps"> Involves Repetitions</label> <small
                 style="margin-left: 12px;"
                 nz-tooltip nzTooltipTitle="''Involves Repetitions'' specifies that the exercise is performed using repetitions. An exercise like Bench Press involves lifting a weight for a number of repetitions, whereas Jogging is an exercise which does not."
                 nzTooltipPlacement="right">(What's this?)</small>
@@ -106,7 +103,7 @@
           </div>
           <div class="col-3">
             <div>
-              <label><input type="checkbox" formControlName="oneSided"> One Sided</label> 
+              <label><input type="checkbox" [formField]="exerciseForm.oneSided"> One Sided</label>
               <small style="margin-left: 12px;"
                 nz-tooltip nzTooltipTitle="''One Sided'' specifies that the exercise is performed on one side. For example, Dumbbell Concentration Curls is an exercise where bicep curls are performed for one arm for a set, followed by a set for the other arm."
                 nzTooltipPlacement="right">(What's this?)</small>
@@ -114,8 +111,8 @@
           </div>
           <div class="col-3">
             <div>
-              <label><input type="checkbox" formControlName="usesBilateralResistance"> Uses bilateral resistance</label> 
-              <small 
+              <label><input type="checkbox" [formField]="exerciseForm.usesBilateralResistance"> Uses bilateral resistance</label>
+              <small
                 style="margin-left: 12px;"
                 nz-tooltip nzTooltipTitle="''Uses bilateral resistance'' means that the exercise requires the same amount of resistance on both sides. For example, doing dumbbell curls with two equally weighted dumbbells. This doesn't apply to exercises which use a single bar, like a bench press, but rather exercises with two weights or sources of resistance."
                 nzTooltipPlacement="right">(What's this?)</small>
@@ -128,54 +125,55 @@
         <div class="row bottom-padded">
           <div class="col-4">
             <label class="center-block" for="howToPrepare"
-              [ngClass]="{'has-error': exerciseForm.controls['setup'].touched && exerciseForm.controls['setup'].errors}">
+              [ngClass]="{'has-error': exerciseForm.setup().touched() && exerciseForm.setup().errors().length}">
               Setup
             </label>
-            <textarea id="howToPrepare" class="form-control" rows="12" formControlName="setup"
+            <textarea id="howToPrepare" class="form-control" rows="12" [formField]="exerciseForm.setup"
               placeholder="How to prepare for this exercise (required)"></textarea>
-            @if (exerciseForm.controls.setup.touched) {
-              @if (exerciseForm.controls.setup.errors?.required) {
-                <span class="error-text">Required</span>
-              }
-
-              @if (exerciseForm.controls.setup.errors?.maxlength) {
-                <span class="error-text">Max length exceeded</span>
+            @if (exerciseForm.setup().touched()) {
+              @for (error of exerciseForm.setup().errors(); track error.kind) {
+                @if (error.kind === 'required') {
+                  <span class="error-text">Required</span>
+                }
+                @if (error.kind === 'maxLength') {
+                  <span class="error-text">Max length exceeded</span>
+                }
               }
             }
           </div>
           <div class="col-4">
             <label class="center-block" for="howToPerform"
-              [ngClass]="{'has-error': exerciseForm.controls.movement.touched && exerciseForm.controls.movement.errors}">
+              [ngClass]="{'has-error': exerciseForm.movement().touched() && exerciseForm.movement().errors().length}">
               Movement
             </label>
-            <textarea id="howToPerform" class="form-control" rows="12" formControlName="movement"
+            <textarea id="howToPerform" class="form-control" rows="12" [formField]="exerciseForm.movement"
               placeholder="How to perform the exercise (required)"></textarea>
-            @if (exerciseForm.controls.movement.touched) {
-              
-              @if (exerciseForm.controls.movement.errors?.required) {
-                <span class="error-text">Required</span>
+            @if (exerciseForm.movement().touched()) {
+              @for (error of exerciseForm.movement().errors(); track error.kind) {
+                @if (error.kind === 'required') {
+                  <span class="error-text">Required</span>
+                }
+                @if (error.kind === 'maxLength') {
+                  <span class="error-text">Max length exceeded</span>
+                }
               }
-
-              @if (exerciseForm.controls.movement.errors?.maxlength) {
-                <span class="error-text">Max length exceeded</span>
-              }
-
             }
           </div>
           <div class="col-4">
             <label class="center-block" for="pointsToRemember"
-              [ngClass]="{'has-error': exerciseForm.controls['pointsToRemember'].touched && exerciseForm.controls['pointsToRemember'].errors}">
+              [ngClass]="{'has-error': exerciseForm.pointsToRemember().touched() && exerciseForm.pointsToRemember().errors().length}">
               Points to Remember
             </label>
-            <textarea id="pointsToRemember" class="form-control" rows="12" formControlName="pointsToRemember"
+            <textarea id="pointsToRemember" class="form-control" rows="12" [formField]="exerciseForm.pointsToRemember"
               placeholder="Points to remember (required)"></textarea>
-            @if (exerciseForm.controls.pointsToRemember.touched) {
-              @if (exerciseForm.controls.pointsToRemember.errors?.required) {
-                <span class="error-text">Required</span>
-              }
-
-              @if (exerciseForm.controls.pointsToRemember.errors?.maxlength) {
-                <span class="error-text">Max length exceeded</span>
+            @if (exerciseForm.pointsToRemember().touched()) {
+              @for (error of exerciseForm.pointsToRemember().errors(); track error.kind) {
+                @if (error.kind === 'required') {
+                  <span class="error-text">Required</span>
+                }
+                @if (error.kind === 'maxLength') {
+                  <span class="error-text">Max length exceeded</span>
+                }
               }
             }
           </div>
@@ -186,13 +184,13 @@
       <div class="col-2">
         <span class="mild-right-margin align-middle">Enable Editing</span>
         <nz-switch id="editModeToggle" [(ngModel)]="editModeEnabled" class="align-middle" />
-      </div>       
+      </div>
 
       @if (editModeEnabled()) {
         <div class="col-10">
-          <button type="submit" [disabled]="exerciseForm.invalid || saving()" (click)="saveExercise()"
+          <button type="submit" [disabled]="exerciseForm().invalid() || saving()" (click)="saveExercise()"
             class="btn btn-save-exercise">Save</button>&nbsp;<span>{{infoMsg()}}</span>
-            @if (exerciseForm.invalid) {
+            @if (exerciseForm().invalid()) {
               <span class="error-text">Please enter all required information above to enable saving.</span>
             }
         </div>

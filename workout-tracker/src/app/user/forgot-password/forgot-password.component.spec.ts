@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { type Mocked } from 'vitest';
@@ -20,7 +19,6 @@ describe('ForgotPasswordComponent', () => {
         await TestBed.configureTestingModule({
             imports: [ForgotPasswordComponent],
             providers: [
-                FormBuilder,
                 {
                     provide: AuthService,
                     useValue: AuthServiceMock
@@ -47,5 +45,19 @@ describe('ForgotPasswordComponent', () => {
         const configService = TestBed.inject(ConfigService);
         expect(configService.get).toHaveBeenCalledWith('smtpEnabled');
         expect(component.smtpEnabled()).toBe(true);
+    });
+
+    it('should be invalid when the email address is empty', () => {
+        expect(component.forgotPasswordForm().invalid()).toBe(true);
+    });
+
+    it('should be invalid when the email address is not a valid email', () => {
+        component.forgotPasswordForm.emailAddress().value.set('not-an-email');
+        expect(component.forgotPasswordForm().invalid()).toBe(true);
+    });
+
+    it('should be valid when a well-formed email address is entered', () => {
+        component.forgotPasswordForm.emailAddress().value.set('user@example.com');
+        expect(component.forgotPasswordForm().valid()).toBe(true);
     });
 });

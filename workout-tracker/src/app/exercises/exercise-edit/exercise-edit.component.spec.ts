@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform, provideZonelessChangeDetection } from '@angular/core';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, ActivatedRouteSnapshot, RouterModule, UrlSegment } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterModule, UrlSegment } from '@angular/router';
 
 import { of } from 'rxjs';
 
 import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../_services/exercise.service';
 import { Exercise, ExerciseTargetAreaLink, TargetArea } from '../../api/';
-import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { type Mocked } from 'vitest';
@@ -50,8 +48,6 @@ function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
 }
 
 
-//TODO: FIX! This spec throws RuntimeError: NG0205: Injector has already been destroyed.
-
 describe('ExerciseEditComponent', () => {
   let component: ExerciseEditComponent;
   let fixture: ComponentFixture<ExerciseEditComponent>;
@@ -78,7 +74,6 @@ describe('ExerciseEditComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        ReactiveFormsModule,
         RouterModule.forRoot([]),
         ExerciseEditComponent,
         InsertSpaceBeforeCapitalPipeMock
@@ -125,28 +120,29 @@ describe('ExerciseEditComponent', () => {
     expect(component.errorMsg()).toBeNull();
   });
 
-  it('should create form', () => {
+  it('should build the form', () => {
     expect(component.exerciseForm).toBeTruthy();
-    expect(component.exerciseForm.controls.id).toBeTruthy();
-    expect(component.exerciseForm.controls.id.hasValidator(Validators.required)).toBe(true);
-    expect(component.exerciseForm.controls.name).toBeTruthy();
-    expect(component.exerciseForm.controls.name.hasValidator(Validators.required)).toBe(true);
-    expect(component.exerciseForm.controls.description).toBeTruthy();
+    expect(component.exerciseForm.name).toBeTruthy();
+    expect(component.exerciseForm.description).toBeTruthy();
+    expect(component.exerciseForm.resistanceType).toBeTruthy();
+    expect(component.exerciseForm.oneSided).toBeTruthy();
+    expect(component.exerciseForm.targetAreas).toBeTruthy();
+    expect(component.exerciseForm.setup).toBeTruthy();
+    expect(component.exerciseForm.movement).toBeTruthy();
+    expect(component.exerciseForm.pointsToRemember).toBeTruthy();
+  });
 
-    //TODO: Determine why this check fails
-    // TODO: Determine why this check fails
-    // expect(component.exerciseForm.controls.description
-    //   .hasValidator(Validators.compose([
-    //     Validators.required,
-    //     Validators.maxLength(4000)
-    //   ]))).toBeTrue();
+  it('should require a name', () => {
+    component.exerciseForm.name().value.set('');
+    expect(component.exerciseForm.name().errors().some(e => e.kind === 'required')).toBe(true);
+  });
 
-    expect(component.exerciseForm.controls.resistanceType).toBeTruthy();
-    expect(component.exerciseForm.controls.oneSided).toBeTruthy();
-    expect(component.exerciseForm.controls.targetAreas).toBeTruthy();
-    expect(component.exerciseForm.controls.setup).toBeTruthy();
-    expect(component.exerciseForm.controls.movement).toBeTruthy();
-    expect(component.exerciseForm.controls.pointsToRemember).toBeTruthy();
+  it('should require at least one target area', () => {
+    //Loaded exercise has Chest selected; clearing all should produce the requireOne error
+    component.exerciseForm.targetAreas().value.set(
+      component.exerciseForm.targetAreas().value().map(a => ({ ...a, selected: false }))
+    );
+    expect(component.exerciseForm.targetAreas().errors().some(e => e.kind === 'requireOne')).toBe(true);
   });
 
   it('should have default values for form if no exercise loaded', () => {
@@ -158,8 +154,7 @@ describe('ExerciseEditComponent', () => {
     component.ngOnInit(); //Because we changed ActivatedRoute
 
     //ASSERT
-    expect(component.exerciseForm.controls.id.value).toEqual(0);
-
+    expect(component.exerciseForm.id().value()).toEqual(0);
   });
 
   it('should get all target areas', () => {
@@ -167,19 +162,22 @@ describe('ExerciseEditComponent', () => {
     expect(exerciseService.getTargetAreas).toHaveBeenCalledTimes(1);
   });
 
-  it('should load exercise when editing', () => {
+  it('should load exercise into the model when editing', () => {
     //Our default route mock includes a value for exercise ID
     expect(exerciseService.getById).toHaveBeenCalledWith('some-guid');
-    //expect(component._exercise).toEqual(EXERCISE);
-    expect(component.exerciseForm).not.toBeNull();
-    expect(component.exerciseForm).toBeTruthy();
-    expect(component.exerciseForm.controls.id.value).toEqual(EXERCISE.id);
-    expect(component.exerciseForm.controls.id.validator).toBeTruthy();
-    expect(component.exerciseForm.controls.name.value).toEqual(EXERCISE.name);
-    expect(component.exerciseForm.controls.description.value).toEqual(EXERCISE.description);
-    expect(component.exerciseForm.controls.setup.value).toEqual(EXERCISE.setup);
-    expect(component.exerciseForm.controls.movement.value).toEqual(EXERCISE.movement);
-    expect(component.exerciseForm.controls.pointsToRemember.value).toEqual(EXERCISE.pointsToRemember);
+    expect(component.exerciseForm.id().value()).toEqual(EXERCISE.id);
+    expect(component.exerciseForm.name().value()).toEqual(EXERCISE.name);
+    expect(component.exerciseForm.description().value()).toEqual(EXERCISE.description);
+    expect(component.exerciseForm.setup().value()).toEqual(EXERCISE.setup);
+    expect(component.exerciseForm.movement().value()).toEqual(EXERCISE.movement);
+    expect(component.exerciseForm.pointsToRemember().value()).toEqual(EXERCISE.pointsToRemember);
+  });
+
+  it('should mark the loaded target area as selected', () => {
+    const chest = component.exerciseForm.targetAreas().value().find(a => a.name === 'Chest');
+    const biceps = component.exerciseForm.targetAreas().value().find(a => a.name === 'Biceps');
+    expect(chest?.selected).toBe(true);   //EXERCISE links targetAreaId 1 (Chest)
+    expect(biceps?.selected).toBe(false);
   });
 
   it('should get resistance types', () => {
@@ -191,92 +189,68 @@ describe('ExerciseEditComponent', () => {
     expect(component.exerciseId).toBe(EXERCISE.id);
   });
 
-  /*
-  it('should enable edit mode', () => {
-    component.editModeToggled({ checked: false });
-    expect(component.editModeEnabled).toBeTrue();
-  });
-
-  it('should disable edit mode', () => {
-    component.editModeToggled({ checked: true });
-    expect(component.editModeEnabled).toBeFalse();
-  });
-  */
-
-  it('should add exercise', () => {
-
-    //ARRANGE
-    //Override default mock behavior
-    const exercise = <Exercise>{};
-    exercise.id = 0;
-    exercise.publicId = EMPTY_GUID;
-    exercise.name = 'Some New Exercise';
-    exercise.description = 'Ultra Mega Super Press';
-    exercise.setup = 'Focus!';
-    exercise.movement = 'Forward!';
-    exercise.oneSided = false;
-    exercise.involvesReps = true;
-    exercise.pointsToRemember = 'Form!';
-    exercise.resistanceType = 1;
-    exercise.exerciseTargetAreaLinks = [];
-    exercise.exerciseTargetAreaLinks.push(<ExerciseTargetAreaLink>{ exerciseId: 0, targetAreaId: 1 });
-    exercise.usesBilateralResistance = false;
-
-    //exerciseService.getById = jasmine.createSpy('getById').and.returnValue(of(exercise));
-    exerciseService.add = vi.mocked(exerciseService.add).mockReturnValue(of(exercise));
-
+  it('should add exercise', async () => {
+    //ARRANGE - create a fresh component already in the "new exercise" state
     const route = TestBed.inject(ActivatedRoute);
     route.snapshot.params['id'] = 0;
+    const router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
-    //Need to re-init because service mock has changed
-    component.ngOnInit();
+    fixture = TestBed.createComponent(ExerciseEditComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges(); //ngOnInit runs the "new" path
 
-    //TODO: Revisit and confirm. The default values of the FormControls didn't seem to take in this test.
-    component.exerciseForm.controls.id.setValue(0);
-    component.exerciseForm.controls.name.setValue(exercise.name);
-    component.exerciseForm.controls.description.setValue(exercise.description);
-    component.exerciseForm.controls.setup.setValue(exercise.setup);
-    component.exerciseForm.controls.movement.setValue(exercise.movement);
-    component.exerciseForm.controls.involvesReps.setValue(exercise.involvesReps);
-    component.exerciseForm.controls.oneSided.setValue(exercise.oneSided);
-    component.exerciseForm.controls.pointsToRemember.setValue(exercise.pointsToRemember);
-    component.exerciseForm.controls.resistanceType.setValue(exercise.resistanceType);
-    component.exerciseForm.controls.targetAreas.setValue({ 'Chest': true, 'Biceps': false, 'Triceps': false });
-    component.exerciseForm.controls.usesBilateralResistance.setValue(exercise.usesBilateralResistance);
+    component.exerciseForm.name().value.set('Some New Exercise');
+    component.exerciseForm.description().value.set('Ultra Mega Super Press');
+    component.exerciseForm.setup().value.set('Focus!');
+    component.exerciseForm.movement().value.set('Forward!');
+    component.exerciseForm.pointsToRemember().value.set('Form!');
+    component.exerciseForm.resistanceType().value.set('1');
+    component.exerciseForm.involvesReps().value.set(true);
+    component.exerciseForm.oneSided().value.set(false);
+    component.exerciseForm.usesBilateralResistance().value.set(false);
+    //Select the "Chest" target area (index 0) via the field, preserving array identity
+    component.exerciseForm.targetAreas[0].selected().value.set(true);
 
     //ACT
     component.saveExercise();
+    await fixture.whenStable(); //submit() runs its action asynchronously
 
     //ASSERT
-    expect(exerciseService.add).toHaveBeenCalledWith(exercise);
+    expect(exerciseService.add).toHaveBeenCalledTimes(1);
+    const added = vi.mocked(exerciseService.add).mock.calls[0][0];
+    expect(added.name).toEqual('Some New Exercise');
+    expect(added.resistanceType).toEqual(1);                 //Converted from the string model value
+    expect(added.exerciseTargetAreaLinks).toEqual([{ exerciseId: 0, targetAreaId: 1 }]);
     expect(component.saving()).toBe(false);
     expect(component.infoMsg()).toContain("Exercise created at ");
-
   });
 
-  it('should update exercise', () => {
-
-    //console.log("component.exerciseForm: ", component.exerciseForm);
+  it('should update exercise', async () => {
     component.saveExercise();
-    expect(exerciseService.update).toHaveBeenCalledWith(EXERCISE);
+    await fixture.whenStable(); //submit() runs its action asynchronously
+    expect(exerciseService.update).toHaveBeenCalledTimes(1);
+    const updated = vi.mocked(exerciseService.update).mock.calls[0][0];
+    expect(updated.id).toEqual(EXERCISE.id);
+    expect(updated.name).toEqual(EXERCISE.name);
     expect(component.saving()).toBe(false);
     expect(component.infoMsg()).toContain("Exercise updated at ");
-
   });
 
-  it('should disable and clear bilateral option when one sided is chosen', () => {
-    component.exerciseForm.controls.usesBilateralResistance.setValue(true);
-    expect(component.exerciseForm.controls.usesBilateralResistance.value).toBe(true);
-    component.exerciseForm.controls.oneSided.setValue(true);
-    expect(component.exerciseForm.controls.usesBilateralResistance.value).toBe(false);
-    expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBe(false);
+  it('should disable the bilateral option when one sided is chosen', () => {
+    expect(component.exerciseForm.usesBilateralResistance().disabled()).toBe(false);
+    component.exerciseForm.oneSided().value.set(true);
+    expect(component.exerciseForm.usesBilateralResistance().disabled()).toBe(true);
   });
 
-  it('should enable bilateral option when one sided option is cleared', () => {
-    component.exerciseForm.controls.oneSided.setValue(true);
-    expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBe(false);
-    component.exerciseForm.controls.oneSided.setValue(false);
-    expect(component.exerciseForm.controls.usesBilateralResistance.enabled).toBe(true);
+  it('should not persist bilateral resistance when one sided', () => {
+    component.exerciseForm.usesBilateralResistance().value.set(true);
+    component.exerciseForm.oneSided().value.set(true);
+
+    component.saveExercise();
+
+    const updated = vi.mocked(exerciseService.update).mock.calls[0][0];
+    expect(updated.usesBilateralResistance).toBe(false);
   });
 
 });
