@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, input } from '@angular/core';
+import { Component, EventEmitter, Output, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
 import { ResistanceType } from '../../../../api';
@@ -11,6 +11,7 @@ import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';
     templateUrl: './exercise-plan-next-time.component.html',
     styleUrls: ['./exercise-plan-next-time.component.scss'],
     //changeDetection: ChangeDetectionStrategy.OnPush, //Can't use this here due to resistance bands modal
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective, ResistanceBandColorPipe, ResistanceAmountPipe]
 })
 export class ExercisePlanNextTimeComponent {

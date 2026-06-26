@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ConfigService } from './core/_services/config/config.service';
 import { UserService } from './core/_services/user/user.service';
 import { AuthService } from './core/_services/auth/auth.service';
-import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { AuthInterceptor } from './core/auth.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { Observable, switchMap, tap } from 'rxjs';
@@ -29,7 +29,7 @@ export const appConfig: ApplicationConfig = {
       useClass: AuthInterceptor,
       multi: true
     },
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideZonelessChangeDetection(),
     provideAnimations(),
     provideNzI18n(en_US)
