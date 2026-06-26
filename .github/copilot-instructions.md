@@ -27,7 +27,7 @@ Use these instructions to make safe, minimal, and architecture-consistent change
 - Build: `npm run build`
 - Unit tests: `npm run test`
 - Lint: `npm run lint`
-- Generate API client (backend swagger must be running on localhost:5600): `npm run openapi-ts`
+- Generate API client (backend must be running on localhost:5600): `npm run gen-api-models`
 
 ## Architecture and Boundaries
 - Keep controller logic thin. Put business rules in application services.
@@ -40,7 +40,7 @@ Use these instructions to make safe, minimal, and architecture-consistent change
 - Prefer existing mapper classes for DTO conversions instead of ad-hoc mapping in controllers.
 
 ## Backend Conventions
-- The solution uses `.NET 9` with nullable reference types enabled.
+- The solution uses `.NET 10` with nullable reference types enabled.
 - Dependency injection registration relies heavily on type suffixes in `Program.cs`:
   - `*Service` -> registered as implemented interfaces
   - `*Repository` -> registered as implemented interfaces
