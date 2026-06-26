@@ -20,7 +20,7 @@
 - Development watch build: `npm run watch`
 - Unit tests: `npm run test`
 - Lint: `npm run lint`
-- Regenerate OpenAPI client: `npm run openapi-ts`
+- Regenerate OpenAPI client: `npm run gen-api-models`
 
 Notes:
 
@@ -54,7 +54,7 @@ Notes:
 - Be careful with services that read config in constructors. Runtime config is loaded during app initialization, so changing constructor-time config access can create subtle startup ordering bugs.
 - Preserve the existing route guard behavior. Several routes depend on `UserSelectedGuard`, `UserNotSelectedGuard`, `UserIsAdminGuard`, and `UnsavedChangesGuard`.
 - The lint config globally ignores `src/app/api/**`. If a change belongs in generated code, do not expect lint to catch issues there.
-- The app expects a backend at the `apiRoot` from [src/config.json](../src/config.json), which defaults to `http://localhost:5600/api/`. OpenAPI generation also expects Swagger at `http://localhost:5600/swagger/v1/swagger.json`.
+- The app expects a backend at the `apiRoot` from [src/config.json](../src/config.json), which defaults to `http://localhost:5600/api/`. OpenAPI client generation reads the schema from `http://localhost:5600/openapi/v1.json` (see [openapi-ts.config.ts](openapi-ts.config.ts)).
 
 ## Key Files
 
