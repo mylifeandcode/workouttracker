@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss' as v;
 
 .ui-table table {
   width: 100%;
@@ -14,12 +14,12 @@ th, td {
 */
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $exercise-color-one, $exercise-color-gradient-end);
+  background-image: linear-gradient(to right, v.$exercise-color-one, v.$exercise-color-gradient-end);
   //font-style: italic;
-  color: $header-text-color-one;
+  color: v.$header-text-color-one;
 }
 
 .btn-add-exercise {
-  color: $button-text-color-one;
-  background-color: $exercise-color-two;
+  color: v.$button-text-color-one;
+  background-color: v.$exercise-color-two;
 }

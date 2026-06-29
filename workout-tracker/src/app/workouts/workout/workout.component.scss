@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss' as v;
 
 .bigger {
   width: 80%;
@@ -9,9 +9,9 @@ h3 {
   padding-right: 6px;
   padding-bottom: 6px;
   padding-left: 14px;
-  background-image: linear-gradient(to right, $workout-color-two, $workout-color-gradient-end);
+  background-image: linear-gradient(to right, v.$workout-color-two, v.$workout-color-gradient-end);
   //font-style: italic;
-  color: $header-text-color-one;
+  color: v.$header-text-color-one;
 }
 
 h4 {

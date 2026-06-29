@@ -1,4 +1,4 @@
-@import '../../../../../variables.scss';
+@use '../../../../../variables.scss' as v;
 
 .suggestions-container {
   flex: 1 1 auto;
@@ -14,7 +14,7 @@
 
 .btn-use-suggestions {
   color: white;
-  background-color: $workout-color-four
+  background-color: v.$workout-color-four
 }
 
 .half-area {

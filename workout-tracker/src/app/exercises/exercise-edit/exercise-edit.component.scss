@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss' as v;
 
 .end-to-end-selection {
   padding-top: 38px;
@@ -9,14 +9,14 @@
   padding-right: 6px;
   padding-bottom: 6px;
   padding-left: 14px;
-  background-image: linear-gradient(to right, $exercise-color-three, $exercise-color-gradient-end);
+  background-image: linear-gradient(to right, v.$exercise-color-three, v.$exercise-color-gradient-end);
   //font-style: italic;
-  color: $header-text-color-one;
+  color: v.$header-text-color-one;
 }
 
 .btn-save-exercise {
-  color: $button-text-color-one;
-  background-color: $exercise-color-three;
+  color: v.$button-text-color-one;
+  background-color: v.$exercise-color-three;
 }
 
 .target-areas {

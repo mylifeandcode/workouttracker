@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss' as v;
 
 .a-little-space {
   padding-top: 12px;
@@ -6,9 +6,9 @@
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $workout-color-two, $workout-color-gradient-end);
+  background-image: linear-gradient(to right, v.$workout-color-two, v.$workout-color-gradient-end);
   //font-style: italic;
-  color: $header-text-color-one;
+  color: v.$header-text-color-one;
 }
 
 select {
@@ -16,13 +16,13 @@ select {
 }
 
 .btn-enter-info {
-  color: $button-text-color-one;
-  background-color: $workout-color-two;
+  color: v.$button-text-color-one;
+  background-color: v.$workout-color-two;
 }
 
 .btn-duration {
-  color: $button-text-color-one;
-  background-color: $workout-color-three;
+  color: v.$button-text-color-one;
+  background-color: v.$workout-color-three;
 
   &-disabled {
     color: white;

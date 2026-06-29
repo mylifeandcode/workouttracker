@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss' as v;
 
 .number-of-sets {
     width: 50px;
@@ -30,17 +30,17 @@ button.exerciseButton {
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $workout-color-five, $workout-color-gradient-end);
+  background-image: linear-gradient(to right, v.$workout-color-five, v.$workout-color-gradient-end);
   //font-style: italic;
-  color: $header-text-color-one;
+  color: v.$header-text-color-one;
 }
 
 .btn-add-exercise {
-  color: $button-text-color-one;
-  background-color: $workout-color-two;
+  color: v.$button-text-color-one;
+  background-color: v.$workout-color-two;
 }
 
 .btn-save-workout {
-  color: $button-text-color-one;
-  background-color: $workout-color-five;
+  color: v.$button-text-color-one;
+  background-color: v.$workout-color-five;
 }

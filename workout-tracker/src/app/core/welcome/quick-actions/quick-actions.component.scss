@@ -1,7 +1,7 @@
-@import '../../../../variables.scss';
+@use '../../../../variables.scss' as v;
 
 h5 {
-  color: $header-text-color-one;
+  color: v.$header-text-color-one;
 }
 
 .quick-actions {
@@ -19,20 +19,20 @@ h5 {
 
 .plan-workout {
   color: white;
-  background-color: $workout-color-two;
+  background-color: v.$workout-color-two;
 }
 
 .view-workout-history {
   color: white;
-  background-color: $history-color-one;
+  background-color: v.$history-color-one;
 }
 
 .manage-workouts {
   color: white;
-  background-color: $workout-color-four;
+  background-color: v.$workout-color-four;
 }
 
 .manage-exercises {
   color: white;
-  background-color: $exercise-color-one;
+  background-color: v.$exercise-color-one;
 }

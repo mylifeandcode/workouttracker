@@ -1,14 +1,14 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss' as v;
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $workout-color-four, $workout-color-gradient-end);
-  color: $header-text-color-one;
+  background-image: linear-gradient(to right, v.$workout-color-four, v.$workout-color-gradient-end);
+  color: v.$header-text-color-one;
 }
 
 .btn-new-workout {
-  color: $button-text-color-one;
-  background-color: $workout-color-four;
+  color: v.$button-text-color-one;
+  background-color: v.$workout-color-four;
 }
 
 .search-box {

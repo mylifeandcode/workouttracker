@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss' as v;
 
 tr.workout-history {
   line-height: 30px;
@@ -6,8 +6,8 @@ tr.workout-history {
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $history-color-one, $history-color-gradient-end);
-  color: $header-text-color-one;
+  background-image: linear-gradient(to right, v.$history-color-one, v.$history-color-gradient-end);
+  color: v.$header-text-color-one;
 }
 
 span {
@@ -15,13 +15,13 @@ span {
 }
 
 .btn-start-workout {
-  color: $button-text-color-one;
-  background-color: $workout-color-one;
+  color: v.$button-text-color-one;
+  background-color: v.$workout-color-one;
 }
 
 .btn-log-past-workout {
-  color: $button-text-color-one;
-  background-color: $workout-color-three;
+  color: v.$button-text-color-one;
+  background-color: v.$workout-color-three;
 }
 
 .search-box {

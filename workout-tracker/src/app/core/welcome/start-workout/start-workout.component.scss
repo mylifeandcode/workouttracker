@@ -1,7 +1,7 @@
-@import '../../../../variables.scss';
+@use '../../../../variables.scss' as v;
 
 h5 {
-  color: $header-text-color-one;
+  color: v.$header-text-color-one;
 }
 
 .button-headroom {
@@ -10,11 +10,11 @@ h5 {
 
 .start-workout {
   color: white;
-  background-color: $workout-color-one;
+  background-color: v.$workout-color-one;
   opacity: 1;
 }
 
 .start-planned-workout {
   color: white;
-  background-color: $workout-color-three;
+  background-color: v.$workout-color-three;
 }

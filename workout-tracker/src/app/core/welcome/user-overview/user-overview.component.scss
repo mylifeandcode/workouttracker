@@ -1,7 +1,7 @@
-@import '../../../../variables.scss';
+@use '../../../../variables.scss' as v;
 
 h5 {
-  color: $header-text-color-one;
+  color: v.$header-text-color-one;
 }
 
 .user-overview {

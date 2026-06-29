@@ -1,14 +1,14 @@
-@import '../../../../variables.scss';
+@use '../../../../variables.scss' as v;
 
 .exercise-header-row {
-  color: $workout-color-three;
+  color: v.$workout-color-three;
 }
 
 .exercise-name {
-  //background-image: linear-gradient(to right, $workout-color-four , $workout-color-gradient-end);
+  //background-image: linear-gradient(to right, v.$workout-color-four , v.$workout-color-gradient-end);
   //border-bottom-style: solid;
   //border-top-style: solid;
-  //border-color: $workout-color-four;
+  //border-color: v.$workout-color-four;
   padding-top: 20px;
 }
 
@@ -32,7 +32,7 @@ label {
 .section-header {
   //background-image: url('../../../assets/images/blue-steel.png');
   border-style: solid;
-  border-color: $workout-color-four;
+  border-color: v.$workout-color-four;
   padding-bottom: 8px;
 }
 */

@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss' as v;
 
 nav {
   color: black;
@@ -9,7 +9,7 @@ nav {
 }
 
 .nav-app-title {
-  color: $title-color;
+  color: v.$title-color;
   padding-left: 8px;
 }
 

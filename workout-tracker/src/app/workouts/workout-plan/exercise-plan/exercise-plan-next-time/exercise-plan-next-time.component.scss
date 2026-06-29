@@ -1,4 +1,4 @@
-@import '../../../../../variables.scss';
+@use '../../../../../variables.scss' as v;
 
 .next-time-container {
   flex: 1 1 auto;
@@ -13,18 +13,18 @@
 .section-header {
   //background-image: url('../../../assets/images/blue-steel.png');
   //border-style: solid;
-  //border-color: $workout-color-four;
+  //border-color: v.$workout-color-four;
   padding-bottom: 8px;
 }
 
 .btn-choose-resistance {
   color: white;
-  background-color: $workout-color-two;
+  background-color: v.$workout-color-two;
 }
 
 .btn-same-as-last-time {
   color: white;
-  background-color: $workout-color-three;
+  background-color: v.$workout-color-three;
 }
 
 .end-padding {

@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss' as v;
 
 label {
   display: block;
@@ -15,8 +15,8 @@ small {
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $admin-color-one, $admin-color-gradient-end);
-  color: $header-text-color-one;
+  background-image: linear-gradient(to right, v.$admin-color-one, v.$admin-color-gradient-end);
+  color: v.$header-text-color-one;
 }
 
 input {

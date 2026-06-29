@@ -1,7 +1,7 @@
-@import '../../../variables.scss';
+@use '../../../variables.scss' as v;
 
 h3 {
   padding: 6px;
-  background-image: linear-gradient(to right, $history-color-two, $history-color-gradient-end);
-  color: $header-text-color-one;
+  background-image: linear-gradient(to right, v.$history-color-two, v.$history-color-gradient-end);
+  color: v.$header-text-color-one;
 }
