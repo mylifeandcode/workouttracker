@@ -1,35 +1,24 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { form, FormField, required, email, validate, submit } from '@angular/forms/signals';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { User, UserRole } from '../../api';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 import { UserService } from '../../core/_services/user/user.service';
 import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { HttpErrorResponse } from '@angular/common/http';
-
-
-interface IUserEditForm {
-  id: FormControl<number>;
-  publicId: FormControl<string>;
-  name: FormControl<string>;
-  emailAddress: FormControl<string>;
-  role: FormControl<number>;
-}
 
 @Component({
   selector: 'wt-user-edit',
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.scss'],
-  imports: [FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [FormField, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserEditComponent implements OnInit {
   private _activatedRoute = inject(ActivatedRoute);
   private _userSvc = inject(UserService);
-  private _formBuilder = inject(FormBuilder);
   private _router = inject(Router);
   private _configService = inject(ConfigService);
   private _authService = inject(AuthService);
@@ -39,16 +28,30 @@ export class UserEditComponent implements OnInit {
   public errorMsg = signal<string | undefined>(undefined);
   public showPasswordResetButton = signal(false);
 
-  public userEditForm: FormGroup<IUserEditForm>;
+  protected readonly model = signal({
+    id: 0,
+    publicId: EMPTY_GUID,
+    name: '',
+    emailAddress: '',
+    role: '0' //Native <select> is string-valued; converted to the numeric enum at persist time
+  });
+
+  public readonly userEditForm = form(this.model, (p) => {
+    required(p.name, { message: 'Required' });
+    required(p.emailAddress, { message: 'Required.' });
+    email(p.emailAddress, { message: 'Must be a valid email address.' });
+    validate(p.role, ({ value }) => {
+      const roleValue = Number(value());
+      return roleValue >= 1 && roleValue <= 2 ? undefined : { kind: 'required', message: 'Required' };
+    });
+  });
 
   private _user: User | undefined;
   private _resetPasswordUrlRoot: string;
 
   constructor() {
-
     this.showPasswordResetButton.set(!this._configService.get("smtpEnabled"));
     this._resetPasswordUrlRoot = `${window.location.protocol}//${window.location.host}/user/reset-password/`;
-    this.userEditForm = this.createForm();
   }
 
   //PUBLIC METHODS
@@ -59,28 +62,30 @@ export class UserEditComponent implements OnInit {
   }
 
   public saveUser(): void {
+    //submit() marks all fields touched and only runs the action when the form is valid.
+    submit(this.userEditForm, async () => {
+      this.savingUserInfo.set(true);
+      this.errorMsg.set(undefined);
+      const user = this.getUserForPersist();
 
-    this.savingUserInfo.set(true);
-    const user = this.getUserForPersist();
-
-    const result: Observable<User> =
-      (user.id === 0 ? this._userSvc.add(user) : this._userSvc.update(user));
-
-    result
-      .pipe(finalize(() => { this.savingUserInfo.set(false); }))
-      .subscribe({
-        next: () => this._router.navigate(['admin/users']), //TODO: Find out how to make this relative, not absolute
-        error: (error: HttpErrorResponse) => {
-          if (error?.status == 403)
-            this.errorMsg.set("You do not have permission to add or edit users.");
-          else
-            this.errorMsg.set(error.message ? error.message : "An error has occurred. Please contact an administrator.");
-        }
-      });
+      try {
+        await firstValueFrom(user.id === 0 ? this._userSvc.add(user) : this._userSvc.update(user));
+        this._router.navigate(['admin/users']); //TODO: Find out how to make this relative, not absolute
+      } catch (error) {
+        if (error instanceof HttpErrorResponse && error.status == 403)
+          this.errorMsg.set("You do not have permission to add or edit users.");
+        else if (error instanceof HttpErrorResponse && error.message)
+          this.errorMsg.set(error.message);
+        else
+          this.errorMsg.set("An error has occurred. Please contact an administrator.");
+      } finally {
+        this.savingUserInfo.set(false);
+      }
+    });
   }
 
   public cancel(): void {
-    if (this.userEditForm.dirty && !window.confirm("Cancel without saving changes?"))
+    if (this.userEditForm().dirty() && !window.confirm("Cancel without saving changes?"))
       return;
 
     this._router.navigate(['/admin/users']);
@@ -88,7 +93,7 @@ export class UserEditComponent implements OnInit {
 
   public resetPassword(): void {
     if (window.confirm("This will reset the user's password. You will need to provide them with the URL to create their new password. Do you want to proceed?")) {
-      this._authService.requestPasswordReset(this.userEditForm.controls.emailAddress.value)
+      this._authService.requestPasswordReset(this.model().emailAddress)
         .subscribe((resetCode: string) => {
           window.alert(`Password has been reset. Instruct user to go to ${this._resetPasswordUrlRoot}${resetCode}.`);
           //console.log("ROUTER: ", this._router);
@@ -99,18 +104,6 @@ export class UserEditComponent implements OnInit {
   //END PUBLIC METHODS
 
   //PRIVATE METHODS
-
-  private createForm(): FormGroup<IUserEditForm> {
-
-    return this._formBuilder.group<IUserEditForm>({
-      id: new FormControl<number>(0, { nonNullable: true }),
-      publicId: new FormControl<string>(EMPTY_GUID, { nonNullable: true }),
-      name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-      emailAddress: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
-      role: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] })
-    });
-
-  }
 
   private getUserInfo(): void {
 
@@ -127,14 +120,13 @@ export class UserEditComponent implements OnInit {
       .subscribe({
         next: (user: User) => {
           this._user = user;
-          this.userEditForm.patchValue(
-            {
-              id: this._user.id,
-              publicId: this._user.publicId,
-              name: this._user.name,
-              emailAddress: this._user.emailAddress,
-              role: this._user.role
-            });
+          this.model.set({
+            id: user.id ?? 0,
+            publicId: user.publicId ?? EMPTY_GUID,
+            name: user.name ?? '',
+            emailAddress: user.emailAddress ?? '',
+            role: String(user.role ?? 0)
+          });
         },
         error: (error: HttpErrorResponse) => this.errorMsg.set(error.message),
         complete: () => this.loadingUserInfo.set(false)
@@ -143,13 +135,14 @@ export class UserEditComponent implements OnInit {
   }
 
   private getUserForPersist(): User {
+    const m = this.model();
     const user = <User>{};
 
-    user.id = this.userEditForm.controls.id.value;
-    user.publicId = this.userEditForm.controls.publicId.value;
-    user.emailAddress = this.userEditForm.controls.emailAddress.value;
-    user.name = this.userEditForm.controls.name.value;
-    user.role = <UserRole>this.userEditForm.controls.role.value;
+    user.id = m.id;
+    user.publicId = m.publicId;
+    user.emailAddress = m.emailAddress;
+    user.name = m.name;
+    user.role = Number(m.role) as UserRole;
 
     if (this._user?.settings) {
       user.settings = this._user.settings;

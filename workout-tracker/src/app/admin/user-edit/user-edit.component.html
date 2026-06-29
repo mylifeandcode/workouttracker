@@ -3,52 +3,59 @@
     @if (!loadingUserInfo()) {
       <div class="pt-3 offset-4 col-4">
         <h3>Edit User</h3>
-        <form [formGroup]="userEditForm" novalidate>
+        <form novalidate>
           <div class="form-group">
-            <input type="hidden" formControlName="id" />
-
             <label class="center-block pt-3">
               Name:
-              <input class="form-control" formControlName="name" placeholder="User Name (required)" />
+              <input class="form-control" [formField]="userEditForm.name" placeholder="User Name (required)" />
             </label>
-            @if (userEditForm.controls.name.touched && userEditForm.controls.name.errors?.required) {
-              <span class="text-danger pt-3">Required</span>
+            @if (userEditForm.name().touched()) {
+              @for (error of userEditForm.name().errors(); track error.kind) {
+                @if (error.kind === 'required') {
+                  <span class="text-danger pt-3">{{ error.message }}</span>
+                }
+              }
             }
           </div>
 
           <div class="form-group">
             <label class="center-block pt-3">
               Email Address:
-              <input class="form-control" formControlName="emailAddress" placeholder="Email Address (required)" />
+              <input class="form-control" [formField]="userEditForm.emailAddress" placeholder="Email Address (required)" />
             </label>
-            @if (userEditForm.controls.emailAddress.touched && userEditForm.controls.emailAddress.errors?.required) {
-              <span class="text-danger pt-3">Required.</span>
-            }
-            @if (userEditForm.controls.emailAddress.touched && userEditForm.controls.emailAddress.errors?.email) {
-              <span class="text-danger pt-3">Must be a valid email address.</span>
+            @if (userEditForm.emailAddress().touched()) {
+              @for (error of userEditForm.emailAddress().errors(); track error.kind) {
+                @if (error.kind === 'required' || error.kind === 'email') {
+                  <span class="text-danger pt-3">{{ error.message }}</span>
+                }
+              }
             }
           </div>
 
           <div class="form-group">
             <label class="center-block pt-3">
               Role:
-              <select class="form-control" formControlName="role" placeholder="User Role (required)">
-                <option value="0" selected disabled>Choose a User Role</option>
+              <select class="form-control" [formField]="userEditForm.role">
+                <option value="0" disabled>Choose a User Role</option>
                 <option value="1">Standard</option>
                 <option value="2">Administrator</option>
               </select>
             </label>
-            @if (userEditForm.controls.role.touched && userEditForm.controls.role.errors?.required) {
-              <span class="text-danger pt-3">Required</span>
+            @if (userEditForm.role().touched()) {
+              @for (error of userEditForm.role().errors(); track error.kind) {
+                @if (error.kind === 'required') {
+                  <span class="text-danger pt-3">{{ error.message }}</span>
+                }
+              }
             }
           </div>
 
           @if (showPasswordResetButton()) {
             <div class="pt-3">
-              <button type="button" [disabled]="userEditForm.dirty" class="btn btn-primary"
+              <button type="button" [disabled]="userEditForm().dirty()" class="btn btn-primary"
                 (click)="resetPassword()">Reset
                 Password</button>
-              @if (userEditForm.dirty) {
+              @if (userEditForm().dirty()) {
                 <span><br /><small>This button is disabled if unsaved changes have been made.
                     Please save any changes if you want to reset this user's password.</small></span>
               }
@@ -56,7 +63,7 @@
           }
 
           <div class="pt-3">
-            <button type="submit" [disabled]="userEditForm.invalid" (click)="saveUser()"
+            <button type="submit" [disabled]="userEditForm().invalid()" (click)="saveUser()"
               class="btn btn-success">Save</button>
             &nbsp;
             <button type="button" [disabled]="savingUserInfo() || loadingUserInfo()" (click)="cancel()"

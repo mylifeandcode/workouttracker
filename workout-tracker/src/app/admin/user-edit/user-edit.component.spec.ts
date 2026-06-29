@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserEditComponent } from './user-edit.component';
-import { ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../core/_services/user/user.service';
 import { of, throwError } from 'rxjs';
 import { User } from '../../api';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { AuthService } from '../../core/_services/auth/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
 import { type Mocked } from 'vitest';
 
 //const CURRENT_USER_ID = 5150;
@@ -33,7 +33,6 @@ describe('UserEditComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [
-        ReactiveFormsModule,
         RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
         UserEditComponent
       ],
@@ -73,51 +72,64 @@ describe('UserEditComponent', () => {
 
   it('should create the form', () => {
     expect(component.userEditForm).toBeTruthy();
-    expect(component.userEditForm.controls.id).toBeTruthy();
-    expect(component.userEditForm.controls.name).toBeTruthy();
+    expect(component.userEditForm.id).toBeTruthy();
+    expect(component.userEditForm.name).toBeTruthy();
   });
 
   it('should get user info when route specifies a user ID', () => {
     expect(userService.getById).toHaveBeenCalledTimes(1);
   });
 
-  it('should update existing user', () => {
+  /** Fills the form with valid values so submit() will run its save action. */
+  const fillValidForm = (): void => {
+    component.userEditForm.name().value.set('Big Jim Slade');
+    component.userEditForm.emailAddress().value.set('jim@workouttracker.com');
+    component.userEditForm.role().value.set('2');
+  };
+
+  it('should update existing user', async () => {
     //ARRANGE
-    const expectedUser = <User>{ id: 100, name: 'Big Jim Slade', role: 2 };
-    component.userEditForm.controls.id.setValue(expectedUser.id);
-    component.userEditForm.controls.name.setValue(expectedUser.name);
-    component.userEditForm.controls.role.setValue(2);
+    component.userEditForm.id().value.set(100);
+    fillValidForm();
 
     //ACT
     component.saveUser();
+    await fixture.whenStable(); //submit() runs its action asynchronously
 
     //ASSERT
-    expect(userService.update).toHaveBeenCalledWith(expectedUser);
+    expect(userService.update).toHaveBeenCalledTimes(1);
+    const updated = vi.mocked(userService.update).mock.calls[0][0];
+    expect(updated.id).toEqual(100);
+    expect(updated.name).toEqual('Big Jim Slade');
+    expect(updated.role).toEqual(2); //Converted from the string model value
   });
 
-  it('should populate error message when error occurs while saving user info', () => {
+  it('should populate error message when error occurs while saving user info', async () => {
     //ARRANGE
-    userService.update = vi.fn<UserService['update']>().mockReturnValue(throwError(() => new Error("Something bad happened.")));
-    component.userEditForm.controls.id.setValue(100);
-    component.userEditForm.controls.name.setValue('Doug');
+    const httpError = new HttpErrorResponse({ status: 500, statusText: 'Server Error' });
+    userService.update = vi.fn<UserService['update']>().mockReturnValue(throwError(() => httpError));
+    component.userEditForm.id().value.set(100);
+    fillValidForm();
 
     //ACT
     component.saveUser();
+    await fixture.whenStable();
 
     //ASSERT
     expect(userService.update).toHaveBeenCalled();
-    expect(component.errorMsg()).toBe("Something bad happened.");
+    expect(component.errorMsg()).toBe(httpError.message);
   });
 
-  it('should populate error message when user does not have permissions to save user info', () => {
+  it('should populate error message when user does not have permissions to save user info', async () => {
     //ARRANGE
-    const error = { status: 403 };
-    userService.update = vi.fn<UserService['update']>().mockReturnValue(throwError(() => error));
-    component.userEditForm.controls.id.setValue(100);
-    component.userEditForm.controls.name.setValue('Doug');
+    const httpError = new HttpErrorResponse({ status: 403 });
+    userService.update = vi.fn<UserService['update']>().mockReturnValue(throwError(() => httpError));
+    component.userEditForm.id().value.set(100);
+    fillValidForm();
 
     //ACT
     component.saveUser();
+    await fixture.whenStable();
 
     //ASSERT
     expect(userService.update).toHaveBeenCalled();
