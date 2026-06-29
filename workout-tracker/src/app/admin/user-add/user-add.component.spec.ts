@@ -1,6 +1,5 @@
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { User, UserNewDTO } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
@@ -12,8 +11,7 @@ import { type Mocked } from 'vitest';
 
 @Component({
   selector: 'wt-blank',
-  template: '',
-  imports: [ReactiveFormsModule]
+  template: ''
 })
 class BlankComponent {
 }
@@ -34,7 +32,6 @@ describe('UserAddComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [
-        ReactiveFormsModule,
         RouterModule.forRoot([{ path: 'admin/users', component: BlankComponent }]),
         UserAddComponent, BlankComponent
       ],
@@ -72,7 +69,7 @@ describe('UserAddComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should add user', () => {
+  it('should add user', async () => {
 
     //ARRANGE
     const expectedUser = <UserNewDTO>{};
@@ -81,14 +78,15 @@ describe('UserAddComponent', () => {
     expectedUser.password = "gargargar123";
     expectedUser.role = 1;
 
-    component.userAddForm.controls.name.setValue(expectedUser.userName);
-    component.userAddForm.controls.emailAddress.setValue(expectedUser.emailAddress);
-    component.userAddForm.controls.password.setValue(expectedUser.password);
-    component.userAddForm.controls.confirmPassword.setValue(expectedUser.password);
-    component.userAddForm.controls.role.setValue(expectedUser.role);
+    component.userAddForm.name().value.set(expectedUser.userName);
+    component.userAddForm.emailAddress().value.set(expectedUser.emailAddress);
+    component.userAddForm.password().value.set(expectedUser.password);
+    component.userAddForm.confirmPassword().value.set(expectedUser.password);
+    component.userAddForm.role().value.set(String(expectedUser.role));
 
     //ACT
     component.addUser();
+    await fixture.whenStable(); //submit() runs its action asynchronously
 
     //ASSERT
     expect(userService.addNew).toHaveBeenCalledWith(expectedUser);
@@ -122,12 +120,15 @@ describe('UserAddComponent', () => {
 
   });
 
-  it('should abort cancellation when form is dirty and user presses cancel on confirm dialog', () => {
+  it('should abort cancellation when form is dirty and user presses cancel on confirm dialog', async () => {
 
     //ARRANGE
     vi.spyOn(window, 'confirm').mockReturnValue(false);
-    component.userAddForm.controls.name.setValue("Jane");
-    component.userAddForm.controls.name.markAsDirty(); //Controls are only marked as dirty if changed via the UI
+    //Dirty the form the way a user would: by editing a bound input
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    input.value = 'Jane';
+    input.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
 
     //ACT
     component.cancel();
