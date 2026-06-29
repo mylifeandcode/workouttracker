@@ -18,8 +18,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class UserEditComponent implements OnInit {
   private _activatedRoute = inject(ActivatedRoute);
-  private _userSvc = inject(UserService);
   private _router = inject(Router);
+  private _userSvc = inject(UserService);
   private _configService = inject(ConfigService);
   private _authService = inject(AuthService);
 

@@ -9,6 +9,7 @@ import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { type Mocked } from 'vitest';
+import { ConfigService } from '../../core/_services/config/config.service';
 
 //const CURRENT_USER_ID = 5150;
 
@@ -29,7 +30,14 @@ describe('UserEditComponent', () => {
       add: vi.fn().mockReturnValue(of(<User>{})),
       update: vi.fn<UserService['update']>().mockReturnValue(of(<User>{}))
     };
+    
     const AuthServiceMock: Partial<Mocked<AuthService>> = {};
+
+    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
+      get: vi.fn<ConfigService['get']>().mockImplementation(() => {
+        return true;
+      })
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -53,6 +61,10 @@ describe('UserEditComponent', () => {
         {
           provide: AuthService,
           useValue: AuthServiceMock
+        },
+        {
+          provide: ConfigService,
+          useValue: ConfigServiceMock
         }
       ]
     })
