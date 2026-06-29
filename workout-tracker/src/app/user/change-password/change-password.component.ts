@@ -1,9 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { form, FormField, required, minLength, validate } from '@angular/forms/signals';
+import { form, FormField, required, minLength, validate, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
-import { finalize } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
     selector: 'wt-change-password',
@@ -35,21 +35,19 @@ export class ChangePasswordComponent {
   public passwordChanged = signal(false);
 
   public changePassword(): void {
-    if (this.changePasswordForm().valid()) {
+    submit(this.changePasswordForm, async () => {
       this.changingPassword.set(true);
       this.errorMessage.set(null);
       this.passwordChanged.set(false);
-      this._authService.changePassword(
-        this.model().currentPassword,
-        this.model().password)
-        .pipe(finalize(() => { this.changingPassword.set(false); }))
-        .subscribe({
-          next: () => { this.passwordChanged.set(true); },
-          error: (error: HttpErrorResponse) => {
-            this.errorMessage.set("Couldn't change password: " + (error?.message ?? "An error occurred."));
-          }
-        });
-    }
+      try {
+        await firstValueFrom(this._authService.changePassword(this.model().currentPassword, this.model().password));
+        this.passwordChanged.set(true);
+      } catch (error) {
+        this.errorMessage.set("Couldn't change password: " + (error instanceof HttpErrorResponse ? error.message : "An error occurred."));
+      } finally {
+        this.changingPassword.set(false);
+      }
+    });
   }
 
   public cancel(): void {

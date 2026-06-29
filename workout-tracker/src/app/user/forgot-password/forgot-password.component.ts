@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { form, FormField, required, email } from '@angular/forms/signals';
+import { form, FormField, required, email, submit } from '@angular/forms/signals';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { ConfigService } from '../../core/_services/config/config.service';
-import { finalize } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -33,16 +33,19 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   public submitPasswordResetRequest(): void {
-    this.requestInProgress.set(true);
-    this.requestSuccessful.set(false);
-    this.errorMessage.set(null);
-    this._authService
-      .requestPasswordReset(this.model().emailAddress)
-      .pipe(finalize(() => { this.requestInProgress.set(false); }))
-      .subscribe({
-        next: () => { this.requestSuccessful.set(true); },
-        error: (error: HttpErrorResponse) => { this.errorMessage.set(error?.message ?? "Password reset request failed. Please try again later."); }
-      });
+    submit(this.forgotPasswordForm, async () => {
+      this.requestInProgress.set(true);
+      this.requestSuccessful.set(false);
+      this.errorMessage.set(null);
+      try {
+        await firstValueFrom(this._authService.requestPasswordReset(this.model().emailAddress));
+        this.requestSuccessful.set(true);
+      } catch (error) {
+        this.errorMessage.set(error instanceof HttpErrorResponse ? error.message : "Password reset request failed. Please try again later.");
+      } finally {
+        this.requestInProgress.set(false);
+      }
+    });
   }
 
 }

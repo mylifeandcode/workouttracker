@@ -73,7 +73,7 @@ describe('ChangePasswordComponent', () => {
         expect(component.changePasswordForm.password().errors().some(e => e.kind === 'minLength')).toBe(true);
     });
 
-    it('should change password', () => {
+    it('should change password', async () => {
         //ARRANGE
         const authService = TestBed.inject(AuthService);
         component.changePasswordForm.currentPassword().value.set('somePassword');
@@ -83,6 +83,7 @@ describe('ChangePasswordComponent', () => {
         //ACT
         component.changingPassword.set(true); //Set to true to ensure it gets set to false when operation completes
         component.changePassword();
+        await fixture.whenStable(); //submit() runs its action asynchronously
 
         //ASSERT
         expect(authService.changePassword).toHaveBeenCalledTimes(1);
