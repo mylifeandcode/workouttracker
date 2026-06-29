@@ -69,7 +69,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     maxLength(p.pointsToRemember, ExerciseEditComponent.MAX_TEXT_LENGTH, { message: 'Max length exceeded' });
 
     // Replaces the old oneSided.valueChanges subscription + checkForBilateral()
-    disabled(p.usesBilateralResistance, ({ valueOf }) => valueOf(p.oneSided));
+    disabled(p.usesBilateralResistance, { when: ({ valueOf }) => valueOf(p.oneSided) });
 
     // Replaces CustomValidators.formGroupOfBooleansRequireOneTrue on the FormRecord
     validate(p.targetAreas, ({ value }) =>
