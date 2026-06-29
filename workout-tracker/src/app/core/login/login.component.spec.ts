@@ -1,6 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { of } from 'rxjs';
@@ -23,13 +22,12 @@ describe('LoginComponent', () => {
         await TestBed.configureTestingModule({
             providers: [
                 provideZonelessChangeDetection(),
-                FormBuilder,
                 {
                     provide: AuthService,
                     useValue: AuthServiceMock
                 }
             ],
-            imports: [RouterModule.forRoot([]), ReactiveFormsModule, LoginComponent]
+            imports: [RouterModule.forRoot([]), LoginComponent]
         })
             .overrideComponent(LoginComponent, {
             remove: { imports: [NzSpinModule] },
@@ -48,8 +46,8 @@ describe('LoginComponent', () => {
 
         fixture.detectChanges();
 
-        component.loginForm.controls.username.setValue(username);
-        component.loginForm.controls.password.setValue(password);
+        component.loginForm.username().value.set(username);
+        component.loginForm.password().value.set(password);
         vi.spyOn(router, 'navigate');
 
     });
@@ -63,11 +61,12 @@ describe('LoginComponent', () => {
         expect(component.showLoginFailed()).toBe(false);
     });
 
-    it('should login a user', () => {
+    it('should login a user', async () => {
         //ARRANGE
 
         //ACT
         component.login();
+        await fixture.whenStable(); //submit() runs its action asynchronously
 
         //ASSERT
         expect(router.navigate).toHaveBeenCalledWith(['home']);
@@ -75,7 +74,7 @@ describe('LoginComponent', () => {
         expect(component.loggingIn()).toBe(false);
     });
 
-    it('should show login failed message when login fails', () => {
+    it('should show login failed message when login fails', async () => {
         //ARRANGE
         //Overide default mock implementation
         const authService = TestBed.inject(AuthService);
@@ -83,6 +82,7 @@ describe('LoginComponent', () => {
 
         //ACT
         component.login();
+        await fixture.whenStable();
 
         //ASSERT
         expect(router.navigate).not.toHaveBeenCalled();

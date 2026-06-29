@@ -4,14 +4,13 @@
       <h3>Welcome to Workout Tracker</h3>
     </div>
   </div>
-  @if (loginForm != null) {
-    <form [formGroup]="loginForm">
+    <form>
       <fieldset [disabled]="loggingIn()">
         <div class="row bump-it-down">
           <div class="offset-4 col-4">
-            <label for="username">Username</label><br>      
-            <input type="text" id="username" class="form-control" formControlName="username" placeholder="Username (required)">
-            @if (loginForm.controls.username.dirty && loginForm.controls.username.errors) {
+            <label for="username">Username</label><br>
+            <input type="text" id="username" class="form-control" [formField]="loginForm.username" placeholder="Username (required)">
+            @if (loginForm.username().dirty() && loginForm.username().errors().length) {
               <span class="form-error">Username required</span>
             }
           </div>
@@ -19,8 +18,8 @@
         <div class="row bump-it-down">
           <div class="offset-4 col-4">
             <label for="password">Password</label>
-            <input type="password" id="password" class="form-control" formControlName="password" placeholder="Password (required)">
-            @if (loginForm.controls.password.dirty && loginForm.controls.password.errors) {
+            <input type="password" id="password" class="form-control" [formField]="loginForm.password" placeholder="Password (required)">
+            @if (loginForm.password().dirty() && loginForm.password().errors().length) {
               <span class="form-error">Password required</span>
             }
             <br />
@@ -29,7 +28,7 @@
         </div>
         <div class="row bump-it-down">
           <div class="offset-4 col-4 text-center">
-            <button class="btn btn-success" [disabled]="!loginForm.valid" (click)="login()">Login</button>
+            <button class="btn btn-success" [disabled]="loginForm().invalid()" (click)="login()">Login</button>
           </div>
         </div>
         <div class="row bump-it-down">
@@ -39,7 +38,6 @@
         </div>
       </fieldset>
     </form>
-  }
   
   @if (loggingIn()) {
     <div class="row">
