@@ -1,14 +1,14 @@
 <h3>Workout Progress</h3>
 
 <div class="container-fluid">
-  <form [formGroup]="form" novalidate>
+  <form novalidate>
     <div class="row">
       <div class="col-5">
         <label for="workoutId">Select a Workout</label>&nbsp;
-        <select id="workoutId" formControlName="workoutId">
-          <option [ngValue]="null" disabled selected>Please Select</option>
+        <select id="workoutId" [formField]="form.workoutId">
+          <option value="" disabled>Please Select</option>
           @for(workout of workouts(); track workout.id) {
-            <option [ngValue]="workout.id">
+            <option [value]="workout.id">
               {{ workout.name }}
             </option>
           }
@@ -16,17 +16,17 @@
       </div>
       <div class="col-7 workout-count">
         <label for="workoutCount"># of Most Recent Workouts to Retrieve</label>&nbsp;
-        <input id="workoutCount" formControlName="workoutCount" wtSelectOnFocus type="number" class="count" required />
+        <input id="workoutCount" [formField]="form.workoutCount" wtSelectOnFocus type="number" class="count" />
       </div>
     </div>
     <div class="row pt-2">
       @if (metrics() && metrics().length > 0) {
         <div class="col-12">
           <label for="exerciseId" class="exercise-label">Exercise</label>
-          <select id="exerciseId" formControlName="exerciseId">
-            <option [ngValue]="null" disabled selected>Please Select</option>
+          <select id="exerciseId" [formField]="form.exerciseId">
+            <option value="" disabled>Please Select</option>
             @for(metric of metrics()[0].exerciseMetrics; track $index) {
-              <option [ngValue]="metric.exerciseId">
+              <option [value]="metric.exerciseId">
                 {{ metric.name }}
               </option>
             }
@@ -49,10 +49,10 @@
 } @else {
   <div class="container-fluid">
     <br />
-    @if (form.controls.workoutId.value && metrics().length == 0) {
+    @if (form.workoutId().value() && metrics().length == 0) {
       <em>No metrics exist for this workout.</em>
-    } 
-    <div style="height: 300px;" [ngClass]="{'visible': form.controls.exerciseId.value != null, 'invisible': form.controls.exerciseId.value == null}">
+    }
+    <div style="height: 300px;" [ngClass]="{'visible': form.exerciseId().value() !== '', 'invisible': form.exerciseId().value() === ''}">
       <nz-tabs>
         <nz-tab nzTitle="Form and Range of Motion">
           <div style="height: 300px">

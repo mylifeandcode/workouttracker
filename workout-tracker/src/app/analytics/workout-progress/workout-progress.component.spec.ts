@@ -7,7 +7,6 @@ import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
 
 import { WorkoutProgressComponent } from './workout-progress.component';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { type Mocked } from 'vitest';
@@ -65,7 +64,6 @@ describe('WorkoutProgressComponent', () => {
 
     await TestBed.configureTestingModule({
       providers: [
-        FormBuilder,
         {
           provide: AnalyticsService,
           useValue: AnalyticsServiceMock
@@ -77,7 +75,6 @@ describe('WorkoutProgressComponent', () => {
         provideZonelessChangeDetection()
       ],
       imports: [
-        ReactiveFormsModule,
         WorkoutProgressComponent
       ]
     })
@@ -108,32 +105,45 @@ describe('WorkoutProgressComponent', () => {
     expect(component.workouts()[2].name).toBe("Workout C");
   });
 
-  it('should get workout metrics when workout selected', () => {
+  it('should get workout metrics when workout selected', async () => {
     //ARRANGE
 
     //ACT
-    component.form.controls.workoutId.setValue('some-id');
-    fixture.detectChanges(); //Not really needed for this test, but a good practice
+    component.form.workoutId().value.set('some-id');
+    await fixture.whenStable(); //the effect reacting to workoutId runs asynchronously
 
     //ASSERT
     expect(analyticsService.getExecutedWorkoutMetrics).toHaveBeenCalledWith('some-id', component.DEFAULT_WORKOUT_COUNT);
   });
 
   //TODO: Fix. Not sure why this one is failing.
-  it.skip('should select exercise from workout', () => {
+  it.skip('should select exercise from workout', async () => {
     //ARRANGE
-    component.form.controls.workoutId.setValue('some-workout-id');
+    component.form.workoutId().value.set('some-workout-id');
 
     //ACT
-    component.form.controls.exerciseId.setValue('some-exercise-id');
-    fixture.detectChanges();
+    component.form.exerciseId().value.set('some-exercise-id');
+    await fixture.whenStable();
 
     //ASSERT
     expect(analyticsService.getExerciseChartData).toHaveBeenCalledTimes(3);
     expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(component.metrics(), 'some-exercise-id', METRICS_TYPE.FormAndRangeOfMotion);
   });
 
-  it('should clear analytics data when selected workout changes', () => {
+  it('should keep the selected exercise when one is chosen (no effect stomp)', async () => {
+    //ARRANGE - select a workout first so metrics load
+    component.form.workoutId().value.set('some-workout-id');
+    await fixture.whenStable();
+
+    //ACT - select an exercise
+    component.form.exerciseId().value.set('some-exercise-id');
+    await fixture.whenStable();
+
+    //ASSERT - the reaction effects must not reset it back to ''
+    expect(component.form.exerciseId().value()).toBe('some-exercise-id');
+  });
+
+  it('should clear analytics data when selected workout changes', async () => {
     //ARRANGE
     component.formAndRangeOfMotionChartData.set(new AnalyticsChartData());
     component.repsChartData.set(new AnalyticsChartData());
@@ -146,8 +156,8 @@ describe('WorkoutProgressComponent', () => {
     expect(component.resistanceChartData()).not.toBeNull();
 
     //ACT
-    component.form.controls.workoutId.setValue('new value');
-    fixture.detectChanges();
+    component.form.workoutId().value.set('new value');
+    await fixture.whenStable();
 
     //ASSERT
     expect(component.formAndRangeOfMotionChartData()).toBeNull();

@@ -1,32 +1,25 @@
-import { Component, ElementRef, OnDestroy, OnInit, inject, viewChild, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, OnInit, inject, viewChild, signal, computed, effect, afterRenderEffect, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { WorkoutService } from '../../workouts/_services/workout.service';
 import { finalize } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
 import { AnalyticsService, METRICS_TYPE } from '../_services/analytics.service';
 import { AnalyticsChartData } from '../_models/analytics-chart-data';
 import { ExecutedWorkoutMetrics } from '../../api';
-import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { form, FormField, required, min } from '@angular/forms/signals';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, ChartOptions } from 'chart.js';
 import { CommonModule } from '@angular/common';
 
-interface IWorkoutProgressForm {
-  workoutId: FormControl<string | null>,
-  workoutCount: FormControl<number>,
-  exerciseId: FormControl<string | null>
-}
-
 @Component({
   selector: 'wt-workout-progress',
   templateUrl: './workout-progress.component.html',
   styleUrls: ['./workout-progress.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, SelectOnFocusDirective, NzSpinModule, NzTabsModule],
+  imports: [CommonModule, FormField, SelectOnFocusDirective, NzSpinModule, NzTabsModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkoutProgressComponent implements OnInit, OnDestroy {
+export class WorkoutProgressComponent implements OnInit {
   // Constants for magic numbers
   private static readonly DEFAULT_PAGE_SIZE = 500;
   private static readonly MIN_WORKOUT_COUNT = 1;
@@ -48,18 +41,31 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   public resistanceChartData = signal<AnalyticsChartData | null>(null);
   public workouts = signal<WorkoutDTO[]>([]);
   
-  public form: FormGroup<IWorkoutProgressForm>;
   public readonly DEFAULT_WORKOUT_COUNT: number = 5;
+
+  protected readonly model = signal({
+    workoutId: '',   // '' = none (was null); native <select> is string-valued
+    workoutCount: this.DEFAULT_WORKOUT_COUNT,
+    exerciseId: ''   // '' = none
+  });
+  public readonly form = form(this.model, (p) => {
+    required(p.workoutId);
+    required(p.workoutCount);
+    min(p.workoutCount, WorkoutProgressComponent.MIN_WORKOUT_COUNT);
+    required(p.exerciseId);
+  });
+
+  //Fine-grained selectors so each reaction effect depends ONLY on its own field
+  //(reading model() directly inside an effect would track the whole model).
+  private readonly _workoutId = computed(() => this.model().workoutId);
+  private readonly _workoutCount = computed(() => this.model().workoutCount);
+  private readonly _exerciseId = computed(() => this.model().exerciseId);
 
   //SERVICES
   private _analyticsService = inject(AnalyticsService);
   private _workoutService = inject(WorkoutService);
 
   //PRIVATE VARIABLES
-  private _workoutId$: Subscription | undefined;
-  private _workoutCount$: Subscription | undefined;
-  private _exerciseId$: Subscription | undefined;
-
   private _formAndRangeOfMotionChart: Chart | null = null;
   private _repsChart: Chart | null = null;
   private _resistanceChart: Chart | null = null;
@@ -93,26 +99,34 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   };
 
   constructor() {
-    const formBuilder = inject(FormBuilder);
     Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend);
 
-    this.form = this.buildForm(formBuilder);
+    //Replaces the old valueChanges subscriptions; effects auto-dispose on destroy.
+    //Track only the relevant field via the computed selector; run the handler untracked so its
+    //model() reads/writes don't widen the dependency (which would make the effects stomp each other).
+    effect(() => {
+      const workoutId = this._workoutId();
+      untracked(() => this.workoutIdChanged(workoutId));
+    });
+    effect(() => {
+      this._workoutCount();
+      untracked(() => this.workoutCountChanged());
+    });
+    //Chart rendering reads canvas layout and drives Chart.js (third-party DOM), so it must run
+    //AFTER the DOM is rendered — otherwise the active tab's canvas is unsized and paints blank.
+    afterRenderEffect(() => {
+      const exerciseId = this._exerciseId();
+      untracked(() => this.exerciseChanged(exerciseId));
+    });
   }
 
   public ngOnInit(): void {
     this.getUserWorkouts(); //TODO: Specify number to get instead of default
   }
 
-  public ngOnDestroy(): void {
-    //console.log('this._workoutId$: ', this._workoutId$);
-    if (this._workoutId$) this._workoutId$.unsubscribe();
-    if (this._workoutCount$) this._workoutCount$.unsubscribe();
-    if (this._exerciseId$) this._exerciseId$.unsubscribe();
-  }
-
   private getMetrics(workoutPublicId: string): void {
     this.metrics.set([]);
-    const count = this.form.controls.workoutCount.value;
+    const count = this.model().workoutCount;
 
     this._analyticsService.getExecutedWorkoutMetrics(workoutPublicId, count)
       .pipe(
@@ -210,30 +224,14 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
     this.resistanceChartData.set(null);
   }
 
-  private buildForm(builder: FormBuilder): FormGroup<IWorkoutProgressForm> {
-    const form = builder.group<IWorkoutProgressForm>({
-      workoutId: new FormControl<string | null>(null, Validators.required),
-      workoutCount: new FormControl<number>(
-        this.DEFAULT_WORKOUT_COUNT,
-        { nonNullable: true, validators: [Validators.required, Validators.min(WorkoutProgressComponent.MIN_WORKOUT_COUNT)] }),
-      exerciseId: new FormControl<string | null>(null, Validators.required)
-    });
-
-    this._workoutId$ = form.controls.workoutId.valueChanges.subscribe(value => this.workoutIdChanged(value));
-    this._workoutCount$ = form.controls.workoutCount.valueChanges.subscribe(() => this.workoutCountChanged());
-    this._exerciseId$ = form.controls.exerciseId.valueChanges.subscribe(value => this.exerciseChanged(value));
-
-    return form;
-  }
-
-  private workoutIdChanged(publicId: string | null): void {
+  private workoutIdChanged(publicId: string): void {
     if (!publicId) return;
 
     this.loadingData.set(true);
     this.metrics.set([]);
     this.clearAnalyticsData();
 
-    this._analyticsService.getExecutedWorkoutMetrics(publicId, this.form.controls.workoutCount.value)
+    this._analyticsService.getExecutedWorkoutMetrics(publicId, this.model().workoutCount)
       .pipe(
         finalize(() => {
           this.loadingData.set(false);
@@ -242,8 +240,7 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (results: ExecutedWorkoutMetrics[]) => {
           this.metrics.set(results);
-          this.form.controls.exerciseId.setValue(null);
-          this.form.controls.exerciseId.markAsUntouched();
+          this.resetSelectedExercise();
         }/*,
         error: (error) => {
           // TODO: Add user-friendly error notification service
@@ -255,13 +252,19 @@ export class WorkoutProgressComponent implements OnInit, OnDestroy {
   private workoutCountChanged(): void {
     this.clearAnalyticsData();
     this.metrics.set([]);
-    if (this.form.controls.workoutId.value) {
-      this.getMetrics(this.form.controls.workoutId.value);
-      this.form.controls.exerciseId.setValue(null);
+    if (this.model().workoutId) {
+      this.getMetrics(this.model().workoutId);
+      this.resetSelectedExercise();
     }
   }
 
-  private exerciseChanged(id: string | null): void {
+  //Only writes when there's actually a change, so the reaction effects don't re-trigger on a no-op model update.
+  private resetSelectedExercise(): void {
+    if (this.model().exerciseId !== '')
+      this.model.update(m => ({ ...m, exerciseId: '' }));
+  }
+
+  private exerciseChanged(id: string): void {
     if (!id) return;
     this.getChartData(id);
   }
