@@ -1,6 +1,5 @@
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { User, UserNewDTO } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
@@ -11,8 +10,7 @@ import { UserSelectNewComponent } from './user-select-new.component';
 
 @Component({
   selector: 'wt-blank',
-  template: '',
-  imports: [ReactiveFormsModule]
+  template: ''
 })
 class BlankComponent {
 }
@@ -30,7 +28,6 @@ describe('UserSelectNewComponent', () => {
     await TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        FormBuilder,
         {
           provide: UserService,
           useValue: UserServiceMock
@@ -54,10 +51,10 @@ describe('UserSelectNewComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should create a FormGroup', () => {
-    expect(component.newUserForm).not.toBeNull();
-    expect(component.newUserForm.controls.emailAddress).not.toBeNull();
-    expect(component.newUserForm.controls.name).not.toBeNull();
+  it('should create the form', () => {
+    expect(component.newUserForm).toBeTruthy();
+    expect(component.newUserForm.emailAddress).toBeTruthy();
+    expect(component.newUserForm.name).toBeTruthy();
   });
 
   it('should initialize signals with default values', () => {
@@ -65,7 +62,7 @@ describe('UserSelectNewComponent', () => {
     expect(component.addingUser()).toBe(false);
   });
 
-  it('should add a user', () => {
+  it('should add a user', async () => {
     //ARRANGE
     const userService = TestBed.inject(UserService);
     const userName = "jtkirk";
@@ -76,13 +73,12 @@ describe('UserSelectNewComponent', () => {
     expectedUser.emailAddress = emailAddress;
     expectedUser.password = "No Password. User-select mode!";
 
-    component.newUserForm.patchValue({
-      name: userName,
-      emailAddress
-    });
+    component.newUserForm.name().value.set(userName);
+    component.newUserForm.emailAddress().value.set(emailAddress);
 
     //ACT
     component.addUser();
+    await fixture.whenStable(); //submit() runs its action asynchronously
 
     //ASSERT
     expect(userService.addNew).toHaveBeenCalledWith(expectedUser);

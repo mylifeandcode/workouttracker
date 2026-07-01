@@ -2,34 +2,38 @@
   <div class="row">
     <div class="headroom offset-4 col-8">
       <h3>New User</h3>
-      <form [formGroup]="newUserForm" novalidate>
+      <form novalidate>
         <div class="form-group">
           <label class="center-block headroom">
             Name:
-            <input class="form-control" formControlName="name" placeholder="User Name (required)" />
+            <input class="form-control" [formField]="newUserForm.name" placeholder="User Name (required)" />
           </label>
-          @if (newUserForm.controls.name.touched && newUserForm.controls.name.errors?.required) {
-            <span class="text-danger headroom"> Required.</span>
+          @if (newUserForm.name().touched()) {
+            @for (error of newUserForm.name().errors(); track error.kind) {
+              @if (error.kind === 'required') {
+                <span class="text-danger headroom"> {{ error.message }}</span>
+              }
+            }
           }
         </div>
 
         <div class="form-group">
           <label class="center-block headroom">
             Email Address:
-            <input class="form-control" formControlName="emailAddress" placeholder="Email Address (required)" />
+            <input class="form-control" [formField]="newUserForm.emailAddress" placeholder="Email Address (required)" />
           </label>
-          @if (newUserForm.controls.emailAddress.touched && newUserForm.controls.emailAddress.errors?.required) {
-            <span class="text-danger headroom"> Required.</span>
+          @if (newUserForm.emailAddress().touched()) {
+            @for (error of newUserForm.emailAddress().errors(); track error.kind) {
+              @if (error.kind === 'required' || error.kind === 'email') {
+                <span class="text-danger headroom"> {{ error.message }}</span>
+              }
+            }
           }
 
-          @if (newUserForm.controls.emailAddress.touched && newUserForm.controls.emailAddress.errors?.email) {
-            <span class="text-danger headroom"> Must be a valid email address.</span>
-          }
-          
         </div>
 
         <div class="headroom">
-          <button type="submit" [disabled]="newUserForm.invalid" (click)="addUser()" class="btn btn-success">Add</button>
+          <button type="submit" [disabled]="newUserForm().invalid()" (click)="addUser()" class="btn btn-success">Add</button>
           &nbsp;
           <button type="button" [disabled]="addingUser()" routerLink="/user-select" class="btn btn-warning">Cancel</button>
           @if (addingUser()) {
