@@ -4,6 +4,8 @@ import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { provideSignalFormsConfig } from '@angular/forms/signals';
+import { NG_STATUS_CLASSES } from '@angular/forms/signals/compat';
 import { ConfigService } from './core/_services/config/config.service';
 import { UserService } from './core/_services/user/user.service';
 import { AuthService } from './core/_services/auth/auth.service';
@@ -32,7 +34,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideZonelessChangeDetection(),
     provideAnimations(),
-    provideNzI18n(en_US)
+    provideNzI18n(en_US),
+    //Signal Forms doesn't add the legacy ng-* status classes by default; this restores them
+    //app-wide (via the compat helper) so existing .ng-invalid.ng-touched styling keeps working.
+    provideSignalFormsConfig({ classes: NG_STATUS_CLASSES })
   ]
 };
 
