@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { form, FormField, required, validate, submit } from '@angular/forms/signals';
 import { Router } from '@angular/router';
-import { CustomValidators } from '../../core/_validators/custom-validators';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
@@ -10,64 +9,50 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { DurationComponent } from '../_shared/duration/duration.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 
-interface ILogPastWorkoutForm {
-  workoutPublicId: FormControl<string | null>;
-
-  /*
-  The datetime-local format of the input element requires the value in a specific STRING format, 
-  so I can't use a Date here.
-  */
-  startDateTime: FormControl<string | null>;
-
-  endDateTime: FormControl<string | null>; //Ditto (comment above).
-}
-
 @Component({
   selector: 'wt-workout-log-past-start',
   templateUrl: './workout-log-past-start.component.html',
   styleUrls: ['./workout-log-past-start.component.scss'],
-  imports: [FormsModule, ReactiveFormsModule, NgClass, NzModalModule, DurationComponent, NzSpinModule],
+  imports: [FormField, NgClass, NzModalModule, DurationComponent, NzSpinModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutLogPastStartComponent implements OnInit {
-  private _formBuilder = inject(FormBuilder);
   private _workoutService = inject(WorkoutService);
   private _router = inject(Router);
 
+  //The datetime-local input requires a specific STRING format, so these are strings, not Dates.
+  //'' means "none" (Signal Forms fields bound to inputs can't be null).
+  protected readonly model = signal({ workoutPublicId: '', startDateTime: '', endDateTime: '' });
+  public readonly formGroup = form(this.model, (p) => {
+    required(p.workoutPublicId, { message: 'Required' });
+    required(p.startDateTime, { message: 'Start Date/Time is required.' });
+    required(p.endDateTime, { message: 'End Date/Time is required.' });
+    //Cross-field: start must be on/before end (seconds zeroed, equal allowed) — replaces compareDatesValidator.
+    validate(p, ({ valueOf }) => {
+      const start = valueOf(p.startDateTime);
+      const end = valueOf(p.endDateTime);
+      if (!start || !end) return undefined;
+      return new Date(start).setSeconds(0) <= new Date(end).setSeconds(0)
+        ? undefined
+        : { kind: 'compareDates', message: 'Start Date/Time must be earlier than End Date/Time' };
+    });
+  });
 
-  /*
-  Properties to make accessing form controls easier, per the example at the official docs 
-  at https://angular.io/guide/form-validation#validating-input-in-reactive-forms (except with 
-  some strong-typing). This surprises me, as properties are essentially functions, and we should 
-  avoid embedding function calls within templates.
-  */
-  get startDateTime(): FormControl<string | null> {
-    return this.formGroup.controls.startDateTime;
-  }
-
-  get endDateTime(): FormControl<string | null> {
-    return this.formGroup.controls.endDateTime;
-  }
-
-  public formGroup: FormGroup<ILogPastWorkoutForm>;
   public workouts = signal<WorkoutDTO[]>([]);
   public gettingData = signal<boolean>(true);
   public showDurationModal = signal<boolean>(false);
-
-  constructor() {
-    this.formGroup = this.buildForm();
-  }
 
   public ngOnInit(): void {
     this.getUserWorkouts();
   }
 
   public proceedToWorkoutEntry(): void {
-    if (this.formGroup.controls.startDateTime.value && this.formGroup.controls.endDateTime.value) {
+    submit(this.formGroup, async () => {
+      const m = this.model();
       this._router.navigate(
-        [`/workouts/plan-for-past/${this.formGroup.controls.workoutPublicId.value}/${this.formGroup.controls.startDateTime.value}/${this.formGroup.controls.endDateTime.value}`]
+        [`/workouts/plan-for-past/${m.workoutPublicId}/${m.startDateTime}/${m.endDateTime}`]
       );
-    }
+    });
   }
 
   public enterDuration(): void {
@@ -77,24 +62,16 @@ export class WorkoutLogPastStartComponent implements OnInit {
   public durationModalAccepted(duration: number): void {
     this.showDurationModal.set(false);
 
-    if (!this.formGroup.controls.startDateTime.value) return;
+    if (!this.model().startDateTime) return;
 
-    const endDate = new Date(this.formGroup.controls.startDateTime.value);
+    const endDate = new Date(this.model().startDateTime);
     endDate.setSeconds(duration);
 
-    this.formGroup.patchValue({ endDateTime: formatDate(endDate, "yyyy-MM-ddTHH:mm", "en-US") });
+    this.model.update(m => ({ ...m, endDateTime: formatDate(endDate, "yyyy-MM-ddTHH:mm", "en-US") }));
   }
 
   public durationModalCancelled(): void {
     this.showDurationModal.set(false);
-  }
-
-  private buildForm(): FormGroup<ILogPastWorkoutForm> {
-    return this._formBuilder.group<ILogPastWorkoutForm>({
-      workoutPublicId: new FormControl<string | null>(null, { validators: Validators.required }),
-      startDateTime: new FormControl<string | null>(null, { validators: Validators.required }),
-      endDateTime: new FormControl<string | null>(null, { validators: Validators.required })
-    }, { validators: CustomValidators.compareDatesValidator('startDateTime', 'endDateTime', true) });
   }
 
   private getUserWorkouts(): void {

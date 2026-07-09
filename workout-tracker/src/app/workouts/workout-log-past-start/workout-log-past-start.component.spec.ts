@@ -1,6 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
@@ -45,13 +44,9 @@ describe('WorkoutLogPastStartComponent', () => {
           provide: Router,
           useValue: RouterMock
         },
-        // TODO: What is proper etiquette for components using a FormBuilder?
-        // Should we mock it like other dependencies?
-        FormBuilder,
         provideZonelessChangeDetection()
       ],
       imports: [
-        ReactiveFormsModule,
         WorkoutLogPastStartComponent
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -76,38 +71,43 @@ describe('WorkoutLogPastStartComponent', () => {
     expect(component.workouts().length).toBe(3);
   });
 
-  it('should proceed to the next step via proceedToWorkoutEntry()', () => {
+  it('should proceed to the next step via proceedToWorkoutEntry()', async () => {
 
     //ARRANGE
     const router = TestBed.inject(Router);
-    component.formGroup.patchValue({
-      workoutPublicId: 'some-guid-1',
-      startDateTime: '2022-03-04T12:00',
-      endDateTime: '2022-03-04T12:30'
-    });
+    component.formGroup.workoutPublicId().value.set('some-guid-1');
+    component.formGroup.startDateTime().value.set('2022-03-04T12:00');
+    component.formGroup.endDateTime().value.set('2022-03-04T12:30');
 
     //ACT
     component.proceedToWorkoutEntry();
+    await fixture.whenStable(); //submit() runs its action asynchronously
 
     //ASSERT
     expect(router.navigate)
-      //.toHaveBeenCalledWith(['/workouts/plan-for-past/some-guid-1/2022-04-04T16:00/2022-04-04T16:30']);
       .toHaveBeenCalledWith(['/workouts/plan-for-past/some-guid-1/2022-03-04T12:00/2022-03-04T12:30']);
 
   });
 
   it('should set endDateTime via duration', () => {
     //ARRANGE
-    component.formGroup.patchValue({
-      workoutPublicId: 'some-guid-1',
-      startDateTime: '2022-03-04T12:00'
-    });
+    component.formGroup.workoutPublicId().value.set('some-guid-1');
+    component.formGroup.startDateTime().value.set('2022-03-04T12:00');
 
     //ACT
     component.durationModalAccepted(3600);
 
     //ASSERT
-    expect(component.formGroup.controls.endDateTime.value).toEqual('2022-03-04T13:00');
+    expect(component.formGroup.endDateTime().value()).toEqual('2022-03-04T13:00');
+  });
+
+  it('should flag a compareDates error when start is after end', () => {
+    //ARRANGE
+    component.formGroup.startDateTime().value.set('2022-03-04T13:00');
+    component.formGroup.endDateTime().value.set('2022-03-04T12:00');
+
+    //ASSERT
+    expect(component.formGroup().errors().some(e => e.kind === 'compareDates')).toBe(true);
   });
 
 });

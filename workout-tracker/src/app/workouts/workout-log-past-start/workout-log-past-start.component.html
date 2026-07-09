@@ -15,11 +15,11 @@
       </div>
     </div>
   } @else {
-    <form [formGroup]="formGroup">
+    <form>
       <div class="row a-little-space">
         <div class="col-2">Select a Workout</div>
         <div class="col-3">
-          <select formControlName="workoutPublicId">
+          <select [formField]="formGroup.workoutPublicId">
             <option value="" disabled selected>Choose a Workout</option>
             @for(workout of workouts(); track workout.id) {
               <option [value]="workout.id">
@@ -29,7 +29,7 @@
           </select>
         </div>
         <div class="col-7">
-          @if (formGroup.controls.workoutPublicId.dirty && formGroup.controls.workoutPublicId.errors) {
+          @if (formGroup.workoutPublicId().dirty() && formGroup.workoutPublicId().errors().length) {
             <span class="text-danger">Required</span>
           }
         </div>
@@ -39,13 +39,17 @@
           <label for="startDateTime">Start Date/Time</label>
         </div>
         <div class="col-3">
-          <input formControlName="startDateTime" type="datetime-local" />
+          <input [formField]="formGroup.startDateTime" type="datetime-local" />
         </div>
         <div class="col-7">
-          @if (startDateTime.invalid && (startDateTime.touched || startDateTime.dirty) && startDateTime.errors?.required) {
-            <span class="text-danger">
-              Start Date/Time is required.
-            </span>
+          @if (formGroup.startDateTime().touched() || formGroup.startDateTime().dirty()) {
+            @for (error of formGroup.startDateTime().errors(); track error.kind) {
+              @if (error.kind === 'required') {
+                <span class="text-danger">
+                  Start Date/Time is required.
+                </span>
+              }
+            }
           }
         </div>
       </div>
@@ -55,9 +59,9 @@
         </div>
         <div class="col-3">
           <p>
-            <button [disabled]="formGroup.controls.startDateTime.invalid" 
+            <button [disabled]="formGroup.startDateTime().invalid()"
               class="btn-sm"
-              [ngClass]="{ 'btn-duration-disabled': formGroup.controls.startDateTime.invalid, 'btn-duration': !formGroup.controls.startDateTime.invalid }" (click)="enterDuration()">
+              [ngClass]="{ 'btn-duration-disabled': formGroup.startDateTime().invalid(), 'btn-duration': !formGroup.startDateTime().invalid() }" (click)="enterDuration()">
               Get from Workout Duration
             </button>
           </p>
@@ -66,27 +70,35 @@
           </p>
           <p>
             Enter Manually<br />
-            <input id="endDateTime" name="endDateTime" formControlName="endDateTime" type="datetime-local" />
+            <input id="endDateTime" [formField]="formGroup.endDateTime" type="datetime-local" />
           </p>
         </div>
         <div class="col-7">
-          @if (endDateTime.invalid && (endDateTime.touched || endDateTime.dirty) && endDateTime.errors?.required) {
-            <span class="text-danger">
-              End Date/Time is required.
-            </span>
+          @if (formGroup.endDateTime().touched() || formGroup.endDateTime().dirty()) {
+            @for (error of formGroup.endDateTime().errors(); track error.kind) {
+              @if (error.kind === 'required') {
+                <span class="text-danger">
+                  End Date/Time is required.
+                </span>
+              }
+            }
           }
         </div>
       </div>
       <div class="row a-little-space">
         <div class="offset-1 col-3">
-          <button [disabled]="!formGroup.valid" type="submit" (click)="proceedToWorkoutEntry()"
+          <button [disabled]="formGroup().invalid()" type="submit" (click)="proceedToWorkoutEntry()"
             class="btn btn-enter-info">Enter Workout Information</button>
         </div>
         <div class="col-8">
-          @if (formGroup.invalid && (endDateTime.touched || endDateTime.dirty) && formGroup.errors?.startDateTimeVsEndDateTime) {
-            <span class="text-danger">
-              Start Date/Time must be earlier than End Date/Time
-            </span>
+          @if (formGroup.endDateTime().touched() || formGroup.endDateTime().dirty()) {
+            @for (error of formGroup().errors(); track error.kind) {
+              @if (error.kind === 'compareDates') {
+                <span class="text-danger">
+                  Start Date/Time must be earlier than End Date/Time
+                </span>
+              }
+            }
           }
         </div>
       </div>
