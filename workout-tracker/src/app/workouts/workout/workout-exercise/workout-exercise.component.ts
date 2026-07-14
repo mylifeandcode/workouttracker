@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FieldTree, FormField } from '@angular/forms/signals';
 import { ResistanceType, SetType } from '../../../api';
 import { NgStyle } from '@angular/common';
 import { IWorkoutFormExercise } from '../_interfaces/i-workout-form-exercise';
@@ -23,8 +23,7 @@ import { ExerciseSidePipe } from '../../_pipes/exercise-side.pipe';
     styleUrls: ['./workout-exercise.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        FormsModule,
-        ReactiveFormsModule,
+        FormField,
         NgStyle,
         SelectOnFocusDirective,
         ResistanceBandColorPipe,
@@ -37,46 +36,46 @@ import { ExerciseSidePipe } from '../../_pipes/exercise-side.pipe';
 export class WorkoutExerciseComponent {
 
   /**
-   * The FormGroup containing FormControls for the Exercise Name, Type, etc, as well as
-   * a FormArray for the Sets
+   * The Signal Forms field tree for the Exercise, containing the sub-fields for the Exercise
+   * Name, Type, etc, as well as an array of Sets
    */
-  readonly formGroup = input.required<FormGroup<IWorkoutFormExercise>>(); //HACK -- kind of. Not really initialized correctly unless I'm mistaken. Value should be there though. This is just to make the compiler happy.
+  readonly field = input.required<FieldTree<IWorkoutFormExercise>>();
 
-  readonly resistanceBandsSelect = output<FormGroup<IWorkoutFormExerciseSet>>();
+  readonly resistanceBandsSelect = output<FieldTree<IWorkoutFormExerciseSet>>();
 
-  readonly showTimerRequest = output<FormGroup<IWorkoutFormExerciseSet>>();
+  readonly showTimerRequest = output<FieldTree<IWorkoutFormExerciseSet>>();
 
   readonly rangeOfMotionEntered = output();
 
-  readonly durationEdit = output<FormControl<number | null>>();
+  readonly durationEdit = output<FieldTree<number>>();
 
   public setTypeEnum: typeof SetType = SetType;
   public resistanceTypeEnum: typeof ResistanceType = ResistanceType;
 
   //Properties
-  get setsArray(): FormArray<FormGroup<IWorkoutFormExerciseSet>> { //TODO: Consider refactoring. This is a property, but functionally the same as a method -- not good for using in template expressions!
+  get setsField(): FieldTree<IWorkoutFormExerciseSet[]> { //TODO: Consider refactoring. This is a property, but functionally the same as a method -- not good for using in template expressions!
     //This property provides an easier way for the template to access this information,
-    //and is used by the component code as a short-hand reference to the form array.
-    return this.formGroup().controls.exerciseSets;
+    //and is used by the component code as a short-hand reference to the sets field array.
+    return this.field().exerciseSets;
   }
 
-  public selectResistanceBands(formGroup: FormGroup<IWorkoutFormExerciseSet>): void {
-    this.resistanceBandsSelect.emit(formGroup);
+  public selectResistanceBands(setField: FieldTree<IWorkoutFormExerciseSet>): void {
+    this.resistanceBandsSelect.emit(setField);
   }
 
-  public showTimer(formGroup: FormGroup<IWorkoutFormExerciseSet>): void {
-    this.showTimerRequest.emit(formGroup);
+  public showTimer(setField: FieldTree<IWorkoutFormExerciseSet>): void {
+    this.showTimerRequest.emit(setField);
   }
 
   public rangeOfMotionChanged(): void {
     this.rangeOfMotionEntered.emit();
   }
 
-  public editDuration(formControl: FormControl<number | null>): void {
-    this.durationEdit.emit(formControl);
+  public editDuration(durationField: FieldTree<number>): void {
+    this.durationEdit.emit(durationField);
   }
 
-  //This functionality has been moved to the wtSelectOnFocus directive, but I'm leaving this test 
+  //This functionality has been moved to the wtSelectOnFocus directive, but I'm leaving this test
   //here so I can remember how to do something like this in the future if I ever need to.
   /*
   public inputFocused(event: Event): void {
@@ -92,14 +91,15 @@ export class WorkoutExerciseComponent {
   */
 
   public applySetChangesToAll(): void {
-    if (this.formGroup().controls.exerciseSets.length > 1) {
-      const source = this.formGroup().controls.exerciseSets.controls[0];
+    const sets = this.field().exerciseSets;
+    if (sets.length > 1) {
+      const source = sets[0]().value();
 
-      for(let x = 1; x < this.formGroup().controls.exerciseSets.length; x++) {
-        this.formGroup().controls.exerciseSets.controls[x].controls.resistance.setValue(source.controls.resistance.value);
-        this.formGroup().controls.exerciseSets.controls[x].controls.resistanceMakeup.setValue(source.controls.resistanceMakeup.value);
-        this.formGroup().controls.exerciseSets.controls[x].controls.duration.setValue(source.controls.duration.value);
-        this.formGroup().controls.exerciseSets.controls[x].controls.targetReps.setValue(source.controls.targetReps.value);
+      for (let x = 1; x < sets.length; x++) {
+        sets[x].resistance().value.set(source.resistance);
+        sets[x].resistanceMakeup().value.set(source.resistanceMakeup);
+        sets[x].duration().value.set(source.duration);
+        sets[x].targetReps().value.set(source.targetReps);
       }
     }
   }

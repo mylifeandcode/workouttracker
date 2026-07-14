@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
+import { form, FieldTree } from '@angular/forms/signals';
 import { WorkoutExerciseComponent } from './workout-exercise.component';
-import { ReactiveFormsModule, Validators, FormBuilder, FormControl, FormArray, FormGroup } from '@angular/forms';
-import { ExecutedExerciseDTO } from '../../../api';
 import { Pipe, PipeTransform } from '@angular/core';
 import { IWorkoutFormExercise } from '../_interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../_interfaces/i-workout-form-exercise-set';
@@ -61,13 +60,12 @@ export class MockResistanceAmountPipe implements PipeTransform {
 describe('WorkoutExerciseComponent', () => {
   let component: WorkoutExerciseComponent;
   let fixture: ComponentFixture<WorkoutExerciseComponent>;
-  let formBuilder: FormBuilder;
+  let exerciseField: FieldTree<IWorkoutFormExercise>;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [
         WorkoutExerciseComponent,
-        ReactiveFormsModule,
         ResistanceTypePipeMock,
         DurationPipeMock,
         ResistanceBandColorMock,
@@ -85,18 +83,10 @@ describe('WorkoutExerciseComponent', () => {
     fixture = TestBed.createComponent(WorkoutExerciseComponent);
     component = fixture.componentInstance;
 
-    const exerciseArray: ExecutedExerciseDTO[] = getExercises();
+    const model = signal<IWorkoutFormExercise>(getExerciseModel());
+    exerciseField = TestBed.runInInjectionContext(() => form(model));
 
-    formBuilder = new FormBuilder();
-    fixture.componentRef.setInput('formGroup', formBuilder.group<IWorkoutFormExercise>({
-      id: new FormControl<number>(10, { nonNullable: true }),
-      exerciseId: new FormControl<string>("25", { nonNullable: true }),
-      exerciseName: new FormControl<string>('Chest Press with Bands', { nonNullable: true }),
-      exerciseSets: getExerciseSetsFormArray(exerciseArray),
-      setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }),
-      resistanceType: new FormControl<number>(exerciseArray[0].resistanceType, { nonNullable: true })
-    }));
-    //setupExercisesFormGroup();
+    fixture.componentRef.setInput('field', exerciseField);
     fixture.detectChanges();
   });
 
@@ -106,14 +96,16 @@ describe('WorkoutExerciseComponent', () => {
 
   it('should emit event when selecting resistance bands', () => {
     vi.spyOn(component.resistanceBandsSelect, 'emit');
-    component.selectResistanceBands(component.setsArray.controls[0]);
-    expect(component.resistanceBandsSelect.emit).toHaveBeenCalledWith(component.setsArray.controls[0]);
+    const setField = component.setsField[0];
+    component.selectResistanceBands(setField);
+    expect(component.resistanceBandsSelect.emit).toHaveBeenCalledWith(setField);
   });
 
   it('should emit event to show timer', () => {
     vi.spyOn(component.showTimerRequest, 'emit');
-    component.showTimer(component.setsArray.controls[0]);
-    expect(component.showTimerRequest.emit).toHaveBeenCalledWith(component.setsArray.controls[0]);
+    const setField = component.setsField[0];
+    component.showTimer(setField);
+    expect(component.showTimerRequest.emit).toHaveBeenCalledWith(setField);
   });
 
   it('should emit event when range of motion is changed', () => {
@@ -124,26 +116,10 @@ describe('WorkoutExerciseComponent', () => {
 
   it('should emit an event to edit duration', () => {
     vi.spyOn(component.durationEdit, 'emit');
-    component.editDuration(component.setsArray.controls[0].controls.duration);
-    expect(component.durationEdit.emit).toHaveBeenCalledWith(component.setsArray.controls[0].controls.duration);
+    const durationField = component.setsField[0].duration;
+    component.editDuration(durationField);
+    expect(component.durationEdit.emit).toHaveBeenCalledWith(durationField);
   });
-
-  //This functionality has been moved to the wtSelectOnFocus directive, but I'm leaving this test 
-  //here so I can remember how to do something like this in the future if I ever need to.
-  /*
-  it('should select the contents of an input when an input gets focus', () => {
-    //ARRANGE
-    //const element = new HTMLInputElement();
-    const element = fixture.nativeElement.querySelector("input[type=number]");
-    spyOn(element, 'select');
-
-    //ACT
-    element.dispatchEvent(new Event('focus'));
-
-    //ASSERT
-    expect(element.select).toHaveBeenCalled();
-  });
-  */
 
   it('should apply changes made to first set to remaining sets when user chooses to do so', () => {
     //ARRANGE
@@ -152,77 +128,52 @@ describe('WorkoutExerciseComponent', () => {
     const changedResistanceMakeup = "Silver";
     const changedTargetReps = 500;
 
+    const sets = component.setsField;
+
     //ACT
-    component.formGroup().controls.exerciseSets.controls[0].patchValue({
-      duration: changedDuration,
-      resistance: changedResistance,
-      resistanceMakeup: changedResistanceMakeup,
-      targetReps: changedTargetReps
-    });
+    sets[0].duration().value.set(changedDuration);
+    sets[0].resistance().value.set(changedResistance);
+    sets[0].resistanceMakeup().value.set(changedResistanceMakeup);
+    sets[0].targetReps().value.set(changedTargetReps);
 
     component.applySetChangesToAll();
 
     //ASSERT
-    const arrayCount = component.formGroup().controls.exerciseSets.controls.length;
-    for (let x = 1; x < arrayCount; x++) { //Start at index 1, not 0
-      expect(component.formGroup().controls.exerciseSets.controls[x].controls.duration.value).toBe(changedDuration);
-      expect(component.formGroup().controls.exerciseSets.controls[x].controls.resistance.value).toBe(changedResistance);
-      expect(component.formGroup().controls.exerciseSets.controls[x].controls.resistanceMakeup.value).toBe(changedResistanceMakeup);
-      expect(component.formGroup().controls.exerciseSets.controls[x].controls.targetReps.value).toBe(changedTargetReps);
+    for (let x = 1; x < sets.length; x++) { //Start at index 1, not 0
+      expect(sets[x].duration().value()).toBe(changedDuration);
+      expect(sets[x].resistance().value()).toBe(changedResistance);
+      expect(sets[x].resistanceMakeup().value()).toBe(changedResistanceMakeup);
+      expect(sets[x].targetReps().value()).toBe(changedTargetReps);
     }
   });
 
-  function getExerciseSetsFormArray(exercises: ExecutedExerciseDTO[]): FormArray<FormGroup<IWorkoutFormExerciseSet>> {
-
-    const formArray = new FormArray<FormGroup<IWorkoutFormExerciseSet>>([]);
-
-    //Each member of the array is a FormGroup
-    for (let i = 0; i < exercises.length; i++) {
-      const formGroup = formBuilder.group<IWorkoutFormExerciseSet>({
-        sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }),
-        resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
-        targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }),
-        actualReps: new FormControl<number>(exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, { nonNullable: true, validators: Validators.required }),
-        formRating: new FormControl<number | null>(exercises[i].formRating ? exercises[i].formRating : null, { validators: Validators.required }),
-        rangeOfMotionRating: new FormControl<number | null>(exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, { validators: Validators.required }),
-        resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup ?? null),
-        bandsEndToEnd: new FormControl<boolean | null>(exercises[i].bandsEndToEnd ?? null),
-        duration: new FormControl<number | null>(120),
-        involvesReps: new FormControl<boolean>(exercises[i].involvesReps, { nonNullable: true }),
-        side: new FormControl<number | null>(null),
-        usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true })
-      });
-
-      formArray.push(formGroup);
-    }
-
-    return formArray;
-  }
-
-  function getExercises(): ExecutedExerciseDTO[] {
-    const exercises: ExecutedExerciseDTO[] = [];
+  function getExerciseModel(): IWorkoutFormExercise {
+    const exerciseSets: IWorkoutFormExerciseSet[] = [];
 
     for (let i = 0; i < 4; i++) {
-      const exercise = <ExecutedExerciseDTO>{};
-      exercise.actualRepCount = 0;
-      exercise.bandsEndToEnd = false;
-      exercise.duration = 60;
-      exercise.exerciseId = "100";
-      exercise.formRating = 0;
-      exercise.id = 5;
-      exercise.involvesReps = true;
-      exercise.name = 'Chest Press w/Bands';
-      exercise.rangeOfMotionRating = 0;
-      exercise.resistanceAmount = 160;
-      exercise.resistanceMakeup = 'Onyx,Onyx';
-      exercise.resistanceType = 2;
-      exercise.sequence = i;
-      exercise.targetRepCount = 30;
-      exercise.setType = 0;
-
-      exercises.push(exercise);
+      exerciseSets.push({
+        sequence: i,
+        resistance: 160,
+        targetReps: 30,
+        actualReps: 0,
+        formRating: '',
+        rangeOfMotionRating: '',
+        resistanceMakeup: 'Onyx,Onyx',
+        bandsEndToEnd: false,
+        duration: 120,
+        involvesReps: true,
+        side: -1,
+        usesBilateralResistance: false
+      });
     }
 
-    return exercises;
+    return {
+      id: 10,
+      exerciseId: "25",
+      exerciseName: 'Chest Press with Bands',
+      exerciseSets,
+      setType: 0,
+      resistanceType: 2
+    };
   }
 });

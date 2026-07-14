@@ -14,8 +14,8 @@
     </div>
   }
 
-  @if (workoutForm && !loading()) {
-    <form [formGroup]="workoutForm" novalidate>
+  @if (!loading()) {
+    <form novalidate>
       <fieldset [disabled]="saving() || (workoutCompleted() && !pastWorkout())">
         @if (workoutLoaded()) {
           <p>
@@ -29,10 +29,10 @@
           </p>
 
           <nz-collapse>
-            @for (exercise of exercisesArray.controls; track $index) {
-              <nz-collapse-panel [nzHeader]="exercise.valid ? exercise.controls.exerciseName.value + ' (DONE)' : exercise.controls.exerciseName.value" [nzActive]="activeAccordionTab() === $index">
-                <wt-workout-exercise 
-                  [formGroup]="exercise" 
+            @for (exerciseField of workoutForm.exercises; track $index) {
+              <nz-collapse-panel [nzHeader]="exerciseField().valid() ? exerciseField.exerciseName().value() + ' (DONE)' : exerciseField.exerciseName().value()" [nzActive]="activeAccordionTab() === $index">
+                <wt-workout-exercise
+                  [field]="exerciseField"
                   (resistanceBandsSelect)="resistanceBandsModalEnabled($event)"
                   (showTimerRequest)="showTimer($event)"
                   (rangeOfMotionEntered)="saveWorkoutInProgress()"
@@ -41,28 +41,28 @@
               </nz-collapse-panel>
             }
           </nz-collapse>
-  
+
           <div class="row">
             <div class="col-12">&nbsp;</div>
           </div>
-  
+
           <div class="row bottom-padded">
             <div class="col-12">
               <label for="journal">Notes/Journal</label>
-              <textarea id="journal" class="form-control" formControlName="journal"></textarea>
+              <textarea id="journal" class="form-control" [formField]="workoutForm.journal"></textarea>
             </div>
           </div>
-  
+
           <div class="row">
             <div class="col-12">
               @if (!workoutCompleted() || pastWorkout()) {
-                <button type="submit" class="btn btn-primary" [disabled]="!workoutForm.valid || saving() || (workoutCompleted() && !pastWorkout())" (click)="completeWorkout()">Complete Workout</button>
+                <button type="button" class="btn btn-primary" [disabled]="workoutForm().invalid() || saving() || (workoutCompleted() && !pastWorkout())" (click)="completeWorkout()">Complete Workout</button>
               }
-              
-              @if (!workoutForm.valid) {
+
+              @if (workoutForm().invalid()) {
                 <span class="error-text ms-2">Please enter the required information above to complete the workout.</span>
               }
-              
+
               @if (saving()) {
                 <span>Saving...</span>&nbsp;{{infoMsg()}}
               }
@@ -72,17 +72,17 @@
       </fieldset>
     </form>
   }
-  
+
   @if (workoutCompleted() && !pastWorkout()) {
     <button class="btn btn-success me-2" routerLink="/workouts/history">View Workout History</button>
     <button class="btn btn-success" routerLink="/workouts/select-for-later">Plan Next Workout</button>
   }
 
-  <p></p> 
+  <p></p>
 
-  <nz-modal nzTitle="Select Resistance Bands" [(nzVisible)]="showResistanceBandsSelectModal" [nzFooter]="null">
+  <nz-modal nzTitle="Select Resistance Bands" [(nzVisible)]="showResistanceBandsSelectModal" [nzFooter]="null" nzClosable="true" (nzOnCancel)="resistanceBandsModalCancelled()">
     <div *nzModalContent>
-      <wt-resistance-band-select 
+      <wt-resistance-band-select
         [resistanceBandInventory]="allResistanceBands()"
         [exerciseUsesBilateralResistance]="settingResistanceForBilateralExercise()"
         [bandAllocation]="exerciseBandAllocation()"
@@ -93,24 +93,24 @@
     </div>
   </nz-modal>
 
-  @if (formGroupForCountdownModal) {
+  @if (fieldForCountdownModal) {
     <nz-modal nzTitle="Timed Set Countdown" [(nzVisible)]="showCountdownModal" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showCountdownModal.set(false)">
       <div *nzModalContent>
         <wt-countdown-timer
-          [secondsToCountdown]="formGroupForCountdownModal.controls.duration!.value!"
+          [secondsToCountdown]="fieldForCountdownModal.duration().value()"
           [secondsLeadInTime]="10"
           [activatedDateTime]="countdownModalActivatedDateTime()"
-          [targetReps]="formGroupForCountdownModal.controls.targetReps.value">
+          [targetReps]="fieldForCountdownModal.targetReps().value()">
         </wt-countdown-timer>
       </div>
     </nz-modal>
   }
 
-  @if (formControlForDurationEdit) {
+  @if (fieldForDurationEdit) {
     <nz-modal nzTitle="Duration" [(nzVisible)]="showDurationModal" [nzFooter]="null" nzClosable="true" (nzOnCancel)="showDurationModal.set(false)">
       <div *nzModalContent>
-        <wt-duration 
-          [currentDuration]="formControlForDurationEdit!.value!"
+        <wt-duration
+          [currentDuration]="fieldForDurationEdit().value()"
           (okClicked)="durationModalAccepted($event)"
           (cancelClicked)="durationModalCancelled()">
         </wt-duration>

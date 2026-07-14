@@ -1,15 +1,14 @@
-<div [formGroup]="formGroup()" class="row set-type-row">
-  <input type="hidden" formControlName="exerciseId" />
+<div class="row set-type-row">
   <div class="col-md-12">
-    {{formGroup().controls.setType.value == 0 ? "Repetition" : "Timed"}} Set(s) using
-    <strong>{{formGroup().controls.resistanceType.value | resistanceType:false}}</strong> resistance:
+    {{field().setType().value() == 0 ? "Repetition" : "Timed"}} Set(s) using
+    <strong>{{field().resistanceType().value() | resistanceType:false}}</strong> resistance:
   </div>
 </div>
 
-<div [formGroup]="formGroup()" class="row">
+<div class="row">
   <div class="col-md-12">
-    <!--exerciseSets is the name of the FormArray on the FormGroup representing an Exercise which is passed in via an @Input()-->
-    <div formArrayName="exerciseSets">
+    <!--exerciseSets is the array field on the Exercise field tree which is passed in via an @Input()-->
+    <div>
 
       <!--Set Header Row-->
       <div class="row mt-2">
@@ -38,23 +37,25 @@
       <!--End Set Header Row-->
 
       <!--Set Detail Rows Loop-->
-      @for (exerciseSet of setsArray.controls; track $index) {
-        <div class="col-md-12" [formGroupName]="$index">
+      @for (setField of setsField; track $index) {
+        <div class="col-md-12">
           <div class="exercise-row row" [ngStyle]="{'backgroundColor': ($index % 2 === 0)?'#d3d3d3':'#ffffff'}">
 
             <div class="col-1 exercise-info-div">
-              {{$index + 1 }} {{exerciseSet.controls.side.value | exerciseSide}}
-              @if (formGroup().controls.setType.value == setTypeEnum.TIMED) {
-                <button 
+              {{$index + 1 }} {{setField.side().value() | exerciseSide}}
+              @if (field().setType().value() == setTypeEnum.TIMED) {
+                <button
+                  type="button"
                   class="btn btn-sm btn-success"
-                  (click)="showTimer(setsArray!.controls[$index])">
+                  (click)="showTimer(setField)">
                   Start
                 </button>
-              } 
+              }
               &nbsp;
-              @if ($index == 0 && setsArray.controls.length > 1 && (exerciseSet.controls.duration.dirty  || exerciseSet.controls.resistance.dirty || exerciseSet.controls.resistanceMakeup.dirty || exerciseSet.controls.targetReps.dirty)) {
+              @if ($index == 0 && setsField.length > 1 && (setField.duration().dirty()  || setField.resistance().dirty() || setField.resistanceMakeup().dirty() || setField.targetReps().dirty())) {
                 <button
-                  class="btn btn-sm btn-primary" 
+                  type="button"
+                  class="btn btn-sm btn-primary"
                   title="Apply these settings to the other sets for this exercise"
                   (click)="applySetChangesToAll()">
                   <i class="fa fa-clone" aria-hidden="true"></i>
@@ -64,29 +65,30 @@
 
             <!--Resistance Amount-->
             <div class="col-4 exercise-info-div">
-              
-              @if (formGroup().controls.resistanceType.value < resistanceTypeEnum.RESISTANCE_BAND || formGroup().controls.resistanceType.value == resistanceTypeEnum.OTHER) {
+
+              @if (field().resistanceType().value() < resistanceTypeEnum.RESISTANCE_BAND || field().resistanceType().value() == resistanceTypeEnum.OTHER) {
                 <input wtSelectOnFocus
-                  type="number" 
-                  class="form-control resistance-amount" 
-                  formControlName="resistance" required />
+                  type="number"
+                  class="form-control resistance-amount"
+                  [formField]="setField.resistance" />
               }
 
-              @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.BODY_WEIGHT) {
+              @if (field().resistanceType().value() == resistanceTypeEnum.BODY_WEIGHT) {
                 <span><strong>Body Weight</strong></span>
               }
 
-              @if (formGroup().controls.resistanceType.value == resistanceTypeEnum.RESISTANCE_BAND) {
+              @if (field().resistanceType().value() == resistanceTypeEnum.RESISTANCE_BAND) {
                 <span>
-                  <button 
+                  <button
+                    type="button"
                     class="btn btn-sm btn-primary mild-margins"
-                    (click)="selectResistanceBands(setsArray!.controls[$index])">
+                    (click)="selectResistanceBands(setField)">
                     Edit
                   </button>
-                  @if (exerciseSet.controls.resistanceMakeup.value) {
+                  @if (setField.resistanceMakeup().value()) {
                     <span>
-                      <span [innerHTML]="exerciseSet.controls.resistanceMakeup.value | resistanceBandColor"></span>
-                      <span> ({{exerciseSet.controls.resistance.value | resistanceAmount}} Max)</span>
+                      <span [innerHTML]="setField.resistanceMakeup().value() | resistanceBandColor"></span>
+                      <span> ({{setField.resistance().value() | resistanceAmount}} Max)</span>
                     </span>
                   } @else {
                     <span>Not set</span>
@@ -97,65 +99,66 @@
 
             <!--Duration-->
             <div class="col-1">
-              @if (formGroup().controls.setType.value == setTypeEnum.REPETITION) {
+              @if (field().setType().value() == setTypeEnum.REPETITION) {
                 <span class="exercise-info-span">N/A</span>
               } @else {
-                <button 
+                <button
+                  type="button"
                   class="btn btn-sm btn-primary duration-button"
-                  (click)="editDuration(exerciseSet.controls.duration)">
-                  {{exerciseSet.controls.duration.value | duration:true}}
+                  (click)="editDuration(setField.duration)">
+                  {{setField.duration().value() | duration:true}}
                 </button>
               }
             </div>
 
             <!--Target Reps-->
             <div class="col-1">
-              @if (exerciseSet?.controls?.involvesReps?.value == false) {
+              @if (setField.involvesReps().value() == false) {
                 <span>N/A</span>
               } @else {
-                <input wtSelectOnFocus 
-                  type="number" 
-                  class="form-control reps" 
-                  formControlName="targetReps" required />
+                <input wtSelectOnFocus
+                  type="number"
+                  class="form-control reps"
+                  [formField]="setField.targetReps" />
               }
             </div>
 
             <!--Actual Reps-->
             <div class="col-1">
-              @if (exerciseSet?.controls?.involvesReps?.value == false) {
+              @if (setField.involvesReps().value() == false) {
                 <span>N/A</span>
               } @else {
-                <input wtSelectOnFocus 
+                <input wtSelectOnFocus
                   type="number"
-                  class="form-control reps" 
-                  formControlName="actualReps" required />
+                  class="form-control reps"
+                  [formField]="setField.actualReps" />
               }
             </div>
 
             <!--Form Rating-->
             <div class="col-2 exercise-dropdown-cell">
-              <select class="form-select" formControlName="formRating" required>
+              <select class="form-select" [formField]="setField.formRating">
                 <!--TODO: Set up differenty, this is just for POC-->
-                <option value=0>N/A</option>
-                <option value=1>Bad</option>
-                <option value=2>Poor</option>
-                <option value=3>OK</option>
-                <option value=4>Good</option>
-                <option value=5>Excellent</option>
+                <option value="0">N/A</option>
+                <option value="1">Bad</option>
+                <option value="2">Poor</option>
+                <option value="3">OK</option>
+                <option value="4">Good</option>
+                <option value="5">Excellent</option>
               </select>
             </div>
 
             <!--Range of Motion Rating-->
             <div class="col-2 exercise-dropdown-cell">
-              <!--TODO: Remove the change handler and use the ReactiveForm instead-->
-              <select class="form-select" formControlName="rangeOfMotionRating" (change)="rangeOfMotionChanged()"
-                required> <!--TODO: Set up differenty, this is just for POC-->
-                <option value=0>N/A</option>
-                <option value=1>Bad</option>
-                <option value=2>Poor</option>
-                <option value=3>OK</option>
-                <option value=4>Good</option>
-                <option value=5>Excellent</option>
+              <!--TODO: Remove the change handler and use the form's dirty/valid state instead-->
+              <select class="form-select" [formField]="setField.rangeOfMotionRating" (change)="rangeOfMotionChanged()">
+                <!--TODO: Set up differenty, this is just for POC-->
+                <option value="0">N/A</option>
+                <option value="1">Bad</option>
+                <option value="2">Poor</option>
+                <option value="3">OK</option>
+                <option value="4">Good</option>
+                <option value="5">Excellent</option>
               </select>
             </div>
           </div>

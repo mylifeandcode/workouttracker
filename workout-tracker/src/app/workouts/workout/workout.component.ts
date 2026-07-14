@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, input, signal, ChangeDetectionStrategy, computed } from '@angular/core';
-import { Validators, FormGroup, FormArray, FormControl, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { form, FormField, FieldTree, required, applyEach } from '@angular/forms/signals';
 import { finalize } from 'rxjs/operators';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { IBandAllocation, ResistanceBandSelectComponent } from '../_shared/resistance-band-select/resistance-band-select.component';
@@ -10,6 +10,7 @@ import { ResistanceBandSelection } from '../_models/resistance-band-selection';
 import { Router, RouterLink } from '@angular/router';
 import { IWorkoutFormExercise } from './_interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from './_interfaces/i-workout-form-exercise-set';
+import { IWorkoutFormModel } from './_interfaces/i-workout-form';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -21,21 +22,13 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { HttpErrorResponse } from '@angular/common/http';
 
-interface IWorkoutForm {
-  //id: FormControl<number | null>;
-  publicId: FormControl<string | null>;
-  exercises: FormArray<FormGroup<IWorkoutFormExercise>>;
-  journal: FormControl<string | null>;
-}
-
 @Component({
   selector: 'wt-workout',
   templateUrl: './workout.component.html',
   styleUrls: ['./workout.component.scss'],
   imports: [
     NzSpinModule,
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
     WorkoutExerciseComponent,
     RouterLink,
     NzModalModule,
@@ -48,7 +41,6 @@ interface IWorkoutForm {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutComponent extends CheckForUnsavedDataComponent implements OnInit {
-  private _formBuilder = inject(FormBuilder);
   private _executedWorkoutService = inject(ExecutedWorkoutService);
   private _resistanceBandService = inject(ResistanceBandService);
   private _messageService = inject(NzMessageService);
@@ -56,10 +48,24 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
 
   //PUBLIC FIELDS
-  public workoutForm: FormGroup<IWorkoutForm>;
-  public formGroupForResistanceSelection: FormGroup<IWorkoutFormExerciseSet> | undefined = undefined;
-  public formGroupForCountdownModal: FormGroup<IWorkoutFormExerciseSet> | undefined = undefined;
-  public formControlForDurationEdit: FormControl<number | null> | null = null;
+  protected readonly model = signal<IWorkoutFormModel>({ publicId: '', journal: '', exercises: [] });
+  public readonly workoutForm = form(this.model, (p) => {
+    required(p.publicId);
+    applyEach(p.exercises, (exercise) => {
+      applyEach(exercise.exerciseSets, (set) => {
+        required(set.resistance);
+        required(set.targetReps);
+        required(set.actualReps);
+        //'' (not yet rated) fails required, which gates workout completion; '0' (N/A) is a valid choice
+        required(set.formRating);
+        required(set.rangeOfMotionRating);
+      });
+    });
+  });
+
+  public fieldForResistanceSelection: FieldTree<IWorkoutFormExerciseSet> | undefined = undefined;
+  public fieldForCountdownModal: FieldTree<IWorkoutFormExerciseSet> | undefined = undefined;
+  public fieldForDurationEdit: FieldTree<number> | undefined = undefined;
 
   public errorInfo = signal<string | undefined>(undefined);
   public workoutName = signal<string | null>(null);
@@ -107,16 +113,6 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   public loading = computed(() => this._apiCallsInProgress() > 0);
 
   /**
-   * A property representing all of the Exercises which are part of the Workout
-   */
-  get exercisesArray(): FormArray<FormGroup<IWorkoutFormExercise>> {
-    //This property provides an easier way for the template to access this information, 
-    //and is used by the component code as a short-hand reference to the form array.
-    //return this.workoutForm.get('exercises') as FormArray;
-    return this.workoutForm.controls.exercises;
-  }
-
-  /**
    * Specifies whether or not the workout has been started
    */
   get workoutStarted(): boolean {
@@ -127,7 +123,6 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
   constructor() {
     super();
-    this.workoutForm = this.createForm();
   }
 
 
@@ -142,27 +137,28 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
     this.getResistanceBands();
     this.setupWorkout();
-    this.startWorkout();
   }
 
-  public resistanceBandsModalEnabled(exerciseFormGroup: FormGroup<IWorkoutFormExerciseSet>): void {
+  public resistanceBandsModalEnabled(setField: FieldTree<IWorkoutFormExerciseSet>): void {
+    const set = setField().value();
     this.exerciseBandAllocation.set({
-      selectedBandsDelimited: exerciseFormGroup.controls.resistanceMakeup.value ?? '',
-      doubleMaxResistanceAmounts: !exerciseFormGroup.controls.bandsEndToEnd.value,
+      selectedBandsDelimited: set.resistanceMakeup ?? '',
+      doubleMaxResistanceAmounts: !set.bandsEndToEnd,
     });
     this.showResistanceBandsSelectModal.set(true);
 
-    this.settingResistanceForBilateralExercise.set(exerciseFormGroup.controls.usesBilateralResistance.value);
-    this.formGroupForResistanceSelection = exerciseFormGroup;
+    this.settingResistanceForBilateralExercise.set(set.usesBilateralResistance);
+    this.fieldForResistanceSelection = setField;
   }
 
   public resistanceBandsModalAccepted(selectedBands: ResistanceBandSelection): void {
-    this.formGroupForResistanceSelection?.patchValue({
-      resistanceMakeup: selectedBands.makeup,
-      resistance: selectedBands.maxResistanceAmount
-    });
-    this.formGroupForResistanceSelection?.controls.resistanceMakeup.markAsDirty();
-    this.formGroupForResistanceSelection?.controls.resistance.markAsDirty();
+    //Write through the field's value signal; this updates the model and immediately re-renders
+    //the exercise display (the previous reactive-forms version was a change-detection cycle behind).
+    this.fieldForResistanceSelection?.resistanceMakeup().value.set(selectedBands.makeup);
+    this.fieldForResistanceSelection?.resistance().value.set(selectedBands.maxResistanceAmount);
+    //Programmatic value writes don't flip dirty, so mark them so the unsaved-changes guard trips.
+    this.fieldForResistanceSelection?.resistanceMakeup().markAsDirty();
+    this.fieldForResistanceSelection?.resistance().markAsDirty();
     this.showResistanceBandsSelectModal.set(false);
   }
 
@@ -170,19 +166,14 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     this.showResistanceBandsSelectModal.set(false);
   }
 
-  public showTimer(exerciseFormGroup: FormGroup): void {
-    this.formGroupForCountdownModal = exerciseFormGroup;
+  public showTimer(setField: FieldTree<IWorkoutFormExerciseSet>): void {
+    this.fieldForCountdownModal = setField;
     this.countdownModalActivatedDateTime.set(new Date());
     this.showCountdownModal.set(true);
   }
 
-  public startWorkout(): void {
-    this.workoutForm?.controls.journal.enable();
-    this.workoutForm?.controls.exercises.enable();
-  }
-
   public completeWorkout(): void {
-    this.setWorkoutValuesFromFormGroup();
+    this.setWorkoutValuesFromModel();
 
     if (!this._executedWorkout) return;
 
@@ -193,44 +184,35 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   }
 
   public saveWorkoutInProgress(): void {
-    this.setWorkoutValuesFromFormGroup();
+    this.setWorkoutValuesFromModel();
     this.save(false);
   }
 
-  public openDurationModal(formControl: FormControl<number | null>): void {
-    this.formControlForDurationEdit = formControl;
+  public openDurationModal(durationField: FieldTree<number>): void {
+    this.fieldForDurationEdit = durationField;
     this.showDurationModal.set(true);
   }
 
   public durationModalAccepted(duration: number): void {
-    this.formControlForDurationEdit?.setValue(duration);
+    this.fieldForDurationEdit?.().value.set(duration);
     this.showDurationModal.set(false);
   }
 
   public durationModalCancelled(): void {
-    this.formControlForDurationEdit = null;
+    this.fieldForDurationEdit = undefined;
     this.showDurationModal.set(false);
   }
 
   public hasUnsavedData(): boolean {
-    return this.workoutForm.dirty;
+    return this.workoutForm().dirty();
   }
 
   //PRIVATE METHODS ///////////////////////////////////////////////////////////
 
-  private createForm(): FormGroup<IWorkoutForm> {
-    return this._formBuilder.group<IWorkoutForm>({
-      //id: new FormControl<number | null>(0, Validators.required),
-      publicId: new FormControl<string | null>(null, Validators.required),
-      exercises: new FormArray<FormGroup<IWorkoutFormExercise>>([]),
-      journal: new FormControl<string | null>('')
-    });
-  }
-
   private getResistanceBands(): void {
     this._apiCallsInProgress.update(n => n + 1);
     this._resistanceBandService.getAllIndividualBands()
-      .pipe(finalize(() => { 
+      .pipe(finalize(() => {
         this._apiCallsInProgress.update(n => n - 1);
       }))
       .subscribe({
@@ -249,7 +231,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
     this._apiCallsInProgress.update(n => n + 1);
     this._executedWorkoutService.getById(id)
-      .pipe(finalize(() => { 
+      .pipe(finalize(() => {
         this._apiCallsInProgress.update(n => n - 1);
       }))
       .subscribe({
@@ -262,17 +244,9 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
 
           this.startDateTime.set(this._executedWorkout.startDateTime);
 
-          this.workoutForm?.patchValue({
-            publicId: id
-          });
-
-          this.setupExercisesFormGroup(executedWorkout.exercises);
+          this.model.set(this.buildModel(id, executedWorkout));
 
           this.workoutCompleted.set(this._executedWorkout.endDateTime != null);
-
-          if (executedWorkout.journal) {
-            this.workoutForm?.controls.journal.setValue(executedWorkout.journal);
-          }
 
           this.workoutLoaded.set(true);
           this.activeAccordionTab.set(this.getExerciseInProgress());
@@ -281,67 +255,38 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       });
   }
 
-  private setupExercisesFormGroup(exercises: ExecutedExerciseDTO[]): void {
-    this.exercisesArray?.clear();
+  private buildModel(id: string, executedWorkout: ExecutedWorkoutDTO): IWorkoutFormModel {
+    const groupedExercises = this._executedWorkoutService.groupExecutedExercises(executedWorkout.exercises);
 
-    const groupedExercises = this._executedWorkoutService.groupExecutedExercises(exercises);
-
-    Object.values(groupedExercises).forEach((exerciseArray: ExecutedExerciseDTO[]) => {
-
-      this.exercisesArray?.push(
-        this._formBuilder.group<IWorkoutFormExercise>({
-          id: new FormControl<number>(exerciseArray[0].id, { nonNullable: true }),
-          exerciseId: new FormControl<string>(exerciseArray[0].exerciseId, { nonNullable: true }),
-          exerciseName: new FormControl<string>(exerciseArray[0].name, { nonNullable: true }),
-          exerciseSets: this.getExerciseSetsFormArray(exerciseArray),
-          setType: new FormControl<number>(exerciseArray[0].setType, { nonNullable: true }),
-          resistanceType: new FormControl<number>(exerciseArray[0].resistanceType, { nonNullable: true })
-        })
-      );
-
-    });
-
-  }
-
-  private getExerciseSetsFormArray(exercises: ExecutedExerciseDTO[]): FormArray<FormGroup<IWorkoutFormExerciseSet>> {
-
-    const formArray = new FormArray<FormGroup<IWorkoutFormExerciseSet>>([]);
-
-    //Each member of the array is a FormGroup
-    for (let i = 0; i < exercises.length; i++) {
-      const formGroup = this._formBuilder.group<IWorkoutFormExerciseSet>({
-        sequence: new FormControl<number>(exercises[i].sequence, { nonNullable: true }),
-        resistance: new FormControl<number>(exercises[i].resistanceAmount, { nonNullable: true, validators: Validators.required }),
-        targetReps: new FormControl<number>(exercises[i].targetRepCount, { nonNullable: true, validators: Validators.required }),
-
-        actualReps: new FormControl<number>(
-          exercises[i].actualRepCount ? exercises[i].actualRepCount : 0, { nonNullable: true, validators: Validators.required }),
-
-        formRating: new FormControl<number | null>(
-          exercises[i].formRating ? exercises[i].formRating : null, { validators: Validators.required }),
-
-        rangeOfMotionRating: new FormControl<number | null>(
-          exercises[i].rangeOfMotionRating ? exercises[i].rangeOfMotionRating : null, { validators: Validators.required }),
-
-        resistanceMakeup: new FormControl<string | null>(exercises[i].resistanceMakeup ?? null),
-
+    const exercises: IWorkoutFormExercise[] = Object.values(groupedExercises).map((exerciseArray: ExecutedExerciseDTO[]) => ({
+      id: exerciseArray[0].id,
+      exerciseId: exerciseArray[0].exerciseId,
+      exerciseName: exerciseArray[0].name,
+      setType: exerciseArray[0].setType,
+      resistanceType: exerciseArray[0].resistanceType,
+      exerciseSets: exerciseArray.map((exercise: ExecutedExerciseDTO): IWorkoutFormExerciseSet => ({
+        sequence: exercise.sequence,
+        resistance: exercise.resistanceAmount,
+        targetReps: exercise.targetRepCount,
+        actualReps: exercise.actualRepCount ? exercise.actualRepCount : 0,
+        //'' when not yet rated; native <select> values are strings, converted to numbers on save
+        formRating: exercise.formRating ? String(exercise.formRating) : '',
+        rangeOfMotionRating: exercise.rangeOfMotionRating ? String(exercise.rangeOfMotionRating) : '',
+        resistanceMakeup: exercise.resistanceMakeup ?? '',
         //TODO: This is kind of a hack, as this value is at the exercise, not set level, and is therefore duplicated here
-        bandsEndToEnd: new FormControl<boolean | null>(
-          exercises[i].bandsEndToEnd ?? null),
+        bandsEndToEnd: exercise.bandsEndToEnd ?? false,
+        duration: WorkoutComponent.DEFAULT_DURATION, //TODO: Get/set value from API
+        involvesReps: exercise.involvesReps, //Kind of a hack, but I need to pass this value along
+        side: exercise.side ?? -1, //-1 = no side (ExerciseSide.LEFT is 0)
+        usesBilateralResistance: exercise.usesBilateralResistance
+      }))
+    }));
 
-        duration: new FormControl<number | null>(WorkoutComponent.DEFAULT_DURATION), //TODO: Get/set value from API
-
-        involvesReps: new FormControl<boolean>(
-          exercises[i].involvesReps, { nonNullable: true }), //Kind of a hack, but I need to pass this value along
-
-        side: new FormControl<number | null>(exercises[i].side ?? null),
-        usesBilateralResistance: new FormControl<boolean>(exercises[i].usesBilateralResistance, { nonNullable: true })
-      });
-
-      formArray.push(formGroup);
-    }
-
-    return formArray;
+    return {
+      publicId: id,
+      journal: executedWorkout.journal ?? '',
+      exercises
+    };
   }
 
   private setErrorInfo(error: HttpErrorResponse, defaultMessage: string): void {
@@ -351,15 +296,16 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       this.errorInfo.set(defaultMessage);
   }
 
-  private setWorkoutValuesFromFormGroup(): void {
-    if (!this.workoutForm || !this._executedWorkout || !this.exercisesArray) return;
-    this._executedWorkout.journal = this.workoutForm.controls.journal.value;
+  private setWorkoutValuesFromModel(): void {
+    if (!this._executedWorkout) return;
+    const model = this.model();
+    this._executedWorkout.journal = model.journal;
 
-    this.exercisesArray.controls.forEach((exerciseFormGroup: FormGroup<IWorkoutFormExercise>) => {
-      const sets = exerciseFormGroup.controls.exerciseSets;
-      const exerciseId = exerciseFormGroup.controls.exerciseId.value;
-      let exercises = this._executedWorkout?.exercises.filter((exercise: ExecutedExerciseDTO) =>
-        exercise.exerciseId == exerciseId
+    model.exercises.forEach((exercise: IWorkoutFormExercise) => {
+      const sets = exercise.exerciseSets;
+      const exerciseId = exercise.exerciseId;
+      let exercises = this._executedWorkout?.exercises.filter((executedExercise: ExecutedExerciseDTO) =>
+        executedExercise.exerciseId == exerciseId
       );
 
       exercises = exercises?.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
@@ -371,16 +317,14 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
       }
 
       for (let x = 0; x < exercises.length; x++) {
-        const setGroup = sets.at(x);
-        if (!setGroup) continue;
-        const setControls = setGroup.controls;
-        exercises[x].actualRepCount = Number(setControls.actualReps.value);
-        exercises[x].duration = setControls.duration.value;
-        exercises[x].resistanceAmount = setControls.resistance.value;
-        exercises[x].resistanceMakeup = setControls.resistanceMakeup.value;
-        exercises[x].targetRepCount = Number(setControls.targetReps.value);
-        exercises[x].formRating = Number(setControls.formRating.value);
-        exercises[x].rangeOfMotionRating = Number(setControls.rangeOfMotionRating.value);
+        const set = sets[x];
+        exercises[x].actualRepCount = Number(set.actualReps);
+        exercises[x].duration = set.duration;
+        exercises[x].resistanceAmount = set.resistance;
+        exercises[x].resistanceMakeup = set.resistanceMakeup;
+        exercises[x].targetRepCount = Number(set.targetReps);
+        exercises[x].formRating = Number(set.formRating);
+        exercises[x].rangeOfMotionRating = Number(set.rangeOfMotionRating);
       }
 
     });
@@ -401,7 +345,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
             this._executedWorkout = workout;
           if (completed) {
             if (this.pastWorkout()) {
-              this.workoutForm.markAsPristine(); //To allow the guard to let us navigate away
+              this.workoutForm().reset(); //Clears dirty/touched so the guard will let us navigate away
               this._router.navigate(['/workouts/history']);
             }
             else {
@@ -409,7 +353,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
               this.workoutCompleted.set(true);
               this.endDateTime.set(this._executedWorkout.endDateTime ?? null);
               this._messageService.success('Workout completed!');
-              this.workoutForm.markAsPristine();
+              this.workoutForm().reset();
             }
           }
           else {
@@ -427,6 +371,10 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
   }
 
   private getExerciseInProgress(): number {
-    return this.exercisesArray.controls.findIndex((group: FormGroup<IWorkoutFormExercise>) => group.invalid);
+    const exercises = this.workoutForm.exercises;
+    for (let i = 0; i < exercises.length; i++) {
+      if (exercises[i]().invalid()) return i;
+    }
+    return -1;
   }
 }
