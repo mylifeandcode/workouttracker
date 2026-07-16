@@ -1,6 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { User, UserMinMaxReps, UserSettings, SetType } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
@@ -46,7 +45,6 @@ describe('UserSettingsComponent', () => {
 
     await TestBed.configureTestingModule({
       providers: [
-        FormBuilder,
         {
           provide: AuthService,
           useValue: AuthServiceMock
@@ -62,7 +60,6 @@ describe('UserSettingsComponent', () => {
         provideZonelessChangeDetection()
       ],
       imports: [
-        ReactiveFormsModule,
         UserSettingsComponent,
         RouterModule.forRoot([])
       ]
@@ -89,33 +86,36 @@ describe('UserSettingsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should toggle recommendations setting on', () => {
-    //ARRANGE
-    component.userSettingsForm?.removeControl('repSettings');
-    component.userSettingsForm?.controls.recommendationsEnabled.setValue(false);
+  it('should seed default rep settings when recommendations are toggled on (from empty)', async () => {
+    //ARRANGE — get to a clean disabled/empty state
+    component.userSettingsForm.recommendationsEnabled().value.set(false);
+    component.userSettingsForm.repSettings().value.set([]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.userSettingsForm.repSettings.length).toBe(0);
 
     //ACT
-
-    //Kinda goofy, but let's immediately change back to true for this
-    component.userSettingsForm?.controls.recommendationsEnabled.setValue(true);
-    component.recommendationEngineToggled();
+    component.userSettingsForm.recommendationsEnabled().value.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     //ASSERT
-    expect(component.userSettingsForm?.controls.recommendationsEnabled.value).toBeTruthy();
-    expect(component.userSettingsForm?.controls.repSettings).toBeDefined();
+    expect(component.userSettingsForm.recommendationsEnabled().value()).toBe(true);
+    expect(component.userSettingsForm.repSettings.length).toBe(2);
   });
 
-  it('should toggle recommendations setting off', () => {
-    //ARRANGE
-    //Nothing extra to do for this one
+  it('should hide the rep settings section when recommendations are toggled off', async () => {
+    //ARRANGE — mock starts enabled, so the section renders initially
+    expect(fixture.nativeElement.querySelector('wt-user-rep-settings')).not.toBeNull();
 
     //ACT
-    component.userSettingsForm?.controls.recommendationsEnabled.setValue(false);
-    component.recommendationEngineToggled();
+    component.userSettingsForm.recommendationsEnabled().value.set(false);
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     //ASSERT
-    expect(component.userSettingsForm?.controls.recommendationsEnabled.value).toBeFalsy();
-    expect(component.userSettingsForm?.controls.repSettings).not.toBeDefined();
+    expect(component.userSettingsForm.recommendationsEnabled().value()).toBe(false);
+    expect(fixture.nativeElement.querySelector('wt-user-rep-settings')).toBeNull();
   });
 
   it('should save settings', () => {
@@ -123,27 +123,20 @@ describe('UserSettingsComponent', () => {
     const userService = TestBed.inject(UserService);
     const messageService = TestBed.inject(NzMessageService);
 
-    const expectedSavedUser = <User>{};
     const duration = 240;
     const minTimedSetReps = 40;
     const maxTimedSetReps = 70;
     const minRepetitionSetReps = 6;
     const maxRepetitionSetReps = 10;
 
-    if (component.userSettingsForm === undefined) {
-      throw new Error('userSettingsForm is undefined');
-    }
-    else if (component.userSettingsForm.controls.repSettings === undefined) {
-      throw new Error('userSettingsForm.controls.repSettings is undefined');
-    }
-    else {
-      component.userSettingsForm.controls.repSettings.controls[0].controls.minReps.setValue(minRepetitionSetReps);
-      component.userSettingsForm.controls.repSettings.controls[0].controls.maxReps.setValue(maxRepetitionSetReps);
-      component.userSettingsForm.controls.repSettings.controls[1].controls.duration.setValue(duration);
-      component.userSettingsForm.controls.repSettings.controls[1].controls.minReps.setValue(minTimedSetReps);
-      component.userSettingsForm.controls.repSettings.controls[1].controls.maxReps.setValue(maxTimedSetReps);
-    }
+    const repSettings = component.userSettingsForm.repSettings;
+    repSettings[0].minReps().value.set(minRepetitionSetReps);
+    repSettings[0].maxReps().value.set(maxRepetitionSetReps);
+    repSettings[1].duration().value.set(duration);
+    repSettings[1].minReps().value.set(minTimedSetReps);
+    repSettings[1].maxReps().value.set(maxTimedSetReps);
 
+    const expectedSavedUser = <User>{};
     expectedSavedUser.settings = <UserSettings>{};
     expectedSavedUser.settings.repSettings = new Array<UserMinMaxReps>();
     expectedSavedUser.settings.repSettings.push(<UserMinMaxReps>{});

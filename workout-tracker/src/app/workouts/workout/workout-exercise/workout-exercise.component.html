@@ -37,7 +37,7 @@
       <!--End Set Header Row-->
 
       <!--Set Detail Rows Loop-->
-      @for (setField of setsField; track $index) {
+      @for (setField of sets(); track $index) {
         <div class="col-md-12">
           <div class="exercise-row row" [ngStyle]="{'backgroundColor': ($index % 2 === 0)?'#d3d3d3':'#ffffff'}">
 
@@ -52,7 +52,7 @@
                 </button>
               }
               &nbsp;
-              @if ($index == 0 && setsField.length > 1 && (setField.duration().dirty()  || setField.resistance().dirty() || setField.resistanceMakeup().dirty() || setField.targetReps().dirty())) {
+              @if ($index == 0 && sets().length > 1 && (setField.duration().dirty()  || setField.resistance().dirty() || setField.resistanceMakeup().dirty() || setField.targetReps().dirty())) {
                 <button
                   type="button"
                   class="btn btn-sm btn-primary"

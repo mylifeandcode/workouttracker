@@ -1,19 +1,18 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, inject, signal, computed, effect, untracked, ChangeDetectionStrategy } from '@angular/core';
+import { form, FormField, required, min, validate, applyEach, applyWhen } from '@angular/forms/signals';
 import { AuthService } from '../../core/_services/auth/auth.service';
-import { User, UserMinMaxReps } from '../../api';
+import { User, UserMinMaxReps, SetType } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
-import { firstControlValueMustBeLessThanOrEqualToSecond, isRequired } from '../../core/_validators/custom-validators';
 import { catchError, finalize } from 'rxjs/operators';
-import { IRepSettingsForm, UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
+import { IUserRepSettingsModel, UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { RouterLink } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
-interface IUserSettingsForm {
-  recommendationsEnabled: FormControl<boolean>;
-  repSettings?: FormArray<FormGroup<IRepSettingsForm>>;
+export interface IUserSettingsModel {
+  recommendationsEnabled: boolean;
+  repSettings: IUserRepSettingsModel[];
 }
 
 @Component({
@@ -21,8 +20,7 @@ interface IUserSettingsForm {
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.scss'],
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
     NzSwitchModule,
     UserRepSettingsComponent,
     RouterLink
@@ -32,14 +30,48 @@ interface IUserSettingsForm {
 export class UserSettingsComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _authService = inject(AuthService);
   private _userService = inject(UserService);
-  private _formBuilder = inject(FormBuilder);
   private _messageService = inject(NzMessageService);
 
   public loading = signal(true);
   public user = signal<User | undefined>(undefined);
-  public userSettingsForm: FormGroup<IUserSettingsForm> | undefined; //undefined until user info is retrieved
   public saving = signal(false);
   public userSettingsLoaded = signal(false);
+
+  protected readonly model = signal<IUserSettingsModel>({ recommendationsEnabled: false, repSettings: [] });
+  public readonly userSettingsForm = form(this.model, (p) => {
+    //Rep settings only matter (and only validate) when recommendations are enabled.
+    applyWhen(p.repSettings, ({ valueOf }) => valueOf(p.recommendationsEnabled), (rs) => {
+      applyEach(rs, (set) => {
+        required(set.minReps);
+        min(set.minReps, 1);
+        min(set.maxReps, 1);
+        //Cross-field: was firstControlValueMustBeLessThanOrEqualToSecond('minReps', 'maxReps')
+        validate(set, ({ value }) =>
+          value().minReps <= value().maxReps
+            ? undefined
+            : { kind: 'minMax', message: 'Min Reps must be less than or equal to Max Reps.' });
+        //Timed sets require a duration >= 1 (was isRequired + Validators.min); N/A for repetition sets.
+        validate(set.duration, ({ value, valueOf }) =>
+          valueOf(set.setType) === SetType.TIMED && (value() == null || value()! < 1)
+            ? { kind: 'required', message: 'Duration is required and must be greater than zero.' }
+            : undefined);
+      });
+    });
+  });
+
+  //Fine-grained selector so the toggle effect depends ONLY on this flag (reading model() directly
+  //would track the whole model and re-run on every rep-settings edit).
+  private readonly _recommendationsEnabled = computed(() => this.model().recommendationsEnabled);
+
+  constructor() {
+    super();
+    //Replaces the old (ngModelChange)="recommendationEngineToggled()". Track only the flag; run the
+    //handler untracked so its model reads/writes don't widen the dependency (see workout-progress).
+    effect(() => {
+      const enabled = this._recommendationsEnabled();
+      untracked(() => this.onRecommendationsToggled(enabled));
+    });
+  }
 
   public ngOnInit(): void {
     if (!this._authService.userPublicId) return;
@@ -53,28 +85,9 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
       )
       .subscribe((user: User) => {
         this.user.set(user);
-        this.createForm();
+        this.model.set(this.buildModel(user));
         this.userSettingsLoaded.set(true);
       });
-  }
-
-  public recommendationEngineToggled(): void {
-    //TODO: Re-evaluate. May be better to just subscribe to the valueChanges Observable and use that to trigger this method.
-    if (this.userSettingsForm?.controls.recommendationsEnabled.value == true) {
-      if (this.user()) {
-        if (this.user()!.settings.repSettings == null || this.user()!.settings.repSettings.length === 0) {
-          this.user()!.settings.repSettings = []; // Ensure it's an empty array if null or undefined
-          this.user()!.settings.repSettings.push(...[<UserMinMaxReps>{}, <UserMinMaxReps>{}]); // Add at least one default entry
-          this.user()!.settings.repSettings[0].setType = 0; // Default to Repetition for the first entry
-          this.user()!.settings.repSettings[1].setType = 1; // Default to Timed for the second entry
-        }
-      }
-      this.userSettingsForm.controls.repSettings = this.getRepSettingsForm();
-    }
-    else {
-      //this.userSettingsForm!.removeControl('repSettings'); // Remove the repSettings control if recommendations are disabled
-      this.userSettingsForm?.removeControl('repSettings');
-    }
   }
 
   public saveSettings(): void {
@@ -86,7 +99,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
       .pipe(
         finalize(() => {
           this.saving.set(false);
-          this.userSettingsForm?.markAsPristine();
+          this.userSettingsForm().reset(); //Clears dirty/touched so the guard lets us navigate away
         }),
         catchError((err) => {
           window.alert("ERROR: " + err.message);
@@ -99,58 +112,64 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   }
 
   public hasUnsavedData(): boolean {
-    if (!this.userSettingsForm) return false;
-    return this.userSettingsForm.dirty;
+    return this.userSettingsForm().dirty();
   }
 
-  private createForm(): void {
-    if (!this.user()) return;
-    this.userSettingsForm = this._formBuilder.group<IUserSettingsForm>({
-      recommendationsEnabled: new FormControl<boolean>(this.user()!.settings.recommendationsEnabled, { nonNullable: true }),
-      repSettings: this.getRepSettingsForm()
-    });
+  private buildModel(user: User): IUserSettingsModel {
+    return {
+      recommendationsEnabled: user.settings.recommendationsEnabled,
+      repSettings: (user.settings.repSettings ?? []).map((value: UserMinMaxReps): IUserRepSettingsModel => ({
+        repSettingsId: value.id,
+        setType: value.setType,
+        duration: value.duration ?? null,
+        //Concrete numbers only — Signal Forms won't build a subfield for an undefined value
+        minReps: value.minReps ?? 0,
+        maxReps: value.maxReps ?? 0
+      }))
+    };
   }
 
-  private getRepSettingsForm(): FormArray<FormGroup<IRepSettingsForm>> {
-    const formArray = new FormArray<FormGroup<IRepSettingsForm>>([]);
-    if (this.user()) {
-      this.user()!.settings.repSettings.forEach((value: UserMinMaxReps) => {
-        const formGroup: FormGroup<IRepSettingsForm> = this._formBuilder.group<IRepSettingsForm>({
-          repSettingsId: new FormControl<number>(value.id, { nonNullable: true }),
-          setType: new FormControl<number>(value.setType, { nonNullable: true }),
-          duration: new FormControl<number | null>(value.duration ?? null, [Validators.min((value.setType == 1 ? 1 : 0)), isRequired((value.setType == 1))]),
-          minReps: new FormControl<number>(value.minReps, { nonNullable: true, validators: [Validators.min(1), isRequired(true)] }),
-          maxReps: new FormControl<number>(value.maxReps, { nonNullable: true, validators: [Validators.min(1)] })
-        }, { validators: [firstControlValueMustBeLessThanOrEqualToSecond('minReps', 'maxReps')] });
+  //When recommendations are switched on and there are no rep settings yet, seed two defaults
+  //(one Repetition, one Timed). Off (or already-populated) is a no-op — the array is kept in the
+  //model and simply hidden/unvalidated when off.
+  private onRecommendationsToggled(enabled: boolean): void {
+    if (!enabled) return;
+    if (this.model().repSettings.length > 0) return;
 
-        formArray.push(formGroup);
-      });
-    }
-    return formArray;
+    this.model.update(m => ({
+      ...m,
+      repSettings: [
+        { repSettingsId: 0, setType: SetType.REPETITION, duration: null, minReps: 0, maxReps: 0 },
+        { repSettingsId: 0, setType: SetType.TIMED, duration: null, minReps: 0, maxReps: 0 }
+      ]
+    }));
   }
 
   private updateSettingsForPersist(): void {
-    if (!this.user()) return;
-    if (!this.userSettingsForm) return;
+    const user = this.user();
+    if (!user) return;
 
-    this.user()!.settings.recommendationsEnabled = this.userSettingsForm.controls.recommendationsEnabled.value;
+    const m = this.model();
+    user.settings.recommendationsEnabled = m.recommendationsEnabled;
 
-    //Update rep settings
-    this.user()!.settings.repSettings.forEach((value: UserMinMaxReps) => {
-      if (this.userSettingsForm !== undefined) { //Needed to keep the linter happy, despite the above check
-        const formGroup = this.userSettingsForm.controls.repSettings?.controls.find((group: FormGroup<IRepSettingsForm>) =>
-          group.controls.repSettingsId.value == value.id
-        );
+    //OFF: the flag alone matters — leave the loaded rep settings untouched (mirrors the old
+    //removeControl behavior on persist, minus the per-entry "error retrieving" alert).
+    if (!m.recommendationsEnabled) return;
 
-        if (!formGroup) { //This should never happen
-          window.alert('Error retrieving rep settings values to save. Please contact the system administrator.');
-          return;
-        }
+    //ON: rebuild from the model, preserving any other DTO fields on matched (persisted) entries.
+    user.settings.repSettings = m.repSettings.map((set: IUserRepSettingsModel): UserMinMaxReps => {
+      const existing = set.repSettingsId !== 0
+        ? user.settings.repSettings.find((value: UserMinMaxReps) => value.id === set.repSettingsId)
+        : undefined;
 
-        value.duration = formGroup.controls.duration.value;
-        value.minReps = formGroup.controls.minReps.value;
-        value.maxReps = formGroup.controls.maxReps.value;
-      }
+      return {
+        ...(existing ?? {} as UserMinMaxReps),
+        id: set.repSettingsId,
+        setType: set.setType,
+        duration: set.duration,
+        minReps: set.minReps,
+        maxReps: set.maxReps
+      };
     });
   }
 }

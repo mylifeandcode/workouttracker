@@ -1,8 +1,8 @@
 <h3 class="headroom">User Settings</h3>
 <div class="container-fluid">
   <h4>Settings</h4>
-  @if (userSettingsLoaded() && userSettingsForm) {
-    <form [formGroup]="userSettingsForm" novalidate>
+  @if (userSettingsLoaded()) {
+    <form novalidate>
       <div class="row">
         <div class="col-4">
           Use Suggestion Engine<br />
@@ -10,27 +10,27 @@
           <span class="headroom"><small><strong>IMPORTANT: </strong>By enabling suggestions, you acknowledge suggestions are followed at your own risk.</small></span>
         </div>
         <div class="col-4">
-          <nz-switch formControlName="recommendationsEnabled" id="useRecommendationEngine" (ngModelChange)="recommendationEngineToggled()" class="align-middle" />
+          <nz-switch [formField]="userSettingsForm.recommendationsEnabled" id="useRecommendationEngine" class="align-middle" />
         </div>
       </div>
-      @if (userSettingsForm.controls.recommendationsEnabled.value) {
+      @if (userSettingsForm.recommendationsEnabled().value()) {
         <div class="row">
           <div class="col-12">
             <h5 class="headroom">Suggestion Settings</h5>
-            @for (settings of userSettingsForm.controls.repSettings?.controls; track $index) {
-              <wt-user-rep-settings [repSettingsFormGroup]="settings"></wt-user-rep-settings>
+            @for (setField of userSettingsForm.repSettings; track $index) {
+              <wt-user-rep-settings [field]="setField"></wt-user-rep-settings>
             }
           </div>
         </div>
       }
       <div class="row">
         <div class="col-4">
-          @if (userSettingsForm.invalid) {
-            <span class="error-text">Please enter the information required above to save settings.</span>  
+          @if (userSettingsForm().invalid()) {
+            <span class="error-text">Please enter the information required above to save settings.</span>
           }
         </div>
         <div class="col-4">
-          <button class="btn btn-save-settings" [disabled]="userSettingsForm.pristine || userSettingsForm.invalid || saving()" (click)="saveSettings()">Save Settings</button>
+          <button type="button" class="btn btn-save-settings" [disabled]="!userSettingsForm().dirty() || userSettingsForm().invalid() || saving()" (click)="saveSettings()">Save Settings</button>
         </div>
       </div>
     </form>

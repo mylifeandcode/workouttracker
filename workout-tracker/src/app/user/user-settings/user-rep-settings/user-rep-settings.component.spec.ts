@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
-import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
+import { form, FieldTree } from '@angular/forms/signals';
 
-import { IRepSettingsForm, UserRepSettingsComponent } from './user-rep-settings.component';
+import { IUserRepSettingsModel, UserRepSettingsComponent } from './user-rep-settings.component';
 
 describe('UserRepSettingsComponent', () => {
   let component: UserRepSettingsComponent;
@@ -10,7 +10,7 @@ describe('UserRepSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, UserRepSettingsComponent],
+      imports: [UserRepSettingsComponent],
       providers: [
         provideZonelessChangeDetection()
       ]
@@ -20,14 +20,15 @@ describe('UserRepSettingsComponent', () => {
     fixture = TestBed.createComponent(UserRepSettingsComponent);
     component = fixture.componentInstance;
 
-    const formBuilder = new FormBuilder();
-    fixture.componentRef.setInput('repSettingsFormGroup', formBuilder.group<IRepSettingsForm>({
-      repSettingsId: new FormControl<number>(1, { nonNullable: true }),
-      setType: new FormControl<number>(1, { nonNullable: true }),
-      duration: new FormControl<number | null>(null),
-      minReps: new FormControl<number>(6, { nonNullable: true }),
-      maxReps: new FormControl<number>(10, { nonNullable: true })
-    }));
+    const model = signal<IUserRepSettingsModel>({
+      repSettingsId: 1,
+      setType: 1,
+      duration: null,
+      minReps: 6,
+      maxReps: 10
+    });
+    const field: FieldTree<IUserRepSettingsModel> = TestBed.runInInjectionContext(() => form(model));
+    fixture.componentRef.setInput('field', field);
 
     fixture.detectChanges();
   });

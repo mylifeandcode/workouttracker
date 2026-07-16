@@ -4,7 +4,6 @@ import { ExerciseService } from '../_services/exercise.service';
 import { of } from 'rxjs';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ExerciseDTO, PaginatedResultsOfExerciseDTO, TargetArea } from '../../api';
 import { type Mocked } from 'vitest';
 
@@ -28,8 +27,7 @@ describe('ExerciseListMiniComponent', () => {
         provideZonelessChangeDetection()
       ],
       imports: [
-        ExerciseListMiniComponent,
-        NoopAnimationsModule
+        ExerciseListMiniComponent
       ]
     })
       .overrideComponent(ExerciseListMiniComponent, {

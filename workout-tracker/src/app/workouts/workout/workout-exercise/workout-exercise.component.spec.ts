@@ -96,14 +96,14 @@ describe('WorkoutExerciseComponent', () => {
 
   it('should emit event when selecting resistance bands', () => {
     vi.spyOn(component.resistanceBandsSelect, 'emit');
-    const setField = component.setsField[0];
+    const setField = exerciseField.exerciseSets[0];
     component.selectResistanceBands(setField);
     expect(component.resistanceBandsSelect.emit).toHaveBeenCalledWith(setField);
   });
 
   it('should emit event to show timer', () => {
     vi.spyOn(component.showTimerRequest, 'emit');
-    const setField = component.setsField[0];
+    const setField = exerciseField.exerciseSets[0];
     component.showTimer(setField);
     expect(component.showTimerRequest.emit).toHaveBeenCalledWith(setField);
   });
@@ -116,7 +116,7 @@ describe('WorkoutExerciseComponent', () => {
 
   it('should emit an event to edit duration', () => {
     vi.spyOn(component.durationEdit, 'emit');
-    const durationField = component.setsField[0].duration;
+    const durationField = exerciseField.exerciseSets[0].duration;
     component.editDuration(durationField);
     expect(component.durationEdit.emit).toHaveBeenCalledWith(durationField);
   });
@@ -128,7 +128,7 @@ describe('WorkoutExerciseComponent', () => {
     const changedResistanceMakeup = "Silver";
     const changedTargetReps = 500;
 
-    const sets = component.setsField;
+    const sets = exerciseField.exerciseSets;
 
     //ACT
     sets[0].duration().value.set(changedDuration);

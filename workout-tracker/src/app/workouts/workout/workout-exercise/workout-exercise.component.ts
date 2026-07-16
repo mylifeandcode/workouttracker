@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { ResistanceType, SetType } from '../../../api';
 import { NgStyle } from '@angular/common';
@@ -52,12 +52,9 @@ export class WorkoutExerciseComponent {
   public setTypeEnum: typeof SetType = SetType;
   public resistanceTypeEnum: typeof ResistanceType = ResistanceType;
 
-  //Properties
-  get setsField(): FieldTree<IWorkoutFormExerciseSet[]> { //TODO: Consider refactoring. This is a property, but functionally the same as a method -- not good for using in template expressions!
-    //This property provides an easier way for the template to access this information,
-    //and is used by the component code as a short-hand reference to the sets field array.
-    return this.field().exerciseSets;
-  }
+  //The Sets field array for this Exercise, as a memoized signal — a short-hand for the template
+  //(and component code) that avoids calling a getter/method on every change-detection cycle.
+  protected readonly sets = computed(() => this.field().exerciseSets);
 
   public selectResistanceBands(setField: FieldTree<IWorkoutFormExerciseSet>): void {
     this.resistanceBandsSelect.emit(setField);
@@ -91,7 +88,7 @@ export class WorkoutExerciseComponent {
   */
 
   public applySetChangesToAll(): void {
-    const sets = this.field().exerciseSets;
+    const sets = this.sets();
     if (sets.length > 1) {
       const source = sets[0]().value();
 
