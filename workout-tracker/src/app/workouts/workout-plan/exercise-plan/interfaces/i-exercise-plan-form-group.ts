@@ -1,27 +1,30 @@
-import { FormControl } from "@angular/forms";
+import { ResistanceType, SetType } from "../../../../api";
 
-export interface IExercisePlanFormGroup {
-  exerciseInWorkoutId: FormControl<number>; 
-  exerciseId: FormControl<number>; 
-  exerciseName: FormControl<string>; 
-  numberOfSets: FormControl<number>;  
-  setType: FormControl<number>; 
-  resistanceType: FormControl<number>;  
-  sequence: FormControl<number>;  
-  targetRepCountLastTime: FormControl<number | null>; 
-  avgActualRepCountLastTime: FormControl<number | null>; 
-  avgRangeOfMotionLastTime: FormControl<number | null>; 
-  avgFormLastTime: FormControl<number | null>; 
-  recommendedTargetRepCount: FormControl<number | null>;  
-  targetRepCount: FormControl<number | null>;  
-  resistanceAmountLastTime: FormControl<number | null>; 
-  resistanceMakeupLastTime: FormControl<string | null>; 
-  recommendedResistanceAmount: FormControl<number | null>; 
-  recommendedResistanceMakeup: FormControl<string | null>; 
-  resistanceAmount: FormControl<number>; 
-  resistanceMakeup: FormControl<string | null>; 
-  bandsEndToEnd: FormControl<boolean | null>; 
-  involvesReps: FormControl<boolean>; 
-  usesBilateralResistance: FormControl<boolean>;
-  recommendationReason: FormControl<string | null>; 
+//Data-shaped model for a single exercise's plan row, used as part of the Signal Forms model.
+//setType/resistanceType are read-only here (display/branching only), so they carry the concrete
+//DTO enum types. The many "last time"/"recommended" fields are display-only.
+export interface IExercisePlanModel {
+  exerciseInWorkoutId: number;
+  exerciseId: number;
+  exerciseName: string;
+  numberOfSets: number;
+  setType: SetType;
+  resistanceType: ResistanceType;
+  sequence: number;
+  targetRepCountLastTime: number | null;
+  avgActualRepCountLastTime: number | null;
+  avgRangeOfMotionLastTime: number | null;
+  avgFormLastTime: number | null;
+  recommendedTargetRepCount: number | null;
+  targetRepCount: number | null;
+  resistanceAmountLastTime: number | null;
+  resistanceMakeupLastTime: string | null;
+  recommendedResistanceAmount: number | null;
+  recommendedResistanceMakeup: string | null;
+  resistanceAmount: number;
+  resistanceMakeup: string | null;
+  bandsEndToEnd: boolean | null;
+  involvesReps: boolean;
+  usesBilateralResistance: boolean;
+  recommendationReason: string | null;
 }

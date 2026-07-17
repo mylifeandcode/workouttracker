@@ -1,34 +1,32 @@
-@if (formGroup()) {
-  <div [formGroup]="formGroup()">
-    
-      <div class="row exercise-name">
-        <div class="col-12">
-          <h5 class="exercise-header-row">{{formGroup().controls.exerciseName.value}}</h5>
-          <h6 class="exercise-header-row">Resistance Type: {{ formGroup().controls.resistanceType.value | resistanceType }}</h6>
-        </div>
+<div>
+
+    <div class="row exercise-name">
+      <div class="col-12">
+        <h5 class="exercise-header-row">{{field().exerciseName().value()}}</h5>
+        <h6 class="exercise-header-row">Resistance Type: {{ field().resistanceType().value() | resistanceType }}</h6>
       </div>
-  
-      <div class="row">
-  
-        <div class="col-12 col-md-4 full-height">
-          <wt-exercise-plan-last-time [formGroup]="formGroup()"></wt-exercise-plan-last-time>
-        </div>
-  
-        @if (formGroup().controls.recommendationReason.value) {
-          <div class="col-12 col-md-4 full-height">
-            <wt-exercise-plan-suggestions [formGroup]="formGroup()"></wt-exercise-plan-suggestions>
-          </div>
-        }
-  
-        <div class="col-12 col-md-4 full-height">
-          <wt-exercise-plan-next-time 
-            [formGroup]="formGroup()" 
-            [workoutHasBeenExecutedBefore]="workoutHasBeenExecutedBefore()"
-            (resistanceBandsModalRequested)="selectResistanceBands($event)">
-          </wt-exercise-plan-next-time>
-        </div>
-  
+    </div>
+
+    <div class="row">
+
+      <div class="col-12 col-md-4 full-height">
+        <wt-exercise-plan-last-time [field]="field()"></wt-exercise-plan-last-time>
       </div>
-  
-  </div>
-}
+
+      @if (field().recommendationReason().value()) {
+        <div class="col-12 col-md-4 full-height">
+          <wt-exercise-plan-suggestions [field]="field()"></wt-exercise-plan-suggestions>
+        </div>
+      }
+
+      <div class="col-12 col-md-4 full-height">
+        <wt-exercise-plan-next-time
+          [field]="field()"
+          [workoutHasBeenExecutedBefore]="workoutHasBeenExecutedBefore()"
+          (resistanceBandsModalRequested)="selectResistanceBands($event)">
+        </wt-exercise-plan-next-time>
+      </div>
+
+    </div>
+
+</div>

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
-import { FormGroup } from '@angular/forms';
+import { FieldTree } from '@angular/forms/signals';
+import { IExercisePlanModel } from '../interfaces/i-exercise-plan-form-group';
 import { ResistanceBandColorPipe } from '../../../../shared/pipes/resistance-band-color.pipe';
 import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';
 import { SentencesToTagsPipe } from '../../../../shared/pipes/sentences-to-tags.pipe';
@@ -14,14 +14,13 @@ import { SentencesToTagsPipe } from '../../../../shared/pipes/sentences-to-tags.
 })
 export class ExercisePlanSuggestionsComponent {
 
-  readonly formGroup = input.required<FormGroup<IExercisePlanFormGroup>>();
+  readonly field = input.required<FieldTree<IExercisePlanModel>>();
 
   public useSuggestions(): void {
-    this.formGroup().patchValue({
-      resistanceAmount: this.formGroup().controls.recommendedResistanceAmount.value ?? 0, 
-      resistanceMakeup: this.formGroup().controls.recommendedResistanceMakeup.value, 
-      targetRepCount: this.formGroup().controls.recommendedTargetRepCount.value ?? 0
-    }); 
+    const f = this.field();
+    f.resistanceAmount().value.set(f.recommendedResistanceAmount().value() ?? 0);
+    f.resistanceMakeup().value.set(f.recommendedResistanceMakeup().value());
+    f.targetRepCount().value.set(f.recommendedTargetRepCount().value() ?? 0);
   }
 
 }

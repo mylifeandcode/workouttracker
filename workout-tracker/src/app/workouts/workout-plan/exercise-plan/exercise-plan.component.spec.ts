@@ -1,61 +1,36 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { IExercisePlanFormGroup } from './interfaces/i-exercise-plan-form-group';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection, signal } from '@angular/core';
+import { form, FieldTree } from '@angular/forms/signals';
+import { IExercisePlanModel } from './interfaces/i-exercise-plan-form-group';
 
 import { ExercisePlanComponent } from './exercise-plan.component';
 import { ResistanceTypePipe } from '../../_pipes/resistance-type.pipe';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { getExercisePlanModel } from './exercise-plan-model.mock';
 
 describe('ExercisePlanComponent', () => {
   let component: ExercisePlanComponent;
   let fixture: ComponentFixture<ExercisePlanComponent>;
+  let field: FieldTree<IExercisePlanModel>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        ReactiveFormsModule, 
         ExercisePlanComponent,
-        ResistanceTypePipe //TODO: Replace with mock 
+        ResistanceTypePipe //TODO: Replace with mock
       ],
       providers: [
         provideZonelessChangeDetection()
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ExercisePlanComponent);
     component = fixture.componentInstance;
-    const formBuilder = new FormBuilder();
-    fixture.componentRef.setInput('formGroup', formBuilder.group<IExercisePlanFormGroup>({
-      exerciseInWorkoutId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
-      exerciseId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }), 
-      exerciseName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-      numberOfSets: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
-      setType: new FormControl<number>(1, { nonNullable: true, validators: Validators.required }),
-      resistanceType: new FormControl<number>(1, { nonNullable: true, validators: Validators.required }),
-      sequence: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
-      targetRepCountLastTime: new FormControl<number | null>(0), 
-      avgActualRepCountLastTime: new FormControl<number | null>(0),
-      avgRangeOfMotionLastTime: new FormControl<number | null>(0), 
-      avgFormLastTime: new FormControl<number | null>(0), 
-      recommendedTargetRepCount: new FormControl<number | null>(0), 
-      targetRepCount: new FormControl<number | null>(0, { validators: Validators.min(1) }),
-      resistanceAmountLastTime: new FormControl<number | null>(0), 
-      resistanceMakeupLastTime: new FormControl<string | null>(null), 
-      recommendedResistanceAmount: new FormControl<number | null>(0),
-      recommendedResistanceMakeup: new FormControl<string | null>(null), 
-      resistanceAmount: new FormControl<number>(0, { nonNullable: true, validators: (Validators.min(0.1))} ), 
-      resistanceMakeup: new FormControl<string | null>(null), 
-      bandsEndToEnd: new FormControl<boolean | null>(null), 
-      involvesReps: new FormControl<boolean>(true, { nonNullable: true }),
-      recommendationReason: new FormControl<string | null>(null),
-      usesBilateralResistance: new FormControl<boolean>(false, { nonNullable: true })
-    }));
-
+    field = TestBed.runInInjectionContext(() => form(signal(getExercisePlanModel())));
+    fixture.componentRef.setInput('field', field);
     fixture.detectChanges();
   });
 
@@ -63,23 +38,15 @@ describe('ExercisePlanComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should apply last resistance values when user chooses to', () => {
-
+  it('should re-emit the resistance-bands modal request', () => {
     //ARRANGE
-    component.formGroup().patchValue({
-      resistanceAmountLastTime: 50, 
-      resistanceMakeupLastTime: 'Mauve, Tiel', 
-      resistanceAmount: 0, 
-      resistanceMakeup: ''
-    });
+    vi.spyOn(component.resistanceBandsModalRequested, 'emit');
 
     //ACT
-    component.useSameResistanceAsLastTime();
+    component.selectResistanceBands(field);
 
     //ASSERT
-    expect(component.formGroup().controls.resistanceAmount.value).toBe(50);
-    expect(component.formGroup().controls.resistanceMakeup.value).toBe('Mauve, Tiel');
-
+    expect(component.resistanceBandsModalRequested.emit).toHaveBeenCalledWith(field);
   });
 
 });

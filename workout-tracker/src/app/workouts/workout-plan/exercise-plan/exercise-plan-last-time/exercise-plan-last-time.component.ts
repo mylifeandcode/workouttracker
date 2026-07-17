@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
+import { FieldTree } from '@angular/forms/signals';
+import { IExercisePlanModel } from '../interfaces/i-exercise-plan-form-group';
 import { ResistanceBandColorPipe } from '../../../../shared/pipes/resistance-band-color.pipe';
 import { RatingPipe } from '../../../_pipes/rating.pipe';
 import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';
@@ -13,6 +13,6 @@ import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';
     imports: [ResistanceBandColorPipe, RatingPipe, ResistanceAmountPipe]
 })
 export class ExercisePlanLastTimeComponent {
-  readonly formGroup = input.required<FormGroup<IExercisePlanFormGroup>>(); //HACK -- kind of. Initializes, but...not for real.
+  readonly field = input.required<FieldTree<IExercisePlanModel>>();
 
 }

@@ -12,9 +12,9 @@
     </div>
     <div class="half-area">
       <strong>
-        <span>{{formGroup().controls.resistanceType.value==3 ? 'Body Weight' : formGroup().controls.resistanceAmountLastTime.value | resistanceAmount:formGroup().controls.resistanceType.value==2}}</span>
-        @if (formGroup().controls.resistanceMakeupLastTime.value) {
-          <br />(<span [innerHTML]="formGroup().controls.resistanceMakeupLastTime.value | resistanceBandColor"></span>)
+        <span>{{field().resistanceType().value()==3 ? 'Body Weight' : field().resistanceAmountLastTime().value() | resistanceAmount:field().resistanceType().value()==2}}</span>
+        @if (field().resistanceMakeupLastTime().value()) {
+          <br />(<span [innerHTML]="field().resistanceMakeupLastTime().value() | resistanceBandColor"></span>)
         }
       </strong>
     </div>
@@ -26,8 +26,8 @@
     </div>
     <div class="half-area">
       <strong>
-        @if (formGroup().controls.involvesReps.value) {
-          <span>{{formGroup().controls.targetRepCountLastTime.value}}</span>
+        @if (field().involvesReps().value()) {
+          <span>{{field().targetRepCountLastTime().value()}}</span>
         } @else {
           <span>N/A</span>
         }
@@ -41,8 +41,8 @@
     </div>
     <div class="half-area">
       <strong>
-        @if (formGroup().controls.involvesReps.value) {
-          <span>{{formGroup().controls.avgActualRepCountLastTime.value}}</span>
+        @if (field().involvesReps().value()) {
+          <span>{{field().avgActualRepCountLastTime().value()}}</span>
         } @else {
           <span>N/A</span>
         }
@@ -57,7 +57,7 @@
 
     <div class="half-area">
       <strong>
-        <span>{{formGroup().controls.avgRangeOfMotionLastTime.value | rating}}</span>
+        <span>{{field().avgRangeOfMotionLastTime().value() | rating}}</span>
       </strong>
     </div>
   </div>
@@ -68,7 +68,7 @@
     </div>
     <div class="half-area">
       <strong>
-        <span>{{formGroup().controls.avgFormLastTime.value | rating}}</span>
+        <span>{{field().avgFormLastTime().value() | rating}}</span>
       </strong>
     </div>
   </div>

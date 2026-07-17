@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Output, input, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IExercisePlanFormGroup } from '../interfaces/i-exercise-plan-form-group';
+import { Component, input, output, computed, ChangeDetectionStrategy } from '@angular/core';
+import { FieldTree, FormField } from '@angular/forms/signals';
+import { IExercisePlanModel } from '../interfaces/i-exercise-plan-form-group';
 import { ResistanceType } from '../../../../api';
 import { SelectOnFocusDirective } from '../../../../shared/directives/select-on-focus.directive';
 import { ResistanceBandColorPipe } from '../../../../shared/pipes/resistance-band-color.pipe';
@@ -10,47 +10,42 @@ import { ResistanceAmountPipe } from '../../../_pipes/resistance-amount.pipe';
     selector: 'wt-exercise-plan-next-time',
     templateUrl: './exercise-plan-next-time.component.html',
     styleUrls: ['./exercise-plan-next-time.component.scss'],
-    //changeDetection: ChangeDetectionStrategy.OnPush, //Can't use this here due to resistance bands modal
-    changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective, ResistanceBandColorPipe, ResistanceAmountPipe]
+    //Signal-backed values keep the resistance-band modal edits in sync, so OnPush is safe here now
+    //(the reactive-forms version had to avoid it — the same stale-value issue fixed elsewhere).
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FormField, SelectOnFocusDirective, ResistanceBandColorPipe, ResistanceAmountPipe]
 })
 export class ExercisePlanNextTimeComponent {
 
-  readonly formGroup = input.required<FormGroup<IExercisePlanFormGroup>>(); //HACK -- kind of. Initializes, but...not for real.
+  readonly field = input.required<FieldTree<IExercisePlanModel>>();
 
   readonly workoutHasBeenExecutedBefore = input<boolean>(false);
 
   readonly planningAhead = input<boolean>(false);
 
-  @Output()
-  resistanceBandsModalRequested: EventEmitter<FormGroup<IExercisePlanFormGroup>>;
+  readonly resistanceBandsModalRequested = output<FieldTree<IExercisePlanModel>>();
 
-  //public resistanceTypeEnum: typeof ResistanceType = ResistanceType; //Needed for template to reference enum
-  readonly resistanceTypeEnum = ResistanceType; // Changed to readonly and direct assignment
+  readonly resistanceTypeEnum = ResistanceType; //Needed for template to reference enum
 
-  constructor() { 
-    this.resistanceBandsModalRequested = new EventEmitter<FormGroup<IExercisePlanFormGroup>>();
-  }
+  //The exercise row's FieldState, as a memoized signal — lets the template read row-level validity
+  //without a getter/method call each change-detection cycle.
+  protected readonly exerciseState = computed(() => this.field()());
 
-  public selectResistanceBands(formGroup: FormGroup<IExercisePlanFormGroup>): void {
-    this.resistanceBandsModalRequested.emit(formGroup);
+  public selectResistanceBands(): void {
+    this.resistanceBandsModalRequested.emit(this.field());
   }
 
   public useSameResistanceAsLastTime(): void {
-    
-    this.formGroup().patchValue({
-      resistanceAmount: this.formGroup().controls.resistanceAmountLastTime.value ?? 0, 
-      resistanceMakeup: this.formGroup().controls.resistanceMakeupLastTime.value
-    }); 
-
+    const f = this.field();
+    f.resistanceAmount().value.set(f.resistanceAmountLastTime().value() ?? 0);
+    f.resistanceMakeup().value.set(f.resistanceMakeupLastTime().value());
   }
 
   public useSuggestions(): void {
-    this.formGroup().patchValue({
-      resistanceAmount: this.formGroup().controls.recommendedResistanceAmount.value ?? 0, 
-      resistanceMakeup: this.formGroup().controls.recommendedResistanceMakeup.value, 
-      targetRepCount: this.formGroup().controls.recommendedTargetRepCount.value ?? 0
-    }); 
+    const f = this.field();
+    f.resistanceAmount().value.set(f.recommendedResistanceAmount().value() ?? 0);
+    f.resistanceMakeup().value.set(f.recommendedResistanceMakeup().value());
+    f.targetRepCount().value.set(f.recommendedTargetRepCount().value() ?? 0);
   }
 
 }
