@@ -1,36 +1,40 @@
-import { ChangeDetectionStrategy, Component, OnChanges, inject, input, output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
+import { form, FormField, required, min, max } from '@angular/forms/signals';
 import { SelectOnFocusDirective } from '../../../shared/directives/select-on-focus.directive';
 
-interface IDurationForm {
-  hours: FormControl<number>;
-  minutes: FormControl<number>;
-  seconds: FormControl<number>;
+interface IDurationModel {
+  hours: number;
+  minutes: number;
+  seconds: number;
 }
 
 @Component({
     selector: 'wt-duration',
     templateUrl: './duration.component.html',
     styleUrls: ['./duration.component.scss'],
-    imports: [FormsModule, ReactiveFormsModule, SelectOnFocusDirective],
+    imports: [FormField, SelectOnFocusDirective],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DurationComponent implements OnChanges {
-private _formBuilder = inject(FormBuilder);
+export class DurationComponent {
 
   readonly currentDuration = input<number>(0);
   readonly okClicked = output<number>();
   readonly cancelClicked = output<void>();
 
-  public form: FormGroup<IDurationForm>;
+  //Model is derived from the currentDuration input but user-editable: linkedSignal recomputes
+  //(resetting the fields) whenever currentDuration changes, replacing the old ngOnChanges patch.
+  protected readonly model = linkedSignal<IDurationModel>(() => this.splitSeconds(this.currentDuration()));
 
-  constructor() { 
-    this.form = this.setupFormGroup();
-  }
-
-  public ngOnChanges(): void {
-    this.setFormControlsFromDuration();
-  }
+  public readonly form = form(this.model, (p) => {
+    required(p.hours);
+    min(p.hours, 0);
+    required(p.minutes);
+    min(p.minutes, 0);
+    max(p.minutes, 59);
+    required(p.seconds);
+    min(p.seconds, 0);
+    max(p.seconds, 59);
+  });
 
   public ok(): void {
     this.okClicked.emit(this.getDurationInSeconds());
@@ -41,33 +45,17 @@ private _formBuilder = inject(FormBuilder);
     this.cancelClicked.emit();
   }
 
-  private setupFormGroup(): FormGroup<IDurationForm> {
-    return this._formBuilder.group<IDurationForm>({
-      hours: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
-      minutes: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
-      seconds: new FormControl<number>(0, { nonNullable: true, validators: Validators.required })
-    });
+  private splitSeconds(totalSeconds: number): IDurationModel {
+    const hours = Math.floor(totalSeconds / 3600);
+    const remainingSeconds = totalSeconds - (hours * 3600);
+    const minutes = Math.floor(remainingSeconds / 60);
+    const seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+
+    return { hours, minutes, seconds };
   }
 
   private getDurationInSeconds(): number {
-    return this.form.controls.hours.value * 3600
-      + this.form.controls.minutes.value * 60
-      + this.form.controls.seconds.value;
-  }
-
-  private setFormControlsFromDuration(): void {
-    if(!this.form)
-      this.setupFormGroup();
-
-    const hoursDuration = Math.floor(this.currentDuration() / 3600);
-    const remainingSeconds = this.currentDuration() - (hoursDuration * 3600);
-    const minutesDuration = Math.floor(remainingSeconds / 60);
-    const secondsDuration = this.currentDuration() - (hoursDuration * 3600) - (minutesDuration * 60);
-
-    this.form.patchValue({
-      hours: hoursDuration,
-      minutes: minutesDuration,
-      seconds: secondsDuration
-    });
+    const m = this.model();
+    return m.hours * 3600 + m.minutes * 60 + m.seconds;
   }
 }

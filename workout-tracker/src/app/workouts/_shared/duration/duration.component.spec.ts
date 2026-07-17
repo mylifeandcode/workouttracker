@@ -1,6 +1,5 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 import { DurationComponent } from './duration.component';
 
@@ -10,8 +9,8 @@ describe('DurationComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ReactiveFormsModule, DurationComponent],
-            providers: [FormBuilder, provideZonelessChangeDetection()]
+            imports: [DurationComponent],
+            providers: [provideZonelessChangeDetection()]
         })
             .compileComponents();
     });
@@ -26,39 +25,49 @@ describe('DurationComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should convert current duration to hours, minutes, and seconds', () => {
-        //TODO: Find a better approach to this
-
-        //ARRANGE
-        fixture.componentRef.setInput('currentDuration', 3805); //When set programmatically, does not trigger ngOnChanges()
-        // We'll use this to call ngOnChanges(), but since the change lifecycle isn't occurring,
-        // the line above is still needed. Yeah, this is kinda kludgey.
-        //const change = new SimpleChange(0, 3805, true);
-
-        //ACT
-        //fixture.detectChanges(); 
-        //NOPE! This won't pick up that we've changed currentDuration programmatically.
-        //We could create a host component, but that's overkill for this scenario.
-        component.ngOnChanges();
+    it('should convert current duration to hours, minutes, and seconds', async () => {
+        //ARRANGE / ACT
+        //The model is a linkedSignal off currentDuration, so setting the input resets the fields.
+        fixture.componentRef.setInput('currentDuration', 3805);
+        fixture.detectChanges();
+        await fixture.whenStable();
 
         //ASSERT
-        expect(component.form.controls.hours.value).toBe(1);
-        expect(component.form.controls.minutes.value).toBe(3);
-        expect(component.form.controls.seconds.value).toBe(25);
+        expect(component.form.hours().value()).toBe(1);
+        expect(component.form.minutes().value()).toBe(3);
+        expect(component.form.seconds().value()).toBe(25);
     });
 
     it('should emit hours, minutes, and seconds converted to total seconds on OK', () => {
         //ARRANGE
         vi.spyOn(component.okClicked, 'emit');
-        component.form.controls.hours.setValue(1);
-        component.form.controls.minutes.setValue(3);
-        component.form.controls.seconds.setValue(25);
+        component.form.hours().value.set(1);
+        component.form.minutes().value.set(3);
+        component.form.seconds().value.set(25);
 
         //ACT
         component.ok();
 
         //ASSERT
         expect(component.okClicked.emit).toHaveBeenCalledWith(3805);
+    });
+
+    it('should be invalid when minutes exceed 59', () => {
+        //ARRANGE — start from a valid state (hours/minutes/seconds all 0)
+        expect(component.form().invalid()).toBe(false);
+
+        //ACT / ASSERT — minutes over 59
+        component.form.minutes().value.set(60);
+        expect(component.form().invalid()).toBe(true);
+    });
+
+    it('should be invalid when seconds exceed 59', () => {
+        //ARRANGE — start from a valid state (hours/minutes/seconds all 0)
+        expect(component.form().invalid()).toBe(false);
+
+        //ACT / ASSERT — seconds over 59
+        component.form.seconds().value.set(60);
+        expect(component.form().invalid()).toBe(true);
     });
 
     it('should emit cancel event when cancelling', () => {
