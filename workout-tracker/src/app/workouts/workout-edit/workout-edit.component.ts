@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Validators, FormControl, FormGroup, FormArray, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { form, FormField, required, min, readonly, applyEach } from '@angular/forms/signals';
+import { FormsModule } from '@angular/forms';
 import { WorkoutService } from '../_services/workout.service';
 import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
@@ -12,22 +13,22 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
 import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ExerciseDTO, ExerciseInWorkout, Workout } from '../../api';
+import { ExerciseDTO, ExerciseInWorkout, SetType, Workout } from '../../api';
 
-interface IExerciseInWorkout {
-  id: FormControl<number>;
-  exerciseId: FormControl<number>;
-  exerciseName: FormControl<string>;
-  numberOfSets: FormControl<number>;
-  setType: FormControl<number>;
+interface IExerciseInWorkoutModel {
+  id: number;
+  exerciseId: number;
+  exerciseName: string;
+  numberOfSets: number;
+  setType: string; //'0'|'1' — native <select> value; converted to the numeric SetType at persist
 }
 
-interface IWorkoutEditForm {
-  id: FormControl<number>;
-  publicId: FormControl<string>; //Will be EMPTY_GUID for a new Workout
-  active: FormControl<boolean>;
-  name: FormControl<string>;
-  exercises: FormArray<FormGroup<IExerciseInWorkout>>;
+interface IWorkoutEditModel {
+  id: number;
+  publicId: string; //Will be EMPTY_GUID for a new Workout
+  active: boolean;
+  name: string;
+  exercises: IExerciseInWorkoutModel[];
 }
 
 @Component({
@@ -35,19 +36,18 @@ interface IWorkoutEditForm {
   templateUrl: './workout-edit.component.html',
   styleUrls: ['./workout-edit.component.scss'],
   imports: [
-    NzSpinModule, FormsModule, ReactiveFormsModule, NgClass,
+    NzSpinModule, FormsModule, FormField, NgClass,
     SelectOnFocusDirective, NzSwitchModule, NzModalModule, ExerciseListMiniComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutEditComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);
-  private _formBuilder = inject(FormBuilder);
   private _workoutService = inject(WorkoutService);
   private _router = inject(Router);
 
   // Constants
-  private static readonly DEFAULT_SET_TYPE = 0;
+  private static readonly DEFAULT_SET_TYPE = '0';
   private static readonly DEFAULT_NUMBER_OF_SETS = 0;
   private static readonly MIN_SETS = 1;
 
@@ -57,7 +57,20 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   public id = input<string | undefined>(undefined);
 
   //PUBLIC FIELDS
-  public workoutForm: FormGroup<IWorkoutEditForm>;
+  protected readonly model = signal<IWorkoutEditModel>(this.buildEmptyModel());
+  public readonly workoutForm = form(this.model, (p) => {
+    required(p.id);
+    required(p.publicId);
+    required(p.name);
+    applyEach(p.exercises, (ex) => {
+      required(ex.exerciseName);
+      readonly(ex.exerciseName); //Name is chosen via the exercise-select modal, never typed
+      required(ex.numberOfSets);
+      min(ex.numberOfSets, WorkoutEditComponent.MIN_SETS);
+      required(ex.setType);
+    });
+  });
+
   public loading = signal<boolean>(true);
   public infoMsg = signal<string | null>(null);
   public showExerciseSelectModal = signal<boolean>(false);
@@ -71,14 +84,8 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   //PRIVATE FIELDS
   private _workout: Workout = <Workout>{};
 
-  //PROPERTIES
-  get exercisesArray(): FormArray<FormGroup<IExerciseInWorkout>> {
-    return this.workoutForm.controls.exercises;
-  }
-
   constructor() {
     super();
-    this.workoutForm = this.createForm();
   }
 
   public ngOnInit(): void {
@@ -87,7 +94,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     if (!this.fromViewRoute()) {
       this.editEnabled.set(true);
     }
-      
+
     this.setupForm();
   }
 
@@ -100,37 +107,44 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
   }
 
   public hasUnsavedData(): boolean {
-    return this.workoutForm.dirty;
+    return this.workoutForm().dirty();
   }
 
   public addExercise(exercise: ExerciseDTO): void {
-    this.exercisesArray.push(this.createExerciseFormGroup(0, exercise.id, exercise.name));
+    this.model.update(m => ({
+      ...m,
+      exercises: [...m.exercises, this.createExerciseModel(0, exercise.id, exercise.name)]
+    }));
   }
 
   public removeExercise(index: number): void {
     //Called by button click in template
-    this.exercisesArray.removeAt(index);
+    this.model.update(m => ({
+      ...m,
+      exercises: m.exercises.filter((_, i) => i !== index)
+    }));
   }
 
   public moveExerciseUp(index: number): void {
     //Called by button click in template
-    const exerciseControl: FormGroup<IExerciseInWorkout> = this.exercisesArray.at(index);
-    this.exercisesArray.removeAt(index);
-    this.exercisesArray.insert((index - 1), exerciseControl);
-    //this.exercisesArray[index - 1].controls.sequnce
+    if (index <= 0) return;
+    this.swapExercises(index, index - 1);
   }
 
   public moveExerciseDown(index: number): void {
     //Called by button click in template
-    const exerciseControl: FormGroup<IExerciseInWorkout> = this.exercisesArray.at(index);
-    this.exercisesArray.removeAt(index);
-    this.exercisesArray.insert((index + 1), exerciseControl);
+    this.model.update(m => {
+      if (index >= m.exercises.length - 1) return m;
+      const exercises = [...m.exercises];
+      [exercises[index], exercises[index + 1]] = [exercises[index + 1], exercises[index]];
+      return { ...m, exercises };
+    });
   }
 
   public saveWorkout(): void {
     //Called by Save button
 
-    if (!this.workoutForm.invalid) {
+    if (!this.workoutForm().invalid()) {
       this.updateWorkoutFromFormValues();
 
       this.saving.set(true);
@@ -152,7 +166,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
         }
       });
     }*/
-      
+
   }
 
   //PRIVATE METHODS ///////////////////////////////////////////////////////////////////////////////
@@ -168,16 +182,14 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     }
   }
 
-  private createForm(): FormGroup<IWorkoutEditForm> {
-
-    return this._formBuilder.group<IWorkoutEditForm>({
-      id: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
-      publicId: new FormControl<string>(EMPTY_GUID, { nonNullable: true, validators: Validators.required }),
-      active: new FormControl<boolean>(true, { nonNullable: true, validators: Validators.required }),
-      name: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-      exercises: new FormArray<FormGroup<IExerciseInWorkout>>([])
-    });
-
+  private buildEmptyModel(): IWorkoutEditModel {
+    return {
+      id: 0,
+      publicId: EMPTY_GUID,
+      active: true,
+      name: '',
+      exercises: []
+    };
   }
 
   private loadWorkout(): void {
@@ -189,7 +201,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
         next: (workout: Workout) => {
-          this.updateFormWithWorkoutValues(workout);
+          this.model.set(this.buildModel(workout));
           this._workout = workout;
         },
         error: (error: HttpErrorResponse) => {
@@ -198,27 +210,22 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       });
   }
 
-  private updateFormWithWorkoutValues(workout: Workout): void {
-    this.workoutForm.patchValue({
+  private buildModel(workout: Workout): IWorkoutEditModel {
+    return {
       id: workout.id,
-      publicId: workout.publicId ?? undefined,
+      publicId: workout.publicId ?? EMPTY_GUID,
       active: workout.active,
-      name: workout.name
-    });
-
-    workout.exercises.forEach(exerciseInWorkout => {
-      if (exerciseInWorkout && exerciseInWorkout?.exercise?.name) {
-        this.exercisesArray.push(
-          this.createExerciseFormGroup(
-            exerciseInWorkout.id,
-            exerciseInWorkout.exerciseId,
-            exerciseInWorkout?.exercise?.name,
-            exerciseInWorkout.setType,
-            exerciseInWorkout.numberOfSets
-          )
-        );
-      }
-    });
+      name: workout.name ?? '',
+      exercises: (workout.exercises ?? [])
+        .filter(exerciseInWorkout => exerciseInWorkout?.exercise?.name)
+        .map(exerciseInWorkout => this.createExerciseModel(
+          exerciseInWorkout.id,
+          exerciseInWorkout.exerciseId,
+          exerciseInWorkout.exercise!.name,
+          String(exerciseInWorkout.setType),
+          exerciseInWorkout.numberOfSets
+        ))
+    };
   }
 
   private addWorkout(): void {
@@ -226,14 +233,10 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     this._workoutService.add(this._workout)
       .pipe(finalize(() => {
         this.saving.set(false);
-        this.workoutForm.markAsPristine();
+        this.workoutForm().reset();
       }))
       .subscribe({
         next: (addedWorkout: Workout) => {
-          //this.workout = value;
-          //this.workoutId = addedWorkout.publicId ?? undefined; //Should NEVER be undefined
-          //this._workout = addedWorkout; //TODO: Refactor! We have redundant variables!
-          //this.infoMsg = "Workout created at " + new Date().toLocaleTimeString();
           this._router.navigate([`workouts/edit/${addedWorkout.publicId}`]);
         },
         error: (error: HttpErrorResponse) => {
@@ -247,7 +250,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     this._workoutService.update(this._workout)
       .pipe(finalize(() => {
         this.saving.set(false);
-        this.workoutForm.markAsPristine();
+        this.workoutForm().reset();
       }))
       .subscribe({
         next: () => {
@@ -262,58 +265,48 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
 
   }
 
-  private createExerciseFormGroup(
+  private createExerciseModel(
     exerciseInWorkoutId: number,
     exerciseId: number,
     exerciseName: string,
-    setType: number = WorkoutEditComponent.DEFAULT_SET_TYPE,
-    numberOfSets: number = WorkoutEditComponent.DEFAULT_NUMBER_OF_SETS): FormGroup<IExerciseInWorkout> {
+    setType: string = WorkoutEditComponent.DEFAULT_SET_TYPE,
+    numberOfSets: number = WorkoutEditComponent.DEFAULT_NUMBER_OF_SETS): IExerciseInWorkoutModel {
 
-    return this._formBuilder.group<IExerciseInWorkout>({
-      id: new FormControl<number>(exerciseInWorkoutId, { nonNullable: true }),
-      exerciseId: new FormControl<number>(exerciseId, { nonNullable: true }),
+    return {
+      id: exerciseInWorkoutId,
+      exerciseId,
+      exerciseName,
+      numberOfSets,
+      setType
+    };
+  }
 
-      exerciseName: new FormControl<string>(
-        exerciseName, { nonNullable: true, validators: Validators.compose([Validators.required]) }),
-
-      numberOfSets: new FormControl<number>(
-        numberOfSets, {
-        nonNullable: true,
-        validators: Validators.compose([Validators.required, Validators.min(WorkoutEditComponent.MIN_SETS)])
-      }),
-
-      setType: new FormControl<number>(setType, { nonNullable: true, validators: Validators.compose([Validators.required]) })
+  private swapExercises(a: number, b: number): void {
+    this.model.update(m => {
+      const exercises = [...m.exercises];
+      [exercises[a], exercises[b]] = [exercises[b], exercises[a]];
+      return { ...m, exercises };
     });
   }
 
   private updateWorkoutFromFormValues(): void {
-    if (this.workoutForm) {
-      this._workout.name = this.workoutForm.controls.name.value;
-      this._workout.exercises = this.getExercisesFromForm();
-    }
+    this._workout.name = this.model().name;
+    this._workout.exercises = this.getExercisesFromForm();
   }
 
   private getExercisesFromForm(): Array<ExerciseInWorkout> {
-    const output = new Array<ExerciseInWorkout>();
-    let index = 0;
-
-    for (const exerciseFormGroup of this.exercisesArray.controls) {
-      output.push(
-        <ExerciseInWorkout>{
-          id: exerciseFormGroup.controls.id.value,
-          createdByUserId: 0, //TODO: Update domain object. This value is never used had been defaulting to 0.
-          createdDateTime: new Date(), //TODO: Update domain object. This value is never used and had been defaulting to DateTime.Min.
-          exercise: null,
-          exerciseId: exerciseFormGroup.controls.exerciseId.value,
-          exerciseName: exerciseFormGroup.controls.exerciseName.value,
-          numberOfSets: exerciseFormGroup.controls.numberOfSets.value,
-          sequence: index,
-          setType: exerciseFormGroup.controls.setType.value
-        }
-      );
-      index++;
-    }
-
-    return output;
+    return this.model().exercises.map((exercise: IExerciseInWorkoutModel, index: number) => (
+      <ExerciseInWorkout>{
+        id: exercise.id,
+        createdByUserId: 0, //TODO: Update domain object. This value is never used had been defaulting to 0.
+        createdDateTime: new Date(), //TODO: Update domain object. This value is never used and had been defaulting to DateTime.Min.
+        exercise: null,
+        exerciseId: exercise.exerciseId,
+        exerciseName: exercise.exerciseName,
+        numberOfSets: exercise.numberOfSets,
+        sequence: index,
+        setType: Number(exercise.setType) as SetType
+      }
+    ));
   }
 }

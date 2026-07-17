@@ -11,114 +11,107 @@
         <nz-spin nzSize="large" />
       </div>
     </div>
-  } @else if (workoutForm) {
-    <form [formGroup]="workoutForm" novalidate>
-      <fieldset [disabled]="!editEnabled()">
-        <div class="row bottom-padded">
-          <div class="col-12">
-            <input type="hidden" formControlName="id" />
-            <input type="hidden" formControlName="publicId" />
-            <input type="hidden" formControlName="active" />
-  
-            <label for="workoutName" class="form-label">Name</label>
-            <input id="workoutName" 
-              class="form-control" 
-              [ngClass]="{'has-error': workoutForm.controls.name.touched && workoutForm.controls.name.errors}"
-              formControlName="name" placeholder="Workout Name (required)" 
-            />
-            @if (workoutForm.controls.name.touched && workoutForm.controls.name.errors) {
-              <span class="error-text">Required</span>
-            }
-          </div>
-        </div>
-  
-        <div class="row center-block bottom-padded">
-          <div class="col-2">
-            Exercises
-          </div>
-        </div>
-  
-        <div class="row">
-          <div class="col-6">Exercise Name</div>
-          <div class="col-2">Number of Sets</div>
-          <div class="col-2">Set Type</div>
-          @if (editEnabled()) {
-            <div class="col-2">Move/Delete</div>
+  } @else {
+    <fieldset [disabled]="!editEnabled()">
+      <div class="row bottom-padded">
+        <div class="col-12">
+          <label for="workoutName" class="form-label">Name</label>
+          <input id="workoutName"
+            class="form-control"
+            [ngClass]="{'has-error': workoutForm.name().touched() && workoutForm.name().invalid()}"
+            [formField]="workoutForm.name" placeholder="Workout Name (required)"
+          />
+          @if (workoutForm.name().touched() && workoutForm.name().invalid()) {
+            <span class="error-text">Required</span>
           }
         </div>
-  
-        <!--
-              Useful example code at:
-              https://jasonwatmore.com/post/2019/06/25/angular-8-dynamic-reactive-forms-example
-              -->
-  
-        <!-- TODO: Replace exercise edit code below with a child component -->
-        @for (exercise of exercisesArray.controls; track $index) {
-          <div class="row exerciseRow" [formGroup]="exercise">
-  
-            <div class="col-6">
-              <input type="hidden" formControlName="exerciseId" />
-              <input type="text" formControlName="exerciseName" [readonly]="true" class="exerciseName" required />
-            </div>
-            <div class="col-2">
-              # of sets: <input type="number" wtSelectOnFocus formControlName="numberOfSets" class="number-of-sets" />
-              @if (exercise.controls.numberOfSets.invalid) {
-                <span class="error-text"><br />Must be > 0</span>
-              }
-            </div>
-            <div class="col-2">
-              <select formControlName="setType">
-                <option value="0">Repetition</option>
-                <option value="1">Timed</option>
-              </select>
-              @if (exercise.controls.setType.invalid) {
-                <span class="error-text"><br />Required</span>
-              }
-            </div>
-            @if (editEnabled()) {
-              <div class="col-2">
-                <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp($index)" [disabled]="$index == 0">
-                  <i class="fa fa-arrow-up"></i>
-                </button>
-                <button class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseDown($index)"
-                  [disabled]="$index == (exercisesArray.controls.length - 1)">
-                  <i class="fa fa-arrow-down"></i>
-                </button>
-                <button class="btn btn-danger btn-sm exerciseButton" (click)="removeExercise($index)">
-                  <i class="fa fa-minus-circle"></i>
-                </button>
-              </div>
-            }
-          </div>
-        }
-  
-        @if (editEnabled()) {
-          <p>
-            <button class="btn btn-add-exercise btn-sm" (click)="openModal()">
-              <i class="fa fa-plus"></i> Add Exercise to Workout
-            </button>
-          </p>
-        }
-  
-        <div class="row">
-          @if (editEnabled()) {
-            <div class="col-8">
-              <button type="submit" [disabled]="workoutForm.invalid || saving()" (click)="saveWorkout()"
-                class="btn btn-save-workout">Save</button>&nbsp;<span>{{infoMsg()}}</span>
-              @if (workoutForm.touched && workoutForm.invalid) {
-                <span class="error-text">Please enter required information</span>
-              }
-            </div>
-          }
-        </div>
+      </div>
 
-        @if (errorMsg()) {
-          <div class="offset-2 col-4 error-text">
-            {{errorMsg()}}
+      <div class="row center-block bottom-padded">
+        <div class="col-2">
+          Exercises
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">Exercise Name</div>
+        <div class="col-2">Number of Sets</div>
+        <div class="col-2">Set Type</div>
+        @if (editEnabled()) {
+          <div class="col-2">Move/Delete</div>
+        }
+      </div>
+
+      <!--
+            Useful example code at:
+            https://jasonwatmore.com/post/2019/06/25/angular-8-dynamic-reactive-forms-example
+            -->
+
+      <!-- TODO: Replace exercise edit code below with a child component -->
+      @for (exerciseField of workoutForm.exercises; track $index) {
+        <div class="row exerciseRow">
+
+          <div class="col-6">
+            <input type="text" [formField]="exerciseField.exerciseName" class="exerciseName" />
+          </div>
+          <div class="col-2">
+            # of sets: <input type="number" wtSelectOnFocus [formField]="exerciseField.numberOfSets" class="number-of-sets" />
+            @if (exerciseField.numberOfSets().invalid()) {
+              <span class="error-text"><br />Must be > 0</span>
+            }
+          </div>
+          <div class="col-2">
+            <select [formField]="exerciseField.setType">
+              <option value="0">Repetition</option>
+              <option value="1">Timed</option>
+            </select>
+            @if (exerciseField.setType().invalid()) {
+              <span class="error-text"><br />Required</span>
+            }
+          </div>
+          @if (editEnabled()) {
+            <div class="col-2">
+              <button type="button" class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseUp($index)" [disabled]="$index == 0">
+                <i class="fa fa-arrow-up"></i>
+              </button>
+              <button type="button" class="btn btn-info btn-sm exerciseButton" (click)="moveExerciseDown($index)"
+                [disabled]="$index == (workoutForm.exercises.length - 1)">
+                <i class="fa fa-arrow-down"></i>
+              </button>
+              <button type="button" class="btn btn-danger btn-sm exerciseButton" (click)="removeExercise($index)">
+                <i class="fa fa-minus-circle"></i>
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+      @if (editEnabled()) {
+        <p>
+          <button type="button" class="btn btn-add-exercise btn-sm" (click)="openModal()">
+            <i class="fa fa-plus"></i> Add Exercise to Workout
+          </button>
+        </p>
+      }
+
+      <div class="row">
+        @if (editEnabled()) {
+          <div class="col-8">
+            <button type="button" [disabled]="workoutForm().invalid() || saving()" (click)="saveWorkout()"
+              class="btn btn-save-workout">Save</button>&nbsp;<span>{{infoMsg()}}</span>
+            @if (workoutForm().touched() && workoutForm().invalid()) {
+              <span class="error-text">Please enter required information</span>
+            }
           </div>
         }
-      </fieldset>
-    </form>
+      </div>
+
+      @if (errorMsg()) {
+        <div class="offset-2 col-4 error-text">
+          {{errorMsg()}}
+        </div>
+      }
+    </fieldset>
     <div class="row">
         @if (fromViewRoute()) {
           <div class="col-2">
