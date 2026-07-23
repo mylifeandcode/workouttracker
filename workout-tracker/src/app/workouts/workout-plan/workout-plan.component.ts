@@ -61,6 +61,7 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
       required(ex.sequence);
       //Target reps must be >= 1, but only for exercises that involve reps
       applyWhen(ex.targetRepCount, ({ valueOf }) => valueOf(ex.involvesReps), (targetRepCount) => {
+        required(targetRepCount);
         min(targetRepCount, 1);
       });
       //Resistance amount must be > 0, except for body-weight exercises

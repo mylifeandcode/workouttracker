@@ -27,9 +27,29 @@
           Body Weight
         </span>
       }
-
     </div>
   </div>
+
+  <div class="d-flex align-content-end little-footroom px-2">
+    <div class="w-100 text-center">
+      @if (field().resistanceType().value() == resistanceTypeEnum.RESISTANCE_BAND) {
+        <button type="button" class="btn btn-choose-resistance btn-sm me-1 mb-2" (click)="selectResistanceBands()">
+          Choose
+        </button>
+      }
+
+      @if (workoutHasBeenExecutedBefore() && field().resistanceType().value() != resistanceTypeEnum.BODY_WEIGHT) {
+        <button type="button" class="btn btn-same-as-last-time btn-sm ms-1 mb-2" (click)="useSameResistanceAsLastTime()">
+          Same as Last Time
+        </button>
+      }
+
+      @if (exerciseState().touched() && field().resistanceAmount().invalid()) {
+        <span class="info-required">Required</span>
+      }
+    </div>
+  </div>
+
 
   <div class="d-flex align-items-center bottom-padded px-2 pt-2">
     <div class="half-area">
@@ -41,28 +61,10 @@
       } @else {
         <span class="pre-pop-value">N/A</span>
       }
-    </div>
-  </div>
-
-  <div class="d-flex align-content-end flex-grow-1 px-3">
-    @if (exerciseState().invalid()) {
-      <span class="info-required">Information required</span>
-    }
-  </div>
-
-  <div class="d-flex align-content-end little-footroom px-2">
-    <div class="w-100 text-center">
-      @if (field().resistanceType().value() == resistanceTypeEnum.RESISTANCE_BAND) {
-        <button type="button" class="btn btn-choose-resistance btn-sm me-1" (click)="selectResistanceBands()">
-          Choose Resistance
-        </button>
-      }
-
-      @if (workoutHasBeenExecutedBefore() && field().resistanceType().value() != resistanceTypeEnum.BODY_WEIGHT) {
-        <button type="button" class="btn btn-same-as-last-time btn-sm ms-1" (click)="useSameResistanceAsLastTime()">
-          Use Same Resistance as Last Time
-        </button>
+      @if(exerciseState().touched() && field().targetRepCount().invalid()) {
+        <span class="info-required">Required</span>
       }
     </div>
   </div>
+
 </div>
