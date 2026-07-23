@@ -6,6 +6,7 @@ using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Workouts.Models;
 using WorkoutTracker.Domain.Workouts;
+using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Application.Workouts.Services
 {
@@ -13,12 +14,15 @@ namespace WorkoutTracker.Application.Workouts.Services
     {
         private IExecutedWorkoutService _executedWorkoutService;
         private ITargetAreaService _targetAreaService;
+        private IAnalyticsRepository _analyticsRepository;
         public AnalyticsService(
             IExecutedWorkoutService executedWorkoutService,
-            ITargetAreaService targetAreaService)
+            ITargetAreaService targetAreaService,
+            IAnalyticsRepository analyticsRepository)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _targetAreaService = targetAreaService ?? throw new ArgumentNullException(nameof(targetAreaService));
+            _analyticsRepository = analyticsRepository ?? throw new ArgumentNullException(nameof(analyticsRepository));
         }
 
         public async Task<List<ExecutedWorkoutMetrics>> GetExecutedWorkoutMetricsAsync(int workoutId, int count = 5)
@@ -46,53 +50,23 @@ namespace WorkoutTracker.Application.Workouts.Services
 
             summary.TotalLoggedWorkouts = allWorkouts.Count;
 
-            summary.TargetAreasWithWorkoutCounts = await GetCountOfWorkoutsByTargetAreaAsync(allWorkouts);
+            summary.TargetAreasWithWorkoutCounts = await GetCountOfWorkoutsByTargetAreaAsync(userId);
 
             return summary;
         }
 
         #region Private Methods
 
-        private async Task<Dictionary<string, int>> GetCountOfWorkoutsByTargetAreaAsync(List<ExecutedWorkout> allWorkouts)
+        private async Task<Dictionary<string, int>> GetCountOfWorkoutsByTargetAreaAsync(int userId)
         {
-            //TODO: Convert back to SQL. This is one of those cases where it's better to make a SQL call than use an O/RM.
-            /*
-            In SQL, the query looks like this:
-            
-            select	ta.Name, count(distinct(ew.Id)) as ExecutedWorkoutCount
-            from	TargetAreas ta
-            join	ExerciseTargetAreaLinks etal on ta.Id = etal.TargetAreaId
-            join	Exercises ex on ex.Id = etal.ExerciseId
-            join	ExecutedExercises exex on exex.ExerciseId = ex.Id
-            join	ExecutedWorkouts ew on ew.id = exex.ExecutedWorkoutId
-            group by ta.Name
-            order by ta.Name
-
-            I couldn't figure out a way to do this in LINQ, and didn't want to resort to doing a straight SQL call, so I took the 
-            less-than-ideal approach below.
-            */
-            var executedWorkoutIdsWithTargetAreas =
-                allWorkouts
-                    .Where(executedWorkout => executedWorkout.EndDateTime.HasValue)
-                    .Select(executedWorkout =>
-                        new
-                        {
-                            ExecutedWorkoutId = executedWorkout.Id,
-                            TargetAreas =
-                                executedWorkout
-                                    .Exercises
-                                    .SelectMany(executedExercise => executedExercise.Exercise.ExerciseTargetAreaLinks.Select(targetAreaLinks => targetAreaLinks.TargetArea.Name))
-                                    .Distinct().ToList()
-                        })
-                    .Distinct()
-                    .ToList();
-
+            var workoutCountsByTargetArea = await _analyticsRepository.GetWorkoutCountsByTargetAreaAsync(userId);
             var allTargetAreas = (await _targetAreaService.GetAllAsync()).OrderBy(x => x.Name).ToList();
             var output = new Dictionary<string, int>(allTargetAreas.Count);
 
             foreach (var area in allTargetAreas)
             {
-                output.Add(area.Name, executedWorkoutIdsWithTargetAreas.Count(x => x.TargetAreas.Contains(area.Name)));
+                var matchingCount = workoutCountsByTargetArea.Find(x => x.Name == area.Name);
+                output.Add(area.Name, matchingCount?.ExecutedWorkoutCount ?? 0);
             }
 
             return output;
