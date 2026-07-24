@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { ResistanceType, SetType } from '../../../api';
-import { NgStyle } from '@angular/common';
 import { IWorkoutFormExercise } from '../_interfaces/i-workout-form-exercise';
 import { IWorkoutFormExerciseSet } from '../_interfaces/i-workout-form-exercise-set';
 import { SelectOnFocusDirective } from '../../../shared/directives/select-on-focus.directive';
@@ -24,7 +23,6 @@ import { ExerciseSidePipe } from '../../_pipes/exercise-side.pipe';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         FormField,
-        NgStyle,
         SelectOnFocusDirective,
         ResistanceBandColorPipe,
         ResistanceTypePipe,

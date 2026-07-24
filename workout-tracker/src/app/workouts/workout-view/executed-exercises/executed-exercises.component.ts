@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ExecutedExerciseDTO } from '../../../api';
-import { NgStyle } from '@angular/common';
 import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';
 import { RatingPipe } from '../../_pipes/rating.pipe';
 import { ResistanceTypePipe } from '../../_pipes/resistance-type.pipe';
@@ -14,7 +13,7 @@ import { ResistanceAmountPipe } from '../../_pipes/resistance-amount.pipe';
     styleUrls: ['./executed-exercises.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-      NgStyle, ResistanceBandColorPipe, RatingPipe, ResistanceTypePipe, DurationPipe, 
+      ResistanceBandColorPipe, RatingPipe, ResistanceTypePipe, DurationPipe,
       ExerciseSidePipe, ResistanceAmountPipe
     ]
 })

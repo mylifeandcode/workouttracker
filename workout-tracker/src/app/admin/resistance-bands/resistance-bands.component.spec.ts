@@ -7,7 +7,6 @@ import { ResistanceBandService } from '../../shared/services/resistance-band.ser
 
 import { ResistanceBandsComponent } from './resistance-bands.component';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NgStyle } from '@angular/common';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -72,7 +71,7 @@ describe('ResistanceBandsComponent', () => {
     }).overrideComponent(ResistanceBandsComponent, {
       remove: {
         imports: [
-          NzIconModule, NgStyle, NzModalModule, NzButtonModule
+          NzIconModule, NzModalModule, NzButtonModule
         ]
       },
       add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] }

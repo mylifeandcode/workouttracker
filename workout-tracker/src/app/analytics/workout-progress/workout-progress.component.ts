@@ -10,13 +10,12 @@ import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, ChartOptions } from 'chart.js';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'wt-workout-progress',
   templateUrl: './workout-progress.component.html',
   styleUrls: ['./workout-progress.component.scss'],
-  imports: [CommonModule, FormField, SelectOnFocusDirective, NzSpinModule, NzTabsModule],
+  imports: [FormField, SelectOnFocusDirective, NzSpinModule, NzTabsModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutProgressComponent implements OnInit {

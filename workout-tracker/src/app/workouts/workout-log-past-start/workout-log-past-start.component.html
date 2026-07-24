@@ -61,7 +61,7 @@
           <p>
             <button [disabled]="formGroup.startDateTime().invalid()"
               class="btn-sm"
-              [ngClass]="{ 'btn-duration-disabled': formGroup.startDateTime().invalid(), 'btn-duration': !formGroup.startDateTime().invalid() }" (click)="enterDuration()">
+              [class.btn-duration-disabled]="formGroup.startDateTime().invalid()" [class.btn-duration]="!formGroup.startDateTime().invalid()" (click)="enterDuration()">
               Get from Workout Duration
             </button>
           </p>

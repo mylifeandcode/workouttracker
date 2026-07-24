@@ -20,7 +20,7 @@
         @for(resistanceBand of dt.data; track resistanceBand.id) {
           <tr>
             @if (!editCache[resistanceBand.id].edit) {
-              <td><span class="resistance-band" [ngStyle]="{'color': resistanceBand.color}">{{resistanceBand.color}}</span>
+              <td><span class="resistance-band" [style.color]="resistanceBand.color">{{resistanceBand.color}}</span>
               </td>
               <td>{{resistanceBand.maxResistanceAmount}}</td>
               <td>{{resistanceBand.numberAvailable}}</td>

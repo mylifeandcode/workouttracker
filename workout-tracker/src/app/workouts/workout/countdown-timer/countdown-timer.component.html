@@ -9,7 +9,7 @@ that the newly-rendered countdown is null.
     Target Reps: {{targetReps()}}
   </div>
 }
-<div [ngStyle]="{'text-align': 'center', 'display': (showPreCountdown())?'inline-block':'none'}" class="text-center timer-text">
+<div [style.text-align]="'center'" [style.display]="(showPreCountdown())?'inline-block':'none'" class="text-center timer-text">
   Get ready: 
   <countdown #preCountdown [config]="preCountdownConfig" (event)="handlePreCountdownEvent($event)"></countdown>
 </div>

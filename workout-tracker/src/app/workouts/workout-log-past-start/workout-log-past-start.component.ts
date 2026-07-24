@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
-import { formatDate, NgClass } from '@angular/common';
+import { formatDate } from '@angular/common';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { DurationComponent } from '../_shared/duration/duration.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -13,7 +13,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
   selector: 'wt-workout-log-past-start',
   templateUrl: './workout-log-past-start.component.html',
   styleUrls: ['./workout-log-past-start.component.scss'],
-  imports: [FormField, NgClass, NzModalModule, DurationComponent, NzSpinModule],
+  imports: [FormField, NzModalModule, DurationComponent, NzSpinModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkoutLogPastStartComponent implements OnInit {

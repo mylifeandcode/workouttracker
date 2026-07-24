@@ -18,7 +18,7 @@
           <label for="workoutName" class="form-label">Name</label>
           <input id="workoutName"
             class="form-control"
-            [ngClass]="{'has-error': workoutForm.name().touched() && workoutForm.name().invalid()}"
+            [class.has-error]="workoutForm.name().touched() && workoutForm.name().invalid()"
             [formField]="workoutForm.name" placeholder="Workout Name (required)"
           />
           @if (workoutForm.name().touched() && workoutForm.name().invalid()) {

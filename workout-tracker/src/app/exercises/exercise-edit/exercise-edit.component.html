@@ -18,7 +18,7 @@
 
           <div class="col-9">
             <label class="center-block"
-              [ngClass]="{'has-error': exerciseForm.name().touched() && exerciseForm.name().errors().length}">
+              [class.has-error]="exerciseForm.name().touched() && exerciseForm.name().errors().length">
               Name
               <input class="form-control" [formField]="exerciseForm.name" placeholder="Exercise Name (required)" />
             </label>
@@ -29,7 +29,7 @@
             <br />
 
             <label class="center-block"
-              [ngClass]="{'has-error': exerciseForm.description().touched() && exerciseForm.description().errors().length}">
+              [class.has-error]="exerciseForm.description().touched() && exerciseForm.description().errors().length">
               Description
               <textarea class="form-control" rows="6" [formField]="exerciseForm.description"
                 placeholder="Exercise Description (required)"></textarea>
@@ -55,7 +55,7 @@
             }
 
             @for (area of exerciseForm.targetAreas; track area().value().id) {
-              <div [ngClass]="{'has-error': exerciseForm.targetAreas().touched() && exerciseForm.targetAreas().errors().length}">
+              <div [class.has-error]="exerciseForm.targetAreas().touched() && exerciseForm.targetAreas().errors().length">
                 <input type="checkbox" [formField]="area.selected" /> {{ area.name().value() }}
               </div>
             }
@@ -125,7 +125,7 @@
         <div class="row bottom-padded">
           <div class="col-4">
             <label class="center-block" for="howToPrepare"
-              [ngClass]="{'has-error': exerciseForm.setup().touched() && exerciseForm.setup().errors().length}">
+              [class.has-error]="exerciseForm.setup().touched() && exerciseForm.setup().errors().length">
               Setup
             </label>
             <textarea id="howToPrepare" class="form-control" rows="12" [formField]="exerciseForm.setup"
@@ -143,7 +143,7 @@
           </div>
           <div class="col-4">
             <label class="center-block" for="howToPerform"
-              [ngClass]="{'has-error': exerciseForm.movement().touched() && exerciseForm.movement().errors().length}">
+              [class.has-error]="exerciseForm.movement().touched() && exerciseForm.movement().errors().length">
               Movement
             </label>
             <textarea id="howToPerform" class="form-control" rows="12" [formField]="exerciseForm.movement"
@@ -161,7 +161,7 @@
           </div>
           <div class="col-4">
             <label class="center-block" for="pointsToRemember"
-              [ngClass]="{'has-error': exerciseForm.pointsToRemember().touched() && exerciseForm.pointsToRemember().errors().length}">
+              [class.has-error]="exerciseForm.pointsToRemember().touched() && exerciseForm.pointsToRemember().errors().length">
               Points to Remember
             </label>
             <textarea id="pointsToRemember" class="form-control" rows="12" [formField]="exerciseForm.pointsToRemember"

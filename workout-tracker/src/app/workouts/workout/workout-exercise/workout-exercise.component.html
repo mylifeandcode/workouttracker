@@ -39,7 +39,7 @@
       <!--Set Detail Rows Loop-->
       @for (setField of sets(); track $index) {
         <div class="col-md-12">
-          <div class="exercise-row row" [ngStyle]="{'backgroundColor': ($index % 2 === 0)?'#d3d3d3':'#ffffff'}">
+          <div class="exercise-row row" [style.backgroundColor]="($index % 2 === 0)?'#d3d3d3':'#ffffff'">
 
             <div class="col-1 exercise-info-div">
               {{$index + 1 }} {{setField.side().value() | exerciseSide}}

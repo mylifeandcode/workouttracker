@@ -6,7 +6,6 @@ import { WorkoutService } from '../_services/workout.service';
 import { finalize } from 'rxjs/operators';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NgClass } from '@angular/common';
 import { SelectOnFocusDirective } from '../../shared/directives/select-on-focus.directive';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzModalModule } from 'ng-zorro-antd/modal';
@@ -36,7 +35,7 @@ interface IWorkoutEditModel {
   templateUrl: './workout-edit.component.html',
   styleUrls: ['./workout-edit.component.scss'],
   imports: [
-    NzSpinModule, FormsModule, FormField, NgClass,
+    NzSpinModule, FormsModule, FormField,
     SelectOnFocusDirective, NzSwitchModule, NzModalModule, ExerciseListMiniComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush

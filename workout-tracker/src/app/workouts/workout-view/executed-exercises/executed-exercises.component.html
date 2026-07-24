@@ -39,7 +39,7 @@
   </div>
 
   @for (exercise of executedExercises(); track exercise.id; let i = $index) {
-    <div class="row" [ngStyle]="{'backgroundColor': (i % 2 === 0)?'#e9ecef':'#ffffff'}">
+    <div class="row" [style.backgroundColor]="(i % 2 === 0)?'#e9ecef':'#ffffff'">
 
       <div class="col-1 exercise-info-div">
         {{i + 1}} {{exercise.side | exerciseSide}}

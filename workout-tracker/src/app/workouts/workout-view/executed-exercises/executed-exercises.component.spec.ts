@@ -3,7 +3,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular
 
 import { ExecutedExercisesComponent } from './executed-exercises.component';
 import { ExerciseSidePipe } from '../../../workouts/_pipes/exercise-side.pipe';
-import { NgStyle } from '@angular/common';
 import { ResistanceBandColorPipe } from '../../../shared/pipes/resistance-band-color.pipe';
 import { RatingPipe } from '../../..//workouts/_pipes/rating.pipe';
 import { ResistanceTypePipe } from '../../..//workouts/_pipes/resistance-type.pipe';
@@ -24,7 +23,7 @@ describe('ExecutedExercisesComponent', () => {
       {
         remove: {
           imports: [
-            NgStyle, ResistanceBandColorPipe, RatingPipe, ResistanceTypePipe, DurationPipe, 
+            ResistanceBandColorPipe, RatingPipe, ResistanceTypePipe, DurationPipe,
             ExerciseSidePipe, ResistanceAmountPipe
           ]
         },

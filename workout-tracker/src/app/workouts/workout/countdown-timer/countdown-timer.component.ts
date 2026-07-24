@@ -1,13 +1,12 @@
 import { Component, effect, inject, input, signal, ChangeDetectionStrategy, viewChild } from '@angular/core';
 import { CountdownComponent, CountdownConfig, CountdownEvent } from 'ngx-countdown';
 import { SoundService } from '../../../core/_services/sound/sound.service';
-import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'wt-countdown-timer',
   templateUrl: './countdown-timer.component.html',
   styleUrls: ['./countdown-timer.component.scss'],
-  imports: [NgStyle, CountdownComponent],
+  imports: [CountdownComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CountdownTimerComponent {

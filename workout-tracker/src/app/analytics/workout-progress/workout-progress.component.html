@@ -52,7 +52,7 @@
     @if (form.workoutId().value() && metrics().length == 0) {
       <em>No metrics exist for this workout.</em>
     }
-    <div style="height: 300px;" [ngClass]="{'visible': form.exerciseId().value() !== '', 'invisible': form.exerciseId().value() === ''}">
+    <div style="height: 300px;" [class.visible]="form.exerciseId().value() !== ''" [class.invisible]="form.exerciseId().value() === ''">
       <nz-tabs>
         <nz-tab nzTitle="Form and Range of Motion">
           <div style="height: 300px">

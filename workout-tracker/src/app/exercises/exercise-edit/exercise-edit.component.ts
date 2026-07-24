@@ -5,7 +5,7 @@ import { ExerciseService } from '../_services/exercise.service';
 import { TargetArea, ResistanceType, Exercise, ExerciseTargetAreaLink } from '../../api';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NgClass, KeyValuePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { FormsModule } from '@angular/forms';
@@ -41,7 +41,7 @@ interface IExerciseEditModel {
   templateUrl: './exercise-edit.component.html',
   styleUrls: ['./exercise-edit.component.scss'],
   imports: [
-    NzSpinModule, FormsModule, FormField, NgClass, NzTooltipModule, NzSwitchModule,
+    NzSpinModule, FormsModule, FormField, NzTooltipModule, NzSwitchModule,
     KeyValuePipe, InsertSpaceBeforeCapitalPipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
