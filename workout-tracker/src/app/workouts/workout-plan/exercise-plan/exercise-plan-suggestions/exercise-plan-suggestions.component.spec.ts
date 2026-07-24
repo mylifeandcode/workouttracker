@@ -8,7 +8,6 @@ import { getExercisePlanModel } from '../exercise-plan-model.mock';
 
 @Pipe({
     name: 'resistanceAmount',
-    standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
   transform(): string {

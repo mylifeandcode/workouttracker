@@ -9,7 +9,6 @@ import { SafeHtml } from '@angular/platform-browser';
 
 @Pipe({
   name: 'resistanceType',
-  standalone: true
 })
 class ResistanceTypePipeMock implements PipeTransform {
   transform(): string {
@@ -19,7 +18,6 @@ class ResistanceTypePipeMock implements PipeTransform {
 
 @Pipe({
   name: 'duration',
-  standalone: true
 })
 class DurationPipeMock implements PipeTransform {
   transform(): number {
@@ -29,7 +27,6 @@ class DurationPipeMock implements PipeTransform {
 
 @Pipe({
   name: 'resistanceBandColor',
-  standalone: true
 })
 class ResistanceBandColorMock implements PipeTransform {
   transform(): SafeHtml {
@@ -39,7 +36,6 @@ class ResistanceBandColorMock implements PipeTransform {
 
 @Pipe({
   name: 'exerciseSide',
-  standalone: true
 })
 class ExerciseSidePipeMock implements PipeTransform {
   transform(): string {
@@ -49,7 +45,6 @@ class ExerciseSidePipeMock implements PipeTransform {
 
 @Pipe({
   name: 'resistanceAmount',
-  standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
   transform(): string {

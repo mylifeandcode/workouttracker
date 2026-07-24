@@ -3,7 +3,6 @@ import { ConfigService } from '../../core/_services/config/config.service';
 
 @Pipe({
     name: 'resistanceAmount',
-    standalone: true
 })
 export class ResistanceAmountPipe implements PipeTransform {
   private _configService = inject(ConfigService);

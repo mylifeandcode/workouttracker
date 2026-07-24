@@ -5,7 +5,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'insertSpaceBeforeCapital',
-  standalone: true
 })
 export class InsertSpaceBeforeCapitalPipe implements PipeTransform {
 

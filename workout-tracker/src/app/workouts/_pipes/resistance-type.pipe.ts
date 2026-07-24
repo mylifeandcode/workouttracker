@@ -3,7 +3,6 @@ import { ResistanceType } from '../../api';
 
 @Pipe({
     name: 'resistanceType',
-    standalone: true
 })
 export class ResistanceTypePipe implements PipeTransform {
 

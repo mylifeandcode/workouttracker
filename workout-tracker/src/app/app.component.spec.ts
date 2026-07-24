@@ -8,7 +8,6 @@ import { NavComponent } from './core/nav/nav.component';
 @Component({
   selector: 'wt-nav',
   template: '',
-  standalone: true
 })
 class MockNavComponent {
 

@@ -3,7 +3,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Pipe({
   name: 'resistanceBandColor',
-  standalone: true
 })
 export class ResistanceBandColorPipe implements PipeTransform {
   private _sanitizer = inject(DomSanitizer);

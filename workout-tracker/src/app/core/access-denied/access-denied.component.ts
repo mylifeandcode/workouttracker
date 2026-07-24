@@ -5,7 +5,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
     templateUrl: './access-denied.component.html',
     styleUrls: ['./access-denied.component.scss'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: true
 })
 export class AccessDeniedComponent {
 }

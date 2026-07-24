@@ -3,7 +3,6 @@ import { ExerciseTargetAreaLink } from '../../api';
 
 @Pipe({
     name: 'targetAreas',
-    standalone: true
 })
 export class TargetAreasPipe implements PipeTransform {
 

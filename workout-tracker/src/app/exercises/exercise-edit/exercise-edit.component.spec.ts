@@ -31,7 +31,6 @@ const EXERCISE: Exercise = <Exercise>{
 
 @Pipe({
   name: 'insertSpaceBeforeCapital',
-  standalone: true
 })
 class InsertSpaceBeforeCapitalPipeMock implements PipeTransform {
   transform(): string {

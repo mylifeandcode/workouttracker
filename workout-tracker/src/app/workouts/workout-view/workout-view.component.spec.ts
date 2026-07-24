@@ -37,7 +37,6 @@ function getFakeExecutedWorkoutForView(): ExecutedWorkoutDTO {
 @Component({
   selector: 'wt-executed-exercises',
   template: '',
-  standalone: true
 })
 export class MockExecutedExercisesComponent {
 

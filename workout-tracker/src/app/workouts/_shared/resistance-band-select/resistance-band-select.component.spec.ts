@@ -10,7 +10,6 @@ import { ResistanceBandIndividual } from '../../../shared/models/resistance-band
 
 @Pipe({
     name: 'resistanceAmount',
-    standalone: true
 })
 export class MockResistanceAmountPipe implements PipeTransform {
     transform(): string {

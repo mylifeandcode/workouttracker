@@ -3,7 +3,6 @@ import { ExerciseSide } from '../../api';
 
 @Pipe({
     name: 'exerciseSide',
-    standalone: true
 })
 export class ExerciseSidePipe implements PipeTransform {
 
