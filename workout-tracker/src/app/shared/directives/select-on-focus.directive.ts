@@ -1,13 +1,16 @@
-import { Directive, ElementRef, HostListener, inject } from '@angular/core';
+import { Directive, ElementRef, inject } from '@angular/core';
 
 @Directive({
     selector: '[wtSelectOnFocus]',
+    host: {
+        '(focus)': 'onFocus()',
+    },
 })
 export class SelectOnFocusDirective {
   private _element = inject(ElementRef);
 
 
-  @HostListener('focus') onFocus(): void {
+  onFocus(): void {
     this._element.nativeElement.select();
   }
 
