@@ -51,10 +51,11 @@ export class ExerciseListComponent implements OnInit {
   }
 
   public onQueryParamsChange(params: NzTableQueryParams): void {
-    const { pageSize, pageIndex, filter } = params;
-    console.log('pageSize:', pageSize, 'pageIndex:', pageIndex, 'filter:', filter);
+    const { pageSize, pageIndex, filter, sort } = params;
+    console.log('pageSize:', pageSize, 'pageIndex:', pageIndex, 'filter:', filter, 'sort:', sort);
 
-
+    const currentSort = sort.find(item => item.value !== null);
+    const sortAscending = currentSort?.value !== 'descend';
     const targetAreaFilter = filter.find(f => f.key === 'targetAreas');
     const selectedTargetAreas: string[] | null =
       targetAreaFilter?.value?.length ? targetAreaFilter.value : null;
@@ -67,13 +68,13 @@ export class ExerciseListComponent implements OnInit {
     //this.pageSize.set(pageSize);
     //this.pageIndex.set(pageIndex);
 
-    this.getExercises((pageIndex - 1) * pageSize, this.nameFilter(), selectedTargetAreas);
+    this.getExercises((pageIndex - 1) * pageSize, this.nameFilter(), selectedTargetAreas, sortAscending);
   }
 
   public search(): void {
     this.nameFilterVisible.set(false);
     this.pageIndex.set(1);
-    this.getExercises(0, this.nameFilter(), this.getActiveTargetAreaFilter());
+    this.getExercises(0, this.nameFilter(), this.getActiveTargetAreaFilter(), true);
   }
 
   public reset(): void {
@@ -81,10 +82,10 @@ export class ExerciseListComponent implements OnInit {
     this.search();
   }
 
-  private getExercises(first: number, nameContains: string | null, targetAreaContains: string[] | null): void {
+  private getExercises(first: number, nameContains: string | null, targetAreaContains: string[] | null, sortAscending: boolean): void {
     this.loading.set(true);
     this._exerciseSvc
-      .getAll(first, this.pageSize(), nameContains, targetAreaContains)
+      .getAll(first, this.pageSize(), nameContains, targetAreaContains, sortAscending)
       .pipe(finalize(() => {
         this.loading.set(false);
       }))

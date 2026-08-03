@@ -8,7 +8,7 @@
           (nzQueryParams)="onQueryParamsChange($event)">
           <thead>
             <tr>
-              <th nzCustomFilter>
+              <th [nzSortFn]="true" nzCustomFilter>
                 Name
                 <nz-filter-trigger [(nzVisible)]="nameFilterVisible" [nzActive]="nameFilter().length > 0"
                   [nzDropdownMenu]="menu">

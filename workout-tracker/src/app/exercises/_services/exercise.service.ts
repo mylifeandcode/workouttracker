@@ -32,9 +32,10 @@ export class ExerciseService {
     firstRecOffset: number,
     pageSize: number,
     nameContains: string | null = null,
-    targetAreaContains: string[] | null = null): Observable<PaginatedResultsOfExerciseDTO> {
+    targetAreaContains: string[] | null = null, 
+    sortAscending: boolean = true): Observable<PaginatedResultsOfExerciseDTO> {
 
-    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}`;
+    let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&sortAscending=${sortAscending}`;
 
     if (nameContains)
       url += `&nameContains=${nameContains}`;

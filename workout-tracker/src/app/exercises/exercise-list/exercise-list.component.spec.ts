@@ -74,7 +74,7 @@ describe('ExerciseListComponent', () => {
     component.onQueryParamsChange(queryParams);
 
     //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null);
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null, true);
   });
 
   it('should pass target area filters from query params', () => {
@@ -90,7 +90,7 @@ describe('ExerciseListComponent', () => {
     component.onQueryParamsChange(queryParams);
 
     //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', ['Chest', 'Biceps']);
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', ['Chest', 'Biceps'], true);
   });
 
   it('should search with current name filter', () => {
@@ -98,7 +98,7 @@ describe('ExerciseListComponent', () => {
     component.search();
 
     //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null);
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null, true);
   });
 
   it('should reset name filter and search', () => {
@@ -106,7 +106,7 @@ describe('ExerciseListComponent', () => {
     component.reset();
 
     //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null);
+    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, '', null, true);
   });
 
   it('should reset page index to 1 when target area filter changes', () => {

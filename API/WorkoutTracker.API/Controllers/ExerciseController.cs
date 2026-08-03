@@ -34,17 +34,15 @@ namespace WorkoutTracker.API.Controllers
 
         // GET: api/Exercises
         [HttpGet]
-        public async Task<ActionResult<PaginatedResults<ExerciseDTO>>> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null)
+        public async Task<ActionResult<PaginatedResults<ExerciseDTO>>> Get(int firstRecord, short pageSize, string nameContains = null, string targetAreas = null, bool sortAscending = true)
         {
             try
             {
-                var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
+                var filter = BuildExerciseFilter(nameContains, targetAreas);
 
                 int totalCount = await _exerciseService.GetTotalCountAsync(filter);
 
-                var exercises =
-                    (await _exerciseService.GetAsync(firstRecord, pageSize, filter))
-                        .OrderBy(x => x.Name);
+                var exercises = await _exerciseService.GetAsync(firstRecord, pageSize, filter, sortAscending);
 
                 var results = exercises.Select((exercise) =>
                 {

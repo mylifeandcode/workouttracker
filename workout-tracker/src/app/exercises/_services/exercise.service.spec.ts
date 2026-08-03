@@ -68,7 +68,7 @@ describe('ExerciseService', () => {
     const expectedResults = <PaginatedResultsOfExerciseDTO>{ results: [], totalCount: 0 };
     const exercisesPromise = firstValueFrom(service.getAll(0, 10));
 
-    const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10");
+    const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&sortAscending=true");
     expect(req.request.method).toEqual('GET');
 
     req.flush(expectedResults);
@@ -84,7 +84,7 @@ describe('ExerciseService', () => {
     ];
     const exercisesPromise = firstValueFrom(service.getAll(0, 10));
 
-    const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10");
+    const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&sortAscending=true");
     expect(req.request.method).toEqual('GET');
 
     req.flush({ results: mockResults, totalRecords: 1 });
@@ -101,7 +101,7 @@ describe('ExerciseService', () => {
     const exercisesPromise = firstValueFrom(service.getAll(0, 10, 'Press'));
 
     // ExerciseService should have made one request to GET exercises from expected URL
-    const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&nameContains=Press");
+    const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&sortAscending=true&nameContains=Press");
     expect(req.request.method).toEqual('GET');
 
     req.flush(expectedResults);
@@ -112,7 +112,7 @@ describe('ExerciseService', () => {
     const expectedResults = <PaginatedResultsOfExerciseDTO>{ totalCount: 0, results: [] };
     const exercisesPromise = firstValueFrom(service.getAll(0, 10, null, ['Chest']));
 
-    const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&hasTargetAreas=Chest");
+    const req = http.expectOne("http://localhost:5600/api/exercises?firstRecord=0&pageSize=10&sortAscending=true&hasTargetAreas=Chest");
     expect(req.request.method).toEqual('GET');
 
     req.flush(expectedResults);
