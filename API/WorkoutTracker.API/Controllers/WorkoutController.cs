@@ -48,12 +48,9 @@ namespace WorkoutTracker.API.Controllers
 
                 int totalCount = await _workoutService.GetTotalCountAsync(filter);
 
-                var workouts = (await _workoutService.GetAsync(firstRecord, pageSize, filter));
-                var sortedWorkouts = sortAscending
-                    ? workouts.OrderBy(x => x.Name)
-                    : workouts.OrderByDescending(x => x.Name);
+                var workouts = (await _workoutService.GetAsync(firstRecord, pageSize, filter, sortAscending));
 
-                var results = sortedWorkouts.Select((workout) =>
+                var results = workouts.Select((workout) =>
                 {
                     return _workoutDTOMapper.MapFromWorkout(workout);
                 });

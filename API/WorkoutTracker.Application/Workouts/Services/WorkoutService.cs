@@ -16,12 +16,17 @@ namespace WorkoutTracker.Application.Workouts.Services
     {
         public WorkoutService(IRepository<Workout> repo, ILogger<WorkoutService> logger) : base(repo, logger) { }
 
-        public async Task<IEnumerable<Workout>> GetAsync(int firstRecord, short pageSize, WorkoutFilter filter)
+        public async Task<IEnumerable<Workout>> GetAsync(int firstRecord, short pageSize, WorkoutFilter filter, bool sortAscending = true)
         {
             IQueryable<Workout> query = _repo.GetWithoutTracking();
 
             if (filter != null)
                 ApplyQueryFilters(ref query, filter);
+
+            if (sortAscending)
+                query = query.OrderBy(workout => workout.Name);
+            else
+                query = query.OrderByDescending(workout => workout.Name);
 
             return await query.Skip(firstRecord).Take(pageSize).ToListAsync();
         }
