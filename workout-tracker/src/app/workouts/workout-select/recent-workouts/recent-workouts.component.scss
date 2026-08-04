@@ -19,3 +19,9 @@
 h5 {
   padding-left: 12px;
 }
+
+// Zebra striping: nz-table projects the tbody, so this scoped rule reaches the
+// rows without ::ng-deep (which is deprecated). Target td so it aligns with NG-ZORRO's cell-level hover.
+tbody tr:nth-child(even) td {
+  background-color: v.$alternate-row-color;
+}
