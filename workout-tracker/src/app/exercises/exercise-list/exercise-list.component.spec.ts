@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExerciseListComponent } from './exercise-list.component';
 import { ExerciseService } from '../_services/exercise.service';
+import { TargetAreaService } from '../_services/target-area.service';
 import { PaginatedResultsOfExerciseDTO, TargetArea } from '../../api';
 import { of } from 'rxjs';
 import { RouterModule } from '@angular/router';
@@ -13,11 +14,15 @@ describe('ExerciseListComponent', () => {
   let component: ExerciseListComponent;
   let fixture: ComponentFixture<ExerciseListComponent>;
   let exerciseService: ExerciseService;
+  let targetAreaService: TargetAreaService;
 
   beforeEach(async () => {
     const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{ results: [], totalCount: 0 })),
-      getTargetAreas: vi.fn<ExerciseService['getTargetAreas']>().mockReturnValue(of([
+      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{ results: [], totalCount: 0 }))
+    };
+
+    const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
+      getAll: vi.fn<TargetAreaService['getAll']>().mockReturnValue(of([
         <TargetArea>{ id: 1, name: 'Chest' },
         <TargetArea>{ id: 2, name: 'Biceps' },
         <TargetArea>{ id: 3, name: 'Triceps' }
@@ -34,6 +39,10 @@ describe('ExerciseListComponent', () => {
           provide: ExerciseService,
           useValue: ExerciseServiceMock
         },
+        {
+          provide: TargetAreaService,
+          useValue: TargetAreaServiceMock
+        },
         provideZonelessChangeDetection()
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -46,6 +55,7 @@ describe('ExerciseListComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     exerciseService = TestBed.inject(ExerciseService);
+    targetAreaService = TestBed.inject(TargetAreaService);
   });
 
   it('should create', () => {
@@ -53,7 +63,7 @@ describe('ExerciseListComponent', () => {
   });
 
   it('should populate target area filters from service', () => {
-    expect(exerciseService.getTargetAreas).toHaveBeenCalled();
+    expect(targetAreaService.getAll).toHaveBeenCalled();
     expect(component.targetAreaFilters()).toEqual([
       { text: 'Chest', value: 'Chest' },
       { text: 'Biceps', value: 'Biceps' },

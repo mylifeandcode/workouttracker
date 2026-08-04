@@ -186,6 +186,22 @@ describe('ExerciseService', () => {
 
   });
 
+  it('should cache resistance types', async () => {
+    const expectedResistanceTypes = { 0: 'Body Weight', 1: 'Free Weight' };
+
+    //Only the first call should trigger an HTTP request
+    const first = firstValueFrom(service.getResistanceTypes());
+    const second = firstValueFrom(service.getResistanceTypes());
+
+    const req = http.expectOne("http://localhost:5600/api/exercises/ResistanceTypes"); //Singular, so a second request would fail this
+    expect(req.request.method).toEqual('GET');
+
+    req.flush(expectedResistanceTypes);
+
+    expect(await first).toEqual(expectedResistanceTypes);
+    expect(await second).toEqual(expectedResistanceTypes);
+  });
+
   it('should update existing exercise', async () => {
     const exercise = <Exercise>{};
     exercise.id = 6;

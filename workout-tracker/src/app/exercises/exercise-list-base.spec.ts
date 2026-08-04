@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { ExerciseListBase } from './exercise-list-base';
 import { Component, inject as inject_1 } from '@angular/core';
 import { ExerciseService } from './_services/exercise.service';
+import { TargetAreaService } from './_services/target-area.service';
 import { PaginatedResultsOfExerciseDTO, TargetArea } from '../api';
 import { type Mocked } from 'vitest';
 
@@ -29,11 +30,15 @@ describe('ExerciseListBaseComponent', () => {
   let component: ExerciseListBaseExtenderComponent;
   let fixture: ComponentFixture<ExerciseListBaseExtenderComponent>;
   let exerciseService: ExerciseService;
+  let targetAreaService: TargetAreaService;
 
   beforeEach(async () => {
     const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{})),
-      getTargetAreas: vi.fn<ExerciseService['getTargetAreas']>().mockImplementation(() => {
+      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{}))
+    };
+
+    const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
+      getAll: vi.fn<TargetAreaService['getAll']>().mockImplementation(() => {
         const targetAreas = new Array<TargetArea>();
         targetAreas.push(<TargetArea>{ id: 1, name: "Chest", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
         targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
@@ -48,6 +53,10 @@ describe('ExerciseListBaseComponent', () => {
           provide: ExerciseService,
           useValue: ExerciseServiceMock
         },
+        {
+          provide: TargetAreaService,
+          useValue: TargetAreaServiceMock
+        },
         provideZonelessChangeDetection()
       ],
       imports: [
@@ -61,6 +70,7 @@ describe('ExerciseListBaseComponent', () => {
     fixture = TestBed.createComponent(ExerciseListBaseExtenderComponent);
     component = fixture.componentInstance;
     exerciseService = TestBed.inject(ExerciseService);
+    targetAreaService = TestBed.inject(TargetAreaService);
     fixture.detectChanges();
   });
 
@@ -71,7 +81,7 @@ describe('ExerciseListBaseComponent', () => {
   it('should get target areas', () => {
     //This currently happens in the constructor, but should be moved to ngOnInit
     //TODO: Expand this test, make it better
-    expect(exerciseService.getTargetAreas).toHaveBeenCalled();
+    expect(targetAreaService.getAll).toHaveBeenCalled();
     expect(component.targetAreas().length).toBe(3);
   });
 

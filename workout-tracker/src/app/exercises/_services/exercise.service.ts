@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { PaginatedResultsOfExerciseDTO, TargetArea } from '../../api';
+import { map, shareReplay } from 'rxjs/operators';
+import { PaginatedResultsOfExerciseDTO } from '../../api';
 import { Exercise } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
@@ -20,12 +20,9 @@ export class ExerciseService {
 
   private readonly API_ROOT: string;
   private _resistanceTypes: Observable<Map<number, string>> | undefined;
-  private readonly TARGET_AREAS_API_ROOT: string; //TODO: Create TargetAreaService
 
   constructor() {
-    const apiRoot: string = (this._configService.get("apiRoot") as string);
-    this.API_ROOT = apiRoot + "exercises";
-    this.TARGET_AREAS_API_ROOT = apiRoot + "TargetAreas";
+    this.API_ROOT = (this._configService.get("apiRoot") as string) + "exercises";
   }
 
   public getAll(
@@ -68,20 +65,6 @@ export class ExerciseService {
       );
   }
 
-  public getTargetAreas(): Observable<Array<TargetArea>> {
-    //TODO: Move this into its own service
-    return this._http
-      .get<Array<TargetArea>>(this.TARGET_AREAS_API_ROOT)
-      .pipe(
-        map((targetAreas) => {
-          targetAreas.forEach(targetArea => {
-            this._dateService.convertAuditDateStringsToDates(targetArea);
-          });
-          return targetAreas;
-        })
-      );
-  }
-
   public add(exercise: Exercise): Observable<Exercise> {
     return this._http
       .post<Exercise>(this.API_ROOT, exercise, HTTP_OPTIONS)
@@ -107,7 +90,9 @@ export class ExerciseService {
 
   public getResistanceTypes(): Observable<Map<number, string>> {
     if (!this._resistanceTypes)
-      this._resistanceTypes = this._http.get<Map<number, string>>(`${this.API_ROOT}/ResistanceTypes`);
+      this._resistanceTypes = this._http
+        .get<Map<number, string>>(`${this.API_ROOT}/ResistanceTypes`)
+        .pipe(shareReplay(1)); //Without this, the call was getting made each time, because only the cold Observable was being held onto
 
     return this._resistanceTypes;
   }

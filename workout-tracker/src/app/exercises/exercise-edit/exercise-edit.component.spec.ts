@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 
 import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../_services/exercise.service';
+import { TargetAreaService } from '../_services/target-area.service';
 import { Exercise, ExerciseTargetAreaLink, TargetArea } from '../../api/';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
@@ -51,20 +52,24 @@ describe('ExerciseEditComponent', () => {
   let component: ExerciseEditComponent;
   let fixture: ComponentFixture<ExerciseEditComponent>;
   let exerciseService: ExerciseService;
+  let targetAreaService: TargetAreaService;
 
   beforeEach(async () => {
     const resistanceTypes = new Map<number, string>();
     resistanceTypes.set(0, 'Free Weight');
     resistanceTypes.set(1, 'Resistance Band');
 
-    const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getTargetAreas: vi.fn<ExerciseService['getTargetAreas']>().mockImplementation(() => {
+    const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
+      getAll: vi.fn<TargetAreaService['getAll']>().mockImplementation(() => {
         const targetAreas = new Array<TargetArea>();
         targetAreas.push(<TargetArea>{ id: 1, name: "Chest", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
         targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
         targetAreas.push(<TargetArea>{ id: 3, name: "Triceps", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
         return of(targetAreas);
-      }),
+      })
+    };
+
+    const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
       getById: vi.fn<ExerciseService['getById']>().mockReturnValue(of(EXERCISE)),
       getResistanceTypes: vi.fn<ExerciseService['getResistanceTypes']>().mockReturnValue(of(resistanceTypes)),
       add: vi.fn<ExerciseService['add']>().mockImplementation((exercise: Exercise) => of(exercise)),
@@ -81,6 +86,10 @@ describe('ExerciseEditComponent', () => {
         {
           provide: ExerciseService,
           useValue: ExerciseServiceMock
+        },
+        {
+          provide: TargetAreaService,
+          useValue: TargetAreaServiceMock
         },
         {
           provide: ActivatedRoute,
@@ -105,6 +114,7 @@ describe('ExerciseEditComponent', () => {
     fixture = TestBed.createComponent(ExerciseEditComponent);
     component = fixture.componentInstance;
     exerciseService = TestBed.inject(ExerciseService);
+    targetAreaService = TestBed.inject(TargetAreaService);
     fixture.detectChanges();
   });
 
@@ -158,7 +168,7 @@ describe('ExerciseEditComponent', () => {
 
   it('should get all target areas', () => {
     expect(component.allTargetAreas).toBeTruthy();
-    expect(exerciseService.getTargetAreas).toHaveBeenCalledTimes(1);
+    expect(targetAreaService.getAll).toHaveBeenCalledTimes(1);
   });
 
   it('should load exercise into the model when editing', () => {

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ExerciseListMiniComponent } from './exercise-list-mini.component';
 import { ExerciseService } from '../_services/exercise.service';
+import { TargetAreaService } from '../_services/target-area.service';
 import { of } from 'rxjs';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -14,8 +15,11 @@ describe('ExerciseListMiniComponent', () => {
 
   beforeEach(async () => {
     const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{})),
-      getTargetAreas: vi.fn<ExerciseService['getTargetAreas']>().mockReturnValue(of(new Array<TargetArea>()))
+      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{}))
+    };
+
+    const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
+      getAll: vi.fn<TargetAreaService['getAll']>().mockReturnValue(of(new Array<TargetArea>()))
     };
 
     await TestBed.configureTestingModule({
@@ -23,6 +27,10 @@ describe('ExerciseListMiniComponent', () => {
         {
           provide: ExerciseService,
           useValue: ExerciseServiceMock
+        },
+        {
+          provide: TargetAreaService,
+          useValue: TargetAreaServiceMock
         },
         provideZonelessChangeDetection()
       ],

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ExerciseService } from '../_services/exercise.service';
+import { TargetAreaService } from '../_services/target-area.service';
 import { ExerciseDTO, PaginatedResultsOfExerciseDTO } from '../../api';
 import { finalize, map } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -18,6 +19,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class ExerciseListComponent implements OnInit {
   private readonly _exerciseSvc = inject(ExerciseService);
+  private readonly _targetAreaSvc = inject(TargetAreaService);
 
   public totalRecords = signal<number>(0);
   public loading = signal<boolean>(true);
@@ -36,8 +38,8 @@ export class ExerciseListComponent implements OnInit {
 
 
   public ngOnInit(): void {
-    this._exerciseSvc
-      .getTargetAreas()
+    this._targetAreaSvc
+      .getAll()
       .pipe(
         map(areas => areas.map(area => ({ text: area.name, value: area.name })))
       )

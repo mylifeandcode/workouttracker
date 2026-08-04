@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@ang
 import { ActivatedRoute, Router } from '@angular/router';
 import { form, FormField, required, maxLength, disabled, validate, submit } from '@angular/forms/signals';
 import { ExerciseService } from '../_services/exercise.service';
+import { TargetAreaService } from '../_services/target-area.service';
 import { TargetArea, ResistanceType, Exercise, ExerciseTargetAreaLink } from '../../api';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -49,6 +50,7 @@ interface IExerciseEditModel {
 export class ExerciseEditComponent extends CheckForUnsavedDataComponent implements OnInit {
   private _route = inject(ActivatedRoute);
   private _exerciseSvc = inject(ExerciseService);
+  private _targetAreaSvc = inject(TargetAreaService);
   private _router = inject(Router);
 
   // Constants
@@ -106,7 +108,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     this.editModeEnabled.set(this._route.snapshot.url.join('').indexOf('view') == -1);
 
     forkJoin({
-      targetAreas: this._exerciseSvc.getTargetAreas(),
+      targetAreas: this._targetAreaSvc.getAll(),
       resistanceTypes: this._exerciseSvc.getResistanceTypes()
     }).subscribe(({ targetAreas, resistanceTypes }) => {
       this.allTargetAreas = targetAreas;

@@ -1,8 +1,9 @@
 import { ExerciseService } from './_services/exercise.service';
+import { TargetAreaService } from './_services/target-area.service';
 import { debounceTime, distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
 import { ExerciseDTO, PaginatedResultsOfExerciseDTO } from '../api';
 import { Subject } from 'rxjs';
-import { effect, signal } from '@angular/core';
+import { effect, inject, signal } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -10,6 +11,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 export abstract class ExerciseListBase {
 
   //TODO: Clean up this class (specifically the differing access modifiers below)
+
+  protected _targetAreaSvc = inject(TargetAreaService);
 
   public totalRecords = signal<number>(0);
   public loading = signal<boolean>(true);
@@ -44,8 +47,8 @@ export abstract class ExerciseListBase {
       });
 
     //TODO: Move to ngOnInit()
-    this._exerciseSvc
-      .getTargetAreas()
+    this._targetAreaSvc
+      .getAll()
       .pipe(map(areas => areas.map(targetArea => targetArea.name)))
       .subscribe({
         next: (targetAreaNames: string[]) => {
