@@ -8,6 +8,8 @@ module.exports = defineConfig([
   globalIgnores(["src/app/api/**"]),
   {
     files: ["**/*.ts"],
+    //The Playwright E2E suite is plain Node/TypeScript, not Angular; it gets its own block below.
+    ignores: ["e2e/**/*.ts", "playwright.config.ts"],
     extends: [
       eslint.configs.recommended,
       tseslint.configs.recommended,
@@ -40,6 +42,23 @@ module.exports = defineConfig([
         null
       ],
       "@typescript-eslint/prefer-for-of": "off", // Could not always be used. Weird rule. https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-for-of.md 
+    },
+  },
+  {
+    files: ["e2e/**/*.ts", "playwright.config.ts"],
+    extends: [
+      eslint.configs.recommended,
+      tseslint.configs.recommended,
+      tseslint.configs.stylistic,
+    ],
+    rules: {
+      "@typescript-eslint/array-type": "off",
+      "@typescript-eslint/consistent-indexed-object-style": "off",
+      "@typescript-eslint/consistent-type-assertions": "off",
+      "@typescript-eslint/no-inferrable-types": [
+        "off",
+        null
+      ],
     },
   },
   {

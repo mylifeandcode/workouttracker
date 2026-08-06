@@ -1,0 +1,17 @@
+/* TypeScript configuration for the Playwright E2E suite. Kept separate from the app
+   and unit-test configs so E2E code gets Node types without leaking them into the app. */
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/e2e",
+    //playwright.config.ts lives at the project root, so the program spans one level up.
+    "rootDir": "..",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "**/*.ts",
+    "../playwright.config.ts"
+  ]
+}

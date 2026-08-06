@@ -34,9 +34,12 @@ npm-debug.log
 testem.log
 /typings
 
-# e2e
-/e2e/*.js
-/e2e/*.map
+# e2e (Playwright)
+/e2e/.auth
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
 
 # System Files
 .DS_Store
