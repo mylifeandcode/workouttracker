@@ -28,12 +28,15 @@
         </div>
         <div class="row bump-it-down">
           <div class="offset-4 col-4 text-center">
-            <button class="btn btn-success" [disabled]="loginForm().invalid()" (click)="login()">Login</button>
+            <!--type="button" is required: without it these default to type="submit", and clicking
+                natively submits the form, reloading the app and putting the typed username and
+                password into the URL as query parameters.-->
+            <button type="button" class="btn btn-success" [disabled]="loginForm().invalid()" (click)="login()">Login</button>
           </div>
         </div>
         <div class="row bump-it-down">
           <div class="offset-4 col-4 text-center">
-            <button class="btn btn-primary" routerLink="/user/register">Register New User</button>
+            <button type="button" class="btn btn-primary" routerLink="/user/register">Register New User</button>
           </div>
         </div>
       </fieldset>

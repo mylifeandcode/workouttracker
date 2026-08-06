@@ -1,4 +1,3 @@
-import { UNAUTHENTICATED } from './support/env';
 import { expect, test } from './support/test-fixtures';
 import { UserSelectPage } from './support/pages';
 
@@ -9,7 +8,7 @@ import { UserSelectPage } from './support/pages';
  */
 test.describe('stack smoke test', () => {
   test.describe('logged out', () => {
-    test.use({ storageState: UNAUTHENTICATED });
+    test.use({ authenticateAs: null });
 
     test('shows the provisioned users on the user-select screen', async ({ page, users }) => {
       const userSelect = new UserSelectPage(page);
@@ -29,7 +28,7 @@ test.describe('stack smoke test', () => {
     await expect(page).toHaveURL(/\/home$/);
   });
 
-  test('baseline exercises exist in the API', async ({ api }) => {
+  test('the seeded target areas are present', async ({ api }) => {
     const targetAreas = await api.getTargetAreas();
 
     expect(targetAreas.map(area => area.name)).toContain('Legs');

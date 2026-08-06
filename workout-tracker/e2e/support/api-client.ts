@@ -3,6 +3,8 @@ import { API_URL } from './env';
 import type {
   AuthTokenResultDTO,
   Exercise,
+  ExerciseTargetAreaLink,
+  PaginatedResultsOfExerciseDTO,
   TargetArea,
   User,
   UserNewDTO,
@@ -109,5 +111,48 @@ export class ApiClient {
 
     expect(response, `Could not create exercise "${exercise.name}"`).toBeOK();
     return response.json() as Promise<Exercise>;
+  }
+
+  /**
+   * Creates an exercise linked to the named (seeded) target areas — the common case, since the
+   * form requires at least one and the raw link records are noisy to build by hand.
+   */
+  async createExerciseWithTargetAreas(name: string, targetAreaNames: string[]): Promise<Exercise> {
+    const allAreas = await this.getTargetAreas();
+
+    const exerciseTargetAreaLinks: ExerciseTargetAreaLink[] = targetAreaNames.map(areaName => {
+      const area = allAreas.find(a => a.name === areaName);
+      if (!area) {
+        throw new Error(`No seeded target area named "${areaName}"; got: ${allAreas.map(a => a.name).join(', ')}`);
+      }
+
+      return {
+        id: 0,
+        exerciseId: 0,
+        targetAreaId: area.id,
+        exercise: null,
+        targetArea: null,
+        createdByUserId: 0,
+        createdDateTime: new Date(),
+      };
+    });
+
+    return this.createExercise({ name, exerciseTargetAreaLinks });
+  }
+
+  async getExerciseByPublicId(publicId: string): Promise<Exercise> {
+    const response = await this.context.get(`/api/Exercises/${publicId}`);
+    expect(response, `Could not load exercise ${publicId}`).toBeOK();
+    return response.json() as Promise<Exercise>;
+  }
+
+  /** Name search, matching what the exercise list's filter does. */
+  async searchExercises(nameContains: string): Promise<PaginatedResultsOfExerciseDTO> {
+    const response = await this.context.get('/api/Exercises', {
+      params: { firstRecord: 0, pageSize: 100, nameContains, sortAscending: true },
+    });
+
+    expect(response, `Could not search exercises for "${nameContains}"`).toBeOK();
+    return response.json() as Promise<PaginatedResultsOfExerciseDTO>;
   }
 }

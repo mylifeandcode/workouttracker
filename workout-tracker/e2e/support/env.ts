@@ -24,12 +24,7 @@ export const E2E_DB_CONNECTION = process.env['E2E_DB_CONNECTION']
   ?? 'Server=.\\SQLEXPRESS;Database=WorkoutTrackerE2E;Trusted_Connection=True;TrustServerCertificate=true';
 
 export const AUTH_DIR = path.join(__dirname, '..', '.auth');
-export const ADMIN_STORAGE_STATE = path.join(AUTH_DIR, 'admin.json');
-export const USER_STORAGE_STATE = path.join(AUTH_DIR, 'user.json');
 export const PROVISIONED_USERS_FILE = path.join(AUTH_DIR, 'users.json');
-
-/* For tests that need to exercise login/user-select themselves. */
-export const UNAUTHENTICATED: { cookies: []; origins: [] } = { cookies: [], origins: [] };
 
 /*
  * Accounts the global setup provisions into the freshly reset database.

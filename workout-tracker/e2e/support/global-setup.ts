@@ -1,17 +1,7 @@
 import * as fs from 'node:fs/promises';
 import { ApiClient } from './api-client';
-import {
-  ADMIN_STORAGE_STATE,
-  AUTH_DIR,
-  E2E_ADMIN,
-  E2E_USER,
-  FRONTEND_URL,
-  PROVISIONED_USERS_FILE,
-  REFRESH_TOKEN_STORAGE_KEY,
-  TOKEN_STORAGE_KEY,
-  USER_STORAGE_STATE,
-} from './env';
-import type { AuthTokenResultDTO, ExerciseTargetAreaLink, User } from '../../src/app/api/types.gen';
+import { AUTH_DIR, E2E_ADMIN, E2E_USER, PROVISIONED_USERS_FILE } from './env';
+import type { User } from '../../src/app/api/types.gen';
 import { UserRole } from '../../src/app/api/types.gen';
 
 /*
@@ -49,8 +39,6 @@ export default async function globalSetup(): Promise<void> {
       );
     }
 
-    await writeStorageState(ADMIN_STORAGE_STATE, await anonymous.logIn(E2E_ADMIN.userName, E2E_ADMIN.password));
-    await writeStorageState(USER_STORAGE_STATE, await anonymous.logIn(E2E_USER.userName, E2E_USER.password));
     await writeProvisionedUsers(admin, standard);
   } finally {
     await anonymous.dispose();
@@ -88,57 +76,11 @@ async function createBaselineExercises(): Promise<void> {
   const api = await ApiClient.authenticateAs(E2E_ADMIN.userName, E2E_ADMIN.password);
 
   try {
-    const targetAreas = await api.getTargetAreas();
-    const legs = targetAreas.find(area => area.name === 'Legs');
-    const chest = targetAreas.find(area => area.name === 'Chest');
-
-    if (!legs || !chest) {
-      throw new Error(`Expected the seeded target areas to include Legs and Chest; got: ${targetAreas.map(a => a.name).join(', ')}`);
-    }
-
-    await api.createExercise({ name: 'E2E Baseline Squat', exerciseTargetAreaLinks: [targetAreaLink(legs.id)] });
-    await api.createExercise({ name: 'E2E Baseline Bench Press', exerciseTargetAreaLinks: [targetAreaLink(chest.id)] });
+    await api.createExerciseWithTargetAreas('E2E Baseline Squat', ['Legs']);
+    await api.createExerciseWithTargetAreas('E2E Baseline Bench Press', ['Chest']);
   } finally {
     await api.dispose();
   }
-}
-
-function targetAreaLink(targetAreaId: number): ExerciseTargetAreaLink {
-  return {
-    id: 0,
-    exerciseId: 0,
-    targetAreaId,
-    exercise: null,
-    targetArea: null,
-    createdByUserId: 0,
-    createdDateTime: new Date(),
-  };
-}
-
-async function writeStorageState(file: string, tokens: AuthTokenResultDTO): Promise<void> {
-  /*
-   * The Angular AuthService restores a session from localStorage during app initialization,
-   * so seeding these two keys is equivalent to having logged in through the UI — and the
-   * router still won't activate until the initializer settles.
-   *
-   * The values must be JSON.stringify'd: LocalStorageService round-trips everything through
-   * JSON, so a bare token string makes JSON.parse throw during app init and the app hangs on
-   * its "Loading..." placeholder.
-   */
-  const state = {
-    cookies: [],
-    origins: [
-      {
-        origin: FRONTEND_URL,
-        localStorage: [
-          { name: TOKEN_STORAGE_KEY, value: JSON.stringify(tokens.accessToken) },
-          { name: REFRESH_TOKEN_STORAGE_KEY, value: JSON.stringify(tokens.refreshToken) },
-        ],
-      },
-    ],
-  };
-
-  await fs.writeFile(file, JSON.stringify(state, null, 2), 'utf-8');
 }
 
 async function writeProvisionedUsers(admin: User, standard: User): Promise<void> {

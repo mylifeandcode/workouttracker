@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import { API_URL, E2E_DB_CONNECTION, FRONTEND_URL, USER_STORAGE_STATE } from './e2e/support/env';
+import { API_URL, E2E_DB_CONNECTION, FRONTEND_URL } from './e2e/support/env';
 
 /*
  * E2E configuration. These tests drive the real Angular app against the real API and a real
@@ -35,9 +35,8 @@ export default defineConfig({
 
   use: {
     baseURL: FRONTEND_URL,
-    //Tests run as the standard E2E user by default; override per-file with test.use() to run
-    //as the admin (ADMIN_STORAGE_STATE) or logged out (UNAUTHENTICATED).
-    storageState: USER_STORAGE_STATE,
+    //Sessions are minted per test by the `authenticateAs` fixture option (default 'standard'),
+    //not from a saved storageState file — see e2e/support/session.ts.
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

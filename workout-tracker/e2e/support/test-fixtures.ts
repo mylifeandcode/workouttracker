@@ -1,12 +1,20 @@
 import { test as base } from '@playwright/test';
 import * as fs from 'node:fs/promises';
 import { ApiClient } from './api-client';
-import { E2E_ADMIN, PROVISIONED_USERS_FILE } from './env';
+import { E2E_ADMIN, E2E_USER, PROVISIONED_USERS_FILE } from './env';
+import { createSessionState } from './session';
 import type { User } from '../../src/app/api/types.gen';
 
 export interface ProvisionedUsers {
   admin: User;
   standard: User;
+}
+
+/** Which account the browser starts logged in as; `null` starts logged out. */
+export type AuthenticateAs = 'admin' | 'standard' | null;
+
+interface Options {
+  authenticateAs: AuthenticateAs;
 }
 
 interface Fixtures {
@@ -21,7 +29,24 @@ interface Fixtures {
   uniqueName: (prefix: string) => string;
 }
 
-export const test = base.extend<Fixtures>({
+export const test = base.extend<Options & Fixtures>({
+  //Override per file or per test with test.use({ authenticateAs: 'admin' | null }).
+  authenticateAs: ['standard', { option: true }],
+
+  /*
+   * Overriding the built-in storageState so every test gets a freshly minted session. See
+   * session.ts for why a shared, pre-saved session file cannot work here.
+   */
+  storageState: async ({ authenticateAs }, use) => {
+    if (authenticateAs === null) {
+      await use({ cookies: [], origins: [] });
+      return;
+    }
+
+    const credentials = authenticateAs === 'admin' ? E2E_ADMIN : E2E_USER;
+    await use(await createSessionState(credentials));
+  },
+
   api: async ({}, use) => {
     const client = await ApiClient.authenticateAs(E2E_ADMIN.userName, E2E_ADMIN.password);
     await use(client);
