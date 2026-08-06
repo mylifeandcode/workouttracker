@@ -188,7 +188,7 @@
 
       @if (editModeEnabled()) {
         <div class="col-10">
-          <button type="submit" [disabled]="exerciseForm().invalid() || saving()" (click)="saveExercise()"
+          <button type="button" [disabled]="exerciseForm().invalid() || saving()" (click)="saveExercise()"
             class="btn btn-save-exercise">Save</button>&nbsp;<span>{{infoMsg()}}</span>
             @if (exerciseForm().invalid()) {
               <span class="error-text">Please enter all required information above to enable saving.</span>

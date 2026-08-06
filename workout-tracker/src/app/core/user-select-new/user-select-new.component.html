@@ -33,7 +33,9 @@
         </div>
 
         <div class="headroom">
-          <button type="submit" [disabled]="newUserForm().invalid()" (click)="addUser()" class="btn btn-success">Add</button>
+          <!--type="button", not "submit": this form has no (ngSubmit) handler, so a submit button
+              natively submits it, reloading the app and discarding the entered values.-->
+          <button type="button" [disabled]="newUserForm().invalid()" (click)="addUser()" class="btn btn-success">Add</button>
           &nbsp;
           <button type="button" [disabled]="addingUser()" routerLink="/user-select" class="btn btn-warning">Cancel</button>
           @if (addingUser()) {

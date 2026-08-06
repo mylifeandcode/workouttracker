@@ -63,7 +63,9 @@
           }
 
           <div class="pt-3">
-            <button type="submit" [disabled]="userEditForm().invalid()" (click)="saveUser()"
+            <!--type="button", not "submit": this form has no (ngSubmit) handler, so a submit button
+                natively submits it, reloading the app and discarding the entered values.-->
+            <button type="button" [disabled]="userEditForm().invalid()" (click)="saveUser()"
               class="btn btn-success">Save</button>
             &nbsp;
             <button type="button" [disabled]="savingUserInfo() || loadingUserInfo()" (click)="cancel()"
