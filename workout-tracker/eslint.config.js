@@ -59,6 +59,9 @@ module.exports = defineConfig([
         "off",
         null
       ],
+      //Playwright fixtures declare their dependencies by destructuring, so `async ({}, use)`
+      //is the documented way to say "this fixture needs nothing".
+      "no-empty-pattern": "off",
     },
   },
   {

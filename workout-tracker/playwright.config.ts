@@ -1,23 +1,18 @@
 import { defineConfig, devices } from '@playwright/test';
+import { API_URL, E2E_DB_CONNECTION, FRONTEND_URL, USER_STORAGE_STATE } from './e2e/support/env';
 
 /*
- * E2E configuration. These tests drive the real Angular app against the real API,
- * so both have to be running. By default Playwright starts each of them itself
- * (see `webServer` below); `reuseExistingServer` means that if you already have
- * the Aspire AppHost — or a hand-started `dotnet run` / `npm run start` — up on the
- * expected ports, Playwright attaches to those instead of starting duplicates.
+ * E2E configuration. These tests drive the real Angular app against the real API and a real
+ * SQL Server database, all of which Playwright starts itself.
+ *
+ * The whole stack is disposable and runs on its own ports (4201/5601, versus the dev stack's
+ * 4200/5600) against its own database, which is dropped at the start of every run. That means
+ * a run is always reproducible, and you can leave your dev servers — or the Aspire AppHost —
+ * running while tests execute.
+ *
+ * Servers are deliberately never reused: an existing server would already be pointed at
+ * whatever database it was started with, which would defeat the per-run reset.
  */
-
-const FRONTEND_URL = process.env['E2E_BASE_URL'] ?? 'http://localhost:4200';
-const API_URL = process.env['E2E_API_URL'] ?? 'http://localhost:5600';
-
-/*
- * E2E runs against a dedicated database so a test run never touches dev data.
- * The API creates/migrates/seeds it on boot, so pointing at a database that
- * doesn't exist yet is fine. Override for a different SQL Server instance.
- */
-const E2E_DB_CONNECTION = process.env['E2E_DB_CONNECTION']
-  ?? 'Server=.\\SQLEXPRESS;Database=WorkoutTrackerE2E;Trusted_Connection=True;TrustServerCertificate=true';
 
 const isCI = !!process.env['CI'];
 
@@ -27,8 +22,11 @@ export default defineConfig({
   testMatch: '**/*.e2e.ts',
   outputDir: './test-results',
 
+  globalSetup: './e2e/support/global-setup.ts',
+
   fullyParallel: false,
-  //Single worker until the Phase 2 fixtures namespace test data per-worker.
+  //Single worker for now. Tests namespace their data via the `uniqueName` fixture, so raising
+  //this is mostly a question of how much load the single API instance should take.
   workers: 1,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
@@ -37,6 +35,9 @@ export default defineConfig({
 
   use: {
     baseURL: FRONTEND_URL,
+    //Tests run as the standard E2E user by default; override per-file with test.use() to run
+    //as the admin (ADMIN_STORAGE_STATE) or logged out (UNAUTHENTICATED).
+    storageState: USER_STORAGE_STATE,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -52,34 +53,43 @@ export default defineConfig({
   webServer: [
     {
       name: 'api',
-      command: 'dotnet run --project ../API/WorkoutTracker.API/WorkoutTracker.API.csproj',
+      /*
+       * The database drop has to happen before the API starts, because the API migrates and
+       * seeds on boot — and Playwright's globalSetup runs after webServer processes are up.
+       * Chaining it into the start command is what guarantees the ordering.
+       */
+      /*
+       * --no-launch-profile matters: launchSettings.json pins the API to port 5600 (the dev
+       * port) via its applicationUrl, which would otherwise override the ASPNETCORE_URLS below
+       * and quietly start the E2E API on top of the dev one.
+       */
+      command: 'node e2e/support/reset-database.mjs && dotnet run --verbosity quiet --no-launch-profile --project ../API/WorkoutTracker.API/WorkoutTracker.API.csproj',
       //The OpenAPI document is a cheap readiness probe that proves the app fully started.
       url: `${API_URL}/openapi/v1.json`,
       //Cold start includes a restore/build plus Database.Migrate() and EnsureSeedData().
       timeout: 240_000,
-      reuseExistingServer: !isCI,
+      reuseExistingServer: false,
       stdout: 'pipe',
       stderr: 'pipe',
       env: {
         ASPNETCORE_ENVIRONMENT: 'Development',
         ASPNETCORE_URLS: API_URL,
+        //reset-database.mjs reads this too, so the two can't disagree about which database.
         ConnectionStrings__WorkoutTrackerDatabase: E2E_DB_CONNECTION,
       },
     },
     {
       name: 'frontend',
-      command: 'npm run start',
+      command: `npm run start -- --port ${new URL(FRONTEND_URL).port}`,
       url: FRONTEND_URL,
       timeout: 240_000,
-      reuseExistingServer: !isCI,
+      reuseExistingServer: false,
       stdout: 'pipe',
       stderr: 'pipe',
       env: {
-        //Keeps proxy.conf.js pointed at the same API this config started.
+        //Points proxy.conf.js at the API this config started, not the dev one.
         API_HTTP: API_URL,
       },
     },
   ],
-
-  //globalSetup (E2E database reset, user provisioning, saved storageState) arrives in Phase 2.
 });
