@@ -1,0 +1,57 @@
+# Lint, unit-test and build the Angular frontend.
+#
+# Deliberately does not run the Playwright E2E suite: that needs a SQL Server instance and the
+# real API, which is a much heavier (and more fragile) CI setup. Run it locally with
+# `npm run e2e` — see workout-tracker/CLAUDE.md.
+name: Frontend
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'workout-tracker/**'
+      - '.github/workflows/frontend.yml'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'workout-tracker/**'
+      - '.github/workflows/frontend.yml'
+
+# A newer push to the same branch makes an in-flight run redundant.
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Lint, test and build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: workout-tracker
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: workout-tracker/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # Vitest runs against jsdom (the browser provider is commented out in src/vitest.config.ts),
+      # so no browser install is needed. --no-watch is explicit rather than relying on TTY detection.
+      - name: Unit tests
+        run: npm run test -- --no-watch
+
+      - name: Production build
+        run: npm run build

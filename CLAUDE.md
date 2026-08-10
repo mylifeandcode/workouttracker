@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A two-part WorkoutTracker app intended for home use on a private network:
 
 - `API/` — a .NET 10 solution (clean-architecture backend, ASP.NET Core Web API) plus a .NET Aspire AppHost.
-- `workout-tracker/` — a standalone, zoneless Angular 21 frontend.
+- `workout-tracker/` — a standalone, zoneless Angular 22 frontend.
 
 Two companion guides go deeper than this file; read them before working in their area:
 - [workout-tracker/CLAUDE.md](workout-tracker/CLAUDE.md) — the authoritative frontend guide (architecture, startup ordering, services, conventions, testing).
@@ -28,6 +28,7 @@ This file is the big-picture summary that connects the two halves. `README.md` i
 
 ### Frontend (run from `workout-tracker/`)
 - See [workout-tracker/CLAUDE.md](workout-tracker/CLAUDE.md). In short: `npm install`, `npm run start` (proxies `/api` → `http://localhost:5600`), `npm run test`, `npm run lint`, `npm run build`.
+- End-to-end tests: `npm run e2e` (Playwright). It starts its own full stack — API on `:5601` and dev server on `:4201` against a disposable `WorkoutTrackerE2E` database that is dropped and rebuilt every run — so it needs nothing running first and won't collide with the dev stack or the Aspire AppHost. Details in the frontend guide's [E2E tests](workout-tracker/CLAUDE.md#e2e-tests) section.
 
 ## Backend architecture
 
