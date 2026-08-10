@@ -4,12 +4,23 @@ import type {
   AuthTokenResultDTO,
   Exercise,
   ExerciseTargetAreaLink,
+  PaginatedResultsOfExecutedWorkoutSummaryDTO,
   PaginatedResultsOfExerciseDTO,
+  PaginatedResultsOfWorkoutDTO,
   TargetArea,
   User,
   UserNewDTO,
+  Workout,
 } from '../../src/app/api/types.gen';
-import { ResistanceType } from '../../src/app/api/types.gen';
+import { ResistanceType, SetType } from '../../src/app/api/types.gen';
+import { EMPTY_GUID } from '../../src/app/shared/constants/feature-agnostic-constants';
+
+/** The parts of an exercise-in-workout a test actually cares about; the rest is boilerplate. */
+export interface WorkoutExerciseSpec {
+  exerciseId: number;
+  numberOfSets?: number;
+  setType?: SetType;
+}
 
 /*
  * Thin, typed wrapper over Playwright's request context for talking to the WorkoutTracker API
@@ -154,5 +165,89 @@ export class ApiClient {
 
     expect(response, `Could not search exercises for "${nameContains}"`).toBeOK();
     return response.json() as Promise<PaginatedResultsOfExerciseDTO>;
+  }
+
+  //WORKOUTS ///////////////////////////////////////////////////////////////////
+
+  /**
+   * Creates a workout containing the given exercises. Note the id asymmetry in this API: the
+   * Workout entity's `id` is numeric, but WorkoutDTO (what the list returns, and what the UI
+   * puts in its route links) carries the publicId guid in a string `id`.
+   */
+  async createWorkout(name: string, exercises: WorkoutExerciseSpec[]): Promise<Workout> {
+    const response = await this.context.post('/api/Workouts', {
+      data: {
+        id: 0,
+        publicId: EMPTY_GUID,
+        name,
+        active: true,
+        createdByUserId: 0,
+        createdDateTime: new Date(),
+        exercises: exercises.map((exercise, index) => ({
+          id: 0,
+          exercise: null,
+          exerciseId: exercise.exerciseId,
+          numberOfSets: exercise.numberOfSets ?? 1,
+          setType: exercise.setType ?? SetType.REPETITION,
+          sequence: index,
+          createdByUserId: 0,
+          createdDateTime: new Date(),
+        })),
+      },
+    });
+
+    expect(response, `Could not create workout "${name}"`).toBeOK();
+    return response.json() as Promise<Workout>;
+  }
+
+  async getWorkoutByPublicId(publicId: string): Promise<Workout> {
+    const response = await this.context.get(`/api/Workouts/${publicId}`);
+    expect(response, `Could not load workout ${publicId}`).toBeOK();
+    return response.json() as Promise<Workout>;
+  }
+
+  async searchWorkouts(nameContains?: string, activeOnly = false): Promise<PaginatedResultsOfWorkoutDTO> {
+    const response = await this.context.get('/api/Workouts', {
+      params: {
+        firstRecord: 0,
+        pageSize: 200,
+        activeOnly,
+        sortAscending: true,
+        ...(nameContains ? { nameContains } : {}),
+      },
+    });
+
+    expect(response, 'Could not search workouts').toBeOK();
+    return response.json() as Promise<PaginatedResultsOfWorkoutDTO>;
+  }
+
+  /** Completed and in-progress workouts for the authenticated user, newest first. */
+  async getExecutedWorkouts(workoutNameContains?: string): Promise<PaginatedResultsOfExecutedWorkoutSummaryDTO> {
+    const response = await this.context.get('/api/ExecutedWorkout', {
+      params: {
+        firstRecord: 0,
+        pageSize: 100,
+        newestFirst: true,
+        ...(workoutNameContains ? { workoutNameContains } : {}),
+      },
+    });
+
+    expect(response, 'Could not load executed workouts').toBeOK();
+    return response.json() as Promise<PaginatedResultsOfExecutedWorkoutSummaryDTO>;
+  }
+
+  /**
+   * Workouts planned for later but not yet started.
+   *
+   * These live behind their own endpoint — the main executed-workout list excludes them — and it
+   * offers no name filter, so callers filter the results themselves.
+   */
+  async getPlannedWorkouts(): Promise<PaginatedResultsOfExecutedWorkoutSummaryDTO> {
+    const response = await this.context.get('/api/ExecutedWorkout/planned', {
+      params: { firstRecord: 0, pageSize: 100, newestFirst: true },
+    });
+
+    expect(response, 'Could not load planned workouts').toBeOK();
+    return response.json() as Promise<PaginatedResultsOfExecutedWorkoutSummaryDTO>;
   }
 }

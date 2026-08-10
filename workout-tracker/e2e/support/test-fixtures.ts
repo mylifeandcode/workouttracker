@@ -18,7 +18,18 @@ interface Options {
 }
 
 interface Fixtures {
-  /** API client authenticated as the E2E admin, for arranging and verifying state. */
+  /**
+   * API client for arranging and verifying state, authenticated as **the same account the
+   * browser is using**.
+   *
+   * This matters: workouts and executed workouts are scoped to their creating user server-side
+   * (WorkoutController filters by GetUserID() and refuses to return another user's workout), so
+   * data arranged as one user is invisible to a page browsing as another. Exercises and target
+   * areas are shared, which is why that mismatch stays hidden until you touch workouts.
+   *
+   * When the browser starts logged out, this still authenticates as the standard user so a test
+   * can set up data before exercising the login flow.
+   */
   api: ApiClient;
   /** The accounts the global setup created, including their real ids. */
   users: ProvisionedUsers;
@@ -47,8 +58,9 @@ export const test = base.extend<Options & Fixtures>({
     await use(await createSessionState(credentials));
   },
 
-  api: async ({}, use) => {
-    const client = await ApiClient.authenticateAs(E2E_ADMIN.userName, E2E_ADMIN.password);
+  api: async ({ authenticateAs }, use) => {
+    const credentials = authenticateAs === 'admin' ? E2E_ADMIN : E2E_USER;
+    const client = await ApiClient.authenticateAs(credentials.userName, credentials.password);
     await use(client);
     await client.dispose();
   },
