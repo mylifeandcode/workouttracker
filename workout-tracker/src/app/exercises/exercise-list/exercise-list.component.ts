@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ExerciseService } from '../_services/exercise.service';
 import { TargetAreaService } from '../_services/target-area.service';
 import { ExerciseDTO, PaginatedResultsOfExerciseDTO } from '../../api';
@@ -36,6 +36,32 @@ export class ExerciseListComponent implements OnInit {
 
   private _previousTargetAreaFilter: string[] | null = null;
 
+  private _tableQuery = signal<NzTableQueryParams | null>(null);
+
+  protected firstRecord = computed(() => {
+    const q = this._tableQuery();
+    return q ? (q.pageIndex - 1) * q.pageSize : 0;
+  });
+
+  protected tableSortAscending = computed(() =>
+    this._tableQuery()?.sort.find(s => s.value !== null)?.value !== 'descend');
+
+  protected selectedTargetAreas = computed(() => {
+    const filter = this._tableQuery()?.filter.find(f => f.key === 'targetAreas');
+    return filter?.value?.length ? filter.value as string[] : null;
+  });
+
+
+  /*
+  private resource = 
+    this._exerciseSvc.getSelection(
+      this.pageIndex,
+      this.pageSize,
+      this.nameFilter,
+      this.getActiveTargetAreaFilter,
+      signal(true)
+    );
+  */
 
   public ngOnInit(): void {
     this._targetAreaSvc
@@ -52,6 +78,7 @@ export class ExerciseListComponent implements OnInit {
       });
   }
 
+  /*
   public onQueryParamsChange(params: NzTableQueryParams): void {
     const { pageSize, pageIndex, filter, sort } = params;
     console.log('pageSize:', pageSize, 'pageIndex:', pageIndex, 'filter:', filter, 'sort:', sort);
@@ -71,6 +98,10 @@ export class ExerciseListComponent implements OnInit {
     //this.pageIndex.set(pageIndex);
 
     this.getExercises((pageIndex - 1) * pageSize, this.nameFilter(), selectedTargetAreas, sortAscending);
+  }
+  */
+  public onQueryParamsChange(params: NzTableQueryParams): void {
+    this._tableQuery.set(params);
   }
 
   public search(): void {

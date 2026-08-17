@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, Signal, inject } from '@angular/core';
+import { HttpClient, httpResource, HttpResourceRef } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { PaginatedResultsOfExerciseDTO } from '../../api';
@@ -29,7 +29,7 @@ export class ExerciseService {
     firstRecOffset: number,
     pageSize: number,
     nameContains: string | null = null,
-    targetAreaContains: string[] | null = null, 
+    targetAreaContains: string[] | null = null,
     sortAscending: boolean = true): Observable<PaginatedResultsOfExerciseDTO> {
 
     let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&sortAscending=${sortAscending}`;
@@ -52,6 +52,44 @@ export class ExerciseService {
           return paginatedResults;
         })
       );
+  }
+
+  public getSelection(
+    firstRecOffset: Signal<number>,
+    pageSize: Signal<number>,
+    nameContains: Signal<string | null>,
+    targetAreaContains: Signal<string[] | null>,
+    sortAscending: Signal<boolean>): HttpResourceRef<PaginatedResultsOfExerciseDTO> {
+
+    return httpResource<PaginatedResultsOfExerciseDTO>(
+      () => {
+        const params: Record<string, string | number | boolean> = {
+          firstRecord: firstRecOffset(),
+          pageSize: pageSize(),
+          sortAscending: sortAscending()
+        };
+
+        const name = nameContains();
+        if (name)
+          params['nameContains'] = name;
+
+        const targetAreas = targetAreaContains();
+        if (targetAreas?.length)
+          params['hasTargetAreas'] = targetAreas.join(',');
+
+        return { url: this.API_ROOT, params };
+      },
+      {
+        parse: (raw) => {//TODO: Consider using Zod for schema validation
+          const paginatedResults = raw as PaginatedResultsOfExerciseDTO;
+          paginatedResults.results.forEach(exercise => {
+            this._dateService.convertAuditDateStringsToDates(exercise);
+          });
+          return paginatedResults;
+        },
+        defaultValue: { results: [], totalCount: 0 }
+      }
+    );
   }
 
   public getById(publicId: string): Observable<Exercise> {
