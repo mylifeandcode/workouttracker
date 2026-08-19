@@ -52,7 +52,6 @@ export class ExerciseListComponent implements OnInit {
   });
 
 
-  /*
   private resource = 
     this._exerciseSvc.getSelection(
       this.pageIndex,
@@ -61,8 +60,7 @@ export class ExerciseListComponent implements OnInit {
       this.getActiveTargetAreaFilter,
       signal(true)
     );
-  */
-
+  
   public ngOnInit(): void {
     this._targetAreaSvc
       .getAll()
