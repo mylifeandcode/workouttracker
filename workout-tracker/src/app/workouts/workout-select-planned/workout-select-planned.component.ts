@@ -5,7 +5,6 @@ import { ExecutedWorkoutSummaryDTO, PaginatedResultsOfExecutedWorkoutSummaryDTO 
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
@@ -42,9 +41,6 @@ export class WorkoutSelectPlannedComponent {
             next: () => {
               this._messageService.success('Planned Workout deleted');
               this.getPlannedWorkouts(0);
-            },
-            error: (error: HttpErrorResponse) => {
-              window.alert("Couldn't delete workout! " + error.message);
             }
           });
       }

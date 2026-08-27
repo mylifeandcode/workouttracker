@@ -41,7 +41,7 @@ export class UserService extends ApiBaseService<User> {
 
   public override add(user: User): Observable<never> {
     console.log("UserService.add() called - throwing error.", user); //HACK
-    return throwError(() => "To add new users, use the addNew() method. UserService doesn't support the base add() method.");
+    return throwError(() => new Error("To add new users, use the addNew() method. UserService doesn't support the base add() method."));
   }
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////

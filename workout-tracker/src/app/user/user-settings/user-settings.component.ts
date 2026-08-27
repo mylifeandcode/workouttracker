@@ -3,7 +3,7 @@ import { form, FormField, required, min, validate, applyEach, applyWhen } from '
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { User, UserMinMaxReps, SetType } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
-import { catchError, finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { IUserRepSettingsModel, UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
@@ -77,11 +77,7 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
     if (!this._authService.userPublicId) return;
     this._userService.getById(this._authService.userPublicId)
       .pipe(
-        finalize(() => { this.loading.set(false); }),
-        catchError((err) => {
-          window.alert("ERROR: " + err.message);
-          throw err.message;
-        })
+        finalize(() => { this.loading.set(false); })
       )
       .subscribe((user: User) => {
         this.user.set(user);
@@ -100,10 +96,6 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
         finalize(() => {
           this.saving.set(false);
           this.userSettingsForm().reset(); //Clears dirty/touched so the guard lets us navigate away
-        }),
-        catchError((err) => {
-          window.alert("ERROR: " + err.message);
-          throw err.message;
         })
       )
       .subscribe(() => {

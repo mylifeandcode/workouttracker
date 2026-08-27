@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, importProvidersFrom, inject, provideAppInitializer, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
@@ -11,6 +11,8 @@ import { UserService } from './core/_services/user/user.service';
 import { AuthService } from './core/_services/auth/auth.service';
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { AuthInterceptor } from './core/auth.interceptor';
+import { GlobalHttpErrorInterceptor } from './core/global-http-error.interceptor';
+import { GlobalErrorHandler } from './core/global-error-handler';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { Observable, switchMap, tap } from 'rxjs';
 import en from '@angular/common/locales/en';
@@ -26,12 +28,34 @@ export const appConfig: ApplicationConfig = {
       const initializerFn = (initializeApp)(inject(ConfigService), inject(UserService), inject(AuthService), inject(HttpClient));
       return initializerFn();
     }),
+    /*
+    INTERCEPTOR ORDER IS LOAD-BEARING — do not reorder these two.
+
+    Angular builds the interceptor chain with reduceRight, so the FIRST entry here is
+    the OUTERMOST one. GlobalHttpErrorInterceptor has to wrap AuthInterceptor: that's
+    what lets a silent token refresh stay silent, because AuthInterceptor's catchError
+    replaces the 401 with the replayed request's success before the error interceptor
+    ever sees it. Swap these and every expired access token raises a spurious error
+    notification — a regression that only reproduces once a token actually expires.
+
+    Covered by global-http-error.interceptor.spec.ts, which asserts both orders.
+    */
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: GlobalHttpErrorInterceptor,
+      multi: true
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
     },
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
+    provideBrowserGlobalErrorListeners(),
+    {
+      provide: ErrorHandler,
+      useClass: GlobalErrorHandler
+    },
     provideZonelessChangeDetection(),
     provideAnimations(),
     provideNzI18n(en_US),

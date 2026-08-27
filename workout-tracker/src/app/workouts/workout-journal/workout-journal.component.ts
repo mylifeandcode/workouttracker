@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
 import { finalize } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { RouterModule } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -41,8 +40,7 @@ export class WorkoutJournalComponent implements OnInit {
         next: (results: PaginatedResultsOfExecutedWorkoutSummaryDTO) => {
           this.executedWorkouts.set(results.results ?? []);
           this.totalRecords.set(results.totalCount);
-        },
-        error: (error: HttpErrorResponse) => window.alert("An error occurred getting executed workouts: " + error.message)
+        }
       });
 
   }

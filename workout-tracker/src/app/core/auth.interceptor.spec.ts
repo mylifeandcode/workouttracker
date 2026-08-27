@@ -1,8 +1,8 @@
-import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Subject, of } from 'rxjs';
 
 import { AuthInterceptor } from './auth.interceptor';
 import { AuthService } from './_services/auth/auth.service';
@@ -19,6 +19,7 @@ describe('AuthInterceptor', () => {
       token: "someAccessToken",
       isRefreshing: false,
       refreshTokenSubject: new BehaviorSubject<string | null>(null),
+      refreshFailed$: new Subject<void>(),
       refreshAccessToken: vi.fn<AuthService['refreshAccessToken']>().mockReturnValue(of(true)),
       logOut: vi.fn<AuthService['logOut']>()
     };
@@ -98,6 +99,78 @@ describe('AuthInterceptor', () => {
 
     expect(authService.refreshAccessToken).not.toHaveBeenCalled();
     expect(errorCaught).toBe(true);
+  });
+
+  /*
+  logOut() fires POST /auth/revoke precisely when the token may already be dead.
+  Without this exclusion its 401 triggers a refresh, which fails, which calls
+  logOut() again.
+  */
+  it('should not attempt refresh on 401 for auth/revoke URL', () => {
+
+    let errorCaught = false;
+    httpClient.post("http://localhost:5600/auth/revoke", {}).subscribe({
+      error: () => { errorCaught = true; }
+    });
+
+    const request = httpTestingController.expectOne("http://localhost:5600/auth/revoke");
+    request.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+
+    expect(authService.refreshAccessToken).not.toHaveBeenCalled();
+    expect(errorCaught).toBe(true);
+  });
+
+  describe('requests queued behind an in-flight refresh', () => {
+
+    beforeEach(() => {
+      //Simulate another request having already started a refresh.
+      authService.isRefreshing = true;
+    });
+
+    it('should be replayed once the refresh succeeds', () => {
+
+      let received: unknown;
+      httpClient.get("api/data").subscribe((value: unknown) => { received = value; });
+
+      httpTestingController.expectOne("api/data")
+        .flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+
+      //The in-flight refresh completes and publishes the new token.
+      authService.refreshTokenSubject.next("aFreshAccessToken");
+
+      const retryRequest: TestRequest = httpTestingController.expectOne("api/data");
+      expect(retryRequest.request.headers.get("Authorization")).toBe("Bearer someAccessToken");
+      retryRequest.flush({ data: 'success' });
+
+      expect(received).toEqual({ data: 'success' });
+    });
+
+    /*
+    Nothing is ever pushed to refreshTokenSubject when a refresh fails, so waiting
+    only on it meant the request never emitted, errored, or completed: finalize()
+    never ran and the caller's spinner stuck permanently.
+    */
+    it('should error rather than hang when the refresh fails', () => {
+
+      let caught: HttpErrorResponse | undefined;
+      let completed = false;
+      httpClient.get("api/data").subscribe({
+        error: (error: HttpErrorResponse) => { caught = error; },
+        complete: () => { completed = true; }
+      });
+
+      httpTestingController.expectOne("api/data")
+        .flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+
+      expect(caught).toBeUndefined(); //Still waiting on the in-flight refresh
+
+      authService.refreshFailed$.next();
+
+      expect(caught).toBeInstanceOf(HttpErrorResponse);
+      expect(caught?.status).toBe(401);
+      expect(completed).toBe(false);
+      httpTestingController.expectNone("api/data"); //Never replayed
+    });
   });
 
 });

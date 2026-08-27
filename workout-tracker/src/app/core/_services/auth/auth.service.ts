@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, WritableSignal, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { catchError, map, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { AuthTokenResultDTO } from '../../../api';
+import { selfHandled } from '../../_http/http-error-context';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,12 @@ export class AuthService {
   // Refresh token coordination
   public isRefreshing = false;
   public refreshTokenSubject = new BehaviorSubject<string | null>(null);
+  /*
+  Emits when a refresh attempt fails. Requests queued behind an in-flight refresh
+  need this to know they should give up — refreshTokenSubject never emits on
+  failure, so without it they'd wait forever.
+  */
+  public refreshFailed$ = new Subject<void>();
 
   //PRIVATE FIELDS
   private _apiRoot: string = '';
@@ -82,7 +89,13 @@ export class AuthService {
 
   public logIn(username: string, password: string): Observable<boolean> {
     return this._http
-      .post<AuthTokenResultDTO>(`${this._apiRoot}/login`, { username, password })
+      /*
+      selfHandled: the login screen owns the failure message ("Login failed."), which
+      it derives from the `false` the catchError below emits. Note that catchError
+      alone can't suppress the global notification — the interceptor's error operator
+      runs upstream of anything we pipe on here, so it would have already fired.
+      */
+      .post<AuthTokenResultDTO>(`${this._apiRoot}/login`, { username, password }, selfHandled())
       .pipe(
         tap(() => console.log('Login successful, processing token...')),
         map((result: AuthTokenResultDTO) => {
@@ -94,9 +107,10 @@ export class AuthService {
   }
 
   public logOut(): void {
-    // Fire-and-forget revoke call
+    // Fire-and-forget revoke call. selfHandled: routinely fails harmlessly (the token
+    // may already be dead, which is often why we're logging out) — never user-facing.
     if (this.token) {
-      this._http.post(`${this._apiRoot}/revoke`, {}).subscribe();
+      this._http.post(`${this._apiRoot}/revoke`, {}, selfHandled()).subscribe();
     }
 
     this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);
@@ -115,10 +129,16 @@ export class AuthService {
     }
 
     return this._http
+      /*
+      selfHandled: internal machinery, never user-initiated. It also runs inside
+      provideAppInitializer (via restoreUserSessionIfApplicable), which is before the
+      notification host can render anything. When a refresh failure genuinely matters
+      to the user, AuthInterceptor surfaces it as the 401 it rethrows.
+      */
       .post<AuthTokenResultDTO>(`${this._apiRoot}/refresh`, {
         accessToken: this.token,
         refreshToken: refreshToken
-      })
+      }, selfHandled())
       .pipe(
         map((result: AuthTokenResultDTO) => {
           const username = this.currentUserName() ?? '';

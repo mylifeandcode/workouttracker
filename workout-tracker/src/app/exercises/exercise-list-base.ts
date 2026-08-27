@@ -6,7 +6,6 @@ import { Subject } from 'rxjs';
 import { effect, inject, signal } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { HttpErrorResponse } from '@angular/common/http';
 
 export abstract class ExerciseListBase {
 
@@ -58,8 +57,7 @@ export abstract class ExerciseListBase {
           });
           */
          this.targetAreas.set(targetAreaNames);
-        },
-        error: (error: HttpErrorResponse) => window.alert("An error occurred getting exercises: " + error.message)
+        }
       });
   }
 
@@ -74,8 +72,7 @@ export abstract class ExerciseListBase {
         next: (exercises: PaginatedResultsOfExerciseDTO) => {
           this.exercises.set(exercises.results);
           this.totalRecords.set(exercises.totalCount);
-        },
-        error: (error: HttpErrorResponse) => window.alert("An error occurred getting exercises: " + error.message)
+        }
       });
   }
   

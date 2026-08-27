@@ -10,7 +10,6 @@ import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
 import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { HttpErrorResponse } from '@angular/common/http';
 
 //TODO: This is similar to WorkoutsListComponent. Find a way to consolidate/reuse code.
 
@@ -79,8 +78,7 @@ export class WorkoutHistoryComponent implements OnInit {
         next: (results: PaginatedResultsOfExecutedWorkoutSummaryDTO) => {
           this.executedWorkouts.set(results.results ?? []);
           this.totalRecords.set(results.totalCount);
-        },
-        error: (error: HttpErrorResponse) => window.alert("An error occurred getting executed workouts: " + error.message)
+        }
       });
   }
 

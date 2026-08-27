@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { WorkoutService } from '../_services/workout.service';
 import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { finalize } from 'rxjs/operators';
-import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { NzTableFilterList, NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -71,8 +70,7 @@ export class WorkoutListComponent {
           next: () => {
             this.pageIndex.set(1);
             this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this.sortAscending(), this.nameFilter());
-          },
-          error: (error: HttpErrorResponse) => window.alert("An error occurred while retiring workout: " + error.message)
+          }
         });
     }
   }
@@ -86,8 +84,7 @@ export class WorkoutListComponent {
           next: () => {
             this.pageIndex.set(1);
             this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this.sortAscending(), this.nameFilter());
-          },
-          error: (error: HttpErrorResponse) => window.alert("An error occurred while reactivating workout: " + error.message)
+          }
         });
     }
   }
@@ -101,8 +98,7 @@ export class WorkoutListComponent {
         next: (results: PaginatedResultsOfWorkoutDTO) => {
           this.workouts.set(results.results);
           this.totalRecords.set(results.totalCount);
-        },
-        error: (error: HttpErrorResponse) => window.alert("An error occurred getting workouts: " + error.message)
+        }
       });
   }
 }

@@ -3,7 +3,6 @@ import { ExerciseService } from '../_services/exercise.service';
 import { TargetAreaService } from '../_services/target-area.service';
 import { ExerciseDTO, PaginatedResultsOfExerciseDTO } from '../../api';
 import { finalize, map } from 'rxjs/operators';
-import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { NzTableFilterList, NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -47,8 +46,7 @@ export class ExerciseListComponent implements OnInit {
         next: (filters: NzTableFilterList) => {
           this.targetAreaFilters.set(filters);
           this.tableSetupFinished.set(true);
-        },
-        error: (error: HttpErrorResponse) => window.alert("An error occurred getting target areas: " + error.message)
+        }
       });
   }
 
@@ -95,8 +93,7 @@ export class ExerciseListComponent implements OnInit {
         next: (exercises: PaginatedResultsOfExerciseDTO) => {
           this.exercises.set(exercises.results);
           this.totalRecords.set(exercises.totalCount);
-        },
-        error: (error: HttpErrorResponse) => window.alert("An error occurred getting exercises: " + error.message)
+        }
       });
   }
 
