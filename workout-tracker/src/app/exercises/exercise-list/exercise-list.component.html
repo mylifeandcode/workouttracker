@@ -4,7 +4,7 @@
     <div class="col-12">
       @if (tableSetupFinished()) {
         <nz-table #dt [nzData]="resource.value().results" [nzFrontPagination]="false" [nzShowSizeChanger]="true"
-          [nzTotal]="totalRecords()" [(nzPageSize)]="pageSize" [(nzPageIndex)]="pageIndex" [nzLoading]="resource.isLoading()"
+          [nzTotal]="resource.value()?.totalCount" [(nzPageSize)]="pageSize" [(nzPageIndex)]="pageIndex" [nzLoading]="resource.isLoading()"
           (nzQueryParams)="onQueryParamsChange($event)">
           <thead>
             <tr>
@@ -36,10 +36,10 @@
     </div>
   </div>
 
-  @if (totalRecords != null) {
+  @if (!resource.isLoading() && resource.value()?.totalCount != null) {
     <div class="row mt-2 mb-2">
-      <div class="col-3">{{totalRecords()}} total exercise(s)</div>
-      @if (totalRecords() == 0) {
+      <div class="col-3">{{resource.value().totalCount}} total exercise(s)</div>
+      @if (!resource.isLoading() && resource.value()?.totalCount == 0) {
         <div class="col-9" style="font-style: italic">
           No exercises have been defined. Please create one using the "Add New" button below.
         </div>
@@ -60,7 +60,9 @@
   <div class="ant-table-filter-dropdown">
     <div class="search-box">
       <input type="text" nz-input placeholder="Exercise Name" [(ngModel)]="nameFilter" />
+      <!--
       <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">Search</button>
+      -->
       <button nz-button nzSize="small" (click)="reset()">Reset</button>
     </div>
   </div>

@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, debounced, inject, linkedSignal, OnInit, signal } from '@angular/core';
 import { ExerciseService } from '../_services/exercise.service';
 import { TargetAreaService } from '../_services/target-area.service';
-import { ExerciseDTO, PaginatedResultsOfExerciseDTO } from '../../api';
-import { finalize, map } from 'rxjs/operators';
+import { ExerciseDTO } from '../../api';
+import { map } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { NzTableFilterList, NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -21,50 +21,54 @@ export class ExerciseListComponent implements OnInit {
   private readonly _exerciseSvc = inject(ExerciseService);
   private readonly _targetAreaSvc = inject(TargetAreaService);
 
-  public totalRecords = signal<number>(0);
+  //public totalRecords = signal<number>(0);
   public loading = signal<boolean>(true);
   public exercises = signal<ExerciseDTO[]>([]);
   public targetAreaFilters = signal<NzTableFilterList>([]);
   public tableSetupFinished = signal(false);
 
-  //Less than ideal to have this be public
-  public pageIndex = signal<number>(1);
-
   protected pageSize = signal<number>(10);
   protected nameFilter = signal('');
   protected nameFilterVisible = signal(false);
 
-  private _previousTargetAreaFilter: string[] | null = null;
-
   private _tableQuery = signal<NzTableQueryParams | null>(null);
 
-  protected firstRecord = computed(() => {
-    const q = this._tableQuery();
-    return q ? (q.pageIndex - 1) * q.pageSize : 0;
-  });
+  // Must be declared BEFORE `pageIndex` — field initializers run in order.
+  private _debouncedNameFilter = debounced(() => this.nameFilter(), 300);
 
   protected tableSortAscending = computed(() =>
     this._tableQuery()?.sort.find(s => s.value !== null)?.value !== 'descend');
 
-  protected selectedTargetAreas = computed(() => {
-    const filter = this._tableQuery()?.filter.find(f => f.key === 'targetAreas');
-    return filter?.value?.length ? filter.value as string[] : null;
+  protected selectedTargetAreas = computed<string[] | null>(
+    () => {
+      const filter = this._tableQuery()?.filter.find(f => f.key === 'targetAreas');
+      return filter?.value?.length ? filter.value as string[] : null;
+    },
+    // nzQueryParams emits a fresh params object on *every* change, page changes
+    // included, so compare by value or this reads as a new filter each time —
+    // which would reset `pageIndex` below on every page click.
+    { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) }
+  );
+
+  //Writable so the table can page it, but reset to page 1 whenever a filter changes.
+  //Sourced from the *debounced* name so the reset and the refetch land in the same tick.
+  protected pageIndex = linkedSignal<{ name: string; areas: string[] | null }, number>({
+    source: () => ({
+      name: this._debouncedNameFilter.value(),
+      areas: this.selectedTargetAreas()
+    }),
+    computation: () => 1
   });
 
-  /*
-  activeTargetAreaFilters = computed(() => {
-    const active = this.targetAreaFilters().filter(f => f.byDefault);
-    return active.length ? active.map(f => f.value as string) : null;
-  });
-  */
+  protected firstRecord = computed(() => (this.pageIndex() - 1) * this.pageSize());
 
-  protected resource = 
+  protected resource =
     this._exerciseSvc.getSelection(
-      this.pageIndex,
+      this.firstRecord,
       this.pageSize,
-      this.nameFilter,
+      this._debouncedNameFilter.value,
       this.selectedTargetAreas,
-      signal(true)
+      this.tableSortAscending
     );
   
   public ngOnInit(): void {
@@ -82,63 +86,12 @@ export class ExerciseListComponent implements OnInit {
       });
   }
 
-  /*
-  public onQueryParamsChange(params: NzTableQueryParams): void {
-    const { pageSize, pageIndex, filter, sort } = params;
-    console.log('pageSize:', pageSize, 'pageIndex:', pageIndex, 'filter:', filter, 'sort:', sort);
-
-    const currentSort = sort.find(item => item.value !== null);
-    const sortAscending = currentSort?.value !== 'descend';
-    const targetAreaFilter = filter.find(f => f.key === 'targetAreas');
-    const selectedTargetAreas: string[] | null =
-      targetAreaFilter?.value?.length ? targetAreaFilter.value : null;
-
-    if (JSON.stringify(selectedTargetAreas) !== JSON.stringify(this._previousTargetAreaFilter)) {
-      this.pageIndex.set(1);
-      this._previousTargetAreaFilter = selectedTargetAreas;
-    }
-
-    //this.pageSize.set(pageSize);
-    //this.pageIndex.set(pageIndex);
-
-    this.getExercises((pageIndex - 1) * pageSize, this.nameFilter(), selectedTargetAreas, sortAscending);
-  }
-  */
   public onQueryParamsChange(params: NzTableQueryParams): void {
     this._tableQuery.set(params);
   }
 
-  public search(): void {
-    this.nameFilterVisible.set(false);
-    this.pageIndex.set(1);
-    this.getExercises(0, this.nameFilter(), this.getActiveTargetAreaFilter(), true);
-  }
-
   public reset(): void {
     this.nameFilter.set('');
-    this.search();
-  }
-
-  private getExercises(first: number, nameContains: string | null, targetAreaContains: string[] | null, sortAscending: boolean): void {
-    this.loading.set(true);
-    this._exerciseSvc
-      .getAll(first, this.pageSize(), nameContains, targetAreaContains, sortAscending)
-      .pipe(finalize(() => {
-        this.loading.set(false);
-      }))
-      .subscribe({
-        next: (exercises: PaginatedResultsOfExerciseDTO) => {
-          this.exercises.set(exercises.results);
-          this.totalRecords.set(exercises.totalCount);
-        },
-        error: (error: HttpErrorResponse) => window.alert("An error occurred getting exercises: " + error.message)
-      });
-  }
-
-
-  private getActiveTargetAreaFilter(): string[] | null {
-    const active = this.targetAreaFilters().filter(f => f.byDefault);
-    return active.length ? active.map(f => f.value as string) : null;
   }
 
 }
