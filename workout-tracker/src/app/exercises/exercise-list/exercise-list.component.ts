@@ -51,13 +51,19 @@ export class ExerciseListComponent implements OnInit {
     return filter?.value?.length ? filter.value as string[] : null;
   });
 
+  /*
+  activeTargetAreaFilters = computed(() => {
+    const active = this.targetAreaFilters().filter(f => f.byDefault);
+    return active.length ? active.map(f => f.value as string) : null;
+  });
+  */
 
-  private resource = 
+  protected resource = 
     this._exerciseSvc.getSelection(
       this.pageIndex,
       this.pageSize,
       this.nameFilter,
-      this.getActiveTargetAreaFilter,
+      this.selectedTargetAreas,
       signal(true)
     );
   
@@ -129,8 +135,10 @@ export class ExerciseListComponent implements OnInit {
       });
   }
 
+
   private getActiveTargetAreaFilter(): string[] | null {
     const active = this.targetAreaFilters().filter(f => f.byDefault);
     return active.length ? active.map(f => f.value as string) : null;
   }
+
 }

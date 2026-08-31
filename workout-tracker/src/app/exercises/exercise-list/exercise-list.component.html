@@ -3,8 +3,8 @@
   <div class="row">
     <div class="col-12">
       @if (tableSetupFinished()) {
-        <nz-table #dt [nzData]="exercises()" [nzFrontPagination]="false" [nzShowSizeChanger]="true"
-          [nzTotal]="totalRecords()" [(nzPageSize)]="pageSize" [(nzPageIndex)]="pageIndex" [nzLoading]="loading()"
+        <nz-table #dt [nzData]="resource.value().results" [nzFrontPagination]="false" [nzShowSizeChanger]="true"
+          [nzTotal]="totalRecords()" [(nzPageSize)]="pageSize" [(nzPageIndex)]="pageIndex" [nzLoading]="resource.isLoading()"
           (nzQueryParams)="onQueryParamsChange($event)">
           <thead>
             <tr>
