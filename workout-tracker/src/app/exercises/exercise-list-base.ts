@@ -1,11 +1,11 @@
 import { ExerciseService } from './_services/exercise.service';
 import { TargetAreaService } from './_services/target-area.service';
-import { debounceTime, distinctUntilChanged, finalize, map, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, finalize, map } from 'rxjs/operators';
 import { ExerciseDTO, PaginatedResultsOfExerciseDTO } from '../api';
 import { Subject } from 'rxjs';
 import { effect, inject, signal } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 export abstract class ExerciseListBase {
 
@@ -32,14 +32,13 @@ export abstract class ExerciseListBase {
   });
 
   private _nameFilterChanged$ = new Subject<string>();
-  private _destroy$ = new Subject<void>();
 
   constructor(protected _exerciseSvc: ExerciseService) {
     this._nameFilterChanged$
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-        takeUntil(this._destroy$)
+        takeUntilDestroyed()
       )
       .subscribe(() => {
         this.handleFilterChange();
@@ -51,11 +50,6 @@ export abstract class ExerciseListBase {
       .pipe(map(areas => areas.map(targetArea => targetArea.name)))
       .subscribe({
         next: (targetAreaNames: string[]) => {
-          /*
-          targetAreaNames.forEach(targetArea => {
-            this.targetAreas.push(targetArea);
-          });
-          */
          this.targetAreas.set(targetAreaNames);
         }
       });
