@@ -20,7 +20,7 @@ export class RecentWorkoutsComponent implements OnInit {
   private _workoutService = inject(WorkoutService);
   private _router = inject(Router);
 
-  public recentWorkouts: ExecutedWorkoutSummaryDTO[] = [];
+  public recentWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
   public showExercises = signal<boolean>(false);
   public selectedWorkout = signal<Workout | null>(null);
   public loading = signal<boolean>(true);
@@ -31,7 +31,7 @@ export class RecentWorkoutsComponent implements OnInit {
     this._executedWorkoutService
       .getRecent() //TODO: Add code to exclude any workouts which have since been retired!
       .subscribe((workouts: ExecutedWorkoutSummaryDTO[]) => {
-        this.recentWorkouts = workouts;
+        this.recentWorkouts.set(workouts);
         this.loading.set(false); //TODO: Use finalize and set this there instead.
       });
   }
