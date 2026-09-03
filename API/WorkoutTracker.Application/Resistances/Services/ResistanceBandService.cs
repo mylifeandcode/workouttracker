@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Resistances.Interfaces;
 using WorkoutTracker.Application.Shared.BaseClasses;
@@ -19,31 +20,31 @@ namespace WorkoutTracker.Application.Resistances.Services
 
         public ResistanceBandService(IRepository<ResistanceBand> repository, ILogger<ResistanceBandService> logger) : base(repository, logger) { }
 
-        public async Task<ResistanceBand> AddAsync(ResistanceBand resistanceBand)
+        public async Task<ResistanceBand> AddAsync(ResistanceBand resistanceBand, CancellationToken cancellationToken = default)
         {
-            return await AddAsync(resistanceBand, true);
+            return await AddAsync(resistanceBand, true, cancellationToken);
         }
 
-        public async Task<ResistanceBand> UpdateAsync(ResistanceBand resistanceBand)
+        public async Task<ResistanceBand> UpdateAsync(ResistanceBand resistanceBand, CancellationToken cancellationToken = default)
         {
-            return await UpdateAsync(resistanceBand, true);
+            return await UpdateAsync(resistanceBand, true, cancellationToken);
         }
 
-        public async Task<IEnumerable<ResistanceBand>> GetAllWithoutTrackingAsync()
+        public async Task<IEnumerable<ResistanceBand>> GetAllWithoutTrackingAsync(CancellationToken cancellationToken = default)
         {
-            return await _repo.GetAllWithoutTrackingAsync();
+            return await _repo.GetAllWithoutTrackingAsync(cancellationToken);
         }
 
-        public async Task<ResistanceBand?> GetByPublicIdAsync(Guid publicId)
+        public async Task<ResistanceBand?> GetByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
         {
-            return await _repo.GetWithoutTracking().FirstOrDefaultAsync(x => x.PublicId == publicId);
+            return await _repo.GetWithoutTracking().FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
         }
 
-        public async Task<List<ResistanceBand>> GetIndividualBandsAsync()
+        public async Task<List<ResistanceBand>> GetIndividualBandsAsync(CancellationToken cancellationToken = default)
         {
-            if (_individualBands != null) return _individualBands;
+            if (_individualBands != null) return _individualBands; // no I/O on this path — token intentionally unused here
 
-            List<ResistanceBand> bandsByColor = (await _repo.GetAllAsync()).ToList();
+            List<ResistanceBand> bandsByColor = (await _repo.GetAllAsync(cancellationToken)).ToList();
             List<ResistanceBand> output = new List<ResistanceBand>(bandsByColor.Sum(band => band.NumberAvailable));
 
             bandsByColor.ForEach((band) =>
@@ -63,7 +64,8 @@ namespace WorkoutTracker.Application.Resistances.Services
             decimal minimalAdjustment,
             decimal preferredMaxAdjustment,
             bool doubleBandResistanceAmounts,
-            bool exerciseUsesBilateralResistance)
+            bool exerciseUsesBilateralResistance,
+            CancellationToken cancellationToken = default)
         {
             _logger.LogInformation(
                 $"Getting resistance amount: Current = {currentAmount}, " +
@@ -88,7 +90,7 @@ namespace WorkoutTracker.Application.Resistances.Services
             }
 
             List<ResistanceBand> availableBands =
-                await GetAvailableBandsAsync(preferredMax, multiplierForDoubledOverBands, exerciseUsesBilateralResistance);
+                await GetAvailableBandsAsync(preferredMax, multiplierForDoubledOverBands, exerciseUsesBilateralResistance, cancellationToken);
 
             if (availableBands.Any())
             {
@@ -103,10 +105,10 @@ namespace WorkoutTracker.Application.Resistances.Services
             }
         }
 
-        public async Task<ResistanceBand?> GetLowestResistanceBandAsync()
+        public async Task<ResistanceBand?> GetLowestResistanceBandAsync(CancellationToken cancellationToken = default)
         {
             if (_lowestResistanceBand == null)
-                _lowestResistanceBand = (await GetIndividualBandsAsync()).MinBy(band => band.MaxResistanceAmount);
+                _lowestResistanceBand = (await GetIndividualBandsAsync(cancellationToken)).MinBy(band => band.MaxResistanceAmount);
 
             if (_lowestResistanceBand == null)
             {
@@ -123,9 +125,10 @@ namespace WorkoutTracker.Application.Resistances.Services
         private async Task<List<ResistanceBand>> GetAvailableBandsAsync(
             decimal preferredMax,
             byte multiplierForDoubledOverBands,
-            bool forBilateralExercise)
+            bool forBilateralExercise,
+            CancellationToken cancellationToken = default)
         {
-            var bands = await GetIndividualBandsAsync();
+            var bands = await GetIndividualBandsAsync(cancellationToken);
             var query = bands.Where(x => (x.MaxResistanceAmount * multiplierForDoubledOverBands) <= preferredMax);
 
             if (forBilateralExercise)

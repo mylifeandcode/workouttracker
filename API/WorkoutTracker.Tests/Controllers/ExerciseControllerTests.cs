@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Application.Exercises.Interfaces;
@@ -60,7 +61,7 @@ namespace WorkoutTracker.Tests.Controllers
             var exercise = new Exercise();
             exerciseSvc
                 .Setup(x => x.AddAsync(It.IsAny<Exercise>(), true))
-                .ReturnsAsync((Exercise newExercise, bool save) => exercise);
+                .ReturnsAsync((Exercise newExercise, bool save, CancellationToken _) => exercise);
 
             var sut = new ExerciseController(exerciseSvc.Object);
             SetupUser(sut);
@@ -82,7 +83,7 @@ namespace WorkoutTracker.Tests.Controllers
             var exercise = new Exercise();
             exerciseSvc
                 .Setup(x => x.UpdateAsync(It.IsAny<Exercise>(), true))
-                .ReturnsAsync((Exercise newExercise, bool save) => exercise);
+                .ReturnsAsync((Exercise newExercise, bool save, CancellationToken _) => exercise);
 
             var sut = new ExerciseController(exerciseSvc.Object);
             SetupUser(sut);

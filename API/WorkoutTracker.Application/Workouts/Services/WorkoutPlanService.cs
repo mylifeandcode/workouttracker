@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
@@ -33,16 +34,16 @@ namespace WorkoutTracker.Application.Workouts.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<WorkoutPlan> CreateAsync(Guid workoutPublicId, int userId)
+        public async Task<WorkoutPlan> CreateAsync(Guid workoutPublicId, int userId, CancellationToken cancellationToken = default)
         {
             try
             {
-                ExecutedWorkout? lastExecutedWorkout = await _executedWorkoutService.GetLatestAsync(workoutPublicId);
+                ExecutedWorkout? lastExecutedWorkout = await _executedWorkoutService.GetLatestAsync(workoutPublicId, cancellationToken);
 
                 if (lastExecutedWorkout == null)
-                    return await CreatePlanForNewWorkoutAsync(workoutPublicId, userId);
+                    return await CreatePlanForNewWorkoutAsync(workoutPublicId, userId, cancellationToken);
                 else
-                    return await CreatePlanForExecutedWorkoutAsync(lastExecutedWorkout);
+                    return await CreatePlanForExecutedWorkoutAsync(lastExecutedWorkout, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -51,10 +52,10 @@ namespace WorkoutTracker.Application.Workouts.Services
             }
         }
 
-        private async Task<WorkoutPlan> CreatePlanForNewWorkoutAsync(Guid workoutPublicId, int userId)
+        private async Task<WorkoutPlan> CreatePlanForNewWorkoutAsync(Guid workoutPublicId, int userId, CancellationToken cancellationToken = default)
         {
-            Workout? workout = await _workoutService.GetByPublicIDAsync(workoutPublicId);
-            var userSettings = await GetUserSettingsAsync(userId);
+            Workout? workout = await _workoutService.GetByPublicIDAsync(workoutPublicId, cancellationToken);
+            var userSettings = await GetUserSettingsAsync(userId, cancellationToken);
 
             var plan = new WorkoutPlan(workout, false);
 
@@ -63,7 +64,7 @@ namespace WorkoutTracker.Application.Workouts.Services
                 foreach (var exercisePlan in plan.Exercises)
                 {
                     var exercise = workout.Exercises.First(x => x.ExerciseId == exercisePlan.ExerciseId);
-                    var recommendation = await _recommendationService.GetRecommendationAsync(exercise.Exercise, null, userSettings);
+                    var recommendation = await _recommendationService.GetRecommendationAsync(exercise.Exercise, null, userSettings, cancellationToken);
                     exercisePlan.ApplyRecommendation(recommendation);
                 }
             }
@@ -71,11 +72,11 @@ namespace WorkoutTracker.Application.Workouts.Services
             return plan;
         }
 
-        private async Task<WorkoutPlan> CreatePlanForExecutedWorkoutAsync(ExecutedWorkout lastExecutedWorkout)
+        private async Task<WorkoutPlan> CreatePlanForExecutedWorkoutAsync(ExecutedWorkout lastExecutedWorkout, CancellationToken cancellationToken = default)
         {
             var workoutPlan = new WorkoutPlan(lastExecutedWorkout.Workout, true);
             var exercisesInWorkout = lastExecutedWorkout.Workout.Exercises.ToList();
-            var userSettings = await GetUserSettingsAsync(lastExecutedWorkout.Workout.CreatedByUserId);
+            var userSettings = await GetUserSettingsAsync(lastExecutedWorkout.Workout.CreatedByUserId, cancellationToken);
 
             for (short x = 0; x < exercisesInWorkout.Count; x++)
             {
@@ -87,7 +88,7 @@ namespace WorkoutTracker.Application.Workouts.Services
 
                 if (userSettings != null && userSettings.RecommendationsEnabled)
                 {
-                    var recommendation = await _recommendationService.GetRecommendationAsync(exerciseInWorkout.Exercise, lastExecutedWorkout, userSettings);
+                    var recommendation = await _recommendationService.GetRecommendationAsync(exerciseInWorkout.Exercise, lastExecutedWorkout, userSettings, cancellationToken);
                     exercisePlan.ApplyRecommendation(recommendation);
                 }
             }
@@ -95,9 +96,9 @@ namespace WorkoutTracker.Application.Workouts.Services
             return workoutPlan;
         }
 
-        private async Task<UserSettings> GetUserSettingsAsync(int userId)
+        private async Task<UserSettings> GetUserSettingsAsync(int userId, CancellationToken cancellationToken = default)
         {
-            var user = await _userService.GetByIdAsync(userId);
+            var user = await _userService.GetByIdAsync(userId, cancellationToken);
             if (user == null)
                 throw new ApplicationException($"User {userId} not found.");
             else

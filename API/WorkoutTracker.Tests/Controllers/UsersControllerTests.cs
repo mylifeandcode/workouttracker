@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Users.Interfaces;
@@ -170,6 +171,32 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             Assert.IsInstanceOfType((result.Result as OkObjectResult).Value, typeof(User));
             userService.Verify(mock => mock.AddAsync(It.IsAny<User>()), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task Should_Forward_CancellationToken_Through_Post_Override_Chain()
+        {
+            //ARRANGE — this exercises UsersController.Post(UserNewDTO, CT) -> base.Post(user, false, CT)
+            //(SimpleAPIControllerBase<User>.Post, virtual dispatch back into the override) ->
+            //_service.AddAsync(value, CT). It's the highest-risk hop in the whole CancellationToken
+            //rollout: forgetting to forward the token at either base.Post(...) call site compiles
+            //cleanly and passes every other test, since nothing else observes cancellation.
+            var cts = new CancellationTokenSource();
+            var token = cts.Token;
+            var userDTO = new UserNewDTO();
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+            userService.Setup(mock => mock.AddAsync(It.IsAny<User>(), token)).ReturnsAsync(new User());
+            var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper);
+            SetupUser(sut);
+
+            //ACT
+            var result = await sut.Post(userDTO, token);
+
+            //ASSERT
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            userService.Verify(mock => mock.AddAsync(It.IsAny<User>(), token), Times.Once);
         }
 
         [TestMethod]

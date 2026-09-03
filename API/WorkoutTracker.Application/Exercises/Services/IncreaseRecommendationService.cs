@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
@@ -22,7 +23,8 @@ namespace WorkoutTracker.Application.Exercises.Services
 
         public async Task<ExerciseAmountRecommendation> GetIncreaseRecommendationAsync(
             ExecutedExerciseAverages executedExerciseAverages,
-            UserSettings userSettings)
+            UserSettings userSettings,
+            CancellationToken cancellationToken = default)
         {
             if (executedExerciseAverages == null) throw new ArgumentNullException(nameof(executedExerciseAverages));
             if (userSettings == null) throw new ArgumentNullException(nameof(userSettings));
@@ -37,7 +39,8 @@ namespace WorkoutTracker.Application.Exercises.Services
                     executedExerciseAverages.AverageTargetRepCount,
                     executedExerciseAverages.AverageActualRepCount,
                     executedExerciseAverages.AverageResistanceAmount,
-                    executedExerciseAverages.Exercise);
+                    executedExerciseAverages.Exercise,
+                    cancellationToken);
                 recommendation.ResistanceAmount = amount;
                 recommendation.ResistanceMakeup = makeup;
                 recommendation.Reason = "Met max rep count.";
@@ -65,7 +68,8 @@ namespace WorkoutTracker.Application.Exercises.Services
             double targetRepsLastTime,
             double actualRepsLastTime,
             decimal previousResistanceAmount,
-            Exercise exercise)
+            Exercise exercise,
+            CancellationToken cancellationToken = default)
         {
             if (exercise.ResistanceType == ResistanceType.BodyWeight || exercise.ResistanceType == ResistanceType.Other)
                 return (previousResistanceAmount, null);
@@ -77,7 +81,8 @@ namespace WorkoutTracker.Application.Exercises.Services
                 previousResistanceAmount,
                 multiplier,
                 !exercise.OneSided,
-                exercise.UsesBilateralResistance);
+                exercise.UsesBilateralResistance,
+                cancellationToken);
         }
 
         #endregion Private Non-Static Methods

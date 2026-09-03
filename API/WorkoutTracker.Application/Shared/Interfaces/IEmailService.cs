@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WorkoutTracker.Application.Shared.Interfaces
@@ -9,6 +10,6 @@ namespace WorkoutTracker.Application.Shared.Interfaces
     public interface IEmailService : IDisposable
     {
         bool IsEnabled { get; }
-        Task SendEmailAsync(string to, string from, string subject, string body);
+        Task SendEmailAsync(string to, string from, string subject, string body, CancellationToken cancellationToken = default);
     }
 }

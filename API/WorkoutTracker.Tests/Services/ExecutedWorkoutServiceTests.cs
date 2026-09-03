@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
@@ -117,7 +118,7 @@ namespace WorkoutTracker.Tests.Services
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
                 .Setup(x => x.AddAsync(It.IsAny<ExecutedWorkout>(), true))
-                .ReturnsAsync((ExecutedWorkout executedWorkout, bool saveChanges) => executedWorkout);
+                .ReturnsAsync((ExecutedWorkout executedWorkout, bool saveChanges, CancellationToken _) => executedWorkout);
 
             var sut =
                 new ExecutedWorkoutService(
@@ -191,7 +192,7 @@ namespace WorkoutTracker.Tests.Services
 
             var executedWorkoutRepo = new Mock<IRepository<ExecutedWorkout>>(MockBehavior.Strict);
             executedWorkoutRepo
-                .Setup(x => x.UpdateAsync<ExecutedWorkout>(modifiedExecutedWorkout, It.IsAny<Expression<Func<ExecutedWorkout, object>>[]>()))
+                .Setup(x => x.UpdateAsync<ExecutedWorkout>(modifiedExecutedWorkout, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<ExecutedWorkout, object>>[]>()))
                 .Returns(Task.FromResult(modifiedExecutedWorkout.Exercises.Count + 1));
 
             var recommendationService = new Mock<IExerciseAmountRecommendationService>(MockBehavior.Strict);
@@ -209,7 +210,7 @@ namespace WorkoutTracker.Tests.Services
             //ASSERT
             result.ShouldBeSameAs(modifiedExecutedWorkout);
             executedWorkoutRepo
-                .Verify(mock => mock.UpdateAsync(modifiedExecutedWorkout, It.IsAny<Expression<Func<ExecutedWorkout, object>>[]>()),
+                .Verify(mock => mock.UpdateAsync(modifiedExecutedWorkout, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<ExecutedWorkout, object>>[]>()),
                 Times.Once);
         }
 

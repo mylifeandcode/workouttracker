@@ -5,6 +5,7 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Workouts.Services;
 using WorkoutTracker.Domain.Exercises;
@@ -83,7 +84,7 @@ namespace WorkoutTracker.Tests.Services
             var repoMock = new Mock<IRepository<Workout>>(MockBehavior.Strict);
 
             repoMock
-                .Setup(mock => mock.UpdateAsync<Workout>(modifiedWorkout, It.IsAny<Expression<Func<Workout, object>>[]>()))
+                .Setup(mock => mock.UpdateAsync<Workout>(modifiedWorkout, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Workout, object>>[]>()))
                 .Returns(Task.FromResult(existingWorkout.Id));
 
             var sut = new WorkoutService(repoMock.Object, _logger.Object);
@@ -93,7 +94,7 @@ namespace WorkoutTracker.Tests.Services
 
             //ASSERT
             result.ShouldBeSameAs(modifiedWorkout);
-            repoMock.Verify(mock => mock.UpdateAsync(modifiedWorkout, It.IsAny<Expression<Func<Workout, object>>[]>()), Times.Once);
+            repoMock.Verify(mock => mock.UpdateAsync(modifiedWorkout, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Workout, object>>[]>()), Times.Once);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Data;
 
@@ -15,7 +16,7 @@ namespace WorkoutTracker.Repository
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<List<TargetAreaWorkoutCount>> GetWorkoutCountsByTargetAreaAsync(int userId)
+        public async Task<List<TargetAreaWorkoutCount>> GetWorkoutCountsByTargetAreaAsync(int userId, CancellationToken cancellationToken = default)
         {
             return await _context.Database.SqlQueryRaw<TargetAreaWorkoutCount>($"""
                 select ta.Name as {nameof(TargetAreaWorkoutCount.Name)},
@@ -27,7 +28,7 @@ namespace WorkoutTracker.Repository
                 join ExecutedWorkouts ew on ew.Id = exex.ExecutedWorkoutId
                 where ew.CreatedByUserId = @userId and ew.EndDateTime is not null
                 group by ta.Name
-                """, new Microsoft.Data.SqlClient.SqlParameter("@userId", userId)).ToListAsync();
+                """, new Microsoft.Data.SqlClient.SqlParameter("@userId", userId)).ToListAsync(cancellationToken);
         }
     }
 }

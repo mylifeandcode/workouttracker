@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 
@@ -10,5 +11,6 @@ public interface IResistanceService
         decimal previousResistance,
         sbyte multiplier,
         bool isDoubledBands,
-        bool isBilateralExercise);
+        bool isBilateralExercise,
+        CancellationToken cancellationToken = default);
 }

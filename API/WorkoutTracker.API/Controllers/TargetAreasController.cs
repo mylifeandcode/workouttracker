@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -25,11 +26,15 @@ namespace WorkoutTracker.API.Controllers
 
         // GET: api/values
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TargetArea>>> Get()
+        public async Task<ActionResult<IEnumerable<TargetArea>>> Get(CancellationToken cancellationToken = default)
         {
             try
             {
-                return Ok(await _svc.GetAllAsync());
+                return Ok(await _svc.GetAllAsync(cancellationToken));
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -39,11 +44,15 @@ namespace WorkoutTracker.API.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TargetArea>> Get(int id)
+        public async Task<ActionResult<TargetArea>> Get(int id, CancellationToken cancellationToken = default)
         {
             try
             {
-                return Ok(await _svc.GetAsync(id));
+                return Ok(await _svc.GetAsync(id, cancellationToken));
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {

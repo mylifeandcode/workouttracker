@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -38,7 +39,7 @@ namespace WorkoutTracker.API.Controllers
 
         // GET: api/Workouts
         [HttpGet]
-        public async Task<ActionResult<PaginatedResults<WorkoutDTO>>> Get(int firstRecord, short pageSize, bool activeOnly, bool sortAscending = true, string nameContains = null)
+        public async Task<ActionResult<PaginatedResults<WorkoutDTO>>> Get(int firstRecord, short pageSize, bool activeOnly, bool sortAscending = true, string nameContains = null, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -46,9 +47,9 @@ namespace WorkoutTracker.API.Controllers
 
                 var filter = BuildWorkoutFilter(userId, activeOnly, nameContains);
 
-                int totalCount = await _workoutService.GetTotalCountAsync(filter);
+                int totalCount = await _workoutService.GetTotalCountAsync(filter, cancellationToken);
 
-                var workouts = (await _workoutService.GetAsync(firstRecord, pageSize, filter, sortAscending));
+                var workouts = (await _workoutService.GetAsync(firstRecord, pageSize, filter, sortAscending, cancellationToken));
 
                 var results = workouts.Select((workout) =>
                 {
@@ -57,6 +58,10 @@ namespace WorkoutTracker.API.Controllers
 
                 var result = new PaginatedResults<WorkoutDTO>(results, totalCount);
                 return Ok(result);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -91,11 +96,11 @@ namespace WorkoutTracker.API.Controllers
         */
 
         [HttpGet("{publicId}")]
-        public async Task<ActionResult<Workout>> GetByPublicId(Guid publicId)
+        public async Task<ActionResult<Workout>> GetByPublicId(Guid publicId, CancellationToken cancellationToken = default)
         {
             try
             {
-                var workout = await _workoutService.GetByPublicIDAsync(publicId);
+                var workout = await _workoutService.GetByPublicIDAsync(publicId, cancellationToken);
                 if (workout == null)
                     return NotFound(publicId);
                 else
@@ -106,6 +111,10 @@ namespace WorkoutTracker.API.Controllers
                     workout.Exercises = workout.Exercises?.OrderBy(x => x.Sequence).ToList();
                     return Ok(workout);
                 }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -138,12 +147,16 @@ namespace WorkoutTracker.API.Controllers
         */
 
         [HttpGet("{workoutPublicId}/plan")]
-        public async Task<ActionResult<WorkoutPlan>> GetNewPlan(Guid workoutPublicId)
+        public async Task<ActionResult<WorkoutPlan>> GetNewPlan(Guid workoutPublicId, CancellationToken cancellationToken = default)
         {
             try
             {
-                var plan = await _workoutPlanService.CreateAsync(workoutPublicId, this.GetUserID());
+                var plan = await _workoutPlanService.CreateAsync(workoutPublicId, this.GetUserID(), cancellationToken);
                 return Ok(plan);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -152,30 +165,34 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpPost("plan")]
-        public async Task<ActionResult<Guid>> SubmitPlan([FromBody] WorkoutPlan plan)
+        public async Task<ActionResult<Guid>> SubmitPlan([FromBody] WorkoutPlan plan, CancellationToken cancellationToken = default)
         {
-            return await CreateWorkoutFromWorkoutPlanAsync(plan, true);
+            return await CreateWorkoutFromWorkoutPlanAsync(plan, true, cancellationToken);
         }
 
         [HttpPost("plan-for-later")]
-        public async Task<ActionResult<Guid>> SubmitPlanForLater([FromBody] WorkoutPlan plan)
+        public async Task<ActionResult<Guid>> SubmitPlanForLater([FromBody] WorkoutPlan plan, CancellationToken cancellationToken = default)
         {
-            return await CreateWorkoutFromWorkoutPlanAsync(plan, false);
+            return await CreateWorkoutFromWorkoutPlanAsync(plan, false, cancellationToken);
         }
 
         [HttpPost("plan-for-past/{startDateTime}/{endDateTime}")]
-        public async Task<ActionResult<Guid>> SubmitPlanForPast([FromBody] WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime) {
-            return await CreateWorkoutFromWorkoutPlanForPastAsync(plan, startDateTime, endDateTime);
+        public async Task<ActionResult<Guid>> SubmitPlanForPast([FromBody] WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime, CancellationToken cancellationToken = default) {
+            return await CreateWorkoutFromWorkoutPlanForPastAsync(plan, startDateTime, endDateTime, cancellationToken);
         }
 
         // POST api/Workouts
         [HttpPost]
-        public async Task<ActionResult<Workout>> Post([FromBody]Workout value)
+        public async Task<ActionResult<Workout>> Post([FromBody]Workout value, CancellationToken cancellationToken = default)
         {
             try
             {
                 SetCreatedAuditFields(value);
-                return Ok(await _workoutService.AddAsync(value, true));
+                return Ok(await _workoutService.AddAsync(value, true, cancellationToken));
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -185,12 +202,16 @@ namespace WorkoutTracker.API.Controllers
 
         // PUT api/Workouts
         [HttpPut]
-        public async Task<ActionResult<Workout>> Put([FromBody]Workout value)
+        public async Task<ActionResult<Workout>> Put([FromBody]Workout value, CancellationToken cancellationToken = default)
         {
             try
             {
                 SetModifiedAuditFields(value);
-                return Ok(await _workoutService.UpdateAsync(value, true));
+                return Ok(await _workoutService.UpdateAsync(value, true, cancellationToken));
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -206,12 +227,16 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpPut("{publicId}/retire")]
-        public async Task<ActionResult> Retire(Guid publicId)
+        public async Task<ActionResult> Retire(Guid publicId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _workoutService.RetireAsync(publicId);
+                await _workoutService.RetireAsync(publicId, cancellationToken);
                 return Ok();
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -220,12 +245,16 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpPut("{publicId}/reactivate")]
-        public async Task<ActionResult> Reactivate(Guid publicId)
+        public async Task<ActionResult> Reactivate(Guid publicId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _workoutService.ReactivateAsync(publicId);
+                await _workoutService.ReactivateAsync(publicId, cancellationToken);
                 return Ok();
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -246,12 +275,16 @@ namespace WorkoutTracker.API.Controllers
             return filter;
         }
 
-        private async Task<ActionResult<Guid>> CreateWorkoutFromWorkoutPlanAsync(WorkoutPlan plan, bool startWorkout)
+        private async Task<ActionResult<Guid>> CreateWorkoutFromWorkoutPlanAsync(WorkoutPlan plan, bool startWorkout, CancellationToken cancellationToken = default)
         {
             try
             {
-                var executedWorkout = await _executedWorkoutService.CreateAsync(plan, startWorkout);
+                var executedWorkout = await _executedWorkoutService.CreateAsync(plan, startWorkout, cancellationToken);
                 return Ok(executedWorkout.PublicId);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -259,12 +292,16 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        private async Task<ActionResult<Guid>> CreateWorkoutFromWorkoutPlanForPastAsync(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime)
+        private async Task<ActionResult<Guid>> CreateWorkoutFromWorkoutPlanForPastAsync(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime, CancellationToken cancellationToken = default)
         {
             try
             {
-                var executedWorkout = await _executedWorkoutService.CreateAsync(plan, startDateTime, endDateTime);
+                var executedWorkout = await _executedWorkoutService.CreateAsync(plan, startDateTime, endDateTime, cancellationToken);
                 return Ok(executedWorkout.PublicId);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {

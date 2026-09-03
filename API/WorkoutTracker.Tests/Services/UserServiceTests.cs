@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Shared.Interfaces;
@@ -38,9 +39,9 @@ namespace WorkoutTracker.Tests.Services
         public void Init()
         {
             _userRepositoryMock = new Mock<IRepository<User>>(MockBehavior.Strict);
-            _userRepositoryMock.Setup(mock => mock.AddAsync(It.IsAny<User>(), true)).ReturnsAsync((User user, bool save) => user);
+            _userRepositoryMock.Setup(mock => mock.AddAsync(It.IsAny<User>(), true)).ReturnsAsync((User user, bool save, CancellationToken _) => user);
             _userRepositoryMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
-            _userRepositoryMock.Setup(mock => mock.UpdateAsync(It.IsAny<User>(), true)).ReturnsAsync((User user, bool save) => user);
+            _userRepositoryMock.Setup(mock => mock.UpdateAsync(It.IsAny<User>(), true)).ReturnsAsync((User user, bool save, CancellationToken _) => user);
             _userRepositoryMock.Setup(mock => mock.Get()).Returns(_users.AsAsyncQueryable());
             _userRepositoryMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).ReturnsAsync(_users[0]);
             _userRepositoryMock.Setup(mock => mock.AnyAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(false);
@@ -191,6 +192,32 @@ namespace WorkoutTracker.Tests.Services
                     "noreply@workouttracker.com",
                     "Password Reset",
                     It.IsAny<string>()),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public async Task Should_Forward_CancellationToken_To_Repository_When_Requesting_Password_Reset()
+        {
+            //ARRANGE
+            var cts = new CancellationTokenSource();
+            var token = cts.Token;
+
+            //The shared Init() setups only match an omitted (default) token; this test needs setups
+            //that match the specific non-default token being passed through.
+            _userRepositoryMock
+                .Setup(mock => mock.UpdateAsync(It.IsAny<User>(), true, token))
+                .ReturnsAsync((User user, bool save, CancellationToken _) => user);
+            _emailServiceMock
+                .Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), token))
+                .Returns(Task.CompletedTask);
+
+            //ACT
+            await _sut.RequestPasswordResetAsync("paul@here.com", token);
+
+            //ASSERT — proves the *same* token instance received by the service is the one
+            //forwarded to the repository, not a freshly created default(CancellationToken).
+            _userRepositoryMock.Verify(
+                x => x.UpdateAsync(It.IsAny<User>(), true, token),
                 Times.Once);
         }
 

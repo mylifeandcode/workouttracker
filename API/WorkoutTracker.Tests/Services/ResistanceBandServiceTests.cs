@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -383,10 +384,10 @@ namespace WorkoutTracker.Tests.Services
 
             _repo.Setup(mock => mock.GetAllAsync()).ReturnsAsync(_bands);
             _repo.Setup(mock => mock.AddAsync(It.IsAny<ResistanceBand>(), true))
-                .ReturnsAsync((ResistanceBand resistanceBand, bool save) => resistanceBand);
+                .ReturnsAsync((ResistanceBand resistanceBand, bool save, CancellationToken _) => resistanceBand);
             _repo.Setup(mock => mock.DeleteAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
             _repo.Setup(mock => mock.UpdateAsync(It.IsAny<ResistanceBand>(), true))
-                .ReturnsAsync((ResistanceBand resistanceBand, bool save) => resistanceBand);
+                .ReturnsAsync((ResistanceBand resistanceBand, bool save, CancellationToken _) => resistanceBand);
 
             //ACT
             var result = await _sut.GetResistanceBandsForResistanceAmountRangeAsync(160, 40, 60, true, true);
@@ -414,10 +415,10 @@ namespace WorkoutTracker.Tests.Services
 
             _repo.Setup(mock => mock.GetAllAsync()).ReturnsAsync(_bands);
             _repo.Setup(mock => mock.AddAsync(It.IsAny<ResistanceBand>(), true))
-                .ReturnsAsync((ResistanceBand resistanceBand, bool save) => resistanceBand);
+                .ReturnsAsync((ResistanceBand resistanceBand, bool save, CancellationToken _) => resistanceBand);
             _repo.Setup(mock => mock.DeleteAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
             _repo.Setup(mock => mock.UpdateAsync(It.IsAny<ResistanceBand>(), true))
-                .ReturnsAsync((ResistanceBand resistanceBand, bool save) => resistanceBand);
+                .ReturnsAsync((ResistanceBand resistanceBand, bool save, CancellationToken _) => resistanceBand);
         }
     }
 }

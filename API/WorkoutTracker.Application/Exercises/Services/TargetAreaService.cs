@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Application.Exercises.Interfaces;
@@ -21,19 +22,19 @@ namespace WorkoutTracker.Application.Exercises.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<TargetArea?> GetAsync(int id)
+        public async Task<TargetArea?> GetAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _repo.GetAsync(id);
+            return await _repo.GetAsync(id, cancellationToken);
         }
 
-        public async Task<IEnumerable<TargetArea>> GetAllAsync()
+        public async Task<IEnumerable<TargetArea>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await _repo.GetAllWithoutTrackingAsync();
+            return await _repo.GetAllWithoutTrackingAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<TargetArea>> GetByIdsAsync(int[] ids)
+        public async Task<IEnumerable<TargetArea>> GetByIdsAsync(int[] ids, CancellationToken cancellationToken = default)
         {
-            return await _repo.GetWithoutTracking().Where(x => ids.Contains(x.Id)).ToListAsync();
+            return await _repo.GetWithoutTracking().Where(x => ids.Contains(x.Id)).ToListAsync(cancellationToken);
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Workouts.Models;
@@ -26,18 +27,18 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet("executed-workouts")]
-        public async Task<ActionResult<ExecutedWorkoutsSummary>> GetExecutedWorkoutsSummary()
+        public async Task<ActionResult<ExecutedWorkoutsSummary>> GetExecutedWorkoutsSummary(CancellationToken cancellationToken = default)
         {
             int userId = this.GetUserID();
-            var summary = await _analyticsService.GetExecutedWorkoutsSummaryAsync(userId);
+            var summary = await _analyticsService.GetExecutedWorkoutsSummaryAsync(userId, cancellationToken);
             return Ok(summary);
         }
 
         [HttpGet("workout-metrics/{workoutPublicId}/{count}")]
-        public async Task<ActionResult<List<ExecutedWorkoutMetrics>>> GetExecutedWorkoutMetrics(Guid workoutPublicId, int count = 5)
+        public async Task<ActionResult<List<ExecutedWorkoutMetrics>>> GetExecutedWorkoutMetrics(Guid workoutPublicId, int count = 5, CancellationToken cancellationToken = default)
         {
-            var workout = await _workoutService.GetByPublicIDAsync(workoutPublicId);
-            var metrics = await _analyticsService.GetExecutedWorkoutMetricsAsync(workout.Id, count);
+            var workout = await _workoutService.GetByPublicIDAsync(workoutPublicId, cancellationToken);
+            var metrics = await _analyticsService.GetExecutedWorkoutMetricsAsync(workout.Id, count, cancellationToken);
             return Ok(metrics);
         }
     }

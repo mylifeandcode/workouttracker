@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +25,7 @@ namespace WorkoutTracker.Application.Security.Services
             _refreshTokenLifetimeDays = int.TryParse(configuration["Jwt:RefreshTokenLifetimeDays"], out var days) ? days : 7;
         }
 
-        public async Task<(string RawToken, RefreshToken Entity)> GenerateRefreshTokenAsync(int userId)
+        public async Task<(string RawToken, RefreshToken Entity)> GenerateRefreshTokenAsync(int userId, CancellationToken cancellationToken = default)
         {
             var randomBytes = new byte[64];
             using var rng = RandomNumberGenerator.Create();
@@ -43,23 +44,23 @@ namespace WorkoutTracker.Application.Security.Services
                 CreatedDateTime = DateTime.UtcNow
             };
 
-            await _refreshTokenRepo.AddAsync(refreshToken, saveChanges: true);
+            await _refreshTokenRepo.AddAsync(refreshToken, saveChanges: true, cancellationToken);
 
             return (rawToken, refreshToken);
         }
 
-        public async Task<RefreshToken?> ValidateRefreshTokenAsync(string rawRefreshToken, int userId)
+        public async Task<RefreshToken?> ValidateRefreshTokenAsync(string rawRefreshToken, int userId, CancellationToken cancellationToken = default)
         {
             var tokenHash = ComputeSha256Hash(rawRefreshToken);
             var existingToken = await _refreshTokenRepo.Get()
-                .FirstOrDefaultAsync(x => x.TokenHash == tokenHash);
+                .FirstOrDefaultAsync(x => x.TokenHash == tokenHash, cancellationToken);
 
             if (existingToken == null)
                 return null;
 
             if (existingToken.IsRevoked)
             {
-                await RevokeDescendantsAsync(existingToken);
+                await RevokeDescendantsAsync(existingToken, cancellationToken);
                 return null;
             }
 
@@ -72,50 +73,50 @@ namespace WorkoutTracker.Application.Security.Services
             return existingToken;
         }
 
-        public async Task<(string RawToken, RefreshToken Entity)> RevokeAndReplaceAsync(RefreshToken existingToken, int userId)
+        public async Task<(string RawToken, RefreshToken Entity)> RevokeAndReplaceAsync(RefreshToken existingToken, int userId, CancellationToken cancellationToken = default)
         {
             existingToken.IsRevoked = true;
             existingToken.ModifiedByUserId = userId;
             existingToken.ModifiedDateTime = DateTime.UtcNow;
 
-            var (newRawToken, newRefreshTokenEntity) = await GenerateRefreshTokenAsync(userId);
+            var (newRawToken, newRefreshTokenEntity) = await GenerateRefreshTokenAsync(userId, cancellationToken);
 
             existingToken.ReplacedByTokenId = newRefreshTokenEntity.Id;
-            await _refreshTokenRepo.UpdateAsync(existingToken, saveChanges: true);
+            await _refreshTokenRepo.UpdateAsync(existingToken, saveChanges: true, cancellationToken);
 
             return (newRawToken, newRefreshTokenEntity);
         }
 
-        public async Task RevokeByUserIdAsync(int userId)
+        public async Task RevokeByUserIdAsync(int userId, CancellationToken cancellationToken = default)
         {
             var tokens = await _refreshTokenRepo.Get()
                 .Where(x => x.UserId == userId && !x.IsRevoked)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             foreach (var token in tokens)
             {
                 token.IsRevoked = true;
                 token.ModifiedByUserId = userId;
                 token.ModifiedDateTime = DateTime.UtcNow;
-                await _refreshTokenRepo.UpdateAsync(token, saveChanges: false);
+                await _refreshTokenRepo.UpdateAsync(token, saveChanges: false, cancellationToken);
             }
 
             if (tokens.Count > 0)
-                await _refreshTokenRepo.UpdateAsync(tokens[0], saveChanges: true);
+                await _refreshTokenRepo.UpdateAsync(tokens[0], saveChanges: true, cancellationToken);
         }
 
-        private async Task RevokeDescendantsAsync(RefreshToken token)
+        private async Task RevokeDescendantsAsync(RefreshToken token, CancellationToken cancellationToken = default)
         {
             if (token.ReplacedByTokenId == null)
                 return;
 
-            var childToken = await _refreshTokenRepo.GetAsync(token.ReplacedByTokenId.Value);
+            var childToken = await _refreshTokenRepo.GetAsync(token.ReplacedByTokenId.Value, cancellationToken);
             if (childToken != null && !childToken.IsRevoked)
             {
                 childToken.IsRevoked = true;
                 childToken.ModifiedDateTime = DateTime.UtcNow;
-                await _refreshTokenRepo.UpdateAsync(childToken, saveChanges: true);
-                await RevokeDescendantsAsync(childToken);
+                await _refreshTokenRepo.UpdateAsync(childToken, saveChanges: true, cancellationToken);
+                await RevokeDescendantsAsync(childToken, cancellationToken);
             }
         }
 

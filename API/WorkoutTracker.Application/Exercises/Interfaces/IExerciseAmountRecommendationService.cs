@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
@@ -11,6 +12,7 @@ namespace WorkoutTracker.Application.Exercises.Interfaces
         Task<ExerciseAmountRecommendation> GetRecommendationAsync(
             Exercise exercise,
             ExecutedWorkout lastWorkoutWithThisExercise,
-            UserSettings userSettings);
+            UserSettings userSettings,
+            CancellationToken cancellationToken = default);
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
@@ -16,7 +17,7 @@ namespace WorkoutTracker.Application.Exercises.Services
     {
         public ExerciseService(IRepository<Exercise> repo, ILogger<ExerciseService> logger) : base(repo, logger) { }
 
-        public async Task<IEnumerable<Exercise>> GetAsync(int firstRecord, short pageSize, ExerciseFilter filter, bool sortAscending = true)
+        public async Task<IEnumerable<Exercise>> GetAsync(int firstRecord, short pageSize, ExerciseFilter filter, bool sortAscending = true, CancellationToken cancellationToken = default)
         {
             IQueryable<Exercise> query = _repo.GetWithoutTracking()
                 .Include(x => x.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea);
@@ -29,17 +30,17 @@ namespace WorkoutTracker.Application.Exercises.Services
             else
                 query = query.OrderByDescending(x => x.Name);
 
-            return await query.Skip(firstRecord).Take(pageSize).ToListAsync();
+            return await query.Skip(firstRecord).Take(pageSize).ToListAsync(cancellationToken);
         }
 
-        public async Task<Exercise?> GetByPublicIdAsync(Guid publicId)
+        public async Task<Exercise?> GetByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking()
                 .Include(x => x.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea)
-                .FirstOrDefaultAsync(x => x.PublicId == publicId);
+                .FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
         }
 
-        public override async Task<Exercise> UpdateAsync(Exercise modifiedExercise, bool saveChanges = false)
+        public override async Task<Exercise> UpdateAsync(Exercise modifiedExercise, bool saveChanges = false, CancellationToken cancellationToken = default)
         {
             if (modifiedExercise == null)
                 throw new ArgumentNullException(nameof(modifiedExercise));
@@ -51,13 +52,13 @@ namespace WorkoutTracker.Application.Exercises.Services
             */
             var existingExercise = await _repo.Get()
                 .Include(x => x.ExerciseTargetAreaLinks)
-                .FirstOrDefaultAsync(x => x.Id == modifiedExercise.Id);
+                .FirstOrDefaultAsync(x => x.Id == modifiedExercise.Id, cancellationToken);
             _repo.SetValues(existingExercise, modifiedExercise);
 
             AddExerciseTargetAreaLinksToExistingExercise(existingExercise, modifiedExercise);
             RemoveExerciseTargetAreaLinksToExistingExercise(existingExercise, modifiedExercise);
 
-            return await _repo.UpdateAsync(existingExercise, saveChanges);
+            return await _repo.UpdateAsync(existingExercise, saveChanges, cancellationToken);
         }
 
         public Dictionary<int, string> GetResistanceTypes()
@@ -69,11 +70,11 @@ namespace WorkoutTracker.Application.Exercises.Services
                     .ToDictionary(enumValue => enumValue, enumValue => Enum.GetName(typeof(ResistanceType), enumValue));
         }
 
-        public async Task<int> GetTotalCountAsync(ExerciseFilter filter)
+        public async Task<int> GetTotalCountAsync(ExerciseFilter filter, CancellationToken cancellationToken = default)
         {
             var query = _repo.GetWithoutTracking();
             ApplyQueryFilters(ref query, filter);
-            return await query.CountAsync();
+            return await query.CountAsync(cancellationToken);
         }
 
         #region Private Methods

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -34,15 +35,15 @@ namespace WorkoutTracker.API.Controllers
 
         // GET: api/Exercises
         [HttpGet]
-        public async Task<ActionResult<PaginatedResults<ExerciseDTO>>> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null, bool sortAscending = true)
+        public async Task<ActionResult<PaginatedResults<ExerciseDTO>>> Get(int firstRecord, short pageSize, string nameContains = null, string hasTargetAreas = null, bool sortAscending = true, CancellationToken cancellationToken = default)
         {
             try
             {
                 var filter = BuildExerciseFilter(nameContains, hasTargetAreas);
 
-                int totalCount = await _exerciseService.GetTotalCountAsync(filter);
+                int totalCount = await _exerciseService.GetTotalCountAsync(filter, cancellationToken);
 
-                var exercises = await _exerciseService.GetAsync(firstRecord, pageSize, filter, sortAscending);
+                var exercises = await _exerciseService.GetAsync(firstRecord, pageSize, filter, sortAscending, cancellationToken);
 
                 var results = exercises.Select((exercise) =>
                 {
@@ -58,6 +59,10 @@ namespace WorkoutTracker.API.Controllers
                 var result = new PaginatedResults<ExerciseDTO>(results, totalCount);
 
                 return Ok(result);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -86,15 +91,19 @@ namespace WorkoutTracker.API.Controllers
         */
 
         [HttpGet("{publicId}")]
-        public async Task<ActionResult<Exercise>> GetByPublicId(Guid publicId)
+        public async Task<ActionResult<Exercise>> GetByPublicId(Guid publicId, CancellationToken cancellationToken = default)
         {
             try
             {
-                var exercise = await _exerciseService.GetByPublicIdAsync(publicId);
+                var exercise = await _exerciseService.GetByPublicIdAsync(publicId, cancellationToken);
                 if (exercise == null)
                     return NotFound(publicId);
                 else
                     return Ok(exercise);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -104,12 +113,16 @@ namespace WorkoutTracker.API.Controllers
 
         // POST api/Exercises
         [HttpPost]
-        public async Task<ActionResult<Exercise>> Post([FromBody]Exercise value)
+        public async Task<ActionResult<Exercise>> Post([FromBody]Exercise value, CancellationToken cancellationToken = default)
         {
             try
             {
                 SetCreatedAuditFields(value);
-                return Ok(await _exerciseService.AddAsync(value, true));
+                return Ok(await _exerciseService.AddAsync(value, true, cancellationToken));
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (BadHttpRequestException ex)
             {
@@ -123,12 +136,16 @@ namespace WorkoutTracker.API.Controllers
 
         // PUT api/Exercises
         [HttpPut]
-        public async Task<ActionResult<Exercise>> Put([FromBody]Exercise value)
+        public async Task<ActionResult<Exercise>> Put([FromBody]Exercise value, CancellationToken cancellationToken = default)
         {
             try
             {
                 SetModifiedAuditFields(value);
-                return Ok(await _exerciseService.UpdateAsync(value, true));
+                return Ok(await _exerciseService.UpdateAsync(value, true, cancellationToken));
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (BadHttpRequestException ex)
             {

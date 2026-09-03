@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Workouts.Interfaces;
@@ -25,9 +26,9 @@ namespace WorkoutTracker.Application.Workouts.Services
             _analyticsRepository = analyticsRepository ?? throw new ArgumentNullException(nameof(analyticsRepository));
         }
 
-        public async Task<List<ExecutedWorkoutMetrics>> GetExecutedWorkoutMetricsAsync(int workoutId, int count = 5)
+        public async Task<List<ExecutedWorkoutMetrics>> GetExecutedWorkoutMetricsAsync(int workoutId, int count = 5, CancellationToken cancellationToken = default)
         {
-            var executedWorkouts = await GetRecentExecutedWorkoutsAsync(workoutId, count);
+            var executedWorkouts = await GetRecentExecutedWorkoutsAsync(workoutId, count, cancellationToken);
             var output = new List<ExecutedWorkoutMetrics>(executedWorkouts.Count);
 
             executedWorkouts.ForEach(x => output.Add(new ExecutedWorkoutMetrics(x)));
@@ -35,23 +36,23 @@ namespace WorkoutTracker.Application.Workouts.Services
             return output.OrderBy(x => x.EndDateTime).ToList();
         }
 
-        public async Task<ExecutedWorkoutsSummary> GetExecutedWorkoutsSummaryAsync(int userId)
+        public async Task<ExecutedWorkoutsSummary> GetExecutedWorkoutsSummaryAsync(int userId, CancellationToken cancellationToken = default)
         {
             var summary = new ExecutedWorkoutsSummary();
 
-            summary.FirstLoggedWorkoutDateTime = await _executedWorkoutService.GetFirstStartDateTimeByUserAsync(userId);
-            summary.TotalLoggedWorkouts = await _executedWorkoutService.GetLoggedWorkoutCountByUserAsync(userId);
-            summary.TargetAreasWithWorkoutCounts = await GetCountOfWorkoutsByTargetAreaAsync(userId);
+            summary.FirstLoggedWorkoutDateTime = await _executedWorkoutService.GetFirstStartDateTimeByUserAsync(userId, cancellationToken);
+            summary.TotalLoggedWorkouts = await _executedWorkoutService.GetLoggedWorkoutCountByUserAsync(userId, cancellationToken);
+            summary.TargetAreasWithWorkoutCounts = await GetCountOfWorkoutsByTargetAreaAsync(userId, cancellationToken);
 
             return summary;
         }
 
         #region Private Methods
 
-        private async Task<Dictionary<string, int>> GetCountOfWorkoutsByTargetAreaAsync(int userId)
+        private async Task<Dictionary<string, int>> GetCountOfWorkoutsByTargetAreaAsync(int userId, CancellationToken cancellationToken = default)
         {
-            var workoutCountsByTargetArea = await _analyticsRepository.GetWorkoutCountsByTargetAreaAsync(userId);
-            var allTargetAreas = (await _targetAreaService.GetAllAsync()).OrderBy(x => x.Name).ToList();
+            var workoutCountsByTargetArea = await _analyticsRepository.GetWorkoutCountsByTargetAreaAsync(userId, cancellationToken);
+            var allTargetAreas = (await _targetAreaService.GetAllAsync(cancellationToken)).OrderBy(x => x.Name).ToList();
             var output = new Dictionary<string, int>(allTargetAreas.Count);
 
             foreach (var area in allTargetAreas)
@@ -63,9 +64,9 @@ namespace WorkoutTracker.Application.Workouts.Services
             return output;
         }
 
-        private async Task<List<ExecutedWorkout>> GetRecentExecutedWorkoutsAsync(int workoutId, int count = 5)
+        private async Task<List<ExecutedWorkout>> GetRecentExecutedWorkoutsAsync(int workoutId, int count = 5, CancellationToken cancellationToken = default)
         {
-            return [.. await _executedWorkoutService.GetRecentByWorkoutAsync(workoutId, count)];
+            return [.. await _executedWorkoutService.GetRecentByWorkoutAsync(workoutId, count, cancellationToken)];
         }
 
         #endregion Private Methods

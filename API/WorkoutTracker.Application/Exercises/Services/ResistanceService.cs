@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Resistances.Interfaces;
@@ -29,7 +30,8 @@ public class ResistanceService : IResistanceService
         decimal previousResistance,
         sbyte multiplier,
         bool isDoubledBands,
-        bool isBilateralExercise)
+        bool isBilateralExercise,
+        CancellationToken cancellationToken = default)
     {
         switch (resistanceType)
         {
@@ -43,7 +45,7 @@ public class ResistanceService : IResistanceService
                 return (GetCalculatedResistance(previousResistance, MACHINEWEIGHT_INCREMENT, multiplier, isBilateralExercise), null);
 
             case ResistanceType.ResistanceBand:
-                return await GetCalculatedResistanceBandResistanceAsync(previousResistance, multiplier, isDoubledBands, isBilateralExercise);
+                return await GetCalculatedResistanceBandResistanceAsync(previousResistance, multiplier, isDoubledBands, isBilateralExercise, cancellationToken);
 
             case ResistanceType.Other:
                 return (previousResistance, null);
@@ -67,9 +69,10 @@ public class ResistanceService : IResistanceService
         decimal previousResistanceAmount,
         sbyte multiplier,
         bool doubleBandResistanceAmounts,
-        bool isBilateralExercise)
+        bool isBilateralExercise,
+        CancellationToken cancellationToken = default)
     {
-        var lowestBand = await _resistanceBandService.GetLowestResistanceBandAsync();
+        var lowestBand = await _resistanceBandService.GetLowestResistanceBandAsync(cancellationToken);
         decimal lowestResistanceBandAmount = lowestBand?.MaxResistanceAmount ?? 0;
 
         decimal minAdjustment = lowestResistanceBandAmount * (isBilateralExercise ? 2 : 1) * multiplier;
@@ -77,7 +80,7 @@ public class ResistanceService : IResistanceService
             minAdjustment + (multiplier > 0 ? (isBilateralExercise ? 20 : 10) : (isBilateralExercise ? -20 : -10));
 
         var recommendedBands = await _resistanceBandService.GetResistanceBandsForResistanceAmountRangeAsync(
-            previousResistanceAmount, minAdjustment, maxAdjustment, doubleBandResistanceAmounts, isBilateralExercise);
+            previousResistanceAmount, minAdjustment, maxAdjustment, doubleBandResistanceAmounts, isBilateralExercise, cancellationToken);
 
         //The use of Count here is not a mistake
         //https://www.jitbit.com/alexblog/316-please-stop-using-any-for-c-lists-and-arrays/

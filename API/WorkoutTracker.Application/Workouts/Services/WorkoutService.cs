@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Workouts.Interfaces;
@@ -16,7 +17,7 @@ namespace WorkoutTracker.Application.Workouts.Services
     {
         public WorkoutService(IRepository<Workout> repo, ILogger<WorkoutService> logger) : base(repo, logger) { }
 
-        public async Task<IEnumerable<Workout>> GetAsync(int firstRecord, short pageSize, WorkoutFilter filter, bool sortAscending = true)
+        public async Task<IEnumerable<Workout>> GetAsync(int firstRecord, short pageSize, WorkoutFilter filter, bool sortAscending = true, CancellationToken cancellationToken = default)
         {
             IQueryable<Workout> query = _repo.GetWithoutTracking()
                 .Include(workout => workout.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise).ThenInclude(exercise => exercise.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea);
@@ -29,41 +30,41 @@ namespace WorkoutTracker.Application.Workouts.Services
             else
                 query = query.OrderByDescending(workout => workout.Name);
 
-            return await query.Skip(firstRecord).Take(pageSize).ToListAsync();
+            return await query.Skip(firstRecord).Take(pageSize).ToListAsync(cancellationToken);
         }
 
-        public override async Task<Workout?> GetByPublicIDAsync(Guid publicId)
+        public override async Task<Workout?> GetByPublicIDAsync(Guid publicId, CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking()
                 .Include(workout => workout.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise).ThenInclude(exercise => exercise.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea)
-                .FirstOrDefaultAsync(x => x.PublicId == publicId);
+                .FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
         }
 
-        public override async Task<Workout> UpdateAsync(Workout modifiedWorkout, bool saveChanges = false)
+        public override async Task<Workout> UpdateAsync(Workout modifiedWorkout, bool saveChanges = false, CancellationToken cancellationToken = default)
         {
             if (modifiedWorkout == null)
                 throw new ArgumentNullException(nameof(modifiedWorkout));
 
-            await _repo.UpdateAsync(modifiedWorkout, (workout) => workout.Exercises);
+            await _repo.UpdateAsync(modifiedWorkout, cancellationToken, (workout) => workout.Exercises);
 
             return modifiedWorkout;
         }
 
-        public async Task RetireAsync(Guid publicId)
+        public async Task RetireAsync(Guid publicId, CancellationToken cancellationToken = default)
         {
-            await SetActiveAsync(publicId, false);
+            await SetActiveAsync(publicId, false, cancellationToken);
         }
 
-        public async Task ReactivateAsync(Guid publicId)
+        public async Task ReactivateAsync(Guid publicId, CancellationToken cancellationToken = default)
         {
-            await SetActiveAsync(publicId, true);
+            await SetActiveAsync(publicId, true, cancellationToken);
         }
 
-        public async Task<int> GetTotalCountAsync(WorkoutFilter filter)
+        public async Task<int> GetTotalCountAsync(WorkoutFilter filter, CancellationToken cancellationToken = default)
         {
             var query = _repo.GetWithoutTracking();
             ApplyQueryFilters(ref query, filter);
-            return await query.CountAsync();
+            return await query.CountAsync(cancellationToken);
         }
 
         private static void ApplyQueryFilters(ref IQueryable<Workout> query, WorkoutFilter filter)
@@ -80,15 +81,15 @@ namespace WorkoutTracker.Application.Workouts.Services
                 query = query.Where(workout => EF.Functions.Like(workout.Name, "%" + filter.NameContains + "%"));
         }
 
-        private async Task SetActiveAsync(Guid workoutPublicId, bool active)
+        private async Task SetActiveAsync(Guid workoutPublicId, bool active, CancellationToken cancellationToken = default)
         {
             try
             {
-                var workout = await _repo.Get().FirstAsync(x => x.PublicId == workoutPublicId);
+                var workout = await _repo.Get().FirstAsync(x => x.PublicId == workoutPublicId, cancellationToken);
                 workout.Active = active;
                 workout.ModifiedByUserId = workout.CreatedByUserId;
                 workout.ModifiedDateTime = DateTime.Now;
-                await _repo.UpdateAsync(workout, true);
+                await _repo.UpdateAsync(workout, true, cancellationToken);
             }
             catch (Exception ex)
             {

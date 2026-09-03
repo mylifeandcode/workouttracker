@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Services;
 using WorkoutTracker.Domain.Users;
@@ -39,7 +40,7 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
             _refreshTokenRepoMock
                 .Setup(x => x.AddAsync(It.IsAny<RefreshToken>(), true))
-                .ReturnsAsync((RefreshToken t, bool _) => t);
+                .ReturnsAsync((RefreshToken t, bool _, CancellationToken __) => t);
 
             //ACT
             var (rawToken, entity) = await _sut.GenerateRefreshTokenAsync(1);
@@ -159,7 +160,7 @@ namespace WorkoutTracker.Tests.Services
 
             _refreshTokenRepoMock
                 .Setup(x => x.UpdateAsync(It.IsAny<RefreshToken>(), true))
-                .ReturnsAsync((RefreshToken t, bool _) => t);
+                .ReturnsAsync((RefreshToken t, bool _, CancellationToken __) => t);
 
             //ACT
             var result = await _sut.ValidateRefreshTokenAsync(rawToken, 1);
@@ -211,11 +212,11 @@ namespace WorkoutTracker.Tests.Services
 
             _refreshTokenRepoMock
                 .Setup(x => x.AddAsync(It.IsAny<RefreshToken>(), true))
-                .ReturnsAsync((RefreshToken t, bool _) => { t.Id = 2; return t; });
+                .ReturnsAsync((RefreshToken t, bool _, CancellationToken __) => { t.Id = 2; return t; });
 
             _refreshTokenRepoMock
                 .Setup(x => x.UpdateAsync(It.IsAny<RefreshToken>(), true))
-                .ReturnsAsync((RefreshToken t, bool _) => t);
+                .ReturnsAsync((RefreshToken t, bool _, CancellationToken __) => t);
 
             //ACT
             var (newRawToken, newEntity) = await _sut.RevokeAndReplaceAsync(existingToken, 1);
@@ -245,11 +246,11 @@ namespace WorkoutTracker.Tests.Services
 
             _refreshTokenRepoMock
                 .Setup(x => x.UpdateAsync(It.IsAny<RefreshToken>(), false))
-                .ReturnsAsync((RefreshToken t, bool _) => t);
+                .ReturnsAsync((RefreshToken t, bool _, CancellationToken __) => t);
 
             _refreshTokenRepoMock
                 .Setup(x => x.UpdateAsync(It.IsAny<RefreshToken>(), true))
-                .ReturnsAsync((RefreshToken t, bool _) => t);
+                .ReturnsAsync((RefreshToken t, bool _, CancellationToken __) => t);
 
             //ACT
             await _sut.RevokeByUserIdAsync(1);

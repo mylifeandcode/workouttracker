@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Mail;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Shared.Interfaces;
 
@@ -25,8 +26,9 @@ namespace WorkoutTracker.Application.Shared.Services
             }
         }
 
-        public async Task SendEmailAsync(string to, string from, string subject, string body)
+        public async Task SendEmailAsync(string to, string from, string subject, string body, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested(); // SmtpClient.SendMailAsync has no CT overload; this is the most we can honor.
             await _smtpClient.SendMailAsync(new MailMessage(from, to, subject, body));
         }
 

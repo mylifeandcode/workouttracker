@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Domain.BaseClasses;
@@ -14,9 +15,9 @@ namespace WorkoutTracker.Application.Shared.BaseClasses
     {
         public PublicEntityServiceBase(IRepository<T> repo, ILogger logger): base(repo, logger) { }
 
-        public virtual async Task<T?> GetByPublicIDAsync(Guid publicId)
+        public virtual async Task<T?> GetByPublicIDAsync(Guid publicId, CancellationToken cancellationToken = default)
         {
-            return await _repo.GetWithoutTracking().FirstOrDefaultAsync(x => x.PublicId == publicId);
+            return await _repo.GetWithoutTracking().FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
         }
     }
 }

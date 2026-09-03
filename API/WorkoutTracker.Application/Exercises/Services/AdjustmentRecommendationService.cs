@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
@@ -21,7 +22,8 @@ namespace WorkoutTracker.Application.Exercises.Services
 
         public async Task<ExerciseAmountRecommendation> GetAdjustmentRecommendationAsync(
             ExecutedExerciseAverages executedExerciseAverages,
-            UserSettings userSettings)
+            UserSettings userSettings,
+            CancellationToken cancellationToken = default)
         {
             if (executedExerciseAverages == null) throw new ArgumentNullException(nameof(executedExerciseAverages));
             if (userSettings == null) throw new ArgumentNullException(nameof(userSettings));
@@ -41,7 +43,8 @@ namespace WorkoutTracker.Application.Exercises.Services
                 formPerformance,
                 rangeOfMotionPerformance,
                 repPerformance,
-                userSettings);
+                userSettings,
+                cancellationToken);
 
             _logger.LogInformation("Returning adjustment recommendation: Resistance = {ResistanceAmount}, Reps = {Reps}, Reason = {Reason}", recommendation.ResistanceAmount, recommendation.Reps, recommendation.Reason);
 
@@ -55,7 +58,8 @@ namespace WorkoutTracker.Application.Exercises.Services
             Performance formPerformance,
             Performance rangeOfMotionPerformance,
             Performance repPerformance,
-            UserSettings userSettings)
+            UserSettings userSettings,
+            CancellationToken cancellationToken = default)
         {
             bool recommendingDecreasedResistance =
                 SuggestDecreasedResistance(executedExerciseAverages, formPerformance, rangeOfMotionPerformance, userSettings);
@@ -71,7 +75,8 @@ namespace WorkoutTracker.Application.Exercises.Services
                 var (amount, makeup) = await GetDecreasedResistanceAmountAsync(
                     executedExerciseAverages.AverageResistanceAmount,
                     lowestPerformance,
-                    executedExerciseAverages.Exercise);
+                    executedExerciseAverages.Exercise,
+                    cancellationToken);
 
                 recommendation.ResistanceAmount = amount;
                 recommendation.ResistanceMakeup = makeup;
@@ -102,7 +107,8 @@ namespace WorkoutTracker.Application.Exercises.Services
         private async Task<(decimal Amount, string? Makeup)> GetDecreasedResistanceAmountAsync(
             decimal previousResistanceAmount,
             Performance lowestPreviousPerformance,
-            Exercise exercise)
+            Exercise exercise,
+            CancellationToken cancellationToken = default)
         {
             sbyte multiplier = GetResistanceMultiplier(lowestPreviousPerformance);
 
@@ -113,7 +119,8 @@ namespace WorkoutTracker.Application.Exercises.Services
                 previousResistanceAmount,
                 multiplier,
                 !exercise.OneSided,
-                exercise.UsesBilateralResistance);
+                exercise.UsesBilateralResistance,
+                cancellationToken);
 
             _logger.LogInformation($"Decreased resistance amount for exercise {exercise.Name} is {result.Amount}.");
 

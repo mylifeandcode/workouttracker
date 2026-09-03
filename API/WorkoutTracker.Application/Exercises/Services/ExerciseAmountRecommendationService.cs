@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Domain.Users;
@@ -40,7 +41,8 @@ namespace WorkoutTracker.Application.Exercises.Services
         public async Task<ExerciseAmountRecommendation> GetRecommendationAsync(
             Exercise exercise,
             ExecutedWorkout lastWorkoutWithThisExercise,
-            UserSettings userSettings)
+            UserSettings userSettings,
+            CancellationToken cancellationToken = default)
         {
             if (exercise == null)
                 throw new ArgumentNullException(nameof(exercise));
@@ -56,26 +58,26 @@ namespace WorkoutTracker.Application.Exercises.Services
                 {
                     //Adjust weights or reps accordingly
                     _logger.LogInformation($"Getting performance-based recommendation for {exercise.Name}. Uses bilateral resistance = {exercise.UsesBilateralResistance}.");
-                    return await GetPerformanceBasedRecommendationAsync(lastSetsOfThisExercise, userSettings);
+                    return await GetPerformanceBasedRecommendationAsync(lastSetsOfThisExercise, userSettings, cancellationToken);
                 }
                 else
                 {
-                    //Recommend same as last time, or lower weights or rep if they 
+                    //Recommend same as last time, or lower weights or rep if they
                     //did poorly
                     _logger.LogInformation($"Getting not-performed-recently recommendation for {exercise.Name}. Uses bilateral resistance = {exercise.UsesBilateralResistance}.");
-                    return await GetRecommendationForExerciseNotPerformedRecentlyAsync(lastSetsOfThisExercise, userSettings);
+                    return await GetRecommendationForExerciseNotPerformedRecentlyAsync(lastSetsOfThisExercise, userSettings, cancellationToken);
                 }
             }
             else
             {
                 _logger.LogInformation($"Getting default recommendation for {exercise.Name} because it has never been performed.");
-                return await GetDefaultRecommendationAsync(exercise);
+                return await GetDefaultRecommendationAsync(exercise, cancellationToken);
             }
         }
 
         #region Private Non-Static Methods
 
-        private async Task<ExerciseAmountRecommendation> GetDefaultRecommendationAsync(Exercise exercise)
+        private async Task<ExerciseAmountRecommendation> GetDefaultRecommendationAsync(Exercise exercise, CancellationToken cancellationToken = default)
         {
             var recommendation = new ExerciseAmountRecommendation();
             recommendation.ExerciseId = exercise.Id;
@@ -96,7 +98,7 @@ namespace WorkoutTracker.Application.Exercises.Services
                     break;
 
                 case ResistanceType.ResistanceBand:
-                    var lowestBand = await _resistanceBandService.GetLowestResistanceBandAsync();
+                    var lowestBand = await _resistanceBandService.GetLowestResistanceBandAsync(cancellationToken);
                     recommendation.ResistanceAmount = lowestBand?.MaxResistanceAmount ?? 0;
                     break;
 
@@ -114,26 +116,28 @@ namespace WorkoutTracker.Application.Exercises.Services
 
         private async Task<ExerciseAmountRecommendation> GetPerformanceBasedRecommendationAsync(
             List<ExecutedExercise> executedExercises,
-            UserSettings userSettings)
+            UserSettings userSettings,
+            CancellationToken cancellationToken = default)
         {
             var averages = new ExecutedExerciseAverages(executedExercises);
 
             if (ExercisePerformanceNeedsImprovement(averages, userSettings.LowestAcceptableRating))
-                return await _adjustmentRecommendationService.GetAdjustmentRecommendationAsync(averages, userSettings);
+                return await _adjustmentRecommendationService.GetAdjustmentRecommendationAsync(averages, userSettings, cancellationToken);
             else
-                return await _increaseRecommendationService.GetIncreaseRecommendationAsync(averages, userSettings);
+                return await _increaseRecommendationService.GetIncreaseRecommendationAsync(averages, userSettings, cancellationToken);
         }
 
         private async Task<ExerciseAmountRecommendation> GetRecommendationForExerciseNotPerformedRecentlyAsync(
             List<ExecutedExercise> executedExercises,
-            UserSettings userSettings)
+            UserSettings userSettings,
+            CancellationToken cancellationToken = default)
         {
             var averages = new ExecutedExerciseAverages(executedExercises);
 
             if (ExercisePerformanceNeedsImprovement(averages, userSettings.LowestAcceptableRating))
             {
                 _logger.LogInformation($"{averages.Exercise.Name} needs improvement.");
-                return await _adjustmentRecommendationService.GetAdjustmentRecommendationAsync(averages, userSettings);
+                return await _adjustmentRecommendationService.GetAdjustmentRecommendationAsync(averages, userSettings, cancellationToken);
             }
             else
             {

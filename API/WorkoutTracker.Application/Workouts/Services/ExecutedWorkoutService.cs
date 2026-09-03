@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Workouts.Interfaces;
@@ -25,26 +26,26 @@ namespace WorkoutTracker.Application.Workouts.Services
             _workoutRepo = workoutRepo ?? throw new ArgumentNullException(nameof(workoutRepo));
         }
 
-        public async Task<ExecutedWorkout> CreateAsync(WorkoutPlan plan, bool startWorkout)
+        public async Task<ExecutedWorkout> CreateAsync(WorkoutPlan plan, bool startWorkout, CancellationToken cancellationToken = default)
         {
             if (plan == null)
                 throw new ArgumentNullException(nameof(plan));
 
             if (startWorkout)
-                return await CreateFromPlanAsync(plan, plan.SubmittedDateTime, null);
+                return await CreateFromPlanAsync(plan, plan.SubmittedDateTime, null, cancellationToken);
             else
-                return await CreateFromPlanAsync(plan, null, null);
+                return await CreateFromPlanAsync(plan, null, null, cancellationToken);
         }
 
-        public async Task<ExecutedWorkout> CreateAsync(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime)
+        public async Task<ExecutedWorkout> CreateAsync(WorkoutPlan plan, DateTime startDateTime, DateTime endDateTime, CancellationToken cancellationToken = default)
         {
             if (plan == null)
                 throw new ArgumentNullException(nameof(plan));
 
-            return await CreateFromPlanAsync(plan, startDateTime, endDateTime);
+            return await CreateFromPlanAsync(plan, startDateTime, endDateTime, cancellationToken);
         }
 
-        public override async Task<ExecutedWorkout> AddAsync(ExecutedWorkout entity, bool saveChanges = false)
+        public override async Task<ExecutedWorkout> AddAsync(ExecutedWorkout entity, bool saveChanges = false, CancellationToken cancellationToken = default)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -72,20 +73,20 @@ namespace WorkoutTracker.Application.Workouts.Services
             {
                 executedExercise.Exercise = null;
             }
-            return await base.AddAsync(entity, saveChanges);
+            return await base.AddAsync(entity, saveChanges, cancellationToken);
         }
 
-        public override async Task<ExecutedWorkout> UpdateAsync(ExecutedWorkout entity, bool saveChanges = false)
+        public override async Task<ExecutedWorkout> UpdateAsync(ExecutedWorkout entity, bool saveChanges = false, CancellationToken cancellationToken = default)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            await _repo.UpdateAsync(entity, (executedWorkout) => executedWorkout.Exercises);
+            await _repo.UpdateAsync(entity, cancellationToken, (executedWorkout) => executedWorkout.Exercises);
 
             return entity;
         }
 
-        public async Task<IEnumerable<ExecutedWorkout>> GetFilteredSubsetAsync(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst)
+        public async Task<IEnumerable<ExecutedWorkout>> GetFilteredSubsetAsync(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst, CancellationToken cancellationToken = default)
         {
             IQueryable<ExecutedWorkout> query = _repo.GetWithoutTracking().Include(x => x.Workout);
 
@@ -97,10 +98,10 @@ namespace WorkoutTracker.Application.Workouts.Services
             else
                 query = query.OrderBy(x => x.StartDateTime);
 
-            return await query.Skip(firstRecordIndex).Take(subsetSize).ToListAsync();
+            return await query.Skip(firstRecordIndex).Take(subsetSize).ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<ExecutedWorkout>> GetRecentByWorkoutAsync(int workoutId, int count)
+        public async Task<IEnumerable<ExecutedWorkout>> GetRecentByWorkoutAsync(int workoutId, int count, CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking()
                 .Include(x => x.Workout)
@@ -108,19 +109,19 @@ namespace WorkoutTracker.Application.Workouts.Services
                 .Where(x => x.WorkoutId == workoutId && x.EndDateTime.HasValue)
                 .OrderByDescending(x => x.EndDateTime)
                 .Take(count)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<ExecutedWorkout>> GetRecentAsync(int numberOfMostRecent)
+        public async Task<IEnumerable<ExecutedWorkout>> GetRecentAsync(int numberOfMostRecent, CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking()
                 .Where(workout => workout.StartDateTime.HasValue)
                 .OrderByDescending(workout => workout.StartDateTime!.Value)
                 .Take(numberOfMostRecent)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<ExecutedWorkout?> GetLatestAsync(Guid workoutPublicId)
+        public async Task<ExecutedWorkout?> GetLatestAsync(Guid workoutPublicId, CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking()
                 .Include(x => x.Workout).ThenInclude(workout => workout.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise)
@@ -128,48 +129,48 @@ namespace WorkoutTracker.Application.Workouts.Services
                 .AsSplitQuery()
                 .Where(x => x.StartDateTime.HasValue && x.EndDateTime.HasValue)
                 .OrderByDescending(x => x.Id)
-                .FirstOrDefaultAsync(x => x.Workout.PublicId == workoutPublicId);
+                .FirstOrDefaultAsync(x => x.Workout.PublicId == workoutPublicId, cancellationToken);
         }
 
-        public override async Task<ExecutedWorkout?> GetByPublicIDAsync(Guid publicId)
+        public override async Task<ExecutedWorkout?> GetByPublicIDAsync(Guid publicId, CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking()
                 .Include(x => x.Workout)
                 .Include(x => x.Exercises).ThenInclude(executedExercise => executedExercise.Exercise)
-                .FirstOrDefaultAsync(x => x.PublicId == publicId);
+                .FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
         }
 
-        public async Task<int> GetTotalCountAsync(ExecutedWorkoutFilter filter)
+        public async Task<int> GetTotalCountAsync(ExecutedWorkoutFilter filter, CancellationToken cancellationToken = default)
         {
             var query = _repo.GetWithoutTracking();
             ApplyQueryFilters(ref query, filter);
-            return await query.CountAsync();
+            return await query.CountAsync(cancellationToken);
         }
 
-        public async Task<int> GetPlannedCountAsync(int userId)
+        public async Task<int> GetPlannedCountAsync(int userId, CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking()
                 .Where(x => x.CreatedByUserId == userId
                     && !x.StartDateTime.HasValue
                     && !x.EndDateTime.HasValue)
-                .CountAsync();
+                .CountAsync(cancellationToken);
         }
 
-        public async Task<DateTime?> GetFirstStartDateTimeByUserAsync(int userId)
+        public async Task<DateTime?> GetFirstStartDateTimeByUserAsync(int userId, CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking()
                 .Where(x => x.CreatedByUserId == userId && x.StartDateTime.HasValue)
-                .MinAsync(x => x.StartDateTime);
+                .MinAsync(x => x.StartDateTime, cancellationToken);
         }
 
-        public async Task<int> GetLoggedWorkoutCountByUserAsync(int userId)
+        public async Task<int> GetLoggedWorkoutCountByUserAsync(int userId, CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking()
                 .Where(x => x.CreatedByUserId == userId)
-                .CountAsync();
+                .CountAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<ExecutedWorkout>> GetInProgressAsync(int userId)
+        public async Task<IEnumerable<ExecutedWorkout>> GetInProgressAsync(int userId, CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking()
                 .Include(x => x.Workout)
@@ -177,12 +178,12 @@ namespace WorkoutTracker.Application.Workouts.Services
                     && x.StartDateTime.HasValue
                     && !x.EndDateTime.HasValue)
                 .OrderByDescending(x => x.StartDateTime)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task DeletePlannedAsync(Guid publicId)
+        public async Task DeletePlannedAsync(Guid publicId, CancellationToken cancellationToken = default)
         {
-            var executedWorkout = await _repo.Get().FirstOrDefaultAsync(x => x.PublicId == publicId);
+            var executedWorkout = await _repo.Get().FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
 
             if (executedWorkout == null)
                 throw new ArgumentException($"Executed workout {publicId} not found.");
@@ -190,17 +191,17 @@ namespace WorkoutTracker.Application.Workouts.Services
             if (executedWorkout.StartDateTime.HasValue)
                 throw new ArgumentException($"Executed workout {publicId} has already been started.");
 
-            await _repo.DeleteAsync(executedWorkout.Id);
+            await _repo.DeleteAsync(executedWorkout.Id, cancellationToken);
         }
 
         #region Private Methods
 
-        private async Task<ExecutedWorkout> CreateFromPlanAsync(WorkoutPlan workoutPlan, DateTime? startDateTime, DateTime? endDateTime)
+        private async Task<ExecutedWorkout> CreateFromPlanAsync(WorkoutPlan workoutPlan, DateTime? startDateTime, DateTime? endDateTime, CancellationToken cancellationToken = default)
         {
             var executedWorkout = new ExecutedWorkout();
             var workout = await _workoutRepo.GetWithoutTracking()
                 .Include(w => w.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise)
-                .FirstAsync(x => x.PublicId == workoutPlan.WorkoutId);
+                .FirstAsync(x => x.PublicId == workoutPlan.WorkoutId, cancellationToken);
             executedWorkout.WorkoutId = workout.Id;
             executedWorkout.CreatedByUserId = workout.CreatedByUserId;
             executedWorkout.Exercises = new List<ExecutedExercise>();
@@ -242,7 +243,7 @@ namespace WorkoutTracker.Application.Workouts.Services
             executedWorkout.StartDateTime = startDateTime;
             executedWorkout.EndDateTime = endDateTime;
 
-            await AddAsync(executedWorkout, true);
+            await AddAsync(executedWorkout, true, cancellationToken);
 
             return executedWorkout;
         }

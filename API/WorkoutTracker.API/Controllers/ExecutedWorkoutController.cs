@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -37,11 +38,11 @@ namespace WorkoutTracker.API.Controllers
 
         // GET api/ExecutedWorkout/5
         [HttpGet("{publicId}")]
-        public async Task<ActionResult<ExecutedWorkoutDTO>> Get(Guid publicId)
+        public async Task<ActionResult<ExecutedWorkoutDTO>> Get(Guid publicId, CancellationToken cancellationToken = default)
         {
             try
             {
-                var executedWorkout = await _executedWorkoutService.GetByPublicIDAsync(publicId);
+                var executedWorkout = await _executedWorkoutService.GetByPublicIDAsync(publicId, cancellationToken);
                 if (executedWorkout == null)
                     return NotFound();
 
@@ -49,6 +50,10 @@ namespace WorkoutTracker.API.Controllers
                     return Forbid();
 
                 return _dtoMapper.MapFromExecutedWorkout(executedWorkout);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -59,15 +64,19 @@ namespace WorkoutTracker.API.Controllers
         //THERE IS NO POST FOR EXECUTEDWORKOUTDTO -- THESE ONLY GET CREATED SERVER-SIDE
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ExecutedWorkoutDTO>> Put([FromBody] ExecutedWorkoutDTO value)
+        public async Task<ActionResult<ExecutedWorkoutDTO>> Put([FromBody] ExecutedWorkoutDTO value, CancellationToken cancellationToken = default)
         {
             try
             {
-                var executedWorkout = await _executedWorkoutService.GetByPublicIDAsync(value.Id);
+                var executedWorkout = await _executedWorkoutService.GetByPublicIDAsync(value.Id, cancellationToken);
                 UpdateExecutedWorkoutFromDTO(executedWorkout, value);
                 SetModifiedAuditFields(executedWorkout);
-                await _executedWorkoutService.UpdateAsync(executedWorkout, true);
+                await _executedWorkoutService.UpdateAsync(executedWorkout, true, cancellationToken);
                 return _dtoMapper.MapFromExecutedWorkout(executedWorkout);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (BadHttpRequestException ex)
             {
@@ -87,7 +96,8 @@ namespace WorkoutTracker.API.Controllers
             DateTime? endDateTime = null,
             bool newestFirst = true,
             string workoutNameContains = null,
-            bool onlyWithJournalNotes = false)
+            bool onlyWithJournalNotes = false,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -97,11 +107,11 @@ namespace WorkoutTracker.API.Controllers
                     BuildExecutedWorkoutFilter(
                         userId, startDateTime, endDateTime, false, workoutNameContains, onlyWithJournalNotes);
 
-                int totalCount = await _executedWorkoutService.GetTotalCountAsync(filter);
+                int totalCount = await _executedWorkoutService.GetTotalCountAsync(filter, cancellationToken);
 
                 var executedWorkouts =
                     (await _executedWorkoutService
-                        .GetFilteredSubsetAsync(firstRecord, pageSize, filter, newestFirst))
+                        .GetFilteredSubsetAsync(firstRecord, pageSize, filter, newestFirst, cancellationToken))
                         .ToList();
 
                 var results = executedWorkouts.Select((executedWorkout) =>
@@ -120,6 +130,10 @@ namespace WorkoutTracker.API.Controllers
                 var result = new PaginatedResults<ExecutedWorkoutSummaryDTO>(results, totalCount);
 
                 return Ok(result);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (BadHttpRequestException ex)
             {
@@ -133,7 +147,7 @@ namespace WorkoutTracker.API.Controllers
 
 
         [HttpGet("planned")]
-        public async Task<ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>>> GetPlanned(int firstRecord, short pageSize, bool newestFirst = true)
+        public async Task<ActionResult<PaginatedResults<ExecutedWorkoutSummaryDTO>>> GetPlanned(int firstRecord, short pageSize, bool newestFirst = true, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -143,11 +157,11 @@ namespace WorkoutTracker.API.Controllers
                     BuildExecutedWorkoutFilter(
                         userId, null, null, true); //last param of true is "planned only"
 
-                int totalCount = await _executedWorkoutService.GetTotalCountAsync(filter);
+                int totalCount = await _executedWorkoutService.GetTotalCountAsync(filter, cancellationToken);
 
                 var executedWorkouts =
                     (await _executedWorkoutService
-                        .GetFilteredSubsetAsync(firstRecord, pageSize, filter, newestFirst))
+                        .GetFilteredSubsetAsync(firstRecord, pageSize, filter, newestFirst, cancellationToken))
                         .ToList();
 
                 var results = executedWorkouts.Select((executedWorkout) =>
@@ -167,6 +181,10 @@ namespace WorkoutTracker.API.Controllers
 
                 return Ok(result);
             }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
             catch (BadHttpRequestException ex)
             {
                 return BadRequest(ex);
@@ -178,16 +196,20 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpGet("in-progress")]
-        public async Task<ActionResult<ExecutedWorkoutSummaryDTO[]>> GetInProgress()
+        public async Task<ActionResult<ExecutedWorkoutSummaryDTO[]>> GetInProgress(CancellationToken cancellationToken = default)
         {
             try
             {
-                var inProgressWorkouts = (await _executedWorkoutService.GetInProgressAsync(GetUserID())).ToList();
+                var inProgressWorkouts = (await _executedWorkoutService.GetInProgressAsync(GetUserID(), cancellationToken)).ToList();
                 if (!inProgressWorkouts.Any())
                     return Ok(new List<ExecutedWorkoutSummaryDTO>(0));
 
                 var summary = inProgressWorkouts.Select(x => _summaryDtoMapper.MapFromExecutedWorkout(x)).ToArray();
                 return Ok(summary);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -196,12 +218,16 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [HttpDelete("planned/{publicId}")]
-        public async Task<ActionResult> DeletePlanned(Guid publicId)
+        public async Task<ActionResult> DeletePlanned(Guid publicId, CancellationToken cancellationToken = default)
         {
             try
             {
-                await _executedWorkoutService.DeletePlannedAsync(publicId);
+                await _executedWorkoutService.DeletePlannedAsync(publicId, cancellationToken);
                 return StatusCode(200);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception ex)
             {
