@@ -14,17 +14,9 @@ namespace WorkoutTracker.API.Mappers
 
             return new WorkoutDTO(
                 workout.PublicId,
-                workout.CreatedDateTime, 
+                workout.CreatedDateTime,
                 workout.ModifiedDateTime,
                 workout.Name,
-                workout.Exercises?.Select(exercise => 
-                    new ExerciseInWorkoutDTO(
-                        exercise.Id, 
-                        exercise.Exercise.PublicId,
-                        exercise.Exercise.Name, 
-                        exercise.NumberOfSets, 
-                        exercise.SetType, 
-                        exercise.Exercise.ResistanceType)),
                 string.Join(", ",
                      workout.Exercises?.SelectMany(x =>
                         x.Exercise?.ExerciseTargetAreaLinks?.Select(x => x.TargetArea.Name))

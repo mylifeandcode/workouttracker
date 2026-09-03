@@ -42,7 +42,7 @@ namespace WorkoutTracker.Data.EntitySetup
 
             //Workout Entity Setup
             _setups.Add(new WorkoutSetup());
-            _setups.Add(new ExecutedSetSetup());
+            _setups.Add(new ExecutedWorkoutSetup());
 
             //User Entity Setup
             _setups.Add(new UserSetup());

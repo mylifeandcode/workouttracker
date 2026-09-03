@@ -38,18 +38,9 @@ namespace WorkoutTracker.Application.Workouts.Services
         public async Task<ExecutedWorkoutsSummary> GetExecutedWorkoutsSummaryAsync(int userId)
         {
             var summary = new ExecutedWorkoutsSummary();
-            var allWorkouts = (await _executedWorkoutService.GetByUserAsync(userId)).ToList();
 
-            var firstWorkout = allWorkouts
-                .Where(x => x.StartDateTime.HasValue)
-                .OrderBy(x => x.StartDateTime)
-                .FirstOrDefault();
-
-            if (firstWorkout != null)
-                summary.FirstLoggedWorkoutDateTime = firstWorkout.StartDateTime;
-
-            summary.TotalLoggedWorkouts = allWorkouts.Count;
-
+            summary.FirstLoggedWorkoutDateTime = await _executedWorkoutService.GetFirstStartDateTimeByUserAsync(userId);
+            summary.TotalLoggedWorkouts = await _executedWorkoutService.GetLoggedWorkoutCountByUserAsync(userId);
             summary.TargetAreasWithWorkoutCounts = await GetCountOfWorkoutsByTargetAreaAsync(userId);
 
             return summary;

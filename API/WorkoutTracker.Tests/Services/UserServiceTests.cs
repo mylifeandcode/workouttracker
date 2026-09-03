@@ -30,7 +30,7 @@ namespace WorkoutTracker.Tests.Services
         {
             _users = new List<User>(3);
             _users.Add(new User { Id = 1, Name = "Paul", HashedPassword = "krbIcgEUXWlOszntUzEHHTvSQy+ig63C", Salt = "MySalt", EmailAddress = "paul@here.com", PasswordResetCode = "SomePasswordResetCode" });
-            _users.Add(new User { Id = 2, Name = "System", HashedPassword = "Huh?", Salt = "SomeSalt", EmailAddress = "blahblah@gmail.com", PasswordResetCode = null });
+            _users.Add(new User { Id = 2, Name = "SYSTEM", HashedPassword = "Huh?", Salt = "SomeSalt", EmailAddress = "blahblah@gmail.com", PasswordResetCode = null });
             _users.Add(new User { Id = 3, Name = "Frank", HashedPassword = "Garrrr!", Salt = "Yay!", EmailAddress = "gar@gar.com", PasswordResetCode = null });
         }
 

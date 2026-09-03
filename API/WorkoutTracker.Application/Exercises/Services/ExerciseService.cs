@@ -18,7 +18,8 @@ namespace WorkoutTracker.Application.Exercises.Services
 
         public async Task<IEnumerable<Exercise>> GetAsync(int firstRecord, short pageSize, ExerciseFilter filter, bool sortAscending = true)
         {
-            IQueryable<Exercise> query = _repo.GetWithoutTracking();
+            IQueryable<Exercise> query = _repo.GetWithoutTracking()
+                .Include(x => x.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea);
 
             if (filter != null)
                 ApplyQueryFilters(ref query, filter);
@@ -33,7 +34,9 @@ namespace WorkoutTracker.Application.Exercises.Services
 
         public async Task<Exercise?> GetByPublicIdAsync(Guid publicId)
         {
-            return await _repo.GetWithoutTracking().FirstOrDefaultAsync(x => x.PublicId == publicId);
+            return await _repo.GetWithoutTracking()
+                .Include(x => x.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea)
+                .FirstOrDefaultAsync(x => x.PublicId == publicId);
         }
 
         public override async Task<Exercise> UpdateAsync(Exercise modifiedExercise, bool saveChanges = false)
@@ -46,7 +49,9 @@ namespace WorkoutTracker.Application.Exercises.Services
             See https://docs.microsoft.com/en-us/ef/core/saving/disconnected-entities for
             more info.
             */
-            var existingExercise = await _repo.GetAsync(modifiedExercise.Id);
+            var existingExercise = await _repo.Get()
+                .Include(x => x.ExerciseTargetAreaLinks)
+                .FirstOrDefaultAsync(x => x.Id == modifiedExercise.Id);
             _repo.SetValues(existingExercise, modifiedExercise);
 
             AddExerciseTargetAreaLinksToExistingExercise(existingExercise, modifiedExercise);

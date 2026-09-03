@@ -18,7 +18,8 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         public async Task<IEnumerable<Workout>> GetAsync(int firstRecord, short pageSize, WorkoutFilter filter, bool sortAscending = true)
         {
-            IQueryable<Workout> query = _repo.GetWithoutTracking();
+            IQueryable<Workout> query = _repo.GetWithoutTracking()
+                .Include(workout => workout.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise).ThenInclude(exercise => exercise.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea);
 
             if (filter != null)
                 ApplyQueryFilters(ref query, filter);
@@ -29,6 +30,13 @@ namespace WorkoutTracker.Application.Workouts.Services
                 query = query.OrderByDescending(workout => workout.Name);
 
             return await query.Skip(firstRecord).Take(pageSize).ToListAsync();
+        }
+
+        public override async Task<Workout?> GetByPublicIDAsync(Guid publicId)
+        {
+            return await _repo.GetWithoutTracking()
+                .Include(workout => workout.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise).ThenInclude(exercise => exercise.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea)
+                .FirstOrDefaultAsync(x => x.PublicId == publicId);
         }
 
         public override async Task<Workout> UpdateAsync(Workout modifiedWorkout, bool saveChanges = false)

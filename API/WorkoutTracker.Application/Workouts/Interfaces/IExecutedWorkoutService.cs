@@ -16,7 +16,8 @@ namespace WorkoutTracker.Application.Workouts.Interfaces
         Task<ExecutedWorkout?> GetLatestAsync(Guid workoutPublicId);
         Task<int> GetTotalCountAsync(ExecutedWorkoutFilter filter);
         Task<int> GetPlannedCountAsync(int userId);
-        Task<IEnumerable<ExecutedWorkout>> GetByUserAsync(int userId);
+        Task<DateTime?> GetFirstStartDateTimeByUserAsync(int userId);
+        Task<int> GetLoggedWorkoutCountByUserAsync(int userId);
         Task<IEnumerable<ExecutedWorkout>> GetRecentByWorkoutAsync(int workoutId, int count);
         Task<IEnumerable<ExecutedWorkout>> GetInProgressAsync(int userId);
         Task DeletePlannedAsync(Guid publicId);

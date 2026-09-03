@@ -18,6 +18,7 @@ namespace WorkoutTracker.Data.EntitySetup.Workouts
             entity.Property(x => x.Active).HasDefaultValue(true);
 
             entity.HasIndex(x => x.PublicId);
+            entity.HasIndex(x => new { x.CreatedByUserId, x.Active, x.Name });
 
             base.SetupAuditFields<Workout>(builder);
         }

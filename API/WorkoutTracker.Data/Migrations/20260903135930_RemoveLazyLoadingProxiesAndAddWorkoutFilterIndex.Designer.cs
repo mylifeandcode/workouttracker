@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutTracker.Data;
 
@@ -11,9 +12,11 @@ using WorkoutTracker.Data;
 namespace WorkoutTracker.Data.Migrations
 {
     [DbContext(typeof(WorkoutsContext))]
-    partial class WorkoutsContextModelSnapshot : ModelSnapshot
+    [Migration("20260903135930_RemoveLazyLoadingProxiesAndAddWorkoutFilterIndex")]
+    partial class RemoveLazyLoadingProxiesAndAddWorkoutFilterIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -627,7 +630,6 @@ namespace WorkoutTracker.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Journal")
-                        .HasMaxLength(4096)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifiedByUserId")
@@ -637,9 +639,7 @@ namespace WorkoutTracker.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("PublicId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
@@ -652,17 +652,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PublicId");
-
-                    b.HasIndex("Rating");
-
-                    b.HasIndex("StartDateTime");
-
                     b.HasIndex("WorkoutId");
-
-                    b.HasIndex("CreatedByUserId", "StartDateTime", "EndDateTime");
-
-                    b.HasIndex("CreatedByUserId", "CreatedDateTime", "ModifiedByUserId", "ModifiedDateTime");
 
                     b.ToTable("ExecutedWorkouts");
                 });
@@ -754,7 +744,7 @@ namespace WorkoutTracker.Data.Migrations
                     b.HasOne("WorkoutTracker.Domain.Workouts.ExecutedWorkout", "ExecutedWorkout")
                         .WithMany("Exercises")
                         .HasForeignKey("ExecutedWorkoutId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WorkoutTracker.Domain.Exercises.Exercise", "Exercise")
@@ -861,7 +851,7 @@ namespace WorkoutTracker.Data.Migrations
                     b.HasOne("WorkoutTracker.Domain.Workouts.Workout", "Workout")
                         .WithMany()
                         .HasForeignKey("WorkoutId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Workout");

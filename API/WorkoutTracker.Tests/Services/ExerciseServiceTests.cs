@@ -86,8 +86,8 @@ namespace WorkoutTracker.Tests.Services
                 .ReturnsAsync(existingExercise);
 
             repoMock
-                .Setup(mock => mock.GetAsync(1))
-                .ReturnsAsync(existingExercise);
+                .Setup(mock => mock.Get())
+                .Returns(new List<Exercise> { existingExercise }.AsAsyncQueryable());
 
             repoMock
                 .Setup(mock => mock.SetValues(existingExercise, modifiedExercise));
@@ -99,7 +99,7 @@ namespace WorkoutTracker.Tests.Services
 
             //ASSERT
             result.ShouldBeSameAs(existingExercise);
-            repoMock.Verify(mock => mock.GetAsync(1), Times.Once);
+            repoMock.Verify(mock => mock.Get(), Times.Once);
             repoMock.Verify(mock => mock.UpdateAsync(existingExercise, true), Times.Once);
             existingExercise.ExerciseTargetAreaLinks.ShouldNotBeNull();
             existingExercise.ExerciseTargetAreaLinks.Count.ShouldBe(modifiedExercise.ExerciseTargetAreaLinks.Count);

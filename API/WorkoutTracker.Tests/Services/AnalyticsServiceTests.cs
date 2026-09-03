@@ -20,12 +20,6 @@ namespace WorkoutTracker.Tests.Services
             //ARRANGE
             int userId = 42;
 
-            var allWorkouts = new List<ExecutedWorkout>
-            {
-                new ExecutedWorkout { Id = 1, CreatedByUserId = userId, StartDateTime = new System.DateTime(2024, 1, 1), EndDateTime = new System.DateTime(2024, 1, 1) },
-                new ExecutedWorkout { Id = 2, CreatedByUserId = userId, StartDateTime = new System.DateTime(2024, 2, 1), EndDateTime = new System.DateTime(2024, 2, 1) }
-            };
-
             var allTargetAreas = new List<TargetArea>
             {
                 new TargetArea { Id = 1, Name = "Chest" },
@@ -40,7 +34,8 @@ namespace WorkoutTracker.Tests.Services
             };
 
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            executedWorkoutService.Setup(x => x.GetByUserAsync(userId)).ReturnsAsync(allWorkouts);
+            executedWorkoutService.Setup(x => x.GetFirstStartDateTimeByUserAsync(userId)).ReturnsAsync(new System.DateTime(2024, 1, 1));
+            executedWorkoutService.Setup(x => x.GetLoggedWorkoutCountByUserAsync(userId)).ReturnsAsync(2);
 
             var targetAreaService = new Mock<ITargetAreaService>(MockBehavior.Strict);
             targetAreaService.Setup(x => x.GetAllAsync()).ReturnsAsync(allTargetAreas);

@@ -56,17 +56,26 @@ namespace WorkoutTracker.Application.Users.Services
 
         public override async Task<IEnumerable<User>> GetAllAsync()
         {
-            return await _repo.Get().Where(x => x.Name.ToUpper() != "SYSTEM").ToListAsync();
+            return await _repo.Get().Where(x => x.Name != "SYSTEM").ToListAsync();
         }
 
         public async Task<IEnumerable<User>> GetAllWithoutTrackingAsync()
         {
-            return await _repo.GetWithoutTracking().Where(x => x.Name.ToUpper() != "SYSTEM").ToListAsync();
+            return await _repo.GetWithoutTracking().Where(x => x.Name != "SYSTEM").ToListAsync();
+        }
+
+        public override async Task<User?> GetByIdAsync(int id)
+        {
+            return await _repo.Get()
+                .Include(x => x.Settings).ThenInclude(settings => settings.RepSettings)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<User?> GetByPublicIdAsync(Guid publicId)
         {
-            return await _repo.GetWithoutTracking().FirstOrDefaultAsync(x => x.PublicId == publicId);
+            return await _repo.GetWithoutTracking()
+                .Include(x => x.Settings).ThenInclude(settings => settings.RepSettings)
+                .FirstOrDefaultAsync(x => x.PublicId == publicId);
         }
 
         public async Task ChangePasswordAsync(int userId, string currentPassword, string newPassword)

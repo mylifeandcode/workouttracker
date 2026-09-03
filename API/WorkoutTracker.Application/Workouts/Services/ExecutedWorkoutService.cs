@@ -87,7 +87,7 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         public async Task<IEnumerable<ExecutedWorkout>> GetFilteredSubsetAsync(int firstRecordIndex, short subsetSize, ExecutedWorkoutFilter filter, bool newestFirst)
         {
-            IQueryable<ExecutedWorkout> query = _repo.GetWithoutTracking();
+            IQueryable<ExecutedWorkout> query = _repo.GetWithoutTracking().Include(x => x.Workout);
 
             if (filter != null)
                 ApplyQueryFilters(ref query, filter);
@@ -103,6 +103,8 @@ namespace WorkoutTracker.Application.Workouts.Services
         public async Task<IEnumerable<ExecutedWorkout>> GetRecentByWorkoutAsync(int workoutId, int count)
         {
             return await _repo.GetWithoutTracking()
+                .Include(x => x.Workout)
+                .Include(x => x.Exercises).ThenInclude(executedExercise => executedExercise.Exercise)
                 .Where(x => x.WorkoutId == workoutId && x.EndDateTime.HasValue)
                 .OrderByDescending(x => x.EndDateTime)
                 .Take(count)
@@ -121,9 +123,20 @@ namespace WorkoutTracker.Application.Workouts.Services
         public async Task<ExecutedWorkout?> GetLatestAsync(Guid workoutPublicId)
         {
             return await _repo.GetWithoutTracking()
+                .Include(x => x.Workout).ThenInclude(workout => workout.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise)
+                .Include(x => x.Exercises).ThenInclude(executedExercise => executedExercise.Exercise)
+                .AsSplitQuery()
                 .Where(x => x.StartDateTime.HasValue && x.EndDateTime.HasValue)
                 .OrderByDescending(x => x.Id)
                 .FirstOrDefaultAsync(x => x.Workout.PublicId == workoutPublicId);
+        }
+
+        public override async Task<ExecutedWorkout?> GetByPublicIDAsync(Guid publicId)
+        {
+            return await _repo.GetWithoutTracking()
+                .Include(x => x.Workout)
+                .Include(x => x.Exercises).ThenInclude(executedExercise => executedExercise.Exercise)
+                .FirstOrDefaultAsync(x => x.PublicId == publicId);
         }
 
         public async Task<int> GetTotalCountAsync(ExecutedWorkoutFilter filter)
@@ -142,16 +155,24 @@ namespace WorkoutTracker.Application.Workouts.Services
                 .CountAsync();
         }
 
-        public async Task<IEnumerable<ExecutedWorkout>> GetByUserAsync(int userId)
+        public async Task<DateTime?> GetFirstStartDateTimeByUserAsync(int userId)
+        {
+            return await _repo.GetWithoutTracking()
+                .Where(x => x.CreatedByUserId == userId && x.StartDateTime.HasValue)
+                .MinAsync(x => x.StartDateTime);
+        }
+
+        public async Task<int> GetLoggedWorkoutCountByUserAsync(int userId)
         {
             return await _repo.GetWithoutTracking()
                 .Where(x => x.CreatedByUserId == userId)
-                .ToListAsync();
+                .CountAsync();
         }
 
         public async Task<IEnumerable<ExecutedWorkout>> GetInProgressAsync(int userId)
         {
             return await _repo.GetWithoutTracking()
+                .Include(x => x.Workout)
                 .Where(x => x.CreatedByUserId == userId
                     && x.StartDateTime.HasValue
                     && !x.EndDateTime.HasValue)
@@ -177,7 +198,9 @@ namespace WorkoutTracker.Application.Workouts.Services
         private async Task<ExecutedWorkout> CreateFromPlanAsync(WorkoutPlan workoutPlan, DateTime? startDateTime, DateTime? endDateTime)
         {
             var executedWorkout = new ExecutedWorkout();
-            var workout = await _workoutRepo.GetWithoutTracking().FirstAsync(x => x.PublicId == workoutPlan.WorkoutId);
+            var workout = await _workoutRepo.GetWithoutTracking()
+                .Include(w => w.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise)
+                .FirstAsync(x => x.PublicId == workoutPlan.WorkoutId);
             executedWorkout.WorkoutId = workout.Id;
             executedWorkout.CreatedByUserId = workout.CreatedByUserId;
             executedWorkout.Exercises = new List<ExecutedExercise>();

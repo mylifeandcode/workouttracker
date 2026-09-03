@@ -83,7 +83,7 @@ builder.Services.AddCors(options =>
 
 var connection = builder.Configuration.GetConnectionString("WorkoutTrackerDatabase");
 builder.Services.AddDbContext<WorkoutsContext>(options =>
-                options.UseLazyLoadingProxies().UseSqlServer(connection));
+                options.UseSqlServer(connection));
 
 //Originally from https://www.codemag.com/Article/2105051/Implementing-JWT-Authentication-in-ASP.NET-Core-5 .
 //See also https://github.com/joydipkanjilal/jwt-aspnetcore/tree/master/jwt-aspnetcore for differences between the 
@@ -163,7 +163,8 @@ void RegisterStuff(WebApplicationBuilder appBuilder)
     {
         containerBuilder.RegisterAssemblyTypes(assemblies)
            .Where(t => t.Name.EndsWith("Service"))
-           .AsImplementedInterfaces();
+           .AsImplementedInterfaces()
+           .InstancePerLifetimeScope();
 
         containerBuilder.RegisterAssemblyTypes(assemblies)
             .Where(t => t.Name.EndsWith("Repository"))

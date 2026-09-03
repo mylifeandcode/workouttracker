@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.API.Models;
+using WorkoutTracker.API.Mappers;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Security.Interfaces;
 
@@ -22,14 +24,17 @@ namespace WorkoutTracker.API.Controllers
     {
         private readonly IExecutedWorkoutService _executedWorkoutService;
         private readonly ICryptoService _cryptoService;
+        private readonly IUserDTOMapper _userDTOMapper;
 
         public UsersController(
             IUserService userService,
             IExecutedWorkoutService executedWorkoutService,
-            ICryptoService cryptoService) : base(userService)
+            ICryptoService cryptoService,
+            IUserDTOMapper userDTOMapper) : base(userService)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
+            _userDTOMapper = userDTOMapper ?? throw new ArgumentNullException(nameof(userDTOMapper));
         }
 
         //TODO: Revisit. The below was causing a 500 response.
@@ -59,7 +64,7 @@ namespace WorkoutTracker.API.Controllers
         */
 
         [HttpGet("{publicId:guid}")]
-        public async Task<ActionResult<User>> GetByPublicId(Guid publicId)
+        public async Task<ActionResult<UserDTO>> GetByPublicId(Guid publicId)
         {
             //This method replaces the default implementation because we don't
             //want to return the domain object which includes the user's
@@ -71,10 +76,7 @@ namespace WorkoutTracker.API.Controllers
                 if (entity == null)
                     return NotFound();
                 else
-                {
-                    entity.HashedPassword = null; //TODO: Check if we need this. We already have an attribute in the class to not serialize this field.
-                    return Ok(entity);
-                }
+                    return Ok(_userDTOMapper.MapFromUser(entity));
             }
             catch (Exception ex)
             {
@@ -83,9 +85,23 @@ namespace WorkoutTracker.API.Controllers
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(typeof(IEnumerable<UserSummaryDTO>), StatusCodes.Status200OK)]
         public override async Task<ActionResult<IEnumerable<User>>> Get()
         {
-            return Ok(await _service.GetAllWithoutTrackingAsync());
+            //This method replaces the default implementation because we don't
+            //want to return the domain object which includes the user's
+            //hashed password. Its declared return type still says IEnumerable<User> because
+            //it overrides SimpleAPIControllerBase<User>.Get() (return types aren't covariant
+            //for an unrelated DTO type), but Ok() doesn't care what shape the boxed value
+            //actually is — it's a UserSummaryDTO collection. (An earlier attempt at this used
+            //`new` to declare a real IEnumerable<UserSummaryDTO> return type instead of overriding —
+            //that compiles, but ASP.NET Core's action discovery still finds the base method too,
+            //since `new` doesn't remove it from the type's method list the way it does for normal
+            //member hiding, and registers both as [HttpGet] "api/Users" — this is what the commented-out
+            //`new ActionResult<UserDTO> Get(int id)` above was hitting when it says "was causing a 500
+            //response": an AmbiguousMatchException, not anything wrong with the DTO itself.)
+            var users = await _service.GetAllWithoutTrackingAsync();
+            return Ok(_userDTOMapper.MapFromUsersToSummaries(users));
         }
 
         [Authorize(Roles = "Administrator")]

@@ -15,6 +15,7 @@ namespace WorkoutTracker.Application.Resistances.Services
     public class ResistanceBandService : ServiceBase<ResistanceBand>, IResistanceBandService
     {
         private ResistanceBand? _lowestResistanceBand;
+        private List<ResistanceBand>? _individualBands;
 
         public ResistanceBandService(IRepository<ResistanceBand> repository, ILogger<ResistanceBandService> logger) : base(repository, logger) { }
 
@@ -40,6 +41,8 @@ namespace WorkoutTracker.Application.Resistances.Services
 
         public async Task<List<ResistanceBand>> GetIndividualBandsAsync()
         {
+            if (_individualBands != null) return _individualBands;
+
             List<ResistanceBand> bandsByColor = (await _repo.GetAllAsync()).ToList();
             List<ResistanceBand> output = new List<ResistanceBand>(bandsByColor.Sum(band => band.NumberAvailable));
 
@@ -51,7 +54,8 @@ namespace WorkoutTracker.Application.Resistances.Services
                 }
             });
 
-            return output;
+            _individualBands = output;
+            return _individualBands;
         }
 
         public async Task<List<ResistanceBand>> GetResistanceBandsForResistanceAmountRangeAsync(

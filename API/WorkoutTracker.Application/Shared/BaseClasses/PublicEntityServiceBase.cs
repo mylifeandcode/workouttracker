@@ -14,7 +14,7 @@ namespace WorkoutTracker.Application.Shared.BaseClasses
     {
         public PublicEntityServiceBase(IRepository<T> repo, ILogger logger): base(repo, logger) { }
 
-        public async Task<T?> GetByPublicIDAsync(Guid publicId)
+        public virtual async Task<T?> GetByPublicIDAsync(Guid publicId)
         {
             return await _repo.GetWithoutTracking().FirstOrDefaultAsync(x => x.PublicId == publicId);
         }

@@ -124,15 +124,6 @@ export type ExerciseInWorkout = {
     modifiedDateTime?: null | Date;
 };
 
-export type ExerciseInWorkoutDTO = {
-    id: number;
-    exerciseId: string;
-    exerciseName: string;
-    numberOfSets: number;
-    setType: SetType;
-    resistanceType: ResistanceType;
-};
-
 export type ExercisePlan = {
     exerciseInWorkoutId: number;
     exerciseId: number;
@@ -297,6 +288,15 @@ export type UserCredentialsDTO = {
     password: string;
 };
 
+export type UserDTO = {
+    id: number;
+    publicId: string;
+    name: string;
+    emailAddress: string;
+    role: UserRole;
+    settings: UserSettings;
+};
+
 export type UserMinMaxReps = {
     userSettingsId: number;
     setType: SetType;
@@ -345,6 +345,12 @@ export type UserSettings = {
     modifiedDateTime?: null | Date;
 };
 
+export type UserSummaryDTO = {
+    id: number;
+    publicId: string;
+    name: string;
+};
+
 export type Workout = {
     publicId: string;
     exercises: Array<ExerciseInWorkout>;
@@ -359,7 +365,6 @@ export type Workout = {
 
 export type WorkoutDTO = {
     name: string;
-    exercises: Array<ExerciseInWorkoutDTO>;
     targetAreas: string;
     active: boolean;
     id: string;
@@ -638,6 +643,7 @@ export type GetApiExercisesData = {
         pageSize?: number;
         nameContains?: string;
         hasTargetAreas?: string;
+        sortAscending?: boolean;
     };
     url: '/api/Exercises';
 };
@@ -918,7 +924,7 @@ export type GetApiUsersByPublicIdResponses = {
     /**
      * OK
      */
-    200: User;
+    200: UserDTO;
 };
 
 export type GetApiUsersByPublicIdResponse = GetApiUsersByPublicIdResponses[keyof GetApiUsersByPublicIdResponses];
@@ -934,7 +940,7 @@ export type GetApiUsersResponses = {
     /**
      * OK
      */
-    200: Array<User>;
+    200: Array<UserSummaryDTO>;
 };
 
 export type GetApiUsersResponse = GetApiUsersResponses[keyof GetApiUsersResponses];
