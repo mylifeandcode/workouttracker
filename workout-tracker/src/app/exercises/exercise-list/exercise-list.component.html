@@ -36,10 +36,10 @@
     </div>
   </div>
 
-  @if (!resource.isLoading() && resource.value()?.totalCount != null) {
+  @if (!resource.isLoading() && resource.value().totalCount != null) {
     <div class="row mt-2 mb-2">
       <div class="col-3">{{resource.value().totalCount}} total exercise(s)</div>
-      @if (!resource.isLoading() && resource.value()?.totalCount == 0) {
+      @if (!resource.isLoading() && resource.value().totalCount == 0) {
         <div class="col-9" style="font-style: italic">
           No exercises have been defined. Please create one using the "Add New" button below.
         </div>
