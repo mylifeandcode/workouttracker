@@ -3,7 +3,6 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
 import { provideSignalFormsConfig } from '@angular/forms/signals';
 import { NG_STATUS_CLASSES } from '@angular/forms/signals/compat';
 import { ConfigService } from './core/_services/config/config.service';
@@ -23,7 +22,7 @@ registerLocaleData(en);
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withComponentInputBinding()),
-    importProvidersFrom(BrowserModule, CommonModule, ReactiveFormsModule),
+    importProvidersFrom(BrowserModule, CommonModule),
     provideAppInitializer(() => {
       const initializerFn = (initializeApp)(inject(ConfigService), inject(UserService), inject(AuthService), inject(HttpClient));
       return initializerFn();
