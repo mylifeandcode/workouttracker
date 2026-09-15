@@ -20,7 +20,8 @@ namespace WorkoutTracker.Application.Workouts.Services
         public async Task<IEnumerable<Workout>> GetAsync(int firstRecord, short pageSize, WorkoutFilter filter, bool sortAscending = true, CancellationToken cancellationToken = default)
         {
             IQueryable<Workout> query = _repo.GetWithoutTracking()
-                .Include(workout => workout.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise).ThenInclude(exercise => exercise.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea);
+                .Include(workout => workout.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise).ThenInclude(exercise => exercise.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea)
+                .AsSplitQuery();
 
             if (filter != null)
                 ApplyQueryFilters(ref query, filter);
@@ -37,6 +38,7 @@ namespace WorkoutTracker.Application.Workouts.Services
         {
             return await _repo.GetWithoutTracking()
                 .Include(workout => workout.Exercises).ThenInclude(exerciseInWorkout => exerciseInWorkout.Exercise).ThenInclude(exercise => exercise.ExerciseTargetAreaLinks).ThenInclude(link => link.TargetArea)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
         }
 

@@ -14,12 +14,11 @@ using WorkoutTracker.Repository;
 
 namespace WorkoutTracker.Application.Users.Services
 {
-    public class UserService : PublicEntityServiceBase<User>, IUserService, IDisposable
+    public class UserService : PublicEntityServiceBase<User>, IUserService
     {
         private ICryptoService _cryptoService;
         private IEmailService _emailService;
         private string _frontEndResetPasswordUrl;
-        private bool _disposedValue;
 
         public UserService(
             IRepository<User> repo,
@@ -143,33 +142,6 @@ namespace WorkoutTracker.Application.Users.Services
         public async Task<bool> ValidatePasswordResetCodeAsync(string resetCode, CancellationToken cancellationToken = default)
         {
             return await _repo.Get().AnyAsync(user => user.PasswordResetCode == resetCode, cancellationToken);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: Dispose managed state (managed objects)
-                }
-
-                if (_emailService != null)
-                    _emailService.Dispose();
-
-                _disposedValue = true;
-            }
-        }
-
-        ~UserService()
-        {
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

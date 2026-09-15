@@ -188,10 +188,12 @@ void RegisterStuff(WebApplicationBuilder appBuilder)
             .WithParameter("host", appBuilder.Configuration["SMTP:Host"])
             .WithParameter("port", appBuilder.Configuration["SMTP:Port"])
             .WithParameter("username", appBuilder.Configuration["SMTP:Username"])
-            .WithParameter("password", appBuilder.Configuration["SMTP:Password"]);
+            .WithParameter("password", appBuilder.Configuration["SMTP:Password"])
+            .InstancePerLifetimeScope();
 
         containerBuilder.RegisterType<UserService>().As<IUserService>()
-            .WithParameter("frontEndResetPasswordUrl", appBuilder.Configuration["FrontEndResetPasswordURL"]);
+            .WithParameter("frontEndResetPasswordUrl", appBuilder.Configuration["FrontEndResetPasswordURL"])
+            .InstancePerLifetimeScope();
     });
 }
 

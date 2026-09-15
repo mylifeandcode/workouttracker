@@ -56,7 +56,6 @@ namespace WorkoutTracker.Tests.Services
             _emailServiceMock = new Mock<IEmailService>(MockBehavior.Strict);
             _emailServiceMock.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
             _emailServiceMock.SetupGet(x => x.IsEnabled).Returns(true);
-            _emailServiceMock.Setup(x => x.Dispose());
 
             _loggerMock = new Mock<ILogger<UserService>>(MockBehavior.Strict);
             _loggerMock.Setup(x => x.Log(
