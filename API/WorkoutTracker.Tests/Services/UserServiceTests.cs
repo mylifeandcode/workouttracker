@@ -43,6 +43,7 @@ namespace WorkoutTracker.Tests.Services
             _userRepositoryMock.Setup(mock => mock.DeleteAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
             _userRepositoryMock.Setup(mock => mock.UpdateAsync(It.IsAny<User>(), true)).ReturnsAsync((User user, bool save, CancellationToken _) => user);
             _userRepositoryMock.Setup(mock => mock.Get()).Returns(_users.AsAsyncQueryable());
+            _userRepositoryMock.Setup(mock => mock.GetWithoutTracking()).Returns(_users.AsAsyncQueryable());
             _userRepositoryMock.Setup(mock => mock.GetAsync(It.IsAny<int>())).ReturnsAsync(_users[0]);
             _userRepositoryMock.Setup(mock => mock.AnyAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(false);
 
@@ -134,6 +135,53 @@ namespace WorkoutTracker.Tests.Services
             //ASSERT
             results.Count.ShouldBe(_users.Count - 1);
             results.Any(user => user.Name.ToUpper() == "SYSTEM").ShouldBeFalse();
+        }
+
+        [TestMethod]
+        public async Task Should_Get_User_By_Name()
+        {
+            //ACT
+            var result = await _sut.GetByNameAsync("Paul");
+
+            //ASSERT
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe(1);
+        }
+
+        [TestMethod]
+        public async Task Should_Return_Null_From_GetByNameAsync_When_User_Not_Found()
+        {
+            //ACT
+            var result = await _sut.GetByNameAsync("NoSuchUser");
+
+            //ASSERT
+            result.ShouldBeNull();
+        }
+
+        [TestMethod]
+        public async Task Should_Not_Return_SYSTEM_User_From_GetByNameAsync()
+        {
+            //ACT
+            var result = await _sut.GetByNameAsync("SYSTEM");
+
+            //ASSERT
+            result.ShouldBeNull();
+        }
+
+        [TestMethod]
+        public async Task Should_Forward_CancellationToken_To_Repository_When_Getting_User_By_Name()
+        {
+            //ARRANGE
+            var token = new CancellationTokenSource().Token;
+
+            //ACT
+            var result = await _sut.GetByNameAsync("Paul", token);
+
+            //ASSERT — this only proves the token is accepted and passed through without breaking the
+            //call; TestAsyncQueryProvider.ExecuteAsync ignores CancellationToken entirely, so it cannot
+            //prove real cancellation actually stops the query (see TestAsyncQueryProvider.cs).
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe(1);
         }
 
         [TestMethod]

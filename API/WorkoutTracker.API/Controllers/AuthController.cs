@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
@@ -48,7 +47,7 @@ namespace WorkoutTracker.API.Controllers
             if (!IsCredentialsObjectValid(credentials))
                 return BadRequest();
 
-            var user = (await _userService.GetAllAsync(cancellationToken)).FirstOrDefault(x => x.Name == credentials.Username);
+            var user = await _userService.GetByNameAsync(credentials.Username, cancellationToken);
 
             if (user == null)
                 return new NotFoundResult();
@@ -99,7 +98,7 @@ namespace WorkoutTracker.API.Controllers
                 return Unauthorized();
 
             // Get the user to build a new access token
-            var user = (await _userService.GetAllAsync(cancellationToken)).FirstOrDefault(x => x.Id == userId);
+            var user = await _userService.GetByIdAsync(userId, cancellationToken);
             if (user == null)
                 return Unauthorized();
 

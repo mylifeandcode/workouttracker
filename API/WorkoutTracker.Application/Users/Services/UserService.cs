@@ -79,6 +79,12 @@ namespace WorkoutTracker.Application.Users.Services
                 .FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
         }
 
+        public async Task<User?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            return await _repo.GetWithoutTracking()
+                .FirstOrDefaultAsync(x => x.Name == name && x.Name != "SYSTEM", cancellationToken);
+        }
+
         public async Task ChangePasswordAsync(int userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default)
         {
             try

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
@@ -26,18 +27,24 @@ namespace WorkoutTracker.Tests.Controllers
         private Mock<ICryptoService> _cryptoServiceMock;
         private Mock<IRefreshTokenService> _refreshTokenServiceMock;
         private AuthController _sut;
+        private List<User> _testUsers;
 
         [TestInitialize]
         public void Initialize()
         {
+            _testUsers = new List<User>(2)
+                {
+                    new User { Id = 1, Name = "Kirk", HashedPassword = "oijosidjfsgd", Salt = "iunfidnfgfd" },
+                    new User { Id = 2, Name = "Spock", HashedPassword = "njnfdgdfufgdf", Salt = " jsnkjnbfdf8" }
+                };
+
             _userServiceMock = new Mock<IUserService>(MockBehavior.Strict);
             _userServiceMock
-                .Setup(x => x.GetAllAsync())
-                .ReturnsAsync(new List<User>(2)
-                    {
-                        new User { Id = 1, Name = "Kirk", HashedPassword = "oijosidjfsgd", Salt = "iunfidnfgfd" },
-                        new User { Id = 2, Name = "Spock", HashedPassword = "njnfdgdfufgdf", Salt = " jsnkjnbfdf8" }
-                    });
+                .Setup(x => x.GetByNameAsync(It.IsAny<string>()))
+                .ReturnsAsync((string name, CancellationToken _) => _testUsers.FirstOrDefault(u => u.Name == name));
+            _userServiceMock
+                .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id, CancellationToken _) => _testUsers.FirstOrDefault(u => u.Id == id));
             _userServiceMock
                 .Setup(x => x.ChangePasswordAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
@@ -90,7 +97,7 @@ namespace WorkoutTracker.Tests.Controllers
             var tokenResult = (AuthTokenResultDTO)okResult.Value;
             Assert.AreEqual("someToken", tokenResult.AccessToken);
             Assert.AreEqual("someRawRefreshToken", tokenResult.RefreshToken);
-            _userServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
+            _userServiceMock.Verify(x => x.GetByNameAsync("Spock"), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), 15), Times.Once);
             _refreshTokenServiceMock.Verify(x => x.GenerateRefreshTokenAsync(It.IsAny<int>()), Times.Once);
@@ -117,7 +124,7 @@ namespace WorkoutTracker.Tests.Controllers
             var tokenResult = (AuthTokenResultDTO)okResult.Value;
             Assert.AreEqual("someToken", tokenResult.AccessToken);
             Assert.AreEqual("someRawRefreshToken", tokenResult.RefreshToken);
-            _userServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
+            _userServiceMock.Verify(x => x.GetByNameAsync("Spock"), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), 15), Times.Once);
             _refreshTokenServiceMock.Verify(x => x.GenerateRefreshTokenAsync(It.IsAny<int>()), Times.Once);
@@ -137,7 +144,7 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsInstanceOfType(result, typeof(ActionResult<AuthTokenResultDTO>));
             var notFoundResult = (NotFoundResult)result.Result;
             Assert.AreEqual((int)HttpStatusCode.NotFound, notFoundResult.StatusCode);
-            _userServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
+            _userServiceMock.Verify(x => x.GetByNameAsync("Bones"), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), It.IsAny<int>()), Times.Never);
         }
@@ -165,7 +172,7 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsInstanceOfType(result.Result, typeof(UnauthorizedResult));
             var unauthorizedResult = (UnauthorizedResult)result.Result;
             Assert.AreEqual((int)HttpStatusCode.Unauthorized, unauthorizedResult.StatusCode);
-            _userServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
+            _userServiceMock.Verify(x => x.GetByNameAsync("Spock"), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             _tokenServiceMock.Verify(x => x.BuildToken("SomeKey", "SomeIssuer", It.IsAny<User>(), It.IsAny<int>()), Times.Never);
         }
@@ -211,6 +218,7 @@ namespace WorkoutTracker.Tests.Controllers
             _tokenServiceMock.Verify(x => x.GetPrincipalFromExpiredToken("expiredAccessToken", "SomeKey", "SomeIssuer"), Times.Once);
             _refreshTokenServiceMock.Verify(x => x.ValidateRefreshTokenAsync("validRefreshToken", 2), Times.Once);
             _refreshTokenServiceMock.Verify(x => x.RevokeAndReplaceAsync(existingToken, 2), Times.Once);
+            _userServiceMock.Verify(x => x.GetByIdAsync(2), Times.Once);
         }
 
         [TestMethod]

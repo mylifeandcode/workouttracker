@@ -7,6 +7,7 @@ namespace WorkoutTracker.Application.Users.Interfaces
 {
     public interface IUserService : ISimpleService<User>
     {
+        Task<User?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
         Task ChangePasswordAsync(int userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default);
         Task<string?> RequestPasswordResetAsync(string emailAddress, CancellationToken cancellationToken = default);
         Task ResetPasswordAsync(string resetCode, string newPassword, CancellationToken cancellationToken = default);
