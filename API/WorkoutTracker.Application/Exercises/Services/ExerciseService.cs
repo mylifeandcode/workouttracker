@@ -94,7 +94,7 @@ namespace WorkoutTracker.Application.Exercises.Services
                     query = query.Where(exercise =>
                         exercise.ExerciseTargetAreaLinks.Any(links =>
                             links.TargetArea != null &&
-                            EF.Functions.Like(links.TargetArea.Name.ToUpper(), targetArea.ToUpper())));
+                            EF.Functions.Like(links.TargetArea.Name, targetArea)));
                 }
             }
         }

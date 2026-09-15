@@ -20,6 +20,7 @@ namespace WorkoutTracker.Data.EntitySetup.Users
             entity.HasIndex(x => x.Name);
             entity.HasIndex(x => x.EmailAddress);
             entity.HasIndex(x => x.PublicId);
+            entity.HasIndex(x => x.PasswordResetCode);
 
             base.SetupAuditFields<User>(builder);
         }
