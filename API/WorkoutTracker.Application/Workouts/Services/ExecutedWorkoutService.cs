@@ -183,7 +183,9 @@ namespace WorkoutTracker.Application.Workouts.Services
 
         public async Task DeletePlannedAsync(Guid publicId, CancellationToken cancellationToken = default)
         {
-            var executedWorkout = await _repo.Get().FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
+            var executedWorkout = await _repo.Get()
+                .Include(x => x.Exercises)
+                .FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
 
             if (executedWorkout == null)
                 throw new ArgumentException($"Executed workout {publicId} not found.");

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Security.Claims;
 using WorkoutTracker.API.Controllers;
 
@@ -8,6 +10,8 @@ namespace WorkoutTracker.Tests.Controllers
     public class UserAwareControllerTestsBase
     {
         public const string USER_ID = "1";
+
+        protected static ILoggerFactory LoggerFactory { get; } = NullLoggerFactory.Instance;
 
         protected void SetupUser(UserAwareController controller)
         {

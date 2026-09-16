@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -20,7 +21,7 @@ namespace WorkoutTracker.API.Controllers
         private IAnalyticsService _analyticsService;
         private IWorkoutService _workoutService;
 
-        public AnalyticsController(IAnalyticsService analyticsService, IWorkoutService workoutService)
+        public AnalyticsController(IAnalyticsService analyticsService, IWorkoutService workoutService, ILoggerFactory loggerFactory) : base(loggerFactory)
         {
             _analyticsService = analyticsService ?? throw new ArgumentNullException(nameof(analyticsService));
             _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));

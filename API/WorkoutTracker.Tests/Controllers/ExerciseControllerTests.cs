@@ -25,7 +25,7 @@ namespace WorkoutTracker.Tests.Controllers
             var exercise = new Exercise();
             exercise.PublicId = Guid.NewGuid();
             exerciseSvc.Setup(x => x.GetByPublicIdAsync(It.IsAny<Guid>())).ReturnsAsync(exercise);
-            var sut = new ExerciseController(exerciseSvc.Object);
+            var sut = new ExerciseController(exerciseSvc.Object, LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -43,7 +43,7 @@ namespace WorkoutTracker.Tests.Controllers
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
             exerciseSvc.Setup(x => x.GetByPublicIdAsync(It.IsAny<Guid>())).ReturnsAsync((Exercise)null);
-            var sut = new ExerciseController(exerciseSvc.Object);
+            var sut = new ExerciseController(exerciseSvc.Object, LoggerFactory);
 
             //ACT
             var response = await sut.GetByPublicId(Guid.NewGuid());
@@ -63,7 +63,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.AddAsync(It.IsAny<Exercise>(), true))
                 .ReturnsAsync((Exercise newExercise, bool save, CancellationToken _) => exercise);
 
-            var sut = new ExerciseController(exerciseSvc.Object);
+            var sut = new ExerciseController(exerciseSvc.Object, LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -85,7 +85,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.UpdateAsync(It.IsAny<Exercise>(), true))
                 .ReturnsAsync((Exercise newExercise, bool save, CancellationToken _) => exercise);
 
-            var sut = new ExerciseController(exerciseSvc.Object);
+            var sut = new ExerciseController(exerciseSvc.Object, LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -123,7 +123,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.GetTotalCountAsync(It.IsAny<ExerciseFilter>()))
                 .ReturnsAsync(100);
 
-            var sut = new ExerciseController(exerciseSvc.Object);
+            var sut = new ExerciseController(exerciseSvc.Object, LoggerFactory);
 
             //ACT
             var response = await sut.Get(0, 20);

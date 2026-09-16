@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using WorkoutTracker.Domain.BaseClasses;
 using WorkoutTracker.Application.Shared.Interfaces;
 
@@ -13,7 +14,7 @@ namespace WorkoutTracker.API.Controllers
     {
         protected ISimpleService<T> _service;
 
-        public SimpleAPIControllerBase(ISimpleService<T> service)
+        public SimpleAPIControllerBase(ISimpleService<T> service, ILoggerFactory loggerFactory) : base(loggerFactory)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
@@ -31,6 +32,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting all {EntityType} entities.", typeof(T).Name);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -53,6 +55,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting {EntityType} {Id}.", typeof(T).Name, id);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -75,6 +78,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error creating {EntityType}.", typeof(T).Name);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -97,6 +101,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error updating {EntityType} {Id}.", typeof(T).Name, id);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -115,6 +120,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error deleting {EntityType} {Id}.", typeof(T).Name, id);
                 return StatusCode(500, ex.Message);
             }
         }

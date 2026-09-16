@@ -13,6 +13,7 @@ using WorkoutTracker.API.Models;
 using WorkoutTracker.API.Mappers;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Security.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace WorkoutTracker.API.Controllers
 {
@@ -31,7 +32,8 @@ namespace WorkoutTracker.API.Controllers
             IUserService userService,
             IExecutedWorkoutService executedWorkoutService,
             ICryptoService cryptoService,
-            IUserDTOMapper userDTOMapper) : base(userService)
+            IUserDTOMapper userDTOMapper,
+            ILoggerFactory loggerFactory) : base(userService, loggerFactory)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
@@ -85,6 +87,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting user {PublicId}.", publicId);
                 return StatusCode(500, ex.Message);
             }
         }

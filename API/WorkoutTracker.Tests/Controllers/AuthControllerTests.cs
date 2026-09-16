@@ -78,7 +78,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.RevokeByUserIdAsync(It.IsAny<int>()))
                 .Returns(Task.CompletedTask);
 
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object);
+            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, LoggerFactory);
         }
 
         [TestMethod]
@@ -110,7 +110,7 @@ namespace WorkoutTracker.Tests.Controllers
             _configuration = GetConfiguration(false);
 
             //TODO: Troubleshoot. The updated config doesn't take unless I recreate the controller.
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object);
+            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, LoggerFactory);
 
             var credentials = new UserCredentialsDTO();
             credentials.Username = "Spock";
@@ -159,7 +159,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Returns(false);
 
             //TODO: Troubleshoot. The updated config doesn't take unless I recreate the controller.
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object);
+            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, LoggerFactory);
 
             var credentials = new UserCredentialsDTO();
             credentials.Username = "Spock";

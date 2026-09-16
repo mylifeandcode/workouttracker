@@ -39,7 +39,7 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.GetAllWithoutTrackingAsync()).ReturnsAsync(users);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
 
             //ACT
             var result = await sut.Get();
@@ -74,7 +74,7 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.GetByPublicIdAsync(publicId)).ReturnsAsync(user);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
 
             //ACT
             var result = await sut.GetByPublicId(publicId);
@@ -102,7 +102,7 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.GetByPublicIdAsync(publicId)).ReturnsAsync(user);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
 
             //ACT
             var result = await sut.GetByPublicId(publicId);
@@ -121,7 +121,7 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(user);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
 
             //ACT
             var result = await sut.Get(1);
@@ -141,7 +141,7 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(user);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
 
             //ACT
             var result = await sut.Get(2);
@@ -160,7 +160,7 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.AddAsync(It.IsAny<User>())).ReturnsAsync(new User());
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -187,7 +187,7 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.AddAsync(It.IsAny<User>(), token)).ReturnsAsync(new User());
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -207,7 +207,7 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.UpdateAsync(user)).ReturnsAsync(user);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -227,7 +227,7 @@ namespace WorkoutTracker.Tests.Controllers
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.DeleteAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
-            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
 
             //ACT
             var result = await sut.Delete(1);

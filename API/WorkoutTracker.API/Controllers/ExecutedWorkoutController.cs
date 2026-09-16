@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using WorkoutTracker.Application.Workouts.Models;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Workouts.Interfaces;
@@ -29,7 +30,8 @@ namespace WorkoutTracker.API.Controllers
         public ExecutedWorkoutController(
             IExecutedWorkoutService executedWorkoutService,
             IExecutedWorkoutDTOMapper dtoMapper,
-            IExecutedWorkoutSummaryDTOMapper summaryDtoMapper)
+            IExecutedWorkoutSummaryDTOMapper summaryDtoMapper,
+            ILoggerFactory loggerFactory) : base(loggerFactory)
         {
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _dtoMapper = dtoMapper ?? throw new ArgumentNullException(nameof(dtoMapper));
@@ -57,6 +59,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting executed workout {PublicId}.", publicId);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -84,6 +87,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error updating executed workout {PublicId}.", value?.Id);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -141,6 +145,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting executed workouts.");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -191,6 +196,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting planned workouts.");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -213,6 +219,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting in-progress workouts.");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -231,6 +238,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error deleting planned workout {PublicId}.", publicId);
                 return StatusCode(500, ex.Message);
             }
         }

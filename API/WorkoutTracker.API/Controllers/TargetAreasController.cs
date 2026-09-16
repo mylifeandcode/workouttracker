@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Application.Exercises.Interfaces;
 
@@ -19,7 +20,7 @@ namespace WorkoutTracker.API.Controllers
     {
         protected ITargetAreaService _svc;
 
-        public TargetAreasController(ITargetAreaService svc)
+        public TargetAreasController(ITargetAreaService svc, ILoggerFactory loggerFactory) : base(loggerFactory)
         {
             _svc = svc ?? throw new ArgumentNullException("svc");
         }
@@ -38,6 +39,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting all target areas.");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -56,6 +58,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting target area {Id}.", id);
                 return StatusCode(500, ex.Message);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,13 @@ namespace WorkoutTracker.API.Controllers
     [ApiController]
     public abstract class UserAwareController : ControllerBase
     {
+        protected readonly ILogger _logger;
+
+        protected UserAwareController(ILoggerFactory loggerFactory)
+        {
+            _logger = loggerFactory.CreateLogger(GetType());
+        }
+
         protected int GetUserID()
         {
             if (User == null)

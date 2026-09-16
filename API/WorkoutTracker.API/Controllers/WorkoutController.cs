@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using WorkoutTracker.Application.Workouts.Models;
 using WorkoutTracker.Domain.Workouts;
 using WorkoutTracker.Application.Workouts.Interfaces;
@@ -29,7 +30,8 @@ namespace WorkoutTracker.API.Controllers
             IWorkoutService workoutService,
             IWorkoutPlanService workoutPlanService,
             IExecutedWorkoutService executedWorkoutService,
-            IWorkoutDTOMapper workoutDTOMapper)
+            IWorkoutDTOMapper workoutDTOMapper,
+            ILoggerFactory loggerFactory) : base(loggerFactory)
         {
             _workoutService = workoutService ?? throw new ArgumentNullException(nameof(workoutService));
             _workoutPlanService = workoutPlanService ?? throw new ArgumentNullException(nameof(workoutPlanService));
@@ -65,6 +67,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting workouts.");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -118,6 +121,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting workout {PublicId}.", publicId);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -160,6 +164,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error creating new plan for workout {WorkoutPublicId}.", workoutPublicId);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -196,6 +201,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error creating workout.");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -215,6 +221,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error updating workout {PublicId}.", value?.PublicId);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -240,6 +247,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error retiring workout {PublicId}.", publicId);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -258,6 +266,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error reactivating workout {PublicId}.", publicId);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -288,6 +297,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error creating workout from plan {WorkoutPublicId}.", plan?.WorkoutId);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -305,6 +315,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error creating past workout from plan {WorkoutPublicId}.", plan?.WorkoutId);
                 return StatusCode(500, ex.Message);
             }
         }

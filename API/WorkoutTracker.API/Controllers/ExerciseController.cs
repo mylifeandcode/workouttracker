@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
@@ -25,7 +26,7 @@ namespace WorkoutTracker.API.Controllers
     {
         private IExerciseService _exerciseService;
 
-        public ExerciseController(IExerciseService svc)
+        public ExerciseController(IExerciseService svc, ILoggerFactory loggerFactory) : base(loggerFactory)
         {
             if (svc == null)
                 throw new ArgumentNullException("svc");
@@ -66,6 +67,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting exercises.");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -107,6 +109,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting exercise {PublicId}.", publicId);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -130,6 +133,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error creating exercise.");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -153,6 +157,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error updating exercise {PublicId}.", value?.PublicId);
                 return StatusCode(500, ex.Message);
             }
         }

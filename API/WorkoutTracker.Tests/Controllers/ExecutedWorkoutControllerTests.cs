@@ -34,7 +34,8 @@ namespace WorkoutTracker.Tests.Controllers
             _sut = new ExecutedWorkoutController(
                 _executedWorkoutService.Object,
                 _executedWorkoutDTOMapper.Object,
-                _executedWorkoutSummaryDTOMapper.Object);
+                _executedWorkoutSummaryDTOMapper.Object,
+                LoggerFactory);
             SetupUser(_sut);
         }
 

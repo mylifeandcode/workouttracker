@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,7 +31,8 @@ namespace WorkoutTracker.API.Controllers
             ITokenService tokenService,
             IConfiguration config,
             ICryptoService cryptoService,
-            IRefreshTokenService refreshTokenService)
+            IRefreshTokenService refreshTokenService,
+            ILoggerFactory loggerFactory) : base(loggerFactory)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
@@ -127,10 +129,10 @@ namespace WorkoutTracker.API.Controllers
         {
             if(passwordChangeRequest == null) return BadRequest();
 
+            int userId = GetUserID();
+
             try
             {
-                int userId = GetUserID();
-
                 await _userService.ChangePasswordAsync(userId, passwordChangeRequest.CurrentPassword, passwordChangeRequest.NewPassword, cancellationToken);
                 await _refreshTokenService.RevokeByUserIdAsync(userId, cancellationToken);
 
@@ -142,6 +144,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error changing password for user {UserId}.", userId);
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -162,6 +165,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error requesting password reset for {EmailAddress}.", request?.EmailAddress);
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -182,6 +186,7 @@ namespace WorkoutTracker.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error resetting password.");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
