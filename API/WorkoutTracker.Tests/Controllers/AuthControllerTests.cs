@@ -11,9 +11,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
+using WorkoutTracker.Application.Users.Models;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.API.Auth;
 using WorkoutTracker.API.Controllers;
+using WorkoutTracker.API.Mappers;
 using WorkoutTracker.API.Models;
 
 namespace WorkoutTracker.Tests.Controllers
@@ -26,6 +28,7 @@ namespace WorkoutTracker.Tests.Controllers
         private IConfiguration _configuration;
         private Mock<ICryptoService> _cryptoServiceMock;
         private Mock<IRefreshTokenService> _refreshTokenServiceMock;
+        private IUserDTOMapper _userDTOMapper;
         private AuthController _sut;
         private List<User> _testUsers;
 
@@ -78,7 +81,9 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.RevokeByUserIdAsync(It.IsAny<int>()))
                 .Returns(Task.CompletedTask);
 
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, LoggerFactory);
+            _userDTOMapper = new UserDTOMapper();
+
+            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, _userDTOMapper, LoggerFactory);
         }
 
         [TestMethod]
@@ -110,7 +115,7 @@ namespace WorkoutTracker.Tests.Controllers
             _configuration = GetConfiguration(false);
 
             //TODO: Troubleshoot. The updated config doesn't take unless I recreate the controller.
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, LoggerFactory);
+            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, _userDTOMapper, LoggerFactory);
 
             var credentials = new UserCredentialsDTO();
             credentials.Username = "Spock";
@@ -159,7 +164,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Returns(false);
 
             //TODO: Troubleshoot. The updated config doesn't take unless I recreate the controller.
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, LoggerFactory);
+            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, _userDTOMapper, LoggerFactory);
 
             var credentials = new UserCredentialsDTO();
             credentials.Username = "Spock";
@@ -271,6 +276,32 @@ namespace WorkoutTracker.Tests.Controllers
 
             //ASSERT
             Assert.IsInstanceOfType(result.Result, typeof(UnauthorizedResult));
+        }
+
+        [TestMethod]
+        public async Task Should_Get_Profiles()
+        {
+            //ARRANGE
+            var profiles = new List<UserProfile>
+            {
+                new UserProfile { PublicId = Guid.NewGuid(), Name = "Kirk" },
+                new UserProfile { PublicId = Guid.NewGuid(), Name = "Spock" }
+            };
+            _userServiceMock.Setup(x => x.GetAllProfilesAsync()).ReturnsAsync(profiles);
+
+            //ACT
+            var result = await _sut.GetProfiles();
+
+            //ASSERT
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            var dtos = ((result.Result as OkObjectResult).Value as IEnumerable<UserProfileDTO>).ToList();
+            Assert.AreEqual(2, dtos.Count);
+            Assert.AreEqual(profiles[0].PublicId, dtos[0].PublicId);
+            Assert.AreEqual(profiles[0].Name, dtos[0].Name);
+            Assert.AreEqual(profiles[1].PublicId, dtos[1].PublicId);
+            Assert.AreEqual(profiles[1].Name, dtos[1].Name);
+            _userServiceMock.Verify(x => x.GetAllProfilesAsync(), Times.Once);
         }
 
         [TestMethod]

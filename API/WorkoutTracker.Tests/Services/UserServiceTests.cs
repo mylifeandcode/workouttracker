@@ -137,6 +137,18 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
+        public async Task Should_Get_All_Profiles_Excluding_SYSTEM_User()
+        {
+            //ACT
+            var results = (await _sut.GetAllProfilesAsync()).ToList();
+
+            //ASSERT
+            results.Count.ShouldBe(_users.Count - 1);
+            results.Any(profile => profile.Name == "SYSTEM").ShouldBeFalse();
+            results.Any(profile => profile.Name == "Paul").ShouldBeTrue();
+        }
+
+        [TestMethod]
         public async Task Should_Get_User_By_Name()
         {
             //ACT

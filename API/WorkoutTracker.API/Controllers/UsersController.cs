@@ -92,7 +92,7 @@ namespace WorkoutTracker.API.Controllers
             }
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(typeof(IEnumerable<UserSummaryDTO>), StatusCodes.Status200OK)]
         public override async Task<ActionResult<IEnumerable<User>>> Get(CancellationToken cancellationToken = default)
         {

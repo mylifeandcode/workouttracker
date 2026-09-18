@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserSelectComponent } from './user-select.component';
-import { UserService } from '../_services/user/user.service';
 import { of } from 'rxjs';
-import { User } from '../../api';
+import { UserProfileDTO } from '../../api';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
@@ -22,10 +21,8 @@ describe('UserSelectComponent', () => {
   ;
 
   beforeEach(async () => {
-    const UserServiceMock: Partial<Mocked<UserService>> = {
-      all$: of(new Array<User>())
-    };
     const AuthServiceMock: Partial<Mocked<AuthService>> = {
+      getProfiles: vi.fn<AuthService['getProfiles']>().mockReturnValue(of(new Array<UserProfileDTO>())),
       logIn: vi.fn<AuthService['logIn']>().mockReturnValue(of(true)),
       get loginRoute() { return "user-select"; }
     };
@@ -37,10 +34,6 @@ describe('UserSelectComponent', () => {
       ],
       providers: [
         provideZonelessChangeDetection(),
-        {
-          provide: UserService,
-          useValue: UserServiceMock
-        },
         {
           provide: AuthService,
           useValue: AuthServiceMock
@@ -70,11 +63,10 @@ describe('UserSelectComponent', () => {
     const authService = TestBed.inject(AuthService);
     const router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate');
-    const userId = 1;
     const userName = "davidleeroth";
 
     //ACT
-    component.selectUser(userId, userName);
+    component.selectUser(userName);
 
     //ASSERT
     expect(authService.logIn).toHaveBeenCalledTimes(1);

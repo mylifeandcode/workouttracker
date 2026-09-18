@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.API.Auth;
+using WorkoutTracker.API.Mappers;
 using WorkoutTracker.API.Models;
 
 namespace WorkoutTracker.API.Controllers
@@ -25,6 +27,7 @@ namespace WorkoutTracker.API.Controllers
         private IConfiguration _config;
         private ICryptoService _cryptoService;
         private IRefreshTokenService _refreshTokenService;
+        private IUserDTOMapper _userDTOMapper;
 
         public AuthController(
             IUserService userService,
@@ -32,6 +35,7 @@ namespace WorkoutTracker.API.Controllers
             IConfiguration config,
             ICryptoService cryptoService,
             IRefreshTokenService refreshTokenService,
+            IUserDTOMapper userDTOMapper,
             ILoggerFactory loggerFactory) : base(loggerFactory)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
@@ -39,6 +43,7 @@ namespace WorkoutTracker.API.Controllers
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
             _refreshTokenService = refreshTokenService ?? throw new ArgumentNullException(nameof(refreshTokenService));
+            _userDTOMapper = userDTOMapper ?? throw new ArgumentNullException(nameof(userDTOMapper));
         }
 
         [AllowAnonymous]
@@ -112,6 +117,15 @@ namespace WorkoutTracker.API.Controllers
             var newAccessToken = _tokenService.BuildToken(jwtKey, jwtIssuer, user, accessTokenLifetimeMinutes);
 
             return Ok(new AuthTokenResultDTO { AccessToken = newAccessToken, RefreshToken = newRawRefreshToken });
+        }
+
+        [AllowAnonymous]
+        [Route("profiles")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UserProfileDTO>>> GetProfiles(CancellationToken cancellationToken = default)
+        {
+            var profiles = await _userService.GetAllProfilesAsync(cancellationToken);
+            return Ok(_userDTOMapper.MapFromProfiles(profiles));
         }
 
         [Route("revoke")]

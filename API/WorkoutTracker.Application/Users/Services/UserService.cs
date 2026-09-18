@@ -9,6 +9,7 @@ using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
+using WorkoutTracker.Application.Users.Models;
 using WorkoutTracker.Domain.Users;
 using WorkoutTracker.Repository;
 
@@ -62,6 +63,15 @@ namespace WorkoutTracker.Application.Users.Services
         public async Task<IEnumerable<User>> GetAllWithoutTrackingAsync(CancellationToken cancellationToken = default)
         {
             return await _repo.GetWithoutTracking().Where(x => x.Name != "SYSTEM").ToListAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<UserProfile>> GetAllProfilesAsync(CancellationToken cancellationToken = default)
+        {
+            return await _repo.GetWithoutTracking()
+                .Where(x => x.Name != "SYSTEM")
+                .OrderBy(x => x.Name)
+                .Select(x => new UserProfile { PublicId = x.PublicId, Name = x.Name })
+                .ToListAsync(cancellationToken);
         }
 
         public override async Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default)

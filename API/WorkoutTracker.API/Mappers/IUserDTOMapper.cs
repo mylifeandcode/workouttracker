@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using WorkoutTracker.API.Models;
+using WorkoutTracker.Application.Users.Models;
 using WorkoutTracker.Domain.Users;
 
 namespace WorkoutTracker.API.Mappers
@@ -9,5 +10,6 @@ namespace WorkoutTracker.API.Mappers
         UserSummaryDTO MapFromUserToSummary(User user);
         IEnumerable<UserSummaryDTO> MapFromUsersToSummaries(IEnumerable<User> users);
         UserDTO MapFromUser(User user);
+        IEnumerable<UserProfileDTO> MapFromProfiles(IEnumerable<UserProfile> profiles);
     }
 }

@@ -7,7 +7,7 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { catchError, map, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { AuthTokenResultDTO } from '../../../api';
+import { AuthTokenResultDTO, UserProfileDTO } from '../../../api';
 import { selfHandled } from '../../_http/http-error-context';
 
 @Injectable({
@@ -211,6 +211,10 @@ export class AuthService {
 
   public validatePasswordResetCode(resetCode: string): Observable<boolean> {
     return this._http.get<boolean>(`${this._apiRoot}/validate-reset-code/${resetCode}`);
+  }
+
+  public getProfiles(): Observable<UserProfileDTO[]> {
+    return this._http.get<UserProfileDTO[]>(`${this._apiRoot}/profiles`);
   }
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////

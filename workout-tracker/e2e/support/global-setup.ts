@@ -55,7 +55,7 @@ export default async function globalSetup(): Promise<void> {
  * data. Better to stop than to start writing test data into someone's real database.
  */
 async function assertDatabaseWasReset(api: ApiClient): Promise<void> {
-  const existingUsers = await api.getUsers();
+  const existingUsers = await api.getUserProfiles();
 
   if (existingUsers.length > 0) {
     throw new Error(

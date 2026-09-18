@@ -333,6 +333,11 @@ export type UserOverview = {
     plannedWorkoutCount: number;
 };
 
+export type UserProfileDTO = {
+    publicId: string;
+    name: string;
+};
+
 export const UserRole = { /**
      * Standard
      */
@@ -467,6 +472,22 @@ export type PostApiAuthRefreshResponses = {
 };
 
 export type PostApiAuthRefreshResponse = PostApiAuthRefreshResponses[keyof PostApiAuthRefreshResponses];
+
+export type GetApiAuthProfilesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/profiles';
+};
+
+export type GetApiAuthProfilesResponses = {
+    /**
+     * OK
+     */
+    200: Array<UserProfileDTO>;
+};
+
+export type GetApiAuthProfilesResponse = GetApiAuthProfilesResponses[keyof GetApiAuthProfilesResponses];
 
 export type PostApiAuthRevokeData = {
     body?: never;

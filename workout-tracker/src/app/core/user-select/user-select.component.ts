@@ -1,7 +1,6 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { UserService } from '../_services/user/user.service';
-import { User } from '../../api';
+import { UserProfileDTO } from '../../api';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -18,7 +17,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class UserSelectComponent {
   private _authService = inject(AuthService);
-  private _userSvc = inject(UserService);
   private _router = inject(Router);
 
   public errorMsg = signal<string | null>(null);
@@ -28,16 +26,16 @@ export class UserSelectComponent {
   //TOOD: Give this a thorough read: https://sebastian-holstein.de/post/error-handling-angular-async-pipe/
 
   public users$ =
-    this._userSvc.all$
+    this._authService.getProfiles()
       .pipe(
         catchError((err: HttpErrorResponse) => {
           console.log("ERROR: ", err.message);
           this.errorMsg.set(err.message ? err.message : "An error has occurred. Please contact an administrator.");
-          return of(new Array<User>());
+          return of(new Array<UserProfileDTO>());
         })
       );
 
-  public selectUser(userId: number, userName: string): void {
+  public selectUser(userName: string): void {
     this.loggingIn.set(true);
     this.username.set(userName);
 

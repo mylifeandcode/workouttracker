@@ -10,6 +10,7 @@ import type {
   TargetArea,
   User,
   UserNewDTO,
+  UserProfileDTO,
   Workout,
 } from '../../src/app/api/types.gen';
 import { ResistanceType, SetType } from '../../src/app/api/types.gen';
@@ -70,11 +71,21 @@ export class ApiClient {
 
   //USERS //////////////////////////////////////////////////////////////////////
 
-  /** Note: the API filters the seeded SYSTEM user out of this list. */
+  /** Admin-only. Note: the API filters the seeded SYSTEM user out of this list. */
   async getUsers(): Promise<User[]> {
     const response = await this.context.get('/api/Users');
     expect(response, 'Could not load users').toBeOK();
     return response.json() as Promise<User[]>;
+  }
+
+  /**
+   * Anonymous — the same minimal list the pre-login user-select screen shows. Usable before
+   * any user (even the admin) exists, unlike getUsers(), which requires an admin token.
+   */
+  async getUserProfiles(): Promise<UserProfileDTO[]> {
+    const response = await this.context.get('/api/Auth/profiles');
+    expect(response, 'Could not load user profiles').toBeOK();
+    return response.json() as Promise<UserProfileDTO[]>;
   }
 
   /**
