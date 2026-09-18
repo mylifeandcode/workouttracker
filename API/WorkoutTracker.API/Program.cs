@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.OpenApi;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -81,6 +82,16 @@ builder.Services.AddCors(options =>
         builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().Build());
 });
 
+// App-level response compression, independent of any reverse proxy (nginx compresses its own
+// static bundle and, in the Docker deployment only, whatever it proxies from here — this makes
+// compression happen for every deployment path, including local dev and the Aspire AppHost).
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
+
 var connection = builder.Configuration.GetConnectionString("WorkoutTrackerDatabase");
 builder.Services.AddDbContext<WorkoutsContext>(options =>
                 options.UseSqlServer(connection));
@@ -113,6 +124,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseResponseCompression();
 app.UseRouting();
 app.UseSerilogRequestLogging();
 app.UseCors();

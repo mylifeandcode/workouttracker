@@ -96,5 +96,49 @@ namespace WorkoutTracker.Tests.Services
             result.ShouldBeSameAs(modifiedWorkout);
             repoMock.Verify(mock => mock.UpdateAsync(modifiedWorkout, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<Workout, object>>[]>()), Times.Once);
         }
+
+        [TestMethod]
+        public async Task Should_Get_Id_By_Public_Id()
+        {
+            //ARRANGE
+            var publicId = Guid.NewGuid();
+            var workouts = new List<Workout>
+            {
+                new Workout { Id = 1, PublicId = Guid.NewGuid() },
+                new Workout { Id = 2, PublicId = publicId }
+            };
+
+            var repoMock = new Mock<IRepository<Workout>>(MockBehavior.Strict);
+            repoMock.Setup(mock => mock.GetWithoutTracking()).Returns(workouts.AsAsyncQueryable());
+
+            var sut = new WorkoutService(repoMock.Object, _logger.Object);
+
+            //ACT
+            var result = await sut.GetIdByPublicIdAsync(publicId);
+
+            //ASSERT
+            result.ShouldBe(2);
+        }
+
+        [TestMethod]
+        public async Task Should_Return_Null_When_Getting_Id_By_Public_Id_And_Not_Found()
+        {
+            //ARRANGE
+            var workouts = new List<Workout>
+            {
+                new Workout { Id = 1, PublicId = Guid.NewGuid() }
+            };
+
+            var repoMock = new Mock<IRepository<Workout>>(MockBehavior.Strict);
+            repoMock.Setup(mock => mock.GetWithoutTracking()).Returns(workouts.AsAsyncQueryable());
+
+            var sut = new WorkoutService(repoMock.Object, _logger.Object);
+
+            //ACT
+            var result = await sut.GetIdByPublicIdAsync(Guid.NewGuid());
+
+            //ASSERT
+            result.ShouldBeNull();
+        }
     }
 }

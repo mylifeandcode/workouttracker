@@ -38,8 +38,11 @@ namespace WorkoutTracker.API.Controllers
         [HttpGet("workout-metrics/{workoutPublicId}/{count}")]
         public async Task<ActionResult<List<ExecutedWorkoutMetrics>>> GetExecutedWorkoutMetrics(Guid workoutPublicId, int count = 5, CancellationToken cancellationToken = default)
         {
-            var workout = await _workoutService.GetByPublicIDAsync(workoutPublicId, cancellationToken);
-            var metrics = await _analyticsService.GetExecutedWorkoutMetricsAsync(workout.Id, count, cancellationToken);
+            var workoutId = await _workoutService.GetIdByPublicIdAsync(workoutPublicId, cancellationToken);
+            if (workoutId == null)
+                return NotFound(workoutPublicId);
+
+            var metrics = await _analyticsService.GetExecutedWorkoutMetricsAsync(workoutId.Value, count, cancellationToken);
             return Ok(metrics);
         }
     }

@@ -42,6 +42,14 @@ namespace WorkoutTracker.Application.Workouts.Services
                 .FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
         }
 
+        public async Task<int?> GetIdByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
+        {
+            return await _repo.GetWithoutTracking()
+                .Where(w => w.PublicId == publicId)
+                .Select(w => (int?)w.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
         public override async Task<Workout> UpdateAsync(Workout modifiedWorkout, bool saveChanges = false, CancellationToken cancellationToken = default)
         {
             if (modifiedWorkout == null)
