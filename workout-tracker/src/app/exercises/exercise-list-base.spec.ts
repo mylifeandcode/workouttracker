@@ -6,7 +6,7 @@ import { ExerciseListBase } from './exercise-list-base';
 import { Component, inject as inject_1 } from '@angular/core';
 import { ExerciseService } from './_services/exercise.service';
 import { TargetAreaService } from './_services/target-area.service';
-import { PaginatedResultsOfExerciseDTO, TargetArea } from '../api';
+import { PaginatedResultsOfExerciseDTO, TargetAreaDTO } from '../api';
 import { type Mocked } from 'vitest';
 
 //We're testing an abstract base class, so let's create a class here that extends it
@@ -39,10 +39,11 @@ describe('ExerciseListBaseComponent', () => {
 
     const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
       getAll: vi.fn<TargetAreaService['getAll']>().mockImplementation(() => {
-        const targetAreas = new Array<TargetArea>();
-        targetAreas.push(<TargetArea>{ id: 1, name: "Chest", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
-        targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
-        targetAreas.push(<TargetArea>{ id: 3, name: "Triceps", order: 1, createdAt: new Date(), updatedAt: null, deletedAt: null, isActive: false, createdByUserId: 0, createdDateTime: new Date() });
+        const targetAreas: TargetAreaDTO[] = [
+          { id: 1, name: "Chest" },
+          { id: 2, name: "Biceps" },
+          { id: 3, name: "Triceps" }
+        ];
         return of(targetAreas);
       })
     };

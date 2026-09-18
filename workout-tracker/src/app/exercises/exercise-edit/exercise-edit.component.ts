@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { form, FormField, required, maxLength, disabled, validate, submit } from '@angular/forms/signals';
 import { ExerciseService } from '../_services/exercise.service';
 import { TargetAreaService } from '../_services/target-area.service';
-import { TargetArea, ResistanceType, Exercise, ExerciseTargetAreaLink } from '../../api';
+import { TargetAreaDTO, ResistanceType, Exercise, ExerciseDetailDTO, ExerciseTargetAreaLink } from '../../api';
 import { CheckForUnsavedDataComponent } from '../../shared/components/check-for-unsaved-data.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { KeyValuePipe } from '@angular/common';
@@ -81,7 +81,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   });
 
   public loading = signal<boolean>(true);
-  public allTargetAreas: TargetArea[] = [];
+  public allTargetAreas: TargetAreaDTO[] = [];
   public resistanceTypes: Map<number, string> | undefined;
   public infoMsg = signal<string | null>(null);
   public editModeEnabled = signal(false);
@@ -100,7 +100,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   }
 
   //PRIVATE FIELDS
-  private _exercise: Exercise = <Exercise>{};
+  private _exercise: ExerciseDetailDTO = this.buildEmptyExercise();
   private _exercisePublicId: string | null = null; //TODO: Refactor. We have an exercise variable. Why have this too?
 
   //PUBLIC METHODS ////////////////////////////////////////////////////////////
@@ -123,14 +123,14 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       this.saving.set(true);
       this.infoMsg.set("Saving...");
       this.errorMsg.set(null);
-      this.updateExerciseForPersisting();
+      const exerciseToPersist = this.buildExerciseForPersisting();
 
       const isNew = !this._exercisePublicId;
       try {
         const saved = await firstValueFrom(
-          isNew ? this._exerciseSvc.add(this._exercise) : this._exerciseSvc.update(this._exercise)
+          isNew ? this._exerciseSvc.add(exerciseToPersist) : this._exerciseSvc.update(exerciseToPersist)
         );
-        this._exercise = saved;
+        this._exercise = this.toExerciseDetailDTO(saved);
 
         if (isNew) {
           this._exercisePublicId = this._exercise.publicId;
@@ -174,7 +174,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
   }
 
   private buildTargetAreaSelections(selectedIds: number[]): ITargetAreaSelection[] {
-    return this.allTargetAreas.map((targetArea: TargetArea) => ({
+    return this.allTargetAreas.map((targetArea: TargetAreaDTO) => ({
       id: targetArea.id,
       name: targetArea.name,
       selected: selectedIds.includes(targetArea.id)
@@ -185,7 +185,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     if (!this._exercisePublicId) return;
     this.loading.set(true);
 
-    this._exerciseSvc.getById(this._exercisePublicId).subscribe((value: Exercise) => {
+    this._exerciseSvc.getById(this._exercisePublicId).subscribe((value: ExerciseDetailDTO) => {
       this._exercise = value;
       this.setModelFromExercise(value);
       this.loading.set(false);
@@ -200,8 +200,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
     }
     else {
       //Creating a new exercise
-      this._exercise = <Exercise>{};
-      this._exercise.id = 0;
+      this._exercise = this.buildEmptyExercise();
       this.model.set({
         ...this.buildEmptyModel(),
         targetAreas: this.buildTargetAreaSelections([])
@@ -211,10 +210,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
   }
 
-  private setModelFromExercise(exercise: Exercise): void {
-    const selectedIds: number[] = (exercise.exerciseTargetAreaLinks ?? [])
-      .map((link: ExerciseTargetAreaLink) => link.targetAreaId);
-
+  private setModelFromExercise(exercise: ExerciseDetailDTO): void {
     this.model.set({
       id: exercise.id,
       publicId: exercise.publicId ?? EMPTY_GUID,
@@ -225,33 +221,40 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
       endToEnd: exercise.bandsEndToEnd ?? false,
       involvesReps: exercise.involvesReps ?? true,
       usesBilateralResistance: exercise.usesBilateralResistance ?? false,
-      targetAreas: this.buildTargetAreaSelections(selectedIds),
+      targetAreas: this.buildTargetAreaSelections(exercise.targetAreaIds ?? []),
       setup: exercise.setup ?? '',
       movement: exercise.movement ?? '',
       pointsToRemember: exercise.pointsToRemember ?? ''
     });
   }
 
-  private updateExerciseForPersisting(): void {
+  //Builds a full write payload from scratch — _exercise is the leaner ExerciseDetailDTO now, so
+  //it can't be mutated-and-reused as the Post/Put body the way the raw Exercise entity used to be.
+  //Id/createdByUserId/createdDateTime are carried over from the loaded exercise because Put's
+  //server-side SetModifiedAuditFields only touches the Modified* fields, so these three must
+  //survive the round-trip intact or the update overwrites them with junk.
+  private buildExerciseForPersisting(): Exercise {
     const m = this.model();
+    const resistanceType = Number(m.resistanceType) as ResistanceType;
 
-    this._exercise.publicId = m.publicId;
-    this._exercise.name = m.name;
-    this._exercise.description = m.description;
-    this._exercise.setup = m.setup;
-    this._exercise.movement = m.movement;
-    this._exercise.pointsToRemember = m.pointsToRemember;
-    this._exercise.resistanceType = Number(m.resistanceType) as ResistanceType;
-    this._exercise.oneSided = m.oneSided;
-
-    if (this._exercise.resistanceType == ExerciseEditComponent.RESISTANCE_BANDS_TYPE)
-      this._exercise.bandsEndToEnd = m.endToEnd;
-
-    this._exercise.involvesReps = m.involvesReps;
-    //When one-sided, bilateral resistance does not apply (the field is disabled in the UI)
-    this._exercise.usesBilateralResistance = m.oneSided ? false : m.usesBilateralResistance;
-
-    this._exercise.exerciseTargetAreaLinks = this.getExerciseTargetAreaLinksForPersist();
+    return {
+      id: this._exercise.id,
+      publicId: m.publicId,
+      createdByUserId: this._exercise.createdByUserId,
+      createdDateTime: this._exercise.createdDateTime,
+      name: m.name,
+      description: m.description,
+      setup: m.setup,
+      movement: m.movement,
+      pointsToRemember: m.pointsToRemember,
+      resistanceType,
+      oneSided: m.oneSided,
+      bandsEndToEnd: resistanceType === ExerciseEditComponent.RESISTANCE_BANDS_TYPE ? m.endToEnd : this._exercise.bandsEndToEnd,
+      involvesReps: m.involvesReps,
+      //When one-sided, bilateral resistance does not apply (the field is disabled in the UI)
+      usesBilateralResistance: m.oneSided ? false : m.usesBilateralResistance,
+      exerciseTargetAreaLinks: this.getExerciseTargetAreaLinksForPersist()
+    };
   }
 
   private getExerciseTargetAreaLinksForPersist(): ExerciseTargetAreaLink[] {
@@ -261,6 +264,46 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
         exerciseId: this._exercise.id,
         targetAreaId: area.id
       }));
+  }
+
+  private buildEmptyExercise(): ExerciseDetailDTO {
+    return {
+      id: 0,
+      publicId: EMPTY_GUID,
+      createdByUserId: 0,
+      createdDateTime: new Date(),
+      name: '',
+      description: '',
+      setup: '',
+      movement: '',
+      pointsToRemember: '',
+      resistanceType: ResistanceType.FREE_WEIGHT,
+      oneSided: false,
+      bandsEndToEnd: null,
+      involvesReps: true,
+      usesBilateralResistance: false,
+      targetAreaIds: []
+    };
+  }
+
+  private toExerciseDetailDTO(exercise: Exercise): ExerciseDetailDTO {
+    return {
+      id: exercise.id,
+      publicId: exercise.publicId,
+      createdByUserId: exercise.createdByUserId,
+      createdDateTime: exercise.createdDateTime,
+      name: exercise.name,
+      description: exercise.description,
+      setup: exercise.setup,
+      movement: exercise.movement,
+      pointsToRemember: exercise.pointsToRemember,
+      resistanceType: exercise.resistanceType,
+      oneSided: exercise.oneSided,
+      bandsEndToEnd: exercise.bandsEndToEnd ?? null,
+      involvesReps: exercise.involvesReps,
+      usesBilateralResistance: exercise.usesBilateralResistance,
+      targetAreaIds: (exercise.exerciseTargetAreaLinks ?? []).map((link: ExerciseTargetAreaLink) => link.targetAreaId)
+    };
   }
 
 }

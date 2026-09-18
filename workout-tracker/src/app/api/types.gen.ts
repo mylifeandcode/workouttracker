@@ -102,6 +102,24 @@ export type Exercise = {
     modifiedDateTime?: null | Date;
 };
 
+export type ExerciseDetailDTO = {
+    id: number;
+    publicId: string;
+    createdByUserId: number;
+    createdDateTime: Date;
+    name: string;
+    description: string;
+    setup: string;
+    movement: string;
+    pointsToRemember: string;
+    resistanceType: ResistanceType;
+    oneSided: boolean;
+    bandsEndToEnd: null | boolean;
+    involvesReps: boolean;
+    usesBilateralResistance: boolean;
+    targetAreaIds: Array<number>;
+};
+
 export type ExerciseDTO = {
     id: number;
     publicId: string;
@@ -231,6 +249,18 @@ export type ResistanceBand = {
     modifiedDateTime?: null | Date;
 };
 
+export type ResistanceBandDTO = {
+    id: number;
+    publicId: string;
+    color: string;
+    maxResistanceAmount: number;
+    numberAvailable: number;
+    createdByUserId: number;
+    createdDateTime: Date;
+    modifiedByUserId: null | number;
+    modifiedDateTime: null | Date;
+};
+
 export const ResistanceType = {
     /**
      * FreeWeight
@@ -273,6 +303,11 @@ export type TargetArea = {
     createdDateTime: Date;
     modifiedByUserId?: null | number;
     modifiedDateTime?: null | Date;
+};
+
+export type TargetAreaDTO = {
+    id: number;
+    name: string;
 };
 
 export type User = {
@@ -760,7 +795,7 @@ export type GetApiExercisesByPublicIdResponses = {
     /**
      * OK
      */
-    200: Exercise;
+    200: ExerciseDetailDTO;
 };
 
 export type GetApiExercisesByPublicIdResponse = GetApiExercisesByPublicIdResponses[keyof GetApiExercisesByPublicIdResponses];
@@ -794,7 +829,7 @@ export type GetApiResistanceBandsResponses = {
     /**
      * OK
      */
-    200: Array<ResistanceBand>;
+    200: Array<ResistanceBandDTO>;
 };
 
 export type GetApiResistanceBandsResponse = GetApiResistanceBandsResponses[keyof GetApiResistanceBandsResponses];
@@ -846,7 +881,7 @@ export type GetApiResistanceBandsByIdResponses = {
     /**
      * OK
      */
-    200: ResistanceBand;
+    200: ResistanceBandDTO;
 };
 
 export type GetApiResistanceBandsByIdResponse = GetApiResistanceBandsByIdResponses[keyof GetApiResistanceBandsByIdResponses];
@@ -880,7 +915,7 @@ export type GetApiTargetAreasResponses = {
     /**
      * OK
      */
-    200: Array<TargetArea>;
+    200: Array<TargetAreaDTO>;
 };
 
 export type GetApiTargetAreasResponse = GetApiTargetAreasResponses[keyof GetApiTargetAreasResponses];
@@ -930,7 +965,7 @@ export type GetApiTargetAreasByIdResponses = {
     /**
      * OK
      */
-    200: TargetArea;
+    200: TargetAreaDTO;
 };
 
 export type GetApiTargetAreasByIdResponse = GetApiTargetAreasByIdResponses[keyof GetApiTargetAreasByIdResponses];

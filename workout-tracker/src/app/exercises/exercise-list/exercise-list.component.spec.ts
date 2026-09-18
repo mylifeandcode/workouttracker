@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ExerciseListComponent } from './exercise-list.component';
 import { ExerciseService } from '../_services/exercise.service';
 import { TargetAreaService } from '../_services/target-area.service';
-import { ExerciseDTO, PaginatedResultsOfExerciseDTO, TargetArea } from '../../api';
+import { ExerciseDTO, PaginatedResultsOfExerciseDTO, TargetAreaDTO } from '../../api';
 import { of } from 'rxjs';
 import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection, signal } from '@angular/core';
@@ -35,9 +35,9 @@ describe('ExerciseListComponent', () => {
 
     const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
       getAll: vi.fn<TargetAreaService['getAll']>().mockReturnValue(of([
-        <TargetArea>{ id: 1, name: 'Chest' },
-        <TargetArea>{ id: 2, name: 'Biceps' },
-        <TargetArea>{ id: 3, name: 'Triceps' }
+        <TargetAreaDTO>{ id: 1, name: 'Chest' },
+        <TargetAreaDTO>{ id: 2, name: 'Biceps' },
+        <TargetAreaDTO>{ id: 3, name: 'Triceps' }
       ]))
     };
 

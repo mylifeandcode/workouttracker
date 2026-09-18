@@ -9,6 +9,7 @@ using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
 using WorkoutTracker.API.Controllers;
+using WorkoutTracker.API.Mappers;
 using WorkoutTracker.API.Models;
 using System;
 
@@ -24,8 +25,9 @@ namespace WorkoutTracker.Tests.Controllers
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
             var exercise = new Exercise();
             exercise.PublicId = Guid.NewGuid();
+            exercise.ExerciseTargetAreaLinks = new List<ExerciseTargetAreaLink>();
             exerciseSvc.Setup(x => x.GetByPublicIdAsync(It.IsAny<Guid>())).ReturnsAsync(exercise);
-            var sut = new ExerciseController(exerciseSvc.Object, LoggerFactory);
+            var sut = new ExerciseController(exerciseSvc.Object, new ExerciseDTOMapper(), LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -34,7 +36,11 @@ namespace WorkoutTracker.Tests.Controllers
             //ASSERT
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response.Result, typeof(OkObjectResult));
-            Assert.AreSame((response.Result as OkObjectResult).Value, exercise);
+            var dto = (response.Result as OkObjectResult).Value as ExerciseDetailDTO;
+            Assert.IsNotNull(dto);
+            Assert.AreEqual(exercise.Id, dto.Id);
+            Assert.AreEqual(exercise.PublicId, dto.PublicId);
+            Assert.AreEqual(exercise.Name, dto.Name);
         }
 
         [TestMethod]
@@ -43,7 +49,7 @@ namespace WorkoutTracker.Tests.Controllers
             //ARRANGE
             var exerciseSvc = new Mock<IExerciseService>(MockBehavior.Strict);
             exerciseSvc.Setup(x => x.GetByPublicIdAsync(It.IsAny<Guid>())).ReturnsAsync((Exercise)null);
-            var sut = new ExerciseController(exerciseSvc.Object, LoggerFactory);
+            var sut = new ExerciseController(exerciseSvc.Object, new ExerciseDTOMapper(), LoggerFactory);
 
             //ACT
             var response = await sut.GetByPublicId(Guid.NewGuid());
@@ -63,7 +69,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.AddAsync(It.IsAny<Exercise>(), true))
                 .ReturnsAsync((Exercise newExercise, bool save, CancellationToken _) => exercise);
 
-            var sut = new ExerciseController(exerciseSvc.Object, LoggerFactory);
+            var sut = new ExerciseController(exerciseSvc.Object, new ExerciseDTOMapper(), LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -85,7 +91,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.UpdateAsync(It.IsAny<Exercise>(), true))
                 .ReturnsAsync((Exercise newExercise, bool save, CancellationToken _) => exercise);
 
-            var sut = new ExerciseController(exerciseSvc.Object, LoggerFactory);
+            var sut = new ExerciseController(exerciseSvc.Object, new ExerciseDTOMapper(), LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -123,7 +129,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Setup(x => x.GetTotalCountAsync(It.IsAny<ExerciseFilter>()))
                 .ReturnsAsync(100);
 
-            var sut = new ExerciseController(exerciseSvc.Object, LoggerFactory);
+            var sut = new ExerciseController(exerciseSvc.Object, new ExerciseDTOMapper(), LoggerFactory);
 
             //ACT
             var response = await sut.Get(0, 20);

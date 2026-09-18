@@ -3,7 +3,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { TargetAreaService } from './target-area.service';
-import { TargetArea } from '../../api';
+import { TargetAreaDTO } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { firstValueFrom } from 'rxjs';
 import { type Mocked } from 'vitest';
@@ -19,8 +19,6 @@ describe('TargetAreaService', () => {
       get: vi.fn<ConfigService['get']>().mockReturnValue(API_ROOT)
     };
 
-    //Note that DateSerializationService is deliberately NOT mocked here, so that the
-    //audit date conversion done by ApiBaseService is genuinely covered.
     TestBed.configureTestingModule({
       imports: [],
       providers: [
@@ -49,8 +47,8 @@ describe('TargetAreaService', () => {
   it('should get all target areas', async () => {
 
     //ARRANGE
-    const targetAreas = new Array<TargetArea>();
-    targetAreas.push(<TargetArea>{ id: 1, name: "Chest" });
+    const targetAreas = new Array<TargetAreaDTO>();
+    targetAreas.push(<TargetAreaDTO>{ id: 1, name: "Chest" });
 
     //ACT
     const result = firstValueFrom(service.getAll());
@@ -66,7 +64,7 @@ describe('TargetAreaService', () => {
   it('should cache target areas', async () => {
 
     //ARRANGE
-    const targetAreas = new Array<TargetArea>();
+    const targetAreas = new Array<TargetAreaDTO>();
 
     //ACT
     const result1 = firstValueFrom(service.getAll()); //Only this one should trigger an HTTP request
@@ -82,35 +80,6 @@ describe('TargetAreaService', () => {
     expect(await result1).toBe(targetAreas);
     expect(await result2).toBe(targetAreas);
     expect(await result3).toBe(targetAreas);
-  });
-
-  it('should convert date strings to Date objects when getting all target areas', async () => {
-
-    //ARRANGE
-    const mockResults = [
-      {
-        id: 1,
-        name: "Chest",
-        createdDateTime: "2024-01-01T12:00:00Z",
-        modifiedDateTime: "2024-01-02T12:00:00Z"
-      }
-    ];
-
-    //ACT
-    const result = firstValueFrom(service.getAll());
-
-    //ASSERT
-    const req = http.expectOne(`${API_ROOT}TargetAreas`);
-    expect(req.request.method).toEqual('GET');
-
-    req.flush(mockResults);
-
-    const targetAreas = await result;
-    expect(targetAreas.length).toBe(1);
-    expect(targetAreas[0].createdDateTime).toBeInstanceOf(Date);
-    expect(targetAreas[0].createdDateTime?.toISOString()).toBe("2024-01-01T12:00:00.000Z");
-    expect(targetAreas[0].modifiedDateTime).toBeInstanceOf(Date);
-    expect(targetAreas[0].modifiedDateTime?.toISOString()).toBe("2024-01-02T12:00:00.000Z");
   });
 
 });

@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
-import { ResistanceBand } from '../../api';
+import { ResistanceBandDTO } from '../../api';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
@@ -25,17 +25,17 @@ export class ResistanceBandsComponent implements OnInit {
   private readonly _messageService = inject(NzMessageService);
   private readonly _modalService = inject(NzModalService);
 
-  public resistanceBands = signal<ResistanceBand[]>([]);
+  public resistanceBands = signal<ResistanceBandDTO[]>([]);
   public busy = signal<boolean>(false);
   public busyMsg = signal<string | undefined>(undefined);
 
   //Add modal related
   public showAddDialog = signal<boolean>(false);
-  public newResistanceBand: ResistanceBand = <ResistanceBand>{};
+  public newResistanceBand: ResistanceBandDTO = <ResistanceBandDTO>{};
   public modalSubmitted = signal<boolean>(false);
 
   //This is used to store the original row when we go into edit mode
-  public editCache: Record<number, { edit: boolean; data: ResistanceBand }> = {}; //TODO: Create interface for record type
+  public editCache: Record<number, { edit: boolean; data: ResistanceBandDTO }> = {}; //TODO: Create interface for record type
 
   public ngOnInit(): void {
     this.getResistanceBandData(true);
@@ -62,7 +62,7 @@ export class ResistanceBandsComponent implements OnInit {
   }
 
   public openAddModal(): void {
-    this.newResistanceBand = <ResistanceBand>{};
+    this.newResistanceBand = <ResistanceBandDTO>{};
     this.modalSubmitted.set(false);
     this.showAddDialog.set(true);
   }
@@ -72,7 +72,7 @@ export class ResistanceBandsComponent implements OnInit {
     this.addResistanceBand();
   }
 
-  public deleteBand(resistanceBand: ResistanceBand): void {
+  public deleteBand(resistanceBand: ResistanceBandDTO): void {
     if (resistanceBand.publicId == null) return;
 
     const bandId = resistanceBand.id;
@@ -96,15 +96,15 @@ export class ResistanceBandsComponent implements OnInit {
     this.modalSubmitted.set(false);
   }
 
-  public sortColumnByColor(a: ResistanceBand, b: ResistanceBand): number {
+  public sortColumnByColor(a: ResistanceBandDTO, b: ResistanceBandDTO): number {
     return a.color.localeCompare(b.color);
   }
 
-  public sortColumnByMaxResistance(a: ResistanceBand, b: ResistanceBand): number {
+  public sortColumnByMaxResistance(a: ResistanceBandDTO, b: ResistanceBandDTO): number {
     return a.maxResistanceAmount - b.maxResistanceAmount;
   }
 
-  public sortColumnByNumberAvailable(a: ResistanceBand, b: ResistanceBand): number {
+  public sortColumnByNumberAvailable(a: ResistanceBandDTO, b: ResistanceBandDTO): number {
     return a.numberAvailable - b.numberAvailable;
   }
 
@@ -128,7 +128,7 @@ export class ResistanceBandsComponent implements OnInit {
           this.busyMsg.set(undefined);
         })
       )
-      .subscribe((results: ResistanceBand[]) => {
+      .subscribe((results: ResistanceBandDTO[]) => {
         this.resistanceBands.set(results);
         this.setupEditCache();
       });
@@ -157,7 +157,7 @@ export class ResistanceBandsComponent implements OnInit {
       });
   }
 
-  private updateResistanceBand(band: ResistanceBand): void {
+  private updateResistanceBand(band: ResistanceBandDTO): void {
     this.busy.set(true);
     this.busyMsg.set('Updating...');
 

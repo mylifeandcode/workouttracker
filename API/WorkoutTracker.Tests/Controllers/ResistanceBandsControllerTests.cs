@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using WorkoutTracker.Domain.Resistances;
 using WorkoutTracker.Application.Resistances.Interfaces;
 using WorkoutTracker.API.Controllers;
+using WorkoutTracker.API.Mappers;
+using WorkoutTracker.API.Models;
+using System.Linq;
 
 namespace WorkoutTracker.Tests.Controllers
 {
@@ -16,10 +19,10 @@ namespace WorkoutTracker.Tests.Controllers
         public async Task Should_Get_All()
         {
             //ARRANGE
-            var resistanceBands = new List<ResistanceBand>(2) { new ResistanceBand(), new ResistanceBand() };
+            var resistanceBands = new List<ResistanceBand>(2) { new ResistanceBand { Id = 1 }, new ResistanceBand { Id = 2 } };
             var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
             service.Setup(mock => mock.GetAllAsync()).ReturnsAsync(resistanceBands);
-            var sut = new ResistanceBandsController(service.Object, LoggerFactory);
+            var sut = new ResistanceBandsController(service.Object, new ResistanceBandDTOMapper(), LoggerFactory);
 
             //ACT
             var result = await sut.Get();
@@ -27,7 +30,9 @@ namespace WorkoutTracker.Tests.Controllers
             //ASSERT
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-            Assert.AreEqual(resistanceBands, (result.Result as OkObjectResult).Value);
+            var dtos = ((result.Result as OkObjectResult).Value as IEnumerable<ResistanceBandDTO>).ToList();
+            Assert.AreEqual(resistanceBands.Count, dtos.Count);
+            CollectionAssert.AreEquivalent(resistanceBands.Select(x => x.Id).ToList(), dtos.Select(x => x.Id).ToList());
             service.Verify(mock => mock.GetAllAsync(), Times.Once);
         }
 
@@ -35,10 +40,10 @@ namespace WorkoutTracker.Tests.Controllers
         public async Task Should_Get_By_Id()
         {
             //ARRANGE
-            var resistanceBand = new ResistanceBand();
+            var resistanceBand = new ResistanceBand { Id = 1 };
             var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
             service.Setup(mock => mock.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(resistanceBand);
-            var sut = new ResistanceBandsController(service.Object, LoggerFactory);
+            var sut = new ResistanceBandsController(service.Object, new ResistanceBandDTOMapper(), LoggerFactory);
 
             //ACT
             var result = await sut.Get(1);
@@ -46,7 +51,9 @@ namespace WorkoutTracker.Tests.Controllers
             //ASSERT
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-            Assert.AreEqual(resistanceBand, (result.Result as OkObjectResult).Value);
+            var dto = (result.Result as OkObjectResult).Value as ResistanceBandDTO;
+            Assert.IsNotNull(dto);
+            Assert.AreEqual(resistanceBand.Id, dto.Id);
             service.Verify(mock => mock.GetByIdAsync(1), Times.Once);
         }
 
@@ -57,7 +64,7 @@ namespace WorkoutTracker.Tests.Controllers
             ResistanceBand resistanceBand = null;
             var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
             service.Setup(mock => mock.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(resistanceBand);
-            var sut = new ResistanceBandsController(service.Object, LoggerFactory);
+            var sut = new ResistanceBandsController(service.Object, new ResistanceBandDTOMapper(), LoggerFactory);
 
             //ACT
             var result = await sut.Get(2);
@@ -75,7 +82,7 @@ namespace WorkoutTracker.Tests.Controllers
             var resistanceBand = new ResistanceBand();
             var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
             service.Setup(mock => mock.AddAsync(resistanceBand)).ReturnsAsync(resistanceBand);
-            var sut = new ResistanceBandsController(service.Object, LoggerFactory);
+            var sut = new ResistanceBandsController(service.Object, new ResistanceBandDTOMapper(), LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -95,7 +102,7 @@ namespace WorkoutTracker.Tests.Controllers
             var resistanceBand = new ResistanceBand();
             var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
             service.Setup(mock => mock.UpdateAsync(resistanceBand)).ReturnsAsync(resistanceBand);
-            var sut = new ResistanceBandsController(service.Object, LoggerFactory);
+            var sut = new ResistanceBandsController(service.Object, new ResistanceBandDTOMapper(), LoggerFactory);
             SetupUser(sut);
 
             //ACT
@@ -114,7 +121,7 @@ namespace WorkoutTracker.Tests.Controllers
             //ARRANGE
             var service = new Mock<IResistanceBandService>(MockBehavior.Strict);
             service.Setup(mock => mock.DeleteAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
-            var sut = new ResistanceBandsController(service.Object, LoggerFactory);
+            var sut = new ResistanceBandsController(service.Object, new ResistanceBandDTOMapper(), LoggerFactory);
 
             //ACT
             var result = await sut.Delete(1);

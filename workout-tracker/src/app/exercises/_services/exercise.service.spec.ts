@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ExerciseService } from './exercise.service';
-import { Exercise, PaginatedResultsOfExerciseDTO } from '../../api';
+import { Exercise, ExerciseDetailDTO, PaginatedResultsOfExerciseDTO } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
@@ -121,7 +121,7 @@ describe('ExerciseService', () => {
 
   it('should retrieve exercise by ID', async () => {
 
-    const expectedExercise = <Exercise>{};
+    const expectedExercise = <ExerciseDetailDTO>{};
     const exercisePromise = firstValueFrom(service.getById('5'));
 
     const req = http.expectOne("http://localhost:5600/api/exercises/5"); //TODO: Refactor
@@ -133,8 +133,7 @@ describe('ExerciseService', () => {
 
   it('should convert date strings to Date objects when getting exercise by ID', async () => {
     const mockExercise = {
-      createdDateTime: "2024-01-01T12:00:00Z",
-      modifiedDateTime: "2024-01-02T12:00:00Z"
+      createdDateTime: "2024-01-01T12:00:00Z"
     };
     const exercisePromise = firstValueFrom(service.getById('5'));
 
@@ -146,8 +145,6 @@ describe('ExerciseService', () => {
     console.log(exercise);
     expect(exercise.createdDateTime).toBeInstanceOf(Date);
     expect(exercise.createdDateTime?.toISOString()).toBe("2024-01-01T12:00:00.000Z");
-    expect(exercise.modifiedDateTime).toBeInstanceOf(Date);
-    expect(exercise.modifiedDateTime?.toISOString()).toBe("2024-01-02T12:00:00.000Z");
   });
 
   it('should create new exercise', async () => {

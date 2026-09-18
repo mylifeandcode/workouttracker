@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ResistanceBand } from '../../api';
+import { ResistanceBandDTO } from '../../api';
 import { of, throwError } from 'rxjs';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 
@@ -12,12 +12,12 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { type Mocked } from 'vitest';
 
-const getResistanceBandInventory = (): Array<ResistanceBand> => {
-  const bands = new Array<ResistanceBand>();
-  bands.push(<ResistanceBand>{ publicId: 'someGuid1', color: 'Blue', maxResistanceAmount: 26, numberAvailable: 2, id: 1 });
-  bands.push(<ResistanceBand>{ publicId: 'someGuid2', color: 'Orange', maxResistanceAmount: 60, numberAvailable: 4, id: 2 });
-  bands.push(<ResistanceBand>{ publicId: 'someGuid3', color: 'Yellow', maxResistanceAmount: 6, numberAvailable: 2, id: 3 });
-  bands.push(<ResistanceBand>{ publicId: 'someGuid4', color: 'Onlyx', maxResistanceAmount: 80, numberAvailable: 5, id: 4 });
+const getResistanceBandInventory = (): Array<ResistanceBandDTO> => {
+  const bands = new Array<ResistanceBandDTO>();
+  bands.push(<ResistanceBandDTO>{ publicId: 'someGuid1', color: 'Blue', maxResistanceAmount: 26, numberAvailable: 2, id: 1 });
+  bands.push(<ResistanceBandDTO>{ publicId: 'someGuid2', color: 'Orange', maxResistanceAmount: 60, numberAvailable: 4, id: 2 });
+  bands.push(<ResistanceBandDTO>{ publicId: 'someGuid3', color: 'Yellow', maxResistanceAmount: 6, numberAvailable: 2, id: 3 });
+  bands.push(<ResistanceBandDTO>{ publicId: 'someGuid4', color: 'Onlyx', maxResistanceAmount: 80, numberAvailable: 5, id: 4 });
   return bands;
 };
 
@@ -28,8 +28,8 @@ describe('ResistanceBandsComponent', () => {
   beforeEach(async () => {
     const ResistanceBandServiceMock: Partial<Mocked<ResistanceBandService>> = {
       getAll: vi.fn<ResistanceBandService['getAll']>().mockReturnValue(of(getResistanceBandInventory())),
-      add: vi.fn<ResistanceBandService['add']>().mockReturnValue(of(<ResistanceBand>{})),
-      update: vi.fn<ResistanceBandService['update']>().mockReturnValue(of(<ResistanceBand>{})),
+      add: vi.fn<ResistanceBandService['add']>().mockReturnValue(of(<ResistanceBandDTO>{})),
+      update: vi.fn<ResistanceBandService['update']>().mockReturnValue(of(<ResistanceBandDTO>{})),
       delete: vi.fn<ResistanceBandService['delete']>().mockReturnValue(of(new HttpResponse<void>()))
     };
     const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
@@ -113,7 +113,7 @@ describe('ResistanceBandsComponent', () => {
 
     //ASSERT
     expect(component.newResistanceBand).not.toBeNull();
-    expect(resistanceBandService.add).toHaveBeenCalledWith(<ResistanceBand>component.newResistanceBand);
+    expect(resistanceBandService.add).toHaveBeenCalledWith(<ResistanceBandDTO>component.newResistanceBand);
     expect(messageService.create).toHaveBeenCalledWith('success', 'Resistance band added.');
     expect(resistanceBandService.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refrsh after the save
 
@@ -160,7 +160,7 @@ describe('ResistanceBandsComponent', () => {
     const modalService = TestBed.inject(NzModalService);
     const messageService = TestBed.inject(NzMessageService);
     modalService.confirm = vi.fn().mockImplementation(() => void 0); //Simulate user not confirming
-    const band = <ResistanceBand>{};
+    const band = <ResistanceBandDTO>{};
     band.id = 5;
 
     //ACT

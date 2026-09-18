@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiBaseService } from '../../core/_services/api-base/api-base.service';
-import { ResistanceBand } from '../../api';
+import { ResistanceBandDTO } from '../../api';
 import { ResistanceBandIndividual } from '../models/resistance-band-individual';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class ResistanceBandService extends ApiBaseService<ResistanceBand> {
+export class ResistanceBandService extends ApiBaseService<ResistanceBandDTO> {
 
   constructor() {
     super("resistancebands");
@@ -23,9 +23,9 @@ export class ResistanceBandService extends ApiBaseService<ResistanceBand> {
   public getAllIndividualBands(): Observable<ResistanceBandIndividual[]> {
     return this.getAll()
       .pipe(
-        map((bands: ResistanceBand[]) => {
+        map((bands: ResistanceBandDTO[]) => {
           const individualBands: ResistanceBandIndividual[] = [];
-          bands.map((band: ResistanceBand) => {
+          bands.map((band: ResistanceBandDTO) => {
             for(let x = 0; x < band.numberAvailable; x++) {
               individualBands.push(new ResistanceBandIndividual(band.color, band.maxResistanceAmount));
             }

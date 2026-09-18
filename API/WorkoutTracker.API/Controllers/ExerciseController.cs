@@ -12,6 +12,7 @@ using WorkoutTracker.Domain.Exercises;
 using WorkoutTracker.Application.Exercises.Interfaces;
 using WorkoutTracker.Application.Exercises.Models;
 using WorkoutTracker.API.Models;
+using WorkoutTracker.API.Mappers;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,13 +26,15 @@ namespace WorkoutTracker.API.Controllers
     public class ExerciseController : UserAwareController
     {
         private IExerciseService _exerciseService;
+        private readonly IExerciseDTOMapper _exerciseDTOMapper;
 
-        public ExerciseController(IExerciseService svc, ILoggerFactory loggerFactory) : base(loggerFactory)
+        public ExerciseController(IExerciseService svc, IExerciseDTOMapper exerciseDTOMapper, ILoggerFactory loggerFactory) : base(loggerFactory)
         {
             if (svc == null)
                 throw new ArgumentNullException("svc");
 
             _exerciseService = svc;
+            _exerciseDTOMapper = exerciseDTOMapper ?? throw new ArgumentNullException(nameof(exerciseDTOMapper));
         }
 
         // GET: api/Exercises
@@ -93,7 +96,7 @@ namespace WorkoutTracker.API.Controllers
         */
 
         [HttpGet("{publicId}")]
-        public async Task<ActionResult<Exercise>> GetByPublicId(Guid publicId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ExerciseDetailDTO>> GetByPublicId(Guid publicId, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -101,7 +104,7 @@ namespace WorkoutTracker.API.Controllers
                 if (exercise == null)
                     return NotFound(publicId);
                 else
-                    return Ok(exercise);
+                    return Ok(_exerciseDTOMapper.MapToDetailDTO(exercise));
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {

@@ -3,7 +3,7 @@ import { HttpClient, httpResource, HttpResourceRef } from '@angular/common/http'
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { PaginatedResultsOfExerciseDTO } from '../../api';
-import { Exercise } from '../../api';
+import { Exercise, ExerciseDetailDTO } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
 import { HTTP_OPTIONS } from '../../shared/constants/http-constants';
@@ -92,9 +92,9 @@ export class ExerciseService {
     );
   }
 
-  public getById(publicId: string): Observable<Exercise> {
+  public getById(publicId: string): Observable<ExerciseDetailDTO> {
     return this._http
-      .get<Exercise>(`${this.API_ROOT}/${publicId}`)
+      .get<ExerciseDetailDTO>(`${this.API_ROOT}/${publicId}`)
       .pipe(
         map((exercise) => {
           this._dateService.convertAuditDateStringsToDates(exercise);

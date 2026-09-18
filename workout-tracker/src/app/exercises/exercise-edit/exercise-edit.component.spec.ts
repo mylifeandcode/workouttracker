@@ -7,27 +7,24 @@ import { of } from 'rxjs';
 import { ExerciseEditComponent } from './exercise-edit.component';
 import { ExerciseService } from '../_services/exercise.service';
 import { TargetAreaService } from '../_services/target-area.service';
-import { Exercise, ExerciseTargetAreaLink, TargetArea } from '../../api/';
+import { Exercise, ExerciseDetailDTO, TargetAreaDTO } from '../../api/';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { type Mocked } from 'vitest';
 
 //TODO: Move initialization inside beforeEach()
-const EXERCISE: Exercise = <Exercise>{
+const EXERCISE: ExerciseDetailDTO = <ExerciseDetailDTO>{
   id: 2,
   publicId: 'some-guid',
+  createdByUserId: 1,
+  createdDateTime: new Date('2024-01-01T00:00:00Z'),
   name: 'Some Exercise',
   description: 'This is a nice exercise. Blah, blah, blah.',
   setup: 'Get ready',
   movement: 'Whatever',
   pointsToRemember: 'Be careful',
   resistanceType: 1,
-  exerciseTargetAreaLinks: [
-    <ExerciseTargetAreaLink>{
-      exerciseId: 2,
-      targetAreaId: 1
-    }
-  ]
+  targetAreaIds: [1]
 };
 
 @Pipe({
@@ -61,10 +58,11 @@ describe('ExerciseEditComponent', () => {
 
     const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
       getAll: vi.fn<TargetAreaService['getAll']>().mockImplementation(() => {
-        const targetAreas = new Array<TargetArea>();
-        targetAreas.push(<TargetArea>{ id: 1, name: "Chest", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
-        targetAreas.push(<TargetArea>{ id: 2, name: "Biceps", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
-        targetAreas.push(<TargetArea>{ id: 3, name: "Triceps", sequence: 1, createdDateTime: new Date(), modifiedDateTime: null, createdByUserId: 0, isDeleted: false });
+        const targetAreas: TargetAreaDTO[] = [
+          { id: 1, name: "Chest" },
+          { id: 2, name: "Biceps" },
+          { id: 3, name: "Triceps" }
+        ];
         return of(targetAreas);
       })
     };

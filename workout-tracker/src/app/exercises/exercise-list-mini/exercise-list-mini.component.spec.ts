@@ -5,7 +5,7 @@ import { TargetAreaService } from '../_services/target-area.service';
 import { of } from 'rxjs';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
-import { ExerciseDTO, PaginatedResultsOfExerciseDTO, TargetArea } from '../../api';
+import { ExerciseDTO, PaginatedResultsOfExerciseDTO, TargetAreaDTO } from '../../api';
 import { type Mocked } from 'vitest';
 
 describe('ExerciseListMiniComponent', () => {
@@ -19,7 +19,7 @@ describe('ExerciseListMiniComponent', () => {
     };
 
     const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
-      getAll: vi.fn<TargetAreaService['getAll']>().mockReturnValue(of(new Array<TargetArea>()))
+      getAll: vi.fn<TargetAreaService['getAll']>().mockReturnValue(of(new Array<TargetAreaDTO>()))
     };
 
     await TestBed.configureTestingModule({
