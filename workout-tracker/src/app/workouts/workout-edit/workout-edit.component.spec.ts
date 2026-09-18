@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 
 import { WorkoutEditComponent } from './workout-edit.component';
 import { WorkoutService } from '../_services/workout.service';
-import { Workout, ExerciseInWorkout, ExerciseDTO } from '../../api';
+import { Workout, WorkoutDetailDTO, ExerciseInWorkoutDetailDTO, ExerciseDTO } from '../../api';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
 
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -31,22 +31,20 @@ class BlankComponent {
 
 const WORKOUT_PUBLIC_ID: string = "some-guid";
 
-function getTestWorkout(): Workout {
-  const workout = <Workout>{};
-  workout.id = 123;
-  workout.publicId = WORKOUT_PUBLIC_ID;
-  workout.active = true;
-  workout.name = 'Test Workout';
-  workout.exercises = [];
-
-  workout.exercises.push(<ExerciseInWorkout>{
-    id: 1, exerciseId: 10, sequence: 0, exercise: { name: 'Bench Press' }, setType: 0, numberOfSets: 3, createdByUserId: 0, createdDateTime: new Date()
-  });
-
-  workout.exercises.push(<ExerciseInWorkout>{
-    id: 2, exerciseId: 20, sequence: 1, exercise: { name: 'Biceps Curls' }, setType: 1, numberOfSets: 4, createdByUserId: 0, createdDateTime: new Date()
-  });
-  return workout;
+function getTestWorkout(): WorkoutDetailDTO {
+  return {
+    id: 123,
+    publicId: WORKOUT_PUBLIC_ID,
+    createdByUserId: 1,
+    createdDateTime: new Date(),
+    modifiedDateTime: null,
+    active: true,
+    name: 'Test Workout',
+    exercises: [
+      <ExerciseInWorkoutDetailDTO>{ id: 1, exerciseId: 10, exerciseName: 'Bench Press', setType: 0, numberOfSets: 3, resistanceType: 0, targetAreas: [] },
+      <ExerciseInWorkoutDetailDTO>{ id: 2, exerciseId: 20, exerciseName: 'Biceps Curls', setType: 1, numberOfSets: 4, resistanceType: 0, targetAreas: [] }
+    ]
+  };
 }
 
 function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {

@@ -99,7 +99,7 @@ namespace WorkoutTracker.API.Controllers
         */
 
         [HttpGet("{publicId}")]
-        public async Task<ActionResult<Workout>> GetByPublicId(Guid publicId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<WorkoutDetailDTO>> GetByPublicId(Guid publicId, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace WorkoutTracker.API.Controllers
                         return Forbid();
 
                     workout.Exercises = workout.Exercises?.OrderBy(x => x.Sequence).ToList();
-                    return Ok(workout);
+                    return Ok(_workoutDTOMapper.MapToDetailDTO(workout));
                 }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -125,30 +125,6 @@ namespace WorkoutTracker.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-        /*
-        [HttpGet("DTO/{id}")]
-        public ActionResult<WorkoutDTO> GetDTO(int id)
-        {
-            try
-            {
-                var workout = _workoutService.GetById(id);
-                if (workout == null)
-                    return NotFound(id);
-
-                if (workout.CreatedByUserId != GetUserID())
-                    return Forbid();
-
-                var dto = _workoutDTOMapper.MapFromWorkout(workout);
-
-                return Ok(dto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-        */
 
         [HttpGet("{workoutPublicId}/plan")]
         public async Task<ActionResult<WorkoutPlan>> GetNewPlan(Guid workoutPublicId, CancellationToken cancellationToken = default)

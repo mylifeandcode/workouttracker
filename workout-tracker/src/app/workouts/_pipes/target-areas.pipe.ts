@@ -1,17 +1,15 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ExerciseTargetAreaLink } from '../../api';
 
 @Pipe({
     name: 'targetAreas',
 })
 export class TargetAreasPipe implements PipeTransform {
 
-  transform(value: ExerciseTargetAreaLink[] | undefined): string {
+  transform(value: string[] | undefined): string {
     if (!value)
       return '';
 
-    const targetAreaNames = value.map(link => link.targetArea?.name);
-    return targetAreaNames.join(', ');
+    return value.join(', ');
   }
 
 }

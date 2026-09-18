@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Workout, PaginatedResultsOfWorkoutDTO, WorkoutPlan } from '../../api';
+import { Workout, WorkoutDetailDTO, PaginatedResultsOfWorkoutDTO, WorkoutPlan } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { HTTP_OPTIONS } from '../../shared/constants/http-constants';
 
@@ -35,8 +35,8 @@ export class WorkoutService {
     return this._http.get<PaginatedResultsOfWorkoutDTO>(url);
   }
 
-  public getById(id: string): Observable<Workout> {
-    return this._http.get<Workout>(`${this.API_ROOT}/${id}`);
+  public getById(id: string): Observable<WorkoutDetailDTO> {
+    return this._http.get<WorkoutDetailDTO>(`${this.API_ROOT}/${id}`);
   }
 
   public add(workout: Workout): Observable<Workout> {

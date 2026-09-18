@@ -12,7 +12,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/exercise-list-mini.component';
 import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ExerciseDTO, ExerciseInWorkout, SetType, Workout } from '../../api';
+import { ExerciseDTO, ExerciseInWorkout, SetType, Workout, WorkoutDetailDTO } from '../../api';
 
 interface IExerciseInWorkoutModel {
   id: number;
@@ -199,9 +199,9 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
     this._workoutService.getById(workoutId)
       .pipe(finalize(() => { this.loading.set(false); }))
       .subscribe({
-        next: (workout: Workout) => {
+        next: (workout: WorkoutDetailDTO) => {
           this.model.set(this.buildModel(workout));
-          this._workout = workout;
+          this._workout = this.buildWorkoutForSave(workout);
         },
         error: (error: HttpErrorResponse) => {
           this.errorMsg.set(error.message || 'An error occurred loading the workout.');
@@ -209,21 +209,37 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
       });
   }
 
-  private buildModel(workout: Workout): IWorkoutEditModel {
+  private buildModel(workout: WorkoutDetailDTO): IWorkoutEditModel {
     return {
       id: workout.id,
       publicId: workout.publicId ?? EMPTY_GUID,
       active: workout.active,
       name: workout.name ?? '',
       exercises: (workout.exercises ?? [])
-        .filter(exerciseInWorkout => exerciseInWorkout?.exercise?.name)
+        .filter(exerciseInWorkout => exerciseInWorkout?.exerciseName)
         .map(exerciseInWorkout => this.createExerciseModel(
           exerciseInWorkout.id,
           exerciseInWorkout.exerciseId,
-          exerciseInWorkout.exercise!.name,
+          exerciseInWorkout.exerciseName,
           String(exerciseInWorkout.setType),
           exerciseInWorkout.numberOfSets
         ))
+    };
+  }
+
+  //Post/Put still take the raw Workout shape (out of scope for the detail-DTO fix), so the
+  //identity/ownership fields they need (id, createdByUserId) have to be carried forward from
+  //the loaded DTO even though the edit form itself never displays or edits them. `exercises`
+  //gets replaced wholesale by updateWorkoutFromFormValues() before save, so a placeholder here is fine.
+  private buildWorkoutForSave(workout: WorkoutDetailDTO): Workout {
+    return {
+      id: workout.id,
+      publicId: workout.publicId,
+      createdByUserId: workout.createdByUserId,
+      createdDateTime: workout.createdDateTime,
+      name: workout.name,
+      active: workout.active,
+      exercises: []
     };
   }
 

@@ -6,5 +6,6 @@ namespace WorkoutTracker.API.Mappers
     public interface IWorkoutDTOMapper
     {
         WorkoutDTO MapFromWorkout(Workout workout);
+        WorkoutDetailDTO MapToDetailDTO(Workout workout);
     }
 }

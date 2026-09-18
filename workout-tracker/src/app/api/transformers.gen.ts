@@ -320,8 +320,16 @@ export const putApiWorkoutsResponseTransformer = async (data: any): Promise<PutA
     return data;
 };
 
+const workoutDetailDtoSchemaResponseTransformer = (data: any) => {
+    data.createdDateTime = new Date(data.createdDateTime);
+    if (data.modifiedDateTime) {
+        data.modifiedDateTime = new Date(data.modifiedDateTime);
+    }
+    return data;
+};
+
 export const getApiWorkoutsByPublicIdResponseTransformer = async (data: any): Promise<GetApiWorkoutsByPublicIdResponse> => {
-    data = workoutSchemaResponseTransformer(data);
+    data = workoutDetailDtoSchemaResponseTransformer(data);
     return data;
 };
 

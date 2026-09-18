@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { Workout } from '../../../../api';
+import { WorkoutDetailDTO } from '../../../../api';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ResistanceTypePipe } from '../../../_pipes/resistance-type.pipe';
 import { TargetAreasPipe } from '../../../_pipes/target-areas.pipe';
@@ -13,6 +13,6 @@ import { TargetAreasPipe } from '../../../_pipes/target-areas.pipe';
 })
 export class WorkoutInfoComponent {
 
-  readonly workout = input<Workout>();
+  readonly workout = input<WorkoutDetailDTO>();
 
 }

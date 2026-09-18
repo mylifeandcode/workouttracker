@@ -5,7 +5,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { WorkoutService } from './workout.service';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { Workout, WorkoutPlan, WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
+import { Workout, WorkoutDetailDTO, WorkoutPlan, WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { firstValueFrom } from 'rxjs';
 import { type Mocked } from 'vitest';
 
@@ -75,7 +75,7 @@ describe('WorkoutService', () => {
   });
 
   it('should get workout by public ID', async () => {
-    const expectedResults = <Workout>{};
+    const expectedResults = <WorkoutDetailDTO>{};
     const workoutId: string = TEST_WORKOUT_ID;
     expectedResults.publicId = workoutId;
 

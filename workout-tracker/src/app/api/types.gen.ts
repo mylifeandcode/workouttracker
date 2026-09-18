@@ -124,6 +124,16 @@ export type ExerciseInWorkout = {
     modifiedDateTime?: null | Date;
 };
 
+export type ExerciseInWorkoutDetailDTO = {
+    id: number;
+    exerciseId: number;
+    exerciseName: string;
+    numberOfSets: number;
+    setType: SetType;
+    resistanceType: ResistanceType;
+    targetAreas: Array<string>;
+};
+
 export type ExercisePlan = {
     exerciseInWorkoutId: number;
     exerciseId: number;
@@ -361,6 +371,17 @@ export type Workout = {
     createdDateTime: Date;
     modifiedByUserId?: null | number;
     modifiedDateTime?: null | Date;
+};
+
+export type WorkoutDetailDTO = {
+    id: number;
+    publicId: string;
+    createdByUserId: number;
+    createdDateTime: Date;
+    modifiedDateTime: null | Date;
+    name: string;
+    active: boolean;
+    exercises: Array<ExerciseInWorkoutDetailDTO>;
 };
 
 export type WorkoutDTO = {
@@ -1130,7 +1151,7 @@ export type GetApiWorkoutsByPublicIdResponses = {
     /**
      * OK
      */
-    200: Workout;
+    200: WorkoutDetailDTO;
 };
 
 export type GetApiWorkoutsByPublicIdResponse = GetApiWorkoutsByPublicIdResponses[keyof GetApiWorkoutsByPublicIdResponses];

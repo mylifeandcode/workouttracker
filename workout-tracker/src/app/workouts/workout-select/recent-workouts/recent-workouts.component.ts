@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
-import { ExecutedWorkoutSummaryDTO, Workout } from '../../../api';
+import { ExecutedWorkoutSummaryDTO, WorkoutDetailDTO } from '../../../api';
 import { WorkoutService } from '../../_services/workout.service';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { WorkoutInfoComponent } from './workout-info/workout-info.component';
@@ -22,7 +22,7 @@ export class RecentWorkoutsComponent implements OnInit {
 
   public recentWorkouts = signal<ExecutedWorkoutSummaryDTO[]>([]);
   public showExercises = signal<boolean>(false);
-  public selectedWorkout = signal<Workout | null>(null);
+  public selectedWorkout = signal<WorkoutDetailDTO | null>(null);
   public loading = signal<boolean>(true);
 
   readonly planningForLater = input<boolean>(false);
@@ -36,10 +36,10 @@ export class RecentWorkoutsComponent implements OnInit {
       });
   }
 
-  public viewExercises(workoutPublicId: string): void { //TODO: Refactor to use a DTO or summary object
+  public viewExercises(workoutPublicId: string): void {
     this._workoutService
       .getById(workoutPublicId)
-      .subscribe((result: Workout) => {
+      .subscribe((result: WorkoutDetailDTO) => {
         this.selectedWorkout.set(result);
         this.showExercises.set(true);
       });

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../../../api';
-import { Workout } from '../../../api';
+import { WorkoutDetailDTO } from '../../../api';
 import { WorkoutService } from '../../_services/workout.service';
 
 import { RecentWorkoutsComponent } from './recent-workouts.component';
@@ -19,7 +19,7 @@ import { type Mocked } from 'vitest';
   template: ''
 })
 class MockWorkoutInfoComponent {
-  readonly workout = input<Workout>();
+  readonly workout = input<WorkoutDetailDTO>();
 }
 
 describe('RecentWorkoutsComponent', () => {
