@@ -3,13 +3,13 @@
   <div class="row">
     <div class="col-12">
       <nz-table #dt
-        [nzData]="workouts()" 
+        [nzData]="resource.value().results" 
         [nzFrontPagination]="false"
         [nzShowSizeChanger]="true"
-        [nzTotal]="totalRecords()"
+        [nzTotal]="resource.value().totalCount"
         [(nzPageSize)]="pageSize"
         [(nzPageIndex)]="pageIndex"
-        [nzLoading]="loading()"
+        [nzLoading]="postInProgress() || resource.isLoading()"
         (nzQueryParams)="onQueryParamsChange($event)"
       >
         <thead>
@@ -59,10 +59,10 @@
       </nz-table>
     </div>
   </div>
-  @if (totalRecords != null) {
+  @if (!resource.isLoading() && resource.value().totalCount != null) {
     <div class="row mt-2 mb-2">
-      <div class="col-3">{{totalRecords()}} total workout(s)</div>
-      @if (totalRecords() == 0) {
+      <div class="col-3">{{resource.value().totalCount}} total workout(s)</div>
+      @if (resource.value().totalCount == 0) {
         <div class="col-9" style="font-style: italic">
           No workouts have been defined. Please create one using the "Add New" button below.
         </div>
@@ -71,7 +71,7 @@
   }
   <div class="row bottom-padded">
     <div class="col-12">
-      <button routerLink="/workouts/new" [disabled]="loading()" class="btn btn-new-workout"><i class="fa fa-plus"></i>
+      <button routerLink="/workouts/new" [disabled]="postInProgress() || resource.isLoading()" class="btn btn-new-workout"><i class="fa fa-plus"></i>
         Add
         New
       </button>
@@ -83,7 +83,6 @@
   <div class="ant-table-filter-dropdown">
     <div class="search-box">
       <input type="text" nz-input placeholder="Workout Name" [(ngModel)]="nameFilter" />
-      <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">Search</button>
       <button nz-button nzSize="small" (click)="reset()">Reset</button>
     </div>
   </div>

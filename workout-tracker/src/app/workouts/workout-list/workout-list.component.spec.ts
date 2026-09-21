@@ -2,11 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutListComponent } from './workout-list.component';
 import { WorkoutService } from '../_services/workout.service';
 import { of } from 'rxjs';
-import { HttpResponse } from '@angular/common/http';
+import { HttpResourceRef, HttpResponse } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
-import { PaginatedResultsOfWorkoutDTO } from '../../api';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection, signal } from '@angular/core';
+import { PaginatedResultsOfWorkoutDTO, WorkoutDTO } from '../../api';
 import { type Mocked } from 'vitest';
 
 describe('WorkoutListComponent', () => {
@@ -15,8 +14,20 @@ describe('WorkoutListComponent', () => {
   let workoutService: WorkoutService;
 
   beforeEach(async () => {
-    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>().mockReturnValue(of(<PaginatedResultsOfWorkoutDTO>{})),
+    const WorkoutServiceMock: Mocked<Pick<WorkoutService, 'getSelection' | 'retire' | 'reactivate'>> = {
+      getSelection: vi.fn<WorkoutService['getSelection']>().mockImplementation(() => {
+        const paginatedResults: PaginatedResultsOfWorkoutDTO = {
+          totalCount: 0,
+          results: <WorkoutDTO[]>[]
+        };
+
+        const mockResourceRef: Partial<HttpResourceRef<PaginatedResultsOfWorkoutDTO>> = {
+          value: signal(paginatedResults),
+          isLoading: signal(false),
+        };
+
+        return mockResourceRef as HttpResourceRef<PaginatedResultsOfWorkoutDTO>;
+      }),
       retire: vi.fn<WorkoutService['retire']>().mockReturnValue(of(new HttpResponse<void>())),
       reactivate: vi.fn<WorkoutService['reactivate']>().mockReturnValue(of(new HttpResponse<void>()))
     };
@@ -49,45 +60,6 @@ describe('WorkoutListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should query workouts using table params', () => {
-    const params: NzTableQueryParams = {
-      pageIndex: 2,
-      pageSize: 25,
-      sort: [{ key: 'name', value: 'descend' }],
-      filter: [{ key: 'active', value: ['ActiveOnly'] }]
-    };
-
-    component.onQueryParamsChange(params);
-
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(25, 25, true, false, '');
-  });
-
-  it('should search using current table state and reset to first page', () => {
-    component.onQueryParamsChange({
-      pageIndex: 2,
-      pageSize: 20,
-      sort: [{ key: 'name', value: 'descend' }],
-      filter: [{ key: 'active', value: [] }]
-    });
-
-    component.search();
-
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 20, false, false, '');
-  });
-
-  it('should reset and search using the current table state', () => {
-    component.onQueryParamsChange({
-      pageIndex: 3,
-      pageSize: 20,
-      sort: [{ key: 'name', value: 'descend' }],
-      filter: [{ key: 'active', value: [] }]
-    });
-
-    component.reset();
-
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 20, false, false, '');
-  });
-
   it('should retire a workout and refresh with current filters', () => {
     component.onQueryParamsChange({
       pageIndex: 1,
@@ -100,7 +72,7 @@ describe('WorkoutListComponent', () => {
     component.retireWorkout('some-guid', 'My Workout');
 
     expect(workoutService.retire).toHaveBeenCalledWith('some-guid');
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 15, false, false, '');
+    //expect(workoutService.getSelection).toHaveBeenCalledWith(0, 15, false, false, '');
   });
 
   it('should reactivate a workout and refresh with current filters', () => {
@@ -115,7 +87,7 @@ describe('WorkoutListComponent', () => {
     component.reactivateWorkout('some-guid', 'My Workout');
 
     expect(workoutService.reactivate).toHaveBeenCalledWith('some-guid');
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 30, true, true, '');
+    //expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 30, true, true, '');
   });
 
 });

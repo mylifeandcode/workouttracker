@@ -90,29 +90,7 @@ export class ExerciseListComponent implements OnInit {
 
   public reset(): void {
     this.nameFilter.set('');
-    //this.search();
+    this.nameFilterVisible.set(false);
   }
-
-  /*
-  private getExercises(first: number, nameContains: string | null, targetAreaContains: string[] | null, sortAscending: boolean): void {
-    this.loading.set(true);
-    this._exerciseSvc
-      .getAll(first, this.pageSize(), nameContains, targetAreaContains, sortAscending)
-      .pipe(finalize(() => {
-        this.loading.set(false);
-      }))
-      .subscribe({
-        next: (exercises: PaginatedResultsOfExerciseDTO) => {
-          this.exercises.set(exercises.results);
-          this.totalRecords.set(exercises.totalCount);
-        }
-      });
-  }
- 
-  private getActiveTargetAreaFilter(): string[] | null {
-    const active = this.targetAreaFilters().filter(f => f.byDefault);
-    return active.length ? active.map(f => f.value as string) : null;
-  }
-  */
  
 }

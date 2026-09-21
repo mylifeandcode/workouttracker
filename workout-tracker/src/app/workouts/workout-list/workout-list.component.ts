@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, debounced, inject, linkedSignal, signal } from '@angular/core';
 import { WorkoutService } from '../_services/workout.service';
-import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
-import { finalize } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 import { NzTableFilterList, NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDropdownModule } from 'ng-zorro-antd/dropdown';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'wt-workout-list',
@@ -18,20 +17,39 @@ import { FormsModule } from '@angular/forms';
 export class WorkoutListComponent {
   private readonly _workoutSvc = inject(WorkoutService);
 
-  public totalRecords = signal<number>(0);
-  public loading = signal<boolean>(true);
-  public workouts = signal<WorkoutDTO[]>([]);
-
   public statusFilter: NzTableFilterList = [
     { text: 'Active Only', value: 'ActiveOnly', byDefault: true }  
   ];
 
+  public postInProgress = signal(false);
   protected nameFilter = signal('');
   protected nameFilterVisible = signal(false);
   protected filterByActiveOnly = signal(true);
   protected sortAscending = signal(true);
-  protected pageIndex = signal<number>(1);
   protected pageSize = signal<number>(10);
+
+  // Must be declared BEFORE `pageIndex` — field initializers run in order.
+  private _debouncedNameFilter = debounced(() => this.nameFilter(), 300);
+
+  //Writable so the table can page it, but reset to page 1 whenever a filter changes.
+  //Sourced from the *debounced* name so the reset and the refetch land in the same tick.
+  protected pageIndex = linkedSignal<{ name: string, activeOnly: boolean }, number>({
+    source: () => ({
+      name: this._debouncedNameFilter.value(),
+      activeOnly: this.filterByActiveOnly()
+    }),
+    computation: () => 1
+  });
+
+  protected firstRecord = computed(() => (this.pageIndex() - 1) * this.pageSize());
+  protected resource =
+    this._workoutSvc.getSelection(
+      this.firstRecord,
+      this.pageSize,
+      this.filterByActiveOnly,
+      this.sortAscending,
+      this._debouncedNameFilter.value
+    );  
 
   public onQueryParamsChange(params: NzTableQueryParams): void {
     const { pageSize, pageIndex, sort, filter } = params;
@@ -46,30 +64,26 @@ export class WorkoutListComponent {
     this.sortAscending.set(sortAscending);
     this.pageSize.set(pageSize);
     this.pageIndex.set(pageIndex); 
-
-    this.getWorkouts(((pageIndex - 1) * pageSize), pageSize, activeOnly, sortAscending, this.nameFilter());
   }
 
   public reset(): void {
     this.nameFilter.set('');
-    this.search();
-  }
-
-  public search(): void {
     this.nameFilterVisible.set(false);
-    this.pageIndex.set(1);
-    this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this.sortAscending(), this.nameFilter());
   }
 
   public retireWorkout(workoutPublicId: string, workoutName: string): void {
     if (window.confirm(`Are you sure you want to retire workout "${workoutName}"?`)) {
-      this.loading.set(true);
+      this.postInProgress.set(true);
       this._workoutSvc.retire(workoutPublicId)
-        .pipe(finalize(() => { this.loading.set(false); }))
+        .pipe(
+          finalize(() => { this.postInProgress.set(false); })
+        )
         .subscribe({
           next: () => {
-            this.pageIndex.set(1);
-            this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this.sortAscending(), this.nameFilter());
+            if (this.pageIndex() != 1)
+              this.pageIndex.set(1);
+            else
+              this.resource.reload();
           }
         });
     }
@@ -77,28 +91,20 @@ export class WorkoutListComponent {
 
   public reactivateWorkout(workoutPublicId: string, workoutName: string): void {
     if (window.confirm(`Are you sure you want to reactivate workout "${workoutName}"?`)) {
-      this.loading.set(true);
+      this.postInProgress.set(true);
       this._workoutSvc.reactivate(workoutPublicId)
-        .pipe(finalize(() => { this.loading.set(false); }))
+        .pipe(
+          finalize(() => { this.postInProgress.set(false); })
+        )
         .subscribe({
           next: () => {
-            this.pageIndex.set(1);
-            this.getWorkouts(0, this.pageSize(), this.filterByActiveOnly(), this.sortAscending(), this.nameFilter());
+            if (this.pageIndex() != 1)
+              this.pageIndex.set(1);
+            else
+              this.resource.reload();
           }
         });
     }
   }
 
-  private getWorkouts(first: number, pageSize: number = 10, filterByActiveOnly: boolean = true, sortAscending: boolean = true, nameFilter: string = ''): void {
-    //this.totalRecords = 0; DO NOT SET THIS -- IT WILL TRIGGER THE PARAMS CHANGE HANDLER AND CALL IT ALL AGAIN WITH THE DEFAULT PARAMS!
-    this.loading.set(true);
-    this._workoutSvc.getFilteredSubset(first, pageSize, filterByActiveOnly, sortAscending, nameFilter)
-      .pipe(finalize(() => { this.loading.set(false); }))
-      .subscribe({
-        next: (results: PaginatedResultsOfWorkoutDTO) => {
-          this.workouts.set(results.results);
-          this.totalRecords.set(results.totalCount);
-        }
-      });
-  }
 }

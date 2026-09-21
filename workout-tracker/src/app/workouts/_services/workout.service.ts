@@ -1,10 +1,11 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Injectable, Signal, inject } from '@angular/core';
+import { HttpClient, httpResource, HttpResourceRef, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Workout, WorkoutDetailDTO, PaginatedResultsOfWorkoutDTO, WorkoutPlan } from '../../api';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { HTTP_OPTIONS } from '../../shared/constants/http-constants';
+import { DateSerializationService } from '../../core/_services/date-serialization/date-serialization.service';
 
 
 @Injectable({
@@ -13,26 +14,64 @@ import { HTTP_OPTIONS } from '../../shared/constants/http-constants';
 export class WorkoutService {
   private _http = inject(HttpClient);
   private _configService = inject(ConfigService);
+  private _dateService = inject(DateSerializationService);
 
   private readonly API_ROOT: string;
 
-  constructor() { 
+  constructor() {
     this.API_ROOT = this._configService.get("apiRoot") + "workouts";
   }
 
   public getFilteredSubset(
-    firstRecOffset: number, 
-    pageSize: number, 
-    activeOnly: boolean, 
-    sortAscending: boolean = true, 
+    firstRecOffset: number,
+    pageSize: number,
+    activeOnly: boolean,
+    sortAscending: boolean = true,
     nameContains: string | null = null): Observable<PaginatedResultsOfWorkoutDTO> {
-        
+
     let url: string = `${this.API_ROOT}?firstRecord=${firstRecOffset}&pageSize=${pageSize}&activeOnly=${activeOnly}&sortAscending=${sortAscending}`;
 
-    if(nameContains)
+    if (nameContains)
       url += `&nameContains=${encodeURIComponent(nameContains)}`;
 
     return this._http.get<PaginatedResultsOfWorkoutDTO>(url);
+  }
+
+  public getSelection(
+    firstRecOffset: Signal<number>,
+    pageSize: Signal<number>,
+    activeOnly: Signal<boolean>,
+    sortAscending: Signal<boolean>,
+    nameContains: Signal<string | null>): HttpResourceRef<PaginatedResultsOfWorkoutDTO> {
+
+    return httpResource<PaginatedResultsOfWorkoutDTO>(
+      () => {
+        const params: Record<string, string | number | boolean> = {
+          firstRecord: firstRecOffset(),
+          pageSize: pageSize(),
+          sortAscending: sortAscending(),
+          activeOnly: activeOnly()
+        };
+
+        const name = nameContains();
+        if (name)
+          params['nameContains'] = name;
+
+        return { url: this.API_ROOT, params };
+      },
+      {
+        parse: (raw) => {//TODO: Consider using Zod for schema validation
+          const paginatedResults = raw as PaginatedResultsOfWorkoutDTO;
+          paginatedResults.results.forEach(workout => {
+            this._dateService.convertAuditDateStringsToDates(workout);
+          });
+          return paginatedResults;
+        },
+        defaultValue: { results: [], totalCount: 0 }
+      }
+
+    );
+
   }
 
   public getById(id: string): Observable<WorkoutDetailDTO> {
@@ -78,5 +117,5 @@ export class WorkoutService {
 
   public reactivate(publicId: string): Observable<HttpResponse<void>> {
     return this._http.put<HttpResponse<void>>(`${this.API_ROOT}/${publicId}/reactivate`, null);
-  }  
+  }
 }
