@@ -24,6 +24,7 @@ describe('WorkoutListComponent', () => {
         const mockResourceRef: Partial<HttpResourceRef<PaginatedResultsOfWorkoutDTO>> = {
           value: signal(paginatedResults),
           isLoading: signal(false),
+          reload: vi.fn()
         };
 
         return mockResourceRef as HttpResourceRef<PaginatedResultsOfWorkoutDTO>;
