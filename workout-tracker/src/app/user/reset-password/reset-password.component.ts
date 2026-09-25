@@ -67,7 +67,7 @@ export class ResetPasswordComponent implements OnInit {
       this.errorMessage.set(null);
       try {
         await firstValueFrom(this._authService.resetPassword(this._resetCode!, this.model().password));
-        window.alert("Password has been reset.");
+        window.alert("Password has been reset."); //TODO: Replace windowa.alert with NZ-MODAL
         this._router.navigate(['']);
       } catch (error) {
         this.errorMessage.set(error instanceof HttpErrorResponse && error.message

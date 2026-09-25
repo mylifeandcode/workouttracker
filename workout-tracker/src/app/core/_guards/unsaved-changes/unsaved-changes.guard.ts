@@ -8,7 +8,7 @@ import { CheckForUnsavedDataComponent } from '../../../shared/components/check-f
 export class UnsavedChangesGuard  {
   canDeactivate(component: CheckForUnsavedDataComponent): boolean {
     if (component.hasUnsavedData()) {
-      return window.confirm("There are unsaved changes. Do you still want to leave this page?");
+      return window.confirm("There are unsaved changes. Do you still want to leave this page?"); //TODO: Replace window.confirm with NZ-MODAL
     }
     else {
       return true;

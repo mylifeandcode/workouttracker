@@ -52,7 +52,7 @@ export class ChangePasswordComponent {
 
   public cancel(): void {
 
-    if (this.changePasswordForm().dirty() && !window.confirm("Cancel without changing password?"))
+    if (this.changePasswordForm().dirty() && !window.confirm("Cancel without changing password?")) //TODO: Replace window.confirm with NZ-MODAL
       return;
 
     this._router.navigate(['/']);

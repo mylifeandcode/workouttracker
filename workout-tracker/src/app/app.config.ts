@@ -17,6 +17,7 @@ import { Observable, switchMap, tap } from 'rxjs';
 import en from '@angular/common/locales/en';
 import { registerLocaleData } from '@angular/common';
 import { provideNzI18n, en_US } from 'ng-zorro-antd/i18n';
+import { windowProvider } from './core/_providers/window.provider';
 registerLocaleData(en);
 
 export const appConfig: ApplicationConfig = {
@@ -58,6 +59,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideAnimations(),
     provideNzI18n(en_US),
+    windowProvider,
     //Signal Forms doesn't add the legacy ng-* status classes by default; this restores them
     //app-wide (via the compat helper) so existing .ng-invalid.ng-touched styling keeps working.
     provideSignalFormsConfig({ classes: NG_STATUS_CLASSES })

@@ -44,7 +44,7 @@ export class UserSelectComponent {
         if (result)
           this._router.navigate(['home']);
         else
-          window.alert("Login attempt failed.");
+          window.alert("Login attempt failed."); //TODO: Replace window.alert with NZ-MODAL
       });
   }
 

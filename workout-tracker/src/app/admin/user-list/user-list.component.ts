@@ -23,7 +23,7 @@ export class UserListComponent {
   public errorMsg = signal<string | undefined>(undefined); //TODO: We have a caching issue! Fix it!
 
   public deleteUser(userPublicId: string): void {
-    if (!window.confirm("Are you sure you want to delete this user?"))
+    if (!window.confirm("Are you sure you want to delete this user?")) //TODO: Replace window.confirm with NZ-MODAL
       return;
 
     this.busy.set(true);

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, debounced, inject, linkedSignal, signal } from '@angular/core';
+import { WINDOW } from '../../core/_injection-tokens/window.token';
 import { WorkoutService } from '../_services/workout.service';
 import { RouterLink } from '@angular/router';
 import { NzTableFilterList, NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -16,6 +17,7 @@ import { finalize } from 'rxjs';
 })
 export class WorkoutListComponent {
   private readonly _workoutSvc = inject(WorkoutService);
+  private readonly _window = inject(WINDOW);
 
   public statusFilter: NzTableFilterList = [
     { text: 'Active Only', value: 'ActiveOnly', byDefault: true }  
@@ -72,7 +74,7 @@ export class WorkoutListComponent {
   }
 
   public retireWorkout(workoutPublicId: string, workoutName: string): void {
-    if (window.confirm(`Are you sure you want to retire workout "${workoutName}"?`)) {
+    if (this._window.confirm(`Are you sure you want to retire workout "${workoutName}"?`)) {
       this.postInProgress.set(true);
       this._workoutSvc.retire(workoutPublicId)
         .pipe(
@@ -90,7 +92,7 @@ export class WorkoutListComponent {
   }
 
   public reactivateWorkout(workoutPublicId: string, workoutName: string): void {
-    if (window.confirm(`Are you sure you want to reactivate workout "${workoutName}"?`)) {
+    if (this._window.confirm(`Are you sure you want to reactivate workout "${workoutName}"?`)) {
       this.postInProgress.set(true);
       this._workoutSvc.reactivate(workoutPublicId)
         .pipe(

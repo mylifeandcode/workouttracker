@@ -10,7 +10,7 @@ export class LocalStorageService {
   private _localStorage: Storage;
 
   constructor() {
-    this._localStorage = window.localStorage;
+    this._localStorage = window.localStorage; //TODO: Replace window with WINDOW
   }
 
   //TODO: Revisit, make generic

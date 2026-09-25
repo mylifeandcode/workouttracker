@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection, signal } from '@angular/core';
 import { PaginatedResultsOfWorkoutDTO, WorkoutDTO } from '../../api';
 import { type Mocked } from 'vitest';
+import { WINDOW } from '../../core/_injection-tokens/window.token';
 
 describe('WorkoutListComponent', () => {
   let component: WorkoutListComponent;
@@ -33,6 +34,10 @@ describe('WorkoutListComponent', () => {
       reactivate: vi.fn<WorkoutService['reactivate']>().mockReturnValue(of(new HttpResponse<void>()))
     };
 
+    const windowMock: Mocked<Pick<Window, 'confirm'>> = {
+      confirm: vi.fn().mockReturnValue(true)
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([]),
@@ -43,6 +48,10 @@ describe('WorkoutListComponent', () => {
         {
           provide: WorkoutService,
           useValue: WorkoutServiceMock
+        },
+        {
+          provide: WINDOW,
+          useValue: windowMock
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

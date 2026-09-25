@@ -51,6 +51,8 @@ export class UserEditComponent implements OnInit {
 
   constructor() {
     this.showPasswordResetButton.set(!this._configService.get("smtpEnabled"));
+
+    //TODO: Inject WINDOW and use that instead of window below
     this._resetPasswordUrlRoot = `${window.location.protocol}//${window.location.host}/user/reset-password/`;
   }
 
@@ -85,13 +87,14 @@ export class UserEditComponent implements OnInit {
   }
 
   public cancel(): void {
-    if (this.userEditForm().dirty() && !window.confirm("Cancel without saving changes?"))
+    if (this.userEditForm().dirty() && !window.confirm("Cancel without saving changes?")) //TODO: Replace window.confirm with NZ-MODAL
       return;
 
     this._router.navigate(['/admin/users']);
   }
 
   public resetPassword(): void {
+    //TODO: Replace window usages below with NZ-MODAL
     if (window.confirm("This will reset the user's password. You will need to provide them with the URL to create their new password. Do you want to proceed?")) {
       this._authService.requestPasswordReset(this.model().emailAddress)
         .subscribe((resetCode: string) => {
