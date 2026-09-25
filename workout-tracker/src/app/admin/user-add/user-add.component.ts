@@ -78,7 +78,7 @@ export class UserAddComponent implements OnInit {
   }
 
   public cancel(): void {
-    if (this.userAddForm().dirty() && !window.confirm("Cancel without saving changes?"))
+    if (this.userAddForm().dirty() && !window.confirm("Cancel without saving changes?")) //TODO: Replace window.confirm with NZ-MODAL
       return;
 
     if (this.showAdminControls())
