@@ -4,7 +4,7 @@ import { AuthService } from '../../core/_services/auth/auth.service';
 import { ConfigService } from '../../core/_services/config/config.service';
 import { firstValueFrom } from 'rxjs';
 import { RouterLink } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
+import { toAppError } from '../../core/_http/app-error.mapper';
 
 @Component({
     selector: 'wt-forgot-password',
@@ -41,7 +41,7 @@ export class ForgotPasswordComponent implements OnInit {
         await firstValueFrom(this._authService.requestPasswordReset(this.model().emailAddress));
         this.requestSuccessful.set(true);
       } catch (error) {
-        this.errorMessage.set(error instanceof HttpErrorResponse ? error.message : "Password reset request failed. Please try again later.");
+        this.errorMessage.set(toAppError(error).userMessage);
       } finally {
         this.requestInProgress.set(false);
       }

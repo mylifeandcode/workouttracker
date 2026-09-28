@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { HttpErrorResponse } from '@angular/common/http';
+import { toAppError } from '../_http/app-error.mapper';
 
 @Component({
   selector: 'wt-user-select',
@@ -29,8 +30,7 @@ export class UserSelectComponent {
     this._authService.getProfiles()
       .pipe(
         catchError((err: HttpErrorResponse) => {
-          console.log("ERROR: ", err.message);
-          this.errorMsg.set(err.message ? err.message : "An error has occurred. Please contact an administrator.");
+          this.errorMsg.set(toAppError(err, 'GET').userMessage);
           return of(new Array<UserProfileDTO>());
         })
       );

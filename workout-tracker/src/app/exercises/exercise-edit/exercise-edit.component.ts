@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { InsertSpaceBeforeCapitalPipe } from '../../shared/pipes/insert-space-before-capital.pipe';
 import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { forkJoin, firstValueFrom } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
+import { toAppError } from '../../core/_http/app-error.mapper';
 
 interface ITargetAreaSelection {
   id: number;
@@ -142,7 +142,7 @@ export class ExerciseEditComponent extends CheckForUnsavedDataComponent implemen
 
         this.exerciseForm().reset(); //Clears touched/dirty so the unsaved-changes guard won't block navigation
       } catch (error) {
-        this.errorMsg.set((error as HttpErrorResponse).message);
+        this.errorMsg.set(toAppError(error).userMessage);
       } finally {
         this.saving.set(false);
       }

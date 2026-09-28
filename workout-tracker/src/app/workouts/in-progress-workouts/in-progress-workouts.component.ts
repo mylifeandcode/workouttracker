@@ -7,6 +7,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { toAppError } from '../../core/_http/app-error.mapper';
 
 @Component({
     selector: 'wt-in-progress-workouts',
@@ -28,7 +29,7 @@ export class InProgressWorkoutsComponent implements OnInit {
       .pipe(
         finalize(() => { this.loading.set(false); }),
         catchError((err: HttpErrorResponse) => {
-          this.errorMessage.set(err.message ? err.message : "An error has occurred. Please contact an administrator.");
+          this.errorMessage.set(toAppError(err, 'GET').userMessage);
           //return of(new Array<ExecutedWorkoutSummaryDTO>());
           return of(new Array<ExecutedWorkoutSummaryDTO>());
         })

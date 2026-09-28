@@ -1,6 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, input, output, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { ResistanceBandIndividual } from '../../shared/models/resistance-band-individual';
@@ -17,8 +16,7 @@ import { type Mocked } from 'vitest';
 
 @Component({
   selector: 'wt-resistance-band-select',
-  template: '',
-  imports: [ReactiveFormsModule]
+  template: ''
 })
 class MockResistanceBandSelectComponent extends ResistanceBandSelectComponent {
 
@@ -66,12 +64,10 @@ describe('WorkoutPlanComponent', () => {
           provide: ActivatedRoute,
           useValue: { params: of({}) }
         },
-        UntypedFormBuilder, //TODO: Determine if this is kosher or if there's a preferred mocking approach
         provideZonelessChangeDetection()
       ],
       imports: [
         RouterModule.forRoot([]),
-        ReactiveFormsModule,
         WorkoutPlanComponent,
         MockResistanceBandSelectComponent
       ],

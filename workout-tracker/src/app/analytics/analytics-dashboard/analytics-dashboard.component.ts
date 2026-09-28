@@ -6,6 +6,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { ZeroIsBadPipe } from '../../shared/pipes/zero-is-bad.pipe';
 import { HttpErrorResponse } from '@angular/common/http';
+import { toAppError } from '../../core/_http/app-error.mapper';
 
 @Component({
     selector: 'wt-analytics-dashboard',
@@ -70,8 +71,7 @@ export class AnalyticsDashboardComponent implements OnInit {
           this.errorMessage.set(null); // Clear any previous errors
         },
         error: (error: HttpErrorResponse) => {
-          const errorMsg = error.message || AnalyticsDashboardComponent.DEFAULT_ERROR_MESSAGE;
-          this.errorMessage.set(errorMsg);
+          this.errorMessage.set(toAppError(error, 'GET').userMessage);
           this.executedWorkoutsSummary.set(undefined); // Clear any stale data
         }
       });

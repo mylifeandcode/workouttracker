@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { form, FormField, required, email, validate, submit } from '@angular/forms/signals';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
@@ -22,6 +22,8 @@ export class UserEditComponent implements OnInit {
   private _userSvc = inject(UserService);
   private _configService = inject(ConfigService);
   private _authService = inject(AuthService);
+
+  public userId = input.required<string>();
 
   public loadingUserInfo = signal(true);
   public savingUserInfo = signal(false);
@@ -59,7 +61,6 @@ export class UserEditComponent implements OnInit {
   //PUBLIC METHODS
 
   public ngOnInit(): void {
-    this.loadingUserInfo.set(true);
     this.getUserInfo();
   }
 
@@ -109,17 +110,8 @@ export class UserEditComponent implements OnInit {
   //PRIVATE METHODS
 
   private getUserInfo(): void {
-
-    this._activatedRoute.params.subscribe(params => {
-      const userId = params['id'];
-      this.getUserInfoFromService(userId);
-    });
-
-  }
-
-  private getUserInfoFromService(userPublicId: string): void {
-
-    this._userSvc.getById(userPublicId)
+    this.loadingUserInfo.set(true);
+    this._userSvc.getById(this.userId())
       .subscribe({
         next: (user: User) => {
           this._user = user;
@@ -134,7 +126,6 @@ export class UserEditComponent implements OnInit {
         error: (error: HttpErrorResponse) => this.errorMsg.set(error.message),
         complete: () => this.loadingUserInfo.set(false)
       });
-
   }
 
   private getUserForPersist(): User {

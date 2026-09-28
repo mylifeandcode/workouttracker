@@ -13,6 +13,7 @@ import { ExerciseListMiniComponent } from '../../exercises/exercise-list-mini/ex
 import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ExerciseDTO, ExerciseInWorkout, SetType, Workout, WorkoutDetailDTO } from '../../api';
+import { toAppError } from '../../core/_http/app-error.mapper';
 
 interface IExerciseInWorkoutModel {
   id: number;
@@ -204,7 +205,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
           this._workout = this.buildWorkoutForSave(workout);
         },
         error: (error: HttpErrorResponse) => {
-          this.errorMsg.set(error.message || 'An error occurred loading the workout.');
+          this.errorMsg.set(toAppError(error).userMessage);
         }
       });
   }
@@ -255,7 +256,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
           this._router.navigate([`workouts/edit/${addedWorkout.publicId}`]);
         },
         error: (error: HttpErrorResponse) => {
-          this.errorMsg.set(error.message);
+          this.errorMsg.set(toAppError(error).userMessage);
           this.infoMsg.set(null);
         }
       });
@@ -273,7 +274,7 @@ export class WorkoutEditComponent extends CheckForUnsavedDataComponent implement
           this.infoMsg.set("Workout updated at " + new Date().toLocaleTimeString());
         },
         error: (error: HttpErrorResponse) => {
-          this.errorMsg.set(error.message);
+          this.errorMsg.set(toAppError(error).userMessage);
           this.infoMsg.set(null);
         }
       });

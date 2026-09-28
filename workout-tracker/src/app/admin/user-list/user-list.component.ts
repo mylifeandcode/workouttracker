@@ -5,6 +5,7 @@ import { Observable, finalize } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { toAppError } from '../../core/_http/app-error.mapper';
 
 @Component({
   selector: 'wt-user-list',
@@ -41,28 +42,8 @@ export class UserListComponent {
           //const index = _.findIndex(this.users, (user: User) => user.id == userId);
           //this.users?.splice(index, 1);
         },
-        error: (error: HttpErrorResponse) => this.errorMsg.set(error.message)
+        error: (error: HttpErrorResponse) => this.errorMsg.set(toAppError(error).userMessage)
       });
   }
-
-  /*
-  private loadUsers(): void {
-    //this._userSvc.getAll()
-    this.users$ = this._userSvc.all$
-      .pipe(
-        tap(() => {
-          this.busy = true;
-          this.busyMsg = "Getting data...";
-        }),
-        finalize(() => {
-          this.busy = false;
-          this.busyMsg = "";            
-        })
-      );
-      .subscribe((users: User[]) => {
-        this.users = users;
-      });
-  }
-  */
 
 }

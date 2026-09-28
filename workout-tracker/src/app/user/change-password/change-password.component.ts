@@ -1,9 +1,9 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { form, FormField, required, minLength, validate, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { firstValueFrom } from 'rxjs';
+import { toAppError } from '../../core/_http/app-error.mapper';
 
 @Component({
     selector: 'wt-change-password',
@@ -43,7 +43,7 @@ export class ChangePasswordComponent {
         await firstValueFrom(this._authService.changePassword(this.model().currentPassword, this.model().password));
         this.passwordChanged.set(true);
       } catch (error) {
-        this.errorMessage.set("Couldn't change password: " + (error instanceof HttpErrorResponse ? error.message : "An error occurred."));
+        this.errorMessage.set(toAppError(error).userMessage);
       } finally {
         this.changingPassword.set(false);
       }

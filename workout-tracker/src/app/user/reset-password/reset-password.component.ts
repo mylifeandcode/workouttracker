@@ -6,6 +6,7 @@ import { of, firstValueFrom } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { HttpErrorResponse } from '@angular/common/http';
+import { toAppError } from '../../core/_http/app-error.mapper';
 
 @Component({
     selector: 'wt-reset-password',
@@ -49,7 +50,7 @@ export class ResetPasswordComponent implements OnInit {
         .pipe(
           finalize(() => { this.validatingResetCode.set(false); }),
           catchError((err: HttpErrorResponse) => {
-            this.errorMessage.set(err.message ? err.message : "An error has occurred. Please contact an administrator.");
+            this.errorMessage.set(toAppError(err).userMessage);
             return of(false);
           })
         )

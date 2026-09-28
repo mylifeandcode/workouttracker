@@ -21,6 +21,7 @@ import { DatePipe } from '@angular/common';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { HttpErrorResponse } from '@angular/common/http';
+import { toAppError } from '../../core/_http/app-error.mapper';
 
 @Component({
   selector: 'wt-workout',
@@ -220,7 +221,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           this.allResistanceBands.set(bands);
         },
         error: (error: HttpErrorResponse) => {
-          this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
+          this.setErrorInfo(error, 'GET');
         }
       });
   }
@@ -251,7 +252,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           this.workoutLoaded.set(true);
           this.activeAccordionTab.set(this.getExerciseInProgress());
         },
-        error: (error: HttpErrorResponse) => { this.setErrorInfo(error, "An error occurred getting workout information. See console for details."); }
+        error: (error: HttpErrorResponse) => { this.setErrorInfo(error, 'GET'); }
       });
   }
 
@@ -289,11 +290,8 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
     };
   }
 
-  private setErrorInfo(error: HttpErrorResponse, defaultMessage: string): void {
-    if (error.message)
-      this.errorInfo.set(error.message);
-    else
-      this.errorInfo.set(defaultMessage);
+  private setErrorInfo(error: HttpErrorResponse, method: string): void {
+   this.errorInfo.set(toAppError(error, method).userMessage);
   }
 
   private setWorkoutValuesFromModel(): void {
@@ -363,7 +361,7 @@ export class WorkoutComponent extends CheckForUnsavedDataComponent implements On
           this.activeAccordionTab.set(this.getExerciseInProgress());
         },
         error: (error: HttpErrorResponse) => {
-          this.setErrorInfo(error, "An error occurred saving workout information. See console for details.");
+          this.setErrorInfo(error, 'PUT');
           //TODO: Fix the styling for this!
           this._messageService.error(error.message);
         }

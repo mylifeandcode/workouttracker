@@ -75,6 +75,7 @@ describe('UserEditComponent', () => {
     fixture = TestBed.createComponent(UserEditComponent);
     component = fixture.componentInstance;
     userService = TestBed.inject(UserService);
+    fixture.componentRef.setInput('userId', 5);
     fixture.detectChanges();
   });
 
