@@ -16,6 +16,7 @@ import { ExercisePlanComponent } from './exercise-plan/exercise-plan.component';
 import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { HttpErrorResponse } from '@angular/common/http';
+import { toAppError } from '../../core/_http/app-error.mapper';
 
 
 @Component({
@@ -263,16 +264,13 @@ export class WorkoutPlanComponent extends CheckForUnsavedDataComponent implement
           this.allResistanceBands.set(bands);
         },
         error: (error: HttpErrorResponse) => {
-          this.setErrorInfo(error, "An error occurred getting resistance bands. See console for more info.");
+          this.setErrorInfo(error, 'GET');
         }
       });
   }
 
-  private setErrorInfo(error: HttpErrorResponse, defaultMessage: string): void {
-    if (error.message)
-      this.errorInfo.set(error.message);
-    else
-      this.errorInfo.set(defaultMessage);
+  private setErrorInfo(error: HttpErrorResponse, method: string): void {
+    this.errorInfo.set(toAppError(error, method).userMessage);
   }
 
   private setupDataForPlanSubmission(): void {
