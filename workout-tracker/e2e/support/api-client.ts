@@ -1,7 +1,7 @@
 import { APIRequestContext, expect, request } from '@playwright/test';
-import { API_URL } from './env';
+import { BFF_URL } from './env';
+import type { BffUser } from '../../src/app/core/_services/auth/bff-user';
 import type {
-  AuthTokenResultDTO,
   Exercise,
   ExerciseTargetAreaLink,
   PaginatedResultsOfExecutedWorkoutSummaryDTO,
@@ -25,8 +25,9 @@ export interface WorkoutExerciseSpec {
 
 /*
  * Thin, typed wrapper over Playwright's request context for talking to the WorkoutTracker API
- * directly. Used to arrange and verify state around UI tests — set data up over HTTP (fast,
- * reliable), assert the outcome through the UI, then confirm it landed via the API.
+ * through the BFF, exactly as the browser does. Used to arrange and verify state around UI tests —
+ * set data up over HTTP (fast, reliable), assert the outcome through the UI, then confirm it landed
+ * via the API.
  *
  * Types come from the generated client so this breaks loudly when a DTO changes shape, which
  * is the point: the schema is the contract between the two halves of the app.
@@ -35,23 +36,26 @@ export class ApiClient {
   constructor(private readonly context: APIRequestContext) {}
 
   /**
-   * Builds a client authenticated as the given user. The API runs with SimpleLogin=true, so
-   * the password is not actually verified — but it is still sent, so this keeps working if
-   * that setting is ever turned off.
+   * Builds a client signed in as the given user, the way the browser is: through the BFF, holding the session
+   * cookie in this context's cookie jar and never seeing a token. The API runs with SimpleLogin=true, so the
+   * password is not actually verified — but it is still sent, so this keeps working if that setting is ever
+   * turned off.
    */
   static async authenticateAs(username: string, password: string): Promise<ApiClient> {
-    const anonymous = new ApiClient(await request.newContext({ baseURL: API_URL }));
-    const tokens = await anonymous.logIn(username, password);
-    await anonymous.dispose();
-
-    return new ApiClient(await request.newContext({
-      baseURL: API_URL,
-      extraHTTPHeaders: { Authorization: `Bearer ${tokens.accessToken}` },
-    }));
+    const client = await ApiClient.anonymous();
+    await client.logIn(username, password);
+    return client;
   }
 
+  /**
+   * Talks to the BFF, not the API: the API is only reachable by the BFF now. The CSRF header is required by the
+   * BFF on every state-changing request (the SPA's AuthInterceptor adds the same one), so it is set once here.
+   */
   static async anonymous(): Promise<ApiClient> {
-    return new ApiClient(await request.newContext({ baseURL: API_URL }));
+    return new ApiClient(await request.newContext({
+      baseURL: BFF_URL,
+      extraHTTPHeaders: { 'X-CSRF': '1' },
+    }));
   }
 
   async dispose(): Promise<void> {
@@ -60,13 +64,22 @@ export class ApiClient {
 
   //AUTH ///////////////////////////////////////////////////////////////////////
 
-  async logIn(username: string, password: string): Promise<AuthTokenResultDTO> {
-    const response = await this.context.post('/api/auth/login', {
+  /** Signs in through the BFF. The response sets the session cookie, which this context's cookie jar keeps. */
+  async logIn(username: string, password: string): Promise<BffUser> {
+    const response = await this.context.post('/bff/login', {
       data: { username, password },
     });
 
     expect(response, `Login failed for "${username}"`).toBeOK();
-    return response.json() as Promise<AuthTokenResultDTO>;
+    return response.json() as Promise<BffUser>;
+  }
+
+  /**
+   * This client's cookie jar as a Playwright storage state. Handing it to a browser context makes the browser
+   * start with this client's live session — the BFF cookie is the whole session.
+   */
+  async sessionState(): ReturnType<APIRequestContext['storageState']> {
+    return this.context.storageState();
   }
 
   //USERS //////////////////////////////////////////////////////////////////////

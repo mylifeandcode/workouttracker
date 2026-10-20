@@ -29,16 +29,13 @@ export const appConfig: ApplicationConfig = {
       return initializerFn();
     }),
     /*
-    INTERCEPTOR ORDER IS LOAD-BEARING — do not reorder these two.
+    Angular builds the interceptor chain with reduceRight, so the FIRST entry here is the OUTERMOST one.
 
-    Angular builds the interceptor chain with reduceRight, so the FIRST entry here is
-    the OUTERMOST one. GlobalHttpErrorInterceptor has to wrap AuthInterceptor: that's
-    what lets a silent token refresh stay silent, because AuthInterceptor's catchError
-    replaces the 401 with the replayed request's success before the error interceptor
-    ever sees it. Swap these and every expired access token raises a spurious error
-    notification — a regression that only reproduces once a token actually expires.
-
-    Covered by global-http-error.interceptor.spec.ts, which asserts both orders.
+    This order used to be load-bearing: AuthInterceptor swallowed a 401, refreshed the token in the browser and replayed
+    the request, so GlobalHttpErrorInterceptor had to wrap it or every silent refresh raised a spurious error
+    notification. The BFF now refreshes tokens server-side and AuthInterceptor never swallows an error, so either order
+    behaves the same. This one is kept because the global error handler reporting what the auth layer rethrows reads
+    naturally.
     */
     {
       provide: HTTP_INTERCEPTORS,

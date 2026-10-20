@@ -45,8 +45,8 @@ export const test = base.extend<Options & Fixtures>({
   authenticateAs: ['standard', { option: true }],
 
   /*
-   * Overriding the built-in storageState so every test gets a freshly minted session. See
-   * session.ts for why a shared, pre-saved session file cannot work here.
+   * Overriding the built-in storageState so every test gets a freshly minted BFF session cookie. See
+   * session.ts for why a shared, pre-saved session cannot work here.
    */
   storageState: async ({ authenticateAs }, use) => {
     if (authenticateAs === null) {

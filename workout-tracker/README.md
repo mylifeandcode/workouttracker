@@ -4,7 +4,7 @@ This project was originally generated with [Angular CLI](https://github.com/angu
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. Requires the WorkoutTracker API running at http://localhost:5600.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. Requires the WorkoutTracker API (http://localhost:5600) and the BFF in front of it (http://localhost:5610) to be running; the dev server proxies `/api` and `/bff` to the BFF. See `CLAUDE.md` for details.
 
 ## Code scaffolding
 

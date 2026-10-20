@@ -26,6 +26,8 @@ describe('ExerciseListComponent', () => {
 
         const mockResourceRef: Partial<HttpResourceRef<PaginatedResultsOfExerciseDTO>> = {
           value: signal(paginatedResults),
+          //hasValue is a type predicate, which a plain mock function can't satisfy without a cast.
+          hasValue: (() => true) as HttpResourceRef<PaginatedResultsOfExerciseDTO>['hasValue'],
           isLoading: signal(false),
         };
 
@@ -72,6 +74,25 @@ describe('ExerciseListComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  /*
+  Reading value() on a resource whose request failed THROWS (ResourceValueError). The template used to do that, so a
+  failed exercises request produced a second "Something went wrong" notification from the global error handler on top of
+  the HTTP error one. This mock behaves like the real thing: value() throws, hasValue() is false.
+  */
+  it('should render without throwing, and without a total, when the exercises request has failed', () => {
+    const failedResource: Partial<HttpResourceRef<PaginatedResultsOfExerciseDTO>> = {
+      value: (() => { throw new Error('Resource is currently in an error state'); }) as unknown as HttpResourceRef<PaginatedResultsOfExerciseDTO>['value'],
+      hasValue: (() => false) as HttpResourceRef<PaginatedResultsOfExerciseDTO>['hasValue'],
+      isLoading: signal(false),
+    };
+    vi.mocked(TestBed.inject(ExerciseService).getSelection).mockReturnValue(failedResource as HttpResourceRef<PaginatedResultsOfExerciseDTO>);
+
+    const failedFixture = TestBed.createComponent(ExerciseListComponent);
+
+    expect(() => failedFixture.detectChanges()).not.toThrow();
+    expect(failedFixture.nativeElement.textContent).not.toContain('total exercise(s)');
   });
 
   it('should populate target area filters from service', () => {

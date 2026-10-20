@@ -69,7 +69,15 @@ export class ExerciseListComponent implements OnInit {
       this.selectedTargetAreas,
       this.tableSortAscending
     );
-  
+
+  /*
+  The template reads these instead of resource.value(): reading value() while the request has FAILED throws a
+  ResourceValueError, which the global error handler would then report as a second, unrelated "Something went wrong"
+  next to the HTTP error notification. hasValue() is false while loading or failed, so both fall back to empty.
+  */
+  protected results = computed(() => this.resource.hasValue() ? this.resource.value().results : []);
+  protected totalCount = computed(() => this.resource.hasValue() ? this.resource.value().totalCount : 0);
+
   public ngOnInit(): void {
     this._targetAreaSvc
       .getAll()

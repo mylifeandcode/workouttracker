@@ -13,6 +13,8 @@ import { UserRole } from '../../src/app/api/types.gen';
 
 export const FRONTEND_URL = process.env['E2E_BASE_URL'] ?? 'http://localhost:4201';
 export const API_URL = process.env['E2E_API_URL'] ?? 'http://localhost:5601';
+//The BFF is what the browser (via the dev server's proxy) and the `api` fixture talk to; only the BFF talks to API_URL.
+export const BFF_URL = process.env['E2E_BFF_URL'] ?? 'http://localhost:5602';
 
 /*
  * The E2E database is dropped and recreated on every run (see reset-database.mjs); the API
@@ -50,6 +52,5 @@ export const E2E_USER = {
   role: UserRole.STANDARD,
 };
 
-/* localStorage keys the Angular AuthService reads on startup. */
-export const TOKEN_STORAGE_KEY = 'WorkoutTrackerToken';
-export const REFRESH_TOKEN_STORAGE_KEY = 'WorkoutTrackerRefreshToken';
+/* The BFF's session cookie (see Program.cs). It is HttpOnly, so JavaScript can't read it, but Playwright can. */
+export const SESSION_COOKIE_NAME = 'wt.session';

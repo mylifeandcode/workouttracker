@@ -10,7 +10,6 @@ export class WorkoutListPage {
   readonly totalRecords: Locator;
   readonly nameFilterTrigger: Locator;
   readonly nameFilterInput: Locator;
-  readonly searchButton: Locator;
   readonly resetButton: Locator;
   readonly statusFilterTrigger: Locator;
   readonly rows: Locator;
@@ -23,7 +22,6 @@ export class WorkoutListPage {
     //another column later doesn't silently break this.
     this.nameFilterTrigger = page.getByRole('columnheader', { name: /^Name/ }).locator('nz-filter-trigger');
     this.nameFilterInput = page.getByPlaceholder('Workout Name');
-    this.searchButton = page.getByRole('button', { name: 'Search' });
     this.resetButton = page.getByRole('button', { name: 'Reset' });
     this.statusFilterTrigger = page.getByRole('columnheader', { name: /^Status/ }).locator('nz-filter-trigger');
     this.rows = page.locator('tbody tr');
@@ -33,10 +31,15 @@ export class WorkoutListPage {
     await this.page.goto('/workouts');
   }
 
+  /**
+   * Opens the name-filter dropdown and types the name. There is no Search button: the list searches by itself shortly
+   * after typing stops (a 300 ms debounce), so wait for that request rather than clicking anything.
+   */
   async searchByName(name: string): Promise<void> {
     await this.nameFilterTrigger.click();
+    const searched = this.page.waitForResponse(response => response.url().includes('nameContains='));
     await this.nameFilterInput.fill(name);
-    await this.searchButton.click();
+    await searched;
   }
 
   row(workoutName: string): Locator {

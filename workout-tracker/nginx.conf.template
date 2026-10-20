@@ -1,3 +1,10 @@
+# If a TLS-terminating proxy sits in front of this nginx it will already have set X-Forwarded-Proto; trust that so the BFF
+# knows the browser's real scheme (it decides whether the session cookie gets the Secure flag). Otherwise use our own scheme.
+map $http_x_forwarded_proto $forwarded_proto {
+    default $http_x_forwarded_proto;
+    ''      $scheme;
+}
+
 server {
     listen ${PORT};
 
@@ -15,15 +22,27 @@ server {
         application/xml
         image/svg+xml;
 
+    # Headers for everything proxied to the BFF (inherited by the locations below, which set none of their own).
+    # The BFF reads X-Forwarded-* (UseForwardedHeaders) to reconstruct the original request.
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $forwarded_proto;
+    proxy_set_header X-Forwarded-Host $host;
+
     location / {
         root /usr/share/nginx/html;
         index index.html;
         try_files $uri $uri/ /index.html;
     }
 
+    # Data calls. The BFF attaches the session's access token and forwards them to the API.
     location /api/ {
-        proxy_pass ${API_HTTP};
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass ${BFF_HTTP};
+    }
+
+    # Cookie session: login, logout and "who am I".
+    location /bff/ {
+        proxy_pass ${BFF_HTTP};
     }
 }

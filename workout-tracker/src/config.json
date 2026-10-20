@@ -1,5 +1,6 @@
 {
   "apiRoot": "/api/",
+  "bffRoot": "/bff/",
   "loginWithUserSelect": true,
   "smtpEnabled": false,
   "unitOfMass": "lb"

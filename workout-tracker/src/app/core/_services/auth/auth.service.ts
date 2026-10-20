@@ -1,81 +1,61 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, WritableSignal, signal, inject } from '@angular/core';
+import { Injectable, Signal, computed, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ConfigService } from '../config/config.service';
-import { LocalStorageService } from '../local-storage/local-storage.service';
-import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { catchError, map, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { AuthTokenResultDTO, UserProfileDTO } from '../../../api';
+import { UserProfileDTO } from '../../../api';
 import { selfHandled } from '../../_http/http-error-context';
+import { BffUser } from './bff-user';
 
+/*
+Authentication is a cookie session owned by the BFF. The browser never sees an access or refresh token: it holds an
+HttpOnly cookie it cannot read, and this service only tracks WHO the BFF says is signed in. Token refresh, bearer
+headers and JWT decoding all live server-side now.
+*/
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private _http = inject(HttpClient);
   private _configService = inject(ConfigService);
-  private _localStorageService = inject(LocalStorageService);
   private _router = inject(Router);
 
-
-  //READ-ONLY FIELDS
-  private readonly LOCAL_STORAGE_TOKEN_KEY = "WorkoutTrackerToken";
-  private readonly LOCAL_STORAGE_REFRESH_TOKEN_KEY = "WorkoutTrackerRefreshToken";
+  private readonly DEFAULT_BFF_ROOT = '/bff/';
 
   //READ-ONLY PROPERTIES
   public get loginRoute(): string {
     return this._loginRoute;
   }
 
-  //PUBLIC FIELDS
-  public token: string | null = null; //TODO: Refactor. This should be a read-only property exposing a private field.
-  public decodedTokenPayload: JwtPayload | undefined; //This is an interface, not a concrete type
-
-  public currentUserName: WritableSignal<string | null> = signal(null);
-
-  // Refresh token coordination
-  public isRefreshing = false;
-  public refreshTokenSubject = new BehaviorSubject<string | null>(null);
-  /*
-  Emits when a refresh attempt fails. Requests queued behind an in-flight refresh
-  need this to know they should give up — refreshTokenSubject never emits on
-  failure, so without it they'd wait forever.
-  */
-  public refreshFailed$ = new Subject<void>();
-
   //PRIVATE FIELDS
   private _apiRoot: string = '';
+  private _bffRoot: string = '';
   private _loginRoute: string = '';
 
-  //PRIVATE READ-ONLY FIELDS
-  private readonly ROLE_CLAIM_TYPE: string = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
-  private readonly USER_ID_CLAIM_TYPE: string = "UserID";
-  private readonly USER_PUBLIC_ID_CLAIM_TYPE: string = "UserPublicID";
-  private readonly NAME_CLAIM_TYPE: string = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+  // The signed-in user as reported by the BFF, or null when signed out. The single source of truth for session state.
+  private readonly _user = signal<BffUser | null>(null);
+
+  public readonly currentUserName: Signal<string | null> = computed(() => this._user()?.userName ?? null);
 
   //PROPERTIES ////////////////////////////////////////////////////////////////
 
   public get isUserLoggedIn(): boolean {
-    return (this.token != null);
+    return this._user() != null;
   }
 
   public get isUserAdmin(): boolean {
-    if (!this.decodedTokenPayload) return false;
-    return this.isUserLoggedIn
-      && this.decodedTokenPayload[this.ROLE_CLAIM_TYPE as keyof JwtPayload] == "Administrator";
+    return this._user()?.isAdmin ?? false;
   }
 
   public get userId(): number {
-    if (!this.decodedTokenPayload) return -1;
-    return this.decodedTokenPayload[this.USER_ID_CLAIM_TYPE as keyof JwtPayload] as number;
+    return this._user()?.userId ?? -1;
   }
 
   public get userPublicId(): string | null {
-    if (!this.decodedTokenPayload) return null;
-    return this.decodedTokenPayload[this.USER_PUBLIC_ID_CLAIM_TYPE as keyof JwtPayload] as string;
-  }  
+    return this._user()?.userPublicId ?? null;
+  }
 
   //END PROPERTIES ////////////////////////////////////////////////////////////
 
@@ -84,6 +64,8 @@ export class AuthService {
   public init(): void {
     //Race condition in app initializer prevents this from being done in constructor
     this._apiRoot = this._configService.get("apiRoot") + "auth";
+    // Not every deployed config.json has bffRoot yet; the BFF is always same-origin at /bff/ unless told otherwise.
+    this._bffRoot = (this._configService.get("bffRoot") as string | null) || this.DEFAULT_BFF_ROOT;
     this._loginRoute = this._configService.get("loginWithUserSelect") ? "user-select" : "login";
   }
 
@@ -95,106 +77,47 @@ export class AuthService {
       alone can't suppress the global notification — the interceptor's error operator
       runs upstream of anything we pipe on here, so it would have already fired.
       */
-      .post<AuthTokenResultDTO>(`${this._apiRoot}/login`, { username, password }, selfHandled())
+      .post<BffUser>(`${this._bffRoot}login`, { username, password }, selfHandled())
       .pipe(
-        tap(() => console.log('Login successful, processing token...')),
-        map((result: AuthTokenResultDTO) => {
-          this.setTokens(result.accessToken, result.refreshToken, username);
-          return true;
-        }),
+        tap((user: BffUser) => this._user.set(user)),
+        map(() => true),
         catchError(() => of(false))
       );
   }
 
   public logOut(): void {
-    // Fire-and-forget revoke call. selfHandled: routinely fails harmlessly (the token
-    // may already be dead, which is often why we're logging out) — never user-facing.
-    if (this.token) {
-      this._http.post(`${this._apiRoot}/revoke`, {}, selfHandled()).subscribe();
+    // Fire-and-forget: the BFF revokes the API tokens and deletes the session. selfHandled: it routinely fails
+    // harmlessly (the session may already be dead, which is often why we're logging out) — never user-facing.
+    if (this.isUserLoggedIn) {
+      this._http.post(`${this._bffRoot}logout`, {}, selfHandled()).subscribe({ error: () => { /* nothing to recover */ } });
     }
 
-    this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);
-    this._localStorageService.remove(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY);
-    this.token = null;
-    this.decodedTokenPayload = undefined;
-    this.currentUserName.set(null);
-    this._router.navigate([this._loginRoute]);
+    this.clearSession();
   }
 
-  public refreshAccessToken(): Observable<boolean> {
-    const refreshToken = this._localStorageService.get(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY) as string | null;
-
-    if (!this.token || !refreshToken) {
-      return of(false);
-    }
-
-    return this._http
-      /*
-      selfHandled: internal machinery, never user-initiated. It also runs inside
-      provideAppInitializer (via restoreUserSessionIfApplicable), which is before the
-      notification host can render anything. When a refresh failure genuinely matters
-      to the user, AuthInterceptor surfaces it as the 401 it rethrows.
-      */
-      .post<AuthTokenResultDTO>(`${this._apiRoot}/refresh`, {
-        accessToken: this.token,
-        refreshToken: refreshToken
-      }, selfHandled())
-      .pipe(
-        map((result: AuthTokenResultDTO) => {
-          const username = this.currentUserName() ?? '';
-          this.setTokens(result.accessToken, result.refreshToken, username);
-          return true;
-        }),
-        catchError(() => of(false))
-      );
+  /*
+  Called when the server says the session is gone (a 401 on an API call). Unlike logOut() it does NOT call
+  /bff/logout: the BFF has already ended the session, so there is nothing left to revoke.
+  */
+  public handleSessionExpired(): void {
+    this.clearSession();
   }
 
   public restoreUserSessionIfApplicable(): Observable<void> {
-    const token: string | null = (this._localStorageService.get(this.LOCAL_STORAGE_TOKEN_KEY) as string | null);
-    const refreshToken: string | null = (this._localStorageService.get(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY) as string | null);
-
-    if (!token) {
-      return of(undefined);
-    }
-
-    const decodedToken = jwtDecode<JwtPayload>(token);
-    if (!decodedToken) {
-      return of(undefined);
-    }
-
-    if (!this.isExpired(decodedToken?.exp)) {
-      // Access token still valid — restore directly
-      this.decodedTokenPayload = decodedToken;
-      this.token = token;
-
-      const username = <string | null>this.decodedTokenPayload[this.NAME_CLAIM_TYPE as keyof JwtPayload];
-      if (username) {
-        this.currentUserName.set(username);
-      }
-
-      return of(undefined);
-    }
-
-    if (refreshToken) {
-      // Access token expired but refresh token exists — attempt refresh.
-      // Returns the refresh Observable so the APP_INITIALIZER can wait for it,
-      // guaranteeing auth state is settled before any route guard runs.
-      this.token = token; // Set temporarily so refreshAccessToken can send it
-      return this.refreshAccessToken().pipe(
-        tap(success => {
-          if (!success) {
-            this.token = null;
-            this._localStorageService.remove(this.LOCAL_STORAGE_TOKEN_KEY);
-            this._localStorageService.remove(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY);
-          }
-        }),
-        map(() => undefined)
-      );
-    }
-
-    // Access token expired and no refresh token — ensure we don't look logged in
-    this.token = null;
-    return of(undefined);
+    /*
+    Asks the BFF whether the browser's cookie belongs to a live session. Returns an Observable so the
+    APP_INITIALIZER can wait for it, guaranteeing auth state is settled before any route guard runs.
+    selfHandled: a 401 here is the normal "not signed in" answer, and this runs inside provideAppInitializer, before
+    the notification host can render anything. Any failure (including the BFF being down) just means "signed out".
+    */
+    return this._http.get<BffUser>(`${this._bffRoot}user`, selfHandled()).pipe(
+      tap((user: BffUser) => this._user.set(user)),
+      map(() => undefined),
+      catchError(() => {
+        this._user.set(null);
+        return of(undefined);
+      })
+    );
   }
 
   public changePassword(currentPassword: string, newPassword: string): Observable<void> {
@@ -219,30 +142,9 @@ export class AuthService {
 
   //END PUBLIC METHODS ////////////////////////////////////////////////////////
 
-  private setTokens(accessToken: string, refreshToken: string, username: string): void {
-    this.decodedTokenPayload = jwtDecode<JwtPayload>(accessToken);
-    this.token = accessToken;
-    this.currentUserName.set(username || this.getUsernameFromToken());
-    this._localStorageService.set(this.LOCAL_STORAGE_TOKEN_KEY, accessToken);
-    this._localStorageService.set(this.LOCAL_STORAGE_REFRESH_TOKEN_KEY, refreshToken);
-  }
-
-  private getUsernameFromToken(): string | null {
-    if (!this.decodedTokenPayload) return null;
-    return <string | null>this.decodedTokenPayload[this.NAME_CLAIM_TYPE as keyof JwtPayload] ?? null;
-  }
-
-  private isExpired(expirationSecondsSinceEpoch: number | undefined): boolean {
-    if (!expirationSecondsSinceEpoch) return true;
-    return expirationSecondsSinceEpoch < this.getSecondsSinceEpoch();
-  }
-
-  private getSecondsSinceEpoch(): number {
-    //Hat tip to https://futurestud.io/tutorials/get-number-of-seconds-since-epoch-in-javascript
-    const now = new Date();
-    const utcMilllisecondsSinceEpoch = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
-    const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
-    return utcSecondsSinceEpoch;
+  private clearSession(): void {
+    this._user.set(null);
+    this._router.navigate([this._loginRoute]);
   }
 
 }

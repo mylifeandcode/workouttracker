@@ -1,6 +1,4 @@
 import { ApiClient } from './api-client';
-import { FRONTEND_URL, REFRESH_TOKEN_STORAGE_KEY, TOKEN_STORAGE_KEY } from './env';
-import type { AuthTokenResultDTO } from '../../src/app/api/types.gen';
 
 export interface SessionCredentials {
   userName: string;
@@ -8,40 +6,24 @@ export interface SessionCredentials {
 }
 
 /**
- * Builds a Playwright storage state that the app will restore as a logged-in session.
+ * Mints a brand new BFF session for the given account and returns it as a Playwright storage state.
  *
- * The values are JSON.stringify'd because LocalStorageService round-trips everything through
- * JSON — a bare token string makes JSON.parse throw during app initialization, and the app
- * hangs forever on its "Loading..." placeholder with no visible error.
- */
-export function buildStorageState(tokens: AuthTokenResultDTO) {
-  return {
-    cookies: [],
-    origins: [
-      {
-        origin: FRONTEND_URL,
-        localStorage: [
-          { name: TOKEN_STORAGE_KEY, value: JSON.stringify(tokens.accessToken) },
-          { name: REFRESH_TOKEN_STORAGE_KEY, value: JSON.stringify(tokens.refreshToken) },
-        ],
-      },
-    ],
-  };
-}
-
-/**
- * Mints a brand new session for the given account.
+ * The whole session is one cookie: the BFF's HttpOnly `wt.session`, which only names a server-side session. We get it
+ * by signing in through the BFF exactly as the browser would, then lift the cookie out of the request context's jar.
+ * There are no tokens and no localStorage to seed. The app restores the session by asking GET /bff/user, which the
+ * browser answers with this cookie.
  *
- * This is deliberately done per test rather than once in the global setup. Restoring a session
- * always ends up calling /auth/refresh, and refresh *rotates* the refresh token — the old one is
- * marked revoked and replaced. A storage state reused by a second test therefore presents an
- * already-revoked refresh token, the refresh fails, and the app silently drops to logged out.
+ * Why the cookie works in a browser that talks to a different port: cookies are scoped by host, not port, so the
+ * cookie the BFF set for localhost:5602 is also sent to the dev server on localhost:4201, which proxies it onward.
+ *
+ * This is deliberately done per test rather than once in the global setup. Logging off ends the session on the server
+ * (the BFF revokes it), so a state shared by several tests would die the moment one of them tests logout.
  */
 export async function createSessionState(credentials: SessionCredentials) {
-  const client = await ApiClient.anonymous();
+  const client = await ApiClient.authenticateAs(credentials.userName, credentials.password);
 
   try {
-    return buildStorageState(await client.logIn(credentials.userName, credentials.password));
+    return await client.sessionState();
   } finally {
     await client.dispose();
   }

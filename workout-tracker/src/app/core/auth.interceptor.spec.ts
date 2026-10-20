@@ -2,7 +2,6 @@ import { HttpClient, HttpErrorResponse, HTTP_INTERCEPTORS, provideHttpClient, wi
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { BehaviorSubject, Subject, of } from 'rxjs';
 
 import { AuthInterceptor } from './auth.interceptor';
 import { AuthService } from './_services/auth/auth.service';
@@ -13,15 +12,15 @@ describe('AuthInterceptor', () => {
   let httpTestingController: HttpTestingController;
   let httpClient: HttpClient;
   let authService: AuthService;
+  let userLoggedIn: boolean;
 
   beforeEach(() => {
+    userLoggedIn = true;
+
+    // isUserLoggedIn is a getter on AuthService; back it with a closure so each test can flip it.
     const AuthServiceMock: Partial<Mocked<AuthService>> = {
-      token: "someAccessToken",
-      isRefreshing: false,
-      refreshTokenSubject: new BehaviorSubject<string | null>(null),
-      refreshFailed$: new Subject<void>(),
-      refreshAccessToken: vi.fn<AuthService['refreshAccessToken']>().mockReturnValue(of(true)),
-      logOut: vi.fn<AuthService['logOut']>()
+      get isUserLoggedIn() { return userLoggedIn; },
+      handleSessionExpired: vi.fn<AuthService['handleSessionExpired']>()
     };
 
     TestBed.configureTestingModule({
@@ -45,132 +44,118 @@ describe('AuthInterceptor', () => {
     httpClient = TestBed.inject(HttpClient);
     httpTestingController = TestBed.inject(HttpTestingController);
     authService = TestBed.inject(AuthService);
-
   });
 
-  it('should inject access token into header', () => {
+  describe('CSRF header', () => {
 
-    httpClient.get("api/blah").subscribe();
+    it.each(['POST', 'PUT', 'PATCH', 'DELETE'])('should be added to a same-origin %s request', (method: string) => {
 
-    const testRequest: TestRequest = httpTestingController.expectOne("api/blah");
+      httpClient.request(method, '/api/blah', { body: {} }).subscribe();
+
+      const testRequest: TestRequest = httpTestingController.expectOne('/api/blah');
+      testRequest.flush({});
+
+      expect(testRequest.request.headers.get('X-CSRF')).toBe('1');
+    });
+
+    it('should be added to the BFF login request, which is also a state-changing POST', () => {
+
+      httpClient.post('/bff/login', {}).subscribe();
+
+      const testRequest: TestRequest = httpTestingController.expectOne('/bff/login');
+      testRequest.flush({});
+
+      expect(testRequest.request.headers.get('X-CSRF')).toBe('1');
+    });
+
+    it.each(['GET', 'HEAD', 'OPTIONS'])('should not be added to a safe %s request', (method: string) => {
+
+      httpClient.request(method, '/api/blah').subscribe();
+
+      const testRequest: TestRequest = httpTestingController.expectOne('/api/blah');
+      testRequest.flush({});
+
+      expect(testRequest.request.headers.has('X-CSRF')).toBe(false);
+    });
+
+    it('should not be sent to a third-party absolute URL', () => {
+
+      httpClient.post('https://example.com/collect', {}).subscribe();
+
+      const testRequest: TestRequest = httpTestingController.expectOne('https://example.com/collect');
+      testRequest.flush({});
+
+      expect(testRequest.request.headers.has('X-CSRF')).toBe(false);
+    });
+  });
+
+  it('should never add an Authorization header: the BFF attaches the token server-side', () => {
+
+    httpClient.get('/api/blah').subscribe();
+
+    const testRequest: TestRequest = httpTestingController.expectOne('/api/blah');
     testRequest.flush([]);
 
-    expect(testRequest.request.headers.get("Authorization")).toBeDefined();
-    expect(testRequest.request.headers.get("Authorization")).toBe("Bearer someAccessToken");
+    expect(testRequest.request.headers.has('Authorization')).toBe(false);
   });
 
-  it('should not inject access token into header when no token is present', () => {
+  describe('401 handling', () => {
 
-    authService.token = null;
+    function respondWith401(url: string): HttpErrorResponse | undefined {
+      let caught: HttpErrorResponse | undefined;
+      httpClient.get(url).subscribe({ error: (error: HttpErrorResponse) => { caught = error; } });
 
-    httpClient.get("api/blah").subscribe();
+      httpTestingController.expectOne(url).flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+      return caught;
+    }
 
-    const testRequest: TestRequest = httpTestingController.expectOne("api/blah");
-    testRequest.flush([]);
+    it('should end the local session, and still rethrow the 401, when a data call is rejected', () => {
 
-    expect(testRequest.request.headers.get("Authorization")).toBeNull();
-  });
+      const caught = respondWith401('/api/blah');
 
-  it('should attempt refresh on 401 and retry original request', () => {
-
-    vi.mocked(authService.refreshAccessToken).mockReturnValue(of(true));
-
-    httpClient.get("api/data").subscribe();
-
-    const originalRequest = httpTestingController.expectOne("api/data");
-    originalRequest.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
-
-    // After refresh, the interceptor retries the request
-    const retryRequest = httpTestingController.expectOne("api/data");
-    retryRequest.flush({ data: 'success' });
-
-    expect(authService.refreshAccessToken).toHaveBeenCalled();
-  });
-
-  it('should not attempt refresh on 401 for auth/refresh URL', () => {
-
-    let errorCaught = false;
-    httpClient.get("http://localhost:5600/auth/refresh").subscribe({
-      error: () => { errorCaught = true; }
+      expect(authService.handleSessionExpired).toHaveBeenCalledTimes(1);
+      expect(caught?.status).toBe(401);
     });
 
-    const request = httpTestingController.expectOne("http://localhost:5600/auth/refresh");
-    request.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+    it('should not retry the request: the BFF already did the refreshing', () => {
 
-    expect(authService.refreshAccessToken).not.toHaveBeenCalled();
-    expect(errorCaught).toBe(true);
-  });
+      respondWith401('/api/blah');
 
-  /*
-  logOut() fires POST /auth/revoke precisely when the token may already be dead.
-  Without this exclusion its 401 triggers a refresh, which fails, which calls
-  logOut() again.
-  */
-  it('should not attempt refresh on 401 for auth/revoke URL', () => {
-
-    let errorCaught = false;
-    httpClient.post("http://localhost:5600/auth/revoke", {}).subscribe({
-      error: () => { errorCaught = true; }
+      httpTestingController.expectNone('/api/blah');
     });
 
-    const request = httpTestingController.expectOne("http://localhost:5600/auth/revoke");
-    request.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+    it('should leave the session alone when /bff/login returns 401, since that is just a failed login', () => {
 
-    expect(authService.refreshAccessToken).not.toHaveBeenCalled();
-    expect(errorCaught).toBe(true);
-  });
+      const caught = respondWith401('/bff/login');
 
-  describe('requests queued behind an in-flight refresh', () => {
-
-    beforeEach(() => {
-      //Simulate another request having already started a refresh.
-      authService.isRefreshing = true;
+      expect(authService.handleSessionExpired).not.toHaveBeenCalled();
+      expect(caught?.status).toBe(401);
     });
 
-    it('should be replayed once the refresh succeeds', () => {
+    it('should leave the session alone when /bff/user returns 401, since that is the normal signed-out answer at startup', () => {
 
-      let received: unknown;
-      httpClient.get("api/data").subscribe((value: unknown) => { received = value; });
+      respondWith401('/bff/user');
 
-      httpTestingController.expectOne("api/data")
-        .flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
-
-      //The in-flight refresh completes and publishes the new token.
-      authService.refreshTokenSubject.next("aFreshAccessToken");
-
-      const retryRequest: TestRequest = httpTestingController.expectOne("api/data");
-      expect(retryRequest.request.headers.get("Authorization")).toBe("Bearer someAccessToken");
-      retryRequest.flush({ data: 'success' });
-
-      expect(received).toEqual({ data: 'success' });
+      expect(authService.handleSessionExpired).not.toHaveBeenCalled();
     });
 
-    /*
-    Nothing is ever pushed to refreshTokenSubject when a refresh fails, so waiting
-    only on it meant the request never emitted, errored, or completed: finalize()
-    never ran and the caller's spinner stuck permanently.
-    */
-    it('should error rather than hang when the refresh fails', () => {
+    it('should not react to a 401 when nobody is signed in', () => {
+      userLoggedIn = false;
+
+      respondWith401('/api/blah');
+
+      expect(authService.handleSessionExpired).not.toHaveBeenCalled();
+    });
+
+    it('should not end the session for errors other than 401', () => {
 
       let caught: HttpErrorResponse | undefined;
-      let completed = false;
-      httpClient.get("api/data").subscribe({
-        error: (error: HttpErrorResponse) => { caught = error; },
-        complete: () => { completed = true; }
-      });
+      httpClient.get('/api/blah').subscribe({ error: (error: HttpErrorResponse) => { caught = error; } });
 
-      httpTestingController.expectOne("api/data")
-        .flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+      httpTestingController.expectOne('/api/blah').flush('boom', { status: 500, statusText: 'Server Error' });
 
-      expect(caught).toBeUndefined(); //Still waiting on the in-flight refresh
-
-      authService.refreshFailed$.next();
-
-      expect(caught).toBeInstanceOf(HttpErrorResponse);
-      expect(caught?.status).toBe(401);
-      expect(completed).toBe(false);
-      httpTestingController.expectNone("api/data"); //Never replayed
+      expect(authService.handleSessionExpired).not.toHaveBeenCalled();
+      expect(caught?.status).toBe(500);
     });
   });
-
 });

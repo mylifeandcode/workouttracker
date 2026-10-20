@@ -14,7 +14,6 @@ export class ExerciseListPage {
   readonly totalRecords: Locator;
   readonly nameFilterTrigger: Locator;
   readonly nameFilterInput: Locator;
-  readonly searchButton: Locator;
   readonly resetButton: Locator;
 
   constructor(private readonly page: Page) {
@@ -24,7 +23,6 @@ export class ExerciseListPage {
     //Both the Name and Target Areas columns have a filter trigger, so this must be scoped.
     this.nameFilterTrigger = page.getByRole('columnheader', { name: /^Name/ }).locator('nz-filter-trigger');
     this.nameFilterInput = page.getByPlaceholder('Exercise Name');
-    this.searchButton = page.getByRole('button', { name: 'Search' });
     this.resetButton = page.getByRole('button', { name: 'Reset' });
   }
 
@@ -32,11 +30,15 @@ export class ExerciseListPage {
     await this.page.goto('/exercises');
   }
 
-  /** Opens the name-filter dropdown, searches, and waits for the table to settle. */
+  /**
+   * Opens the name-filter dropdown and types the name. There is no Search button: the list searches by itself shortly
+   * after typing stops (a 300 ms debounce), so wait for that request rather than clicking anything.
+   */
   async searchByName(name: string): Promise<void> {
     await this.nameFilterTrigger.click();
+    const searched = this.page.waitForResponse(response => response.url().includes('nameContains='));
     await this.nameFilterInput.fill(name);
-    await this.searchButton.click();
+    await searched;
   }
 
   row(exerciseName: string): Locator {

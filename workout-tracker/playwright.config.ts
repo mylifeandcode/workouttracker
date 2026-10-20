@@ -1,12 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
-import { API_URL, E2E_DB_CONNECTION, FRONTEND_URL } from './e2e/support/env';
+import { API_URL, BFF_URL, E2E_DB_CONNECTION, FRONTEND_URL } from './e2e/support/env';
 
 /*
- * E2E configuration. These tests drive the real Angular app against the real API and a real
- * SQL Server database, all of which Playwright starts itself.
+ * E2E configuration. These tests drive the real Angular app against the real BFF, the real API and a
+ * real SQL Server database, all of which Playwright starts itself. The browser only ever talks to the
+ * dev server, which proxies to the BFF; the BFF holds the session and is the only thing that talks to
+ * the API.
  *
- * The whole stack is disposable and runs on its own ports (4201/5601, versus the dev stack's
- * 4200/5600) against its own database, which is dropped at the start of every run. That means
+ * The whole stack is disposable and runs on its own ports (4201/5602/5601, versus the dev stack's
+ * 4200/5610/5600) against its own database, which is dropped at the start of every run. That means
  * a run is always reproducible, and you can leave your dev servers — or the Aspire AppHost —
  * running while tests execute.
  *
@@ -78,6 +80,23 @@ export default defineConfig({
       },
     },
     {
+      name: 'bff',
+      //Listed after the API so it starts after it; the BFF needs the API at Api__BaseUrl only once a request actually reaches it.
+      command: 'dotnet run --verbosity quiet --no-launch-profile --project ../API/WorkoutTracker.BFF/WorkoutTracker.BFF.csproj',
+      //ServiceDefaults maps /health in Development; it proves the BFF is up without needing a session.
+      url: `${BFF_URL}/health`,
+      timeout: 240_000,
+      reuseExistingServer: false,
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: {
+        ASPNETCORE_ENVIRONMENT: 'Development',
+        ASPNETCORE_URLS: BFF_URL,
+        //The one place the BFF learns where the API lives (Api:BaseUrl in appsettings.json).
+        Api__BaseUrl: API_URL,
+      },
+    },
+    {
       name: 'frontend',
       command: `npm run start -- --port ${new URL(FRONTEND_URL).port}`,
       url: FRONTEND_URL,
@@ -86,8 +105,8 @@ export default defineConfig({
       stdout: 'pipe',
       stderr: 'pipe',
       env: {
-        //Points proxy.conf.js at the API this config started, not the dev one.
-        API_HTTP: API_URL,
+        //Points proxy.conf.js (/api and /bff) at the BFF this config started, not the dev one.
+        BFF_HTTP: BFF_URL,
       },
     },
   ],

@@ -46,7 +46,7 @@ export default async function globalSetup(): Promise<void> {
 
   await createBaselineExercises();
 
-  console.log(`[e2e-setup] Provisioned "${E2E_ADMIN.userName}" (admin) and "${E2E_USER.userName}", and saved their sessions.`);
+  console.log(`[e2e-setup] Provisioned "${E2E_ADMIN.userName}" (admin) and "${E2E_USER.userName}", plus baseline data, through the BFF.`);
 }
 
 /*

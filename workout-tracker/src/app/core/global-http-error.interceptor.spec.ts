@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Provider, provideZonelessChangeDetection } from '@angular/core';
-import { BehaviorSubject, Subject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { type Mocked } from 'vitest';
 
@@ -212,26 +212,23 @@ describe('GlobalHttpErrorInterceptor', () => {
     });
   });
 
-  /*
-  THE ORDERING GUARANTEE.
 
-  Angular builds the interceptor chain with reduceRight, so the FIRST HTTP_INTERCEPTORS
-  entry is the outermost. GlobalHttpErrorInterceptor has to wrap AuthInterceptor, or a
-  silent token refresh stops being silent. These tests assert BOTH orders, so the
-  "correct order" test can't pass for the wrong reason.
+  /*
+  INTERACTION WITH AuthInterceptor.
+
+  The BFF refreshes tokens server-side, so the browser no longer swallows a 401 and replays the request. A 401 from a data
+  call means the session is genuinely gone: AuthInterceptor ends the local session and rethrows, and this interceptor tells
+  the user exactly once. Interceptor order no longer changes that outcome, and the first two tests prove it for both orders.
   */
-  describe('ordering relative to AuthInterceptor', () => {
+  describe('interaction with AuthInterceptor', () => {
 
     let authService: AuthService;
 
     function buildAuthServiceMock(): Partial<Mocked<AuthService>> {
       return {
-        token: 'someAccessToken',
-        isRefreshing: false,
-        refreshTokenSubject: new BehaviorSubject<string | null>(null),
-        refreshFailed$: new Subject<void>(),
-        refreshAccessToken: vi.fn<AuthService['refreshAccessToken']>().mockReturnValue(of(true)),
-        logOut: vi.fn<AuthService['logOut']>()
+        // A getter, like the real service: AuthInterceptor only reacts to a 401 while someone is signed in.
+        get isUserLoggedIn() { return true; },
+        handleSessionExpired: vi.fn<AuthService['handleSessionExpired']>()
       };
     }
 
@@ -249,57 +246,37 @@ describe('GlobalHttpErrorInterceptor', () => {
       authService = TestBed.inject(AuthService);
     }
 
-    it('should NOT notify the user when a silent token refresh succeeds', () => {
+    it('should end the session and notify exactly once when a data call returns 401', () => {
       configureWithBothInterceptors(true);
-      let received: unknown;
-
-      httpClient.get(API_URL).subscribe((value: unknown) => { received = value; });
-
-      httpTestingController.expectOne(API_URL).flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
-      httpTestingController.expectOne(API_URL).flush({ ok: true });
-
-      expect(authService.refreshAccessToken).toHaveBeenCalled();
-      expect(received).toEqual({ ok: true });
-      expect(notificationService.error).not.toHaveBeenCalled();
-    });
-
-    /*
-    Proves the test above detects the mistake it exists to prevent, rather than
-    passing for some unrelated reason.
-    */
-    it('should notify spuriously if the interceptors are registered in the wrong order', () => {
-      configureWithBothInterceptors(false);
-
-      httpClient.get(API_URL).subscribe();
-
-      httpTestingController.expectOne(API_URL).flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
-      httpTestingController.expectOne(API_URL).flush({ ok: true });
-
-      expect(notificationService.error).toHaveBeenCalled();
-    });
-
-    it('should notify once when the refresh fails', () => {
-      configureWithBothInterceptors(true);
-      vi.mocked(authService.refreshAccessToken).mockReturnValue(of(false));
 
       httpClient.get(API_URL).subscribe({ error: () => undefined });
 
       httpTestingController.expectOne(API_URL).flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
-      expect(authService.logOut).toHaveBeenCalled();
+      expect(authService.handleSessionExpired).toHaveBeenCalledTimes(1);
       expect(notificationService.error).toHaveBeenCalledTimes(1);
       expect(vi.mocked(notificationService.error).mock.calls[0][1]).toBe('Your session has expired. Please sign in again.');
     });
 
-    it('should still report a replayed request that fails for a different reason', () => {
-      configureWithBothInterceptors(true);
+    it('should behave the same when the interceptors are registered in the opposite order', () => {
+      configureWithBothInterceptors(false);
 
       httpClient.get(API_URL).subscribe({ error: () => undefined });
 
       httpTestingController.expectOne(API_URL).flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
-      const replay: TestRequest = httpTestingController.expectOne(API_URL);
-      replay.flush('boom', { status: 500, statusText: 'Server Error' });
 
+      expect(authService.handleSessionExpired).toHaveBeenCalledTimes(1);
+      expect(notificationService.error).toHaveBeenCalledTimes(1);
+    });
+
+    it('should still report a data call that fails for a different reason, without ending the session', () => {
+      configureWithBothInterceptors(true);
+
+      httpClient.get(API_URL).subscribe({ error: () => undefined });
+
+      httpTestingController.expectOne(API_URL).flush('boom', { status: 500, statusText: 'Server Error' });
+
+      expect(authService.handleSessionExpired).not.toHaveBeenCalled();
       expect(notificationService.error).toHaveBeenCalledTimes(1);
       expect(vi.mocked(notificationService.error).mock.calls[0][1]).toContain("couldn't load");
     });

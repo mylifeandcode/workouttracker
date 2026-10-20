@@ -1,12 +1,12 @@
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { firstValueFrom, throwError } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from './auth.service';
+import { BffUser } from './bff-user';
 import { ConfigService } from '../config/config.service';
-import { LocalStorageService } from '../local-storage/local-storage.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { type Mocked } from 'vitest';
 
@@ -16,17 +16,19 @@ import { type Mocked } from 'vitest';
 class FakeComponent {
 }
 
-//This has to be a real token because the service decodes it
-const TEST_ACCESS_TOKEN: string = 'eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.' +
-  'eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWxhbiIsImh0dHA6Ly9z' +
-  'Y2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmF0b3IiLCJVc2VySUQi' +
-  'OiIyIiwiZXhwIjoxNjU4MDE2NTY0LCJpc3MiOiJ3d3cud29ya291dHRyYWNrZXIubmV0IiwiYXVkIjoid3d3LndvcmtvdXR0cmFja2Vy' +
-  'Lm5ldCJ9.gNYFG9fAcwSfDCntFdxNpPTO5zq-zp9Rw_BrRy3Qus4';
+const ADMIN_USER: BffUser = {
+  userName: 'unittestuser',
+  isAdmin: true,
+  userId: 2,
+  userPublicId: '6f1c2c5e-8a3e-4c3a-9f4e-0d2b7a1c9e11'
+};
+
+const STANDARD_USER: BffUser = { ...ADMIN_USER, isAdmin: false };
 
 describe('AuthService', () => {
   let service: AuthService;
   let configService: ConfigService;
-  let localStorageService: LocalStorageService;
+  let router: Router;
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
@@ -40,15 +42,6 @@ describe('AuthService', () => {
         return "";
       })
     };
-    const LocalStorageServiceMock: Partial<Mocked<LocalStorageService>> = {
-      set: vi.fn<LocalStorageService['set']>(),
-      remove: vi.fn<LocalStorageService['remove']>(),
-      get: vi.fn<LocalStorageService['get']>().mockImplementation((key: string) => {
-        if (key === 'WorkoutTrackerToken') return TEST_ACCESS_TOKEN;
-        if (key === 'WorkoutTrackerRefreshToken') return 'testRefreshToken';
-        return null;
-      })
-    };
 
     TestBed.configureTestingModule({
       imports: [RouterModule.forRoot([{ path: 'user-select', component: FakeComponent }])],
@@ -58,20 +51,24 @@ describe('AuthService', () => {
           provide: ConfigService,
           useValue: ConfigServiceMock
         },
-        {
-          provide: LocalStorageService,
-          useValue: LocalStorageServiceMock
-        },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
       ]
     });
     service = TestBed.inject(AuthService);
     configService = TestBed.inject(ConfigService);
-    localStorageService = TestBed.inject(LocalStorageService);
+    router = TestBed.inject(Router);
     httpTestingController = TestBed.inject(HttpTestingController);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
     service.init(); //Required because APP_INITIALIZER does this due to a race condition
   });
+
+  /** Signs the given user in through the BFF login endpoint, so state is set the way production sets it. */
+  async function signIn(user: BffUser): Promise<void> {
+    const result = firstValueFrom(service.logIn(user.userName, 'thispasswordaintreal123%^&'));
+    httpTestingController.expectOne('/bff/login').flush(user);
+    expect(await result).toBe(true);
+  }
 
   it('should be created', () => {
     expect(service).toBeTruthy();
@@ -80,131 +77,155 @@ describe('AuthService', () => {
   it('should initialize', () => {
     service.init();
     expect(configService.get).toHaveBeenCalledWith("apiRoot");
+    expect(configService.get).toHaveBeenCalledWith("bffRoot");
     expect(configService.get).toHaveBeenCalledWith("loginWithUserSelect");
   });
 
-  it('should log user in', async () => {
+  describe('logIn', () => {
 
-    //ARRANGE
-    const username = "unittestuser";
-    const password = "thispasswordaintreal123%^&";
+    it('should post the credentials to the BFF and record the user it returns', async () => {
 
-    //ACT
-    const result = firstValueFrom(service.logIn(username, password));
+      const result = firstValueFrom(service.logIn('unittestuser', 'thispasswordaintreal123%^&'));
 
-    //ASSERT
-    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
-    expect(testRequest.request.method).toEqual('POST');
+      const testRequest: TestRequest = httpTestingController.expectOne('/bff/login');
+      expect(testRequest.request.method).toEqual('POST');
+      expect(testRequest.request.body).toEqual({ username: 'unittestuser', password: 'thispasswordaintreal123%^&' });
 
-    testRequest.flush({ accessToken: TEST_ACCESS_TOKEN, refreshToken: 'testRefreshToken' });
-    expect(service.token).toBe(TEST_ACCESS_TOKEN);
-    expect(localStorageService.set).toHaveBeenCalledWith('WorkoutTrackerRefreshToken', 'testRefreshToken');
-    
-    expect(await result).toBe(true);
+      testRequest.flush(ADMIN_USER);
+
+      expect(await result).toBe(true);
+      expect(service.isUserLoggedIn).toBe(true);
+      expect(service.currentUserName()).toBe('unittestuser');
+      expect(service.userId).toBe(2);
+      expect(service.userPublicId).toBe(ADMIN_USER.userPublicId);
+    });
+
+    it('should use the bffRoot from config when one is configured', async () => {
+      vi.mocked(configService.get).mockImplementation((key: string) => key === 'bffRoot' ? '/custom-bff/' : '');
+      service.init();
+
+      const result = firstValueFrom(service.logIn('unittestuser', 'pw'));
+      httpTestingController.expectOne('/custom-bff/login').flush(ADMIN_USER);
+
+      expect(await result).toBe(true);
+    });
+
+    it('should return false and stay signed out when the BFF rejects the login', async () => {
+
+      const result = firstValueFrom(service.logIn('username', 'aintarealpassword123$#@!'));
+
+      httpTestingController.expectOne('/bff/login').flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+
+      expect(await result).toBe(false);
+      expect(service.isUserLoggedIn).toBe(false);
+      expect(service.currentUserName()).toBeNull();
+    });
   });
 
-  it('should return value of false from login when error occurs logging user in', async () => {
+  describe('logOut', () => {
 
-    const result = firstValueFrom(service.logIn("username", "aintarealpassword123$#@!"));
+    it('should ask the BFF to end the session, clear local state and go to the login route', async () => {
 
-    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
-    expect(testRequest.request.method).toEqual('POST');
+      await signIn(ADMIN_USER);
 
-    testRequest.flush(throwError(() => "Something bad happened!"));
-    expect(await result).toBe(false);
+      service.logOut();
+
+      // Fire-and-forget: the BFF revokes the API tokens and deletes the session.
+      const logoutRequest = httpTestingController.expectOne('/bff/logout');
+      expect(logoutRequest.request.method).toEqual('POST');
+      logoutRequest.flush(null);
+
+      expect(service.isUserLoggedIn).toBe(false);
+      expect(service.currentUserName()).toBeNull();
+      expect(router.navigate).toHaveBeenCalledWith(['user-select']);
+    });
+
+    it('should clear local state even when the BFF call fails', async () => {
+
+      await signIn(ADMIN_USER);
+
+      service.logOut();
+      httpTestingController.expectOne('/bff/logout').flush('boom', { status: 500, statusText: 'Server Error' });
+
+      expect(service.isUserLoggedIn).toBe(false);
+    });
+
+    it('should not call the BFF when nobody is signed in', () => {
+
+      service.logOut();
+
+      httpTestingController.expectNone('/bff/logout');
+      expect(router.navigate).toHaveBeenCalledWith(['user-select']);
+    });
   });
 
-  it('should log user out', async () => {
+  describe('handleSessionExpired', () => {
 
-    //ARRANGE
-    //We need to log in first
-    const username = "unittestuser";
-    const password = "thispasswordaintreal123%^&";
+    it('should clear local state and go to the login route without calling the BFF', async () => {
 
-    const result = firstValueFrom(service.logIn(username, password));
+      await signIn(ADMIN_USER);
 
-    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
-    expect(testRequest.request.method).toEqual('POST');
+      service.handleSessionExpired();
 
-    testRequest.flush({ accessToken: TEST_ACCESS_TOKEN, refreshToken: 'testRefreshToken' });
-
-    //Sanity Check
-    expect(await result).toBe(true);
-    expect(service.currentUserName()).toBe(username);
-    expect(service.token).toBe(TEST_ACCESS_TOKEN);
-    //End login
-
-    //ACT
-    service.logOut();
-
-    //Flush the revoke request (fire-and-forget)
-    const revokeRequest = httpTestingController.expectOne("http://localhost:5600/auth/revoke");
-    revokeRequest.flush(null);
-
-    //ASSERT
-    expect(service.currentUserName()).toBe(null);
-    expect(service.token).toBeNull();
-    expect(localStorageService.remove).toHaveBeenCalledWith('WorkoutTrackerToken');
-    expect(localStorageService.remove).toHaveBeenCalledWith('WorkoutTrackerRefreshToken');
+      httpTestingController.expectNone('/bff/logout');
+      expect(service.isUserLoggedIn).toBe(false);
+      expect(router.navigate).toHaveBeenCalledWith(['user-select']);
+    });
   });
 
-  it('should refresh access token successfully', async () => {
-    //ARRANGE
-    service.token = TEST_ACCESS_TOKEN;
+  describe('restoreUserSessionIfApplicable', () => {
 
-    //ACT
-    const result = firstValueFrom(service.refreshAccessToken());
+    it('should restore the user when the BFF reports a live session', async () => {
 
-    //ASSERT
-    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/refresh");
-    expect(testRequest.request.method).toEqual('POST');
-    expect(testRequest.request.body.accessToken).toBe(TEST_ACCESS_TOKEN);
-    expect(testRequest.request.body.refreshToken).toBe('testRefreshToken');
+      const result = firstValueFrom(service.restoreUserSessionIfApplicable());
 
-    testRequest.flush({ accessToken: TEST_ACCESS_TOKEN, refreshToken: 'newRefreshToken' });
-    expect(await result).toBe(true);
-    expect(service.token).toBe(TEST_ACCESS_TOKEN);
-    expect(localStorageService.set).toHaveBeenCalledWith('WorkoutTrackerRefreshToken', 'newRefreshToken');
+      const testRequest = httpTestingController.expectOne('/bff/user');
+      expect(testRequest.request.method).toEqual('GET');
+      testRequest.flush(ADMIN_USER);
+      await result;
+
+      expect(service.isUserLoggedIn).toBe(true);
+      expect(service.currentUserName()).toBe('unittestuser');
+    });
+
+    it('should leave the user signed out, and complete normally, when there is no session', async () => {
+
+      const result = firstValueFrom(service.restoreUserSessionIfApplicable(), { defaultValue: undefined });
+
+      httpTestingController.expectOne('/bff/user').flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+      await result;
+
+      expect(service.isUserLoggedIn).toBe(false);
+    });
+
+    it('should leave the user signed out, and not block app startup, when the BFF is unreachable', async () => {
+
+      const result = firstValueFrom(service.restoreUserSessionIfApplicable(), { defaultValue: undefined });
+
+      httpTestingController.expectOne('/bff/user').error(new ProgressEvent('error'));
+      await result;
+
+      expect(service.isUserLoggedIn).toBe(false);
+    });
   });
 
-  it('should return false from refreshAccessToken when error occurs', async () => {
-    //ARRANGE
-    service.token = TEST_ACCESS_TOKEN;
+  describe('isUserAdmin', () => {
 
-    //ACT
-    const result = firstValueFrom(service.refreshAccessToken());
+    it('should be true when the BFF says the user is an administrator', async () => {
+      await signIn(ADMIN_USER);
+      expect(service.isUserAdmin).toBe(true);
+    });
 
-    //ASSERT
-    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/refresh");
-    testRequest.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
-    expect(await result).toBe(false);
-  });
+    it('should be false for a standard user', async () => {
+      await signIn(STANDARD_USER);
+      expect(service.isUserAdmin).toBe(false);
+    });
 
-  //Having a unit test for restoreUserSessionIfApplicable() is problematic because it does an 
-  //expiration check on the token.
-  //TODO: Manipulate .NET code temporarily and create an access token that expires 100 years 
-  //from now so we can setup a unit test for this method.
-
-  //TODO: Create unit test for "should return false from isUserAdmin when user is not an admin".
-  //Issue is similar to the one above: need a real, non-admin token value.
-
-  it('should return true from isUserAdmin when user is an admin', async () => {
-
-    //ARRANGE
-    //We need to log in first
-    const username = "unittestuser";
-    const password = "thispasswordaintreal123%^&";
-
-    const loginResult = firstValueFrom(service.logIn(username, password));
-
-    //ASSERT
-    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/login");
-    expect(testRequest.request.method).toEqual('POST');
-
-    //Respond with the mock results
-    testRequest.flush({ accessToken: TEST_ACCESS_TOKEN, refreshToken: 'testRefreshToken' });
-    expect(await loginResult).toBe(true);
-    expect(service.isUserAdmin).toBe(true);
+    it('should be false when nobody is signed in', () => {
+      expect(service.isUserAdmin).toBe(false);
+      expect(service.userId).toBe(-1);
+      expect(service.userPublicId).toBeNull();
+    });
   });
 
   it('should return user-select route from loginRoute property when applicable', () => {
