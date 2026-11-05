@@ -99,6 +99,18 @@ builder.Services.AddDbContext<WorkoutsContext>(options =>
 //Originally from https://www.codemag.com/Article/2105051/Implementing-JWT-Authentication-in-ASP.NET-Core-5 .
 //See also https://github.com/joydipkanjilal/jwt-aspnetcore/tree/master/jwt-aspnetcore for differences between the 
 //article's code and the code they implemented
+//The signing key is deliberately not stored in any tracked config file. Fail at startup, with
+//instructions, rather than with an opaque ArgumentNullException (or a weak key) at first login.
+var jwtKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrWhiteSpace(jwtKey) || Encoding.UTF8.GetByteCount(jwtKey) < 32)
+{
+    throw new InvalidOperationException(
+        "Jwt:Key is missing or too short. Set a random key of at least 32 bytes " +
+        "(64 recommended) via user-secrets or the Jwt__Key environment variable. " +
+        "Example: dotnet user-secrets set \"Jwt:Key\" \"<your-key>\" --project API/WorkoutTracker.API. " +
+        "See the README section \"Configuring the JWT signing key\".");
+}
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -109,7 +121,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
 

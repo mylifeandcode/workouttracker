@@ -67,6 +67,7 @@ Playwright drives the real app against the real API and a real SQL Server databa
 
 - Run everything: `npm run e2e`. Also `npm run e2e-ui` (Playwright UI), `npm run e2e-headed`, `npm run e2e-report` (last HTML report).
 - Run one file or one test: `npx playwright test e2e/auth.e2e.ts`, or `npx playwright test -g "logging off"`.
+- The E2E API needs a JWT signing key like any other run; the config generates a throwaway one per run, so no setup is needed. Set `E2E_JWT_KEY` to pin one.
 
 **Playwright starts the whole stack itself** — nothing needs to be running first. Each run drops the E2E database ([reset-database.mjs](e2e/support/reset-database.mjs)), starts the API on **:5601** (which recreates, migrates and seeds that database on boot), starts a dev server on **:4201** proxied to it, then runs [global-setup.ts](e2e/support/global-setup.ts) to provision accounts and baseline data.
 

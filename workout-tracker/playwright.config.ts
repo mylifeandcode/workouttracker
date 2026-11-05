@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { randomBytes } from 'node:crypto';
 import { API_URL, E2E_DB_CONNECTION, FRONTEND_URL } from './e2e/support/env';
 
 /*
@@ -75,6 +76,10 @@ export default defineConfig({
         ASPNETCORE_URLS: API_URL,
         //reset-database.mjs reads this too, so the two can't disagree about which database.
         ConnectionStrings__WorkoutTrackerDatabase: E2E_DB_CONNECTION,
+        //The API refuses to start without a signing key and none is committed. Everything this stack
+        //signs dies with the run (sessions are minted per test), so a throwaway key needs no setup.
+        //Set E2E_JWT_KEY to pin one instead.
+        Jwt__Key: process.env['E2E_JWT_KEY'] ?? randomBytes(48).toString('base64'),
       },
     },
     {

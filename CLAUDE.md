@@ -47,7 +47,7 @@ Keep business rules in Application services, EF specifics in Repository/Data, an
 
 **Startup is load-bearing** ([Program.cs](API/WorkoutTracker.API/Program.cs)): on boot it runs `context.Database.Migrate()` (wrapped in a retry loop that tolerates SQL Server still recovering from its data volume — important under Aspire/Docker) then `EnsureSeedData()`. Treat migration and startup changes carefully.
 
-**Auth** is JWT bearer (issuer/audience/key from `Jwt:*` config). The matching frontend behavior (silent refresh, token replay) is documented in the frontend guide.
+**Auth** is JWT bearer (issuer/audience/key from `Jwt:*` config). The signing key (`Jwt:Key`) is **never committed**: supply it via user-secrets (local), the `Jwt__Key` env var (Docker/prod), or the AppHost `jwt-key` parameter (Aspire). `Program.cs` refuses to start if it is missing or under 32 bytes. See the README's "Configuring the JWT signing key". The matching frontend behavior (silent refresh, token replay) is documented in the frontend guide.
 
 ## The backend↔frontend contract
 
