@@ -10,7 +10,6 @@ export class WorkoutListPage {
   readonly totalRecords: Locator;
   readonly nameFilterTrigger: Locator;
   readonly nameFilterInput: Locator;
-  readonly searchButton: Locator;
   readonly resetButton: Locator;
   readonly statusFilterTrigger: Locator;
   readonly rows: Locator;
@@ -23,7 +22,6 @@ export class WorkoutListPage {
     //another column later doesn't silently break this.
     this.nameFilterTrigger = page.getByRole('columnheader', { name: /^Name/ }).locator('nz-filter-trigger');
     this.nameFilterInput = page.getByPlaceholder('Workout Name');
-    this.searchButton = page.getByRole('button', { name: 'Search' });
     this.resetButton = page.getByRole('button', { name: 'Reset' });
     this.statusFilterTrigger = page.getByRole('columnheader', { name: /^Status/ }).locator('nz-filter-trigger');
     this.rows = page.locator('tbody tr');
@@ -33,10 +31,19 @@ export class WorkoutListPage {
     await this.page.goto('/workouts');
   }
 
+  /**
+   * Opens the name-filter dropdown, types the name, and waits for the table to settle.
+   * There is no Search button: the filter applies as you type (debounced), so the wait is on the
+   * refetch carrying this name. Without it a test could grab a row from the unfiltered page that
+   * then re-renders mid-click.
+   */
   async searchByName(name: string): Promise<void> {
     await this.nameFilterTrigger.click();
+    const refetched = this.page.waitForResponse(response =>
+      response.request().method() === 'GET' &&
+      new URL(response.url()).searchParams.get('nameContains') === name);
     await this.nameFilterInput.fill(name);
-    await this.searchButton.click();
+    await refetched;
   }
 
   row(workoutName: string): Locator {

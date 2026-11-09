@@ -59,6 +59,7 @@ If you change a DTO, enum, or nullability on the backend, regenerate the fronten
 
 ## Local environment notes
 - The API connection string (`WorkoutTrackerDatabase` in `appsettings.json`) is machine-specific when running the API standalone; under the Aspire AppHost the SQL Server connection is injected automatically.
+- CORS is closed by default: `SiteCorsPolicy` allows only the origins in `Cors:AllowedOrigins` (empty by default, since the dev server, Aspire and nginx all proxy `/api` same-origin). Origins are validated at startup by `CorsOriginValidator`; see the README's "CORS" section.
 - Local HTTPS cert trust may be needed — see [DevCertInfo.txt](DevCertInfo.txt).
 - Don't edit generated/artifact folders: `**/bin/**`, `**/obj/**`, `API/**/Logs/**`, `API/WorkoutTracker.Tests/TestResults/**`, and (frontend) `coverage/`, `dist/`, `src/app/api/**`.
 

@@ -23,6 +23,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using WorkoutTracker.API.Configuration;
 using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Application.Shared.Services;
 using WorkoutTracker.Application.Users.Interfaces;
@@ -76,10 +77,20 @@ builder.Services.AddLogging(loggingBuilder =>
     loggingBuilder.AddDebug();
 });
 
+//Cross-origin browser access is limited to the origins listed in Cors:AllowedOrigins. The dev server,
+//the Aspire AppHost and the Docker nginx all proxy /api, so the browser stays same-origin and the
+//default (an empty list) permits no cross-origin caller. Only a split-origin deployment (e.g. SPA and
+//API on different IIS sites or ports) needs entries. The policy is always registered because the
+//controllers reference it by name via [EnableCors].
+var corsAllowedOrigins = CorsOriginValidator.GetValidatedOrigins(builder.Configuration);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("SiteCorsPolicy",
-        builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().Build());
+        policy => policy
+            .WithOrigins(corsAllowedOrigins)
+            .WithHeaders("Authorization", "Content-Type")
+            .WithMethods("GET", "POST", "PUT", "DELETE")
+            .SetPreflightMaxAge(TimeSpan.FromMinutes(10)));
 });
 
 // App-level response compression, independent of any reverse proxy (nginx compresses its own
@@ -139,7 +150,7 @@ app.UseHttpsRedirection();
 app.UseResponseCompression();
 app.UseRouting();
 app.UseSerilogRequestLogging();
-app.UseCors();
+app.UseCors("SiteCorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
