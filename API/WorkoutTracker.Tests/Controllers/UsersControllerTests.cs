@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -156,7 +157,7 @@ namespace WorkoutTracker.Tests.Controllers
         public async Task Should_Add()
         {
             //ARRANGE
-            var userDTO = new UserNewDTO();
+            var userDTO = new UserNewDTO { UserName = "Someone", Role = UserRole.Standard };
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.AddAsync(It.IsAny<User>())).ReturnsAsync(new User());
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
@@ -174,6 +175,57 @@ namespace WorkoutTracker.Tests.Controllers
         }
 
         [TestMethod]
+        public async Task Should_Not_Add_A_User_With_An_Undefined_Role()
+        {
+            //ARRANGE
+            var userDTO = new UserNewDTO { UserName = "Someone", Role = 0 };
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+            var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
+            SetupUser(sut);
+
+            //ACT
+            var result = await sut.Post(userDTO);
+
+            //ASSERT
+            Assert.IsInstanceOfType(result.Result, typeof(BadRequestObjectResult));
+            userService.Verify(mock => mock.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [TestMethod]
+        [DataRow("SYSTEM")]
+        [DataRow("system")]
+        [DataRow(" System ")]
+        public async Task Should_Not_Add_A_User_Named_After_The_Hidden_System_User(string userName)
+        {
+            //ARRANGE
+            var userDTO = new UserNewDTO { UserName = userName, Role = UserRole.Standard };
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+            var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
+            SetupUser(sut);
+
+            //ACT
+            var result = await sut.Post(userDTO);
+
+            //ASSERT
+            Assert.IsInstanceOfType(result.Result, typeof(BadRequestObjectResult));
+            userService.Verify(mock => mock.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [TestMethod]
+        public void Should_Only_Allow_Administrators_To_Add_Users()
+        {
+            //Regression guard for the review finding "anyone can register as an Administrator": this endpoint was once anonymous.
+            var method = typeof(UsersController).GetMethod(nameof(UsersController.Post), new[] { typeof(UserNewDTO), typeof(CancellationToken) });
+
+            Assert.IsNotNull(method);
+            Assert.IsTrue(method.GetCustomAttributes(typeof(AuthorizeAttribute), true).Cast<AuthorizeAttribute>().Any(x => x.Roles == "Administrator"));
+            Assert.AreEqual(0, method.GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Length);
+            Assert.AreEqual(0, typeof(UsersController).GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Length);
+        }
+
+        [TestMethod]
         public async Task Should_Forward_CancellationToken_Through_Post_Override_Chain()
         {
             //ARRANGE — this exercises UsersController.Post(UserNewDTO, CT) -> base.Post(user, false, CT)
@@ -183,7 +235,7 @@ namespace WorkoutTracker.Tests.Controllers
             //cleanly and passes every other test, since nothing else observes cancellation.
             var cts = new CancellationTokenSource();
             var token = cts.Token;
-            var userDTO = new UserNewDTO();
+            var userDTO = new UserNewDTO { UserName = "Someone", Role = UserRole.Standard };
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.AddAsync(It.IsAny<User>(), token)).ReturnsAsync(new User());
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);

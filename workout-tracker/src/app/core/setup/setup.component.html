@@ -1,0 +1,85 @@
+<div class="container-fluid">
+  <div class="row headroom">
+    <div class="offset-md-4 col-md-4">
+      <h3>Welcome to Workout Tracker</h3>
+      <p>
+        No users exist yet. Create the administrator account to get started.
+      </p>
+      <p class="setup-code-hint">
+        You will need the <strong>setup code</strong> that the API prints to its console (or to the API's logs in the
+        Aspire dashboard) while no users exist.
+      </p>
+
+      <form novalidate>
+        <div class="form-group">
+          <label class="center-block headroom">
+            Name:
+            <input class="form-control" [formField]="setupForm.userName" placeholder="User Name (required)" autocomplete="username" />
+          </label>
+          @if (setupForm.userName().touched()) {
+            @for (error of setupForm.userName().errors(); track error.kind) {
+              <span class="text-danger headroom"> {{ error.message }}</span>
+            }
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="center-block headroom">
+            Email Address:
+            <input class="form-control" [formField]="setupForm.emailAddress" placeholder="Email Address (required)" autocomplete="email" />
+          </label>
+          @if (setupForm.emailAddress().touched()) {
+            @for (error of setupForm.emailAddress().errors(); track error.kind) {
+              <span class="text-danger headroom"> {{ error.message }}</span>
+            }
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="center-block headroom">
+            Password:
+            <input type="password" class="form-control" [formField]="setupForm.password" placeholder="Password (required)" autocomplete="new-password" />
+          </label>
+          @if (setupForm.password().touched()) {
+            @for (error of setupForm.password().errors(); track error.kind) {
+              <span class="text-danger headroom"> {{ error.message }}</span>
+            }
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="center-block headroom">
+            Confirm Password:
+            <input type="password" class="form-control" [formField]="setupForm.confirmPassword" placeholder="Confirm (required)" autocomplete="new-password" />
+          </label>
+          @if (setupForm.confirmPassword().touched()) {
+            @for (error of setupForm.confirmPassword().errors(); track error.kind) {
+              <span class="text-danger headroom"> {{ error.message }}</span>
+            }
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="center-block headroom">
+            Setup Code:
+            <input class="form-control" [formField]="setupForm.setupCode" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false" />
+          </label>
+          @if (setupForm.setupCode().touched()) {
+            @for (error of setupForm.setupCode().errors(); track error.kind) {
+              <span class="text-danger headroom"> {{ error.message }}</span>
+            }
+          }
+        </div>
+
+        <div class="headroom">
+          <!--type="button", not "submit": this form has no (ngSubmit) handler, so a submit button
+              natively submits it, reloading the app and putting the typed passwords into the URL.-->
+          <button type="button" [disabled]="setupForm().invalid() || creatingAdministrator()" (click)="createAdministrator()" class="btn btn-success">Create Administrator</button>
+          @if (creatingAdministrator()) {
+            <span> Creating...</span>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

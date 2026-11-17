@@ -203,6 +203,13 @@ export type ExerciseTargetAreaLink = {
     modifiedDateTime?: null | Date;
 };
 
+export type FirstAdminRequestDTO = {
+    userName: string;
+    emailAddress: string;
+    password: string;
+    setupCode: string;
+};
+
 export type PaginatedResultsOfExecutedWorkoutSummaryDTO = {
     results: Array<ExecutedWorkoutSummaryDTO>;
     totalCount: number;
@@ -226,6 +233,14 @@ export type PasswordChangeRequest = {
 export type PasswordResetRequest = {
     resetCode: string;
     newPassword: string;
+};
+
+export type ProblemDetails = {
+    type?: null | string;
+    title?: null | string;
+    status?: null | number;
+    detail?: null | string;
+    instance?: null | string;
 };
 
 export type RefreshTokenRequestDTO = {
@@ -295,6 +310,10 @@ export const SetType = { /**
     TIMED: 1 } as const;
 
 export type SetType = typeof SetType[keyof typeof SetType];
+
+export type SetupStatusDTO = {
+    setupRequired: boolean;
+};
 
 export type TargetArea = {
     name: string;
@@ -903,6 +922,53 @@ export type PutApiResistanceBandsByIdResponses = {
 };
 
 export type PutApiResistanceBandsByIdResponse = PutApiResistanceBandsByIdResponses[keyof PutApiResistanceBandsByIdResponses];
+
+export type GetApiSetupStatusData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Setup/status';
+};
+
+export type GetApiSetupStatusResponses = {
+    /**
+     * OK
+     */
+    200: SetupStatusDTO;
+};
+
+export type GetApiSetupStatusResponse = GetApiSetupStatusResponses[keyof GetApiSetupStatusResponses];
+
+export type PostApiSetupFirstAdminData = {
+    body: FirstAdminRequestDTO;
+    path?: never;
+    query?: never;
+    url: '/api/Setup/first-admin';
+};
+
+export type PostApiSetupFirstAdminErrors = {
+    /**
+     * Bad Request
+     */
+    400: ProblemDetails;
+    /**
+     * Conflict
+     */
+    409: ProblemDetails;
+    /**
+     * Too Many Requests
+     */
+    429: ProblemDetails;
+};
+
+export type PostApiSetupFirstAdminError = PostApiSetupFirstAdminErrors[keyof PostApiSetupFirstAdminErrors];
+
+export type PostApiSetupFirstAdminResponses = {
+    /**
+     * No Content
+     */
+    204: unknown;
+};
 
 export type GetApiTargetAreasData = {
     body?: never;

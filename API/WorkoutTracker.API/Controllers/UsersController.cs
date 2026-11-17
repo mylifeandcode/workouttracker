@@ -130,11 +130,19 @@ namespace WorkoutTracker.API.Controllers
             return await base.Post(value, setAuditFields, cancellationToken);
         }
 
-        //[Authorize(Roles = "Administrator")] NOPE -- Because anyone can create/register a new user
+        //Creating users is an administrator action. The very first administrator is created through
+        //SetupController (gated by the one-time setup code), not here.
         [HttpPost("new")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<User>> Post([FromBody] UserNewDTO value, CancellationToken cancellationToken = default)
         {
+            if (!Enum.IsDefined(typeof(UserRole), value.Role))
+                return BadRequest("The role must be Standard or Administrator.");
+
+            //SYSTEM is the hidden seed user that the API filters out of every user list.
+            if (string.Equals(value.UserName?.Trim(), "SYSTEM", StringComparison.OrdinalIgnoreCase))
+                return BadRequest("That user name is reserved.");
+
             var user = GetUserFromUserNewDTO(value);
             // Same forwarding requirement as above — see the note in the User-typed Post override.
             return await base.Post(user, false, cancellationToken);
@@ -165,10 +173,7 @@ namespace WorkoutTracker.API.Controllers
         {
             var user = new User();
 
-            if (!User.Claims.Any()) //This could be a request to add a new user from a...new user. Nobody logged in!
-                SetCreatedAuditFields(user, 0);
-            else
-                SetCreatedAuditFields(user);
+            SetCreatedAuditFields(user);
 
             user.Settings.CreatedDateTime = user.CreatedDateTime;
             user.Settings.CreatedByUserId = user.CreatedByUserId;

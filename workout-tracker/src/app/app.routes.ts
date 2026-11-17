@@ -1,23 +1,26 @@
 import { Routes } from '@angular/router';
 import { UserNotSelectedGuard } from './core/_guards/user-not-selected/user-not-selected.guard';
 import { UserSelectedGuard } from './core/_guards/user-selected/user-selected.guard';
+import { SetupRequiredGuard } from './core/_guards/setup-required/setup-required.guard';
+import { SetupAvailableGuard } from './core/_guards/setup-available/setup-available.guard';
 import { UserIsAdminGuard } from './admin/_guards/user-is-admin/user-is-admin.guard';
 
 export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./core/user-select/user-select.component').then(m => m.UserSelectComponent),
-    canActivate: [UserNotSelectedGuard]
+    canActivate: [UserNotSelectedGuard, SetupRequiredGuard]
   },
   {
     path: 'user-select',
     loadComponent: () => import('./core/user-select/user-select.component').then(m => m.UserSelectComponent),
-    canActivate: [UserNotSelectedGuard]
+    canActivate: [UserNotSelectedGuard, SetupRequiredGuard]
   },
   {
-    path: 'new-user',
-    loadComponent: () => import('./core/user-select-new/user-select-new.component').then(m => m.UserSelectNewComponent),
-    canActivate: [UserNotSelectedGuard]
+    //First-run only: creates the first administrator while the system has no users. Redirects away once one exists.
+    path: 'setup',
+    loadComponent: () => import('./core/setup/setup.component').then(m => m.SetupComponent),
+    canActivate: [SetupAvailableGuard]
   },
   {
     path: 'home',
@@ -27,7 +30,7 @@ export const routes: Routes = [
   {
     path: 'login', 
     loadComponent: () => import('./core/login/login.component').then(m => m.LoginComponent),
-    canActivate: [UserNotSelectedGuard]
+    canActivate: [UserNotSelectedGuard, SetupRequiredGuard]
   },
   {
     path: 'denied',

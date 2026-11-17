@@ -2,12 +2,12 @@ import { test as base } from '@playwright/test';
 import * as fs from 'node:fs/promises';
 import { ApiClient } from './api-client';
 import { E2E_ADMIN, E2E_USER, PROVISIONED_USERS_FILE } from './env';
+import type { ProvisionedUser } from './env';
 import { createSessionState } from './session';
-import type { User } from '../../src/app/api/types.gen';
 
 export interface ProvisionedUsers {
-  admin: User;
-  standard: User;
+  admin: ProvisionedUser;
+  standard: ProvisionedUser;
 }
 
 /** Which account the browser starts logged in as; `null` starts logged out. */

@@ -83,9 +83,10 @@ namespace WorkoutTracker.Tests.Services
         }
 
         [TestMethod]
-        public async Task Should_Create_User_As_Admin_When_No_Users_Exist()
+        public async Task Should_Not_Change_The_Role_Even_When_No_Users_Exist()
         {
             //ARRANGE
+            //This used to promote the first user to Administrator. That now happens only through UserSetupService.
             var user = new User();
             user.Role = UserRole.Standard;
 
@@ -93,7 +94,7 @@ namespace WorkoutTracker.Tests.Services
             await _sut.AddAsync(user);
 
             //ASSERT
-            _userRepositoryMock.Verify(mock => mock.AddAsync(It.Is<User>(x => x.Role == UserRole.Administrator), true), Times.Once);
+            _userRepositoryMock.Verify(mock => mock.AddAsync(It.Is<User>(x => x.Role == UserRole.Standard), true), Times.Once);
         }
 
         [TestMethod]

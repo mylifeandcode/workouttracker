@@ -1,5 +1,6 @@
 import * as path from 'node:path';
 import { UserRole } from '../../src/app/api/types.gen';
+import type { User } from '../../src/app/api/types.gen';
 
 /*
  * Shared E2E environment. Imported by playwright.config.ts, the global setup and the
@@ -26,12 +27,23 @@ export const E2E_DB_CONNECTION = process.env['E2E_DB_CONNECTION']
 export const AUTH_DIR = path.join(__dirname, '..', '.auth');
 export const PROVISIONED_USERS_FILE = path.join(AUTH_DIR, 'users.json');
 
+/** What the global setup records about each account it created: enough to identify it, nothing sensitive. */
+export type ProvisionedUser = Pick<User, 'id' | 'publicId' | 'name' | 'role'>;
+
+/*
+ * The one-time setup code the API requires to create the first administrator. Normally it is generated
+ * at random and printed on the API's console; the E2E stack pins it (via Setup__Code, see
+ * playwright.config.ts) so the global setup can use it. It protects nothing: it only works against the
+ * disposable E2E database, on a localhost port, until the global setup consumes it.
+ */
+export const E2E_SETUP_CODE = process.env['E2E_SETUP_CODE'] ?? 'e2e-setup-code-0000-not-a-secret';
+
 /*
  * Accounts the global setup provisions into the freshly reset database.
  *
- * Order matters: the backend forces the first non-SYSTEM user to Administrator
- * (UserService.AddAsync), so the admin has to be created first. The global setup asserts
- * the role that came back rather than trusting that behavior silently.
+ * Order matters: the admin is created first, through the one-time setup endpoint (POST /api/Setup/first-admin),
+ * because creating any other user requires an administrator. The standard user is then created by that admin.
+ * The global setup asserts the roles that come back rather than trusting them silently.
  *
  * The API runs with SimpleLogin=true, which skips password verification altogether, so these
  * passwords are only meaningful if that setting is ever turned off for an E2E run.

@@ -40,7 +40,7 @@ namespace WorkoutTracker.Application.Users.Services
 
         public async Task<User> AddAsync(User user, CancellationToken cancellationToken = default)
         {
-            if (!await _repo.AnyAsync(x => x.Name != "SYSTEM", cancellationToken)) user.Role = UserRole.Administrator;
+            //The role is whatever the caller set. The first administrator is created through UserSetupService.
             return await AddAsync(user, true, cancellationToken);
         }
 

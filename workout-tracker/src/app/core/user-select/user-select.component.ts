@@ -1,5 +1,5 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { UserProfileDTO } from '../../api';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { catchError } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { toAppError } from '../_http/app-error.mapper';
   selector: 'wt-user-select',
   templateUrl: './user-select.component.html',
   styleUrls: ['./user-select.component.scss'],
-  imports: [RouterLink, NzSpinModule, AsyncPipe],
+  imports: [NzSpinModule, AsyncPipe],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserSelectComponent {

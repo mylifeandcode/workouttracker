@@ -174,6 +174,21 @@ using (var serviceScope = app.Services.CreateScope())
         }
     }
     context.EnsureSeedData();
+
+    //With no users, the first administrator can only be created with a one-time setup code, which is
+    //announced on the console here (stdout only: not the Serilog file sink, which would persist it).
+    //Asking for the status is what makes the code active.
+    var setupRequired = await serviceScope.ServiceProvider.GetRequiredService<IUserSetupService>().IsSetupRequiredAsync();
+
+    //A configured code is a secret that has done its job. It still works if every user is ever deleted, so remind
+    //the operator to take it out of configuration. The category matches the Serilog override in appsettings.json,
+    //which is what lets this single warning through at the default Error level.
+    if (!setupRequired && !string.IsNullOrWhiteSpace(app.Configuration["Setup:Code"]))
+    {
+        serviceScope.ServiceProvider.GetRequiredService<ILoggerFactory>()
+            .CreateLogger("WorkoutTracker.Setup")
+            .LogWarning("Setup:Code is configured but setup is already complete. Remove it from configuration.");
+    }
 }
 
 app.Run();
@@ -225,6 +240,11 @@ void RegisterStuff(WebApplicationBuilder appBuilder)
             .WithParameter("username", appBuilder.Configuration["SMTP:Username"])
             .WithParameter("password", appBuilder.Configuration["SMTP:Password"])
             .InstancePerLifetimeScope();
+
+        //Singleton: it has to remember the code between requests. Not named *Service, so the convention above skips it.
+        containerBuilder.Register(_ => new SetupCodeProvider(appBuilder.Configuration["Setup:Code"], Console.WriteLine))
+            .As<ISetupCodeProvider>()
+            .SingleInstance();
 
         containerBuilder.RegisterType<UserService>().As<IUserService>()
             .WithParameter("frontEndResetPasswordUrl", appBuilder.Configuration["FrontEndResetPasswordURL"])

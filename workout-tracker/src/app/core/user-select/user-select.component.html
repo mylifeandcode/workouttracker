@@ -34,21 +34,8 @@
           </div>
         </div>
 
-        @if (users?.length == 0 && errorMsg() == null) {
-          <div class="offset-md-4 col-md-4 text-center p-1 greeting-text">
-            <p>No users have been created yet. Create one with the button below.</p>
-            <p>
-              <strong>This user will be created as an Administrator.</strong> Administrators have permissions to manage
-              the system.
-            </p>
-          </div>
-        }
-
-        @if (!errorMsg()) {
-          <div class="offset-md-4 col-md-4 text-center mt-4">
-            <button type="button" class="btn btn-info btn-fullWidth" routerLink='/new-user'>Add User</button>
-          </div>
-        }
+        <!--No "Add User" here: users are created by an administrator, and the very first administrator
+            is created on the /setup page, which SetupRequiredGuard sends a first-run visitor to.-->
       </div>
 
     }

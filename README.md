@@ -81,3 +81,45 @@ Cors__AllowedOrigins__0=https://app.example.com
 
 Entries must be bare origins (`scheme://host[:port]`, no path or trailing slash). A wildcard or malformed entry stops
 the API at startup with an explanatory message.
+
+## First-run setup
+
+A new installation has no users, and the API will not create one for just anyone. While no user exists, the API
+prints a **one-time setup code** to its console:
+
+```text
+Initial setup required. Setup code: 7K2M-QX9D-TH4B-6NWE
+```
+
+Find it wherever you can read the API's output (the terminal running `dotnet run`, the API's logs in the Aspire
+dashboard, or `docker compose logs api`). Then open the app: it sends you to a setup page where you enter a name, an
+email address, a password (at least 12 characters) and that code, which creates the first administrator. After that
+the setup page and the code stop working, and only administrators can create more users.
+
+- The code is only ever printed to the console, never written to the log file. If you restart the API before finishing,
+  a new code is printed. Five wrong guesses also replace a generated code (a code you set yourself is locked out instead; see below).
+- For automation, set `Setup__Code` (at least 16 characters) to use a code you choose instead of a generated one.
+
+### On IIS (or anywhere the console is not visible)
+
+IIS does not show the API console, so the generated code above would never be seen. Choose the code yourself instead and
+put it in configuration as `Setup:Code`:
+
+1. Generate a random value of at least 16 characters, for example `openssl rand -base64 24`, or in PowerShell:
+   ```powershell
+   $b = New-Object byte[] 24
+   [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b)
+   [Convert]::ToBase64String($b)
+   ```
+2. Set it in `appsettings.Production.json` (gitignored) or as an environment variable (`Setup__Code`) on the app pool.
+   Do not put it in the committed `appsettings.json`. Recycle the app pool so it is picked up.
+3. Open the app, which sends you to the setup page, and enter that code along with the administrator details.
+4. **Remove `Setup:Code` from configuration afterwards.** It stops working as soon as a user exists, but it becomes
+   valid again if every user is ever deleted, so it should not stay around. If it is still set when the API starts and a
+   user already exists, the API logs a warning to remind you.
+
+Five wrong guesses in a row lock the setup endpoint for 15 minutes (the response is `429`), even for the correct code.
+The configured code itself is never replaced, so once the lockout ends, or after an app pool recycle, it works again.
+
+You can instead enable stdout logging in `web.config` (`stdoutLogEnabled="true"` with an existing `stdoutLogFile` folder)
+to read a generated code, but that writes the code to a log file on disk, so a configured code is the better choice.

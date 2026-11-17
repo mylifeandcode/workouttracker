@@ -6,15 +6,11 @@ import type { Locator, Page } from '@playwright/test';
  */
 export class UserSelectPage {
   readonly heading: Locator;
-  readonly addUserButton: Locator;
   readonly errorMessage: Locator;
-  readonly noUsersMessage: Locator;
 
   constructor(private readonly page: Page) {
     this.heading = page.getByRole('heading', { name: 'Who are you?' });
-    this.addUserButton = page.getByRole('button', { name: 'Add User' });
     this.errorMessage = page.getByRole('heading', { name: /An error occurred/ });
-    this.noUsersMessage = page.getByText('No users have been created yet');
   }
 
   async goto(): Promise<void> {

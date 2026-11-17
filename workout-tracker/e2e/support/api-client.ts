@@ -1,16 +1,20 @@
-import { APIRequestContext, expect, request } from '@playwright/test';
+import { APIRequestContext, APIResponse, expect, request } from '@playwright/test';
 import { API_URL } from './env';
 import type {
   AuthTokenResultDTO,
   Exercise,
   ExerciseTargetAreaLink,
+  FirstAdminRequestDTO,
   PaginatedResultsOfExecutedWorkoutSummaryDTO,
   PaginatedResultsOfExerciseDTO,
   PaginatedResultsOfWorkoutDTO,
+  SetupStatusDTO,
   TargetArea,
   User,
+  UserDTO,
   UserNewDTO,
   UserProfileDTO,
+  UserSummaryDTO,
   Workout,
 } from '../../src/app/api/types.gen';
 import { ResistanceType, SetType } from '../../src/app/api/types.gen';
@@ -71,11 +75,21 @@ export class ApiClient {
 
   //USERS //////////////////////////////////////////////////////////////////////
 
-  /** Admin-only. Note: the API filters the seeded SYSTEM user out of this list. */
-  async getUsers(): Promise<User[]> {
+  /**
+   * Admin-only. Note: the API filters the seeded SYSTEM user out of this list, and returns summaries
+   * (id, publicId, name) rather than whole users.
+   */
+  async getUsers(): Promise<UserSummaryDTO[]> {
     const response = await this.context.get('/api/Users');
     expect(response, 'Could not load users').toBeOK();
-    return response.json() as Promise<User[]>;
+    return response.json() as Promise<UserSummaryDTO[]>;
+  }
+
+  /** One user in full (role, email address, settings), by public id. */
+  async getUser(publicId: string): Promise<UserDTO> {
+    const response = await this.context.get(`/api/Users/${publicId}`);
+    expect(response, `Could not load user ${publicId}`).toBeOK();
+    return response.json() as Promise<UserDTO>;
   }
 
   /**
@@ -89,13 +103,38 @@ export class ApiClient {
   }
 
   /**
-   * Registers a user. This endpoint is anonymous (anyone can register), but note that the
-   * backend overrides the requested role to Administrator when no non-SYSTEM user exists yet.
+   * Creates a user. Administrator-only: use a client from `authenticateAs` with the admin account.
+   * (The very first administrator is created with `createFirstAdmin`.)
    */
   async createUser(user: UserNewDTO): Promise<User> {
-    const response = await this.context.post('/api/Users/new', { data: user });
+    const response = await this.tryCreateUser(user);
     expect(response, `Could not create user "${user.userName}"`).toBeOK();
     return response.json() as Promise<User>;
+  }
+
+  /** Like `createUser`, but returns the raw response so a test can assert on a refusal (401/403/400). */
+  async tryCreateUser(user: UserNewDTO): Promise<APIResponse> {
+    return this.context.post('/api/Users/new', { data: user });
+  }
+
+  //SETUP //////////////////////////////////////////////////////////////////////
+
+  /** Anonymous. `setupRequired` is true until the first administrator exists. */
+  async getSetupStatus(): Promise<SetupStatusDTO> {
+    const response = await this.context.get('/api/Setup/status');
+    expect(response, 'Could not load the setup status').toBeOK();
+    return response.json() as Promise<SetupStatusDTO>;
+  }
+
+  /** Anonymous. Creates the first administrator; only works while setup is required, with the setup code. */
+  async createFirstAdmin(request: FirstAdminRequestDTO): Promise<void> {
+    const response = await this.tryCreateFirstAdmin(request);
+    expect(response, `Could not create the first administrator "${request.userName}"`).toBeOK();
+  }
+
+  /** Like `createFirstAdmin`, but returns the raw response so a test can assert on a refusal (400/409). */
+  async tryCreateFirstAdmin(request: FirstAdminRequestDTO): Promise<APIResponse> {
+    return this.context.post('/api/Setup/first-admin', { data: request });
   }
 
   //EXERCISES //////////////////////////////////////////////////////////////////
