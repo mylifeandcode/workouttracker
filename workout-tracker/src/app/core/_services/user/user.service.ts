@@ -3,7 +3,7 @@ import { Observable, throwError } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { User, UserOverview } from '../../../api';
 import { ApiBaseService } from '../api-base/api-base.service';
-import { UserNewDTO, UserSettingsUpdateDTO, UserUpdateDTO } from '../../../api';
+import { PasswordResetTokenDTO, UserNewDTO, UserSettingsUpdateDTO, UserUpdateDTO } from '../../../api';
 import { HTTP_OPTIONS } from '../../../shared/constants/http-constants';
 
 
@@ -72,6 +72,14 @@ export class UserService extends ApiBaseService<User> {
     return this._http
       .put<void>(`${this._apiRoot}/${publicId}/reactivate`, {}, HTTP_OPTIONS)
       .pipe(tap(() => { this.invalidateCache(); }));
+  }
+
+  /**
+   * Administrators only, for installations that can't send email: creates a one-time reset token for a user, to hand to them.
+   * The token is shown once and expires.
+   */
+  public createPasswordReset(publicId: string): Observable<PasswordResetTokenDTO> {
+    return this._http.post<PasswordResetTokenDTO>(`${this._apiRoot}/${publicId}/password-reset`, {}, HTTP_OPTIONS);
   }
 
   public override add(user: User): Observable<never> {

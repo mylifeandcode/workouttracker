@@ -3,6 +3,7 @@ using System;
 using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
+using WorkoutTracker.Application.Security;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.Application.Users.Models;
@@ -13,8 +14,6 @@ namespace WorkoutTracker.Application.Users.Services
 {
     public class UserSetupService : IUserSetupService
     {
-        public const int MinPasswordLength = 12;
-
         //EnsureSeedData creates a hidden SYSTEM user, so "no users" means "no user other than SYSTEM".
         private const string SYSTEM_USER_NAME = "SYSTEM";
 
@@ -112,10 +111,7 @@ namespace WorkoutTracker.Application.Users.Services
             if (string.IsNullOrWhiteSpace(emailAddress) || !MailAddress.TryCreate(emailAddress.Trim(), out _))
                 return "A valid email address is required.";
 
-            if (string.IsNullOrEmpty(password) || password.Length < MinPasswordLength)
-                return $"The password must be at least {MinPasswordLength} characters.";
-
-            return null;
+            return PasswordPolicy.Validate(password);
         }
 
         //Mirrors what UsersController builds for a new user, except that the role is fixed.

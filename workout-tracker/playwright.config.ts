@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { randomBytes } from 'node:crypto';
-import { API_URL, E2E_DB_CONNECTION, E2E_SETUP_CODE, FRONTEND_URL } from './e2e/support/env';
+import { API_URL, E2E_DB_CONNECTION, E2E_PASSWORD_RESET_PERMIT_LIMIT, E2E_SETUP_CODE, FRONTEND_URL } from './e2e/support/env';
 
 /*
  * E2E configuration. These tests drive the real Angular app against the real API and a real
@@ -82,6 +82,8 @@ export default defineConfig({
         Jwt__Key: process.env['E2E_JWT_KEY'] ?? randomBytes(48).toString('base64'),
         //Normally printed on the API's console; pinned here so global-setup can create the first administrator.
         Setup__Code: E2E_SETUP_CODE,
+        //The anonymous password-reset endpoints are rate limited; see password-reset.e2e.ts.
+        PasswordReset__RateLimit__PermitLimit: String(E2E_PASSWORD_RESET_PERMIT_LIMIT),
       },
     },
     {

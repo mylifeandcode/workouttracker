@@ -13,9 +13,6 @@ namespace WorkoutTracker.Application.Users.Interfaces
         Task<User?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
         Task<IEnumerable<UserProfile>> GetAllProfilesAsync(CancellationToken cancellationToken = default);
         Task ChangePasswordAsync(int userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default);
-        Task<string?> RequestPasswordResetAsync(string emailAddress, CancellationToken cancellationToken = default);
-        Task ResetPasswordAsync(string resetCode, string newPassword, CancellationToken cancellationToken = default);
-        Task<bool> ValidatePasswordResetCodeAsync(string resetCode, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// True if the user exists and has not been deactivated. Used on every authenticated request, so it is a single

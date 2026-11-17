@@ -1,8 +1,11 @@
-﻿namespace WorkoutTracker.API.Models
+namespace WorkoutTracker.API.Models
 {
     public class PasswordResetRequest
     {
-        public string ResetCode { get; set; }
-        public string NewPassword { get; set; }
+        /// <summary>
+        /// The one-time token from the reset link.
+        /// </summary>
+        public string Token { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
     }
 }

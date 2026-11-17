@@ -21,10 +21,8 @@ namespace WorkoutTracker.Tests.Services
     public class UserServiceTests
     {
         private Mock<ICryptoService> _cryptoServiceMock;
-        private Mock<IEmailService> _emailServiceMock;
         private Mock<IRefreshTokenService> _refreshTokenServiceMock;
         private Mock<IRepository<User>> _userRepositoryMock;
-        private const string FRONT_END_PASSWORD_RESET_URL = "https://workouttracker.com/reset-password";
         private List<User> _users;
         private UserService _sut;
         private Mock<ILogger<UserService>> _loggerMock;
@@ -32,9 +30,9 @@ namespace WorkoutTracker.Tests.Services
         public UserServiceTests()
         {
             _users = new List<User>(3);
-            _users.Add(new User { Id = 1, Name = "Paul", HashedPassword = "krbIcgEUXWlOszntUzEHHTvSQy+ig63C", Salt = "MySalt", EmailAddress = "paul@here.com", PasswordResetCode = "SomePasswordResetCode" });
-            _users.Add(new User { Id = 2, Name = "SYSTEM", HashedPassword = "Huh?", Salt = "SomeSalt", EmailAddress = "blahblah@gmail.com", PasswordResetCode = null });
-            _users.Add(new User { Id = 3, Name = "Frank", HashedPassword = "Garrrr!", Salt = "Yay!", EmailAddress = "gar@gar.com", PasswordResetCode = null });
+            _users.Add(new User { Id = 1, Name = "Paul", HashedPassword = "krbIcgEUXWlOszntUzEHHTvSQy+ig63C", Salt = "MySalt", EmailAddress = "paul@here.com" });
+            _users.Add(new User { Id = 2, Name = "SYSTEM", HashedPassword = "Huh?", Salt = "SomeSalt", EmailAddress = "blahblah@gmail.com" });
+            _users.Add(new User { Id = 3, Name = "Frank", HashedPassword = "Garrrr!", Salt = "Yay!", EmailAddress = "gar@gar.com" });
         }
 
         [TestInitialize]
@@ -53,11 +51,7 @@ namespace WorkoutTracker.Tests.Services
             _cryptoServiceMock.Setup(x => x.ComputeHash(It.IsAny<string>(), It.IsAny<string>())).Returns("someHash");
             _cryptoServiceMock.Setup(x => x.GenerateSalt()).Returns("someSalt");
             _cryptoServiceMock.Setup(x => x.VerifyValuesMatch(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
-            _cryptoServiceMock.Setup(x => x.GeneratePasswordResetCode()).Returns("SomePasswordResetCode");
 
-            _emailServiceMock = new Mock<IEmailService>(MockBehavior.Strict);
-            _emailServiceMock.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
-            _emailServiceMock.SetupGet(x => x.IsEnabled).Returns(true);
 
             _loggerMock = new Mock<ILogger<UserService>>(MockBehavior.Strict);
             _loggerMock.Setup(x => x.Log(
@@ -70,7 +64,7 @@ namespace WorkoutTracker.Tests.Services
             _refreshTokenServiceMock = new Mock<IRefreshTokenService>(MockBehavior.Strict);
             _refreshTokenServiceMock.Setup(x => x.RevokeByUserIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-            _sut = new UserService(_userRepositoryMock.Object, _cryptoServiceMock.Object, _emailServiceMock.Object, _refreshTokenServiceMock.Object, _loggerMock.Object, FRONT_END_PASSWORD_RESET_URL);
+            _sut = new UserService(_userRepositoryMock.Object, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, _loggerMock.Object);
         }
 
         [TestMethod]
@@ -206,7 +200,7 @@ namespace WorkoutTracker.Tests.Services
         {
             //ARRANGE
             const string currentPassword = "MyOldPassword";
-            const string newPassword = "MyNewPassword";
+            const string newPassword = "MyNewPassword-123";
 
             //ACT
             await _sut.ChangePasswordAsync(1, currentPassword, newPassword);
@@ -214,8 +208,21 @@ namespace WorkoutTracker.Tests.Services
             //ASSERT
             _userRepositoryMock.Verify(x => x.GetAsync(1), Times.Once);
             _cryptoServiceMock.Verify(x => x.VerifyValuesMatch(currentPassword, It.IsAny<string>(), "MySalt"), Times.Once);
-            _cryptoServiceMock.Verify(x => x.ComputeHash(newPassword, "MySalt"), Times.Once);
-            _userRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<User>(), true), Times.Once);
+            //Hashed with a new salt, not the old one: the old salt belongs to the password being replaced.
+            _cryptoServiceMock.Verify(x => x.ComputeHash(newPassword, "someSalt"), Times.Once);
+            _userRepositoryMock.Verify(x => x.UpdateAsync(It.Is<User>(user => user.Salt == "someSalt" && user.HashedPassword == "someHash"), true), Times.Once);
+        }
+
+        [TestMethod]
+        [DataRow("")]
+        [DataRow("short")]
+        [DataRow("elevenchars")]
+        public async Task Should_Refuse_A_New_Password_That_Breaks_The_Password_Policy_When_Changing_Password(string newPassword)
+        {
+            //ACT & ASSERT: the message is meant to be shown to the user.
+            var ex = await Should.ThrowAsync<ApplicationException>(() => _sut.ChangePasswordAsync(1, "MyOldPassword", newPassword));
+            ex.Message.ShouldContain("at least 12 characters");
+            _userRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<User>(), true), Times.Never);
         }
 
         [TestMethod]
@@ -226,7 +233,7 @@ namespace WorkoutTracker.Tests.Services
 
             //ACT & ASSERT
             await Should.ThrowAsync<ApplicationException>(() =>
-                _sut.ChangePasswordAsync(2, "blah", "garrrrr!"));
+                _sut.ChangePasswordAsync(2, "blah", "garrrrr-and-more!"));
         }
 
         [TestMethod]
@@ -237,82 +244,7 @@ namespace WorkoutTracker.Tests.Services
 
             //ACT & ASSERT
             await Should.ThrowAsync<ApplicationException>(() =>
-                _sut.ChangePasswordAsync(3, "heeeeey", "yoooouuuu"));
-        }
-
-        [TestMethod]
-        public async Task Should_Process_Password_Reset_Request()
-        {
-            //ARRANGE
-
-            //ACT
-            var resetCode = await _sut.RequestPasswordResetAsync("paul@here.com");
-
-            //ASSERT
-            Assert.IsNotNull(resetCode);
-            _userRepositoryMock.Verify(x => x.UpdateAsync(It.Is<User>(user => user.PasswordResetCode == resetCode), true), Times.Once);
-            _emailServiceMock.Verify(x =>
-                x.SendEmailAsync(
-                    "paul@here.com",
-                    "noreply@workouttracker.com",
-                    "Password Reset",
-                    It.IsAny<string>()),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public async Task Should_Forward_CancellationToken_To_Repository_When_Requesting_Password_Reset()
-        {
-            //ARRANGE
-            var cts = new CancellationTokenSource();
-            var token = cts.Token;
-
-            //The shared Init() setups only match an omitted (default) token; this test needs setups
-            //that match the specific non-default token being passed through.
-            _userRepositoryMock
-                .Setup(mock => mock.UpdateAsync(It.IsAny<User>(), true, token))
-                .ReturnsAsync((User user, bool save, CancellationToken _) => user);
-            _emailServiceMock
-                .Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), token))
-                .Returns(Task.CompletedTask);
-
-            //ACT
-            await _sut.RequestPasswordResetAsync("paul@here.com", token);
-
-            //ASSERT — proves the *same* token instance received by the service is the one
-            //forwarded to the repository, not a freshly created default(CancellationToken).
-            _userRepositoryMock.Verify(
-                x => x.UpdateAsync(It.IsAny<User>(), true, token),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public async Task Should_Reset_Password()
-        {
-            //ARRANGE
-            const string resetCode = "SomePasswordResetCode";
-            const string newPassword = "newPassword123987!&^";
-
-            //ACT
-            await _sut.ResetPasswordAsync(resetCode, newPassword);
-
-            //ASSERT
-            _cryptoServiceMock.Verify(x => x.ComputeHash(newPassword, "MySalt"), Times.Once);
-            _userRepositoryMock.Verify(x =>
-                x.UpdateAsync(
-                    It.Is<User>(user => user.PasswordResetCode == null && user.HashedPassword == "someHash"), true), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task Should_Validate_Password_Reset_Code_True()
-        {
-            Assert.IsTrue(await _sut.ValidatePasswordResetCodeAsync("SomePasswordResetCode"));
-        }
-
-        [TestMethod]
-        public async Task Should_Validate_Password_Reset_Code_False()
-        {
-            Assert.IsFalse(await _sut.ValidatePasswordResetCodeAsync("SomeNonExistentPasswordResetCode"));
+                _sut.ChangePasswordAsync(3, "heeeeey", "yoooouuuu-and-more"));
         }
 
         //ADMINISTRATION: PROFILE, SETTINGS, DEACTIVATION ///////////////////////////

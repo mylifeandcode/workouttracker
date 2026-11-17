@@ -25,5 +25,9 @@ server {
         proxy_pass ${API_HTTP};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        #The API runs with forwarded headers enabled (ASPNETCORE_FORWARDEDHEADERS_ENABLED) and reads these two. Without
+        #X-Forwarded-For every request looks like it came from this proxy, so per-client rate limits would be shared by all.
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }

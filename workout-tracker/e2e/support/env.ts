@@ -31,6 +31,13 @@ export const PROVISIONED_USERS_FILE = path.join(AUTH_DIR, 'users.json');
 export type ProvisionedUser = Pick<User, 'id' | 'publicId' | 'name' | 'role'>;
 
 /*
+ * How many requests the three anonymous password-reset endpoints allow per client IP in a window. The API's default is
+ * 10; the E2E stack raises it so the ordinary reset tests have room, and so the one test that deliberately exceeds it knows
+ * how many requests that takes (see password-reset.e2e.ts and Program.cs).
+ */
+export const E2E_PASSWORD_RESET_PERMIT_LIMIT = 25;
+
+/*
  * The one-time setup code the API requires to create the first administrator. Normally it is generated
  * at random and printed on the API's console; the E2E stack pins it (via Setup__Code, see
  * playwright.config.ts) so the global setup can use it. It protects nothing: it only works against the

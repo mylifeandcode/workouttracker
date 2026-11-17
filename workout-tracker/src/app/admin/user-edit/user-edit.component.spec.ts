@@ -28,7 +28,8 @@ describe('UserEditComponent', () => {
     const UserServiceMock: Partial<Mocked<UserService>> = {
       getById: vi.fn<UserService['getById']>().mockReturnValue(of(<User>{})),
       add: vi.fn().mockReturnValue(of(<User>{})),
-      updateUser: vi.fn<UserService['updateUser']>().mockReturnValue(of(undefined))
+      updateUser: vi.fn<UserService['updateUser']>().mockReturnValue(of(undefined)),
+      createPasswordReset: vi.fn<UserService['createPasswordReset']>().mockReturnValue(of({ token: 'theToken', expiresAt: new Date('2026-11-17T13:00:00Z') }))
     };
     
     const AuthServiceMock: Partial<Mocked<AuthService>> = {};
@@ -170,4 +171,32 @@ describe('UserEditComponent', () => {
     expect(component.errorMsg()).toBe("The last administrator can't be demoted.");
   });
 
+  it('should create a one-time password reset for the user and show the link, with the token after a hash mark', () => {
+    //ARRANGE
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const alert = vi.spyOn(window, 'alert').mockReturnValue(undefined);
+    component.userEditForm.publicId().value.set(PUBLIC_ID);
+
+    //ACT
+    component.resetPassword();
+
+    //ASSERT
+    expect(userService.createPasswordReset).toHaveBeenCalledWith(PUBLIC_ID);
+    const message = alert.mock.calls.at(-1)![0] as string;
+    expect(message).toContain('/user/reset-password#token=theToken');
+    expect(message).not.toContain('/user/reset-password/theToken');
+  });
+
+  it('should not create a password reset when the administrator cancels', () => {
+    //ARRANGE
+    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const createPasswordReset = vi.mocked(userService.createPasswordReset);
+    createPasswordReset.mockClear();
+
+    //ACT
+    component.resetPassword();
+
+    //ASSERT
+    expect(createPasswordReset).not.toHaveBeenCalled();
+  });
 });

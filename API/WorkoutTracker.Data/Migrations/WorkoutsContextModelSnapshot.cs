@@ -505,9 +505,12 @@ namespace WorkoutTracker.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("PasswordResetCode")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                    b.Property<DateTime?>("PasswordResetTokenExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PasswordResetTokenHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("ProfilePic")
                         .HasMaxLength(4096)
@@ -531,7 +534,7 @@ namespace WorkoutTracker.Data.Migrations
 
                     b.HasIndex("Name");
 
-                    b.HasIndex("PasswordResetCode");
+                    b.HasIndex("PasswordResetTokenHash");
 
                     b.HasIndex("PublicId");
 

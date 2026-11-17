@@ -29,8 +29,14 @@ namespace WorkoutTracker.Domain.Users
         [Newtonsoft.Json.JsonIgnore]
         public string? Salt { get; set; }
 
+        /// <summary>
+        /// SHA-256 hash (hex) of the live password reset token, if there is one. The token itself is never stored.
+        /// </summary>
         [Newtonsoft.Json.JsonIgnore]
-        public string? PasswordResetCode { get; set; }
+        public string? PasswordResetTokenHash { get; set; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public DateTime? PasswordResetTokenExpiresAt { get; set; }
 
         [NotMapped]
         public bool PasswordProtected

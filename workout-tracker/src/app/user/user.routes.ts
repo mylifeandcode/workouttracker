@@ -19,7 +19,7 @@ export const userRoutes: Routes = [
       loadComponent: () => import('./forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
     },
     {
-      path: 'reset-password/:resetCode',
+      path: 'reset-password', //The one-time token is in the URL fragment (#token=...), so it is never sent to a server or logged
       loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
     },
     {

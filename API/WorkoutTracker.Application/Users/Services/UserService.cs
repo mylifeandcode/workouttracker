@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WorkoutTracker.Application.Security;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Shared.BaseClasses;
 using WorkoutTracker.Application.Shared.Interfaces;
@@ -18,9 +19,7 @@ namespace WorkoutTracker.Application.Users.Services
     public class UserService : PublicEntityServiceBase<User>, IUserService
     {
         private ICryptoService _cryptoService;
-        private IEmailService _emailService;
         private IRefreshTokenService _refreshTokenService;
-        private string _frontEndResetPasswordUrl;
 
         //EnsureSeedData creates a hidden SYSTEM user. It is never listed, edited or deactivated.
         private const string SYSTEM_USER_NAME = "SYSTEM";
@@ -29,19 +28,12 @@ namespace WorkoutTracker.Application.Users.Services
         public UserService(
             IRepository<User> repo,
             ICryptoService cryptoService,
-            IEmailService emailService,
             IRefreshTokenService refreshTokenService,
-            ILogger<UserService> logger,
-            string frontEndResetPasswordUrl) : base(repo, logger)
+            ILogger<UserService> logger) : base(repo, logger)
         {
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
-            _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
             _refreshTokenService = refreshTokenService ?? throw new ArgumentNullException(nameof(refreshTokenService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            if (!string.IsNullOrWhiteSpace(frontEndResetPasswordUrl))
-                _frontEndResetPasswordUrl = frontEndResetPasswordUrl;
-            else
-                throw new ArgumentNullException(nameof(frontEndResetPasswordUrl));
             _logger.LogInformation("UserService constructed");
         }
 
@@ -108,10 +100,16 @@ namespace WorkoutTracker.Application.Users.Services
             {
                 var user = await _repo.GetAsync(userId, cancellationToken);
 
+                //These messages are written to be shown to the user (the controller turns them into a 400).
                 if (user == null) throw new ApplicationException("User not found.");
                 if (!_cryptoService.VerifyValuesMatch(currentPassword, user.HashedPassword, user.Salt))
                     throw new ApplicationException("Current password is not correct.");
 
+                var passwordProblem = PasswordPolicy.Validate(newPassword);
+                if (passwordProblem != null) throw new ApplicationException(passwordProblem);
+
+                //A fresh salt as well as a fresh hash: the old salt belongs to the password being replaced.
+                user.Salt = _cryptoService.GenerateSalt();
                 user.HashedPassword = _cryptoService.ComputeHash(newPassword, user.Salt);
                 await _repo.UpdateAsync(user, true, cancellationToken);
             }
@@ -119,47 +117,6 @@ namespace WorkoutTracker.Application.Users.Services
             {
                 throw;
             }
-        }
-
-        public async Task<string?> RequestPasswordResetAsync(string emailAddress, CancellationToken cancellationToken = default)
-        {
-            var user = await _repo.Get().FirstOrDefaultAsync(x => x.EmailAddress == emailAddress && x.IsActive, cancellationToken);
-            if (user == null)
-                return null;
-
-            user.PasswordResetCode = _cryptoService.GeneratePasswordResetCode();
-            await _repo.UpdateAsync(user, true, cancellationToken);
-
-            if (_emailService.IsEnabled)
-            {
-                await _emailService.SendEmailAsync(
-                    emailAddress,
-                    "noreply@workouttracker.com",
-                    "Password Reset",
-                    $"A password reset request was received. If you made this request, please go to {_frontEndResetPasswordUrl}/{user.PasswordResetCode}",
-                    cancellationToken
-                    );
-            }
-
-            return user.PasswordResetCode;
-        }
-
-        public async Task ResetPasswordAsync(string resetCode, string newPassword, CancellationToken cancellationToken = default)
-        {
-            var user = await _repo.Get().FirstOrDefaultAsync(user => user.PasswordResetCode == resetCode, cancellationToken);
-
-            if (user == null)
-                throw new ApplicationException($"No user found with password reset code {resetCode}.");
-
-            user.HashedPassword = _cryptoService.ComputeHash(newPassword, user.Salt);
-            user.PasswordResetCode = null;
-
-            await _repo.UpdateAsync(user, true, cancellationToken);
-        }
-
-        public async Task<bool> ValidatePasswordResetCodeAsync(string resetCode, CancellationToken cancellationToken = default)
-        {
-            return await _repo.Get().AnyAsync(user => user.PasswordResetCode == resetCode, cancellationToken);
         }
 
         public async Task<bool> IsActiveAsync(int userId, CancellationToken cancellationToken = default)

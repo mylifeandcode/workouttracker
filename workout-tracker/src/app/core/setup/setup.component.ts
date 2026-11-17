@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../_services/auth/auth.service';
 import { NotificationService } from '../_services/notification/notification.service';
 import { SetupService } from '../_services/setup/setup.service';
+import { MIN_PASSWORD_LENGTH } from '../../shared/constants/feature-agnostic-constants';
 
 /**
  * First-run setup: creates the first administrator when the system has no users yet. The setup code is
@@ -18,9 +19,6 @@ import { SetupService } from '../_services/setup/setup.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SetupComponent {
-  //Mirrors UserSetupService.MinPasswordLength on the API, which is what actually enforces it.
-  private static readonly MIN_PASSWORD_LENGTH = 12;
-
   private _setupService = inject(SetupService);
   private _authService = inject(AuthService);
   private _notificationService = inject(NotificationService);
@@ -32,7 +30,7 @@ export class SetupComponent {
     required(p.emailAddress, { message: 'Required.' });
     email(p.emailAddress, { message: 'Must be a valid email address.' });
     required(p.password, { message: 'Required.' });
-    minLength(p.password, SetupComponent.MIN_PASSWORD_LENGTH, { message: `Must be at least ${SetupComponent.MIN_PASSWORD_LENGTH} characters.` });
+    minLength(p.password, MIN_PASSWORD_LENGTH, { message: `Must be at least ${MIN_PASSWORD_LENGTH} characters.` });
     required(p.confirmPassword, { message: 'Required.' });
     validate(p.confirmPassword, ({ value, valueOf }) =>
       value() === valueOf(p.password)

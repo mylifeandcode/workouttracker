@@ -131,6 +131,18 @@ describe('UserService', () => {
     await reactivated;
   });
 
+  it('should create a password reset for a user by public ID', async () => {
+    const publicId = '4b0f0c1e-3c1a-4f57-9d3a-0c6a7d2a9a11';
+
+    const result = firstValueFrom(service.createPasswordReset(publicId));
+
+    const request = http.expectOne(`http://localhost:5600/api/users/${publicId}/password-reset`);
+    expect(request.request.method).toEqual('POST');
+
+    request.flush({ token: 'theToken', expiresAt: '2026-11-17T13:00:00Z' });
+    expect((await result).token).toEqual('theToken');
+  });
+
   it('should refuse the inherited update and delete calls, whose API routes no longer exist', async () => {
     await expect(firstValueFrom(service.update(<User>{ id: 1 }))).rejects.toThrow();
     await expect(firstValueFrom(service.delete(1))).rejects.toThrow();

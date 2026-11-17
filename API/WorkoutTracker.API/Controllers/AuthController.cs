@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -10,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WorkoutTracker.Application.Security.Interfaces;
 using WorkoutTracker.Application.Users.Interfaces;
+using WorkoutTracker.Application.Users.Models;
 using WorkoutTracker.API.Auth;
 using WorkoutTracker.API.Mappers;
 using WorkoutTracker.API.Models;
@@ -28,6 +30,7 @@ namespace WorkoutTracker.API.Controllers
         private ICryptoService _cryptoService;
         private IRefreshTokenService _refreshTokenService;
         private IUserDTOMapper _userDTOMapper;
+        private IPasswordResetService _passwordResetService;
 
         public AuthController(
             IUserService userService,
@@ -36,6 +39,7 @@ namespace WorkoutTracker.API.Controllers
             ICryptoService cryptoService,
             IRefreshTokenService refreshTokenService,
             IUserDTOMapper userDTOMapper,
+            IPasswordResetService passwordResetService,
             ILoggerFactory loggerFactory) : base(loggerFactory)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
@@ -44,6 +48,7 @@ namespace WorkoutTracker.API.Controllers
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
             _refreshTokenService = refreshTokenService ?? throw new ArgumentNullException(nameof(refreshTokenService));
             _userDTOMapper = userDTOMapper ?? throw new ArgumentNullException(nameof(userDTOMapper));
+            _passwordResetService = passwordResetService ?? throw new ArgumentNullException(nameof(passwordResetService));
         }
 
         [AllowAnonymous]
@@ -160,61 +165,69 @@ namespace WorkoutTracker.API.Controllers
             {
                 throw;
             }
+            catch (ApplicationException ex)
+            {
+                //UserService writes these messages for the user ("Current password is not correct.", the password rule).
+                return Problem(statusCode: StatusCodes.Status400BadRequest, detail: ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error changing password for user {UserId}.", userId);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return Problem(statusCode: StatusCodes.Status500InternalServerError);
             }
         }
 
+        //The three actions below are anonymous (the person has forgotten their password), so each is rate limited, and
+        //none of them says anything that tells a stranger whether an email address has an account.
+
+        /// <summary>
+        /// Always 204 with an empty body: if the address belongs to an active user and email is configured, they are
+        /// emailed a one-time link, and otherwise nothing happens. The response is the same either way.
+        /// </summary>
         [Route("request-password-reset")]
         [AllowAnonymous]
+        [EnableRateLimiting("password-reset")]
         [HttpPost]
-        public async Task<ActionResult<string>> RequestPasswordReset(RequestPasswordResetRequest request, CancellationToken cancellationToken = default)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        public async Task<IActionResult> RequestPasswordReset(RequestPasswordResetRequest request, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                string resetCode = await _userService.RequestPasswordResetAsync(request.EmailAddress, cancellationToken);
-                return Ok(resetCode);
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error requesting password reset for {EmailAddress}.", request?.EmailAddress);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            await _passwordResetService.RequestResetEmailAsync(request?.EmailAddress, cancellationToken);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Whether a reset link is still good, so the page can say so before asking for a new password. The token travels
+        /// in the body, not the URL, so it never lands in request logs.
+        /// </summary>
+        [Route("validate-reset-token")]
+        [AllowAnonymous]
+        [EnableRateLimiting("password-reset")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        public async Task<ActionResult<bool>> ValidateResetToken(ValidateResetTokenRequest request, CancellationToken cancellationToken = default)
+        {
+            return Ok(await _passwordResetService.ValidateTokenAsync(request?.Token, cancellationToken));
         }
 
         [Route("reset-password")]
         [AllowAnonymous]
+        [EnableRateLimiting("password-reset")]
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public async Task<IActionResult> ResetPassword(PasswordResetRequest request, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                await _userService.ResetPasswordAsync(request.ResetCode, request.NewPassword, cancellationToken);
-                return Ok();
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error resetting password.");
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+            var outcome = await _passwordResetService.ResetPasswordAsync(request?.Token, request?.NewPassword, cancellationToken);
 
-        [Route("validate-reset-code/{resetCode}")]
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<ActionResult<bool>> ValidatePasswordResetCode(string resetCode, CancellationToken cancellationToken = default)
-        {
-            return await _userService.ValidatePasswordResetCodeAsync(resetCode, cancellationToken);
+            return outcome.Result switch
+            {
+                PasswordResetResult.Done => NoContent(),
+                //The same answer for a token that is unknown, expired, used, or belongs to a deactivated user.
+                PasswordResetResult.InvalidPassword => Problem(statusCode: StatusCodes.Status400BadRequest, detail: outcome.Message),
+                _ => Problem(statusCode: StatusCodes.Status400BadRequest, detail: "This reset link is invalid or has expired.")
+            };
         }
 
         private bool IsCredentialsObjectValid(UserCredentialsDTO credentials)

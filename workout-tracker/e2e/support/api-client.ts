@@ -8,6 +8,7 @@ import type {
   PaginatedResultsOfExecutedWorkoutSummaryDTO,
   PaginatedResultsOfExerciseDTO,
   PaginatedResultsOfWorkoutDTO,
+  PasswordResetTokenDTO,
   SetupStatusDTO,
   TargetArea,
   User,
@@ -83,6 +84,34 @@ export class ApiClient {
     return this.context.post('/api/auth/refresh', {
       data: { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken },
     });
+  }
+
+  //PASSWORD RESET ////////////////////////////////////////////////////////////
+
+  /** Anonymous. The API answers the same empty 204 for every address, so a test checks the raw response. */
+  async tryRequestPasswordReset(emailAddress: string): Promise<APIResponse> {
+    return this.context.post('/api/auth/request-password-reset', { data: { emailAddress } });
+  }
+
+  async validateResetToken(token: string): Promise<boolean> {
+    const response = await this.context.post('/api/auth/validate-reset-token', { data: { token } });
+    expect(response, 'Could not validate the reset token').toBeOK();
+    return response.json() as Promise<boolean>;
+  }
+
+  async tryResetPassword(token: string, newPassword: string): Promise<APIResponse> {
+    return this.context.post('/api/auth/reset-password', { data: { token, newPassword } });
+  }
+
+  /** Administrator-only: creates a one-time reset token for a user, to hand to them (for installations without email). */
+  async createPasswordReset(publicId: string): Promise<PasswordResetTokenDTO> {
+    const response = await this.tryCreatePasswordReset(publicId);
+    expect(response, `Could not create a password reset for ${publicId}`).toBeOK();
+    return response.json() as Promise<PasswordResetTokenDTO>;
+  }
+
+  async tryCreatePasswordReset(publicId: string): Promise<APIResponse> {
+    return this.context.post(`/api/Users/${publicId}/password-reset`);
   }
 
   /** Anonymous: the list the pre-login user picker shows, as raw JSON. */

@@ -1,4 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -6,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,6 +33,7 @@ namespace WorkoutTracker.Tests.Controllers
         private IConfiguration _configuration;
         private Mock<ICryptoService> _cryptoServiceMock;
         private Mock<IRefreshTokenService> _refreshTokenServiceMock;
+        private Mock<IPasswordResetService> _passwordResetServiceMock;
         private IUserDTOMapper _userDTOMapper;
         private AuthController _sut;
         private List<User> _testUsers;
@@ -51,15 +57,6 @@ namespace WorkoutTracker.Tests.Controllers
             _userServiceMock
                 .Setup(x => x.ChangePasswordAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
-            _userServiceMock
-                .Setup(x => x.RequestPasswordResetAsync(It.IsAny<string>()))
-                .ReturnsAsync("someResetCode");
-            _userServiceMock
-                .Setup(x => x.ResetPasswordAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.CompletedTask);
-            _userServiceMock
-                .Setup(x => x.ValidatePasswordResetCodeAsync(It.IsAny<string>()))
-                .ReturnsAsync(true);
 
             _tokenServiceMock = new Mock<ITokenService>(MockBehavior.Strict);
             _tokenServiceMock
@@ -83,7 +80,27 @@ namespace WorkoutTracker.Tests.Controllers
 
             _userDTOMapper = new UserDTOMapper();
 
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, _userDTOMapper, LoggerFactory);
+            _passwordResetServiceMock = new Mock<IPasswordResetService>(MockBehavior.Strict);
+            _passwordResetServiceMock
+                .Setup(x => x.RequestResetEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
+            _sut = CreateController();
+        }
+
+        private AuthController CreateController()
+        {
+            //ControllerBase.Problem() asks the request's services for a factory, and there are none in a unit test.
+            var problemDetailsFactory = new Mock<ProblemDetailsFactory>();
+            problemDetailsFactory
+                .Setup(x => x.CreateProblemDetails(It.IsAny<HttpContext>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns((HttpContext _, int? statusCode, string title, string type, string detail, string instance) =>
+                    new ProblemDetails { Status = statusCode, Detail = detail });
+
+            return new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, _userDTOMapper, _passwordResetServiceMock.Object, LoggerFactory)
+            {
+                ProblemDetailsFactory = problemDetailsFactory.Object
+            };
         }
 
         [TestMethod]
@@ -115,7 +132,7 @@ namespace WorkoutTracker.Tests.Controllers
             _configuration = GetConfiguration(false);
 
             //TODO: Troubleshoot. The updated config doesn't take unless I recreate the controller.
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, _userDTOMapper, LoggerFactory);
+            _sut = CreateController();
 
             var credentials = new UserCredentialsDTO();
             credentials.Username = "Spock";
@@ -164,7 +181,7 @@ namespace WorkoutTracker.Tests.Controllers
                 .Returns(false);
 
             //TODO: Troubleshoot. The updated config doesn't take unless I recreate the controller.
-            _sut = new AuthController(_userServiceMock.Object, _tokenServiceMock.Object, _configuration, _cryptoServiceMock.Object, _refreshTokenServiceMock.Object, _userDTOMapper, LoggerFactory);
+            _sut = CreateController();
 
             var credentials = new UserCredentialsDTO();
             credentials.Username = "Spock";
@@ -373,48 +390,144 @@ namespace WorkoutTracker.Tests.Controllers
             _refreshTokenServiceMock.Verify(x => x.RevokeByUserIdAsync(1), Times.Once);
         }
 
+        //PASSWORD CHANGE AND RESET ///////////////////////////////////////////////
+
         [TestMethod]
-        public async Task Should_Process_Password_Reset_Request()
+        public async Task Should_Turn_The_Messages_Written_For_Users_Into_A_400_When_Changing_Password()
         {
             //ARRANGE
-            var request = new RequestPasswordResetRequest();
-            request.EmailAddress = "jtkirk@ufp.gov";
+            SetupUser(_sut);
+            _userServiceMock
+                .Setup(x => x.ChangePasswordAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new ApplicationException("Current password is not correct."));
+
+            //ACT
+            var result = await _sut.ChangePassword(new PasswordChangeRequest { CurrentPassword = "wrong", NewPassword = "AnotherLongPassword1" });
+
+            //ASSERT
+            var objectResult = (ObjectResult)result;
+            Assert.AreEqual(StatusCodes.Status400BadRequest, objectResult.StatusCode);
+            Assert.AreEqual("Current password is not correct.", ((ProblemDetails)objectResult.Value).Detail);
+        }
+
+        [TestMethod]
+        public async Task Should_Not_Echo_An_Unexpected_Exception_When_Changing_Password()
+        {
+            //ARRANGE
+            SetupUser(_sut);
+            _userServiceMock
+                .Setup(x => x.ChangePasswordAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new InvalidOperationException("secret connection string details"));
+
+            //ACT
+            var result = await _sut.ChangePassword(new PasswordChangeRequest { CurrentPassword = "x", NewPassword = "AnotherLongPassword1" });
+
+            //ASSERT
+            var objectResult = (ObjectResult)result;
+            Assert.AreEqual(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
+            Assert.IsFalse(((ProblemDetails)objectResult.Value).Detail?.Contains("secret") ?? false);
+        }
+
+        [TestMethod]
+        public async Task Should_Answer_A_Password_Reset_Request_With_An_Empty_204()
+        {
+            //ARRANGE
+            var request = new RequestPasswordResetRequest { EmailAddress = "jtkirk@ufp.gov" };
 
             //ACT
             var result = await _sut.RequestPasswordReset(request);
 
+            //ASSERT: no body at all, so there is nothing for a stranger to learn from it.
+            Assert.IsInstanceOfType(result, typeof(NoContentResult));
+            _passwordResetServiceMock.Verify(x => x.RequestResetEmailAsync("jtkirk@ufp.gov", It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [TestMethod]
+        [DataRow(true)]
+        [DataRow(false)]
+        public async Task Should_Say_Whether_A_Reset_Token_Is_Valid(bool isValid)
+        {
+            //ARRANGE
+            _passwordResetServiceMock.Setup(x => x.ValidateTokenAsync("someToken", It.IsAny<CancellationToken>())).ReturnsAsync(isValid);
+
+            //ACT
+            var result = await _sut.ValidateResetToken(new ValidateResetTokenRequest { Token = "someToken" });
+
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(ActionResult<string>));
-            var actionResult = (ActionResult<string>)result;
-            var okObjectResult = (OkObjectResult)actionResult.Result;
-            Assert.AreEqual((int)HttpStatusCode.OK, okObjectResult.StatusCode);
-            Assert.AreEqual("someResetCode", okObjectResult.Value);
-            _userServiceMock.Verify(x => x.RequestPasswordResetAsync(request.EmailAddress), Times.Once);
+            var ok = (OkObjectResult)result.Result;
+            Assert.AreEqual(isValid, ok.Value);
         }
 
         [TestMethod]
         public async Task Should_Reset_Password()
         {
             //ARRANGE
-            var request = new PasswordResetRequest();
-            request.ResetCode = "someRestCode";
-            request.NewPassword = "SomeNewFancyPassword12323238834!!!*&^%";
+            _passwordResetServiceMock
+                .Setup(x => x.ResetPasswordAsync("someToken", "SomeNewFancyPassword12323238834!!!*&^%", It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new PasswordResetOutcome(PasswordResetResult.Done));
 
             //ACT
-            var result = await _sut.ResetPassword(request);
+            var result = await _sut.ResetPassword(new PasswordResetRequest { Token = "someToken", NewPassword = "SomeNewFancyPassword12323238834!!!*&^%" });
 
             //ASSERT
-            Assert.IsInstanceOfType(result, typeof(OkResult));
-            _userServiceMock.Verify(x => x.ResetPasswordAsync(request.ResetCode, request.NewPassword), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(NoContentResult));
         }
 
         [TestMethod]
-        public async Task Should_Validate_Password_Reset_Code()
+        public async Task Should_Show_The_Password_Rule_Message_When_The_New_Password_Is_Refused()
         {
-            var result = await _sut.ValidatePasswordResetCode("someResetCode");
-            Assert.IsInstanceOfType(result, typeof(ActionResult<bool>));
-            Assert.IsTrue((result as ActionResult<bool>).Value);
-            _userServiceMock.Verify(x => x.ValidatePasswordResetCodeAsync("someResetCode"), Times.Once);
+            //ARRANGE
+            _passwordResetServiceMock
+                .Setup(x => x.ResetPasswordAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new PasswordResetOutcome(PasswordResetResult.InvalidPassword, "The password must be at least 12 characters."));
+
+            //ACT
+            var result = await _sut.ResetPassword(new PasswordResetRequest { Token = "someToken", NewPassword = "short" });
+
+            //ASSERT
+            var objectResult = (ObjectResult)result;
+            Assert.AreEqual(StatusCodes.Status400BadRequest, objectResult.StatusCode);
+            Assert.AreEqual("The password must be at least 12 characters.", ((ProblemDetails)objectResult.Value).Detail);
+        }
+
+        [TestMethod]
+        public async Task Should_Give_One_Generic_Answer_For_Any_Bad_Reset_Token()
+        {
+            //ARRANGE: the same answer whatever was wrong with the token (unknown, expired, used, user deactivated).
+            _passwordResetServiceMock
+                .Setup(x => x.ResetPasswordAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new PasswordResetOutcome(PasswordResetResult.InvalidToken));
+
+            //ACT
+            var result = await _sut.ResetPassword(new PasswordResetRequest { Token = "someToken", NewPassword = "AnotherLongPassword1" });
+
+            //ASSERT
+            var objectResult = (ObjectResult)result;
+            Assert.AreEqual(StatusCodes.Status400BadRequest, objectResult.StatusCode);
+            Assert.AreEqual("This reset link is invalid or has expired.", ((ProblemDetails)objectResult.Value).Detail);
+        }
+
+        [TestMethod]
+        public void Should_Rate_Limit_And_Allow_Anonymous_Access_To_The_Reset_Endpoints()
+        {
+            foreach (var name in new[] { nameof(AuthController.RequestPasswordReset), nameof(AuthController.ValidateResetToken), nameof(AuthController.ResetPassword) })
+            {
+                var method = typeof(AuthController).GetMethod(name);
+
+                Assert.IsNotNull(method, name);
+                Assert.AreEqual(1, method.GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Length, name);
+
+                var limit = method.GetCustomAttributes(typeof(EnableRateLimitingAttribute), true).Cast<EnableRateLimitingAttribute>().SingleOrDefault();
+                Assert.IsNotNull(limit, $"{name} should be rate limited.");
+                Assert.AreEqual("password-reset", limit.PolicyName);
+            }
+        }
+
+        [TestMethod]
+        public void Should_No_Longer_Offer_The_Old_Reset_Endpoints_That_Leaked_Codes()
+        {
+            //The old GET validate-reset-code/{code} (a guessing oracle that put the code in the URL) is gone.
+            Assert.IsNull(typeof(AuthController).GetMethod("ValidatePasswordResetCode"));
         }
 
         private IConfiguration GetConfiguration(bool useSimpleLogin)

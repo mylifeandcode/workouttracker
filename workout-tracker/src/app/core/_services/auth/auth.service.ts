@@ -201,16 +201,21 @@ export class AuthService {
     return this._http.post<void>(`${this._apiRoot}/change-password`, { currentPassword, newPassword });
   }
 
-  public requestPasswordReset(emailAddress: string): Observable<string> {
-    return this._http.post<string>(`${this._apiRoot}/request-password-reset`, { emailAddress });
+  /**
+   * The "forgot my password" request. The API answers the same way (an empty 204) whether or not the address has an account,
+   * so there is nothing to read from the response.
+   */
+  public requestPasswordReset(emailAddress: string): Observable<void> {
+    return this._http.post<void>(`${this._apiRoot}/request-password-reset`, { emailAddress });
   }
 
-  public resetPassword(resetCode: string, newPassword: string): Observable<void> {
-    return this._http.post<void>(`${this._apiRoot}/reset-password`, { resetCode, newPassword });
+  public resetPassword(token: string, newPassword: string): Observable<void> {
+    return this._http.post<void>(`${this._apiRoot}/reset-password`, { token, newPassword });
   }
 
-  public validatePasswordResetCode(resetCode: string): Observable<boolean> {
-    return this._http.get<boolean>(`${this._apiRoot}/validate-reset-code/${resetCode}`);
+  //A POST with the token in the body (not a GET with it in the URL), so it never lands in request logs.
+  public validatePasswordResetToken(token: string): Observable<boolean> {
+    return this._http.post<boolean>(`${this._apiRoot}/validate-reset-token`, { token });
   }
 
   public getProfiles(): Observable<UserProfileDTO[]> {

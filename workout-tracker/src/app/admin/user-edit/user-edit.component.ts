@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, signal } from '@angular/core';
 import { form, FormField, required, email, validate, submit } from '@angular/forms/signals';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/_services/auth/auth.service';
 import { ConfigService } from '../../core/_services/config/config.service';
-import { User, UserRole, UserUpdateDTO } from '../../api';
+import { PasswordResetTokenDTO, User, UserRole, UserUpdateDTO } from '../../api';
 import { toAppError } from '../../core/_http/app-error.mapper';
 import { firstValueFrom } from 'rxjs';
 import { UserService } from '../../core/_services/user/user.service';
@@ -22,7 +21,6 @@ export class UserEditComponent implements OnInit {
   private _router = inject(Router);
   private _userSvc = inject(UserService);
   private _configService = inject(ConfigService);
-  private _authService = inject(AuthService);
 
   public userId = input.required<string>();
 
@@ -49,13 +47,13 @@ export class UserEditComponent implements OnInit {
     });
   });
 
-  private _resetPasswordUrlRoot: string;
+  private _resetPasswordUrl: string;
 
   constructor() {
     this.showPasswordResetButton.set(!this._configService.get("smtpEnabled"));
 
     //TODO: Inject WINDOW and use that instead of window below
-    this._resetPasswordUrlRoot = `${window.location.protocol}//${window.location.host}/user/reset-password/`;
+    this._resetPasswordUrl = `${window.location.protocol}//${window.location.host}/user/reset-password`;
   }
 
   //PUBLIC METHODS
@@ -93,11 +91,11 @@ export class UserEditComponent implements OnInit {
 
   public resetPassword(): void {
     //TODO: Replace window usages below with NZ-MODAL
-    if (window.confirm("This will reset the user's password. You will need to provide them with the URL to create their new password. Do you want to proceed?")) {
-      this._authService.requestPasswordReset(this.model().emailAddress)
-        .subscribe((resetCode: string) => {
-          window.alert(`Password has been reset. Instruct user to go to ${this._resetPasswordUrlRoot}${resetCode}.`);
-          //console.log("ROUTER: ", this._router);
+    if (window.confirm("This creates a link that lets the user choose a new password. You will need to give it to them: it works once, and expires. Do you want to proceed?")) {
+      this._userSvc.createPasswordReset(this.model().publicId)
+        .subscribe((reset: PasswordResetTokenDTO) => {
+          //The token is after a #, so it is never sent to a server or written to a log.
+          window.alert(`Give the user this link. It works once and expires at ${new Date(reset.expiresAt).toLocaleString()}:\n\n${this._resetPasswordUrl}#token=${reset.token}`);
         });
     }
   }

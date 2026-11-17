@@ -15,7 +15,7 @@ namespace WorkoutTracker.Data.EntitySetup.Users
             entity.Property(x => x.ProfilePic).HasMaxLength(4096);
             entity.Property(x => x.EmailAddress).HasDefaultValue("noemail@noemail.com").IsRequired();
             entity.Property(x => x.Salt).HasMaxLength(50);
-            entity.Property(x => x.PasswordResetCode).HasMaxLength(25);
+            entity.Property(x => x.PasswordResetTokenHash).HasMaxLength(64); //Hex SHA-256
 
             //The database default keeps every pre-existing user active when the column is added. ValueGeneratedNever
             //makes EF always send the property's actual value: with a default of true it would otherwise treat false
@@ -25,7 +25,7 @@ namespace WorkoutTracker.Data.EntitySetup.Users
             entity.HasIndex(x => x.Name);
             entity.HasIndex(x => x.EmailAddress);
             entity.HasIndex(x => x.PublicId);
-            entity.HasIndex(x => x.PasswordResetCode);
+            entity.HasIndex(x => x.PasswordResetTokenHash);
 
             base.SetupAuditFields<User>(builder);
         }

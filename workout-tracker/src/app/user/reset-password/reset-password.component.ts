@@ -7,6 +7,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { HttpErrorResponse } from '@angular/common/http';
 import { toAppError } from '../../core/_http/app-error.mapper';
+import { MIN_PASSWORD_LENGTH } from '../../shared/constants/feature-agnostic-constants';
 
 @Component({
     selector: 'wt-reset-password',
@@ -23,57 +24,62 @@ export class ResetPasswordComponent implements OnInit {
   protected readonly model = signal({ password: '', confirmPassword: '' });
   public readonly resetPasswordForm = form(this.model, (p) => {
     required(p.password, { message: 'Required.' });
-    minLength(p.password, 7, { message: 'Must be at least 7 characters.' });
+    minLength(p.password, MIN_PASSWORD_LENGTH, { message: `Must be at least ${MIN_PASSWORD_LENGTH} characters.` });
     required(p.confirmPassword, { message: 'Required.' });
-    minLength(p.confirmPassword, 7, { message: 'Must be at least 7 characters.' });
+    minLength(p.confirmPassword, MIN_PASSWORD_LENGTH, { message: `Must be at least ${MIN_PASSWORD_LENGTH} characters.` });
     validate(p.confirmPassword, ({ value, valueOf }) =>
       value() === valueOf(p.password)
         ? undefined
         : { kind: 'passwordsMatch', message: 'Passwords must match.' });
   });
 
-  public validatingResetCode = signal(true);
-  public resetCodeInvalid = signal(false);
+  public validatingResetToken = signal(true);
+  public resetLinkInvalid = signal(false);
   public errorMessage = signal<string | null>(null);
   public resettingPassword = signal(false);
 
-  private _resetCode: string | null = null;
+  private _resetToken: string | null = null;
 
   public ngOnInit(): void {
-    this._resetCode = this._activatedRoute.snapshot.params["resetCode"];
+    //The token is in the URL fragment (…/reset-password#token=…), which browsers never send to a server, so it can't end up in
+    //server logs or Referer headers. Read it, then take it out of the address bar and history.
+    const fragment = this._activatedRoute.snapshot.fragment;
+    this._resetToken = fragment ? new URLSearchParams(fragment).get('token') : null;
 
-    if(!this._resetCode) {
-      this.resetCodeInvalid.set(true);
+    if (!this._resetToken) {
+      this.resetLinkInvalid.set(true);
+      this.validatingResetToken.set(false);
+      return;
     }
-    else {
-      this._authService.validatePasswordResetCode(this._resetCode)
-        .pipe(
-          finalize(() => { this.validatingResetCode.set(false); }),
-          catchError((err: HttpErrorResponse) => {
-            this.errorMessage.set(toAppError(err).userMessage);
-            return of(false);
-          })
-        )
-        .subscribe((isValid: boolean) => {
-          this.resetCodeInvalid.set(!isValid);
-        });
-    }
+
+    this._router.navigate([], { relativeTo: this._activatedRoute, fragment: undefined, replaceUrl: true });
+
+    this._authService.validatePasswordResetToken(this._resetToken)
+      .pipe(
+        finalize(() => { this.validatingResetToken.set(false); }),
+        catchError((err: HttpErrorResponse) => {
+          this.errorMessage.set(toAppError(err, 'POST').userMessage);
+          return of(false);
+        })
+      )
+      .subscribe((isValid: boolean) => {
+        this.resetLinkInvalid.set(!isValid);
+      });
   }
 
   public resetPassword(): void {
-    if (!this._resetCode) return;
+    if (!this._resetToken) return;
 
     submit(this.resetPasswordForm, async () => {
       this.resettingPassword.set(true);
       this.errorMessage.set(null);
       try {
-        await firstValueFrom(this._authService.resetPassword(this._resetCode!, this.model().password));
-        window.alert("Password has been reset."); //TODO: Replace windowa.alert with NZ-MODAL
+        await firstValueFrom(this._authService.resetPassword(this._resetToken!, this.model().password));
+        window.alert("Your password has been reset. You can now sign in with it."); //TODO: Replace window.alert with NZ-MODAL
         this._router.navigate(['']);
       } catch (error) {
-        this.errorMessage.set(error instanceof HttpErrorResponse && error.message
-          ? error.message
-          : "An error has occurred. Please contact an administrator.");
+        //The API's own explanation: the password rule, or that the link is invalid or has expired.
+        this.errorMessage.set(toAppError(error, 'POST').userMessage);
       } finally {
         this.resettingPassword.set(false);
       }

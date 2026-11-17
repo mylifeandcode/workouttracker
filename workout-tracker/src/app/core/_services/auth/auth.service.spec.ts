@@ -207,6 +207,40 @@ describe('AuthService', () => {
     expect(service.isUserAdmin).toBe(true);
   });
 
+  it('should request a password reset and expect nothing back', async () => {
+    const result = firstValueFrom(service.requestPasswordReset("jtkirk@ufp.gov"));
+
+    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/request-password-reset");
+    expect(testRequest.request.method).toEqual("POST");
+    expect(testRequest.request.body).toEqual({ emailAddress: "jtkirk@ufp.gov" });
+
+    testRequest.flush(null, { status: 204, statusText: "No Content" });
+    expect(await result).toBeNull();
+  });
+
+  it('should validate a reset token with a POST, so the token is never in the URL', async () => {
+    const result = firstValueFrom(service.validatePasswordResetToken("someToken"));
+
+    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/validate-reset-token");
+    expect(testRequest.request.method).toEqual("POST");
+    expect(testRequest.request.body).toEqual({ token: "someToken" });
+    expect(testRequest.request.url).not.toContain("someToken");
+
+    testRequest.flush(true);
+    expect(await result).toBe(true);
+  });
+
+  it('should reset the password with the token and the new password', async () => {
+    const result = firstValueFrom(service.resetPassword("someToken", "aNewPassword-123"));
+
+    const testRequest: TestRequest = httpTestingController.expectOne("http://localhost:5600/auth/reset-password");
+    expect(testRequest.request.method).toEqual("POST");
+    expect(testRequest.request.body).toEqual({ token: "someToken", newPassword: "aNewPassword-123" });
+
+    testRequest.flush(null, { status: 204, statusText: "No Content" });
+    await result;
+  });
+
   it('should return user-select route from loginRoute property when applicable', () => {
     expect(service.loginRoute).toBe('user-select');
   });

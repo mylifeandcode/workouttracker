@@ -126,7 +126,7 @@ namespace WorkoutTracker.Tests.Controllers
         public async Task Should_Add()
         {
             //ARRANGE
-            var userDTO = new UserNewDTO { UserName = "Someone", Role = UserRole.Standard };
+            var userDTO = new UserNewDTO { UserName = "Someone", Password = "a-long-enough-password", Role = UserRole.Standard };
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.AddAsync(It.IsAny<User>())).ReturnsAsync(new User());
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
@@ -141,6 +141,28 @@ namespace WorkoutTracker.Tests.Controllers
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             Assert.IsInstanceOfType((result.Result as OkObjectResult).Value, typeof(User));
             userService.Verify(mock => mock.AddAsync(It.IsAny<User>()), Times.Once);
+        }
+
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow("")]
+        [DataRow("short")]
+        public async Task Should_Not_Add_A_User_With_A_Weak_Password(string password)
+        {
+            //ARRANGE
+            var userDTO = new UserNewDTO { UserName = "Someone", Password = password, Role = UserRole.Standard };
+            var userService = new Mock<IUserService>(MockBehavior.Strict);
+            var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);
+            var sut = new UsersController(userService.Object, executedWorkoutService.Object, _cryptoServiceMock.Object, _userDTOMapper, LoggerFactory);
+            SetupUser(sut);
+
+            //ACT
+            var result = await sut.Post(userDTO);
+
+            //ASSERT: the same password rule as everywhere else a password is set.
+            var badRequest = Assert.IsInstanceOfType<BadRequestObjectResult>(result.Result);
+            StringAssert.Contains((string)badRequest.Value, "at least 12 characters");
+            userService.Verify(mock => mock.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [TestMethod]
@@ -204,7 +226,7 @@ namespace WorkoutTracker.Tests.Controllers
             //cleanly and passes every other test, since nothing else observes cancellation.
             var cts = new CancellationTokenSource();
             var token = cts.Token;
-            var userDTO = new UserNewDTO { UserName = "Someone", Role = UserRole.Standard };
+            var userDTO = new UserNewDTO { UserName = "Someone", Password = "a-long-enough-password", Role = UserRole.Standard };
             var userService = new Mock<IUserService>(MockBehavior.Strict);
             userService.Setup(mock => mock.AddAsync(It.IsAny<User>(), token)).ReturnsAsync(new User());
             var executedWorkoutService = new Mock<IExecutedWorkoutService>(MockBehavior.Strict);

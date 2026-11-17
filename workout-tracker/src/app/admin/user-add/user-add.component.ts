@@ -6,6 +6,7 @@ import { AuthService } from '../../core/_services/auth/auth.service';
 import { UserService } from '../../core/_services/user/user.service';
 import { firstValueFrom } from 'rxjs';
 import { UserNewDTO } from '../../api';
+import { MIN_PASSWORD_LENGTH } from "../../shared/constants/feature-agnostic-constants";
 
 @Component({
   selector: 'wt-user-add',
@@ -33,9 +34,9 @@ export class UserAddComponent implements OnInit {
     required(p.emailAddress, { message: 'Required.' });
     email(p.emailAddress, { message: 'Must be a valid email address.' });
     required(p.password, { message: 'Required.' });
-    minLength(p.password, 7, { message: 'Must be at least 7 characters.' });
+    minLength(p.password, MIN_PASSWORD_LENGTH, { message: `Must be at least ${MIN_PASSWORD_LENGTH} characters.` });
     required(p.confirmPassword, { message: 'Required.' });
-    minLength(p.confirmPassword, 7, { message: 'Must be at least 7 characters.' });
+    minLength(p.confirmPassword, MIN_PASSWORD_LENGTH, { message: `Must be at least ${MIN_PASSWORD_LENGTH} characters.` });
     validate(p.confirmPassword, ({ value, valueOf }) =>
       value() === valueOf(p.password)
         ? undefined

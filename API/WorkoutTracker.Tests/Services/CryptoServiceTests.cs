@@ -33,11 +33,5 @@ namespace WorkoutTracker.Tests.Services
             const string mySalt = "MySalt";
             Assert.IsTrue(_sut.VerifyValuesMatch(clearTextValue, hashedValue, mySalt));
         }
-
-        [TestMethod]
-        public void Should_Generate_Password_Reset_Code()
-        {
-            Assert.IsNotNull(_sut.GeneratePasswordResetCode());
-        }
     }
 }

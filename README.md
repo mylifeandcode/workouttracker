@@ -123,3 +123,27 @@ The configured code itself is never replaced, so once the lockout ends, or after
 
 You can instead enable stdout logging in `web.config` (`stdoutLogEnabled="true"` with an existing `stdoutLogFile` folder)
 to read a generated code, but that writes the code to a log file on disk, so a configured code is the better choice.
+
+## Password reset
+
+Passwords are reset with a one-time link, never with a code the API hands back to whoever asks. A reset link works once,
+expires (60 minutes by default, `PasswordReset:TokenLifetimeMinutes`), and carries its token after a `#` so it is never sent
+to a server or written to a log. Only a hash of the token is stored. Resetting a password also signs the user out everywhere.
+
+There are two ways a user gets a link:
+
+- **By email**, if the API can send email (`SMTP:Enabled` and the other `SMTP:*` settings, and `smtpEnabled` in the
+  frontend's `config.json`). The user enters their address on the "forgot password" page. The page always says the same thing
+  whether or not the address has an account, so it can't be used to find out who has one. The email's link is built from
+  `FrontEndResetPasswordURL`, which must be the full address of the reset page, for example
+  `https://app.example.com/user/reset-password`. The API refuses to start if it isn't an absolute `http(s)` URL.
+- **From an administrator**, if there is no email: on a user's edit page, **Reset password** creates a link for the
+  administrator to give to the person. It works once and expires.
+
+Every new password, however it is set (first-administrator setup, a new user, changing it, or a reset), must be at least
+12 characters. Existing passwords keep working until their owner next changes them.
+
+The three anonymous endpoints involved (request, validate, reset) are limited per client IP, 10 requests per 15 minutes by
+default (`PasswordReset:RateLimit`). Behind a reverse proxy the proxy has to pass the real client address on, or everyone
+shares one limit: the bundled `nginx.conf.template` already sets `X-Forwarded-For`, and the compose deployment enables
+forwarded headers on the API. Direct IIS hosting needs nothing extra.

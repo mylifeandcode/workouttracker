@@ -231,8 +231,13 @@ export type PasswordChangeRequest = {
 };
 
 export type PasswordResetRequest = {
-    resetCode: string;
+    token: string;
     newPassword: string;
+};
+
+export type PasswordResetTokenDTO = {
+    token: string;
+    expiresAt: Date;
 };
 
 export type ProblemDetails = {
@@ -338,7 +343,8 @@ export type User = {
     role: UserRole;
     isActive: boolean;
     salt?: null | string;
-    passwordResetCode?: null | string;
+    passwordResetTokenHash?: null | string;
+    passwordResetTokenExpiresAt?: null | Date;
     passwordProtected: boolean;
     name: string;
     id: number;
@@ -440,6 +446,10 @@ export type UserUpdateDTO = {
     userName: string;
     emailAddress: string;
     role: UserRole;
+};
+
+export type ValidateResetTokenRequest = {
+    token: string;
 };
 
 export type Workout = {
@@ -600,14 +610,37 @@ export type PostApiAuthRequestPasswordResetData = {
     url: '/api/Auth/request-password-reset';
 };
 
-export type PostApiAuthRequestPasswordResetResponses = {
+export type PostApiAuthRequestPasswordResetErrors = {
     /**
-     * OK
+     * Too Many Requests
      */
-    200: string;
+    429: ProblemDetails;
 };
 
-export type PostApiAuthRequestPasswordResetResponse = PostApiAuthRequestPasswordResetResponses[keyof PostApiAuthRequestPasswordResetResponses];
+export type PostApiAuthRequestPasswordResetError = PostApiAuthRequestPasswordResetErrors[keyof PostApiAuthRequestPasswordResetErrors];
+
+export type PostApiAuthRequestPasswordResetResponses = {
+    /**
+     * No Content
+     */
+    204: unknown;
+};
+
+export type PostApiAuthValidateResetTokenData = {
+    body: ValidateResetTokenRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/validate-reset-token';
+};
+
+export type PostApiAuthValidateResetTokenErrors = {
+    /**
+     * Too Many Requests
+     */
+    429: ProblemDetails;
+};
+
+export type PostApiAuthValidateResetTokenError = PostApiAuthValidateResetTokenErrors[keyof PostApiAuthValidateResetTokenErrors];
 
 export type PostApiAuthResetPasswordData = {
     body: PasswordResetRequest;
@@ -616,30 +649,25 @@ export type PostApiAuthResetPasswordData = {
     url: '/api/Auth/reset-password';
 };
 
+export type PostApiAuthResetPasswordErrors = {
+    /**
+     * Bad Request
+     */
+    400: ProblemDetails;
+    /**
+     * Too Many Requests
+     */
+    429: ProblemDetails;
+};
+
+export type PostApiAuthResetPasswordError = PostApiAuthResetPasswordErrors[keyof PostApiAuthResetPasswordErrors];
+
 export type PostApiAuthResetPasswordResponses = {
     /**
-     * OK
+     * No Content
      */
-    200: unknown;
+    204: unknown;
 };
-
-export type GetApiAuthValidateResetCodeByResetCodeData = {
-    body?: never;
-    path: {
-        resetCode: string;
-    };
-    query?: never;
-    url: '/api/Auth/validate-reset-code/{resetCode}';
-};
-
-export type GetApiAuthValidateResetCodeByResetCodeResponses = {
-    /**
-     * OK
-     */
-    200: boolean;
-};
-
-export type GetApiAuthValidateResetCodeByResetCodeResponse = GetApiAuthValidateResetCodeByResetCodeResponses[keyof GetApiAuthValidateResetCodeByResetCodeResponses];
 
 export type GetApiExecutedWorkoutByPublicIdData = {
     body?: never;
@@ -858,6 +886,37 @@ export type GetApiExercisesResistanceTypesResponses = {
 };
 
 export type GetApiExercisesResistanceTypesResponse = GetApiExercisesResistanceTypesResponses[keyof GetApiExercisesResistanceTypesResponses];
+
+export type PostApiUsersByPublicIdPasswordResetData = {
+    body?: never;
+    path: {
+        publicId: string;
+    };
+    query?: never;
+    url: '/api/Users/{publicId}/password-reset';
+};
+
+export type PostApiUsersByPublicIdPasswordResetErrors = {
+    /**
+     * Forbidden
+     */
+    403: ProblemDetails;
+    /**
+     * Not Found
+     */
+    404: ProblemDetails;
+};
+
+export type PostApiUsersByPublicIdPasswordResetError = PostApiUsersByPublicIdPasswordResetErrors[keyof PostApiUsersByPublicIdPasswordResetErrors];
+
+export type PostApiUsersByPublicIdPasswordResetResponses = {
+    /**
+     * OK
+     */
+    200: PasswordResetTokenDTO;
+};
+
+export type PostApiUsersByPublicIdPasswordResetResponse = PostApiUsersByPublicIdPasswordResetResponses[keyof PostApiUsersByPublicIdPasswordResetResponses];
 
 export type GetApiResistanceBandsData = {
     body?: never;

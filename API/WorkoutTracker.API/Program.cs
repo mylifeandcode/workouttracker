@@ -3,7 +3,9 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OpenApi;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -22,11 +24,13 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading;
+using System.Threading.RateLimiting;
 using System.Threading.Tasks;
 using WorkoutTracker.API.Auth;
 using WorkoutTracker.API.Configuration;
 using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Application.Shared.Services;
+using WorkoutTracker.Application.Users.Services;
 using WorkoutTracker.Application.Users.Interfaces;
 using WorkoutTracker.Application.Users.Services;
 using WorkoutTracker.Data;
@@ -84,6 +88,28 @@ builder.Services.AddLogging(loggingBuilder =>
 //API on different IIS sites or ports) needs entries. The policy is always registered because the
 //controllers reference it by name via [EnableCors].
 var corsAllowedOrigins = CorsOriginValidator.GetValidatedOrigins(builder.Configuration);
+//The reset links in emails are built from this address, so a bad value should stop the API here rather than quietly
+//producing broken links later.
+PasswordResetService.NormalizeResetPageUrl(builder.Configuration["FrontEndResetPasswordURL"]);
+
+//The anonymous password-reset endpoints are limited per client IP. (Behind a reverse proxy the proxy has to pass the real
+//client address on, or everyone shares one limit: see the X-Forwarded-For header in nginx.conf.template.)
+var resetPermitLimit = int.TryParse(builder.Configuration["PasswordReset:RateLimit:PermitLimit"], out var permits) && permits > 0 ? permits : 10;
+var resetWindowMinutes = int.TryParse(builder.Configuration["PasswordReset:RateLimit:WindowMinutes"], out var windowMinutes) && windowMinutes > 0 ? windowMinutes : 15;
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("password-reset", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = resetPermitLimit,
+                Window = TimeSpan.FromMinutes(resetWindowMinutes),
+                QueueLimit = 0
+            }));
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("SiteCorsPolicy",
@@ -155,6 +181,7 @@ app.UseResponseCompression();
 app.UseRouting();
 app.UseSerilogRequestLogging();
 app.UseCors("SiteCorsPolicy");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
@@ -250,9 +277,6 @@ void RegisterStuff(WebApplicationBuilder appBuilder)
             .As<ISetupCodeProvider>()
             .SingleInstance();
 
-        containerBuilder.RegisterType<UserService>().As<IUserService>()
-            .WithParameter("frontEndResetPasswordUrl", appBuilder.Configuration["FrontEndResetPasswordURL"])
-            .InstancePerLifetimeScope();
     });
 }
 

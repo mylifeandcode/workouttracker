@@ -14,6 +14,7 @@ using WorkoutTracker.API.Mappers;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Security.Interfaces;
 using Microsoft.Extensions.Logging;
+using WorkoutTracker.Application.Security;
 using WorkoutTracker.Application.Users.Models;
 
 namespace WorkoutTracker.API.Controllers
@@ -208,6 +209,10 @@ namespace WorkoutTracker.API.Controllers
             //SYSTEM is the hidden seed user that the API filters out of every user list.
             if (string.Equals(value.UserName?.Trim(), "SYSTEM", StringComparison.OrdinalIgnoreCase))
                 return BadRequest("That user name is reserved.");
+
+            var passwordProblem = PasswordPolicy.Validate(value.Password);
+            if (passwordProblem != null)
+                return BadRequest(passwordProblem);
 
             var user = GetUserFromUserNewDTO(value);
             // Same forwarding requirement as above — see the note in the User-typed Post override.
