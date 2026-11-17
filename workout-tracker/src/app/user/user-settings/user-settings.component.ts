@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed, effect, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { form, FormField, required, min, validate, applyEach, applyWhen } from '@angular/forms/signals';
 import { AuthService } from '../../core/_services/auth/auth.service';
-import { User, UserMinMaxReps, SetType } from '../../api';
+import { User, UserMinMaxReps, UserRepSettingUpdateDTO, UserSettingsUpdateDTO, SetType } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { finalize } from 'rxjs/operators';
 import { IUserRepSettingsModel, UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
@@ -87,11 +87,11 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
   }
 
   public saveSettings(): void {
-    if (!this.user()) return;
+    const user = this.user();
+    if (!user) return;
 
-    this.updateSettingsForPersist();
     this.saving.set(true);
-    this._userService.update(this.user()!)
+    this._userService.updateMySettings(this.getSettingsForPersist(user))
       .pipe(
         finalize(() => {
           this.saving.set(false);
@@ -137,31 +137,36 @@ export class UserSettingsComponent extends CheckForUnsavedDataComponent implemen
     }));
   }
 
-  private updateSettingsForPersist(): void {
-    const user = this.user();
-    if (!user) return;
-
+  /*
+  What gets sent is the settings and nothing else: no user id and no role. The API applies it to whoever is signed in, and
+  matches each rep setting's id only against that user's own rows (an id of 0 is a new one).
+  */
+  private getSettingsForPersist(user: User): UserSettingsUpdateDTO {
     const m = this.model();
-    user.settings.recommendationsEnabled = m.recommendationsEnabled;
 
-    //OFF: the flag alone matters — leave the loaded rep settings untouched (mirrors the old
+    //OFF: the flag alone matters — send the loaded rep settings back as they were (mirrors the old
     //removeControl behavior on persist, minus the per-entry "error retrieving" alert).
-    if (!m.recommendationsEnabled) return;
-
-    //ON: rebuild from the model, preserving any other DTO fields on matched (persisted) entries.
-    user.settings.repSettings = m.repSettings.map((set: IUserRepSettingsModel): UserMinMaxReps => {
-      const existing = set.repSettingsId !== 0
-        ? user.settings.repSettings.find((value: UserMinMaxReps) => value.id === set.repSettingsId)
-        : undefined;
-
-      return {
-        ...(existing ?? {} as UserMinMaxReps),
+    //ON: send what is in the model.
+    const repSettings: UserRepSettingUpdateDTO[] = m.recommendationsEnabled
+      ? m.repSettings.map((set: IUserRepSettingsModel): UserRepSettingUpdateDTO => ({
         id: set.repSettingsId,
         setType: set.setType,
         duration: set.duration,
         minReps: set.minReps,
         maxReps: set.maxReps
-      };
-    });
+      }))
+      : (user.settings.repSettings ?? []).map((value: UserMinMaxReps): UserRepSettingUpdateDTO => ({
+        id: value.id,
+        setType: value.setType,
+        duration: value.duration,
+        minReps: value.minReps,
+        maxReps: value.maxReps
+      }));
+
+    return {
+      recommendationsEnabled: m.recommendationsEnabled,
+      lowestAcceptableRating: user.settings.lowestAcceptableRating,
+      repSettings
+    };
   }
 }

@@ -23,6 +23,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using WorkoutTracker.API.Auth;
 using WorkoutTracker.API.Configuration;
 using WorkoutTracker.Application.Shared.Interfaces;
 using WorkoutTracker.Application.Shared.Services;
@@ -134,6 +135,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidAudience = builder.Configuration["Jwt:Issuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
+
+    //Refuses the token of a user who has been deactivated since it was issued.
+    options.Events = new JwtBearerEvents { OnTokenValidated = ActiveUserTokenValidator.OnTokenValidated };
 });
 
 builder.Services.AddAuthorization();

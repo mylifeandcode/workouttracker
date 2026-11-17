@@ -490,6 +490,10 @@ namespace WorkoutTracker.Data.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<int?>("ModifiedByUserId")
                         .HasColumnType("int");
 

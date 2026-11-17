@@ -14,6 +14,7 @@ using WorkoutTracker.API.Mappers;
 using WorkoutTracker.Application.Workouts.Interfaces;
 using WorkoutTracker.Application.Security.Interfaces;
 using Microsoft.Extensions.Logging;
+using WorkoutTracker.Application.Users.Models;
 
 namespace WorkoutTracker.API.Controllers
 {
@@ -24,6 +25,7 @@ namespace WorkoutTracker.API.Controllers
     [ApiController]
     public class UsersController : SimpleAPIControllerBase<User>
     {
+        private readonly IUserService _userService;
         private readonly IExecutedWorkoutService _executedWorkoutService;
         private readonly ICryptoService _cryptoService;
         private readonly IUserDTOMapper _userDTOMapper;
@@ -35,6 +37,7 @@ namespace WorkoutTracker.API.Controllers
             IUserDTOMapper userDTOMapper,
             ILoggerFactory loggerFactory) : base(userService, loggerFactory)
         {
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _executedWorkoutService = executedWorkoutService ?? throw new ArgumentNullException(nameof(executedWorkoutService));
             _cryptoService = cryptoService ?? throw new ArgumentNullException(nameof(cryptoService));
             _userDTOMapper = userDTOMapper ?? throw new ArgumentNullException(nameof(userDTOMapper));
@@ -66,9 +69,29 @@ namespace WorkoutTracker.API.Controllers
         }
         */
 
+        //The inherited entity endpoints below are switched off ([NonAction]): they took the whole User entity from the
+        //request, with only [Authorize] on them, so any signed-in user could read, change (including their own role) or
+        //delete any other user, and a save also wiped the stored password hash and salt. The narrow endpoints further
+        //down replace them.
+        [NonAction]
+        public override Task<ActionResult<User>> Get(int id, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException("Use GET api/Users/{publicId}.");
+
+        [NonAction]
+        public override Task<ActionResult<User>> Put(int id, [FromBody] User value, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException("Use PUT api/Users/{publicId} (administrators) or PUT api/Users/me/settings.");
+
+        [NonAction]
+        public override Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException("Users are deactivated, not deleted: PUT api/Users/{publicId}/deactivate.");
+
         [HttpGet("{publicId:guid}")]
         public async Task<ActionResult<UserDTO>> GetByPublicId(Guid publicId, CancellationToken cancellationToken = default)
         {
+            //A user can read themselves; reading anyone else is for administrators.
+            if (!IsAdministrator && publicId != GetUserPublicId())
+                return Forbid();
+
             //This method replaces the default implementation because we don't
             //want to return the domain object which includes the user's
             //hashed password.
@@ -90,6 +113,49 @@ namespace WorkoutTracker.API.Controllers
                 _logger.LogError(ex, "Error getting user {PublicId}.", publicId);
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        //Administrators only. Changes the name, email address and role, and nothing else about the user.
+        [HttpPut("{publicId:guid}")]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateUser(Guid publicId, [FromBody] UserUpdateDTO request, CancellationToken cancellationToken = default)
+        {
+            return ToActionResult(await _userService.UpdateProfileAsync(
+                publicId, request.UserName, request.EmailAddress, request.Role, GetUserID(), cancellationToken));
+        }
+
+        //Any signed-in user, but only ever their own: the caller is taken from the token, so there is no id to tamper
+        //with, and the body has no role.
+        [HttpPut("me/settings")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateMySettings([FromBody] UserSettingsUpdateDTO request, CancellationToken cancellationToken = default)
+        {
+            var settings = new UserSettingsUpdate(
+                request.RecommendationsEnabled,
+                request.LowestAcceptableRating,
+                request.RepSettings
+                    .Select(x => new UserRepSettingUpdate(x.Id, x.SetType, x.Duration, x.MinReps, x.MaxReps))
+                    .ToList());
+
+            return ToActionResult(await _userService.UpdateSettingsAsync(GetUserID(), settings, cancellationToken));
+        }
+
+        //"Delete" for a user is deactivation: no sign-in and no sessions, but their data is kept and they can be reactivated.
+        [HttpPut("{publicId:guid}/deactivate")]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Deactivate(Guid publicId, CancellationToken cancellationToken = default)
+        {
+            return ToActionResult(await _userService.DeactivateAsync(publicId, GetUserID(), cancellationToken));
+        }
+
+        [HttpPut("{publicId:guid}/reactivate")]
+        [Authorize(Roles = "Administrator")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Reactivate(Guid publicId, CancellationToken cancellationToken = default)
+        {
+            return ToActionResult(await _userService.ReactivateAsync(publicId, GetUserID(), cancellationToken));
         }
 
         [Authorize(Roles = "Administrator")]
@@ -167,6 +233,18 @@ namespace WorkoutTracker.API.Controllers
             overview.PlannedWorkoutCount = await _executedWorkoutService.GetPlannedCountAsync(GetUserID(), cancellationToken);
 
             return Ok(overview);
+        }
+
+        private IActionResult ToActionResult(UserAdministrationOutcome outcome)
+        {
+            return outcome.Result switch
+            {
+                UserAdministrationResult.Done => NoContent(),
+                UserAdministrationResult.NotFound => NotFound(),
+                UserAdministrationResult.NotPermitted => Forbid(),
+                UserAdministrationResult.InvalidInput => Problem(statusCode: StatusCodes.Status400BadRequest, detail: outcome.Message),
+                _ => Problem(statusCode: StatusCodes.Status409Conflict, detail: outcome.Message)
+            };
         }
 
         private User GetUserFromUserNewDTO(UserNewDTO userNew)

@@ -336,6 +336,7 @@ export type User = {
     profilePic?: null | string;
     settings: UserSettings;
     role: UserRole;
+    isActive: boolean;
     salt?: null | string;
     passwordResetCode?: null | string;
     passwordProtected: boolean;
@@ -392,6 +393,14 @@ export type UserProfileDTO = {
     name: string;
 };
 
+export type UserRepSettingUpdateDTO = {
+    id: number;
+    setType: SetType;
+    duration?: null | number;
+    minReps: number;
+    maxReps: number;
+};
+
 export const UserRole = { /**
      * Standard
      */
@@ -414,10 +423,23 @@ export type UserSettings = {
     modifiedDateTime?: null | Date;
 };
 
+export type UserSettingsUpdateDTO = {
+    recommendationsEnabled: boolean;
+    lowestAcceptableRating: number;
+    repSettings: Array<UserRepSettingUpdateDTO>;
+};
+
 export type UserSummaryDTO = {
     id: number;
     publicId: string;
     name: string;
+    isActive: boolean;
+};
+
+export type UserUpdateDTO = {
+    userName: string;
+    emailAddress: string;
+    role: UserRole;
 };
 
 export type Workout = {
@@ -1072,6 +1094,68 @@ export type GetApiUsersByPublicIdResponses = {
 
 export type GetApiUsersByPublicIdResponse = GetApiUsersByPublicIdResponses[keyof GetApiUsersByPublicIdResponses];
 
+export type PutApiUsersByPublicIdData = {
+    body: UserUpdateDTO;
+    path: {
+        publicId: string;
+    };
+    query?: never;
+    url: '/api/Users/{publicId}';
+};
+
+export type PutApiUsersByPublicIdResponses = {
+    /**
+     * No Content
+     */
+    204: unknown;
+};
+
+export type PutApiUsersMeSettingsData = {
+    body: UserSettingsUpdateDTO;
+    path?: never;
+    query?: never;
+    url: '/api/Users/me/settings';
+};
+
+export type PutApiUsersMeSettingsResponses = {
+    /**
+     * No Content
+     */
+    204: unknown;
+};
+
+export type PutApiUsersByPublicIdDeactivateData = {
+    body?: never;
+    path: {
+        publicId: string;
+    };
+    query?: never;
+    url: '/api/Users/{publicId}/deactivate';
+};
+
+export type PutApiUsersByPublicIdDeactivateResponses = {
+    /**
+     * No Content
+     */
+    204: unknown;
+};
+
+export type PutApiUsersByPublicIdReactivateData = {
+    body?: never;
+    path: {
+        publicId: string;
+    };
+    query?: never;
+    url: '/api/Users/{publicId}/reactivate';
+};
+
+export type PutApiUsersByPublicIdReactivateResponses = {
+    /**
+     * No Content
+     */
+    204: unknown;
+};
+
 export type GetApiUsersData = {
     body?: never;
     path?: never;
@@ -1137,58 +1221,6 @@ export type GetApiUsersOverviewResponses = {
 };
 
 export type GetApiUsersOverviewResponse = GetApiUsersOverviewResponses[keyof GetApiUsersOverviewResponses];
-
-export type DeleteApiUsersByIdData = {
-    body?: never;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/api/Users/{id}';
-};
-
-export type DeleteApiUsersByIdResponses = {
-    /**
-     * OK
-     */
-    200: unknown;
-};
-
-export type GetApiUsersByIdData = {
-    body?: never;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/api/Users/{id}';
-};
-
-export type GetApiUsersByIdResponses = {
-    /**
-     * OK
-     */
-    200: User;
-};
-
-export type GetApiUsersByIdResponse = GetApiUsersByIdResponses[keyof GetApiUsersByIdResponses];
-
-export type PutApiUsersByIdData = {
-    body: User;
-    path: {
-        id: number;
-    };
-    query?: never;
-    url: '/api/Users/{id}';
-};
-
-export type PutApiUsersByIdResponses = {
-    /**
-     * OK
-     */
-    200: User;
-};
-
-export type PutApiUsersByIdResponse = PutApiUsersByIdResponses[keyof PutApiUsersByIdResponses];
 
 export type GetApiWorkoutsData = {
     body?: never;

@@ -59,6 +59,10 @@ namespace WorkoutTracker.API.Controllers
             if (user == null)
                 return new NotFoundResult();
 
+            //A deactivated user can't sign in (with or without SimpleLogin).
+            if (!user.IsActive)
+                return new UnauthorizedResult();
+
             if (!Convert.ToBoolean(_config["SimpleLogin"]))
             {
                 if (!_cryptoService.VerifyValuesMatch(credentials.Password, user.HashedPassword, user.Salt))
@@ -106,7 +110,7 @@ namespace WorkoutTracker.API.Controllers
 
             // Get the user to build a new access token
             var user = await _userService.GetByIdAsync(userId, cancellationToken);
-            if (user == null)
+            if (user == null || !user.IsActive)
                 return Unauthorized();
 
             // Revoke old and create new refresh token

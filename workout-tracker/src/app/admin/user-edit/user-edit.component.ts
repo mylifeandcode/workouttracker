@@ -3,7 +3,8 @@ import { form, FormField, required, email, validate, submit } from '@angular/for
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { ConfigService } from '../../core/_services/config/config.service';
-import { User, UserRole } from '../../api';
+import { User, UserRole, UserUpdateDTO } from '../../api';
+import { toAppError } from '../../core/_http/app-error.mapper';
 import { firstValueFrom } from 'rxjs';
 import { UserService } from '../../core/_services/user/user.service';
 import { EMPTY_GUID } from '../../shared/constants/feature-agnostic-constants';
@@ -48,7 +49,6 @@ export class UserEditComponent implements OnInit {
     });
   });
 
-  private _user: User | undefined;
   private _resetPasswordUrlRoot: string;
 
   constructor() {
@@ -69,18 +69,15 @@ export class UserEditComponent implements OnInit {
     submit(this.userEditForm, async () => {
       this.savingUserInfo.set(true);
       this.errorMsg.set(undefined);
-      const user = this.getUserForPersist();
-
       try {
-        await firstValueFrom(user.id === 0 ? this._userSvc.add(user) : this._userSvc.update(user));
+        await firstValueFrom(this._userSvc.updateUser(this.model().publicId, this.getUserUpdateForPersist()));
         this._router.navigate(['admin/users']); //TODO: Find out how to make this relative, not absolute
       } catch (error) {
         if (error instanceof HttpErrorResponse && error.status == 403)
-          this.errorMsg.set("You do not have permission to add or edit users.");
-        else if (error instanceof HttpErrorResponse && error.message)
-          this.errorMsg.set(error.message);
+          this.errorMsg.set("You do not have permission to edit users.");
         else
-          this.errorMsg.set("An error has occurred. Please contact an administrator.");
+          //For a 400 or 409 this is the API's own explanation, e.g. that the last administrator can't be demoted.
+          this.errorMsg.set(toAppError(error, 'PUT').userMessage);
       } finally {
         this.savingUserInfo.set(false);
       }
@@ -114,7 +111,6 @@ export class UserEditComponent implements OnInit {
     this._userSvc.getById(this.userId())
       .subscribe({
         next: (user: User) => {
-          this._user = user;
           this.model.set({
             id: user.id ?? 0,
             publicId: user.publicId ?? EMPTY_GUID,
@@ -128,21 +124,15 @@ export class UserEditComponent implements OnInit {
       });
   }
 
-  private getUserForPersist(): User {
+  //Only what an administrator is allowed to change: the API leaves everything else about the user alone.
+  private getUserUpdateForPersist(): UserUpdateDTO {
     const m = this.model();
-    const user = <User>{};
 
-    user.id = m.id;
-    user.publicId = m.publicId;
-    user.emailAddress = m.emailAddress;
-    user.name = m.name;
-    user.role = Number(m.role) as UserRole;
-
-    if (this._user?.settings) {
-      user.settings = this._user.settings;
-    }
-
-    return user;
+    return {
+      userName: m.name,
+      emailAddress: m.emailAddress,
+      role: Number(m.role) as UserRole
+    };
   }
 
   //END PRIVATE METHODS

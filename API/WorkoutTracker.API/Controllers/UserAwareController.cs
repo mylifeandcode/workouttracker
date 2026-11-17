@@ -36,6 +36,25 @@ namespace WorkoutTracker.API.Controllers
             return userId;
         }
 
+        /// <summary>
+        /// Whether the token says the caller is an administrator. (Operations that matter most also re-check the
+        /// caller's role in the database, because a token keeps its claims until it expires.)
+        /// </summary>
+        protected bool IsAdministrator => User?.IsInRole("Administrator") == true;
+
+        protected Guid GetUserPublicId()
+        {
+            var claim = User?.FindFirst("UserPublicID");
+
+            if (claim == null)
+                throw new BadHttpRequestException("No UserPublicID claim found for current user.");
+
+            if (!Guid.TryParse(claim.Value, out var publicId))
+                throw new BadHttpRequestException("Invalid UserPublicID claim value for current user.");
+
+            return publicId;
+        }
+
         protected void SetCreatedAuditFields(Entity entity, int? createdByUserId = null)
         {
             int userId = createdByUserId ?? GetUserID();

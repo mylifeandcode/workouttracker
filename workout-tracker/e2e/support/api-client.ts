@@ -14,7 +14,9 @@ import type {
   UserDTO,
   UserNewDTO,
   UserProfileDTO,
+  UserSettingsUpdateDTO,
   UserSummaryDTO,
+  UserUpdateDTO,
   Workout,
 } from '../../src/app/api/types.gen';
 import { ResistanceType, SetType } from '../../src/app/api/types.gen';
@@ -65,12 +67,27 @@ export class ApiClient {
   //AUTH ///////////////////////////////////////////////////////////////////////
 
   async logIn(username: string, password: string): Promise<AuthTokenResultDTO> {
-    const response = await this.context.post('/api/auth/login', {
-      data: { username, password },
-    });
+    const response = await this.tryLogIn(username, password);
 
     expect(response, `Login failed for "${username}"`).toBeOK();
     return response.json() as Promise<AuthTokenResultDTO>;
+  }
+
+  /** Like `logIn`, but returns the raw response so a test can assert on a refusal. */
+  async tryLogIn(username: string, password: string): Promise<APIResponse> {
+    return this.context.post('/api/auth/login', { data: { username, password } });
+  }
+
+  /** Exchanges a session's tokens for new ones; returns the raw response. */
+  async tryRefresh(tokens: AuthTokenResultDTO): Promise<APIResponse> {
+    return this.context.post('/api/auth/refresh', {
+      data: { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken },
+    });
+  }
+
+  /** Anonymous: the list the pre-login user picker shows, as raw JSON. */
+  async getProfileNames(): Promise<string[]> {
+    return (await this.getUserProfiles()).map(profile => profile.name);
   }
 
   //USERS //////////////////////////////////////////////////////////////////////
@@ -87,9 +104,52 @@ export class ApiClient {
 
   /** One user in full (role, email address, settings), by public id. */
   async getUser(publicId: string): Promise<UserDTO> {
-    const response = await this.context.get(`/api/Users/${publicId}`);
+    const response = await this.tryGetUser(publicId);
     expect(response, `Could not load user ${publicId}`).toBeOK();
     return response.json() as Promise<UserDTO>;
+  }
+
+  /** Like `getUser`, but returns the raw response so a test can assert on a refusal (401/403/404). */
+  async tryGetUser(publicId: string): Promise<APIResponse> {
+    return this.context.get(`/api/Users/${publicId}`);
+  }
+
+  /** Administrator-only: changes a user's name, email address and role. */
+  async updateUser(publicId: string, update: UserUpdateDTO): Promise<void> {
+    const response = await this.tryUpdateUser(publicId, update);
+    expect(response, `Could not update user ${publicId}`).toBeOK();
+  }
+
+  async tryUpdateUser(publicId: string, update: UserUpdateDTO): Promise<APIResponse> {
+    return this.context.put(`/api/Users/${publicId}`, { data: update });
+  }
+
+  /**
+   * Saves the signed-in user's own settings. Extra properties are sent as given, so a test can try to smuggle in a
+   * role or a user id and confirm the API ignores them.
+   */
+  async tryUpdateMySettings(settings: UserSettingsUpdateDTO | Record<string, unknown>): Promise<APIResponse> {
+    return this.context.put('/api/Users/me/settings', { data: settings });
+  }
+
+  /** Administrator-only: the "delete" of a user. */
+  async deactivateUser(publicId: string): Promise<void> {
+    const response = await this.tryDeactivateUser(publicId);
+    expect(response, `Could not deactivate user ${publicId}`).toBeOK();
+  }
+
+  async tryDeactivateUser(publicId: string): Promise<APIResponse> {
+    return this.context.put(`/api/Users/${publicId}/deactivate`);
+  }
+
+  async reactivateUser(publicId: string): Promise<void> {
+    const response = await this.context.put(`/api/Users/${publicId}/reactivate`);
+    expect(response, `Could not reactivate user ${publicId}`).toBeOK();
+  }
+
+  /** For asserting that a route no longer exists. */
+  async tryRequest(method: 'get' | 'put' | 'delete', path: string): Promise<APIResponse> {
+    return this.context[method](path);
   }
 
   /**

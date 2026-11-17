@@ -23,14 +23,25 @@ export class UserListComponent {
   public busyMsg = signal<string>('');
   public errorMsg = signal<string | undefined>(undefined); //TODO: We have a caching issue! Fix it!
 
-  public deleteUser(userPublicId: string): void {
-    if (!window.confirm("Are you sure you want to delete this user?")) //TODO: Replace window.confirm with NZ-MODAL
+  //"Delete" for a user is deactivation: they can no longer sign in and their sessions end, but their workouts and history are
+  //kept, and they can be reactivated.
+  public deactivateUser(userPublicId: string): void {
+    if (!window.confirm("Deactivate this user? They will no longer be able to sign in, but their workouts and history are kept.")) //TODO: Replace window.confirm with NZ-MODAL
       return;
 
-    this.busy.set(true);
-    this.busyMsg.set("Deleting...");
+    this.changeActiveState(this._userSvc.deactivate(userPublicId), "Deactivating...");
+  }
 
-    this._userSvc.deleteById(userPublicId)
+  public reactivateUser(userPublicId: string): void {
+    this.changeActiveState(this._userSvc.reactivate(userPublicId), "Reactivating...");
+  }
+
+  private changeActiveState(request: Observable<void>, busyMessage: string): void {
+    this.errorMsg.set(undefined);
+    this.busy.set(true);
+    this.busyMsg.set(busyMessage);
+
+    request
       .pipe(
         finalize(() => {
           this.busy.set(false);
@@ -38,11 +49,8 @@ export class UserListComponent {
         })
       )
       .subscribe({
-        next: () => {
-          //const index = _.findIndex(this.users, (user: User) => user.id == userId);
-          //this.users?.splice(index, 1);
-        },
-        error: (error: HttpErrorResponse) => this.errorMsg.set(toAppError(error).userMessage)
+        //Shows the API's own explanation for a refusal (you can't deactivate yourself, the last administrator, ...).
+        error: (error: HttpErrorResponse) => this.errorMsg.set(toAppError(error, 'PUT').userMessage)
       });
   }
 

@@ -28,7 +28,7 @@ describe('UserEditComponent', () => {
     const UserServiceMock: Partial<Mocked<UserService>> = {
       getById: vi.fn<UserService['getById']>().mockReturnValue(of(<User>{})),
       add: vi.fn().mockReturnValue(of(<User>{})),
-      update: vi.fn<UserService['update']>().mockReturnValue(of(<User>{}))
+      updateUser: vi.fn<UserService['updateUser']>().mockReturnValue(of(undefined))
     };
     
     const AuthServiceMock: Partial<Mocked<AuthService>> = {};
@@ -100,9 +100,11 @@ describe('UserEditComponent', () => {
     component.userEditForm.role().value.set('2');
   };
 
-  it('should update existing user', async () => {
+  const PUBLIC_ID = '4b0f0c1e-3c1a-4f57-9d3a-0c6a7d2a9a11';
+
+  it('should update an existing user, sending only name, email address and role', async () => {
     //ARRANGE
-    component.userEditForm.id().value.set(100);
+    component.userEditForm.publicId().value.set(PUBLIC_ID);
     fillValidForm();
 
     //ACT
@@ -110,18 +112,19 @@ describe('UserEditComponent', () => {
     await fixture.whenStable(); //submit() runs its action asynchronously
 
     //ASSERT
-    expect(userService.update).toHaveBeenCalledTimes(1);
-    const updated = vi.mocked(userService.update).mock.calls[0][0];
-    expect(updated.id).toEqual(100);
-    expect(updated.name).toEqual('Big Jim Slade');
-    expect(updated.role).toEqual(2); //Converted from the string model value
+    expect(userService.updateUser).toHaveBeenCalledTimes(1);
+    expect(userService.updateUser).toHaveBeenCalledWith(PUBLIC_ID, {
+      userName: 'Big Jim Slade',
+      emailAddress: 'jim@workouttracker.com',
+      role: 2 //Converted from the string model value
+    });
   });
 
   it('should populate error message when error occurs while saving user info', async () => {
     //ARRANGE
     const httpError = new HttpErrorResponse({ status: 500, statusText: 'Server Error' });
-    userService.update = vi.fn<UserService['update']>().mockReturnValue(throwError(() => httpError));
-    component.userEditForm.id().value.set(100);
+    userService.updateUser = vi.fn<UserService['updateUser']>().mockReturnValue(throwError(() => httpError));
+    component.userEditForm.publicId().value.set(PUBLIC_ID);
     fillValidForm();
 
     //ACT
@@ -129,15 +132,15 @@ describe('UserEditComponent', () => {
     await fixture.whenStable();
 
     //ASSERT
-    expect(userService.update).toHaveBeenCalled();
-    expect(component.errorMsg()).toBe(httpError.message);
+    expect(userService.updateUser).toHaveBeenCalled();
+    expect(component.errorMsg()).toBe("We couldn't save your changes. Please try again.");
   });
 
   it('should populate error message when user does not have permissions to save user info', async () => {
     //ARRANGE
     const httpError = new HttpErrorResponse({ status: 403 });
-    userService.update = vi.fn<UserService['update']>().mockReturnValue(throwError(() => httpError));
-    component.userEditForm.id().value.set(100);
+    userService.updateUser = vi.fn<UserService['updateUser']>().mockReturnValue(throwError(() => httpError));
+    component.userEditForm.publicId().value.set(PUBLIC_ID);
     fillValidForm();
 
     //ACT
@@ -145,8 +148,26 @@ describe('UserEditComponent', () => {
     await fixture.whenStable();
 
     //ASSERT
-    expect(userService.update).toHaveBeenCalled();
-    expect(component.errorMsg()).toBe("You do not have permission to add or edit users.");
+    expect(userService.updateUser).toHaveBeenCalled();
+    expect(component.errorMsg()).toBe("You do not have permission to edit users.");
+  });
+
+  it("should show the API's explanation when a change is refused", async () => {
+    //ARRANGE
+    const httpError = new HttpErrorResponse({
+      status: 409,
+      error: { status: 409, detail: "The last administrator can't be demoted." }
+    });
+    userService.updateUser = vi.fn<UserService['updateUser']>().mockReturnValue(throwError(() => httpError));
+    component.userEditForm.publicId().value.set(PUBLIC_ID);
+    fillValidForm();
+
+    //ACT
+    component.saveUser();
+    await fixture.whenStable();
+
+    //ASSERT
+    expect(component.errorMsg()).toBe("The last administrator can't be demoted.");
   });
 
 });

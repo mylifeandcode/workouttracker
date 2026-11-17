@@ -20,6 +20,12 @@ namespace WorkoutTracker.Domain.Users
         
         public UserRole Role { get; set; }
 
+        /// <summary>
+        /// False once an administrator has deactivated the user (the "delete" operation): they can't sign in or use an
+        /// existing session, but their data is kept and they can be reactivated.
+        /// </summary>
+        public bool IsActive { get; set; } = true;
+
         [Newtonsoft.Json.JsonIgnore]
         public string? Salt { get; set; }
 

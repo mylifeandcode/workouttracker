@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { UserListComponent } from './user-list.component';
 import { UserService } from '../../core/_services/user/user.service';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { User } from '../../api';
 import { RouterModule } from '@angular/router';
 import { type Mocked } from 'vitest';
@@ -12,17 +12,18 @@ import { type Mocked } from 'vitest';
 describe('UserListComponent', () => {
   let component: UserListComponent;
   let fixture: ComponentFixture<UserListComponent>;
-  let userService: UserService;
+  let userService: Mocked<UserService>;
 
   beforeEach(async () => {
     const fakeUsers: User[] = [
-      <User>{ id: 1, name: 'Fred' },
-      <User>{ id: 2, name: 'Joe' },
-      <User>{ id: 3, name: 'Paul' }
+      <User>{ id: 1, name: 'Fred', isActive: true },
+      <User>{ id: 2, name: 'Joe', isActive: true },
+      <User>{ id: 3, name: 'Paul', isActive: false }
     ];
     const UserServiceMock: Partial<Mocked<UserService>> = {
       getAll: vi.fn<UserService['getAll']>().mockReturnValue(of(fakeUsers)),
-      deleteById: vi.fn<UserService['deleteById']>().mockReturnValue(of(new HttpResponse<void>())), //TOOD: Revisit
+      deactivate: vi.fn<UserService['deactivate']>().mockReturnValue(of(undefined)),
+      reactivate: vi.fn<UserService['reactivate']>().mockReturnValue(of(undefined)),
       all$: of(fakeUsers)
     };
 
@@ -43,60 +44,79 @@ describe('UserListComponent', () => {
     fixture = TestBed.createComponent(UserListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    userService = TestBed.inject(UserService);
+    userService = TestBed.inject(UserService) as Mocked<UserService>;
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  //Removed. Using async pipe with Observable on service now.
-  /*
-  it('should load users on init', () => {
-    expect(userService.getAll).toHaveBeenCalledTimes(1);
-    expect(component?.users?.length).toBeGreaterThan(0);
-  });
-  */
+  it('should offer Deactivate for an active user and Reactivate for an inactive one', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
 
-  it('should prevent deleting user if user confirm dialog returns false', () => {
+    const buttons = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr'))
+      .map(row => Array.from(row.querySelectorAll('button')).map(b => b.textContent?.trim()));
+
+    expect(buttons[0]).toContain('Deactivate');
+    expect(buttons[2]).toContain('Reactivate');
+    expect(buttons[2]).not.toContain('Deactivate');
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Inactive');
+  });
+
+  it('should not deactivate a user if the confirm dialog returns false', () => {
     //ARRANGE
     vi.spyOn(window, 'confirm').mockReturnValue(false);
 
     //ACT
-    component.deleteUser('1');
+    component.deactivateUser('1');
 
     //ASSERT
-    expect(userService.deleteById).not.toHaveBeenCalled();
+    expect(userService.deactivate).not.toHaveBeenCalled();
   });
 
-  it('should call service to delete user when confirm dialog returns true', () => {
+  it('should deactivate a user when the confirm dialog returns true', () => {
     //ARRANGE
     vi.spyOn(window, 'confirm').mockReturnValue(true);
 
     //ACT
-    component.deleteUser('2');
+    component.deactivateUser('2');
 
     //ASSERT
-    expect(userService.deleteById).toHaveBeenCalledWith('2');
+    expect(userService.deactivate).toHaveBeenCalledWith('2');
+    expect(component.busy()).toBe(false);
   });
 
-  //Removed. Using async pipe with Observable on service now.
-  /*
-  it('should remove deleted user from users array when user is deleted', () => {
+  it('should reactivate a user without asking for confirmation', () => {
     //ARRANGE
-    spyOn(window, 'confirm').and.returnValue(true);
+    const confirm = vi.spyOn(window, 'confirm');
+    confirm.mockClear(); //The spy outlives the test that created it, so drop calls recorded by earlier tests.
 
     //ACT
-    component.deleteUser(2);
+    component.reactivateUser('3');
 
     //ASSERT
-    expect(component?.users?.length).toBe(2);
-    if(component?.users != null) {
-      expect(component?.users[0].id).toBe(1);
-      expect(component?.users[1].id).toBe(3);
-    }
-    else
-      fail("component or component.users is null.");
+    expect(userService.reactivate).toHaveBeenCalledWith('3');
+    expect(confirm).not.toHaveBeenCalled();
   });
-  */
+
+  it('should show the API explanation when a user cannot be deactivated', async () => {
+    //ARRANGE
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const refusal = new HttpErrorResponse({
+      status: 409,
+      error: { status: 409, detail: "You can't deactivate your own account." }
+    });
+    userService.deactivate.mockReturnValue(throwError(() => refusal));
+
+    //ACT
+    component.deactivateUser('1');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    //ASSERT
+    expect(component.errorMsg()).toBe("You can't deactivate your own account.");
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain("You can't deactivate your own account.");
+    expect(component.busy()).toBe(false);
+  });
 });

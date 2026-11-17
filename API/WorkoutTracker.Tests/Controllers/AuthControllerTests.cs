@@ -227,6 +227,43 @@ namespace WorkoutTracker.Tests.Controllers
         }
 
         [TestMethod]
+        public async Task Should_Not_Log_In_A_Deactivated_User()
+        {
+            //ARRANGE: SimpleLogin is on in this configuration, which skips the password check, so this is the only barrier.
+            _testUsers.Single(u => u.Name == "Spock").IsActive = false;
+            var credentials = new UserCredentialsDTO { Username = "Spock" };
+
+            //ACT
+            var result = await _sut.Login(credentials);
+
+            //ASSERT
+            Assert.IsInstanceOfType(result.Result, typeof(UnauthorizedResult));
+            _tokenServiceMock.Verify(x => x.BuildToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<User>(), It.IsAny<int>()), Times.Never);
+            _refreshTokenServiceMock.Verify(x => x.GenerateRefreshTokenAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [TestMethod]
+        public async Task Should_Not_Refresh_The_Session_Of_A_Deactivated_User()
+        {
+            //ARRANGE
+            _testUsers.Single(u => u.Id == 2).IsActive = false;
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("UserID", "2") }));
+            _tokenServiceMock
+                .Setup(x => x.GetPrincipalFromExpiredToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(principal);
+            _refreshTokenServiceMock
+                .Setup(x => x.ValidateRefreshTokenAsync(It.IsAny<string>(), 2))
+                .ReturnsAsync(new RefreshToken { Id = 1, UserId = 2, IsRevoked = false });
+
+            //ACT
+            var result = await _sut.Refresh(new RefreshTokenRequestDTO { AccessToken = "expiredAccessToken", RefreshToken = "validRefreshToken" });
+
+            //ASSERT
+            Assert.IsInstanceOfType(result.Result, typeof(UnauthorizedResult));
+            _refreshTokenServiceMock.Verify(x => x.RevokeAndReplaceAsync(It.IsAny<RefreshToken>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [TestMethod]
         public async Task Should_Return_Unauthorized_From_Refresh_When_Token_Invalid()
         {
             //ARRANGE

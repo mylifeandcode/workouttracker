@@ -17,6 +17,11 @@ namespace WorkoutTracker.Data.EntitySetup.Users
             entity.Property(x => x.Salt).HasMaxLength(50);
             entity.Property(x => x.PasswordResetCode).HasMaxLength(25);
 
+            //The database default keeps every pre-existing user active when the column is added. ValueGeneratedNever
+            //makes EF always send the property's actual value: with a default of true it would otherwise treat false
+            //(the CLR default) as "not set" and quietly store true.
+            entity.Property(x => x.IsActive).HasDefaultValue(true).ValueGeneratedNever();
+
             entity.HasIndex(x => x.Name);
             entity.HasIndex(x => x.EmailAddress);
             entity.HasIndex(x => x.PublicId);

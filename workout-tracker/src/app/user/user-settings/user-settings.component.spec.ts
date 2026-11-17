@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthService } from '../../core/_services/auth/auth.service';
-import { User, UserMinMaxReps, UserSettings, SetType } from '../../api';
+import { User, UserMinMaxReps, UserSettings, UserSettingsUpdateDTO, SetType } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
 import { type Mocked } from 'vitest';
@@ -33,10 +33,11 @@ describe('UserSettingsComponent', () => {
         user.settings.repSettings[1].setType = SetType.TIMED;
         user.settings.repSettings[1].id = 2;
         user.settings.recommendationsEnabled = true;
+        user.settings.lowestAcceptableRating = 3;
 
         return of(user);
       }),
-      update: vi.fn<UserService['update']>().mockImplementation((user: User) => of(user))
+      updateMySettings: vi.fn<UserService['updateMySettings']>().mockReturnValue(of(undefined))
     };
 
     const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
@@ -136,30 +137,37 @@ describe('UserSettingsComponent', () => {
     repSettings[1].minReps().value.set(minTimedSetReps);
     repSettings[1].maxReps().value.set(maxTimedSetReps);
 
-    const expectedSavedUser = <User>{};
-    expectedSavedUser.settings = <UserSettings>{};
-    expectedSavedUser.settings.repSettings = new Array<UserMinMaxReps>();
-    expectedSavedUser.settings.repSettings.push(<UserMinMaxReps>{});
-    expectedSavedUser.settings.repSettings[0].id = 1;
-    expectedSavedUser.settings.repSettings[0].setType = SetType.REPETITION;
-    expectedSavedUser.settings.repSettings[0].minReps = minRepetitionSetReps;
-    expectedSavedUser.settings.repSettings[0].maxReps = maxRepetitionSetReps;
-    expectedSavedUser.settings.repSettings[0].duration = null;
-    expectedSavedUser.settings.repSettings.push(<UserMinMaxReps>{});
-    expectedSavedUser.settings.repSettings[1].id = 2;
-    expectedSavedUser.settings.repSettings[1].setType = SetType.TIMED;
-    expectedSavedUser.settings.repSettings[1].minReps = minTimedSetReps;
-    expectedSavedUser.settings.repSettings[1].maxReps = maxTimedSetReps;
-    expectedSavedUser.settings.repSettings[1].duration = duration;
-    expectedSavedUser.settings.recommendationsEnabled = true;
+    //Only the settings are sent: no user id, no role.
+    const expectedSettings: UserSettingsUpdateDTO = {
+      recommendationsEnabled: true,
+      lowestAcceptableRating: 3,
+      repSettings: [
+        { id: 1, setType: SetType.REPETITION, duration: null, minReps: minRepetitionSetReps, maxReps: maxRepetitionSetReps },
+        { id: 2, setType: SetType.TIMED, duration: duration, minReps: minTimedSetReps, maxReps: maxTimedSetReps }
+      ]
+    };
 
     //ACT
     component.saveSettings();
 
     //ASSERT
-    expect(userService.update).toHaveBeenCalledWith(expectedSavedUser);
+    expect(userService.updateMySettings).toHaveBeenCalledWith(expectedSettings);
     expect(messageService.success).toHaveBeenCalledTimes(1);
     expect(messageService.success).toHaveBeenCalledWith('Settings saved.');
     expect(component.saving()).toBe(false);
+  });
+
+  it('should send the loaded rep settings back unchanged when recommendations are switched off', () => {
+    //ARRANGE
+    const userService = TestBed.inject(UserService);
+    component.userSettingsForm.recommendationsEnabled().value.set(false);
+
+    //ACT
+    component.saveSettings();
+
+    //ASSERT
+    const sent = vi.mocked(userService.updateMySettings).mock.calls.at(-1)![0];
+    expect(sent.recommendationsEnabled).toBe(false);
+    expect(sent.repSettings.map(r => r.id)).toEqual([1, 2]);
   });
 });

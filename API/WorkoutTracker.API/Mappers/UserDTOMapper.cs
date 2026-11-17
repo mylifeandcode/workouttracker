@@ -13,7 +13,7 @@ namespace WorkoutTracker.API.Mappers
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
 
-            return new UserSummaryDTO(user.Id, user.PublicId, user.Name);
+            return new UserSummaryDTO(user.Id, user.PublicId, user.Name, user.IsActive);
         }
 
         public IEnumerable<UserSummaryDTO> MapFromUsersToSummaries(IEnumerable<User> users)
