@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { AuthService } from '../../../core/_services/auth/auth.service';
 import { type Mocked } from 'vitest';
@@ -9,28 +9,28 @@ import { UserIsAdminGuard } from '../user-is-admin/user-is-admin.guard';
 describe('UserIsAdminGuard', () => {
   let guard: UserIsAdminGuard;
 
-  beforeEach(() => {
-    const AuthServiceMock: Partial<Mocked<AuthService>> = {
-      get isUserAdmin() { return true; }
-    };
-    const RouterMock: Partial<Mocked<Router>> = {
-      navigate: vi.fn<Router['navigate']>().mockReturnValue(Promise.resolve(true))
-    };
+  const authServiceMock: Mocked<Pick<AuthService, 'isUserAdmin'>> = {
+    get isUserAdmin() { return true; }
+  };
 
+  beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
         provideZonelessChangeDetection(),
         {
           provide: AuthService,
-          useValue: AuthServiceMock
-        },
-        {
-          provide: Router,
-          useValue: RouterMock
+          useValue: authServiceMock
         }
       ]
     });
+    vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
     guard = TestBed.inject(UserIsAdminGuard);
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the isUserAdmin getter spies so they can't leak into later tests
   });
 
   it('should be created', () => {

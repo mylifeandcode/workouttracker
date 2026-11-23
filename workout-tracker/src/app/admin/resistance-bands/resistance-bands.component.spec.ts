@@ -1,5 +1,5 @@
 import { HttpResponse } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, EventEmitter, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ResistanceBandDTO } from '../../api';
 import { of, throwError } from 'rxjs';
@@ -7,7 +7,7 @@ import { ResistanceBandService } from '../../shared/services/resistance-band.ser
 
 import { ResistanceBandsComponent } from './resistance-bands.component';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { ModalOptions, NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { type Mocked } from 'vitest';
@@ -25,29 +25,28 @@ describe('ResistanceBandsComponent', () => {
   let component: ResistanceBandsComponent;
   let fixture: ComponentFixture<ResistanceBandsComponent>;
 
-  beforeEach(async () => {
-    const ResistanceBandServiceMock: Partial<Mocked<ResistanceBandService>> = {
-      getAll: vi.fn<ResistanceBandService['getAll']>().mockReturnValue(of(getResistanceBandInventory())),
-      add: vi.fn<ResistanceBandService['add']>().mockReturnValue(of(<ResistanceBandDTO>{})),
-      update: vi.fn<ResistanceBandService['update']>().mockReturnValue(of(<ResistanceBandDTO>{})),
-      delete: vi.fn<ResistanceBandService['delete']>().mockReturnValue(of(new HttpResponse<void>()))
-    };
-    const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
-      create: vi.fn<NzMessageService['create']>().mockName('NzMessageService.create')
-    };
-    const ModalServiceMock: Partial<Mocked<NzModalService>> = {
-      confirm: vi.fn().mockImplementation((options) => {
-        // Simulate the user clicking "OK"
-        if (options.nzOnOk) {
-          const onOkResult = options.nzOnOk();
-          if (onOkResult instanceof Promise) {
-            return onOkResult.then(() => ({ result: 'ok' } as NzModalRef));
-          }
-        }
-        return { result: 'ok' } as NzModalRef;
-      })
-    };
+  const resistanceBandServiceMock: Mocked<Pick<ResistanceBandService, 'getAll' | 'add' | 'update' | 'delete'>> = {
+    getAll: vi.fn<ResistanceBandService['getAll']>(() => of(getResistanceBandInventory())).mockName('getAll'),
+    add: vi.fn<ResistanceBandService['add']>(() => of(<ResistanceBandDTO>{})).mockName('add'),
+    update: vi.fn<ResistanceBandService['update']>(() => of(<ResistanceBandDTO>{})).mockName('update'),
+    delete: vi.fn<ResistanceBandService['delete']>(() => of(new HttpResponse<void>())).mockName('delete')
+  };
+  const messageServiceMock: Mocked<Pick<NzMessageService, 'create'>> = {
+    create: vi.fn<NzMessageService['create']>().mockName('create')
+  };
+  //NzModalService.confirm is a generic method, which Mocked<Pick<...>> can't represent, so this mock pins a non-generic signature instead.
+  const modalServiceMock = {
+    confirm: vi.fn<(options?: ModalOptions<unknown>) => NzModalRef>((options) => {
+      // Simulate the user clicking "OK"
+      const onOk = options?.nzOnOk;
+      if (onOk && !(onOk instanceof EventEmitter)) {
+        onOk(<never>{});
+      }
+      return <NzModalRef>{};
+    }).mockName('confirm')
+  };
 
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
         ResistanceBandsComponent
@@ -56,15 +55,15 @@ describe('ResistanceBandsComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: ResistanceBandService,
-          useValue: ResistanceBandServiceMock
+          useValue: resistanceBandServiceMock
         },
         {
           provide: NzMessageService,
-          useValue: MessageServiceMock
+          useValue: messageServiceMock
         },
         {
           provide: NzModalService,
-          useValue: ModalServiceMock
+          useValue: modalServiceMock
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -84,6 +83,10 @@ describe('ResistanceBandsComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -96,16 +99,13 @@ describe('ResistanceBandsComponent', () => {
   });
 
   it('should get resistance band data on init', () => {
-    const resistanceBandService: ResistanceBandService = TestBed.inject(ResistanceBandService);
-    expect(resistanceBandService.getAll).toHaveBeenCalledTimes(1);
+    expect(resistanceBandServiceMock.getAll).toHaveBeenCalledTimes(1);
     expect(component.resistanceBands).not.toBeNull();
   });
 
   it('should add resistance band', () => {
 
     //ARRANGE
-    const resistanceBandService = TestBed.inject(ResistanceBandService);
-    const messageService = TestBed.inject(NzMessageService);
     component.openAddModal();
 
     //ACT
@@ -113,9 +113,9 @@ describe('ResistanceBandsComponent', () => {
 
     //ASSERT
     expect(component.newResistanceBand).not.toBeNull();
-    expect(resistanceBandService.add).toHaveBeenCalledWith(<ResistanceBandDTO>component.newResistanceBand);
-    expect(messageService.create).toHaveBeenCalledWith('success', 'Resistance band added.');
-    expect(resistanceBandService.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refrsh after the save
+    expect(resistanceBandServiceMock.add).toHaveBeenCalledWith(<ResistanceBandDTO>component.newResistanceBand);
+    expect(messageServiceMock.create).toHaveBeenCalledWith('success', 'Resistance band added.');
+    expect(resistanceBandServiceMock.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refrsh after the save
 
   });
 
@@ -123,15 +123,13 @@ describe('ResistanceBandsComponent', () => {
 
     //ARRANGE
     const band = getResistanceBandInventory()[0];
-    const resistanceBandService = TestBed.inject(ResistanceBandService);
-    const messageService = TestBed.inject(NzMessageService);
 
     //ACT
     component.saveEdit(1);
 
     //ASSERT
-    expect(resistanceBandService.update).toHaveBeenCalledWith(band);
-    expect(messageService.create)
+    expect(resistanceBandServiceMock.update).toHaveBeenCalledWith(band);
+    expect(messageServiceMock.create)
       .toHaveBeenCalledWith('success', 'Resistance band updated.');
 
   });
@@ -139,27 +137,22 @@ describe('ResistanceBandsComponent', () => {
   it('should delete resistance band', () => {
 
     //ARRANGE
-    const resistanceBandService = TestBed.inject(ResistanceBandService);
-    const messageService = TestBed.inject(NzMessageService);
     const band = getResistanceBandInventory()[2];
 
     //ACT
     component.deleteBand(band);
 
     //ASSERT
-    expect(resistanceBandService.delete).toHaveBeenCalledWith(band.id);
-    expect(messageService.create).toHaveBeenCalledWith('success', 'Resistance band deleted.');
-    expect(resistanceBandService.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refresh after deletion
+    expect(resistanceBandServiceMock.delete).toHaveBeenCalledWith(band.id);
+    expect(messageServiceMock.create).toHaveBeenCalledWith('success', 'Resistance band deleted.');
+    expect(resistanceBandServiceMock.getAll).toHaveBeenCalledTimes(2); //The initial call and then the refresh after deletion
 
   });
 
   it('should not delete resistance band if user does not confirm', () => {
 
     //ARRANGE
-    const resistanceBandService = TestBed.inject(ResistanceBandService);
-    const modalService = TestBed.inject(NzModalService);
-    const messageService = TestBed.inject(NzMessageService);
-    modalService.confirm = vi.fn().mockImplementation(() => void 0); //Simulate user not confirming
+    modalServiceMock.confirm.mockReturnValue(<NzModalRef>{}); //Simulate user not confirming (nzOnOk is never invoked)
     const band = <ResistanceBandDTO>{};
     band.id = 5;
 
@@ -167,9 +160,9 @@ describe('ResistanceBandsComponent', () => {
     component.deleteBand(band);
 
     //ASSERT
-    expect(resistanceBandService.delete).not.toHaveBeenCalled();
-    expect(resistanceBandService.getAll).toHaveBeenCalledTimes(1); //Just the initial call
-    expect(messageService.create).not.toHaveBeenCalled();
+    expect(resistanceBandServiceMock.delete).not.toHaveBeenCalled();
+    expect(resistanceBandServiceMock.getAll).toHaveBeenCalledTimes(1); //Just the initial call
+    expect(messageServiceMock.create).not.toHaveBeenCalled();
   });
 
   it('should open modal', () => {
@@ -245,32 +238,26 @@ describe('ResistanceBandsComponent', () => {
   it('should add message to NzMessageService when error occurs when adding a resistance band', () => {
 
     //ARRANGE
-    const resistanceBandService = TestBed.inject(ResistanceBandService);
-    resistanceBandService.add = vi.fn().mockReturnValue(throwError(() => new Error("Something went wrong!")));
-
-    const messageService = TestBed.inject(NzMessageService);
+    resistanceBandServiceMock.add.mockReturnValue(throwError(() => new Error("Something went wrong!")));
 
     //ACT
     component.saveNewBand();
 
     //ASSERT
-    expect(messageService.create).toHaveBeenCalledWith('error', 'Failed to add resistance band.');
+    expect(messageServiceMock.create).toHaveBeenCalledWith('error', 'Failed to add resistance band.');
 
   });
 
   it('should show message when error occurs when updating a resistance band', () => {
 
     //ARRANGE
-    const resistanceBandService = TestBed.inject(ResistanceBandService);
-    resistanceBandService.update = vi.fn().mockReturnValue(throwError(() => new Error("Something went wrong!")));
-
-    const messageService = TestBed.inject(NzMessageService);
+    resistanceBandServiceMock.update.mockReturnValue(throwError(() => new Error("Something went wrong!")));
 
     //ACT
     component.saveEdit(1);
 
     //ASSERT
-    expect(messageService.create).toHaveBeenCalledWith('error', 'Failed to update resistance band.');
+    expect(messageServiceMock.create).toHaveBeenCalledWith('error', 'Failed to update resistance band.');
 
   });
 

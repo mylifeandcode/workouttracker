@@ -1,6 +1,6 @@
-import { Component, provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { User, UserNewDTO } from '../../api';
 import { UserService } from '../../core/_services/user/user.service';
 import { of } from 'rxjs';
@@ -9,41 +9,31 @@ import { UserAddComponent } from './user-add.component';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { type Mocked } from 'vitest';
 
-@Component({
-  selector: 'wt-blank',
-  template: ''
-})
-class BlankComponent {
-}
-
 describe('UserAddComponent', () => {
   let component: UserAddComponent;
   let fixture: ComponentFixture<UserAddComponent>;
-  let userService: UserService;
   let router: Router;
 
-  beforeEach(async () => {
-    const UserServiceMock: Partial<Mocked<UserService>> = {
-      addNew: vi.fn<UserService['addNew']>().mockReturnValue(of(<User>{}))
-    };
-    const AuthServiceMock: Partial<Mocked<AuthService>> = {
-      get isUserLoggedIn() { return true; }
-    };
+  const userServiceMock: Mocked<Pick<UserService, 'addNew'>> = {
+    addNew: vi.fn<UserService['addNew']>(() => of(<User>{})).mockName('addNew')
+  };
+  const authServiceMock: Mocked<Pick<AuthService, 'isUserLoggedIn'>> = {
+    get isUserLoggedIn() { return true; }
+  };
 
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot([{ path: 'admin/users', component: BlankComponent }]),
-        UserAddComponent, BlankComponent
-      ],
+      imports: [UserAddComponent],
       providers: [
+        provideRouter([]),
         provideZonelessChangeDetection(),
         {
           provide: UserService,
-          useValue: UserServiceMock
+          useValue: userServiceMock
         },
         {
           provide: AuthService,
-          useValue: AuthServiceMock
+          useValue: authServiceMock
         },
         {
           provide: ActivatedRoute,
@@ -59,10 +49,14 @@ describe('UserAddComponent', () => {
 
     fixture = TestBed.createComponent(UserAddComponent);
     component = fixture.componentInstance;
-    userService = TestBed.inject(UserService);
     router = TestBed.inject(Router);
-    vi.spyOn(router, 'navigate');
+    vi.spyOn(router, 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the router.navigate and window.confirm spies
   });
 
   it('should create', () => {
@@ -89,7 +83,7 @@ describe('UserAddComponent', () => {
     await fixture.whenStable(); //submit() runs its action asynchronously
 
     //ASSERT
-    expect(userService.addNew).toHaveBeenCalledWith(expectedUser);
+    expect(userServiceMock.addNew).toHaveBeenCalledWith(expectedUser);
     expect(router.navigate).toHaveBeenCalledWith(['admin/users']);
   });
 

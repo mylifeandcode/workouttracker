@@ -4,8 +4,8 @@ import { UserEditComponent } from './user-edit.component';
 import { UserService } from '../../core/_services/user/user.service';
 import { of, throwError } from 'rxjs';
 import { User } from '../../api';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Component, provideZonelessChangeDetection } from '@angular/core';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { type Mocked } from 'vitest';
@@ -13,43 +13,32 @@ import { ConfigService } from '../../core/_services/config/config.service';
 
 //const CURRENT_USER_ID = 5150;
 
-@Component({
-  template: ''
-})
-class FakeComponent {
-}
-
 describe('UserEditComponent', () => {
   let component: UserEditComponent;
   let fixture: ComponentFixture<UserEditComponent>;
-  let userService: UserService;
+  let router: Router;
+
+  const userServiceMock: Mocked<Pick<UserService, 'getById' | 'updateUser' | 'createPasswordReset'>> = {
+    getById: vi.fn<UserService['getById']>(() => of(<User>{})).mockName('getById'),
+    updateUser: vi.fn<UserService['updateUser']>(() => of(undefined)).mockName('updateUser'),
+    createPasswordReset: vi.fn<UserService['createPasswordReset']>(() => of({ token: 'theToken', expiresAt: new Date('2026-11-17T13:00:00Z') })).mockName('createPasswordReset')
+  };
+
+  const authServiceMock: Mocked<Pick<AuthService, never>> = {};
+
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => true).mockName('get')
+  };
 
   beforeEach(async () => {
-    const UserServiceMock: Partial<Mocked<UserService>> = {
-      getById: vi.fn<UserService['getById']>().mockReturnValue(of(<User>{})),
-      add: vi.fn().mockReturnValue(of(<User>{})),
-      updateUser: vi.fn<UserService['updateUser']>().mockReturnValue(of(undefined)),
-      createPasswordReset: vi.fn<UserService['createPasswordReset']>().mockReturnValue(of({ token: 'theToken', expiresAt: new Date('2026-11-17T13:00:00Z') }))
-    };
-    
-    const AuthServiceMock: Partial<Mocked<AuthService>> = {};
-
-    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockImplementation(() => {
-        return true;
-      })
-    };
-
     await TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
-        UserEditComponent
-      ],
+      imports: [UserEditComponent],
       providers: [
+        provideRouter([]),
         provideZonelessChangeDetection(),
         {
           provide: UserService,
-          useValue: UserServiceMock
+          useValue: userServiceMock
         },
         {
           provide: ActivatedRoute,
@@ -61,11 +50,11 @@ describe('UserEditComponent', () => {
         },
         {
           provide: AuthService,
-          useValue: AuthServiceMock
+          useValue: authServiceMock
         },
         {
           provide: ConfigService,
-          useValue: ConfigServiceMock
+          useValue: configServiceMock
         }
       ]
     })
@@ -75,9 +64,15 @@ describe('UserEditComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UserEditComponent);
     component = fixture.componentInstance;
-    userService = TestBed.inject(UserService);
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
     fixture.componentRef.setInput('userId', 5);
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the router.navigate, window.confirm and window.alert spies
   });
 
   it('should create', () => {
@@ -91,7 +86,7 @@ describe('UserEditComponent', () => {
   });
 
   it('should get user info when route specifies a user ID', () => {
-    expect(userService.getById).toHaveBeenCalledTimes(1);
+    expect(userServiceMock.getById).toHaveBeenCalledTimes(1);
   });
 
   /** Fills the form with valid values so submit() will run its save action. */
@@ -113,8 +108,8 @@ describe('UserEditComponent', () => {
     await fixture.whenStable(); //submit() runs its action asynchronously
 
     //ASSERT
-    expect(userService.updateUser).toHaveBeenCalledTimes(1);
-    expect(userService.updateUser).toHaveBeenCalledWith(PUBLIC_ID, {
+    expect(userServiceMock.updateUser).toHaveBeenCalledTimes(1);
+    expect(userServiceMock.updateUser).toHaveBeenCalledWith(PUBLIC_ID, {
       userName: 'Big Jim Slade',
       emailAddress: 'jim@workouttracker.com',
       role: 2 //Converted from the string model value
@@ -124,7 +119,7 @@ describe('UserEditComponent', () => {
   it('should populate error message when error occurs while saving user info', async () => {
     //ARRANGE
     const httpError = new HttpErrorResponse({ status: 500, statusText: 'Server Error' });
-    userService.updateUser = vi.fn<UserService['updateUser']>().mockReturnValue(throwError(() => httpError));
+    userServiceMock.updateUser.mockReturnValue(throwError(() => httpError));
     component.userEditForm.publicId().value.set(PUBLIC_ID);
     fillValidForm();
 
@@ -133,14 +128,14 @@ describe('UserEditComponent', () => {
     await fixture.whenStable();
 
     //ASSERT
-    expect(userService.updateUser).toHaveBeenCalled();
+    expect(userServiceMock.updateUser).toHaveBeenCalled();
     expect(component.errorMsg()).toBe("We couldn't save your changes. Please try again.");
   });
 
   it('should populate error message when user does not have permissions to save user info', async () => {
     //ARRANGE
     const httpError = new HttpErrorResponse({ status: 403 });
-    userService.updateUser = vi.fn<UserService['updateUser']>().mockReturnValue(throwError(() => httpError));
+    userServiceMock.updateUser.mockReturnValue(throwError(() => httpError));
     component.userEditForm.publicId().value.set(PUBLIC_ID);
     fillValidForm();
 
@@ -149,7 +144,7 @@ describe('UserEditComponent', () => {
     await fixture.whenStable();
 
     //ASSERT
-    expect(userService.updateUser).toHaveBeenCalled();
+    expect(userServiceMock.updateUser).toHaveBeenCalled();
     expect(component.errorMsg()).toBe("You do not have permission to edit users.");
   });
 
@@ -159,7 +154,7 @@ describe('UserEditComponent', () => {
       status: 409,
       error: { status: 409, detail: "The last administrator can't be demoted." }
     });
-    userService.updateUser = vi.fn<UserService['updateUser']>().mockReturnValue(throwError(() => httpError));
+    userServiceMock.updateUser.mockReturnValue(throwError(() => httpError));
     component.userEditForm.publicId().value.set(PUBLIC_ID);
     fillValidForm();
 
@@ -181,7 +176,7 @@ describe('UserEditComponent', () => {
     component.resetPassword();
 
     //ASSERT
-    expect(userService.createPasswordReset).toHaveBeenCalledWith(PUBLIC_ID);
+    expect(userServiceMock.createPasswordReset).toHaveBeenCalledWith(PUBLIC_ID);
     const message = alert.mock.calls.at(-1)![0] as string;
     expect(message).toContain('/user/reset-password#token=theToken');
     expect(message).not.toContain('/user/reset-password/theToken');
@@ -190,8 +185,7 @@ describe('UserEditComponent', () => {
   it('should not create a password reset when the administrator cancels', () => {
     //ARRANGE
     vi.spyOn(window, 'confirm').mockReturnValue(false);
-    const createPasswordReset = vi.mocked(userService.createPasswordReset);
-    createPasswordReset.mockClear();
+    const createPasswordReset = userServiceMock.createPasswordReset;
 
     //ACT
     component.resetPassword();

@@ -12,14 +12,14 @@ describe('SystemComponent', () => {
   let component: SystemComponent;
   let fixture: ComponentFixture<SystemComponent>;
 
-  beforeEach(async () => {
-    const SoundServiceMock: Partial<Mocked<SoundService>> = {
-      playSound: vi.fn<SoundService['playSound']>()
-    };
-    const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
-      success: vi.fn<NzMessageService['success']>()
-    };
+  const soundServiceMock: Mocked<Pick<SoundService, 'playSound'>> = {
+    playSound: vi.fn<SoundService['playSound']>().mockName('playSound')
+  };
+  const messageServiceMock: Mocked<Pick<NzMessageService, 'success'>> = {
+    success: vi.fn<NzMessageService['success']>().mockName('success')
+  };
 
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
         SystemComponent
@@ -28,11 +28,11 @@ describe('SystemComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: SoundService,
-          useValue: SoundServiceMock
+          useValue: soundServiceMock
         },
         {
           provide: NzMessageService,
-          useValue: MessageServiceMock
+          useValue: messageServiceMock
         }
       ]
     })
@@ -48,6 +48,10 @@ describe('SystemComponent', () => {
     fixture = TestBed.createComponent(SystemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should create', () => {

@@ -6,34 +6,34 @@ import { UserListComponent } from './user-list.component';
 import { UserService } from '../../core/_services/user/user.service';
 import { of, throwError } from 'rxjs';
 import { User } from '../../api';
-import { RouterModule } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { type Mocked } from 'vitest';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
   let fixture: ComponentFixture<UserListComponent>;
-  let userService: Mocked<UserService>;
+
+  const fakeUsers: User[] = [
+    <User>{ id: 1, name: 'Fred', isActive: true },
+    <User>{ id: 2, name: 'Joe', isActive: true },
+    <User>{ id: 3, name: 'Paul', isActive: false }
+  ];
+  const userServiceMock: Mocked<Pick<UserService, 'getAll' | 'deactivate' | 'reactivate' | 'all$'>> = {
+    getAll: vi.fn<UserService['getAll']>(() => of(fakeUsers)).mockName('getAll'),
+    deactivate: vi.fn<UserService['deactivate']>(() => of(undefined)).mockName('deactivate'),
+    reactivate: vi.fn<UserService['reactivate']>(() => of(undefined)).mockName('reactivate'),
+    all$: of(fakeUsers)
+  };
 
   beforeEach(async () => {
-    const fakeUsers: User[] = [
-      <User>{ id: 1, name: 'Fred', isActive: true },
-      <User>{ id: 2, name: 'Joe', isActive: true },
-      <User>{ id: 3, name: 'Paul', isActive: false }
-    ];
-    const UserServiceMock: Partial<Mocked<UserService>> = {
-      getAll: vi.fn<UserService['getAll']>().mockReturnValue(of(fakeUsers)),
-      deactivate: vi.fn<UserService['deactivate']>().mockReturnValue(of(undefined)),
-      reactivate: vi.fn<UserService['reactivate']>().mockReturnValue(of(undefined)),
-      all$: of(fakeUsers)
-    };
-
     await TestBed.configureTestingModule({
-      imports: [RouterModule.forRoot([]), UserListComponent],
+      imports: [UserListComponent],
       providers: [
+        provideRouter([]),
         provideZonelessChangeDetection(),
         {
           provide: UserService,
-          useValue: UserServiceMock
+          useValue: userServiceMock
         }
       ]
     })
@@ -44,7 +44,11 @@ describe('UserListComponent', () => {
     fixture = TestBed.createComponent(UserListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    userService = TestBed.inject(UserService) as Mocked<UserService>;
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the window.confirm spies
   });
 
   it('should create', () => {
@@ -72,7 +76,7 @@ describe('UserListComponent', () => {
     component.deactivateUser('1');
 
     //ASSERT
-    expect(userService.deactivate).not.toHaveBeenCalled();
+    expect(userServiceMock.deactivate).not.toHaveBeenCalled();
   });
 
   it('should deactivate a user when the confirm dialog returns true', () => {
@@ -83,20 +87,19 @@ describe('UserListComponent', () => {
     component.deactivateUser('2');
 
     //ASSERT
-    expect(userService.deactivate).toHaveBeenCalledWith('2');
+    expect(userServiceMock.deactivate).toHaveBeenCalledWith('2');
     expect(component.busy()).toBe(false);
   });
 
   it('should reactivate a user without asking for confirmation', () => {
     //ARRANGE
     const confirm = vi.spyOn(window, 'confirm');
-    confirm.mockClear(); //The spy outlives the test that created it, so drop calls recorded by earlier tests.
 
     //ACT
     component.reactivateUser('3');
 
     //ASSERT
-    expect(userService.reactivate).toHaveBeenCalledWith('3');
+    expect(userServiceMock.reactivate).toHaveBeenCalledWith('3');
     expect(confirm).not.toHaveBeenCalled();
   });
 
@@ -107,7 +110,7 @@ describe('UserListComponent', () => {
       status: 409,
       error: { status: 409, detail: "You can't deactivate your own account." }
     });
-    userService.deactivate.mockReturnValue(throwError(() => refusal));
+    userServiceMock.deactivate.mockReturnValue(throwError(() => refusal));
 
     //ACT
     component.deactivateUser('1');
