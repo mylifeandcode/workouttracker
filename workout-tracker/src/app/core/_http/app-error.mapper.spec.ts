@@ -78,8 +78,9 @@ describe('toAppError', () => {
     });
 
     it('should coerce a single string to an array', () => {
+      // Contract says string[]; the mapper must tolerate a bare string. The helper takes unknown, so no cast is needed.
       const appError = toAppError(httpError(422, {
-        errors: { 'Name': 'Required.' } as unknown as Record<string, string[]>
+        errors: { 'Name': 'Required.' }
       }), 'POST');
 
       expect(appError.fieldErrors).toEqual({ name: ['Required.'] });
