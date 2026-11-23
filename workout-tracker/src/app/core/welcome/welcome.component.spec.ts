@@ -14,15 +14,15 @@ import { StartWorkoutComponent } from './start-workout/start-workout.component';
 describe('WelcomeComponent', () => {
   let component: WelcomeComponent;
   let fixture: ComponentFixture<WelcomeComponent>;
+  const UserServiceMock: Mocked<Pick<UserService, 'getOverview'>> = {
+    getOverview: vi.fn<UserService['getOverview']>(() => of(<UserOverview>{
+      lastWorkoutDateTime: new Date(2022, 2, 26, 15, 20),
+      plannedWorkoutCount: 3,
+      username: 'Tyson'
+    })).mockName('getOverview')
+  };
 
   beforeEach(async () => {
-    const UserServiceMock: Partial<Mocked<UserService>> = {
-      getOverview: vi.fn<UserService['getOverview']>().mockReturnValue(of(<UserOverview>{
-        lastWorkoutDateTime: new Date(2022, 2, 26, 15, 20),
-        plannedWorkoutCount: 3,
-        username: 'Tyson'
-      }))
-    };
 
     await TestBed.configureTestingModule({
       imports: [WelcomeComponent],
@@ -45,6 +45,10 @@ describe('WelcomeComponent', () => {
     fixture = TestBed.createComponent(WelcomeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should create', () => {

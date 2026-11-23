@@ -16,7 +16,7 @@ describe('WorkoutListComponent', () => {
 
   beforeEach(async () => {
     const WorkoutServiceMock: Mocked<Pick<WorkoutService, 'getSelection' | 'retire' | 'reactivate'>> = {
-      getSelection: vi.fn<WorkoutService['getSelection']>().mockImplementation(() => {
+      getSelection: vi.fn<WorkoutService['getSelection']>(() => {
         const paginatedResults: PaginatedResultsOfWorkoutDTO = {
           totalCount: 0,
           results: <WorkoutDTO[]>[]
@@ -29,9 +29,9 @@ describe('WorkoutListComponent', () => {
         };
 
         return mockResourceRef as HttpResourceRef<PaginatedResultsOfWorkoutDTO>;
-      }),
-      retire: vi.fn<WorkoutService['retire']>().mockReturnValue(of(new HttpResponse<void>())),
-      reactivate: vi.fn<WorkoutService['reactivate']>().mockReturnValue(of(new HttpResponse<void>()))
+      }).mockName('getSelection'),
+      retire: vi.fn<WorkoutService['retire']>(() => of(new HttpResponse<void>())).mockName('retire'),
+      reactivate: vi.fn<WorkoutService['reactivate']>(() => of(new HttpResponse<void>())).mockName('reactivate')
     };
 
     const windowMock: Mocked<Pick<Window, 'confirm'>> = {
