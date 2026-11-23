@@ -14,35 +14,36 @@ import { type Mocked } from 'vitest';
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
 
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => 'http://localhost:5600/api/').mockName('get')
+  };
+  //convertDateRangeStringsToDates is generic, which Mocked<Pick<...>> can't represent, so this mock pins a non-generic signature instead.
+  const dateSerializationServiceMock = {
+    convertDateRangeStringsToDates: vi.fn<(obj: ExecutedWorkoutMetrics) => ExecutedWorkoutMetrics>((obj) => {
+      if (obj.startDateTime && typeof obj.startDateTime === 'string') {
+        obj.startDateTime = new Date(obj.startDateTime);
+      }
+
+      if (obj.endDateTime && typeof obj.endDateTime === 'string') {
+        obj.endDateTime = new Date(obj.endDateTime);
+      }
+
+      return obj;
+    }).mockName('convertDateRangeStringsToDates')
+  };
+
   beforeEach(() => {
-    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockReturnValue('http://localhost:5600/api/')
-    };
-    const DateSerializationServiceMock: Partial<Mocked<DateSerializationService>> = {
-      convertDateRangeStringsToDates: vi.fn().mockImplementation((obj: ExecutedWorkoutMetrics) => {
-        if (obj.startDateTime && typeof obj.startDateTime === 'string') {
-          obj.startDateTime = new Date(obj.startDateTime);
-        }
-
-        if (obj.endDateTime && typeof obj.endDateTime === 'string') {
-          obj.endDateTime = new Date(obj.endDateTime);
-        }
-
-        return obj;
-      })
-    };
-
     TestBed.configureTestingModule({
       imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useValue: ConfigServiceMock
+          useValue: configServiceMock
         },
         {
           provide: DateSerializationService,
-          useValue: DateSerializationServiceMock
+          useValue: dateSerializationServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
@@ -51,13 +52,16 @@ describe('AnalyticsService', () => {
     service = TestBed.inject(AnalyticsService);
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
   it('should get configuration when constructing', () => {
-    const configService = TestBed.inject(ConfigService);
-    expect(configService.get).toHaveBeenCalledWith('apiRoot');
+    expect(configServiceMock.get).toHaveBeenCalledWith('apiRoot');
   });
 
   it('should get executed workouts summary', async () => {

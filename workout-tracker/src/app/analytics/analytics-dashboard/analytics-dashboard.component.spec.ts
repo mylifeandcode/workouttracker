@@ -12,26 +12,26 @@ describe('AnalyticsDashboardComponent', () => {
   let component: AnalyticsDashboardComponent;
   let fixture: ComponentFixture<AnalyticsDashboardComponent>;
 
-  beforeEach(async () => {
-    const AnalyticsServiceMock: Partial<Mocked<AnalyticsService>> = {
-      getExecutedWorkoutsSummary: vi.fn<AnalyticsService['getExecutedWorkoutsSummary']>().mockReturnValue(of(<ExecutedWorkoutsSummary>{
-        totalLoggedWorkouts: 12,
-        firstLoggedWorkoutDateTime: new Date(2022, 4, 5),
-        targetAreasWithWorkoutCounts: <{ [key: string]: number }>{
-          'Chest': 2,
-          'Back': 3,
-          'Legs': 5,
-          'Arms': 2
-        }
-      }))
-    };
+  const analyticsServiceMock: Mocked<Pick<AnalyticsService, 'getExecutedWorkoutsSummary'>> = {
+    getExecutedWorkoutsSummary: vi.fn<AnalyticsService['getExecutedWorkoutsSummary']>(() => of(<ExecutedWorkoutsSummary>{
+      totalLoggedWorkouts: 12,
+      firstLoggedWorkoutDateTime: new Date(2022, 4, 5),
+      targetAreasWithWorkoutCounts: <{ [key: string]: number }>{
+        'Chest': 2,
+        'Back': 3,
+        'Legs': 5,
+        'Arms': 2
+      }
+    })).mockName('getExecutedWorkoutsSummary')
+  };
 
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AnalyticsDashboardComponent],
       providers: [
         {
           provide: AnalyticsService,
-          useValue: AnalyticsServiceMock
+          useValue: analyticsServiceMock
         },
         provideZonelessChangeDetection()
       ]
@@ -49,13 +49,16 @@ describe('AnalyticsDashboardComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
   it('should get analytics data when initializing', () => {
-    const analyticsService = TestBed.inject(AnalyticsService);
-    expect(analyticsService.getExecutedWorkoutsSummary).toHaveBeenCalledTimes(1);
+    expect(analyticsServiceMock.getExecutedWorkoutsSummary).toHaveBeenCalledTimes(1);
     expect(component.executedWorkoutsSummary()).not.toBeUndefined();
     expect(component.gettingData()).toBe(false);
   });

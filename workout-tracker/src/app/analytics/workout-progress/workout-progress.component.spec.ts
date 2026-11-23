@@ -14,63 +14,61 @@ import { type Mocked } from 'vitest';
 describe('WorkoutProgressComponent', () => {
   let component: WorkoutProgressComponent;
   let fixture: ComponentFixture<WorkoutProgressComponent>;
-  let analyticsService: AnalyticsService;
-  let workoutService: WorkoutService;
+
+  const analyticsServiceMock: Mocked<Pick<AnalyticsService, 'getExerciseChartData' | 'getExecutedWorkoutMetrics'>> = {
+    getExerciseChartData: vi.fn<AnalyticsService['getExerciseChartData']>(() => new AnalyticsChartData()).mockName('getExerciseChartData'),
+    getExecutedWorkoutMetrics: vi.fn<AnalyticsService['getExecutedWorkoutMetrics']>(() => {
+      const metrics = new Array<ExecutedWorkoutMetrics>();
+      const exercise1Metrics = <ExecutedExerciseMetrics>{};
+      exercise1Metrics.name = "Exercise 1";
+      exercise1Metrics.exerciseId = '1';
+      const exercise2Metrics = <ExecutedExerciseMetrics>{};
+      exercise2Metrics.name = "Exercise 2";
+      exercise2Metrics.exerciseId = '2';
+      const exercise3Metrics = <ExecutedExerciseMetrics>{};
+      exercise3Metrics.name = "Exercise 3";
+      exercise3Metrics.exerciseId = '3';
+      const metric1 = <ExecutedWorkoutMetrics>{};
+      metric1.exerciseMetrics = [];
+      metric1.exerciseMetrics.push(exercise1Metrics, exercise2Metrics, exercise3Metrics);
+      metrics.push(metric1);
+      return of(metrics);
+    }).mockName('getExecutedWorkoutMetrics')
+  };
+  const workoutServiceMock: Mocked<Pick<WorkoutService, 'getFilteredSubset'>> = {
+    getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>(() => {
+      const result = <PaginatedResultsOfWorkoutDTO>{};
+      result.results = [];
+
+      const workout1 = <WorkoutDTO>{};
+      workout1.name = "Workout B";
+      workout1.id = '20';
+
+      const workout2 = <WorkoutDTO>{};
+      workout2.name = "Workout C";
+      workout2.id = '30';
+
+      const workout3 = <WorkoutDTO>{};
+      workout3.name = "Workout A";
+      workout3.id = '10';
+
+      result.results.push(workout1, workout2, workout3);
+
+      result.totalCount = 0;
+      return of(result);
+    }).mockName('getFilteredSubset')
+  };
 
   beforeEach(async () => {
-    const AnalyticsServiceMock: Partial<Mocked<AnalyticsService>> = {
-      getExerciseChartData: vi.fn<AnalyticsService['getExerciseChartData']>().mockReturnValue(new AnalyticsChartData()),
-      getExecutedWorkoutMetrics: vi.fn<AnalyticsService['getExecutedWorkoutMetrics']>().mockImplementation(() => {
-        const metrics = new Array<ExecutedWorkoutMetrics>();
-        const exercise1Metrics = <ExecutedExerciseMetrics>{};
-        exercise1Metrics.name = "Exercise 1";
-        exercise1Metrics.exerciseId = '1';
-        const exercise2Metrics = <ExecutedExerciseMetrics>{};
-        exercise2Metrics.name = "Exercise 2";
-        exercise2Metrics.exerciseId = '2';
-        const exercise3Metrics = <ExecutedExerciseMetrics>{};
-        exercise3Metrics.name = "Exercise 3";
-        exercise3Metrics.exerciseId = '3';
-        const metric1 = <ExecutedWorkoutMetrics>{};
-        metric1.exerciseMetrics = [];
-        metric1.exerciseMetrics.push(exercise1Metrics, exercise2Metrics, exercise3Metrics);
-        metrics.push(metric1);
-        return of(metrics);
-      })
-    };
-    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>().mockImplementation(() => {
-        const result = <PaginatedResultsOfWorkoutDTO>{};
-        result.results = [];
-
-        const workout1 = <WorkoutDTO>{};
-        workout1.name = "Workout B";
-        workout1.id = '20';
-
-        const workout2 = <WorkoutDTO>{};
-        workout2.name = "Workout C";
-        workout2.id = '30';
-
-        const workout3 = <WorkoutDTO>{};
-        workout3.name = "Workout A";
-        workout3.id = '10';
-
-        result.results.push(workout1, workout2, workout3);
-
-        result.totalCount = 0;
-        return of(result);
-      })
-    };
-
     await TestBed.configureTestingModule({
       providers: [
         {
           provide: AnalyticsService,
-          useValue: AnalyticsServiceMock
+          useValue: analyticsServiceMock
         },
         {
           provide: WorkoutService,
-          useValue: WorkoutServiceMock
+          useValue: workoutServiceMock
         },
         provideZonelessChangeDetection()
       ],
@@ -86,10 +84,11 @@ describe('WorkoutProgressComponent', () => {
     fixture = TestBed.createComponent(WorkoutProgressComponent);
     component = fixture.componentInstance;
 
-    analyticsService = TestBed.inject(AnalyticsService);
-    workoutService = TestBed.inject(WorkoutService);
-
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should create', () => {
@@ -97,8 +96,8 @@ describe('WorkoutProgressComponent', () => {
   });
 
   it('should get workouts on init', () => {
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledTimes(1);
-    expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 500, true);
+    expect(workoutServiceMock.getFilteredSubset).toHaveBeenCalledTimes(1);
+    expect(workoutServiceMock.getFilteredSubset).toHaveBeenCalledWith(0, 500, true);
     expect(component.workouts().length).toBe(3);
     expect(component.workouts()[0].name).toBe("Workout A");
     expect(component.workouts()[1].name).toBe("Workout B");
@@ -113,7 +112,7 @@ describe('WorkoutProgressComponent', () => {
     await fixture.whenStable(); //the effect reacting to workoutId runs asynchronously
 
     //ASSERT
-    expect(analyticsService.getExecutedWorkoutMetrics).toHaveBeenCalledWith('some-id', component.DEFAULT_WORKOUT_COUNT);
+    expect(analyticsServiceMock.getExecutedWorkoutMetrics).toHaveBeenCalledWith('some-id', component.DEFAULT_WORKOUT_COUNT);
   });
 
   //TODO: Fix. Not sure why this one is failing.
@@ -126,8 +125,8 @@ describe('WorkoutProgressComponent', () => {
     await fixture.whenStable();
 
     //ASSERT
-    expect(analyticsService.getExerciseChartData).toHaveBeenCalledTimes(3);
-    expect(analyticsService.getExerciseChartData).toHaveBeenCalledWith(component.metrics(), 'some-exercise-id', METRICS_TYPE.FormAndRangeOfMotion);
+    expect(analyticsServiceMock.getExerciseChartData).toHaveBeenCalledTimes(3);
+    expect(analyticsServiceMock.getExerciseChartData).toHaveBeenCalledWith(component.metrics(), 'some-exercise-id', METRICS_TYPE.FormAndRangeOfMotion);
   });
 
   it('should keep the selected exercise when one is chosen (no effect stomp)', async () => {
