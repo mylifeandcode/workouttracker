@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { type Mocked } from 'vitest';
 
 import { UserSettingsComponent } from './user-settings.component';
-import { RouterLink, RouterModule } from '@angular/router';
+import { provideRouter, RouterLink } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { UserRepSettingsComponent } from './user-rep-settings/user-rep-settings.component';
 
@@ -15,54 +15,54 @@ describe('UserSettingsComponent', () => {
   let component: UserSettingsComponent;
   let fixture: ComponentFixture<UserSettingsComponent>;
 
+  const authServiceMock: Mocked<Pick<AuthService, 'userId' | 'userPublicId'>> = {
+    userId: 0,
+    userPublicId: 'some-guid'
+  };
+
+  const userServiceMock: Mocked<Pick<UserService, 'getById' | 'updateMySettings'>> = {
+    getById: vi.fn<UserService['getById']>(() => {
+      const user = <User>{};
+      user.settings = <UserSettings>{};
+      user.settings.repSettings = new Array<UserMinMaxReps>();
+      user.settings.repSettings.push(<UserMinMaxReps>{});
+      user.settings.repSettings.push(<UserMinMaxReps>{});
+      user.settings.repSettings[0].setType = SetType.REPETITION;
+      user.settings.repSettings[0].id = 1;
+      user.settings.repSettings[1].setType = SetType.TIMED;
+      user.settings.repSettings[1].id = 2;
+      user.settings.recommendationsEnabled = true;
+      user.settings.lowestAcceptableRating = 3;
+
+      return of(user);
+    }).mockName('getById'),
+    updateMySettings: vi.fn<UserService['updateMySettings']>(() => of(undefined)).mockName('updateMySettings')
+  };
+
+  const messageServiceMock: Mocked<Pick<NzMessageService, 'success'>> = {
+    success: vi.fn<NzMessageService['success']>().mockName('success')
+  };
+
   beforeEach(async () => {
-    const AuthServiceMock: Partial<Mocked<AuthService>> = {
-      userId: 0,
-      userPublicId: 'some-guid'
-    };
-
-    const UserServiceMock: Partial<Mocked<UserService>> = {
-      getById: vi.fn<UserService['getById']>().mockImplementation(() => {
-        const user = <User>{};
-        user.settings = <UserSettings>{};
-        user.settings.repSettings = new Array<UserMinMaxReps>();
-        user.settings.repSettings.push(<UserMinMaxReps>{});
-        user.settings.repSettings.push(<UserMinMaxReps>{});
-        user.settings.repSettings[0].setType = SetType.REPETITION;
-        user.settings.repSettings[0].id = 1;
-        user.settings.repSettings[1].setType = SetType.TIMED;
-        user.settings.repSettings[1].id = 2;
-        user.settings.recommendationsEnabled = true;
-        user.settings.lowestAcceptableRating = 3;
-
-        return of(user);
-      }),
-      updateMySettings: vi.fn<UserService['updateMySettings']>().mockReturnValue(of(undefined))
-    };
-
-    const MessageServiceMock: Partial<Mocked<NzMessageService>> = {
-      success: vi.fn<NzMessageService['success']>()
-    };
-
     await TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
         {
           provide: AuthService,
-          useValue: AuthServiceMock
+          useValue: authServiceMock
         },
         {
           provide: UserService,
-          useValue: UserServiceMock
+          useValue: userServiceMock
         },
         {
           provide: NzMessageService,
-          useValue: MessageServiceMock
+          useValue: messageServiceMock
         },
         provideZonelessChangeDetection()
       ],
       imports: [
-        UserSettingsComponent,
-        RouterModule.forRoot([])
+        UserSettingsComponent
       ]
     })
       .overrideComponent(UserSettingsComponent, {
@@ -81,6 +81,10 @@ describe('UserSettingsComponent', () => {
     fixture = TestBed.createComponent(UserSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should create', () => {
@@ -121,9 +125,6 @@ describe('UserSettingsComponent', () => {
 
   it('should save settings', () => {
     //ARRANGE
-    const userService = TestBed.inject(UserService);
-    const messageService = TestBed.inject(NzMessageService);
-
     const duration = 240;
     const minTimedSetReps = 40;
     const maxTimedSetReps = 70;
@@ -151,22 +152,21 @@ describe('UserSettingsComponent', () => {
     component.saveSettings();
 
     //ASSERT
-    expect(userService.updateMySettings).toHaveBeenCalledWith(expectedSettings);
-    expect(messageService.success).toHaveBeenCalledTimes(1);
-    expect(messageService.success).toHaveBeenCalledWith('Settings saved.');
+    expect(userServiceMock.updateMySettings).toHaveBeenCalledWith(expectedSettings);
+    expect(messageServiceMock.success).toHaveBeenCalledTimes(1);
+    expect(messageServiceMock.success).toHaveBeenCalledWith('Settings saved.');
     expect(component.saving()).toBe(false);
   });
 
   it('should send the loaded rep settings back unchanged when recommendations are switched off', () => {
     //ARRANGE
-    const userService = TestBed.inject(UserService);
     component.userSettingsForm.recommendationsEnabled().value.set(false);
 
     //ACT
     component.saveSettings();
 
     //ASSERT
-    const sent = vi.mocked(userService.updateMySettings).mock.calls.at(-1)![0];
+    const sent = userServiceMock.updateMySettings.mock.calls.at(-1)![0];
     expect(sent.recommendationsEnabled).toBe(false);
     expect(sent.repSettings.map(r => r.id)).toEqual([1, 2]);
   });

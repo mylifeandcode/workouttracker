@@ -12,24 +12,24 @@ describe('ForgotPasswordComponent', () => {
     let component: ForgotPasswordComponent;
     let fixture: ComponentFixture<ForgotPasswordComponent>;
 
-    beforeEach(async () => {
-        const AuthServiceMock: Partial<Mocked<AuthService>> = {
-            requestPasswordReset: vi.fn<AuthService['requestPasswordReset']>().mockReturnValue(of(undefined))
-        };
-        const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-            get: vi.fn<ConfigService['get']>().mockReturnValue(true)
-        };
+    const authServiceMock: Mocked<Pick<AuthService, 'requestPasswordReset'>> = {
+        requestPasswordReset: vi.fn<AuthService['requestPasswordReset']>(() => of(undefined)).mockName('requestPasswordReset')
+    };
+    const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+        get: vi.fn<ConfigService['get']>(() => true).mockName('get')
+    };
 
+    beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [ForgotPasswordComponent],
             providers: [
                 {
                     provide: AuthService,
-                    useValue: AuthServiceMock
+                    useValue: authServiceMock
                 },
                 {
                     provide: ConfigService,
-                    useValue: ConfigServiceMock
+                    useValue: configServiceMock
                 },
                 provideZonelessChangeDetection(),
                 provideRouter([])
@@ -42,13 +42,16 @@ describe('ForgotPasswordComponent', () => {
         fixture.detectChanges();
     });
 
+    afterEach(() => {
+        vi.resetAllMocks();
+    });
+
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
     it('should set smtp enabled from config on init', () => {
-        const configService = TestBed.inject(ConfigService);
-        expect(configService.get).toHaveBeenCalledWith('smtpEnabled');
+        expect(configServiceMock.get).toHaveBeenCalledWith('smtpEnabled');
         expect(component.smtpEnabled()).toBe(true);
     });
 
@@ -68,7 +71,6 @@ describe('ForgotPasswordComponent', () => {
 
     it('should submit the request and say only what is true whether or not the address has an account', async () => {
         //ARRANGE
-        const authService = TestBed.inject(AuthService);
         component.forgotPasswordForm.emailAddress().value.set('user@example.com');
 
         //ACT
@@ -77,7 +79,7 @@ describe('ForgotPasswordComponent', () => {
         fixture.detectChanges();
 
         //ASSERT: the API answers the same way for every address, so the page can only claim an email "if an account exists".
-        expect(authService.requestPasswordReset).toHaveBeenCalledWith('user@example.com');
+        expect(authServiceMock.requestPasswordReset).toHaveBeenCalledWith('user@example.com');
         expect(component.requestSuccessful()).toBe(true);
         expect((fixture.nativeElement as HTMLElement).textContent).toContain('If an account exists for that address');
     });

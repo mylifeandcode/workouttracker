@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { of, throwError } from 'rxjs';
 import { type Mocked } from 'vitest';
@@ -12,8 +12,12 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 describe('ResetPasswordComponent', () => {
     let component: ResetPasswordComponent;
     let fixture: ComponentFixture<ResetPasswordComponent>;
-    let authService: Mocked<AuthService>;
     let router: Router;
+
+    const authServiceMock: Mocked<Pick<AuthService, 'validatePasswordResetToken' | 'resetPassword'>> = {
+        validatePasswordResetToken: vi.fn<AuthService['validatePasswordResetToken']>(() => of(true)).mockName('validatePasswordResetToken'),
+        resetPassword: vi.fn<AuthService['resetPassword']>(() => of(undefined)).mockName('resetPassword')
+    };
 
     const NEW_PASSWORD = 'someNewPassword-123';
 
@@ -27,15 +31,11 @@ describe('ResetPasswordComponent', () => {
     };
 
     beforeEach(async () => {
-        const AuthServiceMock: Partial<Mocked<AuthService>> = {
-            validatePasswordResetToken: vi.fn<AuthService['validatePasswordResetToken']>().mockReturnValue(of(true)),
-            resetPassword: vi.fn<AuthService['resetPassword']>().mockReturnValue(of(undefined))
-        };
-
         await TestBed.configureTestingModule({
-            imports: [RouterModule.forRoot([]), ResetPasswordComponent],
+            imports: [ResetPasswordComponent],
             providers: [
-                { provide: AuthService, useValue: AuthServiceMock },
+                provideRouter([]),
+                { provide: AuthService, useValue: authServiceMock },
                 { provide: ActivatedRoute, useValue: route },
                 provideZonelessChangeDetection()
             ],
@@ -47,10 +47,14 @@ describe('ResetPasswordComponent', () => {
         })
             .compileComponents();
 
-        authService = TestBed.inject(AuthService) as Mocked<AuthService>;
         router = TestBed.inject(Router);
         vi.spyOn(router, 'navigate').mockResolvedValue(true);
         vi.spyOn(window, 'alert').mockReturnValue(undefined);
+    });
+
+    afterEach(() => {
+        vi.resetAllMocks();
+        vi.restoreAllMocks(); //Undoes the router.navigate and window.alert spies
     });
 
     it('should create', () => {
@@ -62,7 +66,7 @@ describe('ResetPasswordComponent', () => {
     it('should read the token from the URL fragment and validate it', () => {
         createComponent('token=abc123');
 
-        expect(authService.validatePasswordResetToken).toHaveBeenCalledWith('abc123');
+        expect(authServiceMock.validatePasswordResetToken).toHaveBeenCalledWith('abc123');
         expect(component.validatingResetToken()).toBe(false);
         expect(component.resetLinkInvalid()).toBe(false);
     });
@@ -78,18 +82,18 @@ describe('ResetPasswordComponent', () => {
 
         expect(component.resetLinkInvalid()).toBe(true);
         expect(component.validatingResetToken()).toBe(false);
-        expect(authService.validatePasswordResetToken).not.toHaveBeenCalled();
+        expect(authServiceMock.validatePasswordResetToken).not.toHaveBeenCalled();
     });
 
     it('should treat a fragment without a token as invalid', () => {
         createComponent('something=else');
 
         expect(component.resetLinkInvalid()).toBe(true);
-        expect(authService.validatePasswordResetToken).not.toHaveBeenCalled();
+        expect(authServiceMock.validatePasswordResetToken).not.toHaveBeenCalled();
     });
 
     it('should treat an expired or unknown link as invalid', () => {
-        authService.validatePasswordResetToken.mockReturnValue(of(false));
+        authServiceMock.validatePasswordResetToken.mockReturnValue(of(false));
 
         createComponent('token=abc123');
 
@@ -97,7 +101,7 @@ describe('ResetPasswordComponent', () => {
     });
 
     it('should treat a link as invalid, and say why, when it cannot be checked', () => {
-        authService.validatePasswordResetToken.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 429 })));
+        authServiceMock.validatePasswordResetToken.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 429 })));
 
         createComponent('token=abc123');
 
@@ -145,14 +149,14 @@ describe('ResetPasswordComponent', () => {
         await fixture.whenStable(); //submit() runs its action asynchronously
 
         //ASSERT
-        expect(authService.resetPassword).toHaveBeenCalledWith('abc123', NEW_PASSWORD);
+        expect(authServiceMock.resetPassword).toHaveBeenCalledWith('abc123', NEW_PASSWORD);
         expect(router.navigate).toHaveBeenCalledWith(['']);
         expect(component.resettingPassword()).toBe(false);
     });
 
     it("should show the API's explanation when the reset is refused", async () => {
         //ARRANGE
-        authService.resetPassword.mockReturnValue(throwError(() => new HttpErrorResponse({
+        authServiceMock.resetPassword.mockReturnValue(throwError(() => new HttpErrorResponse({
             status: 400,
             error: { status: 400, detail: 'This reset link is invalid or has expired.' }
         })));
@@ -181,6 +185,6 @@ describe('ResetPasswordComponent', () => {
         await fixture.whenStable();
 
         //ASSERT
-        expect(authService.resetPassword).not.toHaveBeenCalled();
+        expect(authServiceMock.resetPassword).not.toHaveBeenCalled();
     });
 });

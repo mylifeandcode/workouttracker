@@ -4,7 +4,7 @@ import { AuthService } from '../../core/_services/auth/auth.service';
 import { type Mocked } from 'vitest';
 
 import { ChangePasswordComponent } from './change-password.component';
-import { Router, RouterModule } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 
 describe('ChangePasswordComponent', () => {
@@ -19,18 +19,19 @@ describe('ChangePasswordComponent', () => {
         await fixture.whenStable();
     };
 
-    beforeEach(async () => {
-        const AuthServiceMock: Partial<Mocked<AuthService>> = {
-            // Apparently, this is the way to represent a void Observable.
-            changePassword: vi.fn<AuthService['changePassword']>().mockReturnValue(of(undefined))
-        };
+    const authServiceMock: Mocked<Pick<AuthService, 'changePassword'>> = {
+        // Apparently, this is the way to represent a void Observable.
+        changePassword: vi.fn<AuthService['changePassword']>(() => of(undefined)).mockName('changePassword')
+    };
 
+    beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [RouterModule.forRoot([]), ChangePasswordComponent],
+            imports: [ChangePasswordComponent],
             providers: [
+                provideRouter([]),
                 {
                     provide: AuthService,
-                    useValue: AuthServiceMock
+                    useValue: authServiceMock
                 },
                 provideZonelessChangeDetection()
             ]
@@ -40,6 +41,11 @@ describe('ChangePasswordComponent', () => {
         fixture = TestBed.createComponent(ChangePasswordComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        vi.resetAllMocks();
+        vi.restoreAllMocks(); //Undoes the window.confirm and router.navigate spies
     });
 
     it('should create', () => {
@@ -75,7 +81,6 @@ describe('ChangePasswordComponent', () => {
 
     it('should change password', async () => {
         //ARRANGE
-        const authService = TestBed.inject(AuthService);
         component.changePasswordForm.currentPassword().value.set('somePassword');
         component.changePasswordForm.password().value.set('someNewPassword');
         component.changePasswordForm.confirmPassword().value.set('someNewPassword');
@@ -86,8 +91,8 @@ describe('ChangePasswordComponent', () => {
         await fixture.whenStable(); //submit() runs its action asynchronously
 
         //ASSERT
-        expect(authService.changePassword).toHaveBeenCalledTimes(1);
-        expect(authService.changePassword).toHaveBeenCalledWith('somePassword', 'someNewPassword');
+        expect(authServiceMock.changePassword).toHaveBeenCalledTimes(1);
+        expect(authServiceMock.changePassword).toHaveBeenCalledWith('somePassword', 'someNewPassword');
         expect(component.changingPassword()).toBe(false); //Should be false because operation has completed
     });
 
@@ -96,7 +101,7 @@ describe('ChangePasswordComponent', () => {
         await dirtyTheFormViaUi();
         vi.spyOn(window, 'confirm').mockReturnValue(true);
         const router = TestBed.inject(Router);
-        vi.spyOn(router, 'navigate');
+        vi.spyOn(router, 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
 
         //ACT
         component.cancel();
@@ -111,7 +116,7 @@ describe('ChangePasswordComponent', () => {
         await dirtyTheFormViaUi();
         vi.spyOn(window, 'confirm').mockReturnValue(false);
         const router = TestBed.inject(Router);
-        vi.spyOn(router, 'navigate');
+        vi.spyOn(router, 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
 
         //ACT
         component.cancel();
