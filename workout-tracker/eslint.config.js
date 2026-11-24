@@ -42,6 +42,15 @@ module.exports = defineConfig([
         null
       ],
       "@typescript-eslint/prefer-for-of": "off", // Could not always be used. Weird rule. https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-for-of.md 
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "TSAsExpression > TSAsExpression.expression[typeAnnotation.type='TSUnknownKeyword']",
+          message:
+            "Avoid 'as unknown as' double assertions. Fix the types, use a type guard, or narrow properly.",
+        },
+      ]      
     },
   },
   {
