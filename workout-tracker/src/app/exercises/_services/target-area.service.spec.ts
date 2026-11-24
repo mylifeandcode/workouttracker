@@ -14,18 +14,18 @@ describe('TargetAreaService', () => {
   let service: TargetAreaService;
   let http: HttpTestingController;
 
-  beforeEach(() => {
-    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockReturnValue(API_ROOT)
-    };
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => API_ROOT).mockName('get')
+  };
 
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useValue: ConfigServiceMock
+          useValue: configServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
@@ -38,6 +38,7 @@ describe('TargetAreaService', () => {
 
   afterEach(() => {
     http.verify();
+    vi.resetAllMocks();
   });
 
   it('should be created', () => {

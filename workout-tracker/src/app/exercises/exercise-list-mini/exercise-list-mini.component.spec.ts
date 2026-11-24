@@ -11,26 +11,25 @@ import { type Mocked } from 'vitest';
 describe('ExerciseListMiniComponent', () => {
   let component: ExerciseListMiniComponent;
   let fixture: ComponentFixture<ExerciseListMiniComponent>;
-  let exerciseService: ExerciseService;
+
+  const exerciseServiceMock: Mocked<Pick<ExerciseService, 'getAll'>> = {
+    getAll: vi.fn<ExerciseService['getAll']>(() => of(<PaginatedResultsOfExerciseDTO>{})).mockName('getAll')
+  };
+
+  const targetAreaServiceMock: Mocked<Pick<TargetAreaService, 'getAll'>> = {
+    getAll: vi.fn<TargetAreaService['getAll']>(() => of(new Array<TargetAreaDTO>())).mockName('getAll')
+  };
 
   beforeEach(async () => {
-    const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{}))
-    };
-
-    const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
-      getAll: vi.fn<TargetAreaService['getAll']>().mockReturnValue(of(new Array<TargetAreaDTO>()))
-    };
-
     await TestBed.configureTestingModule({
       providers: [
         {
           provide: ExerciseService,
-          useValue: ExerciseServiceMock
+          useValue: exerciseServiceMock
         },
         {
           provide: TargetAreaService,
-          useValue: TargetAreaServiceMock
+          useValue: targetAreaServiceMock
         },
         provideZonelessChangeDetection()
       ],
@@ -52,8 +51,12 @@ describe('ExerciseListMiniComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ExerciseListMiniComponent);
     component = fixture.componentInstance;
-    exerciseService = TestBed.inject(ExerciseService);
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the exerciseSelected.emit spy
   });
 
   it('should create', () => {
@@ -74,7 +77,7 @@ describe('ExerciseListMiniComponent', () => {
     component.getExercisesLazy(lazyLoadEvent as NzTableQueryParams);
 
     //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(0, 10, 'Pre', ['Chest']);
+    expect(exerciseServiceMock.getAll).toHaveBeenCalledWith(0, 10, 'Pre', ['Chest']);
   });
 
   it('should emit event when exercise is selected', () => {

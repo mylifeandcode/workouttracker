@@ -29,34 +29,32 @@ class ExerciseListBaseExtenderComponent extends ExerciseListBase {
 describe('ExerciseListBaseComponent', () => {
   let component: ExerciseListBaseExtenderComponent;
   let fixture: ComponentFixture<ExerciseListBaseExtenderComponent>;
-  let exerciseService: ExerciseService;
-  let targetAreaService: TargetAreaService;
+
+  const exerciseServiceMock: Mocked<Pick<ExerciseService, 'getAll'>> = {
+    getAll: vi.fn<ExerciseService['getAll']>(() => of(<PaginatedResultsOfExerciseDTO>{})).mockName('getAll')
+  };
+
+  const targetAreaServiceMock: Mocked<Pick<TargetAreaService, 'getAll'>> = {
+    getAll: vi.fn<TargetAreaService['getAll']>(() => {
+      const targetAreas: TargetAreaDTO[] = [
+        { id: 1, name: "Chest" },
+        { id: 2, name: "Biceps" },
+        { id: 3, name: "Triceps" }
+      ];
+      return of(targetAreas);
+    }).mockName('getAll')
+  };
 
   beforeEach(async () => {
-    const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getAll: vi.fn<ExerciseService['getAll']>().mockReturnValue(of(<PaginatedResultsOfExerciseDTO>{}))
-    };
-
-    const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
-      getAll: vi.fn<TargetAreaService['getAll']>().mockImplementation(() => {
-        const targetAreas: TargetAreaDTO[] = [
-          { id: 1, name: "Chest" },
-          { id: 2, name: "Biceps" },
-          { id: 3, name: "Triceps" }
-        ];
-        return of(targetAreas);
-      })
-    };
-
     await TestBed.configureTestingModule({
       providers: [
         {
           provide: ExerciseService,
-          useValue: ExerciseServiceMock
+          useValue: exerciseServiceMock
         },
         {
           provide: TargetAreaService,
-          useValue: TargetAreaServiceMock
+          useValue: targetAreaServiceMock
         },
         provideZonelessChangeDetection()
       ],
@@ -70,9 +68,11 @@ describe('ExerciseListBaseComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ExerciseListBaseExtenderComponent);
     component = fixture.componentInstance;
-    exerciseService = TestBed.inject(ExerciseService);
-    targetAreaService = TestBed.inject(TargetAreaService);
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should create', () => {
@@ -82,7 +82,7 @@ describe('ExerciseListBaseComponent', () => {
   it('should get target areas', () => {
     //This currently happens in the constructor, but should be moved to ngOnInit
     //TODO: Expand this test, make it better
-    expect(targetAreaService.getAll).toHaveBeenCalled();
+    expect(targetAreaServiceMock.getAll).toHaveBeenCalled();
     expect(component.targetAreas().length).toBe(3);
   });
 
@@ -94,7 +94,7 @@ describe('ExerciseListBaseComponent', () => {
     component.getExercises(10, "blah", ["Chest"]);
 
     //ASSERT
-    expect(exerciseService.getAll).toHaveBeenCalledWith(10, component.pageSize(), "blah", ["Chest"]);
+    expect(exerciseServiceMock.getAll).toHaveBeenCalledWith(10, component.pageSize(), "blah", ["Chest"]);
 
   });
 });

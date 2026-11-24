@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, Pipe, PipeTransform, provideZonelessChangeDetection } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterModule, UrlSegment } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router, UrlSegment } from '@angular/router';
 
 import { of } from 'rxjs';
 
@@ -48,48 +48,48 @@ function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
 describe('ExerciseEditComponent', () => {
   let component: ExerciseEditComponent;
   let fixture: ComponentFixture<ExerciseEditComponent>;
-  let exerciseService: ExerciseService;
-  let targetAreaService: TargetAreaService;
+
+  const resistanceTypes = new Map<number, string>();
+  resistanceTypes.set(0, 'Free Weight');
+  resistanceTypes.set(1, 'Resistance Band');
+
+  const targetAreaServiceMock: Mocked<Pick<TargetAreaService, 'getAll'>> = {
+    getAll: vi.fn<TargetAreaService['getAll']>(() => {
+      const targetAreas: TargetAreaDTO[] = [
+        { id: 1, name: "Chest" },
+        { id: 2, name: "Biceps" },
+        { id: 3, name: "Triceps" }
+      ];
+      return of(targetAreas);
+    }).mockName('getAll')
+  };
+
+  const exerciseServiceMock: Mocked<Pick<ExerciseService, 'getById' | 'getResistanceTypes' | 'add' | 'update'>> = {
+    getById: vi.fn<ExerciseService['getById']>(() => of(EXERCISE)).mockName('getById'),
+    getResistanceTypes: vi.fn<ExerciseService['getResistanceTypes']>(() => of(resistanceTypes)).mockName('getResistanceTypes'),
+    add: vi.fn<ExerciseService['add']>((exercise: Exercise) => of(exercise)).mockName('add'),
+    update: vi.fn<ExerciseService['update']>((exercise: Exercise) => of(exercise)).mockName('update')
+  };
 
   beforeEach(async () => {
-    const resistanceTypes = new Map<number, string>();
-    resistanceTypes.set(0, 'Free Weight');
-    resistanceTypes.set(1, 'Resistance Band');
-
-    const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
-      getAll: vi.fn<TargetAreaService['getAll']>().mockImplementation(() => {
-        const targetAreas: TargetAreaDTO[] = [
-          { id: 1, name: "Chest" },
-          { id: 2, name: "Biceps" },
-          { id: 3, name: "Triceps" }
-        ];
-        return of(targetAreas);
-      })
-    };
-
-    const ExerciseServiceMock: Partial<Mocked<ExerciseService>> = {
-      getById: vi.fn<ExerciseService['getById']>().mockReturnValue(of(EXERCISE)),
-      getResistanceTypes: vi.fn<ExerciseService['getResistanceTypes']>().mockReturnValue(of(resistanceTypes)),
-      add: vi.fn<ExerciseService['add']>().mockImplementation((exercise: Exercise) => of(exercise)),
-      update: vi.fn<ExerciseService['update']>().mockImplementation((exercise: Exercise) => of(exercise))
-    };
-
     TestBed.configureTestingModule({
       imports: [
-        RouterModule.forRoot([]),
         ExerciseEditComponent,
         InsertSpaceBeforeCapitalPipeMock
       ],
       providers: [
+        provideRouter([]),
         {
           provide: ExerciseService,
-          useValue: ExerciseServiceMock
+          useValue: exerciseServiceMock
         },
         {
           provide: TargetAreaService,
-          useValue: TargetAreaServiceMock
+          useValue: targetAreaServiceMock
         },
         {
+          //Deliberately NOT hoisted: the tests change snapshot.params, which resetAllMocks() can't undo,
+          //so every test needs a freshly built route.
           provide: ActivatedRoute,
           useValue: {
             params: of({
@@ -111,9 +111,12 @@ describe('ExerciseEditComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ExerciseEditComponent);
     component = fixture.componentInstance;
-    exerciseService = TestBed.inject(ExerciseService);
-    targetAreaService = TestBed.inject(TargetAreaService);
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the router.navigate spy
   });
 
   it('should create', () => {
@@ -166,12 +169,12 @@ describe('ExerciseEditComponent', () => {
 
   it('should get all target areas', () => {
     expect(component.allTargetAreas).toBeTruthy();
-    expect(targetAreaService.getAll).toHaveBeenCalledTimes(1);
+    expect(targetAreaServiceMock.getAll).toHaveBeenCalledTimes(1);
   });
 
   it('should load exercise into the model when editing', () => {
     //Our default route mock includes a value for exercise ID
-    expect(exerciseService.getById).toHaveBeenCalledWith('some-guid');
+    expect(exerciseServiceMock.getById).toHaveBeenCalledWith('some-guid');
     expect(component.exerciseForm.id().value()).toEqual(EXERCISE.id);
     expect(component.exerciseForm.name().value()).toEqual(EXERCISE.name);
     expect(component.exerciseForm.description().value()).toEqual(EXERCISE.description);
@@ -189,7 +192,7 @@ describe('ExerciseEditComponent', () => {
 
   it('should get resistance types', () => {
     expect(component.resistanceTypes).toBeTruthy();
-    expect(exerciseService.getResistanceTypes).toHaveBeenCalledTimes(1);
+    expect(exerciseServiceMock.getResistanceTypes).toHaveBeenCalledTimes(1);
   });
 
   it('should return exercise ID via exerciseId property', () => {
@@ -224,8 +227,8 @@ describe('ExerciseEditComponent', () => {
     await fixture.whenStable(); //submit() runs its action asynchronously
 
     //ASSERT
-    expect(exerciseService.add).toHaveBeenCalledTimes(1);
-    const added = vi.mocked(exerciseService.add).mock.calls[0][0];
+    expect(exerciseServiceMock.add).toHaveBeenCalledTimes(1);
+    const added = exerciseServiceMock.add.mock.calls[0][0];
     expect(added.name).toEqual('Some New Exercise');
     expect(added.resistanceType).toEqual(1);                 //Converted from the string model value
     expect(added.exerciseTargetAreaLinks).toEqual([{ exerciseId: 0, targetAreaId: 1 }]);
@@ -236,8 +239,8 @@ describe('ExerciseEditComponent', () => {
   it('should update exercise', async () => {
     component.saveExercise();
     await fixture.whenStable(); //submit() runs its action asynchronously
-    expect(exerciseService.update).toHaveBeenCalledTimes(1);
-    const updated = vi.mocked(exerciseService.update).mock.calls[0][0];
+    expect(exerciseServiceMock.update).toHaveBeenCalledTimes(1);
+    const updated = exerciseServiceMock.update.mock.calls[0][0];
     expect(updated.id).toEqual(EXERCISE.id);
     expect(updated.name).toEqual(EXERCISE.name);
     expect(component.saving()).toBe(false);
@@ -256,7 +259,7 @@ describe('ExerciseEditComponent', () => {
 
     component.saveExercise();
 
-    const updated = vi.mocked(exerciseService.update).mock.calls[0][0];
+    const updated = exerciseServiceMock.update.mock.calls[0][0];
     expect(updated.usesBilateralResistance).toBe(false);
   });
 

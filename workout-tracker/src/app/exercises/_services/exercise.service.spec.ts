@@ -13,37 +13,38 @@ describe('ExerciseService', () => {
   let service: ExerciseService;
   let http: HttpTestingController;
 
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => "http://localhost:5600/api/").mockName('get')
+  };
+
+  //convertAuditDateStringsToDates is generic, which Mocked<Pick<...>> can't represent, so this mock pins a non-generic signature instead.
+  const dateSerializationServiceMock = {
+    convertAuditDateStringsToDates: vi.fn<(obj: Exercise) => Exercise>((obj) => {
+      console.log('MockDateSerializationService called with object:', obj);
+      if (obj.createdDateTime && typeof obj.createdDateTime === 'string') {
+        obj.createdDateTime = new Date(obj.createdDateTime);
+      }
+
+      if (obj.modifiedDateTime && typeof obj.modifiedDateTime === 'string') {
+        obj.modifiedDateTime = new Date(obj.modifiedDateTime);
+      }
+
+      return obj;
+    }).mockName('convertAuditDateStringsToDates')
+  };
+
   beforeEach(() => {
-    const MockConfigService: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockReturnValue("http://localhost:5600/api/")
-    };
-
-    const MockDateSerializationService: Partial<Mocked<DateSerializationService>> = {
-      convertAuditDateStringsToDates: vi.fn().mockImplementation((obj: Exercise) => {
-        console.log('MockDateSerializationService called with object:', obj);
-        if (obj.createdDateTime && typeof obj.createdDateTime === 'string') {
-          obj.createdDateTime = new Date(obj.createdDateTime);
-        }
-
-        if (obj.modifiedDateTime && typeof obj.modifiedDateTime === 'string') {
-          obj.modifiedDateTime = new Date(obj.modifiedDateTime);
-        }
-
-        return obj;
-      })
-    };
-
     TestBed.configureTestingModule({
       imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useValue: MockConfigService
+          useValue: configServiceMock
         },
         {
           provide: DateSerializationService,
-          useValue: MockDateSerializationService
+          useValue: dateSerializationServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
@@ -56,6 +57,7 @@ describe('ExerciseService', () => {
 
   afterEach(() => {
     http.verify();
+    vi.resetAllMocks();
   });
 
   it('should be creatable', () => {

@@ -5,7 +5,7 @@ import { ExerciseService } from '../_services/exercise.service';
 import { TargetAreaService } from '../_services/target-area.service';
 import { ExerciseDTO, PaginatedResultsOfExerciseDTO, TargetAreaDTO } from '../../api';
 import { of } from 'rxjs';
-import { RouterModule } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection, signal } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { type Mocked } from 'vitest';
@@ -14,46 +14,45 @@ import { HttpResourceRef } from '@angular/common/http';
 describe('ExerciseListComponent', () => {
   let component: ExerciseListComponent;
   let fixture: ComponentFixture<ExerciseListComponent>;
-  let targetAreaService: TargetAreaService;
+
+  const exerciseServiceMock: Mocked<Pick<ExerciseService, 'getSelection'>> = {
+    getSelection: vi.fn<ExerciseService['getSelection']>(() => {
+      const paginatedResults: PaginatedResultsOfExerciseDTO = {
+        totalCount: 0,
+        results: <ExerciseDTO[]>[]
+      };
+
+      const mockResourceRef: Partial<HttpResourceRef<PaginatedResultsOfExerciseDTO>> = {
+        value: signal(paginatedResults),
+        isLoading: signal(false),
+      };
+
+      return mockResourceRef as HttpResourceRef<PaginatedResultsOfExerciseDTO>;
+    }).mockName('getSelection')
+  };
+
+  const targetAreaServiceMock: Mocked<Pick<TargetAreaService, 'getAll'>> = {
+    getAll: vi.fn<TargetAreaService['getAll']>(() => of([
+      <TargetAreaDTO>{ id: 1, name: 'Chest' },
+      <TargetAreaDTO>{ id: 2, name: 'Biceps' },
+      <TargetAreaDTO>{ id: 3, name: 'Triceps' }
+    ])).mockName('getAll')
+  };
 
   beforeEach(async () => {
-    const ExerciseServiceMock: Mocked<Pick<ExerciseService, 'getSelection'>> = {
-      getSelection: vi.fn<ExerciseService['getSelection']>().mockImplementation(() => {
-        const paginatedResults: PaginatedResultsOfExerciseDTO = {
-          totalCount: 0,
-          results: <ExerciseDTO[]>[]
-        };
-
-        const mockResourceRef: Partial<HttpResourceRef<PaginatedResultsOfExerciseDTO>> = {
-          value: signal(paginatedResults),
-          isLoading: signal(false),
-        };
-
-        return mockResourceRef as HttpResourceRef<PaginatedResultsOfExerciseDTO>;
-      })
-    };
-
-    const TargetAreaServiceMock: Partial<Mocked<TargetAreaService>> = {
-      getAll: vi.fn<TargetAreaService['getAll']>().mockReturnValue(of([
-        <TargetAreaDTO>{ id: 1, name: 'Chest' },
-        <TargetAreaDTO>{ id: 2, name: 'Biceps' },
-        <TargetAreaDTO>{ id: 3, name: 'Triceps' }
-      ]))
-    };
-
     await TestBed.configureTestingModule({
       imports: [
-        RouterModule.forRoot([]),
         ExerciseListComponent
       ],
       providers: [
+        provideRouter([]),
         {
           provide: ExerciseService,
-          useValue: ExerciseServiceMock
+          useValue: exerciseServiceMock
         },
         {
           provide: TargetAreaService,
-          useValue: TargetAreaServiceMock
+          useValue: targetAreaServiceMock
         },
         provideZonelessChangeDetection()
       ],
@@ -67,7 +66,10 @@ describe('ExerciseListComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     //qexerciseService = TestBed.inject(ExerciseService);
-    targetAreaService = TestBed.inject(TargetAreaService);
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should create', () => {
@@ -75,7 +77,7 @@ describe('ExerciseListComponent', () => {
   });
 
   it('should populate target area filters from service', () => {
-    expect(targetAreaService.getAll).toHaveBeenCalled();
+    expect(targetAreaServiceMock.getAll).toHaveBeenCalled();
     expect(component.targetAreaFilters()).toEqual([
       { text: 'Chest', value: 'Chest' },
       { text: 'Biceps', value: 'Biceps' },
