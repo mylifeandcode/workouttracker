@@ -1,38 +1,36 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavComponent } from './nav.component';
-import { Component, provideZonelessChangeDetection, signal } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { AuthService } from '../../core/_services/auth/auth.service';
-import { RouterModule } from '@angular/router';
+import { provideRouter } from '@angular/router';
+import { type Mocked } from 'vitest';
 
 const username = 'someuser';
-
-@Component({
-  template: ''
-})
-class FakeComponent {
-}
-;
 
 describe('NavComponent', () => {
     let component: NavComponent;
     let fixture: ComponentFixture<NavComponent>;
 
+    //currentUserName is a signal, which Mocked<> would turn into a MockInstance, so only logOut gets the mock type.
+    const authServiceMock: Pick<AuthService, 'currentUserName'> & Mocked<Pick<AuthService, 'logOut'>> = {
+        currentUserName: signal<string | null>('someuser'),
+        logOut: vi.fn<AuthService['logOut']>().mockName('logOut')
+    };
+
     beforeEach(async () => {
-        const AuthServiceMock = {
-            currentUserName: signal<string | null>('someuser'),
-            logOut: vi.fn<AuthService['logOut']>()
-        } satisfies Partial<AuthService>;
+        //resetAllMocks() only resets the vi.fn()s, so put the signal back to its starting value for every test.
+        authServiceMock.currentUserName.set('someuser');
 
         await TestBed.configureTestingModule({
             imports: [
-                RouterModule.forRoot([{ path: 'admin/users', component: FakeComponent }]),
                 NavComponent
             ],
             providers: [
+                provideRouter([]),
                 provideZonelessChangeDetection(),
                 {
                     provide: AuthService,
-                    useValue: AuthServiceMock
+                    useValue: authServiceMock
                 }
             ]
         })
@@ -43,6 +41,10 @@ describe('NavComponent', () => {
         fixture = TestBed.createComponent(NavComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        vi.resetAllMocks();
     });
 
     it('should create', () => {
