@@ -2,50 +2,48 @@ import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 
 import { UserSelectedGuard } from '../user-selected/user-selected.guard';
-import { Component } from '@angular/core';
-import { Router, RouterModule, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { provideRouter, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthService } from '../../_services/auth/auth.service';
 import { type Mocked } from 'vitest';
-
-
-@Component({
-  template: ''
-})
-class FakeComponent {
-}
 
 
 describe('UserSelectedGuard', () => {
     let guard: UserSelectedGuard;
     let userLoggedIn: boolean;
 
+    const authServiceMock: Mocked<Pick<AuthService, 'isUserLoggedIn' | 'loginRoute'>> = {
+        //isUserLoggedIn is a getter on AuthService; back it with a closure
+        //variable so each test can control it without reassigning the property.
+        get isUserLoggedIn() { return userLoggedIn; },
+        loginRoute: 'login'
+    };
+    const routerStateSnapshotMock: Mocked<Pick<RouterStateSnapshot, 'toString'>> = {
+        toString: vi.fn<RouterStateSnapshot['toString']>().mockName('toString')
+    };
+
     beforeEach(() => {
         userLoggedIn = false;
-        const AuthServiceMock: Partial<Mocked<AuthService>> = {
-            //isUserLoggedIn is a getter on AuthService; back it with a closure
-            //variable so each test can control it without reassigning the property.
-            get isUserLoggedIn() { return userLoggedIn; },
-            loginRoute: 'login'
-        };
 
         TestBed.configureTestingModule({
-            imports: [RouterModule.forRoot([{ path: 'login', component: FakeComponent }])],
             providers: [
+                provideRouter([]),
                 provideZonelessChangeDetection(),
                 UserSelectedGuard,
                 {
                     provide: AuthService,
-                    useValue: AuthServiceMock
+                    useValue: authServiceMock
                 },
                 {
                     provide: RouterStateSnapshot,
-                    useFactory: {
-                        toString: vi.fn().mockName("RouterStateSnapshot.toString")
-                    }
+                    useValue: routerStateSnapshotMock
                 }
             ]
         });
         guard = TestBed.inject(UserSelectedGuard);
+    });
+
+    afterEach(() => {
+        vi.resetAllMocks();
     });
 
     it('should be created', () => {

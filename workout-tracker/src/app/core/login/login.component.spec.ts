@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, RouterModule } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { AuthService } from '../../core/_services/auth/auth.service';
 import { of } from 'rxjs';
 
@@ -13,21 +13,22 @@ describe('LoginComponent', () => {
     let fixture: ComponentFixture<LoginComponent>;
     let router: Router;
 
-    beforeEach(async () => {
-        const AuthServiceMock: Partial<Mocked<AuthService>> = {
-            get loginRoute() { return "login"; },
-            logIn: vi.fn<AuthService['logIn']>().mockReturnValue(of(true))
-        };
+    const authServiceMock: Mocked<Pick<AuthService, 'loginRoute' | 'logIn'>> = {
+        get loginRoute() { return "login"; },
+        logIn: vi.fn<AuthService['logIn']>(() => of(true)).mockName('logIn')
+    };
 
+    beforeEach(async () => {
         await TestBed.configureTestingModule({
             providers: [
+                provideRouter([]),
                 provideZonelessChangeDetection(),
                 {
                     provide: AuthService,
-                    useValue: AuthServiceMock
+                    useValue: authServiceMock
                 }
             ],
-            imports: [RouterModule.forRoot([]), LoginComponent]
+            imports: [LoginComponent]
         })
             .overrideComponent(LoginComponent, {
             remove: { imports: [NzSpinModule] },
@@ -48,8 +49,13 @@ describe('LoginComponent', () => {
 
         component.loginForm.username().value.set(username);
         component.loginForm.password().value.set(password);
-        vi.spyOn(router, 'navigate');
+        vi.spyOn(router, 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
 
+    });
+
+    afterEach(() => {
+        vi.resetAllMocks();
+        vi.restoreAllMocks(); //Undoes the router.navigate spy
     });
 
     it('should create', () => {
@@ -77,8 +83,7 @@ describe('LoginComponent', () => {
     it('should show login failed message when login fails', async () => {
         //ARRANGE
         //Overide default mock implementation
-        const authService = TestBed.inject(AuthService);
-        authService.logIn = vi.fn<AuthService['logIn']>().mockReturnValue(of(false));
+        authServiceMock.logIn.mockReturnValue(of(false));
 
         //ACT
         component.login();

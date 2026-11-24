@@ -1,6 +1,6 @@
-import { Component, provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, RouterModule } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { type Mocked } from 'vitest';
 
@@ -9,19 +9,22 @@ import { AuthService } from '../_services/auth/auth.service';
 import { NotificationService } from '../_services/notification/notification.service';
 import { SetupService } from '../_services/setup/setup.service';
 
-@Component({
-  selector: 'wt-blank',
-  template: ''
-})
-class BlankComponent {
-}
-
 describe('SetupComponent', () => {
   let component: SetupComponent;
   let fixture: ComponentFixture<SetupComponent>;
   let router: Router;
-  let setupService: Mocked<SetupService>;
-  let notificationService: Mocked<NotificationService>;
+
+  const setupServiceMock: Mocked<Pick<SetupService, 'createFirstAdmin'>> = {
+    createFirstAdmin: vi.fn<SetupService['createFirstAdmin']>(() => of(undefined)).mockName('createFirstAdmin')
+  };
+
+  const authServiceMock: Mocked<Pick<AuthService, 'loginRoute'>> = {
+    get loginRoute() { return "user-select"; }
+  };
+
+  const notificationServiceMock: Mocked<Pick<NotificationService, 'success'>> = {
+    success: vi.fn<NotificationService['success']>().mockName('success')
+  };
 
   const VALID_PASSWORD = 'a-long-enough-password';
 
@@ -34,39 +37,28 @@ describe('SetupComponent', () => {
   }
 
   beforeEach(async () => {
-    const SetupServiceMock: Partial<Mocked<SetupService>> = {
-      createFirstAdmin: vi.fn<SetupService['createFirstAdmin']>().mockReturnValue(of(undefined))
-    };
-
-    const AuthServiceMock: Partial<Mocked<AuthService>> = {
-      get loginRoute() { return "user-select"; }
-    };
-
-    const NotificationServiceMock: Partial<Mocked<NotificationService>> = {
-      success: vi.fn<NotificationService['success']>()
-    };
-
     await TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
         provideZonelessChangeDetection(),
-        { provide: SetupService, useValue: SetupServiceMock },
-        { provide: AuthService, useValue: AuthServiceMock },
-        { provide: NotificationService, useValue: NotificationServiceMock }
+        { provide: SetupService, useValue: setupServiceMock },
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: NotificationService, useValue: notificationServiceMock }
       ],
-      imports: [
-        RouterModule.forRoot([{ path: 'user-select', component: BlankComponent }]),
-        BlankComponent
-      ]
+      imports: [SetupComponent]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(SetupComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
-    setupService = TestBed.inject(SetupService) as Mocked<SetupService>;
-    notificationService = TestBed.inject(NotificationService) as Mocked<NotificationService>;
-    vi.spyOn(router, 'navigate');
+    vi.spyOn(router, 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the router.navigate spy
   });
 
   it('should create', () => {
@@ -115,20 +107,20 @@ describe('SetupComponent', () => {
     await fixture.whenStable(); //submit() runs its action asynchronously
 
     //ASSERT
-    expect(setupService.createFirstAdmin).toHaveBeenCalledWith({
+    expect(setupServiceMock.createFirstAdmin).toHaveBeenCalledWith({
       userName: 'jtkirk',
       emailAddress: 'jtkirk@ufp.org',
       password: VALID_PASSWORD,
       setupCode: 'ABCD-EFGH-JKMN-PQRS'
     });
-    expect(notificationService.success).toHaveBeenCalledTimes(1);
+    expect(notificationServiceMock.success).toHaveBeenCalledTimes(1);
     expect(router.navigate).toHaveBeenCalledWith(['user-select']);
     expect(component.creatingAdministrator()).toBe(false);
   });
 
   it('should stay on the page when the API rejects the request', async () => {
     //ARRANGE
-    setupService.createFirstAdmin.mockReturnValue(throwError(() => new Error('Bad request')));
+    setupServiceMock.createFirstAdmin.mockReturnValue(throwError(() => new Error('Bad request')));
     fillInValidForm();
 
     //ACT
@@ -136,7 +128,7 @@ describe('SetupComponent', () => {
     await fixture.whenStable();
 
     //ASSERT
-    expect(notificationService.success).not.toHaveBeenCalled();
+    expect(notificationServiceMock.success).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
     expect(component.creatingAdministrator()).toBe(false);
   });
@@ -147,6 +139,6 @@ describe('SetupComponent', () => {
     await fixture.whenStable();
 
     //ASSERT
-    expect(setupService.createFirstAdmin).not.toHaveBeenCalled();
+    expect(setupServiceMock.createFirstAdmin).not.toHaveBeenCalled();
   });
 });

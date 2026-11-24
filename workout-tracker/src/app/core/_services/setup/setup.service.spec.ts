@@ -13,15 +13,15 @@ describe('SetupService', () => {
   let service: SetupService;
   let http: HttpTestingController;
 
-  beforeEach(() => {
-    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockReturnValue("http://localhost:5600/api/")
-    };
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => "http://localhost:5600/api/").mockName('get')
+  };
 
+  beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        { provide: ConfigService, useValue: ConfigServiceMock },
+        { provide: ConfigService, useValue: configServiceMock },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
       ]
@@ -33,6 +33,7 @@ describe('SetupService', () => {
 
   afterEach(() => {
     http.verify();
+    vi.resetAllMocks();
   });
 
   it('should be creatable', () => {

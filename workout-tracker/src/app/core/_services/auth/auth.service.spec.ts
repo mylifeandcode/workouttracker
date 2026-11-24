@@ -1,20 +1,14 @@
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component, provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, throwError } from 'rxjs';
 
 import { AuthService } from './auth.service';
 import { ConfigService } from '../config/config.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
-import { RouterModule } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { type Mocked } from 'vitest';
-
-@Component({
-  template: ''
-})
-class FakeComponent {
-}
 
 //This has to be a real token because the service decodes it
 const TEST_ACCESS_TOKEN: string = 'eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.' +
@@ -25,52 +19,54 @@ const TEST_ACCESS_TOKEN: string = 'eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L
 
 describe('AuthService', () => {
   let service: AuthService;
-  let configService: ConfigService;
-  let localStorageService: LocalStorageService;
   let httpTestingController: HttpTestingController;
 
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>((configKey: string) => {
+      if (configKey == "apiRoot")
+        return "http://localhost:5600/";
+      if (configKey == "loginWithUserSelect")
+        return true;
+
+      return "";
+    }).mockName('get')
+  };
+  const localStorageServiceMock: Mocked<Pick<LocalStorageService, 'set' | 'remove' | 'get'>> = {
+    set: vi.fn<LocalStorageService['set']>().mockName('set'),
+    remove: vi.fn<LocalStorageService['remove']>().mockName('remove'),
+    get: vi.fn<LocalStorageService['get']>((key: string) => {
+      if (key === 'WorkoutTrackerToken') return TEST_ACCESS_TOKEN;
+      if (key === 'WorkoutTrackerRefreshToken') return 'testRefreshToken';
+      return null;
+    }).mockName('get')
+  };
+
   beforeEach(() => {
-    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockImplementation((configKey: string) => {
-        if (configKey == "apiRoot")
-          return "http://localhost:5600/";
-        if (configKey == "loginWithUserSelect")
-          return true;
-
-        return "";
-      })
-    };
-    const LocalStorageServiceMock: Partial<Mocked<LocalStorageService>> = {
-      set: vi.fn<LocalStorageService['set']>(),
-      remove: vi.fn<LocalStorageService['remove']>(),
-      get: vi.fn<LocalStorageService['get']>().mockImplementation((key: string) => {
-        if (key === 'WorkoutTrackerToken') return TEST_ACCESS_TOKEN;
-        if (key === 'WorkoutTrackerRefreshToken') return 'testRefreshToken';
-        return null;
-      })
-    };
-
     TestBed.configureTestingModule({
-      imports: [RouterModule.forRoot([{ path: 'user-select', component: FakeComponent }])],
       providers: [
+        provideRouter([]),
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useValue: ConfigServiceMock
+          useValue: configServiceMock
         },
         {
           provide: LocalStorageService,
-          useValue: LocalStorageServiceMock
+          useValue: localStorageServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
       ]
     });
     service = TestBed.inject(AuthService);
-    configService = TestBed.inject(ConfigService);
-    localStorageService = TestBed.inject(LocalStorageService);
     httpTestingController = TestBed.inject(HttpTestingController);
+    vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
     service.init(); //Required because APP_INITIALIZER does this due to a race condition
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the router.navigate spy
   });
 
   it('should be created', () => {
@@ -79,8 +75,8 @@ describe('AuthService', () => {
 
   it('should initialize', () => {
     service.init();
-    expect(configService.get).toHaveBeenCalledWith("apiRoot");
-    expect(configService.get).toHaveBeenCalledWith("loginWithUserSelect");
+    expect(configServiceMock.get).toHaveBeenCalledWith("apiRoot");
+    expect(configServiceMock.get).toHaveBeenCalledWith("loginWithUserSelect");
   });
 
   it('should log user in', async () => {
@@ -98,7 +94,7 @@ describe('AuthService', () => {
 
     testRequest.flush({ accessToken: TEST_ACCESS_TOKEN, refreshToken: 'testRefreshToken' });
     expect(service.token).toBe(TEST_ACCESS_TOKEN);
-    expect(localStorageService.set).toHaveBeenCalledWith('WorkoutTrackerRefreshToken', 'testRefreshToken');
+    expect(localStorageServiceMock.set).toHaveBeenCalledWith('WorkoutTrackerRefreshToken', 'testRefreshToken');
     
     expect(await result).toBe(true);
   });
@@ -144,8 +140,8 @@ describe('AuthService', () => {
     //ASSERT
     expect(service.currentUserName()).toBe(null);
     expect(service.token).toBeNull();
-    expect(localStorageService.remove).toHaveBeenCalledWith('WorkoutTrackerToken');
-    expect(localStorageService.remove).toHaveBeenCalledWith('WorkoutTrackerRefreshToken');
+    expect(localStorageServiceMock.remove).toHaveBeenCalledWith('WorkoutTrackerToken');
+    expect(localStorageServiceMock.remove).toHaveBeenCalledWith('WorkoutTrackerRefreshToken');
   });
 
   it('should refresh access token successfully', async () => {
@@ -164,7 +160,7 @@ describe('AuthService', () => {
     testRequest.flush({ accessToken: TEST_ACCESS_TOKEN, refreshToken: 'newRefreshToken' });
     expect(await result).toBe(true);
     expect(service.token).toBe(TEST_ACCESS_TOKEN);
-    expect(localStorageService.set).toHaveBeenCalledWith('WorkoutTrackerRefreshToken', 'newRefreshToken');
+    expect(localStorageServiceMock.set).toHaveBeenCalledWith('WorkoutTrackerRefreshToken', 'newRefreshToken');
   });
 
   it('should return false from refreshAccessToken when error occurs', async () => {
@@ -248,7 +244,7 @@ describe('AuthService', () => {
   it('should return login route from loginRoute property when applicable', () => {
 
     //Override default mock behavior and re-init
-    configService.get = vi.fn().mockImplementation((configKey: string) => {
+    configServiceMock.get.mockImplementation((configKey: string) => {
       if (configKey == "apiRoot")
         return "http://localhost:5600/";
       if (configKey == "loginWithUserSelect")

@@ -14,7 +14,7 @@ import { StartWorkoutComponent } from './start-workout/start-workout.component';
 describe('WelcomeComponent', () => {
   let component: WelcomeComponent;
   let fixture: ComponentFixture<WelcomeComponent>;
-  const UserServiceMock: Mocked<Pick<UserService, 'getOverview'>> = {
+  const userServiceMock: Mocked<Pick<UserService, 'getOverview'>> = {
     getOverview: vi.fn<UserService['getOverview']>(() => of(<UserOverview>{
       lastWorkoutDateTime: new Date(2022, 2, 26, 15, 20),
       plannedWorkoutCount: 3,
@@ -30,7 +30,7 @@ describe('WelcomeComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: UserService,
-          useValue: UserServiceMock
+          useValue: userServiceMock
         }
       ]
     })
@@ -57,8 +57,7 @@ describe('WelcomeComponent', () => {
 
   it('should get user overview on init', () => {
 
-    const userService = TestBed.inject(UserService);
-    expect(userService.getOverview).toHaveBeenCalled();
+    expect(userServiceMock.getOverview).toHaveBeenCalled();
     expect(component.userOverview()).toEqual({
       lastWorkoutDateTime: new Date(2022, 2, 26, 15, 20),
       plannedWorkoutCount: 3,

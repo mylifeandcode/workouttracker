@@ -17,11 +17,11 @@ describe('UserService', () => {
   let service: UserService;
   let http: HttpTestingController;
 
-  beforeEach(() => {
-    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockReturnValue("http://localhost:5600/api/")
-    };
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => "http://localhost:5600/api/").mockName('get')
+  };
 
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
@@ -29,7 +29,7 @@ describe('UserService', () => {
         UserService,
         {
           provide: ConfigService,
-          useValue: ConfigServiceMock
+          useValue: configServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
@@ -39,6 +39,10 @@ describe('UserService', () => {
     service = TestBed.inject(UserService);
     http = TestBed.inject(HttpTestingController);
     service.init();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should be creatable', () => {

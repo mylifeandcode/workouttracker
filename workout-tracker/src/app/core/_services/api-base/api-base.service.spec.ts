@@ -33,11 +33,11 @@ describe('ApiBaseService', () => {
   let service: WidgetService;
   let http: HttpTestingController;
 
-  beforeEach(() => {
-    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockReturnValue(API_ROOT)
-    };
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => API_ROOT).mockName('get')
+  };
 
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
@@ -47,7 +47,7 @@ describe('ApiBaseService', () => {
         provideHttpClientTesting(),
         {
           provide: ConfigService,
-          useValue: ConfigServiceMock
+          useValue: configServiceMock
         }
       ]
     });
@@ -55,6 +55,10 @@ describe('ApiBaseService', () => {
     service = TestBed.inject(WidgetService);
     http = TestBed.inject(HttpTestingController);
 
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should be created', () => {
