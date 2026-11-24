@@ -29,6 +29,10 @@ describe('SelectOnFocusDirective', () => {
         expect(inputElement).toBeTruthy();
     });
 
+    afterEach(() => {
+        vi.restoreAllMocks(); //Undoes the select() spy
+    });
+
     it('should select input value on focus', () => {
         //ARRANGE
         vi.spyOn(inputElement.nativeElement, 'select');

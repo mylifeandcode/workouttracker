@@ -11,18 +11,18 @@ import { type Mocked } from 'vitest';
 describe('ResistanceBandServiceService', () => {
   let service: ResistanceBandService;
 
-  beforeEach(() => {
-    const ConfigServiceMock: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockReturnValue('http://someUrl/api/')
-    };
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => 'http://someUrl/api/').mockName('get')
+  };
 
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useValue: ConfigServiceMock
+          useValue: configServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
@@ -31,13 +31,16 @@ describe('ResistanceBandServiceService', () => {
     service = TestBed.inject(ResistanceBandService);
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
   it('should get configuration when constructing', () => {
-    const configService = TestBed.inject(ConfigService);
-    expect(configService.get).toHaveBeenCalledWith('apiRoot');
+    expect(configServiceMock.get).toHaveBeenCalledWith('apiRoot');
   });
 
   it('should get all individual bands', async () => {
