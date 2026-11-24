@@ -9,19 +9,18 @@ import { type Mocked } from 'vitest';
 describe('WorkoutJournalComponent', () => {
   let component: WorkoutJournalComponent;
   let fixture: ComponentFixture<WorkoutJournalComponent>;
-  let executedWorkoutService: ExecutedWorkoutService;
+
+  const executedWorkoutServiceMock: Mocked<Pick<ExecutedWorkoutService, 'getFilteredSubset'>> = {
+    getFilteredSubset: vi.fn<ExecutedWorkoutService['getFilteredSubset']>(() => of(<PaginatedResultsOfExecutedWorkoutSummaryDTO>{})).mockName('getFilteredSubset')
+  };
 
   beforeEach(async () => {
-    const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getFilteredSubset: vi.fn<ExecutedWorkoutService['getFilteredSubset']>().mockReturnValue(of(<PaginatedResultsOfExecutedWorkoutSummaryDTO>{}))
-    };
-
     await TestBed.configureTestingModule({
       imports: [WorkoutJournalComponent],
       providers: [
         {
           provide: ExecutedWorkoutService,
-          useValue: MockExecutedWorkoutService
+          useValue: executedWorkoutServiceMock
         }
       ]
     })
@@ -29,8 +28,11 @@ describe('WorkoutJournalComponent', () => {
 
     fixture = TestBed.createComponent(WorkoutJournalComponent);
     component = fixture.componentInstance;
-    executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
     await fixture.whenStable();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should create', () => {
@@ -38,7 +40,7 @@ describe('WorkoutJournalComponent', () => {
   });
 
   it('should get workouts on init', () => {
-    expect(executedWorkoutService.getFilteredSubset).toHaveBeenCalledWith(0, 10, null, true);
+    expect(executedWorkoutServiceMock.getFilteredSubset).toHaveBeenCalledWith(0, 10, null, true);
   });
 
 });

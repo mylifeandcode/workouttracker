@@ -21,6 +21,10 @@ describe('DurationComponent', () => {
         fixture.detectChanges();
     });
 
+    afterEach(() => {
+        vi.restoreAllMocks(); //Undoes the emit spies
+    });
+
     it('should create', () => {
         expect(component).toBeTruthy();
     });

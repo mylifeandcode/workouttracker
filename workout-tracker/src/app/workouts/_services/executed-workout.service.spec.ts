@@ -16,36 +16,37 @@ describe('ExecutedWorkoutService', () => {
   let service: ExecutedWorkoutService;
   let httpMock: HttpTestingController;
 
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => API_ROOT_URL).mockName('get')
+  };
+
+  //convertDateRangeStringsToDates is generic, which Mocked<Pick<...>> can't represent, so this mock pins a non-generic signature instead.
+  const dateSerializationServiceMock = {
+    convertDateRangeStringsToDates: vi.fn<(obj: ExecutedWorkoutSummaryDTO) => ExecutedWorkoutSummaryDTO>((obj) => {
+      if (obj.startDateTime && typeof obj.startDateTime === 'string') {
+        obj.startDateTime = new Date(obj.startDateTime);
+      }
+
+      if (obj.endDateTime && typeof obj.endDateTime === 'string') {
+        obj.endDateTime = new Date(obj.endDateTime);
+      }
+
+      return obj;
+    }).mockName('convertDateRangeStringsToDates')
+  };
+
   beforeEach(() => {
-    const MockConfigService: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockReturnValue(API_ROOT_URL)
-    };
-
-    const MockDateSerializationService: Partial<Mocked<DateSerializationService>> = {
-      convertDateRangeStringsToDates: vi.fn().mockImplementation((obj: ExecutedWorkoutSummaryDTO) => {
-        if (obj.startDateTime && typeof obj.startDateTime === 'string') {
-          obj.startDateTime = new Date(obj.startDateTime);
-        }
-
-        if (obj.endDateTime && typeof obj.endDateTime === 'string') {
-          obj.endDateTime = new Date(obj.endDateTime);
-        }
-
-        return obj;
-      })
-    };
-
     TestBed.configureTestingModule({
       imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useValue: MockConfigService
+          useValue: configServiceMock
         },
         {
           provide: DateSerializationService,
-          useValue: MockDateSerializationService
+          useValue: dateSerializationServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
@@ -53,6 +54,10 @@ describe('ExecutedWorkoutService', () => {
     });
     service = TestBed.inject(ExecutedWorkoutService);
     httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should be created', () => {

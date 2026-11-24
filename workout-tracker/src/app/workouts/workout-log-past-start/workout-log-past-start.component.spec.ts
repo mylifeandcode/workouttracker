@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { WorkoutDTO, PaginatedResultsOfWorkoutDTO } from '../../api';
 import { WorkoutService } from '../_services/workout.service';
@@ -26,23 +26,17 @@ describe('WorkoutLogPastStartComponent', () => {
   let component: WorkoutLogPastStartComponent;
   let fixture: ComponentFixture<WorkoutLogPastStartComponent>;
 
-  beforeEach(async () => {
-    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>().mockReturnValue(of(getLogPastStartWorkouts()))
-    };
-    const RouterMock: Partial<Mocked<Router>> = {
-      navigate: vi.fn<Router['navigate']>().mockReturnValue(Promise.resolve(true))
-    };
+  const workoutServiceMock: Mocked<Pick<WorkoutService, 'getFilteredSubset'>> = {
+    getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>(() => of(getLogPastStartWorkouts())).mockName('getFilteredSubset')
+  };
 
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
         {
           provide: WorkoutService,
-          useValue: WorkoutServiceMock
-        },
-        {
-          provide: Router,
-          useValue: RouterMock
+          useValue: workoutServiceMock
         },
         provideZonelessChangeDetection()
       ],
@@ -57,7 +51,13 @@ describe('WorkoutLogPastStartComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WorkoutLogPastStartComponent);
     component = fixture.componentInstance;
+    vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the router.navigate spy
   });
 
   it('should create', () => {
@@ -65,8 +65,7 @@ describe('WorkoutLogPastStartComponent', () => {
   });
 
   it('should get workouts on init', () => {
-    const service = TestBed.inject(WorkoutService);
-    expect(service.getFilteredSubset).toHaveBeenCalledWith(0, 500, true);
+    expect(workoutServiceMock.getFilteredSubset).toHaveBeenCalledWith(0, 500, true);
     expect(component.workouts).not.toBeNull();
     expect(component.workouts().length).toBe(3);
   });

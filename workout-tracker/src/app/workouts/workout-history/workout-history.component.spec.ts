@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutHistoryComponent } from './workout-history.component';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
 import { ExecutedWorkoutService } from '../_services/executed-workout.service';
-import { RouterLink, RouterModule } from '@angular/router';
+import { provideRouter, RouterLink } from '@angular/router';
 import { PaginatedResultsOfExecutedWorkoutSummaryDTO } from '../../api';
 import { of } from 'rxjs';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -15,18 +15,19 @@ describe('WorkoutHistoryComponent', () => {
   let component: WorkoutHistoryComponent;
   let fixture: ComponentFixture<WorkoutHistoryComponent>;
 
-  beforeEach(async () => {
-    const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getFilteredSubset: vi.fn<ExecutedWorkoutService['getFilteredSubset']>().mockReturnValue(of(<PaginatedResultsOfExecutedWorkoutSummaryDTO>{ totalCount: 0, results: [] }))
-    };
+  const executedWorkoutServiceMock: Mocked<Pick<ExecutedWorkoutService, 'getFilteredSubset'>> = {
+    getFilteredSubset: vi.fn<ExecutedWorkoutService['getFilteredSubset']>(() => of(<PaginatedResultsOfExecutedWorkoutSummaryDTO>{ totalCount: 0, results: [] })).mockName('getFilteredSubset')
+  };
 
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [WorkoutHistoryComponent, RouterModule.forRoot([])],
+      imports: [WorkoutHistoryComponent],
       providers: [
+        provideRouter([]),
         {
           provide: ExecutedWorkoutService,
-          useValue: MockExecutedWorkoutService
+          useValue: executedWorkoutServiceMock
         },
         provideZonelessChangeDetection()
       ]
@@ -42,6 +43,10 @@ describe('WorkoutHistoryComponent', () => {
     fixture = TestBed.createComponent(WorkoutHistoryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should create', () => {

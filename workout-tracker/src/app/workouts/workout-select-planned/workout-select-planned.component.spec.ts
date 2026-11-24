@@ -9,53 +9,55 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { HttpResponse } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { ModalOptions, NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { ModalOptions, NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { type Mocked } from 'vitest';
 
 describe('WorkoutSelectPlannedComponent', () => {
   let component: WorkoutSelectPlannedComponent;
   let fixture: ComponentFixture<WorkoutSelectPlannedComponent>;
 
+  const executedWorkoutServiceMock: Mocked<Pick<ExecutedWorkoutService, 'getPlanned' | 'deletePlanned'>> = {
+    getPlanned: vi.fn<ExecutedWorkoutService['getPlanned']>(() => {
+      const response = <PaginatedResultsOfExecutedWorkoutSummaryDTO>{};
+      response.results = new Array<ExecutedWorkoutSummaryDTO>();
+      response.results.push(<ExecutedWorkoutSummaryDTO>{});
+      response.results.push(<ExecutedWorkoutSummaryDTO>{});
+      response.totalCount = 2;
+      return of(response);
+    }).mockName('getPlanned'),
+    deletePlanned: vi.fn<ExecutedWorkoutService['deletePlanned']>(() => of(new HttpResponse<void>())).mockName('deletePlanned')
+  };
+
+  const nzMessageServiceMock: Mocked<Pick<NzMessageService, 'success'>> = {
+    success: vi.fn<NzMessageService['success']>().mockName('success')
+  };
+
+  //NzModalService.confirm is a generic method, which Mocked<Pick<...>> can't represent, so this mock pins a non-generic signature instead.
+  const nzModalServiceMock = {
+    confirm: vi.fn<(options?: ModalOptions<unknown>) => NzModalRef>((options) => {
+      if (options && typeof options.nzOnOk === 'function') {
+        //return options.nzOnOk(); // Simulate the user confirming
+        (options.nzOnOk as () => void)();
+      }
+      return <NzModalRef>{};
+    }).mockName('confirm')
+  };
+
   beforeEach(async () => {
-    const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getPlanned: vi.fn<ExecutedWorkoutService['getPlanned']>().mockImplementation(() => {
-        const response = <PaginatedResultsOfExecutedWorkoutSummaryDTO>{};
-        response.results = new Array<ExecutedWorkoutSummaryDTO>();
-        response.results.push(<ExecutedWorkoutSummaryDTO>{});
-        response.results.push(<ExecutedWorkoutSummaryDTO>{});
-        response.totalCount = 2;
-        return of(response);
-      }),
-      deletePlanned: vi.fn<ExecutedWorkoutService['deletePlanned']>().mockReturnValue(of(new HttpResponse<void>()))
-    };
-
-    const MockNzMessageService: Partial<Mocked<NzMessageService>> = {
-      success: vi.fn<NzMessageService['success']>()
-    };
-
-    const MockNzModalService: Partial<Mocked<NzModalService>> = {
-      confirm: vi.fn().mockImplementation((options: ModalOptions) => {
-        if (options && typeof options.nzOnOk === 'function') {
-          //return options.nzOnOk(); // Simulate the user confirming
-          return (options.nzOnOk as () => void)();
-        }
-      })
-    };
-
     await TestBed.configureTestingModule({
       imports: [WorkoutSelectPlannedComponent],
       providers: [
         {
           provide: ExecutedWorkoutService,
-          useValue: MockExecutedWorkoutService
+          useValue: executedWorkoutServiceMock
         },
         {
           provide: NzMessageService,
-          useValue: MockNzMessageService
+          useValue: nzMessageServiceMock
         },
         {
           provide: NzModalService,
-          useValue: MockNzModalService
+          useValue: nzModalServiceMock
         },
         provideRouter([]),
         provideZonelessChangeDetection()
@@ -74,6 +76,10 @@ describe('WorkoutSelectPlannedComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -89,14 +95,12 @@ describe('WorkoutSelectPlannedComponent', () => {
 
   it('should delete planned workouts', () => {
     //ARRANGE
-    const confirmationService = TestBed.inject(NzModalService);
-    const messageService = TestBed.inject(NzMessageService);
 
     //ACT
     component.deletePlannedWorkout('some-guid-100');
 
     //ASSERT
-    expect(confirmationService.confirm).toHaveBeenCalled();
-    expect(messageService.success).toHaveBeenCalledWith('Planned Workout deleted');
+    expect(nzModalServiceMock.confirm).toHaveBeenCalled();
+    expect(nzMessageServiceMock.success).toHaveBeenCalledWith('Planned Workout deleted');
   });
 });

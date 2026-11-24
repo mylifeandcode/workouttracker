@@ -3,7 +3,7 @@ import { WorkoutListComponent } from './workout-list.component';
 import { WorkoutService } from '../_services/workout.service';
 import { of } from 'rxjs';
 import { HttpResourceRef, HttpResponse } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection, signal } from '@angular/core';
 import { PaginatedResultsOfWorkoutDTO, WorkoutDTO } from '../../api';
 import { type Mocked } from 'vitest';
@@ -12,42 +12,41 @@ import { WINDOW } from '../../core/_injection-tokens/window.token';
 describe('WorkoutListComponent', () => {
   let component: WorkoutListComponent;
   let fixture: ComponentFixture<WorkoutListComponent>;
-  let workoutService: WorkoutService;
+
+  const workoutServiceMock: Mocked<Pick<WorkoutService, 'getSelection' | 'retire' | 'reactivate'>> = {
+    getSelection: vi.fn<WorkoutService['getSelection']>(() => {
+      const paginatedResults: PaginatedResultsOfWorkoutDTO = {
+        totalCount: 0,
+        results: <WorkoutDTO[]>[]
+      };
+
+      const mockResourceRef: Partial<HttpResourceRef<PaginatedResultsOfWorkoutDTO>> = {
+        value: signal(paginatedResults),
+        isLoading: signal(false),
+        reload: vi.fn()
+      };
+
+      return mockResourceRef as HttpResourceRef<PaginatedResultsOfWorkoutDTO>;
+    }).mockName('getSelection'),
+    retire: vi.fn<WorkoutService['retire']>(() => of(new HttpResponse<void>())).mockName('retire'),
+    reactivate: vi.fn<WorkoutService['reactivate']>(() => of(new HttpResponse<void>())).mockName('reactivate')
+  };
+
+  const windowMock: Mocked<Pick<Window, 'confirm'>> = {
+    confirm: vi.fn<Window['confirm']>(() => true).mockName('confirm')
+  };
 
   beforeEach(async () => {
-    const WorkoutServiceMock: Mocked<Pick<WorkoutService, 'getSelection' | 'retire' | 'reactivate'>> = {
-      getSelection: vi.fn<WorkoutService['getSelection']>(() => {
-        const paginatedResults: PaginatedResultsOfWorkoutDTO = {
-          totalCount: 0,
-          results: <WorkoutDTO[]>[]
-        };
-
-        const mockResourceRef: Partial<HttpResourceRef<PaginatedResultsOfWorkoutDTO>> = {
-          value: signal(paginatedResults),
-          isLoading: signal(false),
-          reload: vi.fn()
-        };
-
-        return mockResourceRef as HttpResourceRef<PaginatedResultsOfWorkoutDTO>;
-      }).mockName('getSelection'),
-      retire: vi.fn<WorkoutService['retire']>(() => of(new HttpResponse<void>())).mockName('retire'),
-      reactivate: vi.fn<WorkoutService['reactivate']>(() => of(new HttpResponse<void>())).mockName('reactivate')
-    };
-
-    const windowMock: Mocked<Pick<Window, 'confirm'>> = {
-      confirm: vi.fn().mockReturnValue(true)
-    };
-
     await TestBed.configureTestingModule({
       imports: [
-        RouterModule.forRoot([]),
         WorkoutListComponent
       ],
       providers: [
+        provideRouter([]),
         provideZonelessChangeDetection(),
         {
           provide: WorkoutService,
-          useValue: WorkoutServiceMock
+          useValue: workoutServiceMock
         },
         {
           provide: WINDOW,
@@ -63,7 +62,11 @@ describe('WorkoutListComponent', () => {
     fixture = TestBed.createComponent(WorkoutListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    workoutService = TestBed.inject(WorkoutService);
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the window.confirm spies
   });
 
   it('should create', () => {
@@ -81,7 +84,7 @@ describe('WorkoutListComponent', () => {
 
     component.retireWorkout('some-guid', 'My Workout');
 
-    expect(workoutService.retire).toHaveBeenCalledWith('some-guid');
+    expect(workoutServiceMock.retire).toHaveBeenCalledWith('some-guid');
     //expect(workoutService.getSelection).toHaveBeenCalledWith(0, 15, false, false, '');
   });
 
@@ -96,7 +99,7 @@ describe('WorkoutListComponent', () => {
 
     component.reactivateWorkout('some-guid', 'My Workout');
 
-    expect(workoutService.reactivate).toHaveBeenCalledWith('some-guid');
+    expect(workoutServiceMock.reactivate).toHaveBeenCalledWith('some-guid');
     //expect(workoutService.getFilteredSubset).toHaveBeenCalledWith(0, 30, true, true, '');
   });
 

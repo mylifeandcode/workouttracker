@@ -112,43 +112,43 @@ describe('WorkoutComponent', () => {
   let component: WorkoutComponent;
   let fixture: ComponentFixture<WorkoutComponent>;
 
+  const workoutServiceMock: Mocked<Pick<WorkoutService, 'getFilteredSubset'>> = {
+    getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>(() => of(getFakeUserWorkouts())).mockName('getFilteredSubset')
+  };
+
+  const resistanceBandServiceMock: Mocked<Pick<ResistanceBandService, 'getAllIndividualBands'>> = {
+    getAllIndividualBands: vi.fn<ResistanceBandService['getAllIndividualBands']>(() => of(getResistanceBands())).mockName('getAllIndividualBands')
+  };
+
+  const executedWorkoutServiceMock: Mocked<Pick<ExecutedWorkoutService, 'add' | 'getById' | 'groupExecutedExercises' | 'update'>> = {
+    add: vi.fn<ExecutedWorkoutService['add']>((workout: ExecutedWorkoutDTO) => of(workout)).mockName('add'),
+    getById: vi.fn<ExecutedWorkoutService['getById']>(() => of(getFakeExecutedWorkout())).mockName('getById'),
+    groupExecutedExercises: vi.fn<ExecutedWorkoutService['groupExecutedExercises']>((exercises: ExecutedExerciseDTO[]) => {
+      const sortedExercises: ExecutedExerciseDTO[] = exercises
+        .sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
+
+      const groupedExercises = sortedExercises.reduce((groups, exercise) => {
+        const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
+        if (!groups[key]) {
+          groups[key] = [];
+        }
+        groups[key].push(exercise);
+        return groups;
+      }, {} as Record<string, ExecutedExerciseDTO[]>);
+
+      return groupedExercises;
+    }).mockName('groupExecutedExercises'),
+    update: vi.fn<ExecutedWorkoutService['update']>((workout: ExecutedWorkoutDTO) => of(workout)).mockName('update')
+  };
+
+  const nzMessageServiceMock: Mocked<Pick<NzMessageService, 'success' | 'info' | 'error' | 'remove'>> = {
+    success: vi.fn<NzMessageService['success']>().mockName('success'),
+    info: vi.fn<NzMessageService['info']>().mockName('info'),
+    error: vi.fn<NzMessageService['error']>().mockName('error'),
+    remove: vi.fn<NzMessageService['remove']>().mockName('remove')
+  };
+
   beforeEach(async () => {
-    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getFilteredSubset: vi.fn<WorkoutService['getFilteredSubset']>().mockReturnValue(of(getFakeUserWorkouts()))
-    };
-
-    const ResistanceBandServiceMock: Partial<Mocked<ResistanceBandService>> = {
-      getAllIndividualBands: vi.fn<ResistanceBandService['getAllIndividualBands']>().mockReturnValue(of(getResistanceBands()))
-    };
-
-    const ExecutedWorkoutServiceMock: Partial<Mocked<ExecutedWorkoutService>> = {
-      add: vi.fn<ExecutedWorkoutService['add']>().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout)),
-      getById: vi.fn<ExecutedWorkoutService['getById']>().mockReturnValue(of(getFakeExecutedWorkout())),
-      groupExecutedExercises: vi.fn<ExecutedWorkoutService['groupExecutedExercises']>().mockImplementation((exercises: ExecutedExerciseDTO[]) => {
-        const sortedExercises: ExecutedExerciseDTO[] = exercises
-          .sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
-
-        const groupedExercises = sortedExercises.reduce((groups, exercise) => {
-          const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
-          if (!groups[key]) {
-            groups[key] = [];
-          }
-          groups[key].push(exercise);
-          return groups;
-        }, {} as Record<string, ExecutedExerciseDTO[]>);
-
-        return groupedExercises;
-      }),
-      update: vi.fn<ExecutedWorkoutService['update']>().mockImplementation((workout: ExecutedWorkoutDTO) => of(workout))
-    };
-
-    const NzMessageServiceMock: Partial<Mocked<NzMessageService>> = {
-      success: vi.fn<NzMessageService['success']>(),
-      info: vi.fn<NzMessageService['info']>(),
-      error: vi.fn<NzMessageService['error']>(),
-      remove: vi.fn<NzMessageService['remove']>()
-    };
-
     await TestBed.configureTestingModule({
       imports: [
         WorkoutComponent,
@@ -158,19 +158,19 @@ describe('WorkoutComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: WorkoutService,
-          useValue: WorkoutServiceMock
+          useValue: workoutServiceMock
         },
         {
           provide: ResistanceBandService,
-          useValue: ResistanceBandServiceMock
+          useValue: resistanceBandServiceMock
         },
         {
           provide: ExecutedWorkoutService,
-          useValue: ExecutedWorkoutServiceMock
+          useValue: executedWorkoutServiceMock
         },
         {
           provide: NzMessageService,
-          useValue: NzMessageServiceMock
+          useValue: nzMessageServiceMock
         }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -198,6 +198,10 @@ describe('WorkoutComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -212,11 +216,10 @@ describe('WorkoutComponent', () => {
 
   it('should get resistance bancs on init', () => {
     //ARRANGE
-    const resistanceBandService = TestBed.inject(ResistanceBandService);
     const expectedResults = getResistanceBands();
 
     //ASSERT
-    expect(resistanceBandService.getAllIndividualBands).toHaveBeenCalledTimes(1);
+    expect(resistanceBandServiceMock.getAllIndividualBands).toHaveBeenCalledTimes(1);
     expect(component.allResistanceBands()).toEqual(expectedResults);
   });
 
@@ -288,7 +291,6 @@ describe('WorkoutComponent', () => {
 
   it('should complete a workout', () => {
     //ARRANGE
-    const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
 
     //Fill in the required ratings for every set so the form becomes valid
     const exercises = component.workoutForm.exercises;
@@ -304,7 +306,7 @@ describe('WorkoutComponent', () => {
     component.completeWorkout();
 
     //ASSERT
-    expect(executedWorkoutService.update).toHaveBeenCalled();
+    expect(executedWorkoutServiceMock.update).toHaveBeenCalled();
     expect(component.workoutCompleted()).toBe(true);
   });
 
@@ -317,9 +319,7 @@ describe('WorkoutComponent', () => {
     workout.startDateTime = new Date(2022, 1, 2, 12, 30, 0);
     workout.endDateTime = expectedEndDateTime;
 
-    const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    executedWorkoutService.getById =
-      vi.mocked(executedWorkoutService.getById).mockReturnValue(of(workout));
+    executedWorkoutServiceMock.getById.mockReturnValue(of(workout));
 
     //ACT
     component.ngOnInit(); //Need to reinitialize due to changed mock
@@ -327,7 +327,7 @@ describe('WorkoutComponent', () => {
 
     //ASSERT
     expect(component.endDateTime()).toEqual(expectedEndDateTime); //Service mock returns the same object
-    expect(executedWorkoutService.update).toHaveBeenCalledWith(workout);
+    expect(executedWorkoutServiceMock.update).toHaveBeenCalledWith(workout);
 
   });
 
@@ -336,16 +336,14 @@ describe('WorkoutComponent', () => {
     //Override default behavior
     fixture.componentRef.setInput('executedWorkoutPublicId', undefined);
 
-    const messageService = TestBed.inject(NzMessageService);
-
     //ACT
     component.ngOnInit(); //Need to reinitialize due to changed mock
 
     //ASSERT
-    expect(messageService.error).toHaveBeenCalledTimes(1);
+    expect(nzMessageServiceMock.error).toHaveBeenCalledTimes(1);
 
     //ASSERT
-    expect(messageService.error).toHaveBeenCalledWith('executedWorkoutPublicId is invalid. Please exit this page and return to it ' +
+    expect(nzMessageServiceMock.error).toHaveBeenCalledWith('executedWorkoutPublicId is invalid. Please exit this page and return to it ' +
       'from one of the pages where a workout can be selected.');
   });
 

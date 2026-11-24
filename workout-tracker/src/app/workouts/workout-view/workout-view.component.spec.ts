@@ -49,6 +49,26 @@ describe('WorkoutViewComponent', () => {
   let component: WorkoutViewComponent;
   let fixture: ComponentFixture<WorkoutViewComponent>;
 
+  const executedWorkoutServiceMock: Mocked<Pick<ExecutedWorkoutService, 'getById' | 'groupExecutedExercises'>> = {
+    getById: vi.fn<ExecutedWorkoutService['getById']>(() => of(getFakeExecutedWorkoutForView())).mockName('getById'),
+    groupExecutedExercises: vi.fn<ExecutedWorkoutService['groupExecutedExercises']>((exercises: ExecutedExerciseDTO[]) => {
+      const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
+
+      const groupedExercises = sortedExercises.reduce((groups, exercise) => {
+        const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
+
+        if (!groups[key]) {
+          groups[key] = [];
+        }
+        groups[key].push(exercise);
+
+        return groups;
+      }, {} as Record<string, ExecutedExerciseDTO[]>);
+
+      return groupedExercises;
+    }).mockName('groupExecutedExercises')
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -59,25 +79,7 @@ describe('WorkoutViewComponent', () => {
         provideZonelessChangeDetection(),
         {
           provide: ExecutedWorkoutService,
-          useValue: <Partial<Mocked<ExecutedWorkoutService>>>{
-            getById: vi.fn<ExecutedWorkoutService['getById']>().mockReturnValue(of(getFakeExecutedWorkoutForView())),
-            groupExecutedExercises: vi.fn<ExecutedWorkoutService['groupExecutedExercises']>().mockImplementation((exercises: ExecutedExerciseDTO[]) => {
-              const sortedExercises: ExecutedExerciseDTO[] = exercises.sort((a: ExecutedExerciseDTO, b: ExecutedExerciseDTO) => a.sequence - b.sequence);
-
-              const groupedExercises = sortedExercises.reduce((groups, exercise) => {
-                const key = exercise.exerciseId.toString() + '-' + exercise.setType.toString();
-
-                if (!groups[key]) {
-                  groups[key] = [];
-                }
-                groups[key].push(exercise);
-
-                return groups;
-              }, {} as Record<string, ExecutedExerciseDTO[]>);
-
-              return groupedExercises;
-            })
-          }
+          useValue: executedWorkoutServiceMock
         }
       ]
     })
@@ -95,14 +97,17 @@ describe('WorkoutViewComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
   it('should get executed workout based on id', () => {
-    const executedWorkoutService = TestBed.inject(ExecutedWorkoutService);
-    expect(executedWorkoutService.getById).toHaveBeenCalledTimes(1);
-    expect(executedWorkoutService.getById).toHaveBeenCalledWith(EXECUTED_WORKOUT_PUBLIC_ID);
+    expect(executedWorkoutServiceMock.getById).toHaveBeenCalledTimes(1);
+    expect(executedWorkoutServiceMock.getById).toHaveBeenCalledWith(EXECUTED_WORKOUT_PUBLIC_ID);
     expect(component.executedWorkout).toBeTruthy();
     expect(component.groupedExercises).toBeTruthy();
 

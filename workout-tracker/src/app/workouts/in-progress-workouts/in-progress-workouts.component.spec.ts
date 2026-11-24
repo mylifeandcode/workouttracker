@@ -12,39 +12,39 @@ describe('InProgressWorkoutsComponent', () => {
   let component: InProgressWorkoutsComponent;
   let fixture: ComponentFixture<InProgressWorkoutsComponent>;
 
+  const executedWorkoutServiceMock: Mocked<Pick<ExecutedWorkoutService, 'getInProgress'>> = {
+    getInProgress: vi.fn<ExecutedWorkoutService['getInProgress']>(() => {
+      const workouts: ExecutedWorkoutSummaryDTO[] = [];
+      workouts.push(...[<ExecutedWorkoutSummaryDTO>{
+        id: 'guid-56',
+        name: 'Chest and Arms',
+        workoutPublicId: 'some-guid-56',
+        startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
+        journal: null,
+        createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
+        modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
+      },
+      <ExecutedWorkoutSummaryDTO>{
+        id: 'guid-57',
+        name: 'Chest and Arms',
+        workoutPublicId: 'some-guid-56',
+        startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
+        journal: null,
+        createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
+        modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
+      }]);
+
+      return of(workouts);
+    }).mockName('getInProgress')
+  };
+
   beforeEach(async () => {
-    const MockExeceutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getInProgress: vi.fn<ExecutedWorkoutService['getInProgress']>().mockImplementation(() => {
-        const workouts: ExecutedWorkoutSummaryDTO[] = [];
-        workouts.push(...[<ExecutedWorkoutSummaryDTO>{
-          id: 'guid-56',
-          name: 'Chest and Arms',
-          workoutPublicId: 'some-guid-56',
-          startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
-          journal: null,
-          createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
-          modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
-        },
-        <ExecutedWorkoutSummaryDTO>{
-          id: 'guid-57',
-          name: 'Chest and Arms',
-          workoutPublicId: 'some-guid-56',
-          startDateTime: new Date(2023, 2, 18, 12, 13, 14), endDateTime: null,
-          journal: null,
-          createdDateTime: new Date(2023, 3, 18, 12, 0, 0),
-          modifiedDateTime: new Date(2023, 3, 18, 12, 5, 0)
-        }]);
-
-        return of(workouts);
-      })
-    };
-
     await TestBed.configureTestingModule({
       imports: [InProgressWorkoutsComponent],
       providers: [
         {
           provide: ExecutedWorkoutService,
-          useValue: MockExeceutedWorkoutService
+          useValue: executedWorkoutServiceMock
         },
         provideRouter([]),
         provideZonelessChangeDetection()
@@ -58,18 +58,21 @@ describe('InProgressWorkoutsComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
   it('should get in-progress workouts on init', () => {
     //ARRANGE
-    const service = TestBed.inject(ExecutedWorkoutService);
 
     //ACT
 
     //ASSERT
-    expect(service.getInProgress).toHaveBeenCalledTimes(1);
+    expect(executedWorkoutServiceMock.getInProgress).toHaveBeenCalledTimes(1);
     expect(component.inProgressWorkouts().length).toBe(2);
     expect(component.loading()).toBe(false);
     expect(component.errorMessage()).toBeNull();

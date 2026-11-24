@@ -1,6 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, input, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { ExecutedWorkoutService } from '../../_services/executed-workout.service';
 import { ExecutedWorkoutSummaryDTO } from '../../../api';
@@ -26,27 +26,23 @@ describe('RecentWorkoutsComponent', () => {
   let component: RecentWorkoutsComponent;
   let fixture: ComponentFixture<RecentWorkoutsComponent>;
 
-  beforeEach(async () => {
-    const MockExecutedWorkoutService: Partial<Mocked<ExecutedWorkoutService>> = {
-      getRecent: vi.fn<ExecutedWorkoutService['getRecent']>().mockReturnValue(of(new Array<ExecutedWorkoutSummaryDTO>()))
-    };
-    const MockWorkoutService: Partial<Mocked<WorkoutService>> = {};
-    const MockRouter: Partial<Mocked<Router>> = {};
+  const executedWorkoutServiceMock: Mocked<Pick<ExecutedWorkoutService, 'getRecent'>> = {
+    getRecent: vi.fn<ExecutedWorkoutService['getRecent']>(() => of(new Array<ExecutedWorkoutSummaryDTO>())).mockName('getRecent')
+  };
+  const workoutServiceMock: Mocked<Pick<WorkoutService, never>> = {};
 
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
         provideZonelessChangeDetection(),
         {
           provide: ExecutedWorkoutService,
-          useValue: MockExecutedWorkoutService
+          useValue: executedWorkoutServiceMock
         },
         {
           provide: WorkoutService,
-          useValue: MockWorkoutService
-        },
-        {
-          provide: Router,
-          useValue: MockRouter
+          useValue: workoutServiceMock
         }
       ],
       imports: [
@@ -66,6 +62,10 @@ describe('RecentWorkoutsComponent', () => {
     fixture = TestBed.createComponent(RecentWorkoutsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should create', () => {

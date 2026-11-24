@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, input, output, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { ResistanceBandService } from '../../shared/services/resistance-band.service';
 import { ResistanceBandIndividual } from '../../shared/models/resistance-band-individual';
 import { of } from 'rxjs';
@@ -33,32 +33,33 @@ describe('WorkoutPlanComponent', () => {
   let component: WorkoutPlanComponent;
   let fixture: ComponentFixture<WorkoutPlanComponent>;
 
+  const workoutServiceMock: Mocked<Pick<WorkoutService, 'getNewPlan' | 'submitPlanForPast' | 'submitPlan' | 'submitPlanForLater'>> = {
+    getNewPlan: vi.fn<WorkoutService['getNewPlan']>(() => of(<WorkoutPlan>{ exercises: Array<ExercisePlan>() })).mockName('getNewPlan'),
+    submitPlanForPast: vi.fn<WorkoutService['submitPlanForPast']>(() => of('12')).mockName('submitPlanForPast'),
+    submitPlan: vi.fn<WorkoutService['submitPlan']>(() => of('5')).mockName('submitPlan'),
+    submitPlanForLater: vi.fn<WorkoutService['submitPlanForLater']>(() => of('32')).mockName('submitPlanForLater')
+  };
+
+  const resistanceBandServiceMock: Mocked<Pick<ResistanceBandService, 'getAllIndividualBands'>> = {
+    getAllIndividualBands: vi.fn<ResistanceBandService['getAllIndividualBands']>(() => {
+      const bands: ResistanceBandIndividual[] = [];
+      bands.push(new ResistanceBandIndividual("Orange", 30));
+      bands.push(new ResistanceBandIndividual("Purple", 23));
+      return of(bands);
+    }).mockName('getAllIndividualBands')
+  };
+
   beforeEach(async () => {
-    const WorkoutServiceMock: Partial<Mocked<WorkoutService>> = {
-      getNewPlan: vi.fn<WorkoutService['getNewPlan']>().mockReturnValue(of(<WorkoutPlan>{ exercises: Array<ExercisePlan>() })),
-      submitPlanForPast: vi.fn<WorkoutService['submitPlanForPast']>().mockReturnValue(of('12')),
-      submitPlan: vi.fn<WorkoutService['submitPlan']>().mockReturnValue(of('5')),
-      submitPlanForLater: vi.fn<WorkoutService['submitPlanForLater']>().mockReturnValue(of('32'))
-    };
-
-    const MockResistanceBandService: Partial<Mocked<ResistanceBandService>> = {
-      getAllIndividualBands: vi.fn<ResistanceBandService['getAllIndividualBands']>().mockImplementation(() => {
-        const bands: ResistanceBandIndividual[] = [];
-        bands.push(new ResistanceBandIndividual("Orange", 30));
-        bands.push(new ResistanceBandIndividual("Purple", 23));
-        return of(bands);
-      })
-    };
-
     await TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
         {
           provide: WorkoutService,
-          useValue: WorkoutServiceMock
+          useValue: workoutServiceMock
         },
         {
           provide: ResistanceBandService,
-          useValue: MockResistanceBandService
+          useValue: resistanceBandServiceMock
         },
         {
           provide: ActivatedRoute,
@@ -67,7 +68,6 @@ describe('WorkoutPlanComponent', () => {
         provideZonelessChangeDetection()
       ],
       imports: [
-        RouterModule.forRoot([]),
         WorkoutPlanComponent,
         MockResistanceBandSelectComponent
       ],
@@ -87,6 +87,11 @@ describe('WorkoutPlanComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the router.navigate spies
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -95,8 +100,7 @@ describe('WorkoutPlanComponent', () => {
 
     //ARRANGE
     const router = TestBed.inject(Router);
-    const workoutService = TestBed.inject(WorkoutService);
-    vi.spyOn(router, 'navigate');
+    vi.spyOn(router, 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
 
     //ACT
     component.startWorkout();
@@ -108,7 +112,7 @@ describe('WorkoutPlanComponent', () => {
     else
       workoutPlan = component.workoutPlan()!;
 
-    expect(workoutService.submitPlan).toHaveBeenCalledWith(workoutPlan);
+    expect(workoutServiceMock.submitPlan).toHaveBeenCalledWith(workoutPlan);
     expect(router.navigate).toHaveBeenCalledWith(['workouts/start/5']);
 
   });
@@ -117,8 +121,7 @@ describe('WorkoutPlanComponent', () => {
 
     //ARRANGE
     const router = TestBed.inject(Router);
-    const workoutService = TestBed.inject(WorkoutService);
-    vi.spyOn(router, 'navigate');
+    vi.spyOn(router, 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
 
     //ACT
     component.submitPlanForLater();
@@ -130,7 +133,7 @@ describe('WorkoutPlanComponent', () => {
     else
       workoutPlan = component.workoutPlan()!;
 
-    expect(workoutService.submitPlanForLater).toHaveBeenCalledWith(workoutPlan);
+    expect(workoutServiceMock.submitPlanForLater).toHaveBeenCalledWith(workoutPlan);
     expect(router.navigate).toHaveBeenCalledWith(['workouts/select-planned']);
 
   });
@@ -162,9 +165,8 @@ describe('WorkoutPlanComponent', () => {
     fixture.componentRef.setInput('start', startDate.toISOString());
     fixture.componentRef.setInput('end', endDate.toISOString());
 
-    const workoutService = TestBed.inject(WorkoutService);
     const router = TestBed.inject(Router);
-    vi.spyOn(router, 'navigate');
+    vi.spyOn(router, 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
 
     component.ngOnInit();
 
@@ -179,7 +181,7 @@ describe('WorkoutPlanComponent', () => {
       workoutPlan = component.workoutPlan()!;
 
     expect(component.workoutPlan()).not.toBeNull();
-    expect(workoutService.submitPlanForPast).toHaveBeenCalledWith(workoutPlan, startDate, endDate);
+    expect(workoutServiceMock.submitPlanForPast).toHaveBeenCalledWith(workoutPlan, startDate, endDate);
     expect(router.navigate).toHaveBeenCalledWith(["workouts/start/12"], { queryParams: { pastWorkout: true } });
 
   });

@@ -16,18 +16,18 @@ let service: WorkoutService;
 let httpMock: HttpTestingController;
 
 describe('WorkoutService', () => {
-  beforeEach(() => {
-    const MockConfigService: Partial<Mocked<ConfigService>> = {
-      get: vi.fn<ConfigService['get']>().mockReturnValue("http://localhost:5600/api/")
-    };
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => "http://localhost:5600/api/").mockName('get')
+  };
 
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
         provideZonelessChangeDetection(),
         {
           provide: ConfigService,
-          useValue: MockConfigService
+          useValue: configServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
@@ -35,6 +35,10 @@ describe('WorkoutService', () => {
     });
     service = TestBed.inject(WorkoutService);
     httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should be created', () => {

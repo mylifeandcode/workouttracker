@@ -44,6 +44,10 @@ describe('ExercisePlanNextTimeComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks(); //Undoes the emit spy
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, provideZonelessChangeDetection } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, RouterModule, UrlSegment } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, provideRouter, Router, UrlSegment } from '@angular/router';
 
 import { of } from 'rxjs';
 
@@ -20,13 +20,6 @@ import { type Mocked } from 'vitest';
   template: ''
 })
 class FakeExerciseListMiniComponent {
-}
-
-@Component({
-  selector: 'wt-blank',
-  template: ''
-})
-class BlankComponent {
 }
 
 const WORKOUT_PUBLIC_ID: string = "some-guid";
@@ -58,21 +51,26 @@ function getActivatedRouteSnapshot(): ActivatedRouteSnapshot {
 describe('WorkoutEditComponent', () => {
   let component: WorkoutEditComponent;
   let fixture: ComponentFixture<WorkoutEditComponent>;
-  let workoutService: WorkoutService;
+
+  const workoutServiceMock: Mocked<Pick<WorkoutService, 'getById' | 'add' | 'update'>> = {
+    getById: vi.fn<WorkoutService['getById']>(() => of(getTestWorkout())).mockName('getById'),
+    add: vi.fn<WorkoutService['add']>(() => of(<Workout>{})).mockName('add'),
+    update: vi.fn<WorkoutService['update']>(() => of(<Workout>{})).mockName('update')
+  };
 
   //Thanks to Mike Gallagher for the link: https://www.joshuacolvin.net/mocking-activated-route-data-in-angular/
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterModule.forRoot([
-          { path: 'workouts/edit/:id', component: BlankComponent }
-        ]),
         WorkoutEditComponent,
         FakeExerciseListMiniComponent
       ],
       providers: [
+        provideRouter([]),
         {
+          //Deliberately NOT hoisted: the tests change snapshot.params, which resetAllMocks() can't undo,
+          //so every test needs a freshly built route.
           provide: ActivatedRoute, //ActivatedRoute is still needed even though we get the ID via withComponentInputBinding()
           useValue: {
             params: of({
@@ -83,11 +81,7 @@ describe('WorkoutEditComponent', () => {
         },
         {
           provide: WorkoutService,
-          useValue: <Partial<Mocked<WorkoutService>>>{
-            getById: vi.fn<WorkoutService['getById']>().mockReturnValue(of(getTestWorkout())),
-            add: vi.fn<WorkoutService['add']>().mockReturnValue(of(<Workout>{})),
-            update: vi.fn<WorkoutService['update']>().mockReturnValue(of(<Workout>{}))
-          }
+          useValue: workoutServiceMock
         },
         provideZonelessChangeDetection()
       ]
@@ -103,8 +97,13 @@ describe('WorkoutEditComponent', () => {
     fixture = TestBed.createComponent(WorkoutEditComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('id', WORKOUT_PUBLIC_ID); //Simulate the input binding from the route
-    workoutService = TestBed.inject(WorkoutService);
+    vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true); //No routes are registered, so don't let a real navigation run
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the router.navigate spy
   });
 
   it('should create', () => {
@@ -122,8 +121,8 @@ describe('WorkoutEditComponent', () => {
   });
 
   it('should load workout based on route param ID during init', () => {
-    expect(workoutService.getById).toHaveBeenCalledTimes(1);
-    expect(workoutService.getById).toHaveBeenCalledWith(WORKOUT_PUBLIC_ID);
+    expect(workoutServiceMock.getById).toHaveBeenCalledTimes(1);
+    expect(workoutServiceMock.getById).toHaveBeenCalledWith(WORKOUT_PUBLIC_ID);
 
     expect(component.workoutForm.publicId().value()).toBe(WORKOUT_PUBLIC_ID);
     expect(component.workoutForm.active().value()).toBe(true);
@@ -152,7 +151,7 @@ describe('WorkoutEditComponent', () => {
 
     expect(component.id()).toBe('some-guid');
     // The original ngOnInit() call would've called it with WORKOUT_PUBLIC_ID
-    expect(workoutService.getById).not.toHaveBeenCalledWith(EMPTY_GUID);
+    expect(workoutServiceMock.getById).not.toHaveBeenCalledWith(EMPTY_GUID);
   });
 
   //TODO: Revisit
@@ -205,12 +204,12 @@ describe('WorkoutEditComponent', () => {
     newComponent.saveWorkout();
 
     expect(newComponent.workoutForm().invalid()).toBe(false);
-    expect(workoutService.add).toHaveBeenCalled();
+    expect(workoutServiceMock.add).toHaveBeenCalled();
   });
 
   it('should update an existing workout', () => {
     component.saveWorkout();
-    expect(workoutService.update).toHaveBeenCalled();
+    expect(workoutServiceMock.update).toHaveBeenCalled();
   });
 
   it('should not save a workout if the form is invalid', () => {

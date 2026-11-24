@@ -12,18 +12,18 @@ describe('CountdownTimerComponent', () => {
     let component: CountdownTimerComponent;
     let fixture: ComponentFixture<CountdownTimerComponent>;
 
-    beforeEach(async () => {
-        const SoundServiceMock: Partial<Mocked<SoundService>> = {
-            playSound: vi.fn<SoundService['playSound']>()
-        };
+    const soundServiceMock: Mocked<Pick<SoundService, 'playSound'>> = {
+        playSound: vi.fn<SoundService['playSound']>().mockName('playSound')
+    };
 
+    beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [CountdownModule, CountdownTimerComponent],
             providers: [
                 provideZonelessChangeDetection(),
                 {
                     provide: SoundService,
-                    useValue: SoundServiceMock
+                    useValue: soundServiceMock
                 }
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -35,6 +35,10 @@ describe('CountdownTimerComponent', () => {
         fixture = TestBed.createComponent(CountdownTimerComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        vi.resetAllMocks();
     });
 
     it('should create', () => {
@@ -49,7 +53,6 @@ describe('CountdownTimerComponent', () => {
 
     it('should start countdown on final pre-countdown event', () => {
         //ARRANGE
-        const soundService = TestBed.inject(SoundService);
         const preCountdownEvent = <CountdownEvent>{ action: 'done', status: CountdownStatus.done, left: 0, text: '' };
 
         //ACT
@@ -59,7 +62,7 @@ describe('CountdownTimerComponent', () => {
         //ASSERT
         expect(component.countdownHasBegun()).toBe(true);
         expect(component.showPreCountdown()).toBe(false);
-        expect(soundService.playSound).toHaveBeenCalledWith('../../assets/sounds/210639764.mp3');
+        expect(soundServiceMock.playSound).toHaveBeenCalledWith('../../assets/sounds/210639764.mp3');
     });
 
     it('should reset when activatedDateTime is supplied', () => {
@@ -80,7 +83,6 @@ describe('CountdownTimerComponent', () => {
 
     it('should play sound when countdown is complete', () => {
         //ARRANGE
-        const soundService = TestBed.inject(SoundService);
         const preCountdownEvent = <CountdownEvent>{ action: 'done', status: CountdownStatus.done, left: 0, text: '' };
         const countdownEvent = <CountdownEvent>{ action: 'done', status: CountdownStatus.done, left: 0, text: '' };
 
@@ -92,6 +94,6 @@ describe('CountdownTimerComponent', () => {
         //ASSERT
         expect(component.countdownHasBegun()).toBe(true);
         expect(component.showPreCountdown()).toBe(false);
-        expect(soundService.playSound).toHaveBeenCalledWith('../../assets/sounds/210639764.mp3');
+        expect(soundServiceMock.playSound).toHaveBeenCalledWith('../../assets/sounds/210639764.mp3');
     });
 });

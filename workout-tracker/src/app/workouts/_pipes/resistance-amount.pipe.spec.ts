@@ -7,23 +7,27 @@ import { type Mocked } from 'vitest';
 describe('ResistanceAmountPipe', () => {
     let pipe: ResistanceAmountPipe;
 
-    beforeEach(() => {
-        const MockConfigService: Partial<Mocked<ConfigService>> = {
-            get: vi.fn<ConfigService['get']>().mockReturnValue('lb')
-        };
+    const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+        get: vi.fn<ConfigService['get']>(() => 'lb').mockName('get')
+    };
 
+    beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
                 ResistanceAmountPipe,
                 {
                     provide: ConfigService,
-                    useValue: MockConfigService
+                    useValue: configServiceMock
                 },
                 provideZonelessChangeDetection()
             ]
         });
 
         pipe = TestBed.inject(ResistanceAmountPipe);
+    });
+
+    afterEach(() => {
+        vi.resetAllMocks();
     });
 
     it('create an instance', () => {
