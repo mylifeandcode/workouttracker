@@ -20,15 +20,14 @@ describe('GlobalHttpErrorInterceptor', () => {
 
   let httpTestingController: HttpTestingController;
   let httpClient: HttpClient;
-  let notificationService: NotificationService;
 
-  function buildNotificationServiceMock(): Partial<Mocked<NotificationService>> {
-    return { error: vi.fn<NotificationService['error']>() };
-  }
+  const notificationServiceMock: Mocked<Pick<NotificationService, 'error'>> = {
+    error: vi.fn<NotificationService['error']>().mockName('error')
+  };
 
-  function buildConfigServiceMock(apiRoot: string | null = '/api/'): Partial<Mocked<ConfigService>> {
-    return { get: vi.fn<ConfigService['get']>().mockReturnValue(apiRoot) };
-  }
+  const configServiceMock: Mocked<Pick<ConfigService, 'get'>> = {
+    get: vi.fn<ConfigService['get']>(() => '/api/').mockName('get')
+  };
 
   function configure(extraProviders: Provider[]): void {
     TestBed.configureTestingModule({
@@ -42,7 +41,6 @@ describe('GlobalHttpErrorInterceptor', () => {
 
     httpClient = TestBed.inject(HttpClient);
     httpTestingController = TestBed.inject(HttpTestingController);
-    notificationService = TestBed.inject(NotificationService);
   }
 
   beforeEach(() => {
@@ -51,7 +49,8 @@ describe('GlobalHttpErrorInterceptor', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the console.error spy
   });
 
   describe('on its own', () => {
@@ -59,8 +58,8 @@ describe('GlobalHttpErrorInterceptor', () => {
     beforeEach(() => {
       configure([
         { provide: HTTP_INTERCEPTORS, useClass: GlobalHttpErrorInterceptor, multi: true },
-        { provide: NotificationService, useValue: buildNotificationServiceMock() },
-        { provide: ConfigService, useValue: buildConfigServiceMock() }
+        { provide: NotificationService, useValue: notificationServiceMock },
+        { provide: ConfigService, useValue: configServiceMock }
       ]);
     });
 
@@ -69,8 +68,8 @@ describe('GlobalHttpErrorInterceptor', () => {
 
       httpTestingController.expectOne(API_URL).flush('boom', { status: 500, statusText: 'Server Error' });
 
-      expect(notificationService.error).toHaveBeenCalledTimes(1);
-      expect(vi.mocked(notificationService.error).mock.calls[0][1]).toContain("couldn't load");
+      expect(notificationServiceMock.error).toHaveBeenCalledTimes(1);
+      expect(notificationServiceMock.error.mock.calls[0][1]).toContain("couldn't load");
     });
 
     it('should make a server error sticky', () => {
@@ -78,7 +77,7 @@ describe('GlobalHttpErrorInterceptor', () => {
 
       httpTestingController.expectOne(API_URL).flush('boom', { status: 500, statusText: 'Server Error' });
 
-      expect(vi.mocked(notificationService.error).mock.calls[0][2]).toEqual({ sticky: true });
+      expect(notificationServiceMock.error.mock.calls[0][2]).toEqual({ sticky: true });
     });
 
     it('should make a client error transient', () => {
@@ -86,7 +85,7 @@ describe('GlobalHttpErrorInterceptor', () => {
 
       httpTestingController.expectOne(API_URL).flush('nope', { status: 404, statusText: 'Not Found' });
 
-      expect(vi.mocked(notificationService.error).mock.calls[0][2]).toEqual({ sticky: false });
+      expect(notificationServiceMock.error.mock.calls[0][2]).toEqual({ sticky: false });
     });
 
     it('should log the failure so it is available for telemetry', () => {
@@ -104,7 +103,7 @@ describe('GlobalHttpErrorInterceptor', () => {
 
       httpTestingController.expectOne(API_URL).flush({ ok: true });
 
-      expect(notificationService.error).not.toHaveBeenCalled();
+      expect(notificationServiceMock.error).not.toHaveBeenCalled();
     });
 
     describe('must never swallow the error', () => {
@@ -130,7 +129,7 @@ describe('GlobalHttpErrorInterceptor', () => {
         httpTestingController.expectOne(API_URL).flush('boom', { status: 500, statusText: 'Server Error' });
 
         expect(received).toBe('fallback');
-        expect(notificationService.error).toHaveBeenCalledTimes(1);
+        expect(notificationServiceMock.error).toHaveBeenCalledTimes(1);
       });
 
       /*
@@ -138,7 +137,7 @@ describe('GlobalHttpErrorInterceptor', () => {
       error, so a bug in the mapper or in ng-zorro must not reach the application.
       */
       it('should deliver the original error even if reporting itself throws', () => {
-        vi.mocked(notificationService.error).mockImplementation(() => { throw new Error('ng-zorro exploded'); });
+        notificationServiceMock.error.mockImplementation(() => { throw new Error('ng-zorro exploded'); });
         let caught: unknown;
 
         httpClient.get(API_URL).subscribe({ error: (error: unknown) => { caught = error; } });
@@ -159,7 +158,7 @@ describe('GlobalHttpErrorInterceptor', () => {
 
         httpTestingController.expectOne(API_URL).flush('boom', { status: 500, statusText: 'Server Error' });
 
-        expect(notificationService.error).not.toHaveBeenCalled();
+        expect(notificationServiceMock.error).not.toHaveBeenCalled();
         //The caller still gets the error — it owns the presentation, not the outcome.
         expect(caught).toBeInstanceOf(HttpErrorResponse);
       });
@@ -182,15 +181,15 @@ describe('GlobalHttpErrorInterceptor', () => {
     it('should ignore requests outside apiRoot, such as the config.json fetch', () => {
       configure([
         { provide: HTTP_INTERCEPTORS, useClass: GlobalHttpErrorInterceptor, multi: true },
-        { provide: NotificationService, useValue: buildNotificationServiceMock() },
-        { provide: ConfigService, useValue: buildConfigServiceMock() }
+        { provide: NotificationService, useValue: notificationServiceMock },
+        { provide: ConfigService, useValue: configServiceMock }
       ]);
 
       httpClient.get('config.json').subscribe({ error: () => undefined });
 
       httpTestingController.expectOne('config.json').flush('boom', { status: 500, statusText: 'Server Error' });
 
-      expect(notificationService.error).not.toHaveBeenCalled();
+      expect(notificationServiceMock.error).not.toHaveBeenCalled();
     });
 
     /*
@@ -198,17 +197,18 @@ describe('GlobalHttpErrorInterceptor', () => {
     before then would try to render a notification with no host in place.
     */
     it('should stay quiet while config has not been loaded yet', () => {
+      configServiceMock.get.mockReturnValue(null);
       configure([
         { provide: HTTP_INTERCEPTORS, useClass: GlobalHttpErrorInterceptor, multi: true },
-        { provide: NotificationService, useValue: buildNotificationServiceMock() },
-        { provide: ConfigService, useValue: buildConfigServiceMock(null) }
+        { provide: NotificationService, useValue: notificationServiceMock },
+        { provide: ConfigService, useValue: configServiceMock }
       ]);
 
       httpClient.get(API_URL).subscribe({ error: () => undefined });
 
       httpTestingController.expectOne(API_URL).flush('boom', { status: 500, statusText: 'Server Error' });
 
-      expect(notificationService.error).not.toHaveBeenCalled();
+      expect(notificationServiceMock.error).not.toHaveBeenCalled();
     });
   });
 
@@ -222,18 +222,23 @@ describe('GlobalHttpErrorInterceptor', () => {
   */
   describe('ordering relative to AuthInterceptor', () => {
 
-    let authService: AuthService;
+    const authServiceMock: Mocked<Pick<AuthService, 'token' | 'isRefreshing' | 'refreshTokenSubject' | 'refreshFailed$' | 'refreshAccessToken' | 'logOut'>> = {
+      token: 'someAccessToken',
+      isRefreshing: false,
+      refreshTokenSubject: new BehaviorSubject<string | null>(null),
+      refreshFailed$: new Subject<void>(),
+      refreshAccessToken: vi.fn<AuthService['refreshAccessToken']>(() => of(true)).mockName('refreshAccessToken'),
+      logOut: vi.fn<AuthService['logOut']>().mockName('logOut')
+    };
 
-    function buildAuthServiceMock(): Partial<Mocked<AuthService>> {
-      return {
-        token: 'someAccessToken',
-        isRefreshing: false,
-        refreshTokenSubject: new BehaviorSubject<string | null>(null),
-        refreshFailed$: new Subject<void>(),
-        refreshAccessToken: vi.fn<AuthService['refreshAccessToken']>().mockReturnValue(of(true)),
-        logOut: vi.fn<AuthService['logOut']>()
-      };
-    }
+    beforeEach(() => {
+      //resetAllMocks() only resets the vi.fn()s. These plain fields are changed by AuthInterceptor itself
+      //(isRefreshing, refreshTokenSubject), so they have to be rebuilt for every test.
+      authServiceMock.token = 'someAccessToken';
+      authServiceMock.isRefreshing = false;
+      authServiceMock.refreshTokenSubject = new BehaviorSubject<string | null>(null);
+      authServiceMock.refreshFailed$ = new Subject<void>();
+    });
 
     function configureWithBothInterceptors(errorInterceptorFirst: boolean): void {
       const errorInterceptor: Provider = { provide: HTTP_INTERCEPTORS, useClass: GlobalHttpErrorInterceptor, multi: true };
@@ -241,12 +246,10 @@ describe('GlobalHttpErrorInterceptor', () => {
 
       configure([
         ...(errorInterceptorFirst ? [errorInterceptor, authInterceptor] : [authInterceptor, errorInterceptor]),
-        { provide: AuthService, useValue: buildAuthServiceMock() },
-        { provide: NotificationService, useValue: buildNotificationServiceMock() },
-        { provide: ConfigService, useValue: buildConfigServiceMock() }
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: NotificationService, useValue: notificationServiceMock },
+        { provide: ConfigService, useValue: configServiceMock }
       ]);
-
-      authService = TestBed.inject(AuthService);
     }
 
     it('should NOT notify the user when a silent token refresh succeeds', () => {
@@ -258,9 +261,9 @@ describe('GlobalHttpErrorInterceptor', () => {
       httpTestingController.expectOne(API_URL).flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
       httpTestingController.expectOne(API_URL).flush({ ok: true });
 
-      expect(authService.refreshAccessToken).toHaveBeenCalled();
+      expect(authServiceMock.refreshAccessToken).toHaveBeenCalled();
       expect(received).toEqual({ ok: true });
-      expect(notificationService.error).not.toHaveBeenCalled();
+      expect(notificationServiceMock.error).not.toHaveBeenCalled();
     });
 
     /*
@@ -275,20 +278,20 @@ describe('GlobalHttpErrorInterceptor', () => {
       httpTestingController.expectOne(API_URL).flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
       httpTestingController.expectOne(API_URL).flush({ ok: true });
 
-      expect(notificationService.error).toHaveBeenCalled();
+      expect(notificationServiceMock.error).toHaveBeenCalled();
     });
 
     it('should notify once when the refresh fails', () => {
       configureWithBothInterceptors(true);
-      vi.mocked(authService.refreshAccessToken).mockReturnValue(of(false));
+      authServiceMock.refreshAccessToken.mockReturnValue(of(false));
 
       httpClient.get(API_URL).subscribe({ error: () => undefined });
 
       httpTestingController.expectOne(API_URL).flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
-      expect(authService.logOut).toHaveBeenCalled();
-      expect(notificationService.error).toHaveBeenCalledTimes(1);
-      expect(vi.mocked(notificationService.error).mock.calls[0][1]).toBe('Your session has expired. Please sign in again.');
+      expect(authServiceMock.logOut).toHaveBeenCalled();
+      expect(notificationServiceMock.error).toHaveBeenCalledTimes(1);
+      expect(notificationServiceMock.error.mock.calls[0][1]).toBe('Your session has expired. Please sign in again.');
     });
 
     it('should still report a replayed request that fails for a different reason', () => {
@@ -300,8 +303,8 @@ describe('GlobalHttpErrorInterceptor', () => {
       const replay: TestRequest = httpTestingController.expectOne(API_URL);
       replay.flush('boom', { status: 500, statusText: 'Server Error' });
 
-      expect(notificationService.error).toHaveBeenCalledTimes(1);
-      expect(vi.mocked(notificationService.error).mock.calls[0][1]).toContain("couldn't load");
+      expect(notificationServiceMock.error).toHaveBeenCalledTimes(1);
+      expect(notificationServiceMock.error.mock.calls[0][1]).toContain("couldn't load");
     });
   });
 });

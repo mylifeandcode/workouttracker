@@ -1,39 +1,35 @@
-import { Component, provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router, RouterModule, UrlTree } from '@angular/router';
+import { provideRouter, Router, UrlTree } from '@angular/router';
 import { firstValueFrom, of } from 'rxjs';
 import { type Mocked } from 'vitest';
 import { SetupService } from '../../_services/setup/setup.service';
 import { SetupRequiredGuard } from './setup-required.guard';
 
-@Component({
-  template: ''
-})
-class FakeComponent {
-}
-
 describe('SetupRequiredGuard', () => {
   let guard: SetupRequiredGuard;
   let setupRequired: boolean;
 
+  const setupServiceMock: Mocked<Pick<SetupService, 'isSetupRequired'>> = {
+    isSetupRequired: vi.fn<SetupService['isSetupRequired']>(() => of(setupRequired)).mockName('isSetupRequired')
+  };
+
   beforeEach(() => {
     setupRequired = true;
 
-    const SetupServiceMock: Partial<Mocked<SetupService>> = {
-      isSetupRequired: vi.fn<SetupService['isSetupRequired']>().mockImplementation(() => of(setupRequired))
-    };
-
     TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot([{ path: 'setup', component: FakeComponent }])
-      ],
       providers: [
+        provideRouter([]),
         provideZonelessChangeDetection(),
-        { provide: SetupService, useValue: SetupServiceMock }
+        { provide: SetupService, useValue: setupServiceMock }
       ]
     });
 
     guard = TestBed.inject(SetupRequiredGuard);
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should be created', () => {

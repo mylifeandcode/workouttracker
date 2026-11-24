@@ -1,45 +1,41 @@
-import { Component, provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router, RouterModule, UrlTree } from '@angular/router';
+import { provideRouter, Router, UrlTree } from '@angular/router';
 import { firstValueFrom, of } from 'rxjs';
 import { type Mocked } from 'vitest';
 import { AuthService } from '../../_services/auth/auth.service';
 import { SetupService } from '../../_services/setup/setup.service';
 import { SetupAvailableGuard } from './setup-available.guard';
 
-@Component({
-  template: ''
-})
-class FakeComponent {
-}
-
 describe('SetupAvailableGuard', () => {
   let guard: SetupAvailableGuard;
   let setupRequired: boolean;
 
+  const setupServiceMock: Mocked<Pick<SetupService, 'isSetupRequired'>> = {
+    isSetupRequired: vi.fn<SetupService['isSetupRequired']>(() => of(setupRequired)).mockName('isSetupRequired')
+  };
+
+  const authServiceMock: Mocked<Pick<AuthService, 'loginRoute'>> = {
+    get loginRoute() { return "user-select"; }
+  };
+
   beforeEach(() => {
     setupRequired = true;
 
-    const SetupServiceMock: Partial<Mocked<SetupService>> = {
-      isSetupRequired: vi.fn<SetupService['isSetupRequired']>().mockImplementation(() => of(setupRequired))
-    };
-
-    const AuthServiceMock: Partial<Mocked<AuthService>> = {
-      get loginRoute() { return "user-select"; }
-    };
-
     TestBed.configureTestingModule({
-      imports: [
-        RouterModule.forRoot([{ path: 'user-select', component: FakeComponent }])
-      ],
       providers: [
+        provideRouter([]),
         provideZonelessChangeDetection(),
-        { provide: SetupService, useValue: SetupServiceMock },
-        { provide: AuthService, useValue: AuthServiceMock }
+        { provide: SetupService, useValue: setupServiceMock },
+        { provide: AuthService, useValue: authServiceMock }
       ]
     });
 
     guard = TestBed.inject(SetupAvailableGuard);
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should be created', () => {

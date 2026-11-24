@@ -10,38 +10,37 @@ import { ReportedErrorRegistry } from './_services/error-reporting/reported-erro
 describe('GlobalErrorHandler', () => {
 
   let errorHandler: ErrorHandler;
-  let notificationService: NotificationService;
   let reportedErrors: ReportedErrorRegistry;
+
+  const notificationServiceMock: Mocked<Pick<NotificationService, 'error'>> = {
+    error: vi.fn<NotificationService['error']>().mockName('error')
+  };
 
   beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
-
-    const NotificationServiceMock: Partial<Mocked<NotificationService>> = {
-      error: vi.fn<NotificationService['error']>()
-    };
 
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         { provide: ErrorHandler, useClass: GlobalErrorHandler },
-        { provide: NotificationService, useValue: NotificationServiceMock }
+        { provide: NotificationService, useValue: notificationServiceMock }
       ]
     });
 
     errorHandler = TestBed.inject(ErrorHandler);
-    notificationService = TestBed.inject(NotificationService);
     reportedErrors = TestBed.inject(ReportedErrorRegistry);
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.resetAllMocks();
+    vi.restoreAllMocks(); //Undoes the console.error spy
   });
 
   it('should notify the user about an unexpected error', () => {
     errorHandler.handleError(new TypeError('x is not a function'));
 
-    expect(notificationService.error).toHaveBeenCalledTimes(1);
-    expect(vi.mocked(notificationService.error).mock.calls[0][0]).toBe('Something went wrong');
+    expect(notificationServiceMock.error).toHaveBeenCalledTimes(1);
+    expect(notificationServiceMock.error.mock.calls[0][0]).toBe('Something went wrong');
   });
 
   it('should log every error it handles', () => {
@@ -59,7 +58,7 @@ describe('GlobalErrorHandler', () => {
 
     errorHandler.handleError(error);
 
-    expect(notificationService.error).not.toHaveBeenCalled();
+    expect(notificationServiceMock.error).not.toHaveBeenCalled();
     expect(console.error).toHaveBeenCalled();
   });
 
@@ -71,7 +70,7 @@ describe('GlobalErrorHandler', () => {
   it('should leave HTTP failures to GlobalHttpErrorInterceptor', () => {
     errorHandler.handleError(new HttpErrorResponse({ status: 500 }));
 
-    expect(notificationService.error).not.toHaveBeenCalled();
+    expect(notificationServiceMock.error).not.toHaveBeenCalled();
   });
 
   it('should leave a self-handled HTTP failure alone even though it was never marked reported', () => {
@@ -81,13 +80,13 @@ describe('GlobalErrorHandler', () => {
 
     errorHandler.handleError(error);
 
-    expect(notificationService.error).not.toHaveBeenCalled();
+    expect(notificationServiceMock.error).not.toHaveBeenCalled();
   });
 
   it('should handle a thrown string without throwing', () => {
     expect(() => errorHandler.handleError('something broke')).not.toThrow();
 
-    expect(notificationService.error).toHaveBeenCalledTimes(1);
+    expect(notificationServiceMock.error).toHaveBeenCalledTimes(1);
   });
 
   it('should handle null and undefined without throwing', () => {

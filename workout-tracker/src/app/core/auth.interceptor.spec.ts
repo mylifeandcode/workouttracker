@@ -12,17 +12,23 @@ describe('AuthInterceptor', () => {
 
   let httpTestingController: HttpTestingController;
   let httpClient: HttpClient;
-  let authService: AuthService;
+
+  const authServiceMock: Mocked<Pick<AuthService, 'token' | 'isRefreshing' | 'refreshTokenSubject' | 'refreshFailed$' | 'refreshAccessToken' | 'logOut'>> = {
+    token: "someAccessToken",
+    isRefreshing: false,
+    refreshTokenSubject: new BehaviorSubject<string | null>(null),
+    refreshFailed$: new Subject<void>(),
+    refreshAccessToken: vi.fn<AuthService['refreshAccessToken']>(() => of(true)).mockName('refreshAccessToken'),
+    logOut: vi.fn<AuthService['logOut']>().mockName('logOut')
+  };
 
   beforeEach(() => {
-    const AuthServiceMock: Partial<Mocked<AuthService>> = {
-      token: "someAccessToken",
-      isRefreshing: false,
-      refreshTokenSubject: new BehaviorSubject<string | null>(null),
-      refreshFailed$: new Subject<void>(),
-      refreshAccessToken: vi.fn<AuthService['refreshAccessToken']>().mockReturnValue(of(true)),
-      logOut: vi.fn<AuthService['logOut']>()
-    };
+    //resetAllMocks() only resets the vi.fn()s. These plain fields are changed by the tests and by the
+    //interceptor itself (isRefreshing, refreshTokenSubject), so they have to be rebuilt for every test.
+    authServiceMock.token = "someAccessToken";
+    authServiceMock.isRefreshing = false;
+    authServiceMock.refreshTokenSubject = new BehaviorSubject<string | null>(null);
+    authServiceMock.refreshFailed$ = new Subject<void>();
 
     TestBed.configureTestingModule({
       imports: [],
@@ -35,7 +41,7 @@ describe('AuthInterceptor', () => {
         },
         {
           provide: AuthService,
-          useValue: AuthServiceMock
+          useValue: authServiceMock
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting()
@@ -44,8 +50,11 @@ describe('AuthInterceptor', () => {
 
     httpClient = TestBed.inject(HttpClient);
     httpTestingController = TestBed.inject(HttpTestingController);
-    authService = TestBed.inject(AuthService);
 
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should inject access token into header', () => {
@@ -61,7 +70,7 @@ describe('AuthInterceptor', () => {
 
   it('should not inject access token into header when no token is present', () => {
 
-    authService.token = null;
+    authServiceMock.token = null;
 
     httpClient.get("api/blah").subscribe();
 
@@ -73,7 +82,7 @@ describe('AuthInterceptor', () => {
 
   it('should attempt refresh on 401 and retry original request', () => {
 
-    vi.mocked(authService.refreshAccessToken).mockReturnValue(of(true));
+    authServiceMock.refreshAccessToken.mockReturnValue(of(true));
 
     httpClient.get("api/data").subscribe();
 
@@ -84,7 +93,7 @@ describe('AuthInterceptor', () => {
     const retryRequest = httpTestingController.expectOne("api/data");
     retryRequest.flush({ data: 'success' });
 
-    expect(authService.refreshAccessToken).toHaveBeenCalled();
+    expect(authServiceMock.refreshAccessToken).toHaveBeenCalled();
   });
 
   it('should not attempt refresh on 401 for auth/refresh URL', () => {
@@ -97,7 +106,7 @@ describe('AuthInterceptor', () => {
     const request = httpTestingController.expectOne("http://localhost:5600/auth/refresh");
     request.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
-    expect(authService.refreshAccessToken).not.toHaveBeenCalled();
+    expect(authServiceMock.refreshAccessToken).not.toHaveBeenCalled();
     expect(errorCaught).toBe(true);
   });
 
@@ -116,7 +125,7 @@ describe('AuthInterceptor', () => {
     const request = httpTestingController.expectOne("http://localhost:5600/auth/revoke");
     request.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
-    expect(authService.refreshAccessToken).not.toHaveBeenCalled();
+    expect(authServiceMock.refreshAccessToken).not.toHaveBeenCalled();
     expect(errorCaught).toBe(true);
   });
 
@@ -124,7 +133,7 @@ describe('AuthInterceptor', () => {
 
     beforeEach(() => {
       //Simulate another request having already started a refresh.
-      authService.isRefreshing = true;
+      authServiceMock.isRefreshing = true;
     });
 
     it('should be replayed once the refresh succeeds', () => {
@@ -136,7 +145,7 @@ describe('AuthInterceptor', () => {
         .flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
       //The in-flight refresh completes and publishes the new token.
-      authService.refreshTokenSubject.next("aFreshAccessToken");
+      authServiceMock.refreshTokenSubject.next("aFreshAccessToken");
 
       const retryRequest: TestRequest = httpTestingController.expectOne("api/data");
       expect(retryRequest.request.headers.get("Authorization")).toBe("Bearer someAccessToken");
@@ -164,7 +173,7 @@ describe('AuthInterceptor', () => {
 
       expect(caught).toBeUndefined(); //Still waiting on the in-flight refresh
 
-      authService.refreshFailed$.next();
+      authServiceMock.refreshFailed$.next();
 
       expect(caught).toBeInstanceOf(HttpErrorResponse);
       expect(caught?.status).toBe(401);
