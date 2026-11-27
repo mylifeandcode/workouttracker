@@ -22,7 +22,7 @@ export class UserEditComponent implements OnInit {
   private _userSvc = inject(UserService);
   private _configService = inject(ConfigService);
 
-  public userId = input.required<string>();
+  public id = input.required<string>();
 
   public loadingUserInfo = signal(true);
   public savingUserInfo = signal(false);
@@ -106,7 +106,7 @@ export class UserEditComponent implements OnInit {
 
   private getUserInfo(): void {
     this.loadingUserInfo.set(true);
-    this._userSvc.getById(this.userId())
+    this._userSvc.getById(this.id())
       .subscribe({
         next: (user: User) => {
           this.model.set({
